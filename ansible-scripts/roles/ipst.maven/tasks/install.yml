@@ -1,0 +1,34 @@
+---
+#
+# Copyright (c) 2016, RTE (http://www.rte-france.com)
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+
+
+# install tasks file for ipst.maven
+
+- name: Download maven
+  get_url: url={{ maven_url }} dest=/tmp/{{ maven_bin_filename }}
+
+- name: extract maven tarball
+  unarchive: copy=no src="/tmp/{{ maven_bin_filename }}" dest="{{ dest_path }}" creates="{{ maven_dest_path }}"
+  register: maveninstalled
+
+- name: fix ownership
+  file: state=directory owner=root group=root mode=0755 path="{{ maven_dest_path }}" recurse=yes
+
+
+#manage via alternative
+#- name: Make Maven available for system
+#command: 'alternatives --install "/usr/bin/mvn" "mvn" "{{ maven_dest_path }}/bin/mvn" 999999'
+
+- name: Clean up
+  file: state=absent path="/tmp/{{ maven_bin_filename }}"
+
+- name: add environment variables config file
+  when: maveninstalled|success
+  register: maven_envvars_config
+  template: src=maven_env.sh.j2 dest="/etc/profile.d/maven_env.sh" owner=root group=root
+

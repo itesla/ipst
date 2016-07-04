@@ -1,0 +1,136 @@
+---
+
+#
+# Copyright (c) 2016, RTE (http://www.rte-france.com)
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# 
+
+###
+###
+# This ansible playbook builds and installs IPST on a target CentOS linux (tested versions 6.5, 7.0, 7.2). In particular:
+# 
+# A) it installs on the target server all the OS packages and SW runtimes, needed to build and run the platform
+#     -C/C++development tools (gcc, g++, make, git, etc)
+#     -CMake
+#     -OpenMPI (sources installation + local build with flag --enable-mpi-thread-multiple)
+#     -Oracle JDK8 
+#     -Apache Maven
+#     -MATLAB Runtime (MCR)
+#
+#  Notes:
+#      1) a sudo enabled user is required to install all the above mentioned packages
+#      2) in case all the packages are already available on the target OS, this step can be skipped ( variable installPrerequisites to be set to False)
+#
+# B) on the target server(s): it clones the  IPST project sources from GitHub (or pull onto an existing repository), builds the  'platform distribution' and installs it  (1)
+#
+#  Notes:
+#      1) target paths and other flags are set in the vars section, below
+#
+
+##
+# the target hosts ( should match an entry in ansible configuration /etc/ansible/hosts  )
+- hosts: ipst_hosts
+
+###
+###
+# used to acquire specific user privileges
+  become: yes
+  become_method: sudo
+
+###
+###
+  vars:
+
+# must exist on target OS: IPST code will be built & installed in this user's home directory  (must have sudo rights, to allow most runtimes installations: openmpi, mcr, .. )
+    username: itesla
+
+# if set, updates the ipst repository on target OS from github
+    ipst_github_enabled: True
+
+# if set to False, do not try installing all the prerequisite packages (openmpi, jdk, maven, mcr); useful if already available on the target OS
+    installPrerequisites: true
+    
+# if set to True, triggers the ipst platfrom build even if there are no updates from github
+    forceBuild: False
+
+
+
+# path on target OS where ipst sources will be cloned/updated
+    ipst_sources_path: "/home/{{ username }}/itesla_sources/ipst"
+    
+# path on target OS where ipst will be installed
+    ipst_install_path: "/home/{{ username }}/itesla"
+    
+# path on target OS where ipst thirdparty libraries will be installed
+    ipst_thirdparty_path: "{{ ipst_install_path }}_thirdparty"
+    
+# path on local OS additional  thirdparty libraries will be installed
+    misc_thirdparties_path: "./misc"
+
+# ipst github project details (not expected to be edited)
+    ipst_github_uri: https://github.com/itesla/ipst.git
+    ipst_github_branchName: master
+
+# ipst installation script (not expected to be edited)
+    installCmd: "./install.sh --installDir {{ ipst_install_path  }} --thirdpartyDir {{ ipst_thirdparty_path  }} --overwriteInstallation"
+
+###
+###
+  roles:
+    - { role: ipst.common, when: "installPrerequisites == True" }
+    - { role: ipst.openmpi, when: "installPrerequisites == True" }
+    - { role: ipst.jdk8, when: "installPrerequisites == True" }
+    - { role: ipst.maven, when: "installPrerequisites == True" }
+    - { role: ipst.mcr, when: "installPrerequisites == True" }
+
+###
+###
+  tasks:
+
+  - name: retrieve sources from github
+    git: repo="{{ ipst_github_uri }}"
+      dest="{{ipst_sources_path}}"
+      version="{{ ipst_github_branchName }}"
+    register: gitop
+    become_user: "{{ username }}"
+    when: ipst_github_enabled == True
+
+  - name: check if sources directory exists ...
+    stat: path="{{ ipst_sources_path }}"
+    register: sourcesPathStat
+
+  - name: .... stop if sources directory does not exist
+    fail: msg="sources path {{ ipst_sources_path }} does not exist; either provide required sources or enable ipst_github_enable variable to retrieve the project from GitHub."
+    when: "sourcesPathStat.stat.exists == False"
+
+  - name: build and install ipst
+    # Using shell because 'command' does not handle well redirections, pipes, etc.  Using -l to inherit the environment variables, correctly
+    shell: /bin/bash -lc "{{ installCmd }}"
+    args:
+      chdir: "{{ipst_sources_path}}"
+    when: (gitop.changed or  forceBuild)
+    register: installScript
+    become_user: "{{ username }}"
+
+  - local_action: copy content="{{ installScript.stdout }}" dest="/tmp/build.log"
+    when: installScript is defined and installScript.skipped is not defined
+
+  - name: Check for additional thirdparty files
+    local_action: stat path={{ misc_thirdparties_path}}
+    register: statThirdpartyFolder
+
+  - name: make sure that the target directory exists
+    file: dest="{{ ipst_install_path }}" state=directory mode=0755
+    become_user: "{{ username }}"
+    when:  statThirdpartyFolder.stat.isdir is defined and statThirdpartyFolder.stat.isdir
+
+  - name: complete the remote installation with additional thirdparty files (if available)
+    unarchive: src={{ item }} dest={{ ipst_install_path  }}
+    when:  statThirdpartyFolder.stat.isdir is defined and statThirdpartyFolder.stat.isdir
+    register: installAdditionalFiles
+    become_user: "{{ username }}"
+    with_fileglob:
+      - "{{ misc_thirdparties_path}}/*"

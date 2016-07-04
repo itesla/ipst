@@ -1,0 +1,5 @@
+[ipst_hosts]
+##target server 1
+#192.168.144.10
+##target server 2
+#192.168.144.11

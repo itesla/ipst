@@ -1,0 +1,18 @@
+---
+# defaults file for ipst.mcr
+
+#this is the destination directory (a specific MCR version subdirectory will be created in this directory)
+mcr_dest_parent_path: "/usr/local/MATLAB/MATLAB_Compiler_Runtime"
+
+#R2013a (8.1)
+#mcr_ver_tag: "v81"
+#mcrzip_url: "http://www.mathworks.com/supportfiles/MCR_Runtime/R2013a/MCR_R2013a_glnxa64_installer.zip"
+
+#R2015b (9.0) - MATLAB Runtime 9.0, for R2015b, is intended to work with MATLAB 8.6, which is also R2015b.
+mcr_ver_tag: "v90"
+mcrzip_url: "http://www.mathworks.com/supportfiles/downloads/R2015b/deployment_files/R2015b/installers/glnxa64/MCR_R2015b_glnxa64_installer.zip"
+
+#DON'T EDIT THESE LINES
+mcrzip_local_path: "/tmp/MCRInstaller_{{ mcr_ver_tag }}.zip"
+mcrunzip_local_path: "/tmp/matlab_{{ mcr_ver_tag }}"
+mcr_dest_path: "{{ mcr_dest_parent_path }}/{{ mcr_ver_tag }}"

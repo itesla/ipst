@@ -1,0 +1,8 @@
+---
+# defaults file for ipst.openmpi
+
+openmpi_version: 1.8.8
+openmpi_url: http://www.open-mpi.org/software/ompi/v1.8/downloads/openmpi-{{ openmpi_version }}.tar.bz2
+openmpi_prefix: /opt/openmpi-{{ openmpi_version }}
+#openmpi_configure_options: --enable-mpi-thread-multiple --disable-dlopen
+openmpi_configure_options: --enable-mpi-thread-multiple

@@ -1,0 +1,42 @@
+---
+#
+# Copyright (c) 2016, RTE (http://www.rte-france.com)
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+
+
+
+# install tasks file for ipst.openmpi
+
+- name: download openmpi
+  get_url: url={{ openmpi_url }} dest=/tmp/openmpi-{{ openmpi_version }}.tar.bz2
+
+- name: extract openmpi tarball
+  unarchive: copy=no src=/tmp/openmpi-{{ openmpi_version }}.tar.bz2 dest=/tmp creates=/tmp/openmpi-{{ openmpi_version }}
+
+- name: create openmpi directory
+  file: path=/opt/openmpi-{{ openmpi_version }} state=directory owner=root group=root mode=0755
+
+- name: configure openmpi source
+  shell: ./configure --prefix={{ openmpi_prefix }} {{ openmpi_configure_options }}
+  args:
+    chdir: /tmp/openmpi-{{ openmpi_version }}
+    creates: /tmp/openmpi-{{ openmpi_version }}/config.log
+
+- name: install openmpi
+  shell: make install
+  args:
+    chdir: /tmp/openmpi-{{ openmpi_version }}
+    creates: /opt/openmpi-{{ openmpi_version }}/bin
+  register: openmpiinstalled
+
+- name: Clean up
+  file: state=absent path=/tmp/openmpi-{{ openmpi_version }}
+
+- name: add environment variables config file
+  when: openmpiinstalled|success
+  register: openmpi_envvars_config
+  template: src=openmpi_env.sh.j2 dest="/etc/profile.d/openmpi-{{ openmpi_version }}_env.sh" owner=root group=root
+
