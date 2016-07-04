@@ -1,0 +1,12 @@
+---
+# defaults file for ipst.maven
+
+
+dest_path: "/opt"
+maven_version: "3.0.5"
+maven_mirror: "http://archive.apache.org/dist/maven/binaries"
+
+maven_dest_path: "{{ dest_path }}/apache-maven-{{ maven_version }}"
+maven_bin_filename: "apache-maven-{{ maven_version }}-bin.tar.gz"
+maven_url: "{{ maven_mirror }}/{{ maven_bin_filename  }}"
+

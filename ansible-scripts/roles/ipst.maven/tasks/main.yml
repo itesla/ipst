@@ -1,0 +1,18 @@
+---
+#
+# Copyright (c) 2016, RTE (http://www.rte-france.com)
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+
+
+# main tasks file for ipst.maven
+
+- name: check if already installed
+  stat: path="{{ maven_dest_path }}"
+  register: maven_dir
+  changed_when: maven_dir.stat.exists == False
+
+- include: install.yml
+  when: maven_dir.stat.exists == False
