@@ -1,0 +1,25 @@
+---
+#
+# Copyright (c) 2016, RTE (http://www.rte-france.com)
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+
+# ipst.commons:  installs development tools and some libraries: c/c++, make, cmake, etc.
+
+- name: install development tools from CentOS mirror
+  yum: name="@Development tools" state=present
+
+- name: install packages from CentOS mirror
+  yum: state=present name={{ item }}
+  with_items:
+    - cmake
+    - bzip2-devel
+#    - htop
+#    - iotop
+#    - mc
+# note: prepackaged openmpi libraries do not to work with IPST (openmpi must be compiled with a specific flag enabled: --enable-mpi-thread-multiple )
+#      - openmpi
+#      - openmpi-devel
+    - zlib-devel

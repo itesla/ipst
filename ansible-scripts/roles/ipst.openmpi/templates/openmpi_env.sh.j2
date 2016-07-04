@@ -1,0 +1,5 @@
+# openmpi
+OPENMPI_PREFIX=/opt/openmpi-{{ openmpi_version }}
+export PATH=$OPENMPI_PREFIX/bin:$PATH
+export LD_LIBRARY_PATH=$OPENMPI_PREFIX/lib:$LD_LIBRARY_PATH
+export LD_PRELOAD=libmpi.so

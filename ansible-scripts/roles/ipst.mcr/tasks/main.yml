@@ -1,0 +1,67 @@
+---
+#
+# Copyright (c) 2016, RTE (http://www.rte-france.com)
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+
+# ipst.mcr: install MCR
+
+  - name: Install unzip for unarchiving
+    yum: name=unzip state=present
+      
+# Added libs for libxt.so.6 issue
+# https://uk.mathworks.com/matlabcentral/answers/102840-why-do-i-get-a-java-error-libxt-so-6-cannot-open-shared-object-file-no-such-file-or-directory-wh
+ 
+  - name: install MCR requirements
+    yum: state=present name={{ item }}
+    with_items:
+       - libXext
+       - libXt
+       - libXmu
+       - libX11
+       - libXau
+
+  - name: check for MCR installation
+    stat: path={{ mcr_dest_path }}
+    register: mcr_files
+
+  - name: check for local MCR install zip file
+    stat: path="{{ mcrzip_local_path }}"
+    register: mcrzip
+
+  - name: download MCR
+    get_url:
+      url: "{{ mcrzip_url }}"
+      dest: "{{ mcrzip_local_path }}"
+    when: ((mcr_files.stat.exists == False) and (mcrzip.stat.exists == False))
+
+  - name: create MCR temp  install directory
+    file:
+      dest: "{{ mcrunzip_local_path }}"
+      state: directory
+    when: mcr_files.stat.exists == False
+
+  - name: unzip MCR installation
+    unarchive:
+      copy: no
+      src: "{{ mcrzip_local_path }}"
+      dest: "{{ mcrunzip_local_path }}"
+    when: mcr_files.stat.exists == False
+
+  - name: install MCR
+    command: ./install -mode silent -agreeToLicense yes -destinationFolder {{ mcr_dest_parent_path }}
+    args:
+      chdir: "{{ mcrunzip_local_path }}"
+      creates: "{{ mcr_dest_path }}"
+    when: mcr_files.stat.exists == False
+
+
+  - name: remove MCR temp install dir
+    file:
+      name: "{{ item }}"
+      state: absent
+    with_items:
+      - "{{ mcrunzip_local_path }}"
+    when: mcr_files.stat.exists == False
