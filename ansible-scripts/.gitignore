@@ -1,3 +1,4 @@
 /misc/
+/group_vars/
 *.retry
 ipst-hosts

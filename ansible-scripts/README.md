@@ -37,13 +37,23 @@ This ansible playbook builds and installs IPST on a target CentOS linux. In part
 - The paths where the packages are installed are declared in roles/`*`/defaults/main.yml
 
 - The installation process takes 'some time' to complete, at least for the first run when all the required SW packages are downloaded (e.g. MATLAB MCR) and (possibly) compiled (e.g. openmpi).
- 
+
+
 
 ## Usage
 
 1. Copy file 'init-hosts.example' to 'init-hosts' and edit the latter one, adding the IPs/names of the target servers to the [ipst_hosts] section.
 
-2. Run ansible-playbook -i ipst-hosts ./ipst.yml -u itesla -k
+2. (Optional) To configure the installation procedure to use proxies (downloading OS packages, runtimes and IPST sources), edit/create file ansible-scripts/group_vars/ipst_hosts.yml; example:
+```
+# file: group_vars/ipst_hosts.yml
+---
+ipst_environment:
+  http_proxy: http://proxy.somewhere.com:port
+  https_proxy: http://proxy.somewhere.com:port
+```
+
+3. Run ansible-playbook -i ipst-hosts ./ipst.yml -u itesla -k
 
   ansible will connect to the remote servers using the 'itesla' user (asking for 'itesla' password, when needed)
   and start the build+installation process
