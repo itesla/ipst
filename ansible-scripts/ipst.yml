@@ -42,16 +42,21 @@
 
 ###
 ###
+# environment variables at this playbook level
+  environment: "{{ ipst_environment | default('{}') }}"
+
+###
+###
   vars:
 
 # must exist on target OS: IPST code will be built & installed in this user's home directory  (must have sudo rights, to allow most runtimes installations: openmpi, mcr, .. )
-    username: itesla
+    username: "{{ ipst_username|default('itesla') }}"
 
 # if set, updates the ipst repository on target OS from github
     ipst_github_enabled: True
 
 # if set to False, do not try installing all the prerequisite packages (openmpi, jdk, maven, mcr); useful if already available on the target OS
-    installPrerequisites: true
+    installPrerequisites: True
     
 # if set to True, triggers the ipst platfrom build even if there are no updates from github
     forceBuild: False
