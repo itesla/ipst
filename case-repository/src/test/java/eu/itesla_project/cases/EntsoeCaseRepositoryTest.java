@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2016, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -31,9 +32,7 @@ import java.io.Writer;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
+import java.util.*;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -152,6 +151,37 @@ public class EntsoeCaseRepositoryTest {
         createFile(dir4, "20130115_0015_SN2_D40.uct");
         createFile(dir4, "20130115_0015_SN2_D70.uct");
         createFile(dir4, "20130115_0015_SN2_D80.uct");
+
+        // D2
+        Path dir5 = fileSystem.getPath("/UCT/2D/2013/01/15");
+        Files.createDirectories(dir5);
+        createFile(dir5, "20130115_0030_2D2_FR0.uct");
+        createFile(dir5, "20130115_0130_2D2_FR0.uct");
+
+        // LT
+        Path dir6 = fileSystem.getPath("/UCT/LT/2013/01/15");
+        Files.createDirectories(dir6);
+        createFile(dir6, "20130115_0030_LT2_FR0.uct");
+        createFile(dir6, "20130115_0130_LT2_FR0.uct");
+
+        // RE
+        Path dir7 = fileSystem.getPath("/UCT/RE/2013/01/15");
+        Files.createDirectories(dir7);
+        createFile(dir7, "20130115_0030_RE2_FR0.uct");
+        createFile(dir7, "20130115_0130_RE2_FR0.uct");
+
+        // INTRADAY
+        Path dir8 = fileSystem.getPath("/UCT/IDCF/2013/01/15");
+        Files.createDirectories(dir8);
+        createFile(dir8, "20130115_0330_012_FR0.uct");
+        createFile(dir8, "20130115_0330_022_FR0.uct");
+        createFile(dir8, "20130115_0330_032_FR0.uct");
+
+        // daylight saving FO
+        Path dir9 = fileSystem.getPath("/UCT/FO/2016/10/30");
+        Files.createDirectories(dir9);
+        createFile(dir9, "20161030_0230_FO7_FR0.uct");
+        createFile(dir9, "20161030_B230_FO7_FR0.uct");
     }
 
     @After
@@ -169,7 +199,7 @@ public class EntsoeCaseRepositoryTest {
         // check that cim network is loaded instead of uct network
         assertTrue(caseRepository.load(DateTime.parse("2013-01-14T00:15:00+01:00"), CaseType.SN, Country.FR).equals(Collections.singletonList(cimNetwork)));
 
-        // check that if cim is vorbidden for france, uct is loaded
+        // check that if cim is forbidden for france, uct is loaded
         caseRepository.getConfig().getForbiddenFormatsByGeographicalCode().put(UcteGeographicalCode.FR, "CIM1");
         assertTrue(caseRepository.load(DateTime.parse("2013-01-14T00:15:00+01:00"), CaseType.SN, Country.FR).equals(Collections.singletonList(uctNetwork)));
 
@@ -193,4 +223,71 @@ public class EntsoeCaseRepositoryTest {
         assertTrue(caseRepository.dataAvailable(CaseType.SN, EnumSet.of(Country.FR), Interval.parse("2013-01-14T00:00:00+01:00/2013-01-14T01:00:00+01:00"))
                 .equals(Sets.newHashSet(DateTime.parse("2013-01-14T00:15:00+01:00"), DateTime.parse("2013-01-14T00:30:00+01:00"))));
     }
+
+    @Test
+    public void testLoadD2() throws Exception {
+        assertTrue(caseRepository.load(DateTime.parse("2013-01-15T00:30:00+01:00"), CaseType.D2, Country.FR).size() == 1);
+        assertTrue(caseRepository.load(DateTime.parse("2013-01-15T00:45:00+01:00"), CaseType.D2, Country.FR).isEmpty());
+    }
+
+    @Test
+    public void testLoadLT() throws Exception {
+        assertTrue(caseRepository.load(DateTime.parse("2013-01-15T00:30:00+01:00"), CaseType.LT, Country.FR).size() == 1);
+        assertTrue(caseRepository.load(DateTime.parse("2013-01-15T00:45:00+01:00"), CaseType.LT, Country.FR).isEmpty());
+    }
+
+    @Test
+    public void testLoadRE() throws Exception {
+        assertTrue(caseRepository.load(DateTime.parse("2013-01-15T00:30:00+01:00"), CaseType.RE, Country.FR).size() == 1);
+        assertTrue(caseRepository.load(DateTime.parse("2013-01-15T00:45:00+01:00"), CaseType.RE, Country.FR).isEmpty());
+    }
+
+    @Test
+    public void testLoadDayLightSaving() throws Exception {
+        List<Network> networksCEST=caseRepository.load(DateTime.parse("2016-10-30T02:30:00+02:00"), CaseType.FO, Country.FR);
+        assertTrue(networksCEST.size() == 1);
+        List<Network> networksCET=caseRepository.load(DateTime.parse("2016-10-30T02:30:00+01:00"), CaseType.FO, Country.FR);
+        assertTrue(networksCET.size() == 1);
+    }
+
+    @Test
+    public void testLoadIDCF() throws Exception {
+        assertTrue(caseRepository.load(DateTime.parse("2013-01-15T03:30:00+01:00"), CaseType.IDCF01, Country.FR).size() == 1);
+        assertTrue(caseRepository.load(DateTime.parse("2013-01-15T03:30:00+01:00"), CaseType.IDCF02, Country.FR).size() == 1);
+        assertTrue(caseRepository.load(DateTime.parse("2013-01-15T03:30:00+01:00"), CaseType.IDCF03, Country.FR).size() == 1);
+        assertTrue(caseRepository.load(DateTime.parse("2013-01-15T03:30:00+01:00"), CaseType.IDCF04, Country.FR).isEmpty());
+    }
+
+    @Test
+    public void testIsDataAvailable2D() throws Exception {
+        assertTrue(caseRepository.isDataAvailable(DateTime.parse("2013-01-15T00:30:00+01:00"), CaseType.D2, Country.FR));
+    }
+
+    @Test
+    public void testDataAvailable2D() throws Exception {
+        assertTrue(caseRepository.dataAvailable(CaseType.D2, EnumSet.of(Country.FR), Interval.parse("2013-01-15T00:00:00+01:00/2013-01-15T01:30:00+01:00"))
+                .equals(Sets.newHashSet(DateTime.parse("2013-01-15T00:30:00+01:00"))));
+    }
+
+    @Test
+    public void testDataAvailableIntraday() throws Exception {
+        Set<DateTime> dset=caseRepository.dataAvailable(CaseType.IDCF01, EnumSet.of(Country.FR), Interval.parse("2013-01-15T00:00:00+01:00/2013-01-15T05:30:00+01:00"));
+        System.out.println(dset);
+        assertTrue(dset.equals(Sets.newHashSet(DateTime.parse("2013-01-15T03:30:00+01:00"))));
+    }
+
+    @Test
+    public void testDataAvailableDayLightSaving() throws Exception {
+
+        // double date CEST + CET
+        Set<DateTime> dset=caseRepository.dataAvailable(CaseType.FO, EnumSet.of(Country.FR), Interval.parse("2016-10-30T00:00:00+02:00/2016-10-30T03:30:00+01:00"));
+        System.out.println(dset);
+        assertTrue(dset.equals(Sets.newHashSet(DateTime.parse("2016-10-30T02:30:00+02:00"),DateTime.parse("2016-10-30T02:30:00+01:00"))));
+
+        //just the CET one
+        dset=caseRepository.dataAvailable(CaseType.FO, EnumSet.of(Country.FR), Interval.parse("2016-10-30T02:30:00+01:00/2016-10-30T03:30:00+01:00"));
+        System.out.println(dset);
+        assertTrue(dset.equals(Sets.newHashSet(DateTime.parse("2016-10-30T02:30:00+01:00"))));
+    }
+
 }
