@@ -17,7 +17,7 @@ import eu.itesla_project.iidm.import_.Importer;
 import eu.itesla_project.iidm.import_.Importers;
 import eu.itesla_project.iidm.network.Country;
 import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.ucte.util.UcteFileName;
+import eu.itesla_project.ucte.util.EntsoeFileName;
 import eu.itesla_project.ucte.util.UcteGeographicalCode;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -287,12 +287,12 @@ public class EntsoeCaseRepository implements CaseRepository {
                 Path typeDir = formatDir.resolve(typeDirS);
                 if (Files.exists(typeDir)) {
                     browse(typeDir, path -> {
-                        UcteFileName ucteFileName = UcteFileName.parse(path.getFileName().toString());
-                        UcteGeographicalCode geographicalCode = ucteFileName.getGeographicalCode();
+                        EntsoeFileName entsoeFileName = EntsoeFileName.parse(path.getFileName().toString());
+                        UcteGeographicalCode geographicalCode = entsoeFileName.getGeographicalCode();
                         if (geographicalCode != null
                                 && !config.getForbiddenFormatsByGeographicalCode().get(geographicalCode).contains(format.getImporter().getFormat())
-                                && interval.contains(ucteFileName.getDate())) {
-                            dates.put(ucteFileName.getDate(), geographicalCode);
+                                && interval.contains(entsoeFileName.getDate())) {
+                            dates.put(entsoeFileName.getDate(), geographicalCode);
                         }
                     });
                 }

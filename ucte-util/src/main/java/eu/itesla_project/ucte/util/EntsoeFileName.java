@@ -20,7 +20,7 @@ import static java.lang.Math.toIntExact;
  *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
-public class UcteFileName {
+public class EntsoeFileName {
 
     private static final Pattern DATE_REGEX = Pattern.compile("(\\d{4})(\\d{2})(\\d{2})_(B\\d|\\d{2})(\\d{2})_(\\w{2})(\\d)_(\\w{2})(\\d).*");
 
@@ -35,7 +35,7 @@ public class UcteFileName {
     }
 
 
-    public static UcteFileName parse(String str) {
+    public static EntsoeFileName parse(String str) {
         DateTime date = DateTime.now();
         int forecastDistance = 0;
         UcteGeographicalCode geographicalCode = null;
@@ -82,10 +82,10 @@ public class UcteFileName {
 
             geographicalCode = UcteGeographicalCode.valueOf(cCode);
         }
-        return new UcteFileName(date, forecastDistance, geographicalCode);
+        return new EntsoeFileName(date, forecastDistance, geographicalCode);
     }
 
-    private UcteFileName(DateTime date, int forecastDistance, UcteGeographicalCode geographicalCode) {
+    private EntsoeFileName(DateTime date, int forecastDistance, UcteGeographicalCode geographicalCode) {
         this.date = date;
         this.forecastDistance = forecastDistance;
         this.geographicalCode = geographicalCode;
