@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2016, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -16,7 +17,7 @@ import eu.itesla_project.iidm.import_.Importer;
 import eu.itesla_project.iidm.import_.Importers;
 import eu.itesla_project.iidm.network.Country;
 import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.ucte.util.UcteFileName;
+import eu.itesla_project.ucte.util.EntsoeFileName;
 import eu.itesla_project.ucte.util.UcteGeographicalCode;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -112,13 +113,33 @@ public class EntsoeCaseRepository implements CaseRepository {
                 .collect(Collectors.toList());
     }
 
+    public static boolean isIntraday(CaseType ct) {
+        return ((ct != null) && (ct.name().startsWith("IDCF")));
+    }
+
+    public static String intraForecastDistanceInHoursSx(CaseType ct) {
+        return ct.name().substring(4,6);
+    }
+
     private <R> R scanRepository(DateTime date, CaseType type, Country country, Function<List<ImportContext>, R> handler) {
         Collection<UcteGeographicalCode> geographicalCodes = country != null ? forCountryHacked(country)
-                                                                             : Collections.singleton(UcteGeographicalCode.UX);
+                                                                             : Arrays.asList(UcteGeographicalCode.UX, UcteGeographicalCode.UC);
+
+        DateTime testDate1=date.minusHours(1);
+        String typeDirS=type.name();
+        String typeID=type.name();
+        if (isIntraday(type)) {
+            typeDirS = "IDCF";
+            typeID = intraForecastDistanceInHoursSx(type);
+        } else if (type.equals(CaseType.D2)) {
+            typeDirS="2D"; // because enum names cannot be prefixed with a digit
+            typeID="2D";
+        }
+
         for (EntsoeFormat format : formats) {
             Path formatDir = config.getRootDir().resolve(format.getDirName());
             if (Files.exists(formatDir)) {
-                Path typeDir = formatDir.resolve(type.name());
+                Path typeDir = formatDir.resolve(typeDirS);
                 if (Files.exists(typeDir)) {
                     Path dayDir = typeDir.resolve(String.format("%04d", date.getYear()))
                             .resolve(String.format("%02d", date.getMonthOfYear()))
@@ -129,9 +150,12 @@ public class EntsoeCaseRepository implements CaseRepository {
                             Collection<String> forbiddenFormats = config.getForbiddenFormatsByGeographicalCode().get(geographicalCode);
                             if (!forbiddenFormats.contains(format.getImporter().getFormat())) {
                                 for (int i = 9; i >= 0; i--) {
-                                    String baseName = String.format("%04d%02d%02d_%02d%02d_" + type + "%01d_" + geographicalCode.name() + "%01d",
+                                    String baseName = String.format("%04d%02d%02d_%02d%02d_" + typeID + "%01d_" + geographicalCode.name() + "%01d",
                                             date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(), date.getHourOfDay(), date.getMinuteOfHour(),
                                             date.getDayOfWeek(), i);
+                                    if (testDate1.getHourOfDay() == date.getHourOfDay()) {
+                                        baseName = baseName.substring(0,9)+'B'+baseName.substring(10);
+                                    }
                                     ReadOnlyDataSource ds = dataSourceFactory.create(dayDir, baseName);
                                     if (importContexts == null) {
                                         importContexts = new ArrayList<>();
@@ -139,6 +163,15 @@ public class EntsoeCaseRepository implements CaseRepository {
                                     if (format.getImporter().exists(ds)) {
                                         importContexts.add(new ImportContext(format.getImporter(), ds));
                                     }
+                                }
+                                if (importContexts.size()==0 ) {  // for info purposes, only
+                                    String baseName1 = String.format("%04d%02d%02d_%02d%02d_" + typeID + "%01d_" + geographicalCode.name(),
+                                            date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(), date.getHourOfDay(), date.getMinuteOfHour(),
+                                            date.getDayOfWeek());
+                                    if (testDate1.getHourOfDay() == date.getHourOfDay()) {
+                                        baseName1 = baseName1.substring(0,9)+'B'+baseName1.substring(10);
+                                    }
+                                    LOGGER.warn("could not find any file {}[0-9] in directory {}", baseName1, dayDir);
                                 }
                             }
                         }
@@ -148,8 +181,14 @@ public class EntsoeCaseRepository implements CaseRepository {
                                 return result;
                             }
                         }
+                    } else {
+                        LOGGER.warn("could not find any (daydir) directory {}", dayDir);
                     }
+                } else {
+                    LOGGER.warn("could not find any (typedir) directory {}", typeDir);
                 }
+            } else {
+                LOGGER.warn("could not find any (formatdir) directory {}", formatDir);
             }
         }
         return null;
@@ -227,24 +266,33 @@ public class EntsoeCaseRepository implements CaseRepository {
         Set<UcteGeographicalCode> geographicalCodes = new HashSet<>();
         if (countries == null) {
             geographicalCodes.add(UcteGeographicalCode.UX);
+            geographicalCodes.add(UcteGeographicalCode.UC);
         } else {
             for (Country country : countries) {
                 geographicalCodes.addAll(forCountryHacked(country));
             }
         }
         Multimap<DateTime, UcteGeographicalCode> dates = HashMultimap.create();
+
+        String typeDirS=type.name();
+        if (isIntraday(type)) {
+            typeDirS = "IDCF";
+        } else if (type.equals(CaseType.D2)) {
+            typeDirS="2D"; // because enum names cannot be prefixed with a digit
+        }
+
         for (EntsoeFormat format : formats) {
             Path formatDir = config.getRootDir().resolve(format.getDirName());
             if (Files.exists(formatDir)) {
-                Path typeDir = formatDir.resolve(type.name());
+                Path typeDir = formatDir.resolve(typeDirS);
                 if (Files.exists(typeDir)) {
                     browse(typeDir, path -> {
-                        UcteFileName ucteFileName = UcteFileName.parse(path.getFileName().toString());
-                        UcteGeographicalCode geographicalCode = ucteFileName.getGeographicalCode();
+                        EntsoeFileName entsoeFileName = EntsoeFileName.parse(path.getFileName().toString());
+                        UcteGeographicalCode geographicalCode = entsoeFileName.getGeographicalCode();
                         if (geographicalCode != null
                                 && !config.getForbiddenFormatsByGeographicalCode().get(geographicalCode).contains(format.getImporter().getFormat())
-                                && interval.contains(ucteFileName.getDate())) {
-                            dates.put(ucteFileName.getDate(), geographicalCode);
+                                && interval.contains(entsoeFileName.getDate())) {
+                            dates.put(entsoeFileName.getDate(), geographicalCode);
                         }
                     });
                 }

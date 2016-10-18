@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2016, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -34,7 +35,8 @@ public enum UcteGeographicalCode {
     PL(Country.PL),
     SI(Country.SI),
     NO(Country.NO), // not a real UCTE geo code but necessary to work with nordic
-    UX(null);
+    UX(null),
+    UC(null);
 
     private static Multimap<Country, UcteGeographicalCode> COUNTRY_TO_GEOGRAPHICAL_CODES;
 
