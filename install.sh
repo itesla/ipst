@@ -33,10 +33,12 @@ removeNonJavaBuildDir=false
 ## remove thord-party build dir, before triggering a new build
 removeThirdpartyBuildDir=false
 
+## replace any existing samples configuration
+samplesOverwrite=false
 
 cmd=$0
 usage() {
-    echo "usage: $cmd [--help] [--installDir <installation path>] [--thirdpartyDir <thirdparty path>] [--overwriteInstallation] [--clean] [--removeNonJavaBuildDir] [--removeThirdpartyBuildDir] [--buildMATLAB] [--buildEUROSTAG] [--buildDYMOLA]";
+    echo "usage: $cmd [--help] [--installDir <installation path>] [--thirdpartyDir <thirdparty path>] [--overwriteInstallation] [--clean] [--removeNonJavaBuildDir] [--removeThirdpartyBuildDir] [--buildMATLAB] [--buildEUROSTAG] [--buildDYMOLA] [--samplesOverwrite]";
     echo ""
     exit 1
 }
@@ -53,6 +55,7 @@ help() {
     echo "   --removeThirdpartyBuildDir if set, remove an already existing third-party build dir before starting a new build (default is false)";
     echo "   --removeNonJavaBuildDir    if set, remove an already existing non java ipst  build dir before starting a new build (default is false)";
     echo "   --clean                    remove compiled files and directories generated during a build (thirdpartyDir excluded) and exit.";
+    echo "   --samplesOverwrite         if set, overwrite the already installed sample configurations (e.g. config.xml) (default is false).";
     echo "   --help  ";
     echo ""
     exit
@@ -93,6 +96,9 @@ do
     elif [ ${!i} = "--clean" ];
     then 
         cleanIPST=true;  
+    elif [ ${!i} = "--samplesOverwrite" ];
+    then 
+        samplesOverwrite=true;  
     elif [ ${!i} = "--help" ];    
     then ((i++)) 
         help;
@@ -131,6 +137,8 @@ echo "** removeNonJavaBuildDir:" $removeNonJavaBuildDir
 echo "** buildMATLAB:" $BUILD_MATLAB
 echo "** buildEUROSTAG:" $BUILD_EUROSTAG
 echo "** buildDYMOLA:" $BUILD_DYMOLA
+echo "** samplesOverwrite:" $samplesOverwrite
+
 
 if [ $BUILD_MATLAB = true ] ; then
  if [ -z "$MATLABHOME" ] ; then
@@ -262,6 +270,32 @@ echo "mpi_hosts=localhost" >> $installDir/etc/itesla.conf
 else
 echo "*** Configuration file " $installDir/etc/itesla.conf " already exists: it will not be replaced."
 fi
+echo ""
+
+######################################################################################
+# create sample study configurations and data
+#
+
+function installSampleFile()
+{
+echo "*** copying file: " $1 " to " $2
+if [ ! -f "$2" ] || [ "$3" == true ]; then
+#cp -f $1 $2
+mkdir -p `dirname $2` && cp -f "$1" "$2";
+else
+echo "***** file " $2 " already exists. It will not be replaced."
+fi
+}
+
+echo ""
+echo "** Installing default study configuration and data files"
+
+installSampleFile $sourceDir/examples/default/config/config.xml $HOME/.itesla/config.xml $samplesOverwrite
+installSampleFile $sourceDir/examples/default/config/ENTSO-E_Boundary_Set_EU_EQ.xml $HOME/.itesla/ENTSO-E_Boundary_Set_EU_EQ.xml $samplesOverwrite
+installSampleFile $sourceDir/examples/default/config/ENTSO-E_Boundary_Set_EU_TP.xml $HOME/.itesla/ENTSO-E_Boundary_Set_EU_TP.xml $samplesOverwrite
+installSampleFile $sourceDir/examples/default/itesla_default_study/action-contingency.xml $HOME/itesla_default_study/action-contingency.xml $samplesOverwrite
+installSampleFile $sourceDir/examples/default/caserepo/CIM/SN/2016/07/12/20160712_1440_SN2_FR0.zip $HOME/caserepo/CIM/SN/2016/07/12/20160712_1440_SN2_FR0.zip $samplesOverwrite
+
 echo ""
 
 exit 0
