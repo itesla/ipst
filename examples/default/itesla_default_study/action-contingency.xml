@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+
+    Copyright (c) 2016, RTE (http://www.rte-france.com)
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<actionsContingencies>
+
+  <zones>
+	<zone name="ZONE" number="1"
+            description="Default Zone">
+            <voltageLevels>
+                <voltageLevel ID="_BUS____1_VL" name="substation 1" level="400"/>	
+            </voltageLevels>
+        </zone>
+
+  </zones>
+
+  <contingencies>
+      
+	<contingency>
+	  <name>Tripping_10_11</name>
+	  <zones>
+          	<num>1</num>
+	  </zones>
+	  <equipments>
+		<equipment id="_BUS___10-BUS___11-1_AC"/>	
+	  </equipments>
+	</contingency>	    	
+  </contingencies>
+  
+  <elementaryActions>
+  	
+	<elementaryAction name="Open_1_2_line"  curativeType="true" preventiveType="true" startTime="120">
+	  <description info="Open line between substation 12 and 13"/>
+	  <zones>
+            <num>1</num>
+	  </zones>
+	  <lineOperation id="_BUS____1-BUS____2-1_AC" substation="_BUS____1" action="opening" implementationTime="150" achievmentIndex="100"/>   
+	</elementaryAction>
+	
+  </elementaryActions>
+  
+  <actionPlans>
+  </actionPlans>
+
+  <actionCtgAssociations>     
+	<association>
+		<contingency id="Tripping_10_11" />
+		<constraint equipment="_BUS___12-BUS___13-1_AC" type="overload" value="57735" />
+		<action id="Open_1_2_line" />
+	</association>    
+  </actionCtgAssociations>
+  
+</actionsContingencies>
