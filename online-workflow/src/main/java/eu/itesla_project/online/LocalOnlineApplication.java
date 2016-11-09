@@ -23,10 +23,10 @@ import eu.itesla_project.merge.MergeOptimizerFactory;
 import eu.itesla_project.cases.CaseRepository;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
 import eu.itesla_project.modules.histo.HistoDbClient;
-import eu.itesla_project.modules.mcla.ForecastErrorsDataStorage;
 import eu.itesla_project.modules.mcla.MontecarloSamplerFactory;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.online.OnlineDb;
+import eu.itesla_project.modules.online.OnlineProcess;
 import eu.itesla_project.modules.online.OnlineWorkflowParameters;
 import eu.itesla_project.modules.online.RulesFacadeFactory;
 import eu.itesla_project.modules.online.TimeHorizon;
@@ -42,7 +42,9 @@ import eu.itesla_project.offline.forecast_errors.ForecastErrorsAnalysis;
 import eu.itesla_project.offline.forecast_errors.ForecastErrorsAnalysisConfig;
 import eu.itesla_project.offline.forecast_errors.ForecastErrorsAnalysisParameters;
 import gnu.trove.list.array.TIntArrayList;
-
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,54 +76,24 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
     private  OnlineConfig config;
 
     private final ComputationManager computationManager;
+    
+	private ScheduledExecutorService ses;
 
-    private final ScheduledExecutorService ses;
-
-    private final ExecutorService es;
+	private ExecutorService es;
 
     private final boolean enableJmx;
-    
-    private OnlineWorkflow workflow ;
-
-    private  HistoDbClient histoDbClient;
-
-    private  ContingenciesAndActionsDatabaseClient cadbClient;
-
-    private  RulesDbClient rulesDb;
-
-    private  WCAFactory wcaFactory;
-
-    private  LoadFlowFactory loadFlowFactory;
-
-    private  ForecastErrorsDataStorage feDataStorage;
-    
-    private  OnlineDb onlineDb;
-
-    private  UncertaintiesAnalyserFactory uncertaintiesAnalyserFactory;
-    
-    private  CorrectiveControlOptimizerFactory correctiveControlOptimizerFactory;
-    
-    private  CaseRepository caseRepository;
-
-    private  SimulatorFactory simulatorFactory;
-
-    private  MontecarloSamplerFactory montecarloSamplerFactory;
-    
-    private MergeOptimizerFactory mergeOptimizerFactory;
-    
-    private RulesFacadeFactory rulesFacadeFactory;
 
     private final ScheduledFuture<?> future;
-
-    private final Map<String, OnlineWorkflowImpl> workflows = new ConcurrentHashMap<>();
 
     private final TIntArrayList busyCores;
 
     private final Lock listenersLock = new ReentrantLock();
-    private final Lock workflowLock = new ReentrantLock();
+
     private final List<OnlineApplicationListener> listeners = new CopyOnWriteArrayList<>();
 
     private final AtomicInteger notificationIndex = new AtomicInteger();
+
+
 
     public LocalOnlineApplication(OnlineConfig config,
                                   ComputationManager computationManager,
@@ -136,8 +108,7 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
         this.es = es;
 
         LOGGER.info("Version: {}", Version.VERSION);
-       
-        init();        	
+     	
        
         this.enableJmx = enableJmx;
       
@@ -169,26 +140,6 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
     }
     
     
-    
-    private  void init() throws InstantiationException, IllegalAccessException{
-    
-         histoDbClient = config.getHistoDbClientFactoryClass().newInstance().create();
-         cadbClient = config.getContingencyDbClientFactoryClass().newInstance().create();
-         rulesDb = config.getRulesDbClientFactoryClass().newInstance().create("rulesdb");
-         wcaFactory = config.getWcaFactoryClass().newInstance();
-         loadFlowFactory = config.getLoadFlowFactoryClass().newInstance();
-         onlineDb = config.getOnlineDbFactoryClass().newInstance().create();
-         uncertaintiesAnalyserFactory = config.getUncertaintiesAnalyserFactoryClass().newInstance();
-         correctiveControlOptimizerFactory = config.getCorrectiveControlOptimizerFactoryClass().newInstance();
-         simulatorFactory = config.getSimulatorFactoryClass().newInstance();
-         montecarloSamplerFactory = config.getMontecarloSamplerFactory().newInstance();
-         caseRepository = config.getCaseRepositoryFactoryClass().newInstance().create(computationManager);
-         mergeOptimizerFactory = config.getMergeOptimizerFactory().newInstance();
-         rulesFacadeFactory = config.getRulesFacadeFactory().newInstance();
-
-    	this.feDataStorage = new ForecastErrorsDataStorageImpl(); //TODO ...
-    	
-    }
 
     @Override
     public int[] getBusyCores() {
@@ -234,14 +185,81 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
     public int getAvailableCores() {
         return computationManager.getResourcesStatus().getAvailableCores();
     }
+    
+    @Override
+    public void startProcess(String name, String owner, DateTime date, DateTime creationDate, OnlineWorkflowStartParameters start, OnlineWorkflowParameters params, DateTime[] basecases) throws Exception
+    {
+    	config=OnlineConfig.load();
+    	OnlineDb onlineDb = config.getOnlineDbFactoryClass().newInstance().create();
+    	OnlineProcess proc=new OnlineProcess();
+    	String processId= DateTimeFormat.forPattern("yyyyMMddHHmmSSS").print(new DateTime());
+        LOGGER.info("Starting process: "+processId);
+
+    	proc.setId(processId);
+    	proc.setName(name);
+    	proc.setOwner(owner);
+    	proc.setCaseType(params.getCaseType().toString());
+    	if(date!=null)
+    		proc.setDate(date);
+    	else
+    		proc.setDate(new DateTime());
+    	if(creationDate!=null)
+    		proc.setCreationDate(creationDate);
+    	else
+    		proc.setCreationDate(new DateTime());
+    	
+
+    	for(DateTime bcase: basecases){
+    		params.setBaseCaseDate(bcase);
+
+    		String id=startWorkflow(start,params);
+    		org.joda.time.format.DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
+    		String basecaseString = fmt.print(bcase);
+    		proc.addWorkflow(basecaseString, id);
+    		  		 
+    	} 
+    	   	
+
+    	onlineDb.storeProcess(proc);
+    	LOGGER.info("End of process: "+processId);
+    }
 
 
     @Override
-    public void startWorkflow( OnlineWorkflowStartParameters start, OnlineWorkflowParameters params)  {
-    	
-    	try {
+    public String startWorkflow( OnlineWorkflowStartParameters start, OnlineWorkflowParameters params)  {
+    	OnlineWorkflow workflow;
+    	HistoDbClient histoDbClient;
+		ContingenciesAndActionsDatabaseClient cadbClient;
+		RulesDbClient rulesDb;
+		WCAFactory wcaFactory;
+		LoadFlowFactory loadFlowFactory;
+		OnlineDb onlineDb;
+		UncertaintiesAnalyserFactory uncertaintiesAnalyserFactory;
+		CorrectiveControlOptimizerFactory correctiveControlOptimizerFactory;
+		SimulatorFactory simulatorFactory;
+		MontecarloSamplerFactory montecarloSamplerFactory;
+		CaseRepository caseRepository;
+		MergeOptimizerFactory mergeOptimizerFactory;
+		RulesFacadeFactory rulesFacadeFactory;
+		ForecastErrorsDataStorageImpl feDataStorage;
+		try {
 			config=OnlineConfig.load();
-			init();
+	         histoDbClient = config.getHistoDbClientFactoryClass().newInstance().create();
+	         cadbClient = config.getContingencyDbClientFactoryClass().newInstance().create();
+	         rulesDb = config.getRulesDbClientFactoryClass().newInstance().create("rulesdb");
+	         wcaFactory = config.getWcaFactoryClass().newInstance();
+	         loadFlowFactory = config.getLoadFlowFactoryClass().newInstance();
+	         onlineDb = config.getOnlineDbFactoryClass().newInstance().create();
+	         uncertaintiesAnalyserFactory = config.getUncertaintiesAnalyserFactoryClass().newInstance();
+	         correctiveControlOptimizerFactory = config.getCorrectiveControlOptimizerFactoryClass().newInstance();
+	         simulatorFactory = config.getSimulatorFactoryClass().newInstance();
+	         montecarloSamplerFactory = config.getMontecarloSamplerFactory().newInstance();
+	         caseRepository = config.getCaseRepositoryFactoryClass().newInstance().create(computationManager);
+	         mergeOptimizerFactory = config.getMergeOptimizerFactory().newInstance();
+	         rulesFacadeFactory = config.getRulesFacadeFactory().newInstance();
+
+	    	feDataStorage = new ForecastErrorsDataStorageImpl(); //TODO ...
+			
 		} catch (ClassNotFoundException | IOException | ParseException | InstantiationException | IllegalAccessException e1) {
 			
 			e1.printStackTrace();
@@ -255,11 +273,7 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
         
         
         LOGGER.info("Starting workflow: "+startParams.toString()+"\n"+onlineParams.toString());
-        
-        if(!workflowLock.tryLock())
-        {
-        	throw new RuntimeException("Already running");
-        }
+       
        
         try {
 			workflow =startParams.getOnlineWorkflowFactoryClass().newInstance().create(computationManager, cadbClient, histoDbClient, rulesDb, wcaFactory, loadFlowFactory, feDataStorage,
@@ -288,17 +302,19 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-
+        String wfId=null;
         try {
+            
             workflow.start(oCtx);
+            wfId=workflow.getId();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         finally
         {
-            workflowLock.unlock();
             workflow=null;
         }
+        return wfId;
     }
 
     @Override
@@ -435,31 +451,7 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
 
     }
 
-	/*@Override
-    public void onStableContingencies(StableContingenciesSynthesis stableContingencies) {
-        sendNotification(new AttributeChangeNotification(this,
-                notificationIndex.getAndIncrement(),
-                System.currentTimeMillis(),
-                "StableContingencies",
-                STABLE_CONTINGENCIES_ATTRIBUTE,
-                stableContingencies.getClass().getName(),
-                null,
-                stableContingencies));
 
-    }
-	
-	@Override
-    public void onUnstableContingencies(UnstableContingenciesSynthesis unstableContingencies) {
-        sendNotification(new AttributeChangeNotification(this,
-                notificationIndex.getAndIncrement(),
-                System.currentTimeMillis(),
-                "UnstableContingencies",
-                UNSTABLE_CONTINGENCIES_ATTRIBUTE,
-                unstableContingencies.getClass().getName(),
-                null,
-                unstableContingencies));
-
-    }*/
 	
 	@Override
 	public void onWcaContingencies(WcaContingenciesSynthesis wcaContingencies) {
@@ -507,11 +499,6 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
     public void runFeaAnalysis(OnlineWorkflowStartParameters startconfig, ForecastErrorsAnalysisParameters parameters, String timeHorizonS) {
         LOGGER.info("Starting fea analysis: "+parameters.toString()+"\n"+timeHorizonS);
 
-        if(!workflowLock.tryLock())
-        {
-            throw new RuntimeException("a computation is already running.");
-        }
-
         try {
             ForecastErrorsAnalysis feAnalysis = new ForecastErrorsAnalysis(computationManager, ForecastErrorsAnalysisConfig.load(), parameters);
             if ("".equals(timeHorizonS)) {
@@ -525,8 +512,8 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
             e.printStackTrace();
             throw new RuntimeException(e);
         }  finally {
-            workflowLock.unlock();
-            workflow=null;
+           // workflowLock.unlock();
+            //workflow=null;
         }
     }
 
@@ -637,7 +624,11 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
     }
 
     private void runTDSimulations(Path caseDir, String caseBaseName, String contingenciesIds, Boolean emptyContingency, Path outputFolder) throws Exception {
-        //TODO check nulls
+    	 ContingenciesAndActionsDatabaseClient cadbClient = config.getContingencyDbClientFactoryClass().newInstance().create();
+         SimulatorFactory simulatorFactory = config.getSimulatorFactoryClass().newInstance();
+
+    	 //TODO check nulls
+    	
         //in contingenciesIds, we assume a comma separated list of ids ...
         Set<String> contingencyIds = (contingenciesIds != null) ?  Sets.newHashSet(contingenciesIds.split(",")) : null;
         Path metricsFile = getFile(outputFolder, "metrics.log");
@@ -703,11 +694,12 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
     @Override
     public void runTDSimulations(OnlineWorkflowStartParameters startconfig, String caseDirS, String caseBaseName, String contingenciesIds, String emptyContingencyS, String outputFolderS) {
         LOGGER.info("Starting td simulations: "+startconfig.toString()+"\n");
-
+        /*
         if(!workflowLock.tryLock())
         {
             throw new RuntimeException("a computation is already running.");
         }
+        */
 
         try {
             Path caseDir = Paths.get(caseDirS);
@@ -719,8 +711,8 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
             e.printStackTrace();
             throw new RuntimeException(e);
         }  finally {
-            workflowLock.unlock();
-            workflow=null;
+            //workflowLock.unlock();
+            //workflow=null;
         }
     }
 

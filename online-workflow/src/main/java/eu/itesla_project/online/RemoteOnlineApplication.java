@@ -7,6 +7,8 @@
 package eu.itesla_project.online;
 
 import eu.itesla_project.modules.online.OnlineWorkflowParameters;
+
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -182,14 +184,16 @@ public class RemoteOnlineApplication implements OnlineApplication, NotificationL
     }
 
 
+
     @Override
-    public void startWorkflow(OnlineWorkflowStartParameters start, OnlineWorkflowParameters params) {
+    public String startWorkflow(OnlineWorkflowStartParameters start, OnlineWorkflowParameters params) {
         try {
-            application.startWorkflow(start, params);
+            return application.startWorkflow(start, params);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(),e);
             notifyDisconnection();
         }
+        return null;
     }
 
     @Override
@@ -225,5 +229,20 @@ public class RemoteOnlineApplication implements OnlineApplication, NotificationL
         listeners.remove(l);
 
     }
+
+
+
+	@Override
+	public void startProcess(String name, String owner, DateTime date, DateTime creationDate,
+			OnlineWorkflowStartParameters start, OnlineWorkflowParameters params, DateTime[] basecases)
+					throws Exception {
+		try {
+        	application.startProcess( name,  owner,  date,  creationDate, start,  params,  basecases);            
+        } catch (Exception  e) {
+        	LOGGER.error(e.getMessage(),e);
+        	notifyDisconnection();
+        }
+		
+	}
 
 }

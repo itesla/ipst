@@ -6,6 +6,8 @@
  */
 package eu.itesla_project.online;
 
+import org.joda.time.DateTime;
+
 import eu.itesla_project.modules.online.OnlineWorkflowParameters;
 import eu.itesla_project.offline.forecast_errors.ForecastErrorsAnalysisParameters;
 
@@ -46,7 +48,7 @@ public interface LocalOnlineApplicationMBean {
 
     int[] getBusyCores();
     
-    void startWorkflow(OnlineWorkflowStartParameters start, OnlineWorkflowParameters params);
+    String startWorkflow(OnlineWorkflowStartParameters start, OnlineWorkflowParameters params);
 
     void stopWorkflow();
 
@@ -57,4 +59,8 @@ public interface LocalOnlineApplicationMBean {
     void runFeaAnalysis(OnlineWorkflowStartParameters startconfig, ForecastErrorsAnalysisParameters parameters, String timeHorizonS);
 
     void runTDSimulations(OnlineWorkflowStartParameters startconfig, String caseDirS, String caseBaseName, String contingenciesIds, String emptyContingencyS, String outputFolderS);
+
+	void startProcess(String name, String owner, DateTime date, DateTime creationDate,
+			OnlineWorkflowStartParameters start, OnlineWorkflowParameters params, DateTime[] basecases)
+					throws Exception;
 }

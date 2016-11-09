@@ -11,7 +11,11 @@ package eu.itesla_project.online;
  * @author Quinary <itesla@quinary.com>
  */
 public interface OnlineWorkflow {
-
+	/*
+	String getProcessId();
+	
+	void setProcessId(String processId);
+	*/
 	String getId();
 
 	void start(OnlineWorkflowContext oCtx) throws Exception;
@@ -19,5 +23,7 @@ public interface OnlineWorkflow {
 	void addOnlineApplicationListener(OnlineApplicationListener listener);
 
 	void removeOnlineApplicationListener(OnlineApplicationListener listener);
+
+	
 
 }

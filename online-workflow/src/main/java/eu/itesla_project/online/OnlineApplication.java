@@ -6,6 +6,8 @@
  */
 package eu.itesla_project.online;
 
+import org.joda.time.DateTime;
+
 import eu.itesla_project.modules.online.OnlineWorkflowParameters;
 
 /**
@@ -16,7 +18,7 @@ public interface OnlineApplication extends AutoCloseable {
 
     int getAvailableCores();
 
-    void startWorkflow(OnlineWorkflowStartParameters start, OnlineWorkflowParameters params);
+    String startWorkflow(OnlineWorkflowStartParameters start, OnlineWorkflowParameters params);
 
     void stopWorkflow();
 
@@ -25,5 +27,9 @@ public interface OnlineApplication extends AutoCloseable {
     void removeListener(OnlineApplicationListener l);
     
     void notifyListeners();
+    
+    void startProcess(String name, String owner, DateTime date, DateTime creationDate,
+			OnlineWorkflowStartParameters start, OnlineWorkflowParameters params, DateTime[] basecases)
+					throws Exception;
 }
 	
