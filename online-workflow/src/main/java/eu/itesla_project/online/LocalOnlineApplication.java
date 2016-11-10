@@ -308,7 +308,13 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
             workflow.start(oCtx);
             wfId=workflow.getId();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+
+			  StatusSynthesis st=new StatusSynthesis();
+			  st.setWorkflowId(workflow.getId());
+			  st.setStatus(StatusSynthesis.STATUS_ERROR);
+			  onWorkflowUpdate(st);
+        	throw new RuntimeException(e);
+            
         }
         finally
         {

@@ -189,9 +189,9 @@ public class RemoteOnlineApplication implements OnlineApplication, NotificationL
     public String startWorkflow(OnlineWorkflowStartParameters start, OnlineWorkflowParameters params) {
         try {
             return application.startWorkflow(start, params);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             LOGGER.error(e.getMessage(),e);
-            notifyDisconnection();
+           // notifyDisconnection();
         }
         return null;
     }

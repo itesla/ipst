@@ -12,7 +12,7 @@
             
             <div class="col-md-6">        
                    <div ng-if="!connected"><h4 class="error">JMX DISCONNECTED</h4></div>
-                   <button ng-if="connected" class="btn btn-primary"  ng-class="{ disabled: startDisabled() }" ng-click="start()">Start Workflow</button>
+                   <button ng-if="connected" class="btn btn-primary"   ng-click="start()">Start Workflow</button>
             </div>
         </div>
     </div>
@@ -46,7 +46,7 @@
 		             	<h4 ng-class="{  running: workflow.status == 1  }">
 		            		<a ng-click="$parent.activeWorkflowId = workflow.worflowId" href="#workflow?wfId={{workflow.worflowId}}" >{{workflow.worflowId}} </a></h4>
 					</td>
-		            	<td ng-class="{  running: workflow.status == 1  }"><h4 ng-class="{  running: workflow.status == 1  }">{{workflow.status < 0 ? "UNAVAILABLE" : (  workflow.status == 1 ? 'RUNNING' :(workflow.status == 3 ? 'DONE' :'IDLE') ) }}</h4></td>
+		            	<td ng-class="{  running: workflow.status == 1  }"><h4 ng-class="{  running: workflow.status == 1  }">{{workflow.status < 0 ? "UNAVAILABLE" : (  workflow.status == 1 ? 'RUNNING' :(workflow.status == 3 ? 'DONE': (  workflow.status == 4 ? 'ERROR' :'IDLE')) ) }}</h4></td>
 		            </tr>
        		 	</tbody>
         	</table>

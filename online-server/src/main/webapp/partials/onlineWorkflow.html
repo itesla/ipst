@@ -25,7 +25,7 @@
         <tbody>
             <tr>
 	            <td><h4> {{activeWorkflowId}} </h4></td>
-    	        <td><h4 ng-class="{  running: workflowStatus == 1  }">{{workflowStatus < 0 ? "UNAVAILABLE" : (  workflowStatus == 1 ? 'RUNNING' :(workflowStatus == 3 ? 'DONE' :'IDLE') ) }}</h4></td>
+    	        <td><h4 ng-class="{  running: workflowStatus == 1  }">{{workflowStatus < 0 ? "UNAVAILABLE" : (  workflowStatus == 1 ? 'RUNNING' :(workflowStatus == 3 ? 'DONE' : (  workflowStatus == 4 ? 'ERROR' :'IDLE') ) ) }}</h4></td>
             </tr>
          </tbody>
          </table>
@@ -49,8 +49,7 @@
         </thead>
         <tbody>
         	<tr>
-            	<td><h4 ng-class="{ running: wcaRunning }"> {{wcaRunning == undefined ? "IDLE" : (wcaRunning  ? "RUNNING" : "DONE")}} </h4></td>
-		        <!-- td><p ng-repeat="stable in stableContingencies">{{stable}}</p></td --> 
+            	<td><h4 ng-class="{ running: wcaRunning }" ng-if="workflowStatus !=4 "> {{wcaRunning == undefined ? "IDLE" : (wcaRunning  ? "RUNNING" : "DONE")}} </h4></td>		     
             </tr>
         </tbody>
         </table>

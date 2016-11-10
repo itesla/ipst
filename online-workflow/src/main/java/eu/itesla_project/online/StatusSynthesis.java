@@ -24,6 +24,7 @@ public class StatusSynthesis implements Serializable{
 	public static int STATUS_RUNNING=1;
 	public static int STATUS_STOPPED=2;
 	public static int STATUS_TERMINATED=3;
+	public static int STATUS_ERROR=4;
 	
 	private String workflowId;
 	private int status;
