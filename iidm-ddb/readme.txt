@@ -82,7 +82,7 @@ in 'subsystem' section, edit property default-missing-method-permissions-deny-ac
   <default-missing-method-permissions-deny-access value="false"/>   
 
 
-3) edit JBOSS_HOME/modules/system/layers/base/sun/jdk/main/module.xlm
+3) edit JBOSS_HOME/modules/system/layers/base/sun/jdk/main/module.xml
    add  <path name="com/sun/jndi/url/rmi"/>
 
 
