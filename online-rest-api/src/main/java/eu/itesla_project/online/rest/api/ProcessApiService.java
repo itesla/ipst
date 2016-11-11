@@ -6,9 +6,10 @@
  */
 package eu.itesla_project.online.rest.api;
 
-import java.util.Date;
+
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+
 
 /**
 *
@@ -16,10 +17,10 @@ import javax.ws.rs.core.SecurityContext;
 */
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2016-10-06T14:01:02.692Z")
 public abstract class ProcessApiService {
-      public abstract Response processGet(String user,String basecase,String name,Date date,Date creationDate,SecurityContext securityContext)
-      throws NotFoundException;
+      public abstract Response processGet(String user,String basecase,String name,DateTimeParameter date,DateTimeParameter creationDate,SecurityContext securityContext)
+      throws ApiException;
       public abstract Response processProcessIdGet(String processId,SecurityContext securityContext)
-      throws NotFoundException;
+      throws ApiException;
       public abstract Response processProcessIdWorkflowIdGet(String processId,String workflowId,SecurityContext securityContext)
-      throws NotFoundException;
+      throws ApiException;
 }

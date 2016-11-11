@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
+import org.joda.time.DateTime;
+
 import java.util.function.Predicate;
 
 import eu.itesla_project.modules.online.OnlineDb;
@@ -26,6 +28,7 @@ import eu.itesla_project.modules.online.OnlineWorkflowResults;
 import eu.itesla_project.modules.online.StateProcessingStatus;
 
 import eu.itesla_project.online.db.OnlineDbMVStoreFactory;
+import eu.itesla_project.online.rest.api.DateTimeParameter;
 import eu.itesla_project.online.rest.model.PostContingencyResult;
 import eu.itesla_project.online.rest.model.PreContingencyResult;
 import eu.itesla_project.online.rest.model.SimulationResult;
@@ -42,7 +45,7 @@ import eu.itesla_project.online.rest.model.Process;
 public class OnlineDBUtils {
 	OnlineDbMVStoreFactory fact = new OnlineDbMVStoreFactory();
 
-	public List<Process> listProcesses(String user, String basecase, String name, Date date, Date creationDate) {
+	public List<Process> listProcesses(String user, String basecase, String name, DateTimeParameter date, DateTimeParameter creationDate) {
 		List<Process> processes = new ArrayList<Process>();
 
 		OnlineDb onlinedb = fact.create();
@@ -70,9 +73,9 @@ public class OnlineDBUtils {
 					if (basecase != null)
 						res = res && p.getWorkflowsMap().containsKey(basecase);
 					if (date != null)
-						res = res && date.equals(p.getDate());
+						res = res && date.getDateTime().getMillis() == p.getDate().getMillis();
 					if (creationDate != null)
-						res = res && creationDate.equals(p.getCreationDate());
+						res = res && creationDate.getDateTime().getMillis() ==p.getCreationDate().getMillis();
 					return res;
 				}
 			}).map(p -> toProcess(p)).collect(Collectors.toList());

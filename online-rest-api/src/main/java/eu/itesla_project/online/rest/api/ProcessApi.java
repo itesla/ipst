@@ -13,6 +13,9 @@ import java.util.Date;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+
+import org.joda.time.DateTime;
+
 import eu.itesla_project.online.rest.api.factories.ProcessApiServiceFactory;
 import javax.ws.rs.*;
 
@@ -26,27 +29,22 @@ public class ProcessApi  {
    private final ProcessApiService delegate = ProcessApiServiceFactory.getProcessApi();
 
     @GET
-    
-    
-    
-    public Response processGet( @QueryParam("user") String user, @QueryParam("basecase") String basecase, @QueryParam("name") String name, @QueryParam("date") Date date, @QueryParam("creationDate") Date creationDate,@Context SecurityContext securityContext)
-    throws NotFoundException {
+    public Response processGet( @QueryParam("user") String user, @QueryParam("basecase") String basecase, @QueryParam("name") String name, @QueryParam("date") DateTimeParameter date, @QueryParam("creationDate") DateTimeParameter creationDate,@Context SecurityContext securityContext)
+    throws ApiException {
         return delegate.processGet(user,basecase,name,date,creationDate,securityContext);
     }
+    
     @GET
-    @Path("/{processId}")
-    
-    
+    @Path("/{processId}")   
     public Response processProcessIdGet( @PathParam("processId") String processId,@Context SecurityContext securityContext)
-    throws NotFoundException {
+    throws  ApiException {
         return delegate.processProcessIdGet(processId,securityContext);
     }
+    
     @GET
-    @Path("/{processId}/{workflowId}")
-    
-    
+    @Path("/{processId}/{workflowId}") 
     public Response processProcessIdWorkflowIdGet( @PathParam("processId") String processId, @PathParam("workflowId") String workflowId,@Context SecurityContext securityContext)
-    throws NotFoundException {
+    throws  ApiException {
         return delegate.processProcessIdWorkflowIdGet(processId,workflowId,securityContext);
     }
 }

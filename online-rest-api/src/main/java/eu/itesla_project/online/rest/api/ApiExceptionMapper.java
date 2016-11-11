@@ -6,18 +6,21 @@
  */
 package eu.itesla_project.online.rest.api;
 
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
+
+
 /**
 *
 * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
 */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2016-10-06T14:01:02.692Z")
-public class ApiException extends Exception{
-	private int code;
-	public int getCode() {
-		return code;
+@Provider
+public class ApiExceptionMapper implements ExceptionMapper<ApiException>{
+
+	@Override
+	public Response toResponse(ApiException exception) {
+		return Response.status(exception.getCode()).entity(exception.getMessage()).build();
 	}
-	public ApiException (int code, String msg) {
-		super(msg);
-		this.code = code;
-	}
+
 }
