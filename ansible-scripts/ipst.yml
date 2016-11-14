@@ -80,7 +80,7 @@
     ipst_github_branchName: master
 
 # ipst installation script (not expected to be edited)
-    installCmd: "./install.sh --installDir {{ ipst_install_path  }} --thirdpartyDir {{ ipst_thirdparty_path  }} --overwriteInstallation"
+    installCmd: "./install.sh --prefix={{ ipst_install_path  }} --thirdparty-prefix={{ ipst_thirdparty_path  }}"
 
 ###
 ###
