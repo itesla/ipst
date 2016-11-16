@@ -248,6 +248,10 @@ public class Importers {
     public static void importAll(Path dir, Importer importer, boolean parallel, Consumer<Network> consumer, Consumer<ReadOnlyDataSource> listener) throws IOException, InterruptedException, ExecutionException {
         List<ReadOnlyDataSource> dataSources = new ArrayList<>();
         importAll(dir, importer, dataSources);
+        importAll(dir,importer,parallel,consumer,listener,dataSources);
+    }
+
+    public static void importAll(Path dir, Importer importer, boolean parallel, Consumer<Network> consumer, Consumer<ReadOnlyDataSource> listener, List<ReadOnlyDataSource> dataSources) throws IOException, InterruptedException, ExecutionException {
         if (parallel) {
             ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
             try {
@@ -339,6 +343,10 @@ public class Importers {
             return new GzFileDataSource(directory, getBaseName(fileNameOrBaseName.substring(0, fileNameOrBaseName.length() - 3)));
         } else if (fileNameOrBaseName.endsWith(".bz2")) {
             return new Bzip2FileDataSource(directory, getBaseName(fileNameOrBaseName.substring(0, fileNameOrBaseName.length() - 4)));
+        } else if (fileNameOrBaseName.endsWith("_EQ.xml")) {
+            //trim the suffix to handle unzipped CIM files
+            String basename=getBaseName(fileNameOrBaseName);
+            return new FileDataSource(directory, basename.substring(0,basename.length()-3));
         } else {
             return new FileDataSource(directory, getBaseName(fileNameOrBaseName));
         }
@@ -369,13 +377,43 @@ public class Importers {
         return loadNetwork(Paths.get(file));
     }
 
+    private static void addReadOnlyDataSource(Path dir, Path file, Importer importer, List<ReadOnlyDataSource> dataSources) {
+        ReadOnlyDataSource ds = createReadOnly(dir, file.getFileName().toString());
+        if (importer.exists(ds)) {
+            dataSources.add(ds);
+        }
+    }
+
+    private static void importAllReadonlyDatasources(Path parent, Importer importer, List<ReadOnlyDataSource> dataSources) throws IOException {
+        if (Files.isDirectory(parent)) {
+            try (Stream<Path> stream = Files.list(parent)) {
+                stream.sorted().forEach(child -> {
+                    if (Files.isDirectory(child)) {
+                        try {
+                            importAllReadonlyDatasources(child, importer, dataSources);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        addReadOnlyDataSource(parent, child, importer, dataSources);
+                    }
+                });
+            }
+        } else {
+            if (parent.getParent() != null) {
+                addReadOnlyDataSource(parent.getParent(), parent, importer, dataSources);
+            }
+        }
+    }
 
     public static void loadNetworks(Path dir, boolean parallel, ComputationManager computationManager, ImportConfig config, Consumer<Network> consumer, Consumer<ReadOnlyDataSource> listener) throws IOException, InterruptedException, ExecutionException {
         if (!Files.isDirectory(dir)) {
             throw new RuntimeException("Directory " + dir + " does not exist or is not a regular directory");
         }
         for (Importer importer : Importers.list(computationManager, config)) {
-            Importers.importAll(dir, importer, parallel, consumer, listener);
+            List<ReadOnlyDataSource> dataSources = new ArrayList<>();
+            importAllReadonlyDatasources(dir, importer, dataSources);
+            Importers.importAll(dir, importer, parallel, consumer, listener,dataSources);
         }
     }
 
@@ -386,7 +424,6 @@ public class Importers {
     public static void loadNetworks(Path dir, boolean parallel, Consumer<Network> consumer) throws IOException, InterruptedException, ExecutionException {
         loadNetworks(dir, parallel, LocalComputationManager.getDefault(), CONFIG.get(), consumer);
     }
-
 
     public static void loadNetworks(Path dir, boolean parallel, Consumer<Network> consumer, Consumer<ReadOnlyDataSource> listener) throws IOException, InterruptedException, ExecutionException {
         loadNetworks(dir, parallel, LocalComputationManager.getDefault(), CONFIG.get(), consumer, listener);
