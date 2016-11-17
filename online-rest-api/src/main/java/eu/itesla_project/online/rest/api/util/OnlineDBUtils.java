@@ -8,16 +8,12 @@ package eu.itesla_project.online.rest.api.util;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
-
-import org.joda.time.DateTime;
-
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import eu.itesla_project.modules.online.OnlineDb;
 import eu.itesla_project.modules.online.OnlineProcess;
@@ -26,26 +22,29 @@ import eu.itesla_project.modules.online.OnlineWorkflowDetails;
 import eu.itesla_project.modules.online.OnlineWorkflowParameters;
 import eu.itesla_project.modules.online.OnlineWorkflowResults;
 import eu.itesla_project.modules.online.StateProcessingStatus;
-
 import eu.itesla_project.online.db.OnlineDbMVStoreFactory;
 import eu.itesla_project.online.rest.api.DateTimeParameter;
 import eu.itesla_project.online.rest.model.PostContingencyResult;
 import eu.itesla_project.online.rest.model.PreContingencyResult;
+import eu.itesla_project.online.rest.model.Process;
 import eu.itesla_project.online.rest.model.SimulationResult;
 import eu.itesla_project.online.rest.model.Violation;
 import eu.itesla_project.online.rest.model.WorkflowInfo;
 import eu.itesla_project.online.rest.model.WorkflowResult;
 import eu.itesla_project.security.LimitViolation;
-import eu.itesla_project.online.rest.model.Process;
 
 /**
 *
 * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
 */
-public class OnlineDBUtils {
+public class OnlineDBUtils implements ProcessDBUtils {
 	OnlineDbMVStoreFactory fact = new OnlineDbMVStoreFactory();
 
-	public List<Process> listProcesses(String user, String basecase, String name, DateTimeParameter date, DateTimeParameter creationDate) {
+	/* (non-Javadoc)
+	 * @see eu.itesla_project.online.rest.api.util.ProcessDBUtils#listProcesses(java.lang.String, java.lang.String, java.lang.String, eu.itesla_project.online.rest.api.DateTimeParameter, eu.itesla_project.online.rest.api.DateTimeParameter)
+	 */
+	@Override
+	public List<Process> listProcesses(String owner, String basecase, String name, DateTimeParameter date, DateTimeParameter creationDate) {
 		List<Process> processes = new ArrayList<Process>();
 
 		OnlineDb onlinedb = fact.create();
@@ -68,8 +67,10 @@ public class OnlineDBUtils {
 				@Override
 				public boolean test(OnlineProcess p) {
 					boolean res = true;
-					if (user != null)
-						res = res && user.equals(p.getOwner());
+					if (name != null)
+						res = res && name.equals(p.getName());
+					if (owner != null)
+						res = res && owner.equals(p.getOwner());
 					if (basecase != null)
 						res = res && p.getWorkflowsMap().containsKey(basecase);
 					if (date != null)
@@ -83,6 +84,10 @@ public class OnlineDBUtils {
 		return processes;
 	}
 
+	/* (non-Javadoc)
+	 * @see eu.itesla_project.online.rest.api.util.ProcessDBUtils#getProcess(java.lang.String)
+	 */
+	@Override
 	public Process getProcess(String processId) {
 		Process proc = null;
 		OnlineDb onlinedb = fact.create();
@@ -104,6 +109,10 @@ public class OnlineDBUtils {
 		return proc;
 	}
 
+	/* (non-Javadoc)
+	 * @see eu.itesla_project.online.rest.api.util.ProcessDBUtils#getWorkflowResult(java.lang.String, java.lang.String)
+	 */
+	@Override
 	public WorkflowResult getWorkflowResult(String processId, String workflowId) {
 
 		OnlineDb onlinedb = fact.create();

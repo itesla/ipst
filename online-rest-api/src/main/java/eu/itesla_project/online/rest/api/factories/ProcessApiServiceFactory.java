@@ -8,6 +8,7 @@ package eu.itesla_project.online.rest.api.factories;
 
 import eu.itesla_project.online.rest.api.ProcessApiService;
 import eu.itesla_project.online.rest.api.impl.ProcessApiServiceImpl;
+import eu.itesla_project.online.rest.api.util.OnlineDBUtils;
 
 /**
 *
@@ -16,10 +17,11 @@ import eu.itesla_project.online.rest.api.impl.ProcessApiServiceImpl;
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2016-10-06T14:01:02.692Z")
 public class ProcessApiServiceFactory {
 
-   private final static ProcessApiService service = new ProcessApiServiceImpl();
+   private final static ProcessApiService service = new ProcessApiServiceImpl(new OnlineDBUtils());
 
    public static ProcessApiService getProcessApi()
    {
+	  
       return service;
    }
 }

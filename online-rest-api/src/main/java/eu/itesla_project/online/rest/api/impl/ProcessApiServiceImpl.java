@@ -21,7 +21,7 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
 import eu.itesla_project.online.rest.api.ApiException;
 import eu.itesla_project.online.rest.api.DateTimeParameter;
 import eu.itesla_project.online.rest.api.ProcessApiService;
-import eu.itesla_project.online.rest.api.util.OnlineDBUtils;
+import eu.itesla_project.online.rest.api.util.ProcessDBUtils;
 
 /**
 *
@@ -32,12 +32,12 @@ public class ProcessApiServiceImpl extends ProcessApiService {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProcessApiServiceImpl.class);
 
-	private OnlineDBUtils utils;
+	private ProcessDBUtils utils;
 	private ObjectMapper objectMapper;
 	private final SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-	public ProcessApiServiceImpl() {
-
-			utils= new OnlineDBUtils();
+	public ProcessApiServiceImpl(ProcessDBUtils utils) {
+			System.out.println("ProcessApiServiceImpl");
+			this.utils= utils;
 			objectMapper = new ObjectMapper();
 			objectMapper.registerModule(new JodaModule());
 			objectMapper.configure(com.fasterxml.jackson.databind.SerializationFeature.
@@ -47,14 +47,14 @@ public class ProcessApiServiceImpl extends ProcessApiService {
 	
 	
       @Override
-      public Response processGet(String user,String basecase,String name,DateTimeParameter date,DateTimeParameter creationDate,SecurityContext securityContext)
+      public Response processGet(String owner,String basecase,String name,DateTimeParameter date,DateTimeParameter creationDate,SecurityContext securityContext)
       throws ApiException {
-    	 LOGGER.info("Get process list: user="+user+", basecase="+basecase+", name="+name+", date="+date+", creationDate="+creationDate);
-    	 System.out.println("Get process list: user="+user+", basecase="+basecase+", name="+name+", date="+date+", creationDate="+creationDate);
+    	 LOGGER.info("Get process list: owner="+owner+", basecase="+basecase+", name="+name+", date="+date+", creationDate="+creationDate);
+    	 System.out.println("Get process list: owner="+owner+", basecase="+basecase+", name="+name+", date="+date+", creationDate="+creationDate);
     	
 			String res=null;
 			try {
-				res=objectMapper.writer().writeValueAsString(utils.listProcesses( user, basecase, name, date, creationDate));
+				res=objectMapper.writer().writeValueAsString(utils.listProcesses( owner, basecase, name, date, creationDate));
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 				LOGGER.error(e.getMessage(),e);

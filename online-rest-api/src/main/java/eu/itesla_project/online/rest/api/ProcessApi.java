@@ -9,15 +9,15 @@ package eu.itesla_project.online.rest.api;
 
 
 
-import java.util.Date;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-import org.joda.time.DateTime;
-
 import eu.itesla_project.online.rest.api.factories.ProcessApiServiceFactory;
-import javax.ws.rs.*;
 
 /**
 *
@@ -29,9 +29,9 @@ public class ProcessApi  {
    private final ProcessApiService delegate = ProcessApiServiceFactory.getProcessApi();
 
     @GET
-    public Response processGet( @QueryParam("user") String user, @QueryParam("basecase") String basecase, @QueryParam("name") String name, @QueryParam("date") DateTimeParameter date, @QueryParam("creationDate") DateTimeParameter creationDate,@Context SecurityContext securityContext)
+    public Response processGet( @QueryParam("owner") String owner, @QueryParam("basecase") String basecase, @QueryParam("name") String name, @QueryParam("date") DateTimeParameter date, @QueryParam("creationDate") DateTimeParameter creationDate,@Context SecurityContext securityContext)
     throws ApiException {
-        return delegate.processGet(user,basecase,name,date,creationDate,securityContext);
+        return delegate.processGet(owner,basecase,name,date,creationDate,securityContext);
     }
     
     @GET
