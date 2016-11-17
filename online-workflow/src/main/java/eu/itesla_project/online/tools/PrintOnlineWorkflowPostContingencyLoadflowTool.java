@@ -1,13 +1,15 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2016, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 package eu.itesla_project.online.tools;
 
-import com.csvreader.CsvWriter;
 import com.google.auto.service.AutoService;
+import eu.itesla_project.commons.io.SystemOutStreamWriter;
+import eu.itesla_project.commons.io.table.*;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
 import eu.itesla_project.modules.online.OnlineConfig;
@@ -15,12 +17,13 @@ import eu.itesla_project.modules.online.OnlineDb;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
-import org.nocrala.tools.texttablefmt.BorderStyle;
-import org.nocrala.tools.texttablefmt.CellStyle;
-import org.nocrala.tools.texttablefmt.Table;
 
 import java.io.IOException;
-import java.io.StringWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -31,6 +34,7 @@ import java.util.Map;
 @AutoService(Tool.class)
 public class PrintOnlineWorkflowPostContingencyLoadflowTool implements Tool {
 
+	private static final String TABLE_TITLE = "online-workflow-postcontingency-loadflow";
 	private static Command COMMAND = new Command() {
 		
 		@Override
@@ -68,8 +72,10 @@ public class PrintOnlineWorkflowPostContingencyLoadflowTool implements Tool {
 	                .argName("CONTINGENCY")
 	                .build());
 			options.addOption(Option.builder().longOpt("csv")
-	                .desc("export in csv format")
-	                .build());
+					.desc("export in csv format to a file")
+					.hasArg()
+					.argName("FILE")
+					.build());
 			return options;
 		}
 
@@ -88,104 +94,85 @@ public class PrintOnlineWorkflowPostContingencyLoadflowTool implements Tool {
 	@Override
 	public void run(CommandLine line) throws Exception {
 		OnlineConfig config = OnlineConfig.load();
-		OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
 		String workflowId = line.getOptionValue("workflow");
-		if ( line.hasOption("state") ) {
-			Integer stateId = Integer.parseInt(line.getOptionValue("state"));
-			Map<String, Boolean> loadflowConvergence = onlinedb.getPostContingencyLoadflowConvergence(workflowId, stateId);
-			if ( loadflowConvergence != null && !loadflowConvergence.keySet().isEmpty() ) { 
-				Table table = new Table(3, BorderStyle.CLASSIC_WIDE);
-				StringWriter content = new StringWriter();
-				CsvWriter cvsWriter = new CsvWriter(content, ',');
-				printHeaders(table, cvsWriter);
-				String[] contingencyIds = loadflowConvergence.keySet().toArray(new String[loadflowConvergence.keySet().size()]);
-				Arrays.sort(contingencyIds);
-				for(String contingencyId : contingencyIds) {
-					Boolean loadflowConverge = loadflowConvergence.get(contingencyId);
-					printValues(table, cvsWriter, stateId, contingencyId, loadflowConverge);
-				}
-				cvsWriter.flush();
-				printOutput(table, content, line.hasOption("csv"));
-				cvsWriter.close();
-			} else
-				System.out.println("\nNo post contingency loadflow data for workflow "+workflowId+" and state "+stateId);
-		} else if ( line.hasOption("contingency") ) {
-			String contingencyId = line.getOptionValue("contingency");
-			Map<Integer, Boolean> loadflowConvergence = onlinedb.getPostContingencyLoadflowConvergence(workflowId, contingencyId);
-			if ( loadflowConvergence != null && !loadflowConvergence.keySet().isEmpty() ) { 
-				Table table = new Table(3, BorderStyle.CLASSIC_WIDE);
-				StringWriter content = new StringWriter();
-				CsvWriter cvsWriter = new CsvWriter(content, ',');
-				printHeaders(table, cvsWriter);
-				Integer[] stateIds = loadflowConvergence.keySet().toArray(new Integer[loadflowConvergence.keySet().size()]);
-				Arrays.sort(stateIds);
-				for(Integer stateId : stateIds) {
-					Boolean loadflowConverge = loadflowConvergence.get(stateId);
-					printValues(table, cvsWriter, stateId, contingencyId, loadflowConverge);
-				}
-				cvsWriter.flush();
-				printOutput(table, content, line.hasOption("csv"));
-				cvsWriter.close();
-			} else
-				System.out.println("\nNo post contingency loadflow data for workflow "+workflowId+" and contingency "+contingencyId);
-		} else {		
-			Map<Integer, Map<String, Boolean>> loadflowConvergence = onlinedb.getPostContingencyLoadflowConvergence(workflowId);
-			if ( loadflowConvergence != null && !loadflowConvergence.keySet().isEmpty() ) { 
-				Table table = new Table(3, BorderStyle.CLASSIC_WIDE);
-				StringWriter content = new StringWriter();
-				CsvWriter cvsWriter = new CsvWriter(content, ',');
-				printHeaders(table, cvsWriter);
-				Integer[] stateIds = loadflowConvergence.keySet().toArray(new Integer[loadflowConvergence.keySet().size()]);
-				Arrays.sort(stateIds);
-				for(Integer stateId : stateIds) {
-					Map<String, Boolean> stateLoadflowConvergence = loadflowConvergence.get(stateId);
-					if ( stateLoadflowConvergence != null && !stateLoadflowConvergence.keySet().isEmpty() ) {
-						String[] contingencyIds = stateLoadflowConvergence.keySet().toArray(new String[stateLoadflowConvergence.keySet().size()]);
-						Arrays.sort(contingencyIds);
-						for(String contingencyId : contingencyIds) {
-							Boolean loadflowConverge = stateLoadflowConvergence.get(contingencyId);
-							printValues(table, cvsWriter, stateId, contingencyId, loadflowConverge);
-						}
-					}
-				}
-				cvsWriter.flush();
-				printOutput(table, content, line.hasOption("csv"));
-				cvsWriter.close();
-			} else
-				System.out.println("\nNo post contingency loadflow data for workflow "+workflowId);
+		TableFormatterConfig tableFormatterConfig=TableFormatterConfig.load();
+		Writer writer=null;
+		Path csvFile = null;
+		TableFormatterFactory formatterFactory=null;
+		if (line.hasOption("csv")) {
+			formatterFactory=new CsvTableFormatterFactory();
+			csvFile = Paths.get(line.getOptionValue("csv"));
+			writer=Files.newBufferedWriter(csvFile, StandardCharsets.UTF_8);
+		} else {
+			formatterFactory=new AsciiTableFormatterFactory();
+			writer=new SystemOutStreamWriter();
 		}
-		onlinedb.close();
+		try (OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create()) {
+            if (line.hasOption("state")) {
+                Integer stateId = Integer.parseInt(line.getOptionValue("state"));
+                Map<String, Boolean> loadflowConvergence = onlinedb.getPostContingencyLoadflowConvergence(workflowId, stateId);
+                if (loadflowConvergence != null && !loadflowConvergence.keySet().isEmpty()) {
+                    try (TableFormatter formatter = createFormatter(formatterFactory, tableFormatterConfig, writer)) {
+                        String[] contingencyIds = loadflowConvergence.keySet().toArray(new String[loadflowConvergence.keySet().size()]);
+                        Arrays.sort(contingencyIds);
+                        for (String contingencyId : contingencyIds) {
+                            Boolean loadflowConverge = loadflowConvergence.get(contingencyId);
+                            printValues(formatter, stateId, contingencyId, loadflowConverge);
+                        }
+                    }
+                } else
+                    System.out.println("\nNo post contingency loadflow data for workflow " + workflowId + " and state " + stateId);
+            } else if (line.hasOption("contingency")) {
+                String contingencyId = line.getOptionValue("contingency");
+                Map<Integer, Boolean> loadflowConvergence = onlinedb.getPostContingencyLoadflowConvergence(workflowId, contingencyId);
+                if (loadflowConvergence != null && !loadflowConvergence.keySet().isEmpty()) {
+                    try (TableFormatter formatter = createFormatter(formatterFactory, tableFormatterConfig, writer)) {
+                        Integer[] stateIds = loadflowConvergence.keySet().toArray(new Integer[loadflowConvergence.keySet().size()]);
+                        Arrays.sort(stateIds);
+                        for (Integer stateId : stateIds) {
+                            Boolean loadflowConverge = loadflowConvergence.get(stateId);
+                            printValues(formatter, stateId, contingencyId, loadflowConverge);
+                        }
+                    }
+                } else
+                    System.out.println("\nNo post contingency loadflow data for workflow " + workflowId + " and contingency " + contingencyId);
+            } else {
+                Map<Integer, Map<String, Boolean>> loadflowConvergence = onlinedb.getPostContingencyLoadflowConvergence(workflowId);
+                if (loadflowConvergence != null && !loadflowConvergence.keySet().isEmpty()) {
+                    try (TableFormatter formatter = createFormatter(formatterFactory, tableFormatterConfig, writer)) {
+                        Integer[] stateIds = loadflowConvergence.keySet().toArray(new Integer[loadflowConvergence.keySet().size()]);
+                        Arrays.sort(stateIds);
+                        for (Integer stateId : stateIds) {
+                            Map<String, Boolean> stateLoadflowConvergence = loadflowConvergence.get(stateId);
+                            if (stateLoadflowConvergence != null && !stateLoadflowConvergence.keySet().isEmpty()) {
+                                String[] contingencyIds = stateLoadflowConvergence.keySet().toArray(new String[stateLoadflowConvergence.keySet().size()]);
+                                Arrays.sort(contingencyIds);
+                                for (String contingencyId : contingencyIds) {
+                                    Boolean loadflowConverge = stateLoadflowConvergence.get(contingencyId);
+                                    printValues(formatter, stateId, contingencyId, loadflowConverge);
+                                }
+                            }
+                        }
+                    }
+                } else
+                    System.out.println("\nNo post contingency loadflow data for workflow " + workflowId);
+            }
+        }
 	}
-	
-	private void printHeaders(Table table, CsvWriter cvsWriter) throws IOException {
-		String[] headers = new String[3];
-		int i = 0;
-        table.addCell("State", new CellStyle(CellStyle.HorizontalAlign.center));
-        headers[i++] = "State";
-        table.addCell("Contingency", new CellStyle(CellStyle.HorizontalAlign.center));
-        headers[i++] = "Contingency";
-        table.addCell("Loadflow Convergence", new CellStyle(CellStyle.HorizontalAlign.center));
-        headers[i++] = "Loadflow Convergence";
-        cvsWriter.writeRecord(headers);
+
+	private TableFormatter createFormatter(TableFormatterFactory formatterFactory, TableFormatterConfig config, Writer writer) throws IOException {
+		TableFormatter formatter = formatterFactory.create(writer,
+				TABLE_TITLE,
+				config,
+				new Column("State"),
+				new Column("Contingency"),
+				new Column("Loadflow Convergence"));
+		return formatter;
 	}
-	
-	private void printValues(Table table, CsvWriter cvsWriter, Integer stateId, String contingencyId, Boolean loadflowConverge) throws IOException {
-			String[] values = new String[3];
-			int i = 0;
-			table.addCell(Integer.toString(stateId), new CellStyle(CellStyle.HorizontalAlign.right));
-			values[i++] = Integer.toString(stateId);
-			table.addCell(contingencyId, new CellStyle(CellStyle.HorizontalAlign.left));
-			values[i++] = contingencyId;
-			table.addCell(loadflowConverge.toString(), new CellStyle(CellStyle.HorizontalAlign.left));
-			values[i++] = loadflowConverge.toString();
-			cvsWriter.writeRecord(values);
+
+	private void printValues(TableFormatter formatter, Integer stateId, String contingencyId, Boolean loadflowConverge) throws IOException {
+		formatter.writeCell(stateId);
+		formatter.writeCell(contingencyId);
+		formatter.writeCell(loadflowConverge);
 	}
-	
-	private void printOutput(Table table, StringWriter content, boolean csv) {
-		if ( csv )
-			System.out.println(content.toString());
-		else
-			System.out.println(table.render());
-	}
-	
 }

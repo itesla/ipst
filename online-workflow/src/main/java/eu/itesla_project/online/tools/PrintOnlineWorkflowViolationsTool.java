@@ -7,26 +7,9 @@
  */
 package eu.itesla_project.online.tools;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.nocrala.tools.texttablefmt.BorderStyle;
-import org.nocrala.tools.texttablefmt.CellStyle;
-import org.nocrala.tools.texttablefmt.Table;
-
-import com.csvreader.CsvWriter;
 import com.google.auto.service.AutoService;
-
+import eu.itesla_project.commons.io.SystemOutStreamWriter;
+import eu.itesla_project.commons.io.table.*;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
 import eu.itesla_project.modules.online.OnlineConfig;
@@ -35,14 +18,26 @@ import eu.itesla_project.modules.online.OnlineStep;
 import eu.itesla_project.security.LimitViolation;
 import eu.itesla_project.security.LimitViolationFilter;
 import eu.itesla_project.security.LimitViolationType;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 @AutoService(Tool.class)
 public class PrintOnlineWorkflowViolationsTool implements Tool {
 
+    private static final String TABLE_TITLE = "online-workflow-violations";
     private static Command COMMAND = new Command() {
 
         @Override
@@ -85,7 +80,9 @@ public class PrintOnlineWorkflowViolationsTool implements Tool {
                     .argName("VIOLATION_TYPE,VIOLATION_TYPE,...")
                     .build());
             options.addOption(Option.builder().longOpt("csv")
-                    .desc("export in csv format")
+                    .desc("export in csv format to a file")
+                    .hasArg()
+                    .argName("FILE")
                     .build());
             return options;
         }
@@ -105,7 +102,6 @@ public class PrintOnlineWorkflowViolationsTool implements Tool {
     @Override
     public void run(CommandLine line) throws Exception {
         OnlineConfig config = OnlineConfig.load();
-        OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
         String workflowId = line.getOptionValue("workflow");
         LimitViolationFilter violationsFilter = null;
         if (line.hasOption("type")) {
@@ -114,118 +110,106 @@ public class PrintOnlineWorkflowViolationsTool implements Tool {
                     .collect(Collectors.toSet());
             violationsFilter = new LimitViolationFilter(limitViolationTypes, 0);
         }
-        if ( line.hasOption("state") && line.hasOption("step")) {
-            Integer stateId = Integer.parseInt(line.getOptionValue("state"));
-            OnlineStep step = OnlineStep.valueOf(line.getOptionValue("step"));
-            List<LimitViolation> violations = onlinedb.getViolations(workflowId, stateId, step);
-            if ( violations != null && !violations.isEmpty() ) {
-                Table table = new Table(8, BorderStyle.CLASSIC_WIDE);
-                StringWriter content = new StringWriter();
-                CsvWriter cvsWriter = new CsvWriter(content, ',');
-                printHeaders(table, cvsWriter);
-                printValues(table, cvsWriter, stateId, step, violations, violationsFilter);
-                printOutput(table, content, line.hasOption("csv"));
-                cvsWriter.close();
-            } else
-                System.out.println("\nNo violations for workflow "+workflowId+", step "+step.name()+" and state "+stateId);			
-        } else if ( line.hasOption("state") ) {
-            Integer stateId = Integer.parseInt(line.getOptionValue("state"));
-            Map<OnlineStep, List<LimitViolation>> stateViolations = onlinedb.getViolations(workflowId, stateId);
-            if ( stateViolations != null && !stateViolations.keySet().isEmpty() ) { 
-                Table table = new Table(8, BorderStyle.CLASSIC_WIDE);
-                StringWriter content = new StringWriter();
-                CsvWriter cvsWriter = new CsvWriter(content, ',');
-                printHeaders(table, cvsWriter);
-                OnlineStep[] steps = stateViolations.keySet().toArray(new OnlineStep[stateViolations.keySet().size()]);
-                Arrays.sort(steps);
-                for(OnlineStep step : steps) {
-                    List<LimitViolation> violations = stateViolations.get(step);
-                    if ( violations != null && !violations.isEmpty() ) {
-                        printValues(table, cvsWriter, stateId, step, violations, violationsFilter);
+
+        TableFormatterConfig tableFormatterConfig = TableFormatterConfig.load();
+        Writer writer = null;
+        Path csvFile = null;
+        TableFormatterFactory formatterFactory = null;
+        if (line.hasOption("csv")) {
+            formatterFactory = new CsvTableFormatterFactory();
+            csvFile = Paths.get(line.getOptionValue("csv"));
+            writer = Files.newBufferedWriter(csvFile, StandardCharsets.UTF_8);
+        } else {
+            formatterFactory = new AsciiTableFormatterFactory();
+            writer = new SystemOutStreamWriter();
+        }
+        try (OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create()) {
+            if (line.hasOption("state") && line.hasOption("step")) {
+                Integer stateId = Integer.parseInt(line.getOptionValue("state"));
+                OnlineStep step = OnlineStep.valueOf(line.getOptionValue("step"));
+                List<LimitViolation> violations = onlinedb.getViolations(workflowId, stateId, step);
+                if (violations != null && !violations.isEmpty()) {
+                    try (TableFormatter formatter = createFormatter(formatterFactory, tableFormatterConfig, writer)) {
+                        printValues(formatter, stateId, step, violations, violationsFilter);
                     }
-                }
-                cvsWriter.flush();
-                printOutput(table, content, line.hasOption("csv"));
-                cvsWriter.close();
-            } else
-                System.out.println("\nNo violations for workflow "+workflowId+" and state "+stateId);
-        } else if ( line.hasOption("step") ) {
-            OnlineStep step = OnlineStep.valueOf(line.getOptionValue("step"));
-            Map<Integer, List<LimitViolation>> stepViolations = onlinedb.getViolations(workflowId, step);
-            if ( stepViolations != null && !stepViolations.keySet().isEmpty() ) { 
-                Table table = new Table(8, BorderStyle.CLASSIC_WIDE);
-                StringWriter content = new StringWriter();
-                CsvWriter cvsWriter = new CsvWriter(content, ',');
-                printHeaders(table, cvsWriter);
-                Integer[] stateIds = stepViolations.keySet().toArray(new Integer[stepViolations.keySet().size()]);
-                Arrays.sort(stateIds);
-                for(Integer stateId : stateIds) {
-                    List<LimitViolation> violations = stepViolations.get(stateId);
-                    if ( violations != null && !violations.isEmpty() ) {
-                        printValues(table, cvsWriter, stateId, step, violations, violationsFilter);
-                    }
-                }
-                cvsWriter.flush();
-                printOutput(table, content, line.hasOption("csv"));
-                cvsWriter.close();
-            } else
-                System.out.println("\nNo violations for workflow "+workflowId+" and step "+step);
-        } else {		
-            Map<Integer, Map<OnlineStep, List<LimitViolation>>> wfViolations = onlinedb.getViolations(workflowId);
-            if ( wfViolations != null && !wfViolations.keySet().isEmpty() ) { 
-                Table table = new Table(8, BorderStyle.CLASSIC_WIDE);
-                StringWriter content = new StringWriter();
-                CsvWriter cvsWriter = new CsvWriter(content, ',');
-                printHeaders(table, cvsWriter);
-                Integer[] stateIds = wfViolations.keySet().toArray(new Integer[wfViolations.keySet().size()]);
-                Arrays.sort(stateIds);
-                for(Integer stateId : stateIds) {
-                    Map<OnlineStep, List<LimitViolation>> stateViolations = wfViolations.get(stateId);
-                    if ( stateViolations != null && !stateViolations.keySet().isEmpty() ) {
+                } else
+                    System.out.println("\nNo violations for workflow " + workflowId + ", step " + step.name() + " and state " + stateId);
+            } else if (line.hasOption("state")) {
+                Integer stateId = Integer.parseInt(line.getOptionValue("state"));
+                Map<OnlineStep, List<LimitViolation>> stateViolations = onlinedb.getViolations(workflowId, stateId);
+                if (stateViolations != null && !stateViolations.keySet().isEmpty()) {
+                    try (TableFormatter formatter = createFormatter(formatterFactory, tableFormatterConfig, writer)) {
                         OnlineStep[] steps = stateViolations.keySet().toArray(new OnlineStep[stateViolations.keySet().size()]);
                         Arrays.sort(steps);
-                        for(OnlineStep step : steps) {
+                        for (OnlineStep step : steps) {
                             List<LimitViolation> violations = stateViolations.get(step);
-                            if ( violations != null && !violations.isEmpty() ) {
-                                printValues(table, cvsWriter, stateId, step, violations, violationsFilter);
+                            if (violations != null && !violations.isEmpty()) {
+                                printValues(formatter, stateId, step, violations, violationsFilter);
                             }
                         }
                     }
-                }
-                cvsWriter.flush();
-                printOutput(table, content, line.hasOption("csv"));
-                cvsWriter.close();
-            } else
-                System.out.println("\nNo violations for workflow "+workflowId);
+                } else
+                    System.out.println("\nNo violations for workflow " + workflowId + " and state " + stateId);
+            } else if (line.hasOption("step")) {
+                OnlineStep step = OnlineStep.valueOf(line.getOptionValue("step"));
+                Map<Integer, List<LimitViolation>> stepViolations = onlinedb.getViolations(workflowId, step);
+                if (stepViolations != null && !stepViolations.keySet().isEmpty()) {
+                    try (TableFormatter formatter = createFormatter(formatterFactory, tableFormatterConfig, writer)) {
+                        Integer[] stateIds = stepViolations.keySet().toArray(new Integer[stepViolations.keySet().size()]);
+                        Arrays.sort(stateIds);
+                        for (Integer stateId : stateIds) {
+                            List<LimitViolation> violations = stepViolations.get(stateId);
+                            if (violations != null && !violations.isEmpty()) {
+                                printValues(formatter, stateId, step, violations, violationsFilter);
+                            }
+                        }
+                    }
+                } else
+                    System.out.println("\nNo violations for workflow " + workflowId + " and step " + step);
+            } else {
+                Map<Integer, Map<OnlineStep, List<LimitViolation>>> wfViolations = onlinedb.getViolations(workflowId);
+                if (wfViolations != null && !wfViolations.keySet().isEmpty()) {
+                    try (TableFormatter formatter = createFormatter(formatterFactory, tableFormatterConfig, writer)) {
+                        Integer[] stateIds = wfViolations.keySet().toArray(new Integer[wfViolations.keySet().size()]);
+                        Arrays.sort(stateIds);
+                        for (Integer stateId : stateIds) {
+                            Map<OnlineStep, List<LimitViolation>> stateViolations = wfViolations.get(stateId);
+                            if (stateViolations != null && !stateViolations.keySet().isEmpty()) {
+                                OnlineStep[] steps = stateViolations.keySet().toArray(new OnlineStep[stateViolations.keySet().size()]);
+                                Arrays.sort(steps);
+                                for (OnlineStep step : steps) {
+                                    List<LimitViolation> violations = stateViolations.get(step);
+                                    if (violations != null && !violations.isEmpty()) {
+                                        printValues(formatter, stateId, step, violations, violationsFilter);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else
+                    System.out.println("\nNo violations for workflow " + workflowId);
+            }
         }
-        onlinedb.close();
     }
 
-    private void printHeaders(Table table, CsvWriter cvsWriter) throws IOException {
-        String[] headers = new String[8];
-        int i = 0;
-        table.addCell("State", new CellStyle(CellStyle.HorizontalAlign.center));
-        headers[i++] = "State";
-        table.addCell("Step", new CellStyle(CellStyle.HorizontalAlign.center));
-        headers[i++] = "Step";
-        table.addCell("Equipment", new CellStyle(CellStyle.HorizontalAlign.center));
-        headers[i++] = "Equipment";
-        table.addCell("Type", new CellStyle(CellStyle.HorizontalAlign.center));
-        headers[i++] = "Type";
-        table.addCell("Value", new CellStyle(CellStyle.HorizontalAlign.center));
-        headers[i++] = "Value";
-        table.addCell("Limit", new CellStyle(CellStyle.HorizontalAlign.center));
-        headers[i++] = "Limit";
-        table.addCell("Limit Reduction", new CellStyle(CellStyle.HorizontalAlign.center));
-        headers[i++] = "Limit Reduction";
-        table.addCell("Voltage Level", new CellStyle(CellStyle.HorizontalAlign.center));
-        headers[i++] = "Voltage Level";
-        cvsWriter.writeRecord(headers);
+    private TableFormatter createFormatter(TableFormatterFactory formatterFactory, TableFormatterConfig config, Writer writer) throws IOException {
+        TableFormatter formatter = formatterFactory.create(writer,
+                TABLE_TITLE,
+                config,
+                new Column("State"),
+                new Column("Step"),
+                new Column("Equipment"),
+                new Column("Type"),
+                new Column("Value"),
+                new Column("Limit"),
+                new Column("Limit reduction"),
+                new Column("Voltage Level"));
+        return formatter;
     }
 
-    private void printValues(Table table, CsvWriter cvsWriter, Integer stateId, OnlineStep step, List<LimitViolation> violations, 
-            LimitViolationFilter violationsFilter) throws IOException {
-        if ( violationsFilter != null )
+    private void printValues(TableFormatter formatter, Integer stateId, OnlineStep step, List<LimitViolation> violations,
+                             LimitViolationFilter violationsFilter) throws IOException {
+        if (violationsFilter != null)
             violations = violationsFilter.apply(violations);
         Collections.sort(violations, new Comparator<LimitViolation>() {
             public int compare(LimitViolation o1, LimitViolation o2) {
@@ -233,33 +217,14 @@ public class PrintOnlineWorkflowViolationsTool implements Tool {
             }
         });
         for (LimitViolation violation : violations) {
-            String[] values = new String[8];
-            int i = 0;
-            table.addCell(Integer.toString(stateId), new CellStyle(CellStyle.HorizontalAlign.right));
-            values[i++] = Integer.toString(stateId);
-            table.addCell(step.name(), new CellStyle(CellStyle.HorizontalAlign.left));
-            values[i++] = step.name();
-            table.addCell(violation.getSubject().getId(), new CellStyle(CellStyle.HorizontalAlign.left));
-            values[i++] = violation.getSubject().getId();
-            table.addCell(violation.getLimitType().name(), new CellStyle(CellStyle.HorizontalAlign.left));
-            values[i++] = violation.getLimitType().name();
-            table.addCell(Float.toString(violation.getValue()), new CellStyle(CellStyle.HorizontalAlign.right));
-            values[i++] = Float.toString(violation.getValue());
-            table.addCell(Float.toString(violation.getLimit()), new CellStyle(CellStyle.HorizontalAlign.right));
-            values[i++] = Float.toString(violation.getLimit());
-            table.addCell(Float.toString(violation.getLimitReduction()), new CellStyle(CellStyle.HorizontalAlign.right));
-            values[i++] = Float.toString(violation.getLimitReduction());
-            table.addCell(Float.toString(violation.getBaseVoltage()), new CellStyle(CellStyle.HorizontalAlign.right));
-            values[i++] = Float.toString(violation.getBaseVoltage());
-            cvsWriter.writeRecord(values);
+            formatter.writeCell(stateId);
+            formatter.writeCell(step.name());
+            formatter.writeCell(violation.getSubject().getId());
+            formatter.writeCell(violation.getLimitType().name());
+            formatter.writeCell(violation.getValue());
+            formatter.writeCell(violation.getLimit());
+            formatter.writeCell(violation.getLimitReduction());
+            formatter.writeCell(violation.getBaseVoltage());
         }
     }
-
-    private void printOutput(Table table, StringWriter content, boolean csv) {
-        if ( csv )
-            System.out.println(content.toString());
-        else
-            System.out.println(table.render());
-    }
-
 }
