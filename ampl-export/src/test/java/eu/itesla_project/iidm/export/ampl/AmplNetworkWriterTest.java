@@ -33,7 +33,7 @@ public class AmplNetworkWriterTest {
         Network network = EurostagTutorialExample1Factory.create();
 
         MemDataSource dataSource = new MemDataSource();
-        new AmplNetworkWriter(network, dataSource, new AmplExportConfig(AmplExportConfig.ExportScope.ALL, true))
+        new AmplNetworkWriter(network, dataSource, new AmplExportConfig(AmplExportConfig.ExportScope.ALL, true, AmplExportConfig.ExportActionType.CURATIVE))
                 .write();
 
         assertEqualsToRef(dataSource, "_network_substations", "eurostag-tutorial-example1-substations.txt");
