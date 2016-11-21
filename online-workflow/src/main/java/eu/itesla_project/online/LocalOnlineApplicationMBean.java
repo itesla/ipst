@@ -60,7 +60,7 @@ public interface LocalOnlineApplicationMBean {
 
     void runTDSimulations(OnlineWorkflowStartParameters startconfig, String caseDirS, String caseBaseName, String contingenciesIds, String emptyContingencyS, String outputFolderS);
 
-	void startProcess(String name, String owner, DateTime date, DateTime creationDate,
+	String startProcess(String name, String owner, DateTime date, DateTime creationDate,
 			OnlineWorkflowStartParameters start, OnlineWorkflowParameters params, DateTime[] basecases)
 					throws Exception;
 }

@@ -187,7 +187,7 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
     }
     
     @Override
-    public void startProcess(String name, String owner, DateTime date, DateTime creationDate, OnlineWorkflowStartParameters start, OnlineWorkflowParameters params, DateTime[] basecases) throws Exception
+    public String startProcess(String name, String owner, DateTime date, DateTime creationDate, OnlineWorkflowStartParameters start, OnlineWorkflowParameters params, DateTime[] basecases) throws Exception
     {
     	config=OnlineConfig.load();
     	OnlineDb onlineDb = config.getOnlineDbFactoryClass().newInstance().create();
@@ -222,6 +222,7 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
 
     	onlineDb.storeProcess(proc);
     	LOGGER.info("End of process: "+processId);
+    	return processId;
     }
 
 

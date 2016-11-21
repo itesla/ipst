@@ -171,7 +171,8 @@ public class OnlineWorkflowTool implements Tool {
             for (DateTime basecase:baseCasesSet) {
                 params.setBaseCaseDate(basecase);
                 System.out.println("starting Online Workflow, basecase " + basecase.toString());
-                application.startWorkflow(startconfig, params);
+                String workflowId=application.startWorkflow(startconfig, params);
+                System.out.println("workflowId="+workflowId);
             }
         }
         else if(line.hasOption(OnlineWorkflowCommand.SHUTDOWN_CMD))

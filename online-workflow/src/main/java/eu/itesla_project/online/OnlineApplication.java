@@ -28,7 +28,7 @@ public interface OnlineApplication extends AutoCloseable {
     
     void notifyListeners();
     
-    void startProcess(String name, String owner, DateTime date, DateTime creationDate,
+    String startProcess(String name, String owner, DateTime date, DateTime creationDate,
 			OnlineWorkflowStartParameters start, OnlineWorkflowParameters params, DateTime[] basecases)
 					throws Exception;
 }

@@ -251,7 +251,8 @@ public class OnlineProcessTool implements Tool {
 		LocalOnlineApplicationMBean application = MBeanServerInvocationHandler.newProxyInstance(mbsc, objname,
 				LocalOnlineApplicationMBean.class, false);
 
-		application.startProcess(proc_params.getName(), proc_params.getOwner(), proc_params.getDate(), proc_params.getCreationDate(), startconfig, params, basecases);
+		String processId=application.startProcess(proc_params.getName(), proc_params.getOwner(), proc_params.getDate(), proc_params.getCreationDate(), startconfig, params, basecases);
+		System.out.println("processId="+processId);
 	}
 	
 	private void readParams(CommandLine line, OnlineProcessParameters pp) {
