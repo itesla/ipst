@@ -78,11 +78,6 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>iidm-import-export-api</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
 			<artifactId>iidm-network-impl</artifactId>
 			<version>${project.version}</version>
 		</dependency>
