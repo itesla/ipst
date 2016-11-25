@@ -10,8 +10,9 @@
 
 # install tasks file for ipst.openmpi
 
+# validate_certs=False for compatibility with Python 2.6
 - name: download openmpi
-  get_url: url={{ openmpi_url }} dest=/tmp/openmpi-{{ openmpi_version }}.tar.bz2
+  get_url: url={{ openmpi_url }} dest=/tmp/openmpi-{{ openmpi_version }}.tar.bz2 validate_certs=False
 
 - name: extract openmpi tarball
   unarchive: copy=no src=/tmp/openmpi-{{ openmpi_version }}.tar.bz2 dest=/tmp creates=/tmp/openmpi-{{ openmpi_version }}
