@@ -79,6 +79,10 @@ public class XMLImporter implements Importer, XmlConstants {
     @Override
     public boolean exists(ReadOnlyDataSource dataSource) {
         try {
+            //skip exploded CIM1 files (assumption: CIM1 files' extensions are _EQ, _TP. _SV, _ME)
+            if (dataSource.getBaseName().endsWith("_EQ") || dataSource.getBaseName().endsWith("_TP") || dataSource.getBaseName().endsWith("_SV") || dataSource.getBaseName().endsWith("_ME") ) {
+                return false;
+            }
             String ext = findExtension(dataSource);
             if (ext != null) {
                 try (InputStream is = dataSource.newInputStream(null, ext)) {
