@@ -45,27 +45,22 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>iidm-network-api</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>iidm-converter-api</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>computation</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>computation-local</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>case-repository</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -80,22 +75,18 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>simulation-api</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>contingency-api</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>eu.itesla_project</groupId>
             <artifactId>security-analysis</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>eu.itesla_project</groupId>
             <artifactId>iidm-xml-converter</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
@@ -112,7 +103,6 @@
         <dependency>
             <groupId>eu.itesla_project</groupId>
             <artifactId>loadflow-api</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -152,7 +142,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>iidm-network-impl</artifactId>
-            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>eu.itesla_project</groupId>
+            <artifactId>graph</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

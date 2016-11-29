@@ -48,11 +48,6 @@
             <artifactId>ucte-import</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-xml-converter</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
         <!-- case-repositories -->
         <dependency>
@@ -158,7 +153,6 @@
             <artifactId>fpf-integration</artifactId>
             <version>${project.version}</version>
         </dependency>
-
 
     </dependencies>
 

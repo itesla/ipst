@@ -13,24 +13,13 @@ In order to build iPST you need:
   * Maven 
   * CMake *(2.6 or greater)*
   * Recent C++ compiler (GNU g++ or Clang)
-  * OpenMPI *(1.8.3 or greater)*
+  * [ipst-core](https://github.com/itesla/ipst-core)
   
 Optional C++ modules requires:
   * Intel Fortran Compiler 
   * Matlab
   * Dymola
   * Eurostag
-
-### OpenMPI (required)
-In order to support the MPI modules, you need to compile and install the [OpenMPI](https://www.open-mpi.org/) library.
-```
-$> wget http://www.open-mpi.org/software/ompi/v1.8/downloads/openmpi-1.8.3.tar.bz2
-$> tar xjf openmpi-1.8.3.tar.bz2
-$> cd openmpi-1.8.3
-$> ./configure --prefix=<INSTALL_DIR> --enable-mpi-thread-multiple
-$> make install
-$> export PATH=$PATH:<INSTALL_DIR>/bin
-```
 
 ### Intel Fortran Compiler
 To compile Eurostag dependant modules, you have to set your INTEL_HOME environment variable to the root of the
@@ -115,3 +104,4 @@ thirdparty_packs=$HOME/itesla_packs
 
 ## License
 https://www.mozilla.org/en-US/MPL/2.0/
+
