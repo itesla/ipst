@@ -9,5 +9,6 @@ install:
 - cd itesla/ipst-core && mvn install
 
 script:
+- cd ${TRAVIS_BUILD_DIR}
 - mvn clean test jacoco:report coveralls:report
 
