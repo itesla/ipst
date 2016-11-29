@@ -54,10 +54,5 @@
             <artifactId>iidm-network-impl</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>graph</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 </project>
