@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2016, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -16,6 +17,8 @@ import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.modules.contingencies.Action;
 import eu.itesla_project.modules.contingencies.ActionPlan;
 import eu.itesla_project.modules.contingencies.ActionsContingenciesAssociation;
+import eu.itesla_project.modules.contingencies.Constraint;
+import eu.itesla_project.modules.contingencies.ConstraintType;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
 import eu.itesla_project.contingency.Contingency;
 import eu.itesla_project.modules.contingencies.Scenario;
@@ -137,5 +140,24 @@ public class ContingenciesAndActionsDatabaseClientImpl implements ContingenciesA
 		}
 		return associationForContingency;
 	}
+
+    @Override
+    public Collection<ActionsContingenciesAssociation> getActionsCtgAssociationsByConstraint(
+            String equipmentId, ConstraintType constraintType) {
+        List<ActionsContingenciesAssociation> associationForContingency = new ArrayList<ActionsContingenciesAssociation>();
+        for (ActionsContingenciesAssociation association : associations) {
+            if ( constraintOnEquipment(association.getConstraints(), equipmentId, constraintType) )
+                associationForContingency.add(association);
+        }
+        return associationForContingency;
+    }
+
+    private boolean constraintOnEquipment(Collection<Constraint> constraints, String equipmentId, ConstraintType constraintType) {
+        for(Constraint constraint : constraints) {
+            if ( equipmentId.equals(constraint.getEquipment()) && constraintType.equals(constraint.getType()) )
+                return true;
+        }
+        return false;
+    }
 
 }

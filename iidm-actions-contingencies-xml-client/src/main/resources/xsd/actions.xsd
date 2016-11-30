@@ -139,7 +139,7 @@
   <xs:element name="association">
     <xs:complexType>
       <xs:sequence>
-        <xs:element maxOccurs="unbounded" ref="contingency"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="contingency"/>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="constraint"/>
         <xs:element maxOccurs="unbounded" ref="action"/>
       </xs:sequence>
