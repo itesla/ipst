@@ -40,8 +40,8 @@ if [ $rank = 0 ]; then
     options+=" -Dcom.sun.management.jmxremote.ssl=false"
     options+=" -Djava.io.tmpdir=$installDir/tmp"
     options+=" -Dlogback.configurationFile="
-    [ -f "$itesla_config_dir/logback-wp5.xml" ] && options+="$itesla_config_dir" || options+="$installDir/etc"
-    options+="/logback-wp5.xml"
+    [ -f "$itesla_config_dir/logback-online.xml" ] && options+="$itesla_config_dir" || options+="$installDir/etc"
+    options+="/logback-online.xml"
     $JAVA_HOME/bin/java \
 -Xmx2048m \
 -verbose:gc -XX:+PrintGCTimeStamps -Xloggc:$installDir/logs/gc.log \

@@ -7,26 +7,10 @@
  */
 package eu.itesla_project.online.tools;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.nocrala.tools.texttablefmt.BorderStyle;
-import org.nocrala.tools.texttablefmt.CellStyle;
-import org.nocrala.tools.texttablefmt.Table;
-
-import com.csvreader.CsvWriter;
 import com.google.auto.service.AutoService;
-
+import eu.itesla_project.commons.io.table.Column;
+import eu.itesla_project.commons.io.table.TableFormatter;
+import eu.itesla_project.commons.io.table.TableFormatterConfig;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
 import eu.itesla_project.modules.online.OnlineConfig;
@@ -34,14 +18,23 @@ import eu.itesla_project.modules.online.OnlineDb;
 import eu.itesla_project.security.LimitViolation;
 import eu.itesla_project.security.LimitViolationFilter;
 import eu.itesla_project.security.LimitViolationType;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 @AutoService(Tool.class)
 public class PrintOnlineWorkflowPostContingencyViolationsTool implements Tool {
 
+    private static final String TABLE_TITLE = "online-workflow-postcontingency-violations";
     private static Command COMMAND = new Command() {
 
         @Override
@@ -84,7 +77,9 @@ public class PrintOnlineWorkflowPostContingencyViolationsTool implements Tool {
                     .argName("VIOLATION_TYPE,VIOLATION_TYPE,...")
                     .build());
             options.addOption(Option.builder().longOpt("csv")
-                    .desc("export in csv format")
+                    .desc("export in csv format to a file")
+                    .hasArg()
+                    .argName("FILE")
                     .build());
             return options;
         }
@@ -104,161 +99,104 @@ public class PrintOnlineWorkflowPostContingencyViolationsTool implements Tool {
     @Override
     public void run(CommandLine line) throws Exception {
         OnlineConfig config = OnlineConfig.load();
-        OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
         String workflowId = line.getOptionValue("workflow");
-        LimitViolationFilter violationsFilter = null;
-        if (line.hasOption("type")) {
-            Set<LimitViolationType> limitViolationTypes = Arrays.stream(line.getOptionValue("type").split(","))
-                    .map(LimitViolationType::valueOf)
-                    .collect(Collectors.toSet());
-            violationsFilter = new LimitViolationFilter(limitViolationTypes, 0);
-        }
-        if ( line.hasOption("state") && line.hasOption("contingency")) {
-            Integer stateId = Integer.parseInt(line.getOptionValue("state"));
-            String contingencyId = line.getOptionValue("contingency");
-            List<LimitViolation> violations = onlinedb.getPostContingencyViolations(workflowId, stateId, contingencyId);
-            if ( violations != null && !violations.isEmpty() ) {
-                Table table = new Table(8, BorderStyle.CLASSIC_WIDE);
-                StringWriter content = new StringWriter();
-                CsvWriter cvsWriter = new CsvWriter(content, ',');
-                printHeaders(table, cvsWriter);
-                printValues(table, cvsWriter, stateId, contingencyId, violations, violationsFilter);
-                printOutput(table, content, line.hasOption("csv"));
-                cvsWriter.close();
-            } else
-                System.out.println("\nNo post contingency violations for workflow "+workflowId+", contingency "+contingencyId+" and state "+stateId);			
-        } else if ( line.hasOption("state") ) {
-            Integer stateId = Integer.parseInt(line.getOptionValue("state"));
-            Map<String, List<LimitViolation>> stateViolations = onlinedb.getPostContingencyViolations(workflowId, stateId);
-            if ( stateViolations != null && !stateViolations.keySet().isEmpty() ) { 
-                Table table = new Table(8, BorderStyle.CLASSIC_WIDE);
-                StringWriter content = new StringWriter();
-                CsvWriter cvsWriter = new CsvWriter(content, ',');
-                printHeaders(table, cvsWriter);
-                String[] contingencyIds = stateViolations.keySet().toArray(new String[stateViolations.keySet().size()]);
-                Arrays.sort(contingencyIds);
-                for(String contingencyId : contingencyIds) {
-                    List<LimitViolation> violations = stateViolations.get(contingencyId);
-                    if ( violations != null && !violations.isEmpty() ) {
-                        printValues(table, cvsWriter, stateId, contingencyId, violations, violationsFilter);
+        final LimitViolationFilter violationsFilter = (line.hasOption("type")) ?
+                new LimitViolationFilter(Arrays.stream(line.getOptionValue("type")
+                        .split(","))
+                        .map(LimitViolationType::valueOf)
+                        .collect(Collectors.toSet()), 0)
+                : null;
+        TableFormatterConfig tableFormatterConfig = TableFormatterConfig.load();
+        Column[] tableColumns = {
+                new Column("State"),
+                new Column("Contingency"),
+                new Column("Equipment"),
+                new Column("Type"),
+                new Column("Value"),
+                new Column("Limit"),
+                new Column("Limit reduction"),
+                new Column("Voltage Level")
+        };
+        Path cvsOutFile = (line.hasOption("csv")) ? Paths.get(line.getOptionValue("csv")) : null;
+        try (OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create()) {
+            if (line.hasOption("state") && line.hasOption("contingency")) {
+                Integer stateId = Integer.parseInt(line.getOptionValue("state"));
+                String contingencyId = line.getOptionValue("contingency");
+                List<LimitViolation> violations = onlinedb.getPostContingencyViolations(workflowId, stateId, contingencyId);
+                if (violations != null && !violations.isEmpty()) {
+                    try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, cvsOutFile, TABLE_TITLE, tableColumns)) {
+                        printStateContingencyViolations(formatter, stateId, contingencyId, violations, violationsFilter);
                     }
+                } else {
+                    System.out.println("\nNo post contingency violations for workflow " + workflowId + ", contingency " + contingencyId + " and state " + stateId);
                 }
-                cvsWriter.flush();
-                printOutput(table, content, line.hasOption("csv"));
-                cvsWriter.close();
-            } else
-                System.out.println("\nNo post contingency violations for workflow "+workflowId+" and state "+stateId);
-        } else if ( line.hasOption("contingency") ) {
-            String contingencyId = line.getOptionValue("contingency");
-            Map<Integer, List<LimitViolation>> contingencyViolations = onlinedb.getPostContingencyViolations(workflowId, contingencyId);
-            if ( contingencyViolations != null && !contingencyViolations.keySet().isEmpty() ) { 
-                Table table = new Table(8, BorderStyle.CLASSIC_WIDE);
-                StringWriter content = new StringWriter();
-                CsvWriter cvsWriter = new CsvWriter(content, ',');
-                printHeaders(table, cvsWriter);
-                Integer[] stateIds = contingencyViolations.keySet().toArray(new Integer[contingencyViolations.keySet().size()]);
-                Arrays.sort(stateIds);
-                for(Integer stateId : stateIds) {
-                    List<LimitViolation> violations = contingencyViolations.get(stateId);
-                    if ( violations != null && !violations.isEmpty() ) {
-                        printValues(table, cvsWriter, stateId, contingencyId, violations, violationsFilter);
+            } else if (line.hasOption("state")) {
+                Integer stateId = Integer.parseInt(line.getOptionValue("state"));
+                Map<String, List<LimitViolation>> stateViolationsByStateId = onlinedb.getPostContingencyViolations(workflowId, stateId);
+                if (stateViolationsByStateId != null && !stateViolationsByStateId.keySet().isEmpty()) {
+                    try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, cvsOutFile, TABLE_TITLE, tableColumns)) {
+                        new TreeMap<>(stateViolationsByStateId).forEach((contingencyId, violations) ->
+                                printStateContingencyViolations(formatter, stateId, contingencyId, violations, violationsFilter));
                     }
+                } else {
+                    System.out.println("\nNo post contingency violations for workflow " + workflowId + " and state " + stateId);
                 }
-                cvsWriter.flush();
-                printOutput(table, content, line.hasOption("csv"));
-                cvsWriter.close();
-            } else
-                System.out.println("\nNo post contingency violations for workflow "+workflowId+" and contingency "+contingencyId);
-        } else {		
-            Map<Integer, Map<String, List<LimitViolation>>> wfViolations = onlinedb.getPostContingencyViolations(workflowId);
-            if ( wfViolations != null && !wfViolations.keySet().isEmpty() ) { 
-                Table table = new Table(8, BorderStyle.CLASSIC_WIDE);
-                StringWriter content = new StringWriter();
-                CsvWriter cvsWriter = new CsvWriter(content, ',');
-                printHeaders(table, cvsWriter);
-                Integer[] stateIds = wfViolations.keySet().toArray(new Integer[wfViolations.keySet().size()]);
-                Arrays.sort(stateIds);
-                for(Integer stateId : stateIds) {
-                    Map<String, List<LimitViolation>> stateViolations = wfViolations.get(stateId);
-                    if ( stateViolations != null && !stateViolations.keySet().isEmpty() ) {
-                        String[] contingencyIds = stateViolations.keySet().toArray(new String[stateViolations.keySet().size()]);
-                        Arrays.sort(contingencyIds);
-                        for(String contingencyId : contingencyIds) {
-                            List<LimitViolation> violations = stateViolations.get(contingencyId);
-                            if ( violations != null && !violations.isEmpty() ) {
-                                printValues(table, cvsWriter, stateId, contingencyId, violations, violationsFilter);
-                            }
+            } else {
+                if (line.hasOption("contingency")) {
+                    String contingencyId = line.getOptionValue("contingency");
+                    Map<Integer, List<LimitViolation>> contingencyViolationsByContingencyId = onlinedb.getPostContingencyViolations(workflowId, contingencyId);
+                    if (contingencyViolationsByContingencyId != null && !contingencyViolationsByContingencyId.keySet().isEmpty()) {
+                        try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, cvsOutFile, TABLE_TITLE, tableColumns)) {
+                            new TreeMap<>(contingencyViolationsByContingencyId).forEach((stateId, violations) ->
+                                    printStateContingencyViolations(formatter, stateId, contingencyId, violations, violationsFilter));
                         }
+                    } else {
+                        System.out.println("\nNo post contingency violations for workflow " + workflowId + " and contingency " + contingencyId);
+                    }
+                } else {
+                    Map<Integer, Map<String, List<LimitViolation>>> wfViolations = onlinedb.getPostContingencyViolations(workflowId);
+                    if (wfViolations != null && !wfViolations.keySet().isEmpty()) {
+                        try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, cvsOutFile, TABLE_TITLE, tableColumns)) {
+                            new TreeMap<>(wfViolations).forEach((stateId, stateViolations) -> {
+                                if (stateViolations != null) {
+                                    new TreeMap<>(stateViolations).forEach((contingencyId, violations) -> {
+                                        printStateContingencyViolations(formatter, stateId, contingencyId, violations, violationsFilter);
+                                    });
+                                }
+                            });
+
+                        }
+                    } else {
+                        System.out.println("\nNo post contingency violations for workflow " + workflowId);
                     }
                 }
-                cvsWriter.flush();
-                printOutput(table, content, line.hasOption("csv"));
-                cvsWriter.close();
-            } else
-                System.out.println("\nNo post contingency violations for workflow "+workflowId);
-        }
-        onlinedb.close();
-    }
-
-    private void printHeaders(Table table, CsvWriter cvsWriter) throws IOException {
-        String[] headers = new String[8];
-        int i = 0;
-        table.addCell("State", new CellStyle(CellStyle.HorizontalAlign.center));
-        headers[i++] = "State";
-        table.addCell("Contingency", new CellStyle(CellStyle.HorizontalAlign.center));
-        headers[i++] = "Contingency";
-        table.addCell("Equipment", new CellStyle(CellStyle.HorizontalAlign.center));
-        headers[i++] = "Equipment";
-        table.addCell("Type", new CellStyle(CellStyle.HorizontalAlign.center));
-        headers[i++] = "Type";
-        table.addCell("Value", new CellStyle(CellStyle.HorizontalAlign.center));
-        headers[i++] = "Value";
-        table.addCell("Limit", new CellStyle(CellStyle.HorizontalAlign.center));
-        headers[i++] = "Limit";
-        table.addCell("Limit Reduction", new CellStyle(CellStyle.HorizontalAlign.center));
-        headers[i++] = "Limit Reduction";
-        table.addCell("Voltage Level", new CellStyle(CellStyle.HorizontalAlign.center));
-        headers[i++] = "Voltage Level";
-        cvsWriter.writeRecord(headers);
-    }
-
-    private void printValues(Table table, CsvWriter cvsWriter, Integer stateId, String contingencyId, List<LimitViolation> violations,
-            LimitViolationFilter violationsFilter) throws IOException {
-        if ( violationsFilter != null )
-            violations = violationsFilter.apply(violations);
-        Collections.sort(violations, new Comparator<LimitViolation>() {
-            public int compare(LimitViolation o1, LimitViolation o2) {
-                return o1.getSubject().getId().compareTo(o2.getSubject().getId());
             }
-        });
-        for (LimitViolation violation : violations) {
-            String[] values = new String[8];
-            int i = 0;
-            table.addCell(Integer.toString(stateId), new CellStyle(CellStyle.HorizontalAlign.right));
-            values[i++] = Integer.toString(stateId);
-            table.addCell(contingencyId, new CellStyle(CellStyle.HorizontalAlign.left));
-            values[i++] = contingencyId;
-            table.addCell(violation.getSubject().getId(), new CellStyle(CellStyle.HorizontalAlign.left));
-            values[i++] = violation.getSubject().getId();
-            table.addCell(violation.getLimitType().name(), new CellStyle(CellStyle.HorizontalAlign.left));
-            values[i++] = violation.getLimitType().name();
-            table.addCell(Float.toString(violation.getValue()), new CellStyle(CellStyle.HorizontalAlign.right));
-            values[i++] = Float.toString(violation.getValue());
-            table.addCell(Float.toString(violation.getLimit()), new CellStyle(CellStyle.HorizontalAlign.right));
-            values[i++] = Float.toString(violation.getLimit());
-            table.addCell(Float.toString(violation.getLimitReduction()), new CellStyle(CellStyle.HorizontalAlign.right));
-            values[i++] = Float.toString(violation.getLimitReduction());
-            table.addCell(Float.toString(violation.getBaseVoltage()), new CellStyle(CellStyle.HorizontalAlign.right));
-            values[i++] = Float.toString(violation.getBaseVoltage());
-            cvsWriter.writeRecord(values);
         }
     }
 
-    private void printOutput(Table table, StringWriter content, boolean csv) {
-        if ( csv )
-            System.out.println(content.toString());
-        else
-            System.out.println(table.render());
+    private void printStateContingencyViolations(TableFormatter formatter, Integer stateId, String contingencyId, List<LimitViolation> violations,
+                                                 LimitViolationFilter violationsFilter) {
+        if (violations != null) {
+            if (violationsFilter != null) {
+                violations = violationsFilter.apply(violations);
+            }
+            violations
+                    .stream()
+                    .sorted(Comparator.comparing(o -> o.getSubject().getId()))
+                    .forEach(violation -> {
+                        try {
+                            formatter.writeCell(stateId);
+                            formatter.writeCell(contingencyId);
+                            formatter.writeCell(violation.getSubject().getId());
+                            formatter.writeCell(violation.getLimitType().name());
+                            formatter.writeCell(violation.getValue());
+                            formatter.writeCell(violation.getLimit());
+                            formatter.writeCell(violation.getLimitReduction());
+                            formatter.writeCell(violation.getBaseVoltage());
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+        }
     }
-
 }
