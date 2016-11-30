@@ -54,13 +54,16 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>iidm-network-test</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>iidm-network-impl</artifactId>
-            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>eu.itesla_project</groupId>
+            <artifactId>graph</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
