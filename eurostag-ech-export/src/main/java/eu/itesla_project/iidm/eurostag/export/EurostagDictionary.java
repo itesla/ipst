@@ -26,12 +26,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
 public class EurostagDictionary {
 
-    private static final EurostagNamingStrategy NAMING_STRATEGY = new CutEurostagNamingStrategy();
+    private static final EurostagNamingStrategy NAMING_STRATEGY = new DicoEurostagNamingStrategyFactory().create();
 
     private final BiMap<String, String> iidmId2esgId;
 
@@ -100,11 +99,11 @@ public class EurostagDictionary {
         return dictionary;
     }
 
-    public EurostagDictionary() {
+    private EurostagDictionary() {
         this(new HashMap<>());
     }
 
-    public EurostagDictionary(Map<String, String> iidmId2esgId) {
+    private EurostagDictionary(Map<String, String> iidmId2esgId) {
         this.iidmId2esgId = HashBiMap.create(iidmId2esgId);
     }
 
