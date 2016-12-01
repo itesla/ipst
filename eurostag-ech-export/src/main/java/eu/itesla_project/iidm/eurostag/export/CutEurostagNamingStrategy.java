@@ -18,19 +18,24 @@ public class CutEurostagNamingStrategy implements EurostagNamingStrategy {
     public void fillDictionary(EurostagDictionary dictionary, NameType nameType, Set<String> iidmIds) {
         iidmIds.forEach(iidmId -> {
             if (!dictionary.iidmIdExists(iidmId)) {
-                String esgId = iidmId.length() > nameType.getLength() ? iidmId.substring(0, nameType.getLength())
-                                                                      : Strings.padEnd(iidmId, nameType.getLength(), ' ');
-                int counter = 0;
-                while (dictionary.esgIdExists(esgId)) {
-                    String counterStr = Integer.toString(counter++);
-                    if (counterStr.length() > nameType.getLength()) {
-                        throw new RuntimeException("Renaming fatal error " + iidmId + " -> " + esgId);
-                    }
-                    esgId = esgId.substring(0, nameType.getLength() - counterStr.length()) + counterStr;
-                }
+                String esgId = getEsgId(dictionary, nameType, iidmId);
                 dictionary.add(iidmId, esgId);
             }
         });
+    }
+
+    protected String getEsgId(EurostagDictionary dictionary, NameType nameType, String iidmId) {
+        String esgId = iidmId.length() > nameType.getLength() ? iidmId.substring(0, nameType.getLength())
+                : Strings.padEnd(iidmId, nameType.getLength(), ' ');
+        int counter = 0;
+        while (dictionary.esgIdExists(esgId)) {
+            String counterStr = Integer.toString(counter++);
+            if (counterStr.length() > nameType.getLength()) {
+                throw new RuntimeException("Renaming fatal error " + iidmId + " -> " + esgId);
+            }
+            esgId = esgId.substring(0, nameType.getLength() - counterStr.length()) + counterStr;
+        }
+        return esgId;
     }
 }
 

@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2016, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -11,6 +12,7 @@ import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.modules.contingencies.*;
 import eu.itesla_project.security.LimitViolation;
 import eu.itesla_project.security.LimitViolationType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +67,8 @@ public class SimpleContingencyDbFacade implements ContingencyDbFacade {
 
     @Override
     public synchronized List<List<Action>> getCurativeActions(Contingency contingency, List<LimitViolation> limitViolations) {
-        Objects.requireNonNull(contingency);
+        Objects.requireNonNull(contingency, "contingency is null");
+        LOGGER.info("Getting curative actions for contingency {}", contingency.getId());
         List<List<Action>> curativeActions = new ArrayList<>();
         for (ActionsContingenciesAssociation association : contingenciesActionsDbClient.getActionsCtgAssociations(network)) {
             if (!association.getContingenciesId().contains(contingency.getId())) {
@@ -95,6 +98,44 @@ public class SimpleContingencyDbFacade implements ContingencyDbFacade {
                 }
             }
         }
+        LOGGER.info("Found {} curative actions for contingency {}", curativeActions.size(), contingency.getId());
         return curativeActions;
+    }
+
+    @Override
+    public synchronized List<List<Action>> getPreventiveActions(LimitViolation limitViolation) {
+        Objects.requireNonNull(limitViolation, "limit violation is null");
+        LOGGER.info("Getting preventive actions for {} violation on equipment {}", limitViolation.getLimitType(), limitViolation.getSubject().getId());
+        List<List<Action>> preventiveActions = new ArrayList<>();
+        if( !limitViolation.getLimitType().equals(LimitViolationType.CURRENT) ) // just branch overload id handled, so far
+            return preventiveActions;
+        for ( ActionsContingenciesAssociation association : contingenciesActionsDbClient.getActionsCtgAssociationsByConstraint(
+                limitViolation.getSubject().getId(), ConstraintType.BRANCH_OVERLOAD) ) {
+            if ( !association.getContingenciesId().isEmpty() ) { // getting only actions not associated to a contingency
+                continue;
+            }
+            for (String actionId : association.getActionsId()) {
+                Action action = contingenciesActionsDbClient.getAction(actionId, network);
+                if (action != null) {
+                    preventiveActions.add(Collections.singletonList(action));
+                } else {
+                    ActionPlan actionPlan = contingenciesActionsDbClient.getActionPlan(actionId);
+                    if (actionPlan != null) {
+                        for (ActionPlanOption option : actionPlan.getPriorityOption().values()) {
+                            if (option.getLogicalExpression().getOperator() instanceof UnaryOperator) {
+                                UnaryOperator op = (UnaryOperator)  option.getLogicalExpression().getOperator();
+                                preventiveActions.add(Collections.singletonList(contingenciesActionsDbClient.getAction(op.getActionId(), network)));
+                            } else {
+                                throw new AssertionError("Operator " + option.getLogicalExpression().getOperator().getClass() + " not yet supported");
+                            }
+                        }
+                    } else {
+                        LOGGER.error("Action {} not found for {} violation on equipment {}", actionId , limitViolation.getLimitType(), limitViolation.getSubject().getId());
+                    }
+                }
+            }
+        }
+        LOGGER.info("Found {} preventive actions for {} violation on equipment {}", preventiveActions.size(), limitViolation.getLimitType(), limitViolation.getSubject().getId());
+        return preventiveActions;
     }
 }
