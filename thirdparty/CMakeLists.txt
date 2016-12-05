@@ -35,48 +35,21 @@ endif()
 set(CMAKE_BINARY_DIR ${prefix}/build)
 
 set(boost_md5 25f9a8ac28beeb5ab84aa98510305299)
-if (download) 
-     set(protobuf_url https://github.com/google/protobuf/releases/download/v2.5.0/protobuf-2.5.0.tar.bz2)
-     set(libarchive_url http://www.libarchive.org/downloads/libarchive-3.1.2.tar.gz)
+if (download)
      set(boost_url http://sourceforge.net/projects/boost/files/boost/1.57.0/boost_1_57_0.tar.gz/download)
      set(log4cpp_url http://sourceforge.net/projects/log4cpp/files/log4cpp-1.1.x%20%28new%29/log4cpp-1.1/log4cpp-1.1.1.tar.gz)
      set(szip_url https://www.hdfgroup.org/ftp/lib-external/szip/2.1/src/szip-2.1.tar.gz)
      set(zlib_url https://www.hdfgroup.org/ftp/lib-external/zlib/zlib-1.2.5.tar.gz)
      set(hdf5_url https://www.hdfgroup.org/ftp/HDF5//releases/hdf5-1.8.13/src/hdf5-1.8.13.tar.gz)
      set(matio_url http://downloads.sourceforge.net/project/matio/matio/1.5.2/matio-1.5.2.tar.gz)
-#    set(openmpi_url http://www.open-mpi.org/software/ompi/v1.8/downloads/openmpi-1.8.3.tar.bz2)
 else()
-    set(protobuf_url ${packs}/protobuf-2.5.0.tar.bz2)
-    set(libarchive_url ${packs}/libarchive-3.1.2.tar.gz)
     set(boost_url ${packs}/boost_1_57_0.tar.gz)
     set(log4cpp_url ${packs}/log4cpp-1.1.1.tar.gz)
     set(szip_url ${packs}/szip-2.1.tar.gz)
     set(zlib_url ${packs}/zlib-1.2.5.tar.gz)
     set(hdf5_url ${packs}/hdf5-1.8.13.tar.gz)
     set(matio_url ${packs}/matio-1.5.2.tar.gz)
-#    set(openmpi_url ${packs}/openmpi-1.8.3.tar.bz2)
 endif()
-
-
-# protobuf
-ExternalProject_Add(protobuf_project
-    INSTALL_DIR ${prefix}/protobuf
-    URL ${protobuf_url}
-    CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR> CXXFLAGS=-fPIC LDFLAGS=-fPIC
-    BUILD_COMMAND make
-    INSTALL_COMMAND make install
-)
-ExternalProject_Get_Property(protobuf_project install_dir)
-set(protobuf_install_dir ${install_dir})
-
-# libarchive
-ExternalProject_Add(libarchive_project
-    INSTALL_DIR ${prefix}/libarchive
-    URL ${libarchive_url}
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR> -DCMAKE_C_FLAGS=-fPIC -DCMAKE_LDFLAGS=-fPIC
-)
-ExternalProject_Get_Property(libarchive_project install_dir)
-set(libarchive_install_dir ${install_dir})
 
 # boost
 ExternalProject_Add(boost_project
@@ -144,14 +117,3 @@ ExternalProject_Add(matio_project
 )
 ExternalProject_Get_Property(matio_project install_dir)
 set(matio_install_dir ${install_dir})
-
-# openmpi: is assumed to be already installed on target OS
-#ExternalProject_Add(openmpi_project
-#    INSTALL_DIR ${prefix}/openmpi
-#    URL ${openmpi_url}
-#    CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR> --enable-mpi-thread-multiple
-#    BUILD_COMMAND make
-#    INSTALL_COMMAND make install
-#)
-#ExternalProject_Get_Property(openmpi_project install_dir)
-#set(openmpi_install_dir ${install_dir})
