@@ -7,17 +7,19 @@
 package eu.itesla_project.online.rest.api;
 
 /**
-*
-* @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
-*/
+ *
+ * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
+ */
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2016-10-06T14:01:02.692Z")
-public class ApiException extends Exception{
-	private int code;
-	public int getCode() {
-		return code;
-	}
-	public ApiException (int code, String msg) {
-		super(msg);
-		this.code = code;
-	}
+public class ApiException extends Exception {
+    private int code;
+
+    public int getCode() {
+        return code;
+    }
+
+    public ApiException(int code, String msg) {
+        super(msg);
+        this.code = code;
+    }
 }

@@ -8,11 +8,11 @@ import eu.itesla_project.online.rest.model.WorkflowResult;
 
 public interface ProcessDBUtils {
 
-	List<Process> listProcesses(String owner, String basecase, String name, DateTimeParameter date,
-			DateTimeParameter creationDate);
+    List<Process> listProcesses(String owner, String basecase, String name, DateTimeParameter date,
+            DateTimeParameter creationDate);
 
-	Process getProcess(String processId);
+    Process getProcess(String processId);
 
-	WorkflowResult getWorkflowResult(String processId, String workflowId);
+    WorkflowResult getWorkflowResult(String processId, String workflowId);
 
 }

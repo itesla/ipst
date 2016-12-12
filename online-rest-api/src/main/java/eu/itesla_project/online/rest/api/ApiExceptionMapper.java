@@ -10,17 +10,16 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-
 /**
-*
-* @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
-*/
+ *
+ * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
+ */
 @Provider
-public class ApiExceptionMapper implements ExceptionMapper<ApiException>{
+public class ApiExceptionMapper implements ExceptionMapper<ApiException> {
 
-	@Override
-	public Response toResponse(ApiException exception) {
-		return Response.status(exception.getCode()).entity(exception.getMessage()).build();
-	}
+    @Override
+    public Response toResponse(ApiException exception) {
+        return Response.status(exception.getCode()).entity(exception.getMessage()).build();
+    }
 
 }

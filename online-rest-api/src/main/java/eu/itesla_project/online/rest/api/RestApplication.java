@@ -13,19 +13,18 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 /**
-*
-* @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
-*/
+ *
+ * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
+ */
 @ApplicationPath("/")
 public class RestApplication extends Application {
-	
-	@Override
-    public Set<Class<?>> getClasses()
-    {
-       HashSet<Class<?>> classes = new HashSet<Class<?>>();
-       
-       classes.add(ProcessApi.class);
-       return classes;
+
+    @Override
+    public Set<Class<?>> getClasses() {
+        HashSet<Class<?>> classes = new HashSet<Class<?>>();
+
+        classes.add(ProcessApi.class);
+        return classes;
     }
-    
+
 }

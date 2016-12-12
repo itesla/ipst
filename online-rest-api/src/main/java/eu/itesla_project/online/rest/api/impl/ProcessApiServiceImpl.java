@@ -6,7 +6,6 @@
  */
 package eu.itesla_project.online.rest.api.impl;
 
-
 import java.text.SimpleDateFormat;
 import eu.itesla_project.online.rest.model.Process;
 import eu.itesla_project.online.rest.model.WorkflowResult;
@@ -24,80 +23,83 @@ import eu.itesla_project.online.rest.api.ProcessApiService;
 import eu.itesla_project.online.rest.api.util.ProcessDBUtils;
 
 /**
-*
-* @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
-*/
+ *
+ * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
+ */
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2016-10-06T14:01:02.692Z")
 public class ProcessApiServiceImpl extends ProcessApiService {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(ProcessApiServiceImpl.class);
 
-	private ProcessDBUtils utils;
-	private ObjectMapper objectMapper;
-	private final SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-	public ProcessApiServiceImpl(ProcessDBUtils utils) {
-			System.out.println("ProcessApiServiceImpl");
-			this.utils= utils;
-			objectMapper = new ObjectMapper();
-			objectMapper.registerModule(new JodaModule());
-			objectMapper.configure(com.fasterxml.jackson.databind.SerializationFeature.
-				    WRITE_DATES_AS_TIMESTAMPS , false);
-			objectMapper.setDateFormat(sdf);		
-	}
-	
-	
-      @Override
-      public Response processGet(String owner,String basecase,String name,DateTimeParameter date,DateTimeParameter creationDate,SecurityContext securityContext)
-      throws ApiException {
-    	 LOGGER.info("Get process list: owner="+owner+", basecase="+basecase+", name="+name+", date="+date+", creationDate="+creationDate);
-    	 System.out.println("Get process list: owner="+owner+", basecase="+basecase+", name="+name+", date="+date+", creationDate="+creationDate);
-    	
-			String res=null;
-			try {
-				res=objectMapper.writer().writeValueAsString(utils.listProcesses( owner, basecase, name, date, creationDate));
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-				LOGGER.error(e.getMessage(),e);
-				throw new ApiException(500,e.getMessage());
-			}
-			
-      return Response.ok().entity(res).build();
-  }
-      @Override
-      public Response processProcessIdGet(String processId,SecurityContext securityContext)
-      throws ApiException {
-     	 LOGGER.info("Get process : processId="+processId);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProcessApiServiceImpl.class);
 
-    	  Process entity= utils.getProcess(processId);
-    	  if(entity==null)
-    		  return Response.status(Status.NOT_FOUND).entity("Process not found").build();
-    	  String res=null;
-			try {
-				res=objectMapper.writer().writeValueAsString(entity);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-				LOGGER.error(e.getMessage(),e);
-				throw new ApiException(500,e.getMessage());
-			}
-      return Response.ok().entity(res).build();
-  }
-      @Override
-      public Response processProcessIdWorkflowIdGet(String processId,String workflowId,SecurityContext securityContext)
-      throws ApiException {
-    	  LOGGER.info("Get workflow result : processId="+processId +" ,workflowId="+workflowId);
-    	  WorkflowResult entity= utils.getWorkflowResult(processId,workflowId);
-    	  if(entity==null)
-    		  return Response.status(Status.NOT_FOUND).entity("Workflow not found").build();
-    	  
-    	  String res=null;
-			try {
-				res=objectMapper.writer().writeValueAsString(entity);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-				LOGGER.error(e.getMessage(),e);
-				throw new ApiException(500,e.getMessage());
-			}
-    	  
-      return Response.ok().entity(res).build();
-  }
+    private ProcessDBUtils utils;
+    private ObjectMapper objectMapper;
+    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+
+    public ProcessApiServiceImpl(ProcessDBUtils utils) {
+        System.out.println("ProcessApiServiceImpl");
+        this.utils = utils;
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JodaModule());
+        objectMapper.configure(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        objectMapper.setDateFormat(sdf);
+    }
+
+    @Override
+    public Response processGet(String owner, String basecase, String name, DateTimeParameter date,
+            DateTimeParameter creationDate, SecurityContext securityContext) throws ApiException {
+        LOGGER.info("Get process list: owner=" + owner + ", basecase=" + basecase + ", name=" + name + ", date=" + date
+                + ", creationDate=" + creationDate);
+        System.out.println("Get process list: owner=" + owner + ", basecase=" + basecase + ", name=" + name + ", date="
+                + date + ", creationDate=" + creationDate);
+
+        String res = null;
+        try {
+            res = objectMapper.writer()
+                    .writeValueAsString(utils.listProcesses(owner, basecase, name, date, creationDate));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
+            throw new ApiException(500, e.getMessage());
+        }
+
+        return Response.ok().entity(res).build();
+    }
+
+    @Override
+    public Response processProcessIdGet(String processId, SecurityContext securityContext) throws ApiException {
+        LOGGER.info("Get process : processId=" + processId);
+
+        Process entity = utils.getProcess(processId);
+        if (entity == null)
+            return Response.status(Status.NOT_FOUND).entity("Process not found").build();
+        String res = null;
+        try {
+            res = objectMapper.writer().writeValueAsString(entity);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
+            throw new ApiException(500, e.getMessage());
+        }
+        return Response.ok().entity(res).build();
+    }
+
+    @Override
+    public Response processProcessIdWorkflowIdGet(String processId, String workflowId, SecurityContext securityContext)
+            throws ApiException {
+        LOGGER.info("Get workflow result : processId=" + processId + " ,workflowId=" + workflowId);
+        WorkflowResult entity = utils.getWorkflowResult(processId, workflowId);
+        if (entity == null)
+            return Response.status(Status.NOT_FOUND).entity("Workflow not found").build();
+
+        String res = null;
+        try {
+            res = objectMapper.writer().writeValueAsString(entity);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
+            throw new ApiException(500, e.getMessage());
+        }
+
+        return Response.ok().entity(res).build();
+    }
 }

@@ -231,7 +231,6 @@ public class ProcessApiTest {
         client.close();
     }
 
-
     private class OnlineDbFactoryMock implements OnlineDbFactory {
 
         @Override

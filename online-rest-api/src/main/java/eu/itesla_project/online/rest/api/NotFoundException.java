@@ -7,14 +7,15 @@
 package eu.itesla_project.online.rest.api;
 
 /**
-*
-* @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
-*/
+ *
+ * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
+ */
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2016-10-06T14:01:02.692Z")
 public class NotFoundException extends ApiException {
-	private int code;
-	public NotFoundException (int code, String msg) {
-		super(code, msg);
-		this.code = code;
-	}
+    private int code;
+
+    public NotFoundException(int code, String msg) {
+        super(code, msg);
+        this.code = code;
+    }
 }

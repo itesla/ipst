@@ -15,33 +15,33 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 /**
-*
-* @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
-*/
+ *
+ * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
+ */
 public class DateTimeParameter {
 
-	private DateTime dateTime;
+    private DateTime dateTime;
 
-	public DateTimeParameter(String dateTime) throws ApiException {
-		DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
-		try {
-			this.dateTime = fmt.parseDateTime(dateTime);
-		} catch (IllegalArgumentException ex) {
-			throw new WebApplicationException(Response.status(Status.BAD_REQUEST)
-					.entity("Wrong date parameter format: " + ex.getMessage()).build());
-		}
-	}
+    public DateTimeParameter(String dateTime) throws ApiException {
+        DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
+        try {
+            this.dateTime = fmt.parseDateTime(dateTime);
+        } catch (IllegalArgumentException ex) {
+            throw new WebApplicationException(Response.status(Status.BAD_REQUEST)
+                    .entity("Wrong date parameter format: " + ex.getMessage()).build());
+        }
+    }
 
-	public DateTime getDateTime() {
-		return dateTime;
-	}
+    public DateTime getDateTime() {
+        return dateTime;
+    }
 
-	public void setDateTime(DateTime dateTime) {
-		this.dateTime = dateTime;
-	}
+    public void setDateTime(DateTime dateTime) {
+        this.dateTime = dateTime;
+    }
 
-	public String toString() {
-		return dateTime != null ? dateTime.toString() : null;
-	}
+    public String toString() {
+        return dateTime != null ? dateTime.toString() : null;
+    }
 
 }

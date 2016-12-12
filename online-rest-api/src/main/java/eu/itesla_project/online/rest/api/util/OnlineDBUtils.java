@@ -41,12 +41,11 @@ import eu.itesla_project.security.LimitViolation;
 public class OnlineDBUtils implements ProcessDBUtils {
     OnlineDbFactory fact;// = new OnlineDbMVStoreFactory();
 
-    
-    public OnlineDBUtils(OnlineDbFactory factory){
-        fact=factory;
-        
+    public OnlineDBUtils(OnlineDbFactory factory) {
+        fact = factory;
+
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -269,16 +268,15 @@ public class OnlineDBUtils implements ProcessDBUtils {
             }
 
             OnlineWorkflowResults wfResults = onlinedb.getResults(workflowId);
-            if(wfResults!=null)
-            {
+            if (wfResults != null) {
                 for (String contingencyId : wfResults.getUnsafeContingencies()) {
                     for (Integer stateId : wfResults.getUnstableStates(contingencyId)) {
-    
+
                         Map<String, Boolean> idxData = wfResults.getIndexesData(contingencyId, stateId);
                         boolean safe = false;
                         if (!idxData.values().contains(Boolean.FALSE))
                             safe = true;
-    
+
                         Map<Integer, SimulationResult> srMap = postMap.get(contingencyId);
                         SimulationResult sr = srMap.get(stateId);
                         if (sr == null) {
@@ -287,11 +285,11 @@ public class OnlineDBUtils implements ProcessDBUtils {
                             srMap.put(stateId, sr);
                         }
                         sr.setSafe(safe);
-    
+
                     }
                 }
             }
-            
+
             postMap.forEach(new BiConsumer<String, Map<Integer, SimulationResult>>() {
 
                 @Override
