@@ -16,10 +16,8 @@
   with_items:
     - cmake
     - bzip2-devel
-#    - htop
-#    - iotop
-#    - mc
 # note: prepackaged openmpi libraries do not to work with IPST (openmpi must be compiled with a specific flag enabled: --enable-mpi-thread-multiple )
 #      - openmpi
 #      - openmpi-devel
     - zlib-devel
+    - wget

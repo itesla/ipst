@@ -21,24 +21,16 @@
 #     -MATLAB Runtime (MCR)
 #
 #  Notes:
-#      1) a sudo enabled user is required to install all the above mentioned packages
-#      2) in case all the packages are already available on the target OS, this step can be skipped ( variable installPrerequisites to be set to False)
+#      1) admin rights are required to install all the above mentioned packages and runtimes
+#      2) in case all the packages are already available on the target OS, this step can be skipped ( set variable installPrerequisites to be False, in the inventory ipst-hosts file)
 #
-# B) on the target server(s): it clones the  IPST project sources from GitHub (or pull onto an existing repository), builds the  'platform distribution' and installs it  (1)
+# B) on the target server(s): it clones the IPST project sources from GitHub (or pull onto an existing repository), builds the  'platform distribution' and installs it
 #
-#  Notes:
-#      1) target paths and other flags are set in the vars section, below
 #
 
 ##
-# the target hosts ( should match an entry in ansible configuration /etc/ansible/hosts  )
-- hosts: ipst_hosts
-
-###
-###
-# used to acquire specific user privileges
-  become: yes
-  become_method: sudo
+# the target hosts
+- hosts: all
 
 ###
 ###
@@ -49,93 +41,64 @@
 ###
   vars:
 
-# must exist on target OS: IPST code will be built & installed in this user's home directory  (must have sudo rights, to allow most runtimes installations: openmpi, mcr, .. )
-    username: "{{ ipst_username|default('itesla') }}"
+# if set, clone/updates the ipst repository on target OS from github
+    ipst_github_enabled: "{{ github_enabled|default('True') }}"
 
-# if set, updates the ipst repository on target OS from github
-    ipst_github_enabled: True
+# if set to False, do not try installing all the prerequisite packages: common development tools, openmpi libraries, jdk, maven;
+#  useful if already available on the target OS and no admin rights are available
+    installPrerequisites: "{{ install_prerequisites|default('True') }}"
 
-# if set to False, do not try installing all the prerequisite packages (openmpi, jdk, maven, mcr); useful if already available on the target OS
-    installPrerequisites: True
+# if set to False, do not try installing the matlab runtime;
+#  useful if already available on the target OS and no admin rights are available
+    installMCR: "{{ install_MCR|default('False') }}"
     
-# if set to True, triggers the ipst platfrom build even if there are no updates from github
-    forceBuild: False
-
-
+# if set to True, always triggers the ipst platfrom build, even if there are no updates from github
+    forceBuild: "{{ force_build|default('True') }}"
 
 # path on target OS where ipst sources will be cloned/updated
-    ipst_sources_path: "/home/{{ username }}/itesla_sources/ipst"
-    
-# path on target OS where ipst will be installed
-    ipst_install_path: "/home/{{ username }}/itesla"
-    
+    ipst_sources_path_default: "{{  ansible_env.HOME }}/ipst_ansible/ipst"
+    ipst_sources_path: "{{ sources_path|default(ipst_sources_path_default) }}"
+
 # path on target OS where ipst thirdparty libraries will be installed
-    ipst_thirdparty_path: "{{ ipst_install_path }}_thirdparty"
-    
-# path on local OS additional  thirdparty libraries will be installed
+    ipst_thirdparty_path_default: "{{  ansible_env.HOME }}/ipst_ansible/thirdparty"
+    ipst_thirdparty_path: "{{ thirdparty_path | default(ipst_thirdparty_path_default) }}"
+
+# path on target OS where ipst will be installed
+    ipst_install_path_default: "{{  ansible_env.HOME }}/itesla"
+    ipst_install_path: "{{ install_path|default(ipst_install_path_default) }}"
+
+# path on local OS, source of additional thirdparty libraries to be installed (as-is: untgz to ipst_install_path)
     misc_thirdparties_path: "./misc"
 
-# ipst github project details (not expected to be edited)
-    ipst_github_uri: https://github.com/itesla/ipst.git
-    ipst_github_branchName: master
+# ipst github project details
+## TODO branchname must be set to master, eventually
+    ipst_github_branchname: "{{ github_branchname|default('ansible2') }}"
 
-# ipst installation script (not expected to be edited)
-    installCmd: "./install.sh --prefix={{ ipst_install_path  }} --thirdparty-prefix={{ ipst_thirdparty_path  }}"
+# ipst_thirdparty_packs
+    ipst_thirdparty_packs_path_default: "{{  ansible_env.HOME }}/ipst_ansible/thirdparty_packs"
+    ipst_thirdparty_packs_path: "{{  thirdparty_packs|default(ipst_thirdparty_packs_path_default) }}"
 
 ###
 ###
+### dump variable's content
+
+  pre_tasks:
+  - debug: var="installPrerequisites"
+  - debug: var="installMCR"
+  - debug: var="ipst_github_enabled"
+  - debug: var="ipst_github_branchname"
+  - debug: var="ipst_sources_path"
+  - debug: var="ipst_install_path"
+  - debug: var="ipst_thirdparty_path"
+
+###
+###
+###
+
   roles:
-    - { role: ipst.common, when: "installPrerequisites == True" }
-    - { role: ipst.openmpi, when: "installPrerequisites == True" }
-    - { role: ipst.jdk8, when: "installPrerequisites == True" }
-    - { role: ipst.maven, when: "installPrerequisites == True" }
-    - { role: ipst.mcr, when: "installPrerequisites == True" }
-
-###
-###
-  tasks:
-
-  - name: retrieve sources from github
-    git: repo="{{ ipst_github_uri }}"
-      dest="{{ipst_sources_path}}"
-      version="{{ ipst_github_branchName }}"
-    register: gitop
-    become_user: "{{ username }}"
-    when: ipst_github_enabled == True
-
-  - name: check if sources directory exists ...
-    stat: path="{{ ipst_sources_path }}"
-    register: sourcesPathStat
-
-  - name: .... stop if sources directory does not exist
-    fail: msg="sources path {{ ipst_sources_path }} does not exist; either provide required sources or enable ipst_github_enable variable to retrieve the project from GitHub."
-    when: "sourcesPathStat.stat.exists == False"
-
-  - name: build and install ipst
-    # Using shell because 'command' does not handle well redirections, pipes, etc.  Using -l to inherit the environment variables, correctly
-    shell: /bin/bash -lc "{{ installCmd }}"
-    args:
-      chdir: "{{ipst_sources_path}}"
-    when: (gitop.changed or  forceBuild)
-    register: installScript
-    become_user: "{{ username }}"
-
-  - local_action: copy content="{{ installScript.stdout }}" dest="/tmp/build.log"
-    when: installScript is defined and installScript.skipped is not defined
-
-  - name: Check for additional thirdparty files
-    local_action: stat path={{ misc_thirdparties_path}}
-    register: statThirdpartyFolder
-
-  - name: make sure that the target directory exists
-    file: dest="{{ ipst_install_path }}" state=directory mode=0755
-    become_user: "{{ username }}"
-    when:  statThirdpartyFolder.stat.isdir is defined and statThirdpartyFolder.stat.isdir
-
-  - name: complete the remote installation with additional thirdparty files (if available)
-    unarchive: src={{ item }} dest={{ ipst_install_path  }}
-    when:  statThirdpartyFolder.stat.isdir is defined and statThirdpartyFolder.stat.isdir
-    register: installAdditionalFiles
-    become_user: "{{ username }}"
-    with_fileglob:
-      - "{{ misc_thirdparties_path}}/*"
+    - { role: ipst.common, when: "installPrerequisites == True", become: "yes" }
+    - { role: ipst.openmpi, when: "installPrerequisites == True", become: "yes" }
+    - { role: ipst.jdk8, when: "installPrerequisites == True", become: "yes" }
+    - { role: ipst.maven, when: "installPrerequisites == True", become: "yes" }
+    - { role: ipst.mcr, when: "installMCR == True", become: "yes" }
+    - { role: ipst.ipst }

@@ -1,0 +1,76 @@
+---
+#
+# Copyright (c) 2016, RTE (http://www.rte-france.com)
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# 
+
+# maven: create a settings.xml for the current user, with proxy info (if a setting.xml file does not already exist)
+  - stat: path={{ ansible_env.HOME }}/.m2/settings.xml
+    register: maven_user_settings
+
+  - name: if it does not exist
+    file: path={{  ansible_env.HOME }}/.m2 state=directory
+
+  - name: create a maven settings.xml
+    template: src=maven_settings.xml.j2 dest={{  ansible_env.HOME }}/.m2/settings.xml
+    when: not maven_user_settings.stat.exists
+
+# clone/update project from github
+# Note: update does not work when there are local modifications (e.g. when some of the project's file are edited on-site)
+  - name: retrieve sources from github
+    git: repo="{{ ipst_github_uri }}"
+      dest="{{ipst_sources_path}}"
+      version="{{ ipst_github_branchname }}"
+    register: gitop
+    when: ipst_github_enabled == True
+
+  - name: check if sources directory exists ...
+    stat: path="{{ ipst_sources_path }}"
+    register: sourcesPathStat
+
+  - name: .... stop if sources directory does not exist
+    fail: msg="sources path {{ ipst_sources_path }} does not exist; either provide required sources on target node or set ipst_github_enable variable, to retrieve the project from GitHub."
+    when: sourcesPathStat.stat.exists == False
+
+# remove a previously generated install config file (to not interfere with the ansible configurations)
+  - name: remove current install configuration
+    file: path={{ ipst_sources_path }}/install.cfg state=absent
+    when: (gitop.changed or forceBuild)
+
+  - name: build and install ipst
+    # Using shell because 'command' does not handle well redirections, pipes, etc.  Using -l to inherit the environment variables, correctly
+    shell: /bin/bash -lc "{{ installCmd }}"
+    args:
+      chdir: "{{ipst_sources_path}}"
+    when: (gitop.changed or forceBuild)
+    register: installScript
+    #in case, ignore errors (to proceed to next steps and possibly log the errors)
+    ignore_errors: True
+
+    #local dumps a per-host log of iPST install script execution
+  - name: dump log, to
+    local_action: copy content="{{ installScript }}" dest="{{ playbook_dir }}/ipst_install_{{ inventory_hostname }}.log"
+    when: installScript is defined and installScript.skipped is not defined
+
+  - name: stop execution in case of failure
+    fail: msg="The execution has failed because of errors."
+    when: installScript is defined and installScript.rc > 1000
+
+  - name: check for additional thirdparty files
+    local_action: stat path={{ misc_thirdparties_path}}
+    register: statThirdpartyFolder
+
+  - name: make sure that the target directory exists
+    file: dest="{{ ipst_install_path }}" state=directory mode=0755
+    when:  statThirdpartyFolder.stat.isdir is defined and statThirdpartyFolder.stat.isdir
+
+  - name: complete the remote installation with additional thirdparty files (if available)
+    unarchive: src={{ item }} dest={{ ipst_install_path  }}
+    when:  statThirdpartyFolder.stat.isdir is defined and statThirdpartyFolder.stat.isdir
+    register: installAdditionalFiles
+    with_fileglob:
+      - "{{ misc_thirdparties_path}}/*"
+

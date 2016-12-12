@@ -1,0 +1,9 @@
+---
+# defaults file for ipst
+
+maven_proxies: []
+
+ipst_github_uri: https://github.com/itesla/ipst.git
+
+# ipst installation script (not expected to be edited)
+installCmd: "./install.sh --prefix={{ ipst_install_path }} --thirdparty-prefix={{ ipst_thirdparty_path }}"
