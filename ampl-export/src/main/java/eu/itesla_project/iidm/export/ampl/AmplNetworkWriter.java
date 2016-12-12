@@ -1381,6 +1381,24 @@ public class AmplNetworkWriter implements AmplConstants {
         writeShunts(context);
         writeStaticVarCompensators(context);
         writeSubstations(context);
+        writeHVDCLines(context);
+    }
+    
+    private void writeHVDCLines(AmplExportContext context) throws IOException {
+        try (TableFormatter formatter = new AmplDatTableFormatter(
+                new OutputStreamWriter(dataSource.newOutputStream("_network_hvdc", "txt", append), StandardCharsets.UTF_8),
+                getTableTitle("HVDC lines"),
+                INVALID_FLOAT_VALUE,
+                !append,
+                LOCALE)) {
+            List<String> skipped = new ArrayList<>();
+            for (HvdcLine hvdcLine : network.getHvdcLines()) {
+                throw new UnsupportedOperationException(); // FIXME
+            }
+            if (skipped.size() > 0) {
+                LOGGER.trace("Skip HVDC lines {} because not connected and not connectable", skipped);
+            }
+        }
     }
 
 }
