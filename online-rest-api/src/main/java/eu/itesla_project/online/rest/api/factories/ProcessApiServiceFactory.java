@@ -6,22 +6,22 @@
  */
 package eu.itesla_project.online.rest.api.factories;
 
+import eu.itesla_project.online.db.OnlineDbMVStoreFactory;
 import eu.itesla_project.online.rest.api.ProcessApiService;
 import eu.itesla_project.online.rest.api.impl.ProcessApiServiceImpl;
 import eu.itesla_project.online.rest.api.util.OnlineDBUtils;
 
 /**
-*
-* @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
-*/
+ *
+ * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
+ */
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2016-10-06T14:01:02.692Z")
 public class ProcessApiServiceFactory {
 
-   private final static ProcessApiService service = new ProcessApiServiceImpl(new OnlineDBUtils());
+    private final static ProcessApiService service = new ProcessApiServiceImpl(new OnlineDBUtils(new OnlineDbMVStoreFactory()));
 
-   public static ProcessApiService getProcessApi()
-   {
-	  
-      return service;
-   }
+    public static ProcessApiService getProcessApi() {
+
+        return service;
+    }
 }
