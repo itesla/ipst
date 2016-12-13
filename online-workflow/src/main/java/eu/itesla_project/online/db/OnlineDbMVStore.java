@@ -114,7 +114,6 @@ public class OnlineDbMVStore implements OnlineDb {
     private static final String STORED_PC_VIOLATIONS_MAP_PREFIX = "pcviolations_";
     private static final String STORED_PC_LOADFLOW_CONTINGENCIES_MAP_NAME = "storedPCLoadflowContingencies";
     private static final String STORED_PC_LOADFLOW_STATES_MAP_SUFFIX = "_pcloadflowstates";
-    ;
     private static final String STORED_PC_LOADFLOW_STATES_MAP_NAME = "storedPCLoadflowStates";
     private static final String STORED_PC_LOADFLOW_CONTINGENCIES_MAP_SUFFIX = "_pcloadflowcontigencies";
     private static final String STORED_WCA_RULES_RESULTS_MAP_NAME = "wfWcaRulesResults";
@@ -817,8 +816,10 @@ public class OnlineDbMVStore implements OnlineDb {
         storedParametersMap.put(STORED_PARAMETERS_HANDLE_VIOLATIONS_KEY, Boolean.toString(parameters.isHandleViolationsInN()));
         // store merge constraint margin
         storedParametersMap.put(STORED_PARAMETERS_CONSTRAINT_MARGIN_KEY, Float.toString(parameters.getConstraintMargin()));
-        // store case file name (null if it was not specified)
-        storedParametersMap.put(STORED_PARAMETERS_CASE_FILE_KEY, parameters.getCaseFile());
+        // store case file name
+        if (parameters.getCaseFile() != null) {
+            storedParametersMap.put(STORED_PARAMETERS_CASE_FILE_KEY, parameters.getCaseFile());
+        }
 
         wfMVStore.commit();
     }
