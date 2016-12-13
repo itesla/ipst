@@ -220,7 +220,7 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
 
 
     @Override
-    public void startWorkflow(OnlineWorkflowStartParameters start, OnlineWorkflowParameters params) {
+    public String startWorkflow(OnlineWorkflowStartParameters start, OnlineWorkflowParameters params) {
 
         try {
             config = OnlineConfig.load();
@@ -267,14 +267,17 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+        String wfId=null;
         try {
             workflow.start(oCtx);
+            wfId=workflow.getId();
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
             workflowLock.unlock();
             workflow = null;
         }
+        return wfId;
     }
 
     @Override
