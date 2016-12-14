@@ -103,7 +103,7 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
     private static final int DETAILS_LEVEL_NORMAL = 2;
     private static final int DETAILS_LEVEL_DEBUG = 4;
 
-    private static final Pattern CLUSTER_INDEX_PATTERN = Pattern.compile(" WCA Result : contingency_index (\\d*) contingency_cluster_index (\\d*)");
+    private static final Pattern CLUSTER_INDEX_PATTERN = Pattern.compile(" WCA Result : contingency_index (\\d*) contingency_cluster_index (\\d*) curative_action_index (\\d*)");
     private static final Pattern DOMAINS_RESULTS_PATTERN = Pattern.compile(" WCA Result : basic_violation (\\d*) rule_violation (\\d*)");
 
     private final Network network;

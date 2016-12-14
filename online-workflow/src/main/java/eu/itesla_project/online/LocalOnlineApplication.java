@@ -245,7 +245,6 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
             for (OnlineApplicationListener l : listeners)
                 workflow.addOnlineApplicationListener(l);
 
-
             if (startParams.getOnlineApplicationListenerFactoryClass() != null) {
                 OnlineApplicationListener listener = startParams.getOnlineApplicationListenerFactoryClass().newInstance().create();
                 workflow.addOnlineApplicationListener(listener);
