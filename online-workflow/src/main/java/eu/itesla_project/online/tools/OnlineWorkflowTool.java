@@ -194,15 +194,15 @@ public class OnlineWorkflowTool implements Tool {
         if (line.hasOption(OnlineWorkflowCommand.START_CMD)) {
             if (params.getCaseFile() != null) {
                 System.out.println("starting Online Workflow, caseFile " + params.getCaseFile());
-                String workflowId=application.startWorkflow(startconfig, params);
-                System.out.println("workflowId="+workflowId);
+                String workflowId = application.startWorkflow(startconfig, params);
+                System.out.println("workflowId=" + workflowId);
 
             } else {
                 for (DateTime basecase : baseCasesSet) {
                     params.setBaseCaseDate(basecase);
                     System.out.println("starting Online Workflow, basecase " + basecase.toString());
-                    String workflowId=application.startWorkflow(startconfig, params);
-                    System.out.println("workflowId="+workflowId);
+                    String workflowId = application.startWorkflow(startconfig, params);
+                    System.out.println("workflowId=" + workflowId);
                 }
             }
         } else if (line.hasOption(OnlineWorkflowCommand.SHUTDOWN_CMD)) {

@@ -235,7 +235,7 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
         if (!workflowLock.tryLock()) {
             throw new RuntimeException("Already running");
         }
-        String wfId=null;
+        String wfId = null;
         try {
             workflow = startParams.getOnlineWorkflowFactoryClass().newInstance().create(computationManager, cadbClient, histoDbClient, rulesDb, wcaFactory, loadFlowFactory, feDataStorage,
                     onlineDb, uncertaintiesAnalyserFactory, correctiveControlOptimizerFactory, simulatorFactory, caseRepository,
@@ -251,7 +251,7 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
             }
 
             workflow.start(oCtx);
-            wfId=workflow.getId();
+            wfId = workflow.getId();
         } catch (Exception e) {
             LOGGER.error(e.toString(), e);
             throw new RuntimeException(e);
