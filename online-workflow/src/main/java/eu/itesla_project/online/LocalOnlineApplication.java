@@ -213,7 +213,7 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
 
 
     @Override
-    public void startWorkflow(OnlineWorkflowStartParameters start, OnlineWorkflowParameters params) {
+    public String startWorkflow(OnlineWorkflowStartParameters start, OnlineWorkflowParameters params) {
 
         try {
             config = OnlineConfig.load();
@@ -235,7 +235,7 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
         if (!workflowLock.tryLock()) {
             throw new RuntimeException("Already running");
         }
-
+        String wfId = null;
         try {
             workflow = startParams.getOnlineWorkflowFactoryClass().newInstance().create(computationManager, cadbClient, histoDbClient, rulesDb, wcaFactory, loadFlowFactory, feDataStorage,
                     onlineDb, uncertaintiesAnalyserFactory, correctiveControlOptimizerFactory, simulatorFactory, caseRepository,
@@ -245,13 +245,13 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
             for (OnlineApplicationListener l : listeners)
                 workflow.addOnlineApplicationListener(l);
 
-
             if (startParams.getOnlineApplicationListenerFactoryClass() != null) {
                 OnlineApplicationListener listener = startParams.getOnlineApplicationListenerFactoryClass().newInstance().create();
                 workflow.addOnlineApplicationListener(listener);
             }
 
             workflow.start(oCtx);
+            wfId = workflow.getId();
         } catch (Exception e) {
             LOGGER.error(e.toString(), e);
             throw new RuntimeException(e);
@@ -259,6 +259,7 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
             workflowLock.unlock();
             workflow = null;
         }
+        return wfId;
     }
 
     @Override

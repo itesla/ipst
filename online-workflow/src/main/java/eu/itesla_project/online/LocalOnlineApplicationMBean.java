@@ -45,7 +45,7 @@ public interface LocalOnlineApplicationMBean {
 
     int[] getBusyCores();
 
-    void startWorkflow(OnlineWorkflowStartParameters start, OnlineWorkflowParameters params);
+    String startWorkflow(OnlineWorkflowStartParameters start, OnlineWorkflowParameters params);
 
     void stopWorkflow();
 

@@ -16,7 +16,7 @@ public interface OnlineApplication extends AutoCloseable {
 
     int getAvailableCores();
 
-    void startWorkflow(OnlineWorkflowStartParameters start, OnlineWorkflowParameters params);
+    String startWorkflow(OnlineWorkflowStartParameters start, OnlineWorkflowParameters params);
 
     void stopWorkflow();
 
