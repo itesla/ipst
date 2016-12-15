@@ -23,10 +23,13 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Quinary <itesla@quinary.com>
@@ -93,6 +96,7 @@ public class PrintOnlineWorkflowProcessingStatusTool implements Tool {
         try (OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create()) {
             String workflowId = line.getOptionValue("workflow");
             Map<Integer, ? extends StateProcessingStatus> statesProcessingStatus = onlinedb.getStatesProcessingStatus(workflowId);
+
             if (statesProcessingStatus != null) {
 
                 Path outputFile = (line.hasOption("output-file")) ? Paths.get(line.getOptionValue("output-file")) : null;
@@ -100,23 +104,30 @@ public class PrintOnlineWorkflowProcessingStatusTool implements Tool {
 
                 TableFormatterConfig tableFormatterConfig = TableFormatterConfig.load();
 
-                Column[] tableColumns = new Column[OnlineTaskType.values().length + 2];
-                tableColumns[0] = new Column("State");
-                int i = 1;
-                for (OnlineTaskType taskType : OnlineTaskType.values()) {
-                    tableColumns[i++] = new Column(taskTypeLabel(taskType));
-                }
-                tableColumns[i] = new Column("Detail");
+                // build labels for the table's header
+                LinkedList<Column> columns = Arrays.stream(OnlineTaskType.values()).map(taskType -> new Column(taskTypeLabel(taskType))).collect(Collectors.toCollection(LinkedList::new));
+                columns.addFirst(new Column("State"));
+                columns.addLast(new Column("Detail"));
 
-                try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, outputFormat, outputFile, TABLE_TITLE, tableColumns)) {
-                    for (Integer stateId : statesProcessingStatus.keySet()) {
-                        formatter.writeCell(stateId);
-                        HashMap<String, String> stateProcessingStatus = getProcessingStatus(statesProcessingStatus.get(stateId).getStatus());
-                        for (OnlineTaskType taskType : OnlineTaskType.values()) {
-                            formatter.writeCell(stateProcessingStatus.get(taskType.name()));
+                try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, outputFormat, outputFile,
+                        TABLE_TITLE, columns.toArray(new Column[0]))) {
+
+                    statesProcessingStatus.forEach((stateId, processingStatus) -> {
+                        try {
+                            formatter.writeCell(stateId);
+                            Arrays.stream(OnlineTaskType.values()).forEach(taskType -> {
+                                try {
+                                    formatter.writeCell(statusVal(processingStatus, taskType));
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            });
+                            formatter.writeCell(processingStatus.getDetail().isEmpty() ? "-" : processingStatus.getDetail());
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
                         }
-                        formatter.writeCell(statesProcessingStatus.get(stateId).getDetail().isEmpty() ? "-" : statesProcessingStatus.get(stateId).getDetail());
-                    }
+                    });
+
                 }
             } else {
                 System.err.println("No status of the processing steps for this workflow: " + workflowId);
@@ -124,25 +135,24 @@ public class PrintOnlineWorkflowProcessingStatusTool implements Tool {
         }
     }
 
-    private HashMap<String, String> getProcessingStatus(Map<String, String> processingStatus) {
-        HashMap<String, String> completeProcessingStatus = new HashMap<>();
-        for (OnlineTaskType taskType : OnlineTaskType.values()) {
-            if (processingStatus.containsKey(taskType.name()))
-                switch (OnlineTaskStatus.valueOf(processingStatus.get(taskType.name()))) {
-                    case SUCCESS:
-                        completeProcessingStatus.put(taskType.name(), "OK");
-                        break;
-                    case FAILED:
-                        completeProcessingStatus.put(taskType.name(), "FAILED");
-                        break;
-                    default:
-                        completeProcessingStatus.put(taskType.name(), "-");
-                        break;
-                }
-            else
-                completeProcessingStatus.put(taskType.name(), "-");
+    private String statusVal(StateProcessingStatus status, OnlineTaskType taskType) {
+        String ret;
+        if (status.getStatus().containsKey(taskType.name())) {
+            switch (OnlineTaskStatus.valueOf(status.getStatus().get(taskType.name()))) {
+                case SUCCESS:
+                    ret = "OK";
+                    break;
+                case FAILED:
+                    ret = "FAILED";
+                    break;
+                default:
+                    ret = "-";
+                    break;
+            }
+        } else {
+            ret = "-";
         }
-        return completeProcessingStatus;
+        return ret;
     }
 
     private String taskTypeLabel(OnlineTaskType taskType) {
