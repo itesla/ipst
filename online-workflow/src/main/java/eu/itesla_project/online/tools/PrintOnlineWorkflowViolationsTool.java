@@ -80,10 +80,15 @@ public class PrintOnlineWorkflowViolationsTool implements Tool {
                     .hasArg()
                     .argName("VIOLATION_TYPE,VIOLATION_TYPE,...")
                     .build());
-            options.addOption(Option.builder().longOpt("csv")
-                    .desc("export in csv format to a file")
+            options.addOption(Option.builder().longOpt("output-file")
+                    .desc("export to a file")
                     .hasArg()
                     .argName("FILE")
+                    .build());
+            options.addOption(Option.builder().longOpt("output-format")
+                    .desc("output formats available: " + PrintOnlineWorkflowUtils.availableTableFormatterFormats() + " (default is ascii)")
+                    .hasArg()
+                    .argName("FORMAT")
                     .build());
             return options;
         }
@@ -121,45 +126,46 @@ public class PrintOnlineWorkflowViolationsTool implements Tool {
                 new Column("Limit reduction"),
                 new Column("Voltage Level")
         };
-        Path cvsOutFile = (line.hasOption("csv")) ? Paths.get(line.getOptionValue("csv")) : null;
+        Path outputFile = (line.hasOption("output-file")) ? Paths.get(line.getOptionValue("output-file")) : null;
+        String outputFormat = (line.hasOption("output-format")) ? line.getOptionValue("output-format") : "ascii";
         try (OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create()) {
             if (line.hasOption("state") && line.hasOption("step")) {
                 Integer stateId = Integer.parseInt(line.getOptionValue("state"));
                 OnlineStep step = OnlineStep.valueOf(line.getOptionValue("step"));
                 List<LimitViolation> violationsByStateAndStep = onlinedb.getViolations(workflowId, stateId, step);
                 if (violationsByStateAndStep != null && !violationsByStateAndStep.isEmpty()) {
-                    try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, cvsOutFile, TABLE_TITLE, tableColumns)) {
+                    try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, outputFormat, outputFile, TABLE_TITLE, tableColumns)) {
                         printStateStepViolations(formatter, stateId, step, violationsByStateAndStep, violationsFilter);
                     }
                 } else {
-                    System.out.println("\nNo violations for workflow " + workflowId + ", step " + step.name() + " and state " + stateId);
+                    System.err.println("\nNo violations for workflow " + workflowId + ", step " + step.name() + " and state " + stateId);
                 }
             } else if (line.hasOption("state")) {
                 Integer stateId = Integer.parseInt(line.getOptionValue("state"));
                 Map<OnlineStep, List<LimitViolation>> stateViolations = onlinedb.getViolations(workflowId, stateId);
                 if (stateViolations != null && !stateViolations.keySet().isEmpty()) {
-                    try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, cvsOutFile, TABLE_TITLE, tableColumns)) {
+                    try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, outputFormat, outputFile, TABLE_TITLE, tableColumns)) {
                         new TreeMap<>(stateViolations).forEach((onlineStep, violations) ->
                                 printStateStepViolations(formatter, stateId, onlineStep, violations, violationsFilter));
                     }
                 } else {
-                    System.out.println("\nNo violations for workflow " + workflowId + " and state " + stateId);
+                    System.err.println("\nNo violations for workflow " + workflowId + " and state " + stateId);
                 }
             } else if (line.hasOption("step")) {
                 OnlineStep step = OnlineStep.valueOf(line.getOptionValue("step"));
                 Map<Integer, List<LimitViolation>> stepViolations = onlinedb.getViolations(workflowId, step);
                 if (stepViolations != null && !stepViolations.keySet().isEmpty()) {
-                    try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, cvsOutFile, TABLE_TITLE, tableColumns)) {
+                    try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, outputFormat, outputFile, TABLE_TITLE, tableColumns)) {
                         new TreeMap<>(stepViolations).forEach((stateId, violations) ->
                                 printStateStepViolations(formatter, stateId, step, violations, violationsFilter));
                     }
                 } else {
-                    System.out.println("\nNo violations for workflow " + workflowId + " and step " + step);
+                    System.err.println("\nNo violations for workflow " + workflowId + " and step " + step);
                 }
             } else {
                 Map<Integer, Map<OnlineStep, List<LimitViolation>>> workflowViolations = onlinedb.getViolations(workflowId);
                 if (workflowViolations != null && !workflowViolations.keySet().isEmpty()) {
-                    try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, cvsOutFile, TABLE_TITLE, tableColumns)) {
+                    try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, outputFormat, outputFile, TABLE_TITLE, tableColumns)) {
                         new TreeMap<>(workflowViolations).forEach((stateId, stateViolations) -> {
                             if (stateViolations != null) {
                                 new TreeMap<>(stateViolations).forEach((step, violations) ->
@@ -168,7 +174,7 @@ public class PrintOnlineWorkflowViolationsTool implements Tool {
                         });
                     }
                 } else {
-                    System.out.println("\nNo violations for workflow " + workflowId);
+                    System.err.println("\nNo violations for workflow " + workflowId);
                 }
             }
         }
