@@ -9,7 +9,7 @@ package eu.itesla_project.online;
 
 import com.csvreader.CsvWriter;
 import com.google.common.collect.Sets;
-
+import eu.itesla_project.cases.CaseRepository;
 import eu.itesla_project.commons.Version;
 import eu.itesla_project.computation.ComputationManager;
 import eu.itesla_project.computation.ComputationResourcesStatus;
@@ -18,33 +18,26 @@ import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.loadflow.api.LoadFlowFactory;
 import eu.itesla_project.mcla.ForecastErrorsDataStorageImpl;
 import eu.itesla_project.merge.MergeOptimizerFactory;
-import eu.itesla_project.cases.CaseRepository;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
 import eu.itesla_project.modules.histo.HistoDbClient;
 import eu.itesla_project.modules.mcla.ForecastErrorsDataStorage;
 import eu.itesla_project.modules.mcla.MontecarloSamplerFactory;
-import eu.itesla_project.modules.online.OnlineConfig;
-import eu.itesla_project.modules.online.OnlineDb;
-import eu.itesla_project.modules.online.OnlineWorkflowParameters;
-import eu.itesla_project.modules.online.RulesFacadeFactory;
-import eu.itesla_project.modules.online.TimeHorizon;
+import eu.itesla_project.modules.online.*;
 import eu.itesla_project.modules.optimizer.CorrectiveControlOptimizerFactory;
 import eu.itesla_project.modules.rules.RulesDbClient;
-import eu.itesla_project.security.LimitViolation;
-import eu.itesla_project.security.Security;
-import eu.itesla_project.simulation.*;
 import eu.itesla_project.modules.wca.UncertaintiesAnalyserFactory;
 import eu.itesla_project.modules.wca.WCAFactory;
 import eu.itesla_project.offline.forecast_errors.ForecastErrorsAnalysis;
 import eu.itesla_project.offline.forecast_errors.ForecastErrorsAnalysisConfig;
 import eu.itesla_project.offline.forecast_errors.ForecastErrorsAnalysisParameters;
+import eu.itesla_project.security.LimitViolation;
+import eu.itesla_project.security.Security;
+import eu.itesla_project.simulation.SimulatorFactory;
 import gnu.trove.list.array.TIntArrayList;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.management.*;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -220,7 +213,7 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
 
 
     @Override
-    public void startWorkflow(OnlineWorkflowStartParameters start, OnlineWorkflowParameters params) {
+    public String startWorkflow(OnlineWorkflowStartParameters start, OnlineWorkflowParameters params) {
 
         try {
             config = OnlineConfig.load();
@@ -242,39 +235,31 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
         if (!workflowLock.tryLock()) {
             throw new RuntimeException("Already running");
         }
-
+        String wfId = null;
         try {
             workflow = startParams.getOnlineWorkflowFactoryClass().newInstance().create(computationManager, cadbClient, histoDbClient, rulesDb, wcaFactory, loadFlowFactory, feDataStorage,
                     onlineDb, uncertaintiesAnalyserFactory, correctiveControlOptimizerFactory, simulatorFactory, caseRepository,
                     montecarloSamplerFactory, mergeOptimizerFactory, rulesFacadeFactory, onlineParams, startParams);
-        } catch (InstantiationException | IllegalAccessException e1) {
-            e1.printStackTrace();
-            throw new RuntimeException(e1.getMessage());
-        }
+            workflow.addOnlineApplicationListener(this);
 
-        workflow.addOnlineApplicationListener(this);
+            for (OnlineApplicationListener l : listeners)
+                workflow.addOnlineApplicationListener(l);
 
-        for (OnlineApplicationListener l : listeners)
-            workflow.addOnlineApplicationListener(l);
-
-
-        try {
             if (startParams.getOnlineApplicationListenerFactoryClass() != null) {
                 OnlineApplicationListener listener = startParams.getOnlineApplicationListenerFactoryClass().newInstance().create();
                 workflow.addOnlineApplicationListener(listener);
             }
-        } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-        try {
+
             workflow.start(oCtx);
+            wfId = workflow.getId();
         } catch (Exception e) {
+            LOGGER.error(e.toString(), e);
             throw new RuntimeException(e);
         } finally {
             workflowLock.unlock();
             workflow = null;
         }
+        return wfId;
     }
 
     @Override

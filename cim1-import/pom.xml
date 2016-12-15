@@ -24,6 +24,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.google.auto.service</groupId>
+            <artifactId>auto-service</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
@@ -36,18 +40,17 @@
             <artifactId>jgrapht-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>cim1-model</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>iidm-converter-api</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>iidm-network-api</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>eu.itesla_project</groupId>
+            <artifactId>cim1-model</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

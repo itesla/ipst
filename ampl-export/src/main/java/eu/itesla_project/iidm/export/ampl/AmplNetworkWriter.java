@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2016, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -41,7 +42,7 @@ public class AmplNetworkWriter implements AmplConstants {
 
     private final int faultNum;
 
-    private final int curativeActionNum;
+    private final int actionNum;
 
     private final DataSource dataSource;
 
@@ -65,11 +66,11 @@ public class AmplNetworkWriter implements AmplConstants {
 
     }
 
-    public AmplNetworkWriter(Network network, DataSource dataSource, int faultNum, int curativeActionNum,
+    public AmplNetworkWriter(Network network, DataSource dataSource, int faultNum, int actionNum,
                 boolean append, StringToIntMapper<AmplSubset> mapper, AmplExportConfig config) {
         this.network = network;
         this.faultNum = faultNum;
-        this.curativeActionNum = curativeActionNum;
+        this.actionNum = actionNum;
         this.dataSource = dataSource;
         this.append = append;
         this.mapper = mapper;
@@ -123,7 +124,7 @@ public class AmplNetworkWriter implements AmplConstants {
                 new Column("minV (pu)"),
                 new Column("maxV (pu)"),
                 new Column("fault"),
-                new Column("curative"),
+                new Column(config.getActionType().getLabel()),
                 new Column("country"),
                 new Column("id"),
                 new Column("description"))) {
@@ -142,7 +143,7 @@ public class AmplNetworkWriter implements AmplConstants {
                          .writeCell(minV)
                          .writeCell(maxV)
                          .writeCell(faultNum)
-                         .writeCell(curativeActionNum)
+                         .writeCell(actionNum)
                          .writeCell(vl.getSubstation().getCountry().toString())
                          .writeCell(vl.getId())
                          .writeCell(vl.getName());
@@ -164,7 +165,7 @@ public class AmplNetworkWriter implements AmplConstants {
                          .writeCell(Float.NaN)
                          .writeCell(Float.NaN)
                          .writeCell(faultNum)
-                         .writeCell(curativeActionNum)
+                         .writeCell(actionNum)
                          .writeCell(vl1.getSubstation().getCountry().toString())
                          .writeCell(vlId)
                          .writeEmptyCell();
@@ -187,7 +188,7 @@ public class AmplNetworkWriter implements AmplConstants {
                          .writeCell(minV)
                          .writeCell(maxV)
                          .writeCell(faultNum)
-                         .writeCell(curativeActionNum)
+                         .writeCell(actionNum)
                          .writeCell(vl.getSubstation().getCountry().toString())
                          .writeCell(dl.getId() + "_voltageLevel")
                          .writeEmptyCell();
@@ -207,7 +208,7 @@ public class AmplNetworkWriter implements AmplConstants {
                             .writeCell(Float.NaN)
                             .writeCell(Float.NaN)
                             .writeCell(faultNum)
-                            .writeCell(curativeActionNum)
+                            .writeCell(actionNum)
                             .writeCell(XNODE_COUNTRY_NAME)
                             .writeCell(AmplUtil.getXnodeBusId(tieLine) + "_voltageLevel")
                             .writeEmptyCell();
@@ -246,7 +247,7 @@ public class AmplNetworkWriter implements AmplConstants {
                 new Column("p (MW)"),
                 new Column("q (MVar)"),
                 new Column("fault"),
-                new Column("curative"))) {
+                new Column(config.getActionType().getLabel()))) {
             for (Bus b : AmplUtil.getBuses(network)) {
                 int ccNum = ConnectedComponents.getCcNum(b);
                 // skip buses not in the main connected component
@@ -269,7 +270,7 @@ public class AmplNetworkWriter implements AmplConstants {
                          .writeCell(b.getP())
                          .writeCell(b.getQ())
                          .writeCell(faultNum)
-                         .writeCell(curativeActionNum);
+                         .writeCell(actionNum);
             }
             // 3 windings transformers middle bus
             for (ThreeWindingsTransformer twt : network.getThreeWindingsTransformers()) {
@@ -306,7 +307,7 @@ public class AmplNetworkWriter implements AmplConstants {
                          .writeCell(0f)
                          .writeCell(0f)
                          .writeCell(faultNum)
-                         .writeCell(curativeActionNum);
+                         .writeCell(actionNum);
             }
             // dangling line middle bus
             for (DanglingLine dl : network.getDanglingLines()) {
@@ -341,7 +342,7 @@ public class AmplNetworkWriter implements AmplConstants {
                          .writeCell(0f) // 0 MW injected at dangling line internal bus
                          .writeCell(0f) // 0 MVar injected at dangling line internal bus
                          .writeCell(faultNum)
-                         .writeCell(curativeActionNum);
+                         .writeCell(actionNum);
             }
             if (config.isExportXNodes()) {
                 for (Line l : network.getLines()) {
@@ -376,7 +377,7 @@ public class AmplNetworkWriter implements AmplConstants {
                             .writeCell(0f)
                             .writeCell(0f)
                             .writeCell(faultNum)
-                            .writeCell(curativeActionNum);
+                            .writeCell(actionNum);
                 }
             }
         }
@@ -423,7 +424,7 @@ public class AmplNetworkWriter implements AmplConstants {
                 new Column("patl2 (A)"),
                 new Column("merged"),
                 new Column("fault"),
-                new Column("curative"),
+                new Column(config.getActionType().getLabel()),
                 new Column("id"),
                 new Column("description"))) {
             for (Line l : network.getLines()) {
@@ -497,7 +498,7 @@ public class AmplNetworkWriter implements AmplConstants {
                             .writeCell(Float.NaN)
                             .writeCell(merged)
                             .writeCell(faultNum)
-                            .writeCell(curativeActionNum)
+                            .writeCell(actionNum)
                             .writeCell(half1Id)
                             .writeCell(tl.getHalf1().getName());
                     formatter.writeCell(half2Num)
@@ -523,7 +524,7 @@ public class AmplNetworkWriter implements AmplConstants {
                             .writeCell(getPermanentLimit(l.getCurrentLimits2()))
                             .writeCell(merged)
                             .writeCell(faultNum)
-                            .writeCell(curativeActionNum)
+                            .writeCell(actionNum)
                             .writeCell(half2Id)
                             .writeCell(tl.getHalf2().getName());
                 } else {
@@ -550,7 +551,7 @@ public class AmplNetworkWriter implements AmplConstants {
                             .writeCell(getPermanentLimit(l.getCurrentLimits2()))
                             .writeCell(merged)
                             .writeCell(faultNum)
-                            .writeCell(curativeActionNum)
+                            .writeCell(actionNum)
                             .writeCell(id)
                             .writeCell(l.getName());
                 }
@@ -624,7 +625,7 @@ public class AmplNetworkWriter implements AmplConstants {
                          .writeCell(getPermanentLimit(twt.getCurrentLimits2()))
                          .writeCell(false) // TODO to update
                          .writeCell(faultNum)
-                         .writeCell(curativeActionNum)
+                         .writeCell(actionNum)
                          .writeCell(id)
                          .writeCell(twt.getName());
             }
@@ -722,7 +723,7 @@ public class AmplNetworkWriter implements AmplConstants {
                             .writeCell(getPermanentLimit(twt.getLeg1().getCurrentLimits()))
                             .writeCell(false)
                             .writeCell(faultNum)
-                            .writeCell(curativeActionNum)
+                            .writeCell(actionNum)
                             .writeCell(id1)
                             .writeEmptyCell();
                 }
@@ -750,7 +751,7 @@ public class AmplNetworkWriter implements AmplConstants {
                             .writeCell(Float.NaN)
                             .writeCell(false)
                             .writeCell(faultNum)
-                            .writeCell(curativeActionNum)
+                            .writeCell(actionNum)
                             .writeCell(id2)
                             .writeEmptyCell();
                 }
@@ -778,7 +779,7 @@ public class AmplNetworkWriter implements AmplConstants {
                             .writeCell(Float.NaN)
                             .writeCell(false)
                             .writeCell(faultNum)
-                            .writeCell(curativeActionNum)
+                            .writeCell(actionNum)
                             .writeCell(id3)
                             .writeEmptyCell();
                 }
@@ -836,7 +837,7 @@ public class AmplNetworkWriter implements AmplConstants {
                          .writeCell(patl)
                          .writeCell(false)
                          .writeCell(faultNum)
-                         .writeCell(curativeActionNum)
+                         .writeCell(actionNum)
                          .writeCell(id)
                          .writeCell(dl.getName());
             }
@@ -856,7 +857,7 @@ public class AmplNetworkWriter implements AmplConstants {
                 new Column("x (pu)"),
                 new Column("angle (rad)"),
                 new Column("fault"),
-                new Column("curative"))) {
+                new Column(config.getActionType().getLabel()))) {
             for (TwoWindingsTransformer twt : network.getTwoWindingsTransformers()) {
                 Terminal t2 = twt.getTerminal2();
                 float vb2 = t2.getVoltageLevel().getNominalV();
@@ -875,7 +876,7 @@ public class AmplNetworkWriter implements AmplConstants {
                                  .writeCell(x)
                                  .writeCell(0f)
                                  .writeCell(faultNum)
-                                 .writeCell(curativeActionNum);
+                                 .writeCell(actionNum);
                     }
                 }
                 PhaseTapChanger ptc = twt.getPhaseTapChanger();
@@ -891,7 +892,7 @@ public class AmplNetworkWriter implements AmplConstants {
                                  .writeCell(x)
                                  .writeCell((float) Math.toRadians(step.getAlpha()))
                                  .writeCell(faultNum)
-                                 .writeCell(curativeActionNum);
+                                 .writeCell(actionNum);
                     }
                 }
             }
@@ -915,7 +916,7 @@ public class AmplNetworkWriter implements AmplConstants {
                                  .writeCell(x)
                                  .writeCell(0f)
                                  .writeCell(faultNum)
-                                 .writeCell(curativeActionNum);
+                                 .writeCell(actionNum);
                     }
                 }
                 RatioTapChanger rtc3 = twt.getLeg3().getRatioTapChanger();
@@ -931,7 +932,7 @@ public class AmplNetworkWriter implements AmplConstants {
                                  .writeCell(x)
                                  .writeCell(0f)
                                  .writeCell(faultNum)
-                                 .writeCell(curativeActionNum);
+                                 .writeCell(actionNum);
                     }
                 }
             }
@@ -950,7 +951,7 @@ public class AmplNetworkWriter implements AmplConstants {
             formatter.writeCell(rtc.getTargetV());
         }
         formatter.writeCell(faultNum)
-                .writeCell(curativeActionNum)
+                .writeCell(actionNum)
                 .writeCell(rtcId);
     }
 
@@ -964,7 +965,7 @@ public class AmplNetworkWriter implements AmplConstants {
             columns.add(new Column("targetV"));
         }
         columns.add(new Column("fault"));
-        columns.add(new Column("curative"));
+        columns.add(new Column(config.getActionType().getLabel()));
         columns.add(new Column("id"));
         try (TableFormatter formatter = new AmplDatTableFormatter(
                 new OutputStreamWriter(dataSource.newOutputStream("_network_rtc", "txt", append), StandardCharsets.UTF_8),
@@ -1009,7 +1010,7 @@ public class AmplNetworkWriter implements AmplConstants {
                 new Column("tap"),
                 new Column("table"),
                 new Column("fault"),
-                new Column("curative"),
+                new Column(config.getActionType().getLabel()),
                 new Column("id"))) {
             for (TwoWindingsTransformer twt : network.getTwoWindingsTransformers()) {
                 PhaseTapChanger ptc = twt.getPhaseTapChanger();
@@ -1022,7 +1023,7 @@ public class AmplNetworkWriter implements AmplConstants {
                              .writeCell(ptc.getTapPosition() - ptc.getLowTapPosition() + 1)
                              .writeCell(tcsNum)
                              .writeCell(faultNum)
-                             .writeCell(curativeActionNum)
+                             .writeCell(actionNum)
                              .writeCell(ptcId);
                 }
             }
@@ -1055,7 +1056,7 @@ public class AmplNetworkWriter implements AmplConstants {
                 new Column("p (MW)"),
                 new Column("q (MVar)"),
                 new Column("fault"),
-                new Column("curative"),
+                new Column(config.getActionType().getLabel()),
                 new Column("id"),
                 new Column("description"))) {
             List<String> skipped = new ArrayList<>();
@@ -1082,7 +1083,7 @@ public class AmplNetworkWriter implements AmplConstants {
                          .writeCell(l.getP0())
                          .writeCell(l.getQ0())
                          .writeCell(faultNum)
-                         .writeCell(curativeActionNum)
+                         .writeCell(actionNum)
                          .writeCell(id)
                          .writeCell(l.getName());
             }
@@ -1103,7 +1104,7 @@ public class AmplNetworkWriter implements AmplConstants {
                          .writeCell(dl.getP0())
                          .writeCell(dl.getQ0())
                          .writeCell(faultNum)
-                         .writeCell(curativeActionNum)
+                         .writeCell(actionNum)
                          .writeCell(dl.getId() + "_load")
                          .writeEmptyCell();
             }
@@ -1143,7 +1144,7 @@ public class AmplNetworkWriter implements AmplConstants {
                 new Column("inter. points"),
                 new Column("b (pu)"),
                 new Column("fault"),
-                new Column("curative"),
+                new Column(config.getActionType().getLabel()),
                 new Column("id"),
                 new Column("description"))) {
             List<String> skipped = new ArrayList<>();
@@ -1188,7 +1189,7 @@ public class AmplNetworkWriter implements AmplConstants {
                          .writeCell(points)
                          .writeCell(b)
                          .writeCell(faultNum)
-                         .writeCell(curativeActionNum)
+                         .writeCell(actionNum)
                          .writeCell(id)
                          .writeCell(sc.getName());
             }
@@ -1237,7 +1238,7 @@ public class AmplNetworkWriter implements AmplConstants {
                 new Column("targetP (MW)"),
                 new Column("targetQ (MVar)"),
                 new Column("fault"),
-                new Column("curative"),
+                new Column(config.getActionType().getLabel()),
                 new Column("id"),
                 new Column("description"))) {
             List<String> skipped = new ArrayList<>();
@@ -1284,7 +1285,7 @@ public class AmplNetworkWriter implements AmplConstants {
                          .writeCell(g.getTargetP())
                          .writeCell(g.getTargetQ())
                          .writeCell(faultNum)
-                         .writeCell(curativeActionNum)
+                         .writeCell(actionNum)
                          .writeCell(id)
                          .writeCell(g.getName());
             }
@@ -1305,7 +1306,7 @@ public class AmplNetworkWriter implements AmplConstants {
                     .writeCell(tl.getValue())
                     .writeCell(tl.getAcceptableDuration())
                     .writeCell(faultNum)
-                    .writeCell(curativeActionNum);
+                    .writeCell(actionNum);
         }
     }
 
@@ -1322,7 +1323,7 @@ public class AmplNetworkWriter implements AmplConstants {
                 new Column("limit (A)"),
                 new Column("accept. duration (s)"),
                 new Column("fault"),
-                new Column("curative"))) {
+                new Column(config.getActionType().getLabel()))) {
             for (Line l : network.getLines()) {
                 String branchId = l.getId();
                 if (l.getCurrentLimits1() != null) {
@@ -1380,6 +1381,24 @@ public class AmplNetworkWriter implements AmplConstants {
         writeShunts(context);
         writeStaticVarCompensators(context);
         writeSubstations(context);
+        writeHVDCLines(context);
+    }
+    
+    private void writeHVDCLines(AmplExportContext context) throws IOException {
+        try (TableFormatter formatter = new AmplDatTableFormatter(
+                new OutputStreamWriter(dataSource.newOutputStream("_network_hvdc", "txt", append), StandardCharsets.UTF_8),
+                getTableTitle("HVDC lines"),
+                INVALID_FLOAT_VALUE,
+                !append,
+                LOCALE)) {
+            List<String> skipped = new ArrayList<>();
+            for (HvdcLine hvdcLine : network.getHvdcLines()) {
+                throw new UnsupportedOperationException(); // FIXME
+            }
+            if (skipped.size() > 0) {
+                LOGGER.trace("Skip HVDC lines {} because not connected and not connectable", skipped);
+            }
+        }
     }
 
 }

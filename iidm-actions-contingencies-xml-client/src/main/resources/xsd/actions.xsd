@@ -8,6 +8,11 @@
 
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:simpleType name='nonEmptyString'>
+    <xs:restriction base='xs:string'>
+      <xs:minLength value='1'/>
+    </xs:restriction>
+  </xs:simpleType>
   <xs:element name="actionsContingencies">
     <xs:complexType>
       <xs:sequence>
@@ -40,12 +45,12 @@
         <xs:element minOccurs="0" ref="zones"/>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="lineOperation"/>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="switchOperation"/>
-		<xs:element minOccurs="0" maxOccurs="unbounded" ref="generationOperation"/>
-		<xs:element minOccurs="0" maxOccurs="unbounded" ref="pstOperation"/>
-		<xs:element minOccurs="0" maxOccurs="unbounded" ref="redispatching"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="generationOperation"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="pstOperation"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="redispatching"/>
       </xs:sequence>
       <xs:attribute name="curativeType" use="required" type="xs:boolean"/>
-      <xs:attribute name="name" use="required" type="xs:NCName"/>
+      <xs:attribute name="name" use="required" type="nonEmptyString"/>
       <xs:attribute name="preventiveType" use="required" type="xs:boolean"/>
       <xs:attribute name="startTime" use="required" type="xs:integer"/>
     </xs:complexType>
@@ -53,41 +58,41 @@
   <xs:element name="generationOperation">
     <xs:complexType>
       <xs:attribute name="achievmentIndex" use="required" type="xs:integer"/>
-      <xs:attribute name="action" use="required" type="xs:NCName"/>
-      <xs:attribute name="id" use="required" type="xs:NCName"/>
+      <xs:attribute name="action" use="required" type="nonEmptyString"/>
+      <xs:attribute name="id" use="required" type="nonEmptyString"/>
       <xs:attribute name="implementationTime" use="required" type="xs:integer"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="pstOperation">
     <xs:complexType>
       <xs:attribute name="achievmentIndex" use="required" type="xs:integer"/>
-      <xs:attribute name="action" use="required" type="xs:NCName"/>
-      <xs:attribute name="id" use="required" type="xs:NCName"/>
+      <xs:attribute name="action" use="required" type="nonEmptyString"/>
+      <xs:attribute name="id" use="required" type="nonEmptyString"/>
       <xs:attribute name="implementationTime" use="required" type="xs:integer"/>
-      <xs:attribute name="substation" type="xs:NCName"/>
+      <xs:attribute name="substation" type="nonEmptyString"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="lineOperation">
     <xs:complexType>
       <xs:attribute name="achievmentIndex" use="required" type="xs:integer"/>
-      <xs:attribute name="action" use="required" type="xs:NCName"/>
-      <xs:attribute name="id" use="required" type="xs:NCName"/>
+      <xs:attribute name="action" use="required" type="nonEmptyString"/>
+      <xs:attribute name="id" use="required" type="nonEmptyString"/>
       <xs:attribute name="implementationTime" use="required" type="xs:integer"/>
-      <xs:attribute name="substation" use="required" type="xs:NCName"/>
+      <xs:attribute name="substation" use="required" type="nonEmptyString"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="switchOperation">
     <xs:complexType>
       <xs:attribute name="achievmentIndex" use="required" type="xs:integer"/>
-      <xs:attribute name="action" use="required" type="xs:NCName"/>
-      <xs:attribute name="id" use="required" type="xs:NCName"/>
+      <xs:attribute name="action" use="required" type="nonEmptyString"/>
+      <xs:attribute name="id" use="required" type="nonEmptyString"/>
       <xs:attribute name="implementationTime" use="required" type="xs:integer"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="redispatching">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="generator" maxOccurs="unbounded" type="xs:NCName" />
+        <xs:element name="generator" maxOccurs="unbounded" type="nonEmptyString" />
       </xs:sequence>
       <xs:attribute name="achievmentIndex" use="required" type="xs:integer"/>
       <xs:attribute name="implementationTime" use="required" type="xs:integer"/>
@@ -107,7 +112,7 @@
         <xs:element minOccurs="0" ref="zones"/>
         <xs:element maxOccurs="unbounded" ref="option"/>
       </xs:sequence>
-      <xs:attribute name="name" use="required" type="xs:NCName"/>
+      <xs:attribute name="name" use="required" type="nonEmptyString"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="option">
@@ -125,7 +130,7 @@
         <xs:element ref="and"/>
         <xs:element ref="operand"/>
         <xs:element ref="then"/>
-		<xs:element ref="or"/>
+        <xs:element ref="or"/>
       </xs:choice>
     </xs:complexType>
   </xs:element>
@@ -148,7 +153,7 @@
   <xs:element name="constraint">
     <xs:complexType>
       <xs:attribute name="equipment" use="required"/>
-      <xs:attribute name="type" use="required" type="xs:NCName"/>
+      <xs:attribute name="type" use="required" type="nonEmptyString"/>
       <xs:attribute name="value" use="required" type="xs:integer"/>
     </xs:complexType>
   </xs:element>
@@ -166,7 +171,7 @@
         <xs:element ref="voltageLevels"/>
       </xs:sequence>
       <xs:attribute name="description" use="required"/>
-      <xs:attribute name="name" use="required" type="xs:NCName"/>
+      <xs:attribute name="name" use="required" type="nonEmptyString"/>
       <xs:attribute name="number" use="required" type="xs:integer"/>
     </xs:complexType>
   </xs:element>
@@ -179,7 +184,7 @@
   </xs:element>
   <xs:element name="voltageLevel">
     <xs:complexType>
-      <xs:attribute name="ID" use="required" type="xs:NCName"/>
+      <xs:attribute name="ID" use="required" type="nonEmptyString"/>
       <xs:attribute name="level" use="required" type="xs:integer"/>
       <xs:attribute name="name" use="required"/>
     </xs:complexType>
@@ -192,10 +197,10 @@
         <xs:element minOccurs="0" ref="zones"/>
         <xs:element ref="equipments"/>
       </xs:sequence>
-      <xs:attribute name="id" type="xs:NCName"/>
+      <xs:attribute name="id" type="nonEmptyString"/>
     </xs:complexType>
   </xs:element>
-  <xs:element name="name" type="xs:NCName"/>
+  <xs:element name="name" type="nonEmptyString"/>
   <xs:element name="equipments">
     <xs:complexType>
       <xs:sequence>
@@ -225,7 +230,7 @@
       <xs:choice minOccurs="0" maxOccurs="1">
         <xs:element ref="and"/>
         <xs:element ref="then"/>
-		<xs:element ref="or"/>
+        <xs:element ref="or"/>
       </xs:choice>
     </xs:complexType>
   </xs:element>
@@ -236,13 +241,13 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
- <xs:element name="or">
+  <xs:element name="or">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="2" maxOccurs="2" ref="operand"/>
       </xs:sequence>
     </xs:complexType>
-  </xs:element>  
+  </xs:element>
   <xs:element name="action">
     <xs:complexType>
       <xs:attribute name="achievmentIndex" type="xs:integer"/>
