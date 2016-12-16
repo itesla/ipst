@@ -20,8 +20,8 @@ public class iTesla {
 
 	@Test
 	public void test() throws IOException {
-		String pathFRM = getClass().getResource("/edftur1c.frm").toString();
-		String pathOUT = getClass().getResource("/output").toString();
+		String pathFRM = Paths.get(System.getProperty("user.dir")).resolve("data").resolve("htgpsat3.frm").toString();
+		String pathOUT = Paths.get(System.getProperty("user.dir")).resolve("data").toString();
 		converter = new Converter(pathFRM, pathOUT, false);
 		converter_init = new Converter(pathFRM, pathOUT, true);
 		try {
