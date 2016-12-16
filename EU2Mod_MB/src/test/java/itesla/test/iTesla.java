@@ -10,6 +10,7 @@ import itesla.converter.Converter;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
