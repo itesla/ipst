@@ -78,9 +78,14 @@ public class PrintOnlineWorkflowSummaryTable implements Tool {
                     .argName("BASECASE")
                     .build());
             options.addOption(Option.builder().longOpt("output-file")
-                    .desc("export in csv format to a file")
+                    .desc("export to a file")
                     .hasArg()
                     .argName("FILE")
+                    .build());
+            options.addOption(Option.builder().longOpt("output-format")
+                    .desc("output formats available: " + PrintOnlineWorkflowUtils.availableTableFormatterFormats() + " (default is ascii)")
+                    .hasArg()
+                    .argName("FORMAT")
                     .build());
             return options;
         }
@@ -113,11 +118,12 @@ public class PrintOnlineWorkflowSummaryTable implements Tool {
                 Interval basecasesInterval = Interval.parse(line.getOptionValue("basecases-interval"));
                 workflowsIds = onlinedb.listWorkflows(basecasesInterval).stream().map(OnlineWorkflowDetails::getWorkflowId).collect(Collectors.toList());
             } else {
-                System.out.println("You must specify workflow(s) or basecase(s)");
+                System.err.println("You must specify workflow(s) or basecase(s)");
                 return;
             }
             TableFormatterConfig tableFormatterConfig = TableFormatterConfig.load();
             try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig,
+                    (line.hasOption("output-format")) ? line.getOptionValue("output-format") : "ascii",
                     (line.hasOption("output-file")) ? Paths.get(line.getOptionValue("output-file")) : null,
                     TABLE_TITLE,
                     new Column("WorkflowId"),
@@ -134,9 +140,7 @@ public class PrintOnlineWorkflowSummaryTable implements Tool {
                     new Column("Limit"))) {
 
                 workflowsIds.sort((o1, o2) -> (o1.compareTo(o2)));
-                System.out.println("Printing violations and failues of workflows " + workflowsIds);
                 workflowsIds.forEach(workflowId -> {
-                    System.out.println("Printing violations and failures of workflow " + workflowId);
                     Network basecase = onlinedb.getState(workflowId, 0);
                     String basecaseId = basecase.getId();
                     printPrecontingencyViolations(workflowId, basecaseId, onlinedb, formatter);
