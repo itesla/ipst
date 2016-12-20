@@ -100,12 +100,12 @@ public interface OnlineDb extends AutoCloseable {
     Map<String, String> getMetrics(String workflowId, Integer stateId, OnlineStep step);
 
     /**
-     * Get, in CSV format, all the metrics associated to a step of the workflow, for all states
-     * @param workflowId the id of 
+     * Get all the metrics associated to a step of the workflow, for all states
+     * @param workflowId the id of
      * @param step of the workflow
-     * @return all the metrics associated to a step of the workflow, for all states, in CSV format, null if no data about the workflow is available
+     * @return all the metrics associated to a step of the workflow, for all states, as a list of string arrays (first row is the table's headers), empty list if no data about the workflow is available
      */
-    String getCsvMetrics(String workflowId, OnlineStep step);
+    List<String[]> getAllMetrics(String workflowId, OnlineStep step);
 
 
     /**

@@ -9,6 +9,7 @@ package eu.itesla_project.online.db;
 
 import com.csvreader.CsvWriter;
 import eu.itesla_project.cases.CaseType;
+
 import eu.itesla_project.iidm.datasource.DataSource;
 import eu.itesla_project.iidm.datasource.FileDataSource;
 import eu.itesla_project.iidm.export.Exporters;
@@ -250,7 +251,7 @@ public class OnlineDbMVStore implements OnlineDb {
 
     private Map<String, String> getMetrics(String workflowId, String mapName) {
         if (isWorkflowStored(workflowId)) {
-            HashMap<String, String> metrics = new HashMap<String, String>();
+            TreeMap<String,String> metrics = new TreeMap<>();
             MVStore wfMVStore = getStore(workflowId);
             if (wfMVStore.getMapNames().contains(mapName)) {
                 Map<String, String> storedMap = wfMVStore.openMap(mapName, mapBuilder);
@@ -266,11 +267,10 @@ public class OnlineDbMVStore implements OnlineDb {
     }
 
     @Override
-    public String getCsvMetrics(String workflowId, OnlineStep step) {
+    public List<String[]> getAllMetrics(String workflowId, OnlineStep step) {
         LOGGER.info("Preparing CSV data for wf {} and step {}", workflowId, step.name());
+        List<String[]> retTable= new ArrayList<>();
         if (isWorkflowStored(workflowId)) {
-            StringWriter content = new StringWriter();
-            CsvWriter cvsWriter = new CsvWriter(content, ',');
             try {
                 MVStore wfMVStore = getStore(workflowId);
                 // check if there are stored metrics
@@ -278,8 +278,7 @@ public class OnlineDbMVStore implements OnlineDb {
                 if (storedStepsMap.containsKey(step.name())) {
                     MVMap<String, String> stepParamsMap = wfMVStore.openMap(step.name() + STORED_METRICS_PARAMS_MAP_SUFFIX, mapBuilder);
                     MVMap<String, String> stepStatesMap = wfMVStore.openMap(step.name() + STORED_METRICS_STATES_MAP_SUFFIX, mapBuilder);
-                    // write headers
-                    //LOGGER.debug("Preparing CSV headers for wf {} and step {}", workflowId, step.name());
+                    // gets headers
                     String[] headers = new String[stepParamsMap.keySet().size() + 1];
                     headers[0] = "state";
                     HashMap<String, Integer> paramsIndexes = new HashMap<>();
@@ -289,34 +288,30 @@ public class OnlineDbMVStore implements OnlineDb {
                         paramsIndexes.put(parameter, i);
                         i++;
                     }
-                    cvsWriter.writeRecord(headers);
-                    // write step general metrics, if stored
+                    retTable.add(headers);
+                    // gets step general metrics, if stored
                     if (stepStatesMap.containsKey("_")) {
-                        //LOGGER.debug("Preparing CSV data for wf {} and step {} - general step metrics", workflowId, step.name());
-                        String[] values = getStoredMapValues(wfMVStore, "_", step, stepParamsMap.keySet().size(), paramsIndexes);
-                        cvsWriter.writeRecord(values);
+                        retTable.add(getStoredMapValues(wfMVStore, "_", step, stepParamsMap.keySet().size(), paramsIndexes));
                     }
-                    // write step metrics for each state, if stored
-                    for (String stateId : stepStatesMap.keySet()) {
-                        if (!"_".equals(stateId)) {
-                            //LOGGER.debug("Preparing CSV data for wf {} and step {} - state {} metrics", workflowId, step.name(), stateId);
-                            String[] values = getStoredMapValues(wfMVStore, stateId, step, stepParamsMap.keySet().size(), paramsIndexes);
-                            cvsWriter.writeRecord(values);
-                        }
-                    }
+                    // gets step metrics for each state, if stored
+                    stepStatesMap.keySet().stream()
+                            .filter( x -> (!"_".equals(x)))
+                            .sorted(Comparator.comparing(Integer::valueOf))
+                            .forEach(stateId -> {
+                                retTable.add(getStoredMapValues(wfMVStore, stateId, step, stepParamsMap.keySet().size(), paramsIndexes));
+                            });
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 String errorMessage = "error getting cvs data for step " + step.name() + " and wf id " + workflowId;
                 LOGGER.error(errorMessage);
                 throw new RuntimeException(errorMessage);
             }
-            cvsWriter.flush();
-            return content.toString();
         } else {
             LOGGER.warn("No data about wf {}", workflowId);
-            return null;
         }
+        return retTable;
     }
+
 
     private String[] getStoredMapValues(MVStore wfMVStore, String stateId, OnlineStep step, int paramsN, HashMap<String, Integer> paramsIndexes) {
         String[] values = new String[paramsN + 1];
@@ -1890,5 +1885,53 @@ public class OnlineDbMVStore implements OnlineDb {
         }
         return storedMapList.toString();
     }
+
+    public static void main(String[] args) {
+        MVMapConcurrent.Builder<String, String> mapBuilder = new MVMapConcurrent.Builder<String, String>();
+
+        //MVStore wfMVStore = MVStore.open("/mnt/Downloads/20161212/wf-20130115_2015_20161013162324632");
+        MVStore wfMVStore = MVStore.open("/mnt/Downloads/20161212/wf-20130225_2330_20160420125159422");
+
+        wfMVStore.getMapNames().forEach(x -> System.out.println(x));
+        System.out.println("--------------");
+        Map<String, String> storedStepsMap = wfMVStore.openMap(STORED_METRICS_STEPS_MAP_NAME, mapBuilder);
+        storedStepsMap.keySet().forEach(x -> System.out.println(x));
+        System.out.println("--------------");
+
+        MVMap<String, String> stepParamsMap = wfMVStore.openMap("LOAD_FLOW" + STORED_METRICS_PARAMS_MAP_SUFFIX, mapBuilder);
+        stepParamsMap.keySet().forEach(x -> System.out.println(x));
+
+        System.out.println("--------------");
+
+        MVMap<String, String> stepStatesMap = wfMVStore.openMap("LOAD_FLOW" + STORED_METRICS_STATES_MAP_SUFFIX, mapBuilder);
+        stepStatesMap.keySet().forEach(x -> System.out.println(x));
+
+
+        System.out.println("-------------- LATEST");
+
+
+
+
+
+
+        String[] headers = new String[stepParamsMap.keySet().size() + 1];
+        headers[0] = "state";
+        HashMap<String, Integer> paramsIndexes = new HashMap<>();
+        int i = 1;
+        for (String parameter : stepParamsMap.keySet()) {
+            System.out.println(" ]] : " + parameter);
+            headers[i] = parameter;
+            paramsIndexes.put(parameter, i);
+            i++;
+        }
+
+        //System.out.println("headers : " + headers);
+
+
+
+
+        wfMVStore.close();
+    }
+
 
 }
