@@ -7,9 +7,7 @@
  */
 package eu.itesla_project.online.db;
 
-import com.csvreader.CsvWriter;
 import eu.itesla_project.cases.CaseType;
-
 import eu.itesla_project.iidm.datasource.DataSource;
 import eu.itesla_project.iidm.datasource.FileDataSource;
 import eu.itesla_project.iidm.export.Exporters;
@@ -40,7 +38,10 @@ import org.slf4j.LoggerFactory;
 import org.supercsv.io.CsvListWriter;
 import org.supercsv.prefs.CsvPreference;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -251,7 +252,7 @@ public class OnlineDbMVStore implements OnlineDb {
 
     private Map<String, String> getMetrics(String workflowId, String mapName) {
         if (isWorkflowStored(workflowId)) {
-            TreeMap<String,String> metrics = new TreeMap<>();
+            TreeMap<String, String> metrics = new TreeMap<>();
             MVStore wfMVStore = getStore(workflowId);
             if (wfMVStore.getMapNames().contains(mapName)) {
                 Map<String, String> storedMap = wfMVStore.openMap(mapName, mapBuilder);
@@ -269,7 +270,7 @@ public class OnlineDbMVStore implements OnlineDb {
     @Override
     public List<String[]> getAllMetrics(String workflowId, OnlineStep step) {
         LOGGER.info("Preparing CSV data for wf {} and step {}", workflowId, step.name());
-        List<String[]> retTable= new ArrayList<>();
+        List<String[]> retTable = new ArrayList<>();
         if (isWorkflowStored(workflowId)) {
             try {
                 MVStore wfMVStore = getStore(workflowId);
@@ -295,7 +296,7 @@ public class OnlineDbMVStore implements OnlineDb {
                     }
                     // gets step metrics for each state, if stored
                     stepStatesMap.keySet().stream()
-                            .filter( x -> (!"_".equals(x)))
+                            .filter(x -> (!"_".equals(x)))
                             .sorted(Comparator.comparing(Integer::valueOf))
                             .forEach(stateId -> {
                                 retTable.add(getStoredMapValues(wfMVStore, stateId, step, stepParamsMap.keySet().size(), paramsIndexes));
@@ -1910,10 +1911,6 @@ public class OnlineDbMVStore implements OnlineDb {
         System.out.println("-------------- LATEST");
 
 
-
-
-
-
         String[] headers = new String[stepParamsMap.keySet().size() + 1];
         headers[0] = "state";
         HashMap<String, Integer> paramsIndexes = new HashMap<>();
@@ -1926,8 +1923,6 @@ public class OnlineDbMVStore implements OnlineDb {
         }
 
         //System.out.println("headers : " + headers);
-
-
 
 
         wfMVStore.close();
