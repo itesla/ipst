@@ -14,6 +14,8 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import eu.itesla_project.commons.io.FileUtil;
+import eu.itesla_project.commons.io.mmap.MemoryMappedFileFactory;
+import eu.itesla_project.commons.io.mmap.MemoryMappedFileImpl;
 import eu.itesla_project.iidm.network.Country;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.modules.histo.HistoDbNetworkAttributeId;
@@ -23,8 +25,6 @@ import eu.itesla_project.simulation.securityindexes.SecurityIndex;
 import eu.itesla_project.simulation.securityindexes.SecurityIndexId;
 import eu.itesla_project.simulation.securityindexes.SecurityIndexParser;
 import eu.itesla_project.offline.db.util.CsvWriter;
-import eu.itesla_project.offline.db.util.MemoryMappedFileFactory;
-import eu.itesla_project.offline.db.util.MemoryMappedFileImpl;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.slf4j.Logger;
@@ -286,7 +286,7 @@ public class MMapOfflineDb implements OfflineDb {
     private final Lock contextsLock = new ReentrantLock();
 
     public MMapOfflineDb(MMapOfflineDbConfig config, String dbName) throws IOException {
-        this(config, dbName, MemoryMappedFileImpl::new);
+        this(config, dbName, path -> new MemoryMappedFileImpl(path.toFile()));
     }
 
     public MMapOfflineDb(MMapOfflineDbConfig config, String dbName, MemoryMappedFileFactory memoryMappedFileFactory) throws IOException {

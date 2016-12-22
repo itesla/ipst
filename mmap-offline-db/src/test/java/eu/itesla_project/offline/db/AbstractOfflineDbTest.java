@@ -15,7 +15,6 @@ import eu.itesla_project.iidm.network.test.EurostagTutorialExample1Factory;
 import eu.itesla_project.modules.offline.*;
 import eu.itesla_project.simulation.securityindexes.OverloadSecurityIndex;
 import eu.itesla_project.simulation.securityindexes.SecurityIndex;
-import eu.itesla_project.offline.db.util.MemoryMappedFile;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.nio.file.ShrinkWrapFileSystems;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -28,7 +27,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
@@ -43,23 +41,6 @@ import java.util.List;
 public class AbstractOfflineDbTest {
 
     protected static final String DB_NAME = "testdb";
-
-    public static class MemoryMapFileTestImpl implements MemoryMappedFile {
-
-        @Override
-        public boolean exists() {
-            return false;
-        }
-
-        @Override
-        public ByteBuffer getBuffer(int size) throws IOException {
-            return ByteBuffer.allocate(size);
-        }
-
-        @Override
-        public void close() throws IOException {
-        }
-    }
 
     protected FileSystem fileSystem;
     protected Path tmpDir;
