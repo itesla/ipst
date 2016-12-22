@@ -1886,47 +1886,4 @@ public class OnlineDbMVStore implements OnlineDb {
         }
         return storedMapList.toString();
     }
-
-    public static void main(String[] args) {
-        MVMapConcurrent.Builder<String, String> mapBuilder = new MVMapConcurrent.Builder<String, String>();
-
-        //MVStore wfMVStore = MVStore.open("/mnt/Downloads/20161212/wf-20130115_2015_20161013162324632");
-        MVStore wfMVStore = MVStore.open("/mnt/Downloads/20161212/wf-20130225_2330_20160420125159422");
-
-        wfMVStore.getMapNames().forEach(x -> System.out.println(x));
-        System.out.println("--------------");
-        Map<String, String> storedStepsMap = wfMVStore.openMap(STORED_METRICS_STEPS_MAP_NAME, mapBuilder);
-        storedStepsMap.keySet().forEach(x -> System.out.println(x));
-        System.out.println("--------------");
-
-        MVMap<String, String> stepParamsMap = wfMVStore.openMap("LOAD_FLOW" + STORED_METRICS_PARAMS_MAP_SUFFIX, mapBuilder);
-        stepParamsMap.keySet().forEach(x -> System.out.println(x));
-
-        System.out.println("--------------");
-
-        MVMap<String, String> stepStatesMap = wfMVStore.openMap("LOAD_FLOW" + STORED_METRICS_STATES_MAP_SUFFIX, mapBuilder);
-        stepStatesMap.keySet().forEach(x -> System.out.println(x));
-
-
-        System.out.println("-------------- LATEST");
-
-
-        String[] headers = new String[stepParamsMap.keySet().size() + 1];
-        headers[0] = "state";
-        HashMap<String, Integer> paramsIndexes = new HashMap<>();
-        int i = 1;
-        for (String parameter : stepParamsMap.keySet()) {
-            System.out.println(" ]] : " + parameter);
-            headers[i] = parameter;
-            paramsIndexes.put(parameter, i);
-            i++;
-        }
-
-        //System.out.println("headers : " + headers);
-
-
-        wfMVStore.close();
-    }
-
-
 }
