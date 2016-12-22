@@ -69,6 +69,11 @@ public class EntsoeCaseRepositoryTest {
         }
 
         @Override
+        public OutputStream newOutputStream(String fileName, boolean append) throws IOException {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public OutputStream newOutputStream(String suffix, String ext, boolean append) throws IOException {
             throw new UnsupportedOperationException();
         }
