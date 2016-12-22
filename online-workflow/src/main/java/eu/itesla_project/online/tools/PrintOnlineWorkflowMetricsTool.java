@@ -116,7 +116,7 @@ public class PrintOnlineWorkflowMetricsTool implements Tool {
                 Integer stateId = Integer.parseInt(line.getOptionValue("state"));
                 Map<String, String> metrics = onlinedb.getMetrics(workflowId, stateId, step);
                 if ((metrics == null) || (metrics.keySet().isEmpty())) {
-                    System.out.println("\nNo metrics for workflow " + workflowId + ", step " + step.name() + " and state " + stateId);
+                    System.err.println("\nNo metrics for workflow " + workflowId + ", step " + step.name() + " and state " + stateId);
                 } else {
                     String[] headers = new String[metrics.keySet().size() + 1];
                     headers[0] = "state";
