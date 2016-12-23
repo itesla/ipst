@@ -6,6 +6,7 @@
  */
 package eu.itesla_project.offline.db.mmap;
 
+import eu.itesla_project.commons.io.mmap.MemoryMapFileMock;
 import eu.itesla_project.offline.db.AbstractOfflineDbTest;
 import org.junit.Test;
 
@@ -19,14 +20,14 @@ public class MMapOfflineDbTest extends AbstractOfflineDbTest {
 
     @Test
     public void testMMapImplChunkSample10() throws IOException {
-        try (MMapOfflineDb offlineDb = new MMapOfflineDb(new MMapOfflineDbConfig(tmpDir, 10, 5, 70), DB_NAME, file -> new MemoryMapFileTestImpl())) {
+        try (MMapOfflineDb offlineDb = new MMapOfflineDb(new MMapOfflineDbConfig(tmpDir, 10, 5, 70), DB_NAME, file -> new MemoryMapFileMock())) {
             test(offlineDb);
         }
     }
 
     @Test
     public void testMMapImplChunkSample1() throws IOException {
-        try (MMapOfflineDb offlineDb = new MMapOfflineDb(new MMapOfflineDbConfig(tmpDir, 1, 5, 70), DB_NAME, file -> new MemoryMapFileTestImpl())) {
+        try (MMapOfflineDb offlineDb = new MMapOfflineDb(new MMapOfflineDbConfig(tmpDir, 1, 5, 70), DB_NAME, file -> new MemoryMapFileMock())) {
             test(offlineDb);
         }
     }
