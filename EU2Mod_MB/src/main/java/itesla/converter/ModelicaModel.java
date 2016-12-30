@@ -390,7 +390,7 @@ public class ModelicaModel {
 				} else if(Blocks[i].idEu == 23) 
 				{
 					modelDeclaration = "  " + model.pathModelica + " " + "Max" + "_" + Blocks[i].GraphicalNumber.toString(); 
-				} else
+				}  else
 				{
 					modelDeclaration = "  " + model.pathModelica + " " + model.nameModelica + "_" + Blocks[i].GraphicalNumber.toString(); 					
 				}
@@ -427,7 +427,12 @@ public class ModelicaModel {
 									if(Blocks[i].idEu.equals(6))
 									{
 										modelParameters = modelParameters + model.param.get(j) + "=" + "init_" + Blocks[i].GraphicalNumber.toString() + ", "+ "initType = Modelica.Blocks.Types.Init.SteadyState";	
-									} else
+									} 
+									else if(Blocks[i].idEu.equals(9))
+									{
+										modelParameters = modelParameters + model.param.get(j) + "=" + "init_" + Blocks[i].GraphicalNumber.toString() + ", "+ "initType = Modelica.Blocks.Types.Init.InitialOutput";
+									} 
+									else
 									{
 										modelParameters = modelParameters + model.param.get(j) + "=" + "init_" + Blocks[i].GraphicalNumber.toString();
 									}
