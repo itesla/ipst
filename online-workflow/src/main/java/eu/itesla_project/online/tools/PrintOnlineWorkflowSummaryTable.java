@@ -153,7 +153,7 @@ public class PrintOnlineWorkflowSummaryTable implements Tool {
     private void printPrecontingencyViolations(String workflowId, String basecaseId, OnlineDb onlinedb, TableFormatter formatter) {
         Map<Integer, Map<OnlineStep, List<LimitViolation>>> wfViolations = onlinedb.getViolations(workflowId);
         Map<Integer, ? extends StateProcessingStatus> statesProcessingStatus = onlinedb.getStatesProcessingStatus(workflowId);
-        if (wfViolations != null && !wfViolations.keySet().isEmpty()) {
+        if (statesProcessingStatus != null) {
             new TreeMap<>(statesProcessingStatus).forEach((stateId, stateprocessingStatus) -> {
                 if (stateprocessingStatus != null && stateprocessingStatus.getStatus() != null
                         && !stateprocessingStatus.getStatus().isEmpty()) {
@@ -179,11 +179,13 @@ public class PrintOnlineWorkflowSummaryTable implements Tool {
                         }
                     }
                 }
-                Map<OnlineStep, List<LimitViolation>> stateViolations = wfViolations.get(stateId);
-                if (stateViolations != null && !stateViolations.keySet().isEmpty()) {
-                    stateViolations.entrySet().stream()
-                            .sorted(Comparator.comparing(Map.Entry::getKey))
-                            .forEach(entry -> printViolations(workflowId, basecaseId, EMPTY_CONTINGENCY_ID, stateId, entry.getKey(), entry.getValue(), formatter));
+                if (wfViolations != null) {
+                    Map<OnlineStep, List<LimitViolation>> stateViolations = wfViolations.get(stateId);
+                    if (stateViolations != null && !stateViolations.keySet().isEmpty()) {
+                        stateViolations.entrySet().stream()
+                                .sorted(Comparator.comparing(Map.Entry::getKey))
+                                .forEach(entry -> printViolations(workflowId, basecaseId, EMPTY_CONTINGENCY_ID, stateId, entry.getKey(), entry.getValue(), formatter));
+                    }
                 }
             });
         }
