@@ -7,10 +7,12 @@
  */
 package eu.itesla_project.online.tools;
 
-import eu.itesla_project.commons.io.SystemOutStreamWriter;
+import eu.itesla_project.commons.io.ForwardingOutputStream;
 import eu.itesla_project.commons.io.table.*;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -60,7 +62,11 @@ public class PrintOnlineWorkflowUtils {
         if (outputFilePath != null) {
             writer = Files.newBufferedWriter(outputFilePath, StandardCharsets.UTF_8);
         } else {
-            writer = new SystemOutStreamWriter();
+            writer = new OutputStreamWriter(new ForwardingOutputStream<PrintStream>(System.out) {
+                @Override
+                public void close() throws IOException {
+                }
+            });
         }
         return formatterFactory.create(writer, tableTitle, config, columns);
     }
