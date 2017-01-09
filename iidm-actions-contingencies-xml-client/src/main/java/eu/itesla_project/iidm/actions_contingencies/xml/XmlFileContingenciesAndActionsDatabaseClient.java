@@ -30,6 +30,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import eu.itesla_project.iidm.actions_contingencies.xml.mapping.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -38,28 +39,6 @@ import eu.itesla_project.contingency.ContingencyElement;
 import eu.itesla_project.contingency.ContingencyImpl;
 import eu.itesla_project.contingency.GeneratorContingency;
 import eu.itesla_project.contingency.LineContingency;
-import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Action;
-import eu.itesla_project.iidm.actions_contingencies.xml.mapping.ActionCtgAssociations;
-import eu.itesla_project.iidm.actions_contingencies.xml.mapping.ActionPlan;
-import eu.itesla_project.iidm.actions_contingencies.xml.mapping.ActionsContingencies;
-import eu.itesla_project.iidm.actions_contingencies.xml.mapping.And;
-import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Association;
-import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Constraint;
-import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Contingency;
-import eu.itesla_project.iidm.actions_contingencies.xml.mapping.ElementaryAction;
-import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Equipment;
-import eu.itesla_project.iidm.actions_contingencies.xml.mapping.GenerationOperation;
-import eu.itesla_project.iidm.actions_contingencies.xml.mapping.LineOperation;
-import eu.itesla_project.iidm.actions_contingencies.xml.mapping.LogicalExpression;
-import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Operand;
-import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Or;
-import eu.itesla_project.iidm.actions_contingencies.xml.mapping.PstOperation;
-import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Redispatching;
-import eu.itesla_project.iidm.actions_contingencies.xml.mapping.SwitchOperation;
-import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Then;
-import eu.itesla_project.iidm.actions_contingencies.xml.mapping.VoltageLevel;
-import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Zone;
-import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Zones;
 import eu.itesla_project.iidm.network.Line;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.iidm.network.TieLine;
@@ -921,10 +900,17 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
             if ( network.getTwoWindingsTransformer(transformerId) != null ) {
                 if (pst.getAction().equals("shunt"))
                     elements.add(new ShuntAction(pst.getId(), pst.getImplementationTime(), pst.getAchievmentIndex()));
-                else if (pst.getAction().equals("tapChange"))
-                    elements.add(new TapChangeAction(pst.getId(), pst.getImplementationTime(), pst.getAchievmentIndex()));
+                else if (pst.getAction().equals("tapChange")) {
+                    Parameter tapPositionParameter = getParameter(pst.getParameter(), "tapPosition");
+                    if (tapPositionParameter != null) {
+                        int tapPosition = Integer.parseInt(tapPositionParameter.getValue());
+                        elements.add(new TapChangeAction(pst.getId(), tapPosition, pst.getImplementationTime(), pst.getAchievmentIndex()));
+                    }
+                }
                 else if (pst.getAction().equals("opening")) {
-                    elements.add(new TransformerOpeningAction(pst.getId(), pst.getImplementationTime(), pst.getAchievmentIndex()));
+                    Parameter substationParameter = getParameter(pst.getParameter(), "substation");
+                    String substation = (substationParameter == null) ? null : substationParameter.getValue();
+                    elements.add(new TransformerOpeningAction(pst.getId(), substation, pst.getImplementationTime(), pst.getAchievmentIndex()));
                 }
                 else
                     LOGGER.warn("pst operation not supported : " + pst.getAction());
@@ -1001,4 +987,10 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
         return false;
     }
 
+    private static Parameter getParameter(List<Parameter> parameters, String name) {
+        Objects.requireNonNull(parameters);
+        Objects.requireNonNull(name);
+
+        return parameters.stream().filter(p -> p.getName().equals(name)).findFirst().get();
+    }
 }
