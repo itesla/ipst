@@ -125,9 +125,9 @@ public class PrintOnlineWorkflowMetricsTool implements Tool {
                         headers[i] = parameter;
                         i++;
                     }
-                    LinkedList<Column> columns = Arrays.stream(headers)
+                    List<Column> columns = Arrays.stream(headers)
                             .map(Column::new)
-                            .collect(Collectors.toCollection(LinkedList::new));
+                            .collect(Collectors.toList());
                     try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, outputFormat, outputFile,
                             TABLE_TITLE, columns.toArray(new Column[0]))) {
                         formatter.writeCell(stateId);
@@ -146,9 +146,9 @@ public class PrintOnlineWorkflowMetricsTool implements Tool {
                     System.err.println("\nNo metrics for workflow " + workflowId + " and step " + step.name());
                 } else {
                     //first row is metrics' header
-                    LinkedList<Column> columns = Arrays.stream(metricsTableList.get(0))
+                    List<Column> columns = Arrays.stream(metricsTableList.get(0))
                             .map(Column::new)
-                            .collect(Collectors.toCollection(LinkedList::new));
+                            .collect(Collectors.toList());
                     try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, outputFormat, outputFile,
                             TABLE_TITLE, columns.toArray(new Column[0]))) {
                         metricsTableList.stream().skip(1).forEach(row -> Arrays.stream(row).forEach(colValue -> {
