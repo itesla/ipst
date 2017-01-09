@@ -148,7 +148,7 @@ public class OnlineDbMVStore implements OnlineDb {
             } catch (IOException e) {
                 String errorMessage = "online db folder " + storageFolder + " does not exist and cannot be created: " + e.getMessage();
                 LOGGER.error(errorMessage);
-                throw new RuntimeException(errorMessage);
+                throw new RuntimeException(errorMessage, e);
             }
         }
         mapBuilder = new MVMapConcurrent.Builder<String, String>();
@@ -211,7 +211,7 @@ public class OnlineDbMVStore implements OnlineDb {
         } catch (Throwable e) {
             String errorMessage = "Error storing metrics for wf " + workflowId + " in map " + mapName + ": " + e.getMessage();
             LOGGER.error(errorMessage);
-            throw new RuntimeException(errorMessage);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
@@ -233,7 +233,7 @@ public class OnlineDbMVStore implements OnlineDb {
         } catch (Throwable e) {
             String errorMessage = "Error storing metadata for wf " + workflowId + ", step " + step.name() + ", state " + stateId + ": " + e.getMessage();
             LOGGER.error(errorMessage);
-            throw new RuntimeException(errorMessage);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
@@ -305,7 +305,7 @@ public class OnlineDbMVStore implements OnlineDb {
             } catch (Exception e) {
                 String errorMessage = "error getting cvs data for step " + step.name() + " and wf id " + workflowId;
                 LOGGER.error(errorMessage);
-                throw new RuntimeException(errorMessage);
+                throw new RuntimeException(errorMessage, e);
             }
         } else {
             LOGGER.warn("No data about wf {}", workflowId);
@@ -985,7 +985,7 @@ public class OnlineDbMVStore implements OnlineDb {
                         String errorMessage = "online db: folder " + workflowStatesFolder + " for workflow " + workflowId
                                 + " , state " + stateIdStr + " ; cannot remove existing state file: " + e.getMessage();
                         LOGGER.error(errorMessage);
-                        throw new RuntimeException(errorMessage);
+                        throw new RuntimeException(errorMessage, e);
                     }
                 }
             } else {
@@ -995,7 +995,7 @@ public class OnlineDbMVStore implements OnlineDb {
                     String errorMessage = "online db: folder " + workflowStatesFolder + " for workflow " + workflowId
                             + " and state " + stateIdStr + " cannot be created: " + e.getMessage();
                     LOGGER.error(errorMessage);
-                    throw new RuntimeException(errorMessage);
+                    throw new RuntimeException(errorMessage, e);
                 }
             }
             DataSource dataSource = new FileDataSource(stateFolder, network.getId());
@@ -1234,7 +1234,7 @@ public class OnlineDbMVStore implements OnlineDb {
         } catch (Throwable e) {
             String errorMessage = "Error storing violations for wf " + workflowId + " in map " + mapName + ": " + e.getMessage();
             LOGGER.error(errorMessage);
-            throw new RuntimeException(errorMessage);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
@@ -1260,7 +1260,7 @@ public class OnlineDbMVStore implements OnlineDb {
         } catch (Throwable e) {
             String errorMessage = "Error storing violations metadata for wf " + workflowId + ", step " + step.name() + ", state " + stateId + ": " + e.getMessage();
             LOGGER.error(errorMessage);
-            throw new RuntimeException(errorMessage);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
@@ -1452,7 +1452,7 @@ public class OnlineDbMVStore implements OnlineDb {
         } catch (Throwable e) {
             String errorMessage = "Error storing pc violations metadata for wf " + workflowId + ", contingency " + contingencyId + ", state " + stateId + ": " + e.getMessage();
             LOGGER.error(errorMessage);
-            throw new RuntimeException(errorMessage);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
@@ -1485,7 +1485,7 @@ public class OnlineDbMVStore implements OnlineDb {
         } catch (Throwable e) {
             String errorMessage = "Error storing pc loadflow convergence for wf " + workflowId + ", contingency " + contingencyId + ", state " + stateId + ": " + e.getMessage();
             LOGGER.error(errorMessage);
-            throw new RuntimeException(errorMessage);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
@@ -1814,7 +1814,7 @@ public class OnlineDbMVStore implements OnlineDb {
             } catch (IOException e) {
                 String errorMessage = "online db: folder " + workflowStatesFolder + " for workflow " + workflowId + " cannot be created: " + e.getMessage();
                 LOGGER.error(errorMessage);
-                throw new RuntimeException(errorMessage);
+                throw new RuntimeException(errorMessage, e);
             }
 
         return workflowStatesFolder;
