@@ -1201,14 +1201,20 @@ public class AmplNetworkWriter implements AmplConstants {
 
     private void writeStaticVarCompensators(AmplExportContext context) throws IOException {
         try (TableFormatter formatter = new AmplDatTableFormatter(
-                new OutputStreamWriter(dataSource.newOutputStream("_network_static_var_compensatiors", "txt", append), StandardCharsets.UTF_8),
+                new OutputStreamWriter(dataSource.newOutputStream("_network_static_var_compensators", "txt", append), StandardCharsets.UTF_8),
                 getTableTitle("Static VAR compensators"),
                 INVALID_FLOAT_VALUE,
                 !append,
-                LOCALE)) {
+                LOCALE,
+                new Column("num"),
+                new Column("id"))) {
             List<String> skipped = new ArrayList<>();
             for (StaticVarCompensator svc : network.getStaticVarCompensators()) {
-                throw new UnsupportedOperationException(); // FIXME
+                // FIXME
+                String id = svc.getId();
+                int num = mapper.getInt(AmplSubset.STATIC_VAR_COMPENSATOR, id);
+                formatter.writeCell(num)
+                         .writeCell(id);
             }
             if (skipped.size() > 0) {
                 LOGGER.trace("Skip static VAR compensators {} because not connected and not connectable", skipped);
@@ -1390,10 +1396,16 @@ public class AmplNetworkWriter implements AmplConstants {
                 getTableTitle("HVDC lines"),
                 INVALID_FLOAT_VALUE,
                 !append,
-                LOCALE)) {
+                LOCALE,
+                new Column("num"),
+                new Column("id"))) {
             List<String> skipped = new ArrayList<>();
             for (HvdcLine hvdcLine : network.getHvdcLines()) {
-                throw new UnsupportedOperationException(); // FIXME
+                // FIXME
+                String id = hvdcLine.getId();
+                int num = mapper.getInt(AmplSubset.HVDC_LINE, id);
+                formatter.writeCell(num)
+                         .writeCell(id);
             }
             if (skipped.size() > 0) {
                 LOGGER.trace("Skip HVDC lines {} because not connected and not connectable", skipped);
