@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2016, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -116,7 +117,13 @@ public interface ContingenciesAndActionsDatabaseClient extends ContingenciesProv
      * @return the list of scenarios
      */
     List<Scenario> getScenarios();
-	
-    
+
+    /**
+     * Get the associations between actions, contingencies and constraints, given a constraint
+     * @param equipmentId the equipment involved in the constraint
+     * @param constraintType the constraint type
+     * @return the list of associations
+     */
+    Collection<ActionsContingenciesAssociation> getActionsCtgAssociationsByConstraint(String equipmentId, ConstraintType constraintType);
 
 }

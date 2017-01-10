@@ -13,6 +13,7 @@ import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.modules.contingencies.Action;
 import eu.itesla_project.modules.contingencies.ActionPlan;
 import eu.itesla_project.modules.contingencies.ActionsContingenciesAssociation;
+import eu.itesla_project.modules.contingencies.ConstraintType;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
 import eu.itesla_project.contingency.Contingency;
 import eu.itesla_project.contingency.ContingencyElement;
@@ -123,5 +124,12 @@ public class AutomaticContingenciesAndActionsDatabaseClient implements Contingen
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    @Override
+    public Collection<ActionsContingenciesAssociation> getActionsCtgAssociationsByConstraint(
+            String equipmentId, ConstraintType constraintType) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

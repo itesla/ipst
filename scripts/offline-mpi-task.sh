@@ -35,8 +35,8 @@ if [ $rank = 0 ]; then
     options+=" -Dcom.sun.management.jmxremote.authenticate=false"
     options+=" -Dcom.sun.management.jmxremote.ssl=false"
     options+=" -Dlogback.configurationFile="
-    [ -f "$itesla_config_dir/logback.xml" ] && options+="$itesla_config_dir" || options+="$installDir/etc"
-    options+="/logback.xml"
+    [ -f "$itesla_config_dir/logback-offline.xml" ] && options+="$itesla_config_dir" || options+="$installDir/etc"
+    options+="/logback-offline.xml"
     $JAVA_HOME/bin/java \
 -Xmx8G \
 -verbose:gc -XX:+PrintGCTimeStamps -Xloggc:$tmpdir/gc.log \

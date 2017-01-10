@@ -11,7 +11,7 @@ sourceDir=$(dirname $(readlink -f $0))
 ## install default settings
 ###############################################################################
 ipst_prefix=$HOME/itesla
-ipst_package_version=` mvn -f "$sourceDir/pom.xml" org.apache.maven.plugins:maven-help-plugin:evaluate -Dexpression=project.version | grep -v "\["`
+ipst_package_version=` mvn -f "$sourceDir/pom.xml" org.apache.maven.plugins:maven-help-plugin:evaluate -Dexpression=project.version | grep -v "Download" | grep -v "\["`
 ipst_package_name=ipst-$ipst_package_version
 ipst_package_type=zip
 
@@ -152,7 +152,7 @@ buildthirdparty()
         if [ $ipst_compile = true ]; then
             if [ $thirdparty_build = true ]; then
                  echo "**** Building the C++ thirdparty libraries"
-                 thirdparty_builddir="${thirdparty_prefix}/build"
+                 thirdparty_builddir="${thirdparty_prefix}/build/ipst"
                  cmake -Dprefix="$thirdparty_prefix" -Ddownload="$thirdparty_download" -Dpacks="$thirdparty_packs" -G "Unix Makefiles" -H"$sourceDir/thirdparty" -B"$thirdparty_builddir" || exit $?
                  make -C "$thirdparty_builddir" || exit $?
 

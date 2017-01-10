@@ -66,37 +66,20 @@
             <fileMode>0644</fileMode>
         </fileSet>
 
-        <!-- copy iidm.xsd from iidm-xml-import-export to etc -->
-        <fileSet>
-            <directory>${project.basedir}/../iidm-xml-import-export/src/main/resources</directory>
-            <outputDirectory>etc</outputDirectory>
-            <includes>
-                <include>xsd/iidm.xsd</include>
-            </includes>
-            <fileMode>0644</fileMode>
-        </fileSet>
-
         <!-- Javadoc -->
         <fileSet>
             <directory>${project.basedir}/../target/site/apidocs</directory>
-            <outputDirectory>doc/java</outputDirectory>
-            <includes>
-                <include>
-                    *
-                </include>
-            </includes>
+            <outputDirectory>doc/java/ipst</outputDirectory>
             <fileMode>0644</fileMode>
         </fileSet>
 
         <!-- Doxygen -->
         <fileSet>
             <directory>${project.basedir}/../build/html</directory>
-            <outputDirectory>doc/cpp</outputDirectory>
-            <includes>
-                <include>*</include>
-            </includes>
+            <outputDirectory>doc/cpp/ipst</outputDirectory>
             <fileMode>0644</fileMode>
         </fileSet>
 
     </fileSets>
 </assembly>
+
