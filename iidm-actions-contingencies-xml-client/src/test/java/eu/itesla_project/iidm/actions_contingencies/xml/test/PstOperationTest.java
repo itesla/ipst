@@ -18,8 +18,8 @@ import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -30,11 +30,11 @@ import static org.junit.Assert.*;
 public class PstOperationTest {
 
     @Test
-    public void test() throws JAXBException, SAXException {
+    public void test() throws JAXBException, SAXException, IOException {
         Network network = PhaseShifterTestCaseFactory.create();
 
-        Path path = Paths.get("src/test/resources/pstOperations.xml");
-        XmlFileContingenciesAndActionsDatabaseClient client = new XmlFileContingenciesAndActionsDatabaseClient(path);
+        URL config = getClass().getResource("/pstOperations.xml");
+        XmlFileContingenciesAndActionsDatabaseClient client = new XmlFileContingenciesAndActionsDatabaseClient(config);
 
         List<Action> actions = client.getActions(network);
         assertEquals(1, actions.size());

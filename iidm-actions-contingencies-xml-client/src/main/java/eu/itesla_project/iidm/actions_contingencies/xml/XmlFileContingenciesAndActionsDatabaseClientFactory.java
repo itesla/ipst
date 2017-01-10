@@ -6,6 +6,7 @@
  */
 package eu.itesla_project.iidm.actions_contingencies.xml;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 import javax.xml.bind.JAXBException;
@@ -21,30 +22,25 @@ import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseCl
 
 
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 public class XmlFileContingenciesAndActionsDatabaseClientFactory implements
-		ContingenciesAndActionsDatabaseClientFactory {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(XmlFileContingenciesAndActionsDatabaseClientFactory.class);
+        ContingenciesAndActionsDatabaseClientFactory {
 
-	@Override
-	public ContingenciesAndActionsDatabaseClient create() {
-		 XmlFileContingenciesAndActionsDatabaseClient client=null;
-		 ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("xmlcontingencydb");
-	     Path xmlFile = config.getPathProperty("xmlFile");
-	    
-		 try {
-			client= new XmlFileContingenciesAndActionsDatabaseClient(xmlFile);
-		 } catch (JAXBException e) {
-			 LOGGER.error("Error loading input file "+xmlFile,e);		
-		 } catch (SAXException e) {
-			 LOGGER.error("Error loading input file "+xmlFile,e);
-		}
-	     return client;
+    private static final Logger LOGGER = LoggerFactory.getLogger(XmlFileContingenciesAndActionsDatabaseClientFactory.class);
 
+    @Override
+    public ContingenciesAndActionsDatabaseClient create() {
+        XmlFileContingenciesAndActionsDatabaseClient client = null;
+        ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("xmlcontingencydb");
+        Path xmlFile = config.getPathProperty("xmlFile");
 
-	}
+        try {
+            client = new XmlFileContingenciesAndActionsDatabaseClient(xmlFile);
+        } catch (JAXBException | SAXException | IOException e) {
+            LOGGER.error("Error loading input file " + xmlFile, e);
+        }
 
+        return client;
+    }
 }

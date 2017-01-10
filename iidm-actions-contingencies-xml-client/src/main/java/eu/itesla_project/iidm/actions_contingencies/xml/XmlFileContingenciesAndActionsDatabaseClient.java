@@ -7,8 +7,11 @@
  */
 package eu.itesla_project.iidm.actions_contingencies.xml;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -80,22 +83,31 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
     private ActionsContingencies actionContingencies;
     private Map<Number, String> zonesMapping = new HashMap<Number, String>();
 
-    public XmlFileContingenciesAndActionsDatabaseClient(Path file)
-            throws JAXBException, SAXException {
+    public XmlFileContingenciesAndActionsDatabaseClient(Path file) throws JAXBException, SAXException, IOException {
+        try (InputStream stream = Files.newInputStream(file)) {
+            load(stream);
+        }
+    }
 
-        JAXBContext jaxbContext = JAXBContext
-                .newInstance(ActionsContingencies.class);
+    public XmlFileContingenciesAndActionsDatabaseClient(URL url) throws JAXBException, SAXException, IOException {
+        try (InputStream stream = url.openStream()) {
+            load(stream);
+        }
+    }
+
+    private void load(InputStream stream) throws JAXBException, SAXException, IOException {
+        JAXBContext jaxbContext = JAXBContext.newInstance(ActionsContingencies.class);
         Unmarshaller jaxbMarshaller = jaxbContext.createUnmarshaller();
 
-        SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI); 
-        URL res=XmlFileContingenciesAndActionsDatabaseClient.class.getClassLoader().getResource("xsd/actions.xsd");
-        Schema schema = sf.newSchema(res); 
+        SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        URL res = XmlFileContingenciesAndActionsDatabaseClient.class.getClassLoader().getResource("xsd/actions.xsd");
+        if (res == null) {
+            throw new IOException("Unable to find schema");
+        }
+        Schema schema = sf.newSchema(res);
         jaxbMarshaller.setSchema(schema);
 
-        actionContingencies = (ActionsContingencies) jaxbMarshaller
-                .unmarshal(file.toFile());
-
-
+        actionContingencies = (ActionsContingencies) jaxbMarshaller.unmarshal(stream);
     }
 
     @Override
