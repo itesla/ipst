@@ -338,11 +338,7 @@ public class ProcessApiTest {
             return null;
         }
 
-        @Override
-        public String getCsvMetrics(String workflowId, OnlineStep step) {
-            return null;
-        }
-
+        
         @Override
         public void storeRulesResults(String workflowId, OnlineWorkflowRulesResults results) {
 
@@ -513,6 +509,11 @@ public class ProcessApiTest {
         @Override
         public OnlineProcess getProcess(String processId) throws IOException {
             return processMap.get(processId);
+        }
+
+        @Override
+        public List<String[]> getAllMetrics(String workflowId, OnlineStep step) {
+            return null;
         }
 
     }
