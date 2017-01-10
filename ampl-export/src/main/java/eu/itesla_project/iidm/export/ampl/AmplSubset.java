@@ -10,7 +10,6 @@ package eu.itesla_project.iidm.export.ampl;
 import eu.itesla_project.commons.util.IntCounter;
 
 /**
- *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
 public enum AmplSubset implements IntCounter {
@@ -28,11 +27,13 @@ public enum AmplSubset implements IntCounter {
     THREE_WINDINGS_TRANSFO(1),
     FAULT(1),
     CURATIVE_ACTION(1),
-    PREVENTIVE_ACTION(1);
+    PREVENTIVE_ACTION(1),
+    STATIC_VAR_COMPENSATOR(1),
+    HVDC_LINE(1);
 
     private final int initialValue;
 
-    private AmplSubset(int initialValue) {
+    AmplSubset(int initialValue) {
         this.initialValue = initialValue;
     }
 

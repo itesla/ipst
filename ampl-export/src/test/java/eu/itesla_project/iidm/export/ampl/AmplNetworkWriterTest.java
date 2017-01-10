@@ -10,6 +10,8 @@ import com.google.common.io.CharStreams;
 import eu.itesla_project.iidm.datasource.MemDataSource;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.iidm.network.test.EurostagTutorialExample1Factory;
+import eu.itesla_project.iidm.network.test.HvdcTestNetwork;
+import eu.itesla_project.iidm.network.test.SvcTestCaseFactory;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -29,7 +31,7 @@ public class AmplNetworkWriterTest {
     }
 
     @Test
-    public void write() throws Exception {
+    public void writeEurostag() throws Exception {
         Network network = EurostagTutorialExample1Factory.create();
 
         MemDataSource dataSource = new MemDataSource();
@@ -47,4 +49,36 @@ public class AmplNetworkWriterTest {
         assertEqualsToRef(dataSource, "_network_limits", "eurostag-tutorial-example1-limits.txt");
     }
 
+    @Test
+    public void writeSVC() throws Exception {
+        Network network = SvcTestCaseFactory.create();
+
+        MemDataSource dataSource = new MemDataSource();
+        new AmplNetworkWriter(network, dataSource, new AmplExportConfig(AmplExportConfig.ExportScope.ALL, true, AmplExportConfig.ExportActionType.CURATIVE))
+                .write();
+
+        assertEqualsToRef(dataSource, "_network_static_var_compensators", "svc-test-case.txt");
+    }
+
+    @Test
+    public void writeLcc() throws Exception {
+        Network network = HvdcTestNetwork.createLcc();
+
+        MemDataSource dataSource = new MemDataSource();
+        new AmplNetworkWriter(network, dataSource, new AmplExportConfig(AmplExportConfig.ExportScope.ALL, true, AmplExportConfig.ExportActionType.CURATIVE))
+                .write();
+
+        assertEqualsToRef(dataSource, "_network_hvdc", "lcc-test-case.txt");
+    }
+
+    @Test
+    public void writeVsc() throws Exception {
+        Network network = HvdcTestNetwork.createVsc();
+
+        MemDataSource dataSource = new MemDataSource();
+        new AmplNetworkWriter(network, dataSource, new AmplExportConfig(AmplExportConfig.ExportScope.ALL, true, AmplExportConfig.ExportActionType.CURATIVE))
+                .write();
+
+        assertEqualsToRef(dataSource, "_network_hvdc", "vsc-test-case.txt");
+    }
 }
