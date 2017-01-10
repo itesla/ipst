@@ -7,32 +7,66 @@
  */
 package eu.itesla_project.online.tools;
 
-import eu.itesla_project.commons.io.SystemOutStreamWriter;
 import eu.itesla_project.commons.io.table.*;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * @author c.biasuzzi@techrain.it
  */
 public class PrintOnlineWorkflowUtils {
 
-    public static TableFormatter createFormatter(TableFormatterConfig config, Path outputFilePath, String tableTitle, Column... columns) throws IOException {
+    enum TableFormatterFactorySupplier {
+
+        ascii(AsciiTableFormatterFactory::new),
+        csv(CsvTableFormatterFactory::new);
+
+        public final Supplier<TableFormatterFactory> supplier;
+
+        private TableFormatterFactorySupplier(Supplier<TableFormatterFactory> supplier) {
+            this.supplier = Objects.requireNonNull(supplier, "null supplier for name " + name());
+        }
+    }
+
+    public static String availableTableFormatterFormats() {
+        return Arrays.stream(TableFormatterFactorySupplier.values()).map(x -> x.name()).collect(Collectors.joining(", "));
+    }
+
+    public static boolean isTableFactoryAvailable(String formatName) {
+        return Arrays.stream(TableFormatterFactorySupplier.values()).anyMatch((t) -> t.name().equals(formatName));
+    }
+
+    public static TableFormatterFactory tableFactoryByFormatName(String formatName) {
+        return TableFormatterFactorySupplier.valueOf(formatName).supplier.get();
+    }
+
+    public static TableFormatter createFormatter(TableFormatterConfig config, String outputFormatName, Path outputFilePath, String tableTitle, Column... columns) throws IOException {
         Writer writer;
         TableFormatterFactory formatterFactory;
+        if (isTableFactoryAvailable(outputFormatName)) {
+            formatterFactory = tableFactoryByFormatName(outputFormatName);
+        } else {
+            throw new RuntimeException("output format not supported: " + outputFormatName);
+        }
         if (outputFilePath != null) {
-            formatterFactory = new CsvTableFormatterFactory();
             writer = Files.newBufferedWriter(outputFilePath, StandardCharsets.UTF_8);
         } else {
-            formatterFactory = new AsciiTableFormatterFactory();
-            writer = new SystemOutStreamWriter();
+            writer = new OutputStreamWriter(System.out) {
+                @Override
+                public void close() throws IOException {
+                    flush();
+                }
+            };
         }
         return formatterFactory.create(writer, tableTitle, config, columns);
     }
 }
-
-

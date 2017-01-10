@@ -76,10 +76,15 @@ public class PrintOnlineWorkflowPostContingencyViolationsTool implements Tool {
                     .hasArg()
                     .argName("VIOLATION_TYPE,VIOLATION_TYPE,...")
                     .build());
-            options.addOption(Option.builder().longOpt("csv")
-                    .desc("export in csv format to a file")
+            options.addOption(Option.builder().longOpt("output-file")
+                    .desc("export to a file")
                     .hasArg()
                     .argName("FILE")
+                    .build());
+            options.addOption(Option.builder().longOpt("output-format")
+                    .desc("output formats available: " + PrintOnlineWorkflowUtils.availableTableFormatterFormats() + " (default is ascii)")
+                    .hasArg()
+                    .argName("FORMAT")
                     .build());
             return options;
         }
@@ -117,46 +122,47 @@ public class PrintOnlineWorkflowPostContingencyViolationsTool implements Tool {
                 new Column("Limit reduction"),
                 new Column("Voltage Level")
         };
-        Path cvsOutFile = (line.hasOption("csv")) ? Paths.get(line.getOptionValue("csv")) : null;
+        Path outputFile = (line.hasOption("output-file")) ? Paths.get(line.getOptionValue("output-file")) : null;
+        String outputFormat = (line.hasOption("output-format")) ? line.getOptionValue("output-format") : "ascii";
         try (OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create()) {
             if (line.hasOption("state") && line.hasOption("contingency")) {
                 Integer stateId = Integer.parseInt(line.getOptionValue("state"));
                 String contingencyId = line.getOptionValue("contingency");
                 List<LimitViolation> violations = onlinedb.getPostContingencyViolations(workflowId, stateId, contingencyId);
                 if (violations != null && !violations.isEmpty()) {
-                    try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, cvsOutFile, TABLE_TITLE, tableColumns)) {
+                    try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, outputFormat, outputFile, TABLE_TITLE, tableColumns)) {
                         printStateContingencyViolations(formatter, stateId, contingencyId, violations, violationsFilter);
                     }
                 } else {
-                    System.out.println("\nNo post contingency violations for workflow " + workflowId + ", contingency " + contingencyId + " and state " + stateId);
+                    System.err.println("\nNo post contingency violations for workflow " + workflowId + ", contingency " + contingencyId + " and state " + stateId);
                 }
             } else if (line.hasOption("state")) {
                 Integer stateId = Integer.parseInt(line.getOptionValue("state"));
                 Map<String, List<LimitViolation>> stateViolationsByStateId = onlinedb.getPostContingencyViolations(workflowId, stateId);
                 if (stateViolationsByStateId != null && !stateViolationsByStateId.keySet().isEmpty()) {
-                    try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, cvsOutFile, TABLE_TITLE, tableColumns)) {
+                    try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, outputFormat, outputFile, TABLE_TITLE, tableColumns)) {
                         new TreeMap<>(stateViolationsByStateId).forEach((contingencyId, violations) ->
                                 printStateContingencyViolations(formatter, stateId, contingencyId, violations, violationsFilter));
                     }
                 } else {
-                    System.out.println("\nNo post contingency violations for workflow " + workflowId + " and state " + stateId);
+                    System.err.println("\nNo post contingency violations for workflow " + workflowId + " and state " + stateId);
                 }
             } else {
                 if (line.hasOption("contingency")) {
                     String contingencyId = line.getOptionValue("contingency");
                     Map<Integer, List<LimitViolation>> contingencyViolationsByContingencyId = onlinedb.getPostContingencyViolations(workflowId, contingencyId);
                     if (contingencyViolationsByContingencyId != null && !contingencyViolationsByContingencyId.keySet().isEmpty()) {
-                        try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, cvsOutFile, TABLE_TITLE, tableColumns)) {
+                        try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, outputFormat, outputFile, TABLE_TITLE, tableColumns)) {
                             new TreeMap<>(contingencyViolationsByContingencyId).forEach((stateId, violations) ->
                                     printStateContingencyViolations(formatter, stateId, contingencyId, violations, violationsFilter));
                         }
                     } else {
-                        System.out.println("\nNo post contingency violations for workflow " + workflowId + " and contingency " + contingencyId);
+                        System.err.println("\nNo post contingency violations for workflow " + workflowId + " and contingency " + contingencyId);
                     }
                 } else {
                     Map<Integer, Map<String, List<LimitViolation>>> wfViolations = onlinedb.getPostContingencyViolations(workflowId);
                     if (wfViolations != null && !wfViolations.keySet().isEmpty()) {
-                        try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, cvsOutFile, TABLE_TITLE, tableColumns)) {
+                        try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, outputFormat, outputFile, TABLE_TITLE, tableColumns)) {
                             new TreeMap<>(wfViolations).forEach((stateId, stateViolations) -> {
                                 if (stateViolations != null) {
                                     new TreeMap<>(stateViolations).forEach((contingencyId, violations) -> {
@@ -167,7 +173,7 @@ public class PrintOnlineWorkflowPostContingencyViolationsTool implements Tool {
 
                         }
                     } else {
-                        System.out.println("\nNo post contingency violations for workflow " + workflowId);
+                        System.err.println("\nNo post contingency violations for workflow " + workflowId);
                     }
                 }
             }

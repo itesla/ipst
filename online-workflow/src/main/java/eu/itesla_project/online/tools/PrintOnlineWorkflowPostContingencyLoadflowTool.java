@@ -67,10 +67,15 @@ public class PrintOnlineWorkflowPostContingencyLoadflowTool implements Tool {
                     .hasArg()
                     .argName("CONTINGENCY")
                     .build());
-            options.addOption(Option.builder().longOpt("csv")
-                    .desc("export in csv format to a file")
+            options.addOption(Option.builder().longOpt("output-file")
+                    .desc("export to a file")
                     .hasArg()
                     .argName("FILE")
+                    .build());
+            options.addOption(Option.builder().longOpt("output-format")
+                    .desc("output formats available: " + PrintOnlineWorkflowUtils.availableTableFormatterFormats() + " (default is ascii)")
+                    .hasArg()
+                    .argName("FORMAT")
                     .build());
             return options;
         }
@@ -97,34 +102,35 @@ public class PrintOnlineWorkflowPostContingencyLoadflowTool implements Tool {
         };
         String workflowId = line.getOptionValue("workflow");
         TableFormatterConfig tableFormatterConfig = TableFormatterConfig.load();
-        Path cvsOutFile = (line.hasOption("csv")) ? Paths.get(line.getOptionValue("csv")) : null;
+        Path outputFile = (line.hasOption("output-file")) ? Paths.get(line.getOptionValue("output-file")) : null;
+        String outputFormat = (line.hasOption("output-format")) ? line.getOptionValue("output-format") : "ascii";
         try (OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create()) {
             if (line.hasOption("state")) {
                 Integer stateId = Integer.parseInt(line.getOptionValue("state"));
                 Map<String, Boolean> loadflowConvergenceByStateId = onlinedb.getPostContingencyLoadflowConvergence(workflowId, stateId);
                 if (loadflowConvergenceByStateId != null && !loadflowConvergenceByStateId.keySet().isEmpty()) {
-                    try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, cvsOutFile, TABLE_TITLE, tableColumns)) {
+                    try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, outputFormat, outputFile, TABLE_TITLE, tableColumns)) {
                         new TreeMap<>(loadflowConvergenceByStateId).forEach((contingencyId, loadflowConverge) ->
                                 printValues(formatter, stateId, contingencyId, loadflowConverge));
                     }
                 } else {
-                    System.out.println("\nNo post contingency loadflow data for workflow " + workflowId + " and state " + stateId);
+                    System.err.println("\nNo post contingency loadflow data for workflow " + workflowId + " and state " + stateId);
                 }
             } else if (line.hasOption("contingency")) {
                 String contingencyId = line.getOptionValue("contingency");
                 Map<Integer, Boolean> loadflowConvergenceByContingencyId = onlinedb.getPostContingencyLoadflowConvergence(workflowId, contingencyId);
                 if (loadflowConvergenceByContingencyId != null && !loadflowConvergenceByContingencyId.keySet().isEmpty()) {
-                    try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, cvsOutFile, TABLE_TITLE, tableColumns)) {
+                    try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, outputFormat, outputFile, TABLE_TITLE, tableColumns)) {
                         new TreeMap<>(loadflowConvergenceByContingencyId).forEach((stateId, loadflowConverge) ->
                                 printValues(formatter, stateId, contingencyId, loadflowConverge));
                     }
                 } else {
-                    System.out.println("\nNo post contingency loadflow data for workflow " + workflowId + " and contingency " + contingencyId);
+                    System.err.println("\nNo post contingency loadflow data for workflow " + workflowId + " and contingency " + contingencyId);
                 }
             } else {
                 Map<Integer, Map<String, Boolean>> loadflowConvergence = onlinedb.getPostContingencyLoadflowConvergence(workflowId);
                 if (loadflowConvergence != null && !loadflowConvergence.keySet().isEmpty()) {
-                    try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, cvsOutFile, TABLE_TITLE, tableColumns)) {
+                    try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, outputFormat, outputFile, TABLE_TITLE, tableColumns)) {
                         new TreeMap<>(loadflowConvergence).forEach((stateId, stateLoadflowConvergence) -> {
                             if (stateLoadflowConvergence != null && !stateLoadflowConvergence.keySet().isEmpty()) {
                                 new TreeMap<>(stateLoadflowConvergence).forEach((contingencyId, loadflowConverge) ->
@@ -133,7 +139,7 @@ public class PrintOnlineWorkflowPostContingencyLoadflowTool implements Tool {
                         });
                     }
                 } else {
-                    System.out.println("\nNo post contingency loadflow data for workflow " + workflowId);
+                    System.err.println("\nNo post contingency loadflow data for workflow " + workflowId);
                 }
             }
         }

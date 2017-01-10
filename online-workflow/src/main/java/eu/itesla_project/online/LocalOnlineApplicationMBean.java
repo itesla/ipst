@@ -38,7 +38,7 @@ public interface LocalOnlineApplicationMBean {
 
     String WCA_CONTINGENCIES_ATTRIBUTE = "WcaContingencies";
 
-    //Apogee
+    // Apogee
     // String GENERATE_CARD_ATTRIBUTE = "Card";
 
     void ping();
@@ -46,7 +46,7 @@ public interface LocalOnlineApplicationMBean {
     int getAvailableCores();
 
     int[] getBusyCores();
-    
+
     String startWorkflow(OnlineWorkflowStartParameters start, OnlineWorkflowParameters params);
 
     void stopWorkflow();
@@ -55,11 +55,13 @@ public interface LocalOnlineApplicationMBean {
 
     void shutdown();
 
-    void runFeaAnalysis(OnlineWorkflowStartParameters startconfig, ForecastErrorsAnalysisParameters parameters, String timeHorizonS);
+    void runFeaAnalysis(OnlineWorkflowStartParameters startconfig, ForecastErrorsAnalysisParameters parameters,
+            String timeHorizonS);
 
-    void runTDSimulations(OnlineWorkflowStartParameters startconfig, String caseFile, String contingenciesIds, String emptyContingencyS, String outputFolderS);
+    void runTDSimulations(OnlineWorkflowStartParameters startconfig, String caseFile, String contingenciesIds,
+            String emptyContingencyS, String outputFolderS);
 
-	String startProcess(String name, String owner, DateTime date, DateTime creationDate,
-			OnlineWorkflowStartParameters start, OnlineWorkflowParameters params, DateTime[] basecases)
-					throws Exception;
+    String startProcess(String name, String owner, DateTime date, DateTime creationDate,
+            OnlineWorkflowStartParameters start, OnlineWorkflowParameters params, DateTime[] basecases)
+                    throws Exception;
 }

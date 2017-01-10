@@ -75,6 +75,11 @@ public class EntsoeAndXmlCaseRepositoryTest {
         }
 
         @Override
+        public OutputStream newOutputStream(String fileName, boolean append) throws IOException {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public String getBaseName() {
             return baseName;
         }

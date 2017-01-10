@@ -9,51 +9,38 @@ package eu.itesla_project.online;
 
 import com.csvreader.CsvWriter;
 import com.google.common.collect.Sets;
-
+import eu.itesla_project.cases.CaseRepository;
 import eu.itesla_project.commons.Version;
 import eu.itesla_project.computation.ComputationManager;
 import eu.itesla_project.computation.ComputationResourcesStatus;
-import eu.itesla_project.iidm.datasource.GenericReadOnlyDataSource;
-import eu.itesla_project.iidm.import_.Importer;
 import eu.itesla_project.iidm.import_.Importers;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.loadflow.api.LoadFlowFactory;
 import eu.itesla_project.mcla.ForecastErrorsDataStorageImpl;
 import eu.itesla_project.merge.MergeOptimizerFactory;
-import eu.itesla_project.cases.CaseRepository;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
 import eu.itesla_project.modules.histo.HistoDbClient;
-import eu.itesla_project.modules.mcla.ForecastErrorsDataStorage;
 import eu.itesla_project.modules.mcla.MontecarloSamplerFactory;
-import eu.itesla_project.modules.online.OnlineConfig;
-import eu.itesla_project.modules.online.OnlineDb;
-import eu.itesla_project.modules.online.OnlineProcess;
-import eu.itesla_project.modules.online.OnlineWorkflowParameters;
-import eu.itesla_project.modules.online.RulesFacadeFactory;
-import eu.itesla_project.modules.online.TimeHorizon;
+import eu.itesla_project.modules.online.*;
 import eu.itesla_project.modules.optimizer.CorrectiveControlOptimizerFactory;
 import eu.itesla_project.modules.rules.RulesDbClient;
-import eu.itesla_project.security.LimitViolation;
-import eu.itesla_project.security.Security;
-import eu.itesla_project.simulation.securityindexes.SecurityIndex;
-import eu.itesla_project.simulation.*;
 import eu.itesla_project.modules.wca.UncertaintiesAnalyserFactory;
 import eu.itesla_project.modules.wca.WCAFactory;
 import eu.itesla_project.offline.forecast_errors.ForecastErrorsAnalysis;
 import eu.itesla_project.offline.forecast_errors.ForecastErrorsAnalysisConfig;
 import eu.itesla_project.offline.forecast_errors.ForecastErrorsAnalysisParameters;
+import eu.itesla_project.security.LimitViolation;
+import eu.itesla_project.security.Security;
+import eu.itesla_project.simulation.SimulatorFactory;
 import gnu.trove.list.array.TIntArrayList;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import javax.management.*;
-
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.lang.management.ManagementFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -68,7 +55,8 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * @author Quinary <itesla@quinary.com>
  */
-public class LocalOnlineApplication extends NotificationBroadcasterSupport implements OnlineApplication, OnlineApplicationListener, LocalOnlineApplicationMBean {
+public class LocalOnlineApplication extends NotificationBroadcasterSupport
+        implements OnlineApplication, OnlineApplicationListener, LocalOnlineApplicationMBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalOnlineApplication.class);
 
@@ -77,10 +65,10 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
     private OnlineConfig config;
 
     private final ComputationManager computationManager;
-    
-	private ScheduledExecutorService ses;
 
-	private ExecutorService es;
+    private ScheduledExecutorService ses;
+
+    private ExecutorService es;
 
     private final boolean enableJmx;
 
@@ -94,23 +82,18 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
 
     private final AtomicInteger notificationIndex = new AtomicInteger();
 
-    public LocalOnlineApplication(OnlineConfig config,
-                                  ComputationManager computationManager,
-                                  ScheduledExecutorService ses,
-                                  ExecutorService es,
-                                  boolean enableJmx)
-            throws IllegalAccessException, InstantiationException, InstanceAlreadyExistsException,
-            MBeanRegistrationException, MalformedObjectNameException, NotCompliantMBeanException, IOException {
+    public LocalOnlineApplication(OnlineConfig config, ComputationManager computationManager,
+            ScheduledExecutorService ses, ExecutorService es, boolean enableJmx)
+                    throws IllegalAccessException, InstantiationException, InstanceAlreadyExistsException,
+                    MBeanRegistrationException, MalformedObjectNameException, NotCompliantMBeanException, IOException {
         this.config = config;
         this.computationManager = computationManager;
         this.ses = ses;
         this.es = es;
 
         LOGGER.info("Version: {}", Version.VERSION);
-     	
-       
-        this.enableJmx = enableJmx;
 
+        this.enableJmx = enableJmx;
 
         busyCores = new TIntArrayList();
         ComputationResourcesStatus status = computationManager.getResourcesStatus();
@@ -131,10 +114,8 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
             } catch (Throwable t) {
                 LOGGER.error(t.toString(), t);
             }
-        }, 0, 20, TimeUnit.SECONDS);
+        } , 0, 20, TimeUnit.SECONDS);
     }
-    
-    
 
     @Override
     public int[] getBusyCores() {
@@ -158,16 +139,12 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
                 else
                     busyCores.insert(0, 1);
 
-                busyCores.removeAt(busyCores.size() - 1); // remove the older one
+                busyCores.removeAt(busyCores.size() - 1); // remove the older
+                                                          // one
             }
             if (enableJmx) {
-                sendNotification(new AttributeChangeNotification(this,
-                        notificationIndex.getAndIncrement(),
-                        System.currentTimeMillis(),
-                        "Busy cores has changed",
-                        BUSY_CORES_ATTRIBUTE,
-                        "int[]",
-                        null,
+                sendNotification(new AttributeChangeNotification(this, notificationIndex.getAndIncrement(),
+                        System.currentTimeMillis(), "Busy cores has changed", BUSY_CORES_ATTRIBUTE, "int[]", null,
                         busyCores.toArray()));
             }
 
@@ -180,138 +157,123 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
     public int getAvailableCores() {
         return computationManager.getResourcesStatus().getAvailableCores();
     }
-    
+
     @Override
-    public String startProcess(String name, String owner, DateTime date, DateTime creationDate, OnlineWorkflowStartParameters start, OnlineWorkflowParameters params, DateTime[] basecases) throws Exception
-    {
-    	config=OnlineConfig.load();
-    	OnlineDb onlineDb = config.getOnlineDbFactoryClass().newInstance().create();
-    	OnlineProcess proc=new OnlineProcess();
-    	String processId= DateTimeFormat.forPattern("yyyyMMddHHmmSSS").print(new DateTime());
-        LOGGER.info("Starting process: "+processId);
+    public String startProcess(String name, String owner, DateTime date, DateTime creationDate,
+            OnlineWorkflowStartParameters start, OnlineWorkflowParameters params, DateTime[] basecases)
+                    throws Exception {
+        config = OnlineConfig.load();
+        OnlineDb onlineDb = config.getOnlineDbFactoryClass().newInstance().create();
+        OnlineProcess proc = new OnlineProcess();
+        String processId = DateTimeFormat.forPattern("yyyyMMddHHmmSSS").print(new DateTime());
+        LOGGER.info("Starting process: " + processId);
 
-    	proc.setId(processId);
-    	proc.setName(name);
-    	proc.setOwner(owner);
-    	proc.setCaseType(params.getCaseType().toString());
-    	if(date!=null)
-    		proc.setDate(date);
-    	else
-    		proc.setDate(new DateTime());
-    	if(creationDate!=null)
-    		proc.setCreationDate(creationDate);
-    	else
-    		proc.setCreationDate(new DateTime());
-    	
+        proc.setId(processId);
+        proc.setName(name);
+        proc.setOwner(owner);
+        proc.setCaseType(params.getCaseType().toString());
+        if (date != null)
+            proc.setDate(date);
+        else
+            proc.setDate(new DateTime());
+        if (creationDate != null)
+            proc.setCreationDate(creationDate);
+        else
+            proc.setCreationDate(new DateTime());
 
-    	for(DateTime bcase: basecases){
-    		params.setBaseCaseDate(bcase);
+        for (DateTime bcase : basecases) {
+            params.setBaseCaseDate(bcase);
 
-    		String id=startWorkflow(start,params);
-    		org.joda.time.format.DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
-    		String basecaseString = fmt.print(bcase);
-    		proc.addWorkflow(basecaseString, id);
-    		  		 
-    	} 
-    	   	
+            String id = startWorkflow(start, params);
+            org.joda.time.format.DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
+            String basecaseString = fmt.print(bcase);
+            proc.addWorkflow(basecaseString, id);
 
-    	onlineDb.storeProcess(proc);
-    	LOGGER.info("End of process: "+processId);
-    	return processId;
+        }
+
+        onlineDb.storeProcess(proc);
+        LOGGER.info("End of process: " + processId);
+        return processId;
     }
 
-
     @Override
-    public String startWorkflow( OnlineWorkflowStartParameters start, OnlineWorkflowParameters params)  {
-    	OnlineWorkflow workflow;
-    	HistoDbClient histoDbClient;
-		ContingenciesAndActionsDatabaseClient cadbClient;
-		RulesDbClient rulesDb;
-		WCAFactory wcaFactory;
-		LoadFlowFactory loadFlowFactory;
-		OnlineDb onlineDb;
-		UncertaintiesAnalyserFactory uncertaintiesAnalyserFactory;
-		CorrectiveControlOptimizerFactory correctiveControlOptimizerFactory;
-		SimulatorFactory simulatorFactory;
-		MontecarloSamplerFactory montecarloSamplerFactory;
-		CaseRepository caseRepository;
-		MergeOptimizerFactory mergeOptimizerFactory;
-		RulesFacadeFactory rulesFacadeFactory;
-		ForecastErrorsDataStorageImpl feDataStorage;
-		try {
-			config=OnlineConfig.load();
-	         histoDbClient = config.getHistoDbClientFactoryClass().newInstance().create();
-	         cadbClient = config.getContingencyDbClientFactoryClass().newInstance().create();
-	         rulesDb = config.getRulesDbClientFactoryClass().newInstance().create("rulesdb");
-	         wcaFactory = config.getWcaFactoryClass().newInstance();
-	         loadFlowFactory = config.getLoadFlowFactoryClass().newInstance();
-	         onlineDb = config.getOnlineDbFactoryClass().newInstance().create();
-	         uncertaintiesAnalyserFactory = config.getUncertaintiesAnalyserFactoryClass().newInstance();
-	         correctiveControlOptimizerFactory = config.getCorrectiveControlOptimizerFactoryClass().newInstance();
-	         simulatorFactory = config.getSimulatorFactoryClass().newInstance();
-	         montecarloSamplerFactory = config.getMontecarloSamplerFactory().newInstance();
-	         caseRepository = config.getCaseRepositoryFactoryClass().newInstance().create(computationManager);
-	         mergeOptimizerFactory = config.getMergeOptimizerFactory().newInstance();
-	         rulesFacadeFactory = config.getRulesFacadeFactory().newInstance();
-
-	    	feDataStorage = new ForecastErrorsDataStorageImpl(); //TODO ...
-			
-		} catch (ClassNotFoundException | IOException | ParseException | InstantiationException | IllegalAccessException e1) {
-			
-			e1.printStackTrace();
-			throw new RuntimeException(e1.getMessage());
-		}
-    	
-    	
-        OnlineWorkflowContext oCtx = new OnlineWorkflowContext();
-        OnlineWorkflowStartParameters startParams= start!=null ? start : OnlineWorkflowStartParameters.loadDefault();
-        OnlineWorkflowParameters onlineParams = params !=null ? params : OnlineWorkflowParameters.loadDefault();
-        
-        
-        LOGGER.info("Starting workflow: "+startParams.toString()+"\n"+onlineParams.toString());
-       
-       
+    public String startWorkflow(OnlineWorkflowStartParameters start, OnlineWorkflowParameters params) {
+        OnlineWorkflow workflow = null;
+        HistoDbClient histoDbClient;
+        ContingenciesAndActionsDatabaseClient cadbClient;
+        RulesDbClient rulesDb;
+        WCAFactory wcaFactory;
+        LoadFlowFactory loadFlowFactory;
+        OnlineDb onlineDb;
+        UncertaintiesAnalyserFactory uncertaintiesAnalyserFactory;
+        CorrectiveControlOptimizerFactory correctiveControlOptimizerFactory;
+        SimulatorFactory simulatorFactory;
+        MontecarloSamplerFactory montecarloSamplerFactory;
+        CaseRepository caseRepository;
+        MergeOptimizerFactory mergeOptimizerFactory;
+        RulesFacadeFactory rulesFacadeFactory;
+        ForecastErrorsDataStorageImpl feDataStorage;
         try {
-            workflow = startParams.getOnlineWorkflowFactoryClass().newInstance().create(computationManager, cadbClient, histoDbClient, rulesDb, wcaFactory, loadFlowFactory, feDataStorage,
-                    onlineDb, uncertaintiesAnalyserFactory, correctiveControlOptimizerFactory, simulatorFactory, caseRepository,
-                    montecarloSamplerFactory, mergeOptimizerFactory, rulesFacadeFactory, onlineParams, startParams);
-        } catch (InstantiationException | IllegalAccessException e1) {
+            config = OnlineConfig.load();
+            histoDbClient = config.getHistoDbClientFactoryClass().newInstance().create();
+            cadbClient = config.getContingencyDbClientFactoryClass().newInstance().create();
+            rulesDb = config.getRulesDbClientFactoryClass().newInstance().create("rulesdb");
+            wcaFactory = config.getWcaFactoryClass().newInstance();
+            loadFlowFactory = config.getLoadFlowFactoryClass().newInstance();
+            onlineDb = config.getOnlineDbFactoryClass().newInstance().create();
+            uncertaintiesAnalyserFactory = config.getUncertaintiesAnalyserFactoryClass().newInstance();
+            correctiveControlOptimizerFactory = config.getCorrectiveControlOptimizerFactoryClass().newInstance();
+            simulatorFactory = config.getSimulatorFactoryClass().newInstance();
+            montecarloSamplerFactory = config.getMontecarloSamplerFactory().newInstance();
+            caseRepository = config.getCaseRepositoryFactoryClass().newInstance().create(computationManager);
+            mergeOptimizerFactory = config.getMergeOptimizerFactory().newInstance();
+            rulesFacadeFactory = config.getRulesFacadeFactory().newInstance();
+
+            feDataStorage = new ForecastErrorsDataStorageImpl(); // TODO ...
+
+        } catch (ClassNotFoundException | IOException | ParseException | InstantiationException
+                | IllegalAccessException e1) {
+
             e1.printStackTrace();
             throw new RuntimeException(e1.getMessage());
         }
 
-        workflow.addOnlineApplicationListener(this);
+        OnlineWorkflowContext oCtx = new OnlineWorkflowContext();
+        OnlineWorkflowStartParameters startParams = start != null ? start : OnlineWorkflowStartParameters.loadDefault();
+        OnlineWorkflowParameters onlineParams = params != null ? params : OnlineWorkflowParameters.loadDefault();
 
-        for (OnlineApplicationListener l : listeners)
-            workflow.addOnlineApplicationListener(l);
+        LOGGER.info("Starting workflow: " + startParams.toString() + "\n" + onlineParams.toString());
 
-
+        String wfId = null;
         try {
+            workflow = startParams.getOnlineWorkflowFactoryClass().newInstance().create(computationManager, cadbClient,
+                    histoDbClient, rulesDb, wcaFactory, loadFlowFactory, feDataStorage, onlineDb,
+                    uncertaintiesAnalyserFactory, correctiveControlOptimizerFactory, simulatorFactory, caseRepository,
+                    montecarloSamplerFactory, mergeOptimizerFactory, rulesFacadeFactory, onlineParams, startParams);
+            workflow.addOnlineApplicationListener(this);
+
+            for (OnlineApplicationListener l : listeners)
+                workflow.addOnlineApplicationListener(l);
+
             if (startParams.getOnlineApplicationListenerFactoryClass() != null) {
-                OnlineApplicationListener listener = startParams.getOnlineApplicationListenerFactoryClass().newInstance().create();
+                OnlineApplicationListener listener = startParams.getOnlineApplicationListenerFactoryClass()
+                        .newInstance().create();
                 workflow.addOnlineApplicationListener(listener);
             }
-        } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-        String wfId=null;
-        try {
-            
-            workflow.start(oCtx);
-            wfId=workflow.getId();
-        } catch (Exception e) {
 
-			  StatusSynthesis st=new StatusSynthesis();
-			  st.setWorkflowId(workflow.getId());
-			  st.setStatus(StatusSynthesis.STATUS_ERROR);
-			  onWorkflowUpdate(st);
-        	throw new RuntimeException(e);
-            
-        }
-        finally
-        {
-            workflow=null;
+            workflow.start(oCtx);
+            wfId = workflow.getId();
+        } catch (Exception e) {
+            LOGGER.error(e.toString(), e);
+            if (workflow != null) {
+                StatusSynthesis st = new StatusSynthesis();
+                st.setWorkflowId(workflow.getId());
+                st.setStatus(StatusSynthesis.STATUS_ERROR);
+                onWorkflowUpdate(st);
+            }
+            throw new RuntimeException(e);
+        } finally {
+            workflow = null;
         }
         return wfId;
     }
@@ -332,7 +294,6 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
         listeners.remove(l);
     }
 
-
     @Override
     public void close() throws Exception {
         future.cancel(true);
@@ -350,20 +311,14 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
     @Override
     public void onBusyCoresUpdate(int[] busyCores) {
 
-
     }
 
     @Override
     public void onWorkflowStateUpdate(WorkSynthesis status) {
         if (enableJmx) {
-            sendNotification(new AttributeChangeNotification(this,
-                    notificationIndex.getAndIncrement(),
-                    System.currentTimeMillis(),
-                    "WorkflowStateUpdate",
-                    WORK_STATES_ATTRIBUTE,
-                    status.getClass().getName(),
-                    null,
-                    status));
+            sendNotification(new AttributeChangeNotification(this, notificationIndex.getAndIncrement(),
+                    System.currentTimeMillis(), "WorkflowStateUpdate", WORK_STATES_ATTRIBUTE,
+                    status.getClass().getName(), null, status));
         }
 
     }
@@ -371,13 +326,8 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
     @Override
     public void onWorkflowUpdate(StatusSynthesis status) {
         if (enableJmx) {
-            sendNotification(new AttributeChangeNotification(this,
-                    notificationIndex.getAndIncrement(),
-                    System.currentTimeMillis(),
-                    "Running",
-                    RUNNING_ATTRIBUTE,
-                    status.getClass().getName(),
-                    null,
+            sendNotification(new AttributeChangeNotification(this, notificationIndex.getAndIncrement(),
+                    System.currentTimeMillis(), "Running", RUNNING_ATTRIBUTE, status.getClass().getName(), null,
                     status));
         }
 
@@ -387,14 +337,9 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
     public void onWcaUpdate(RunningSynthesis wcaRunning) {
         LOGGER.info("SEND onWcaUpdate" + wcaRunning);
         if (enableJmx) {
-            sendNotification(new AttributeChangeNotification(this,
-                    notificationIndex.getAndIncrement(),
-                    System.currentTimeMillis(),
-                    "WcaRunning",
-                    WCA_RUNNING_ATTRIBUTE,
-                    wcaRunning.getClass().getName(),
-                    null,
-                    wcaRunning));
+            sendNotification(new AttributeChangeNotification(this, notificationIndex.getAndIncrement(),
+                    System.currentTimeMillis(), "WcaRunning", WCA_RUNNING_ATTRIBUTE, wcaRunning.getClass().getName(),
+                    null, wcaRunning));
         }
 
     }
@@ -404,14 +349,9 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
 
         LOGGER.info("onStatesWithActionsUpdate received " + statesActions.getClass().getName());
         if (enableJmx) {
-            sendNotification(new AttributeChangeNotification(this,
-                    notificationIndex.getAndIncrement(),
-                    System.currentTimeMillis(),
-                    "StateActions",
-                    STATES_ACTIONS_ATTRIBUTE,
-                    statesActions.getClass().getName(),
-                    null,
-                    statesActions));
+            sendNotification(new AttributeChangeNotification(this, notificationIndex.getAndIncrement(),
+                    System.currentTimeMillis(), "StateActions", STATES_ACTIONS_ATTRIBUTE,
+                    statesActions.getClass().getName(), null, statesActions));
         }
 
     }
@@ -420,14 +360,10 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
     public void onStatesWithIndexesUpdate(ContingencyStatesIndexesSynthesis indexeActions) {
         LOGGER.info("onStatesWithIndexesUpdate received " + indexeActions.getClass().getName());
         if (enableJmx) {
-            sendNotification(new AttributeChangeNotification(this,
-                    notificationIndex.getAndIncrement(),
+            sendNotification(new AttributeChangeNotification(this, notificationIndex.getAndIncrement(),
                     System.currentTimeMillis(),
                     // "StateActions",
-                    "StatesIndexes",
-                    STATES_INDEXES_ATTRIBUTE,
-                    indexeActions.getClass().getName(),
-                    null,
+                    "StatesIndexes", STATES_INDEXES_ATTRIBUTE, indexeActions.getClass().getName(), null,
                     indexeActions));
         }
 
@@ -437,55 +373,40 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
     public void onStatesWithSecurityRulesResultsUpdate(IndexSecurityRulesResultsSynthesis indexesResults) {
         LOGGER.info("onStatesWithSecurityRulesResultsUpdate received " + indexesResults.getClass().getName());
         if (enableJmx) {
-            sendNotification(new AttributeChangeNotification(this,
-                    notificationIndex.getAndIncrement(),
-                    System.currentTimeMillis(),
-                    "IndexSecurityRulesResults",
-                    INDEXES_SECURITY_RULES_ATTRIBUTE,
-                    indexesResults.getClass().getName(),
-                    null,
-                    indexesResults));
+            sendNotification(new AttributeChangeNotification(this, notificationIndex.getAndIncrement(),
+                    System.currentTimeMillis(), "IndexSecurityRulesResults", INDEXES_SECURITY_RULES_ATTRIBUTE,
+                    indexesResults.getClass().getName(), null, indexesResults));
         }
 
     }
 
-
-	/*@Override
-    public void onStableContingencies(StableContingenciesSynthesis stableContingencies) {
-        sendNotification(new AttributeChangeNotification(this,
-                notificationIndex.getAndIncrement(),
-                System.currentTimeMillis(),
-                "StableContingencies",
-                STABLE_CONTINGENCIES_ATTRIBUTE,
-                stableContingencies.getClass().getName(),
-                null,
-                stableContingencies));
-
-    }
-	
-	@Override
-    public void onUnstableContingencies(UnstableContingenciesSynthesis unstableContingencies) {
-        sendNotification(new AttributeChangeNotification(this,
-                notificationIndex.getAndIncrement(),
-                System.currentTimeMillis(),
-                "UnstableContingencies",
-                UNSTABLE_CONTINGENCIES_ATTRIBUTE,
-                unstableContingencies.getClass().getName(),
-                null,
-                unstableContingencies));
-
-    }*/
+    /*
+     * @Override public void onStableContingencies(StableContingenciesSynthesis
+     * stableContingencies) { sendNotification(new
+     * AttributeChangeNotification(this, notificationIndex.getAndIncrement(),
+     * System.currentTimeMillis(), "StableContingencies",
+     * STABLE_CONTINGENCIES_ATTRIBUTE, stableContingencies.getClass().getName(),
+     * null, stableContingencies));
+     * 
+     * }
+     * 
+     * @Override public void
+     * onUnstableContingencies(UnstableContingenciesSynthesis
+     * unstableContingencies) { sendNotification(new
+     * AttributeChangeNotification(this, notificationIndex.getAndIncrement(),
+     * System.currentTimeMillis(), "UnstableContingencies",
+     * UNSTABLE_CONTINGENCIES_ATTRIBUTE,
+     * unstableContingencies.getClass().getName(), null,
+     * unstableContingencies));
+     * 
+     * }
+     */
 
     @Override
     public void onWcaContingencies(WcaContingenciesSynthesis wcaContingencies) {
-        sendNotification(new AttributeChangeNotification(this,
-                notificationIndex.getAndIncrement(),
-                System.currentTimeMillis(),
-                "WcaContingencies",
-                WCA_CONTINGENCIES_ATTRIBUTE,
-                wcaContingencies.getClass().getName(),
-                null,
-                wcaContingencies));
+        sendNotification(new AttributeChangeNotification(this, notificationIndex.getAndIncrement(),
+                System.currentTimeMillis(), "WcaContingencies", WCA_CONTINGENCIES_ATTRIBUTE,
+                wcaContingencies.getClass().getName(), null, wcaContingencies));
 
     }
 
@@ -519,11 +440,13 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
     }
 
     @Override
-    public void runFeaAnalysis(OnlineWorkflowStartParameters startconfig, ForecastErrorsAnalysisParameters parameters, String timeHorizonS) {
+    public void runFeaAnalysis(OnlineWorkflowStartParameters startconfig, ForecastErrorsAnalysisParameters parameters,
+            String timeHorizonS) {
         LOGGER.info("Starting fea analysis: " + parameters.toString() + "\n" + timeHorizonS);
 
         try {
-            ForecastErrorsAnalysis feAnalysis = new ForecastErrorsAnalysis(computationManager, ForecastErrorsAnalysisConfig.load(), parameters);
+            ForecastErrorsAnalysis feAnalysis = new ForecastErrorsAnalysis(computationManager,
+                    ForecastErrorsAnalysisConfig.load(), parameters);
             if ("".equals(timeHorizonS)) {
                 feAnalysis.start();
             } else {
@@ -534,17 +457,17 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
-        }  finally {
-           // workflowLock.unlock();
-            //workflow=null;
+        } finally {
+            // workflowLock.unlock();
+            // workflow=null;
         }
     }
 
     @Override
-    public void onWorkflowEnd(OnlineWorkflowContext context, OnlineDb onlineDb, ContingenciesAndActionsDatabaseClient cadbClient, OnlineWorkflowParameters parameters) {
+    public void onWorkflowEnd(OnlineWorkflowContext context, OnlineDb onlineDb,
+            ContingenciesAndActionsDatabaseClient cadbClient, OnlineWorkflowParameters parameters) {
         System.out.println("LocalOnlineApplicationListener onWorkFlowEnd");
     }
-
 
     // start td simulations
     private Path getFile(Path folder, String filename) {
@@ -553,20 +476,18 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
         return Paths.get(filename);
     }
 
-    private void writeCsvViolations(String basecase, List<LimitViolation> networkViolations, CsvWriter cvsWriter) throws IOException {
+    private void writeCsvViolations(String basecase, List<LimitViolation> networkViolations, CsvWriter cvsWriter)
+            throws IOException {
         for (LimitViolation violation : networkViolations) {
-            String[] values = new String[]{basecase,
-                    violation.getSubject().getId(),
-                    violation.getLimitType().name(),
-                    Float.toString(violation.getValue()),
-                    Float.toString(violation.getLimit())};
+            String[] values = new String[] { basecase, violation.getSubject().getId(), violation.getLimitType().name(),
+                    Float.toString(violation.getValue()), Float.toString(violation.getLimit()) };
             cvsWriter.writeRecord(values);
         }
         cvsWriter.flush();
     }
 
-    private void writeCsvTDResults(String basecase, Set<String> securityIndexIds, Map<String, Boolean> tdSimulationResults,
-                                   boolean writeHeaders, CsvWriter cvsWriter) throws IOException {
+    private void writeCsvTDResults(String basecase, Set<String> securityIndexIds,
+            Map<String, Boolean> tdSimulationResults, boolean writeHeaders, CsvWriter cvsWriter) throws IOException {
         String[] indexIds = securityIndexIds.toArray(new String[securityIndexIds.size()]);
         Arrays.sort(indexIds);
         if (writeHeaders) {
@@ -591,24 +512,26 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
         cvsWriter.flush();
     }
 
-    private void runTDSimulations(Path caseFile, String contingenciesIds, Boolean emptyContingency, Path outputFolder) throws Exception {
-    	 ContingenciesAndActionsDatabaseClient cadbClient = config.getContingencyDbClientFactoryClass().newInstance().create();
-         SimulatorFactory simulatorFactory = config.getSimulatorFactoryClass().newInstance();
+    private void runTDSimulations(Path caseFile, String contingenciesIds, Boolean emptyContingency, Path outputFolder)
+            throws Exception {
+        ContingenciesAndActionsDatabaseClient cadbClient = config.getContingencyDbClientFactoryClass().newInstance()
+                .create();
+        SimulatorFactory simulatorFactory = config.getSimulatorFactoryClass().newInstance();
 
-        //TODO check nulls
-        //in contingenciesIds, we assume a comma separated list of ids ...
+        // TODO check nulls
+        // in contingenciesIds, we assume a comma separated list of ids ...
         Set<String> contingencyIds = (contingenciesIds != null) ? Sets.newHashSet(contingenciesIds.split(",")) : null;
         Path metricsFile = getFile(outputFolder, "metrics.log");
         Path violationsFile = getFile(outputFolder, "networks-violations.csv");
         Path resultsFile = getFile(outputFolder, "simulation-results.csv");
         try (FileWriter metricsContent = new FileWriter(metricsFile.toFile());
-             FileWriter violationsContent = new FileWriter(violationsFile.toFile());
-             FileWriter resultsContent = new FileWriter(resultsFile.toFile())) {
+                FileWriter violationsContent = new FileWriter(violationsFile.toFile());
+                FileWriter resultsContent = new FileWriter(resultsFile.toFile())) {
             CsvWriter violationsCvsWriter = new CsvWriter(violationsContent, ',');
             CsvWriter resultsCvsWriter = new CsvWriter(resultsContent, ',');
             Set<String> securityIndexIds = new LinkedHashSet<>();
             try {
-                String[] violationsHeaders = new String[]{"Basecase", "Equipment", "Type", "Value", "Limit"};
+                String[] violationsHeaders = new String[] { "Basecase", "Equipment", "Type", "Value", "Limit" };
                 violationsCvsWriter.writeRecord(violationsHeaders);
                 violationsCvsWriter.flush();
 
@@ -623,13 +546,8 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
 
                     List<LimitViolation> networkViolations = Security.checkLimits(network);
                     writeCsvViolations(network.getId(), networkViolations, violationsCvsWriter);
-                    Map<String, Boolean> tdSimulationResults = Utils.runTDSimulation(network,
-                            contingencyIds,
-                            emptyContingency,
-                            computationManager,
-                            simulatorFactory,
-                            cadbClient,
-                            metricsContent);
+                    Map<String, Boolean> tdSimulationResults = Utils.runTDSimulation(network, contingencyIds,
+                            emptyContingency, computationManager, simulatorFactory, cadbClient, metricsContent);
                     securityIndexIds.addAll(tdSimulationResults.keySet());
                     writeCsvTDResults(network.getId(), securityIndexIds, tdSimulationResults, true, resultsCvsWriter);
                 } else if (Files.isDirectory(caseFile)) {
@@ -637,23 +555,19 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
                         try {
                             List<LimitViolation> networkViolations = Security.checkLimits(network);
                             writeCsvViolations(network.getId(), networkViolations, violationsCvsWriter);
-                            Map<String, Boolean> tdSimulationResults = Utils.runTDSimulation(network,
-                                    contingencyIds,
-                                    emptyContingency,
-                                    computationManager,
-                                    simulatorFactory,
-                                    cadbClient,
-                                    metricsContent);
+                            Map<String, Boolean> tdSimulationResults = Utils.runTDSimulation(network, contingencyIds,
+                                    emptyContingency, computationManager, simulatorFactory, cadbClient, metricsContent);
                             boolean writeHeaders = false;
                             if (securityIndexIds.isEmpty()) {
                                 securityIndexIds.addAll(tdSimulationResults.keySet());
                                 writeHeaders = true;
                             }
-                            writeCsvTDResults(network.getId(), securityIndexIds, tdSimulationResults, writeHeaders, resultsCvsWriter);
+                            writeCsvTDResults(network.getId(), securityIndexIds, tdSimulationResults, writeHeaders,
+                                    resultsCvsWriter);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    }, dataSource -> System.out.println("loading case " + dataSource.getBaseName()));
+                    } , dataSource -> System.out.println("loading case " + dataSource.getBaseName()));
                 }
             } catch (IOException ioxcp) {
                 ioxcp.printStackTrace();
@@ -665,9 +579,9 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
     }
 
     @Override
-    public void runTDSimulations(OnlineWorkflowStartParameters startconfig, String caseFile, String contingenciesIds, String emptyContingencyS, String outputFolderS) {
+    public void runTDSimulations(OnlineWorkflowStartParameters startconfig, String caseFile, String contingenciesIds,
+            String emptyContingencyS, String outputFolderS) {
         LOGGER.info("Starting td simulations: " + startconfig.toString() + "\n");
-
 
         try {
             boolean emptyContingency = Boolean.parseBoolean(emptyContingencyS);
@@ -683,6 +597,5 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport imple
     }
 
     // end td simulations
-
 
 }
