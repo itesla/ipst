@@ -7,7 +7,6 @@
  */
 package eu.itesla_project.online.db;
 
-import com.csvreader.CsvWriter;
 import eu.itesla_project.cases.CaseType;
 import eu.itesla_project.iidm.datasource.DataSource;
 import eu.itesla_project.iidm.datasource.FileDataSource;
@@ -39,7 +38,10 @@ import org.slf4j.LoggerFactory;
 import org.supercsv.io.CsvListWriter;
 import org.supercsv.prefs.CsvPreference;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -146,7 +148,7 @@ public class OnlineDbMVStore implements OnlineDb {
             } catch (IOException e) {
                 String errorMessage = "online db folder " + storageFolder + " does not exist and cannot be created: " + e.getMessage();
                 LOGGER.error(errorMessage);
-                throw new RuntimeException(errorMessage);
+                throw new RuntimeException(errorMessage, e);
             }
         }
         mapBuilder = new MVMapConcurrent.Builder<String, String>();
@@ -209,7 +211,7 @@ public class OnlineDbMVStore implements OnlineDb {
         } catch (Throwable e) {
             String errorMessage = "Error storing metrics for wf " + workflowId + " in map " + mapName + ": " + e.getMessage();
             LOGGER.error(errorMessage);
-            throw new RuntimeException(errorMessage);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
@@ -231,7 +233,7 @@ public class OnlineDbMVStore implements OnlineDb {
         } catch (Throwable e) {
             String errorMessage = "Error storing metadata for wf " + workflowId + ", step " + step.name() + ", state " + stateId + ": " + e.getMessage();
             LOGGER.error(errorMessage);
-            throw new RuntimeException(errorMessage);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
@@ -250,7 +252,7 @@ public class OnlineDbMVStore implements OnlineDb {
 
     private Map<String, String> getMetrics(String workflowId, String mapName) {
         if (isWorkflowStored(workflowId)) {
-            HashMap<String, String> metrics = new HashMap<String, String>();
+            TreeMap<String, String> metrics = new TreeMap<>();
             MVStore wfMVStore = getStore(workflowId);
             if (wfMVStore.getMapNames().contains(mapName)) {
                 Map<String, String> storedMap = wfMVStore.openMap(mapName, mapBuilder);
@@ -266,11 +268,10 @@ public class OnlineDbMVStore implements OnlineDb {
     }
 
     @Override
-    public String getCsvMetrics(String workflowId, OnlineStep step) {
+    public List<String[]> getAllMetrics(String workflowId, OnlineStep step) {
         LOGGER.info("Preparing CSV data for wf {} and step {}", workflowId, step.name());
+        List<String[]> retTable = new ArrayList<>();
         if (isWorkflowStored(workflowId)) {
-            StringWriter content = new StringWriter();
-            CsvWriter cvsWriter = new CsvWriter(content, ',');
             try {
                 MVStore wfMVStore = getStore(workflowId);
                 // check if there are stored metrics
@@ -278,8 +279,7 @@ public class OnlineDbMVStore implements OnlineDb {
                 if (storedStepsMap.containsKey(step.name())) {
                     MVMap<String, String> stepParamsMap = wfMVStore.openMap(step.name() + STORED_METRICS_PARAMS_MAP_SUFFIX, mapBuilder);
                     MVMap<String, String> stepStatesMap = wfMVStore.openMap(step.name() + STORED_METRICS_STATES_MAP_SUFFIX, mapBuilder);
-                    // write headers
-                    //LOGGER.debug("Preparing CSV headers for wf {} and step {}", workflowId, step.name());
+                    // gets headers
                     String[] headers = new String[stepParamsMap.keySet().size() + 1];
                     headers[0] = "state";
                     HashMap<String, Integer> paramsIndexes = new HashMap<>();
@@ -289,34 +289,30 @@ public class OnlineDbMVStore implements OnlineDb {
                         paramsIndexes.put(parameter, i);
                         i++;
                     }
-                    cvsWriter.writeRecord(headers);
-                    // write step general metrics, if stored
+                    retTable.add(headers);
+                    // gets step general metrics, if stored
                     if (stepStatesMap.containsKey("_")) {
-                        //LOGGER.debug("Preparing CSV data for wf {} and step {} - general step metrics", workflowId, step.name());
-                        String[] values = getStoredMapValues(wfMVStore, "_", step, stepParamsMap.keySet().size(), paramsIndexes);
-                        cvsWriter.writeRecord(values);
+                        retTable.add(getStoredMapValues(wfMVStore, "_", step, stepParamsMap.keySet().size(), paramsIndexes));
                     }
-                    // write step metrics for each state, if stored
-                    for (String stateId : stepStatesMap.keySet()) {
-                        if (!"_".equals(stateId)) {
-                            //LOGGER.debug("Preparing CSV data for wf {} and step {} - state {} metrics", workflowId, step.name(), stateId);
-                            String[] values = getStoredMapValues(wfMVStore, stateId, step, stepParamsMap.keySet().size(), paramsIndexes);
-                            cvsWriter.writeRecord(values);
-                        }
-                    }
+                    // gets step metrics for each state, if stored
+                    stepStatesMap.keySet().stream()
+                            .filter(x -> (!"_".equals(x)))
+                            .sorted(Comparator.comparing(Integer::valueOf))
+                            .forEach(stateId -> {
+                                retTable.add(getStoredMapValues(wfMVStore, stateId, step, stepParamsMap.keySet().size(), paramsIndexes));
+                            });
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 String errorMessage = "error getting cvs data for step " + step.name() + " and wf id " + workflowId;
                 LOGGER.error(errorMessage);
-                throw new RuntimeException(errorMessage);
+                throw new RuntimeException(errorMessage, e);
             }
-            cvsWriter.flush();
-            return content.toString();
         } else {
             LOGGER.warn("No data about wf {}", workflowId);
-            return null;
         }
+        return retTable;
     }
+
 
     private String[] getStoredMapValues(MVStore wfMVStore, String stateId, OnlineStep step, int paramsN, HashMap<String, Integer> paramsIndexes) {
         String[] values = new String[paramsN + 1];
@@ -989,7 +985,7 @@ public class OnlineDbMVStore implements OnlineDb {
                         String errorMessage = "online db: folder " + workflowStatesFolder + " for workflow " + workflowId
                                 + " , state " + stateIdStr + " ; cannot remove existing state file: " + e.getMessage();
                         LOGGER.error(errorMessage);
-                        throw new RuntimeException(errorMessage);
+                        throw new RuntimeException(errorMessage, e);
                     }
                 }
             } else {
@@ -999,7 +995,7 @@ public class OnlineDbMVStore implements OnlineDb {
                     String errorMessage = "online db: folder " + workflowStatesFolder + " for workflow " + workflowId
                             + " and state " + stateIdStr + " cannot be created: " + e.getMessage();
                     LOGGER.error(errorMessage);
-                    throw new RuntimeException(errorMessage);
+                    throw new RuntimeException(errorMessage, e);
                 }
             }
             DataSource dataSource = new FileDataSource(stateFolder, network.getId());
@@ -1238,7 +1234,7 @@ public class OnlineDbMVStore implements OnlineDb {
         } catch (Throwable e) {
             String errorMessage = "Error storing violations for wf " + workflowId + " in map " + mapName + ": " + e.getMessage();
             LOGGER.error(errorMessage);
-            throw new RuntimeException(errorMessage);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
@@ -1264,7 +1260,7 @@ public class OnlineDbMVStore implements OnlineDb {
         } catch (Throwable e) {
             String errorMessage = "Error storing violations metadata for wf " + workflowId + ", step " + step.name() + ", state " + stateId + ": " + e.getMessage();
             LOGGER.error(errorMessage);
-            throw new RuntimeException(errorMessage);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
@@ -1456,7 +1452,7 @@ public class OnlineDbMVStore implements OnlineDb {
         } catch (Throwable e) {
             String errorMessage = "Error storing pc violations metadata for wf " + workflowId + ", contingency " + contingencyId + ", state " + stateId + ": " + e.getMessage();
             LOGGER.error(errorMessage);
-            throw new RuntimeException(errorMessage);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
@@ -1489,7 +1485,7 @@ public class OnlineDbMVStore implements OnlineDb {
         } catch (Throwable e) {
             String errorMessage = "Error storing pc loadflow convergence for wf " + workflowId + ", contingency " + contingencyId + ", state " + stateId + ": " + e.getMessage();
             LOGGER.error(errorMessage);
-            throw new RuntimeException(errorMessage);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
@@ -1818,7 +1814,7 @@ public class OnlineDbMVStore implements OnlineDb {
             } catch (IOException e) {
                 String errorMessage = "online db: folder " + workflowStatesFolder + " for workflow " + workflowId + " cannot be created: " + e.getMessage();
                 LOGGER.error(errorMessage);
-                throw new RuntimeException(errorMessage);
+                throw new RuntimeException(errorMessage, e);
             }
 
         return workflowStatesFolder;
@@ -1890,5 +1886,4 @@ public class OnlineDbMVStore implements OnlineDb {
         }
         return storedMapList.toString();
     }
-
 }
