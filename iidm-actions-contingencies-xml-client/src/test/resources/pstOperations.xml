@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+    Copyright (c) 2017, RTE (http://www.rte-france.com)
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<actionsContingencies>
+    <contingencies>
+        <contingency id="emptyContingency"/>
+    </contingencies>
+    <elementaryActions>
+        <elementaryAction name="tapChange" curativeType="true" preventiveType="false" startTime="123">
+            <description info="PST Tap operation" />
+            <pstOperation achievmentIndex="0" action="tapChange" id="PS1" implementationTime="150">
+                <parameter name="tapPosition">2</parameter>
+            </pstOperation>
+        </elementaryAction>
+    </elementaryActions>
+    <actionPlans/>
+    <actionCtgAssociations>
+        <association>
+            <action achievmentIndex="0" id="tapChange" num="1"/>
+        </association>
+    </actionCtgAssociations>
+</actionsContingencies>

@@ -8,35 +8,35 @@ package eu.itesla_project.iidm.actions_contingencies.xml.test;
 
 import static org.junit.Assert.*;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
+import java.io.IOException;
+import java.net.URL;
 
 import org.junit.Test;
 
 import eu.itesla_project.iidm.actions_contingencies.xml.XmlFileContingenciesAndActionsDatabaseClient;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
+import org.xml.sax.SAXException;
+
+import javax.xml.bind.JAXBException;
 
 /**
-*
-* @author Quinary <itesla@quinary.com>
-*/
+ * @author Quinary <itesla@quinary.com>
+ */
 public class ACXmlClientTest {
 
-	@Test
-	public void test()  {
-		
-		Path p1 = Paths.get("src/test/resources/test-ac.xml");
-		try {
-			ContingenciesAndActionsDatabaseClient client = new XmlFileContingenciesAndActionsDatabaseClient(p1);
-			client.getActionPlans();
-			client.getZones();
-			
-		} catch (Exception  e) {
-			e.printStackTrace();
-			fail("Error "+e.getMessage());
-		}
-		
-	}
+    @Test
+    public void test() {
+        try {
+            URL config = getClass().getResource("/test-ac.xml");
+            ContingenciesAndActionsDatabaseClient client = new XmlFileContingenciesAndActionsDatabaseClient(config);
+            client.getActionPlans();
+            client.getZones();
+
+        } catch (JAXBException | SAXException | IOException e) {
+            e.printStackTrace();
+            fail("Error " + e.getMessage());
+        }
+
+    }
 
 }
