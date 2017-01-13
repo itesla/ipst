@@ -13,7 +13,6 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
  */
 @javax.xml.bind.annotation.XmlRootElement
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2016-10-06T14:01:02.692Z")
 public class ApiResponseMessage {
     public static final int ERROR = 1;
     public static final int WARNING = 2;

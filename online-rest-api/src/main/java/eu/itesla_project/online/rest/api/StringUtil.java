@@ -10,7 +10,6 @@ package eu.itesla_project.online.rest.api;
  *
  * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2016-10-06T14:01:02.692Z")
 public class StringUtil {
     /**
      * Check if the given array contains the given value (with case-insensitive

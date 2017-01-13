@@ -21,7 +21,6 @@ import eu.itesla_project.online.rest.api.factories.ProcessApiServiceFactory;
  * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
  */
 @Path("/process")
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2016-10-06T14:01:02.692Z")
 public class ProcessApi {
     private final ProcessApiService delegate = ProcessApiServiceFactory.getProcessApi();
 

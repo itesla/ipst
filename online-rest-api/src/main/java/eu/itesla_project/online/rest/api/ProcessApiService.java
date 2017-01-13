@@ -13,7 +13,6 @@ import javax.ws.rs.core.SecurityContext;
  *
  * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2016-10-06T14:01:02.692Z")
 public abstract class ProcessApiService {
     public abstract Response processGet(String owner, String basecase, String name, DateTimeParameter date,
             DateTimeParameter creationDate, SecurityContext securityContext) throws ApiException;

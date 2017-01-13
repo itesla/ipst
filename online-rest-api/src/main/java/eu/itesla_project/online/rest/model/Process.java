@@ -16,7 +16,6 @@ import java.util.List;
  *
  * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2016-10-06T14:01:02.692Z")
 public class Process {
 
     private String id = null;
