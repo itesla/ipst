@@ -21,7 +21,6 @@ public class ProcessApiServiceFactory {
             new OnlineDBUtils(new OnlineDbMVStoreFactory()));
 
     public static ProcessApiService getProcessApi() {
-
         return service;
     }
 }

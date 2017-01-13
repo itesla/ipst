@@ -387,10 +387,10 @@ public interface OnlineDb extends AutoCloseable {
      */
     Map<Integer, Map<String, Boolean>> getPostContingencyLoadflowConvergence(String workflowId);
 
-	void storeProcess(OnlineProcess proc) throws Exception;
+    void storeProcess(OnlineProcess proc) throws Exception;
 
-	List<OnlineProcess> listProcesses() throws IOException;
+    List<OnlineProcess> listProcesses() throws IOException;
 
-	OnlineProcess getProcess(String processId) throws IOException;
+    OnlineProcess getProcess(String processId) throws IOException;
 
 }

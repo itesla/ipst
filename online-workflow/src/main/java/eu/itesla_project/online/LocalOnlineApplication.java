@@ -457,9 +457,6 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
-        } finally {
-            // workflowLock.unlock();
-            // workflow=null;
         }
     }
 

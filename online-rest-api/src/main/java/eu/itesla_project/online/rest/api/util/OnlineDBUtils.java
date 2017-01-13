@@ -218,11 +218,8 @@ public class OnlineDBUtils implements ProcessDBUtils {
                                 sr.setState(state);
                                 srMap.put(state, sr);
                             }
-
                             sr.setConvergence(convergenceMap.get(cont));
-
                         }
-
                     }
                 });
             }

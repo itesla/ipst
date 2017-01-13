@@ -35,7 +35,6 @@ public class ProcessApiServiceImpl extends ProcessApiService {
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
 
     public ProcessApiServiceImpl(ProcessDBUtils utils) {
-        System.out.println("ProcessApiServiceImpl");
         this.utils = utils;
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JodaModule());
@@ -48,9 +47,6 @@ public class ProcessApiServiceImpl extends ProcessApiService {
             DateTimeParameter creationDate, SecurityContext securityContext) throws ApiException {
         LOGGER.info("Get process list: owner=" + owner + ", basecase=" + basecase + ", name=" + name + ", date=" + date
                 + ", creationDate=" + creationDate);
-        System.out.println("Get process list: owner=" + owner + ", basecase=" + basecase + ", name=" + name + ", date="
-                + date + ", creationDate=" + creationDate);
-
         String res = null;
         try {
             res = objectMapper.writer()
@@ -60,14 +56,12 @@ public class ProcessApiServiceImpl extends ProcessApiService {
             LOGGER.error(e.getMessage(), e);
             throw new ApiException(500, e.getMessage());
         }
-
         return Response.ok().entity(res).build();
     }
 
     @Override
     public Response processProcessIdGet(String processId, SecurityContext securityContext) throws ApiException {
         LOGGER.info("Get process : processId=" + processId);
-
         Process entity = utils.getProcess(processId);
         if (entity == null)
             return Response.status(Status.NOT_FOUND).entity("Process not found").build();
@@ -75,7 +69,6 @@ public class ProcessApiServiceImpl extends ProcessApiService {
         try {
             res = objectMapper.writer().writeValueAsString(entity);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
             LOGGER.error(e.getMessage(), e);
             throw new ApiException(500, e.getMessage());
         }
@@ -94,7 +87,6 @@ public class ProcessApiServiceImpl extends ProcessApiService {
         try {
             res = objectMapper.writer().writeValueAsString(entity);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
             LOGGER.error(e.getMessage(), e);
             throw new ApiException(500, e.getMessage());
         }

@@ -70,7 +70,6 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
     private final MergeOptimizerFactory mergeOptimizerFactory;
     private final RulesFacadeFactory rulesFacadeFactory;
     private final OnlineWorkflowStartParameters startParameters;
-    //private String processId;
     private String id;
 
     public OnlineWorkflowImpl(
@@ -137,19 +136,6 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
         this.id = DateTimeFormat.forPattern("yyyyMMdd_HHmm_").print(this.parameters.getBaseCaseDate()) + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
         logger.info(this.parameters.toString());
     }
-    
-    /*
-    public void setProcessId(String processId)
-    {
-    	this.processId=processId;
-    }
-    
-    @Override
-    public String getProcessId(){
-    	return processId;
-    }
-    */
-    
     
     /* (non-Javadoc)
      * @see eu.itesla_project.online.OnlineWorkflowInterface#getId()

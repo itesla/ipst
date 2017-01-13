@@ -50,7 +50,7 @@
         <module>online-mpi</module>
         <module>online-server</module>
         <module>online-workflow</module>
-		<module>online-rest-api</module>
+        <module>online-rest-api</module>
         <module>pclfsim-integration</module>
         <module>sampling-integration</module>
         <module>ucte-import</module>
