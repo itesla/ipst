@@ -8,6 +8,7 @@ package eu.itesla_project.modules.online;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.joda.time.DateTime;
 
@@ -17,52 +18,42 @@ import org.joda.time.DateTime;
  */
 public class OnlineProcess {
 
-    private String id;
-    private String name;
-    private String owner;
-    private DateTime date;
-    private DateTime creationDate;
-    private String caseType;
-    private Map<String, String> workflowsMap = new HashMap<String, String>();
+    private final String id;
+    private final String name;
+    private final String owner;
+    private final DateTime date;
+    private final DateTime creationDate;
+    private final String caseType;
+    private final Map<String, String> workflowsMap = new HashMap<String, String>();
 
+    public OnlineProcess(String id, String name, String owner, String caseType, DateTime date, DateTime creationDate)
+    {
+        this.id=Objects.requireNonNull(id);
+        this.name=name;
+        this.owner=owner;
+        this.caseType=Objects.requireNonNull(caseType);
+        this.date=Objects.requireNonNull(date);
+        this.creationDate=Objects.requireNonNull(creationDate);
+    }
+    
     public String getId() {
         return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getOwner() {
         return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
     }
 
     public DateTime getDate() {
         return date;
     }
 
-    public void setDate(DateTime date) {
-        this.date = date;
-    }
-
     public DateTime getCreationDate() {
         return creationDate;
-    }
-
-    public void setCreationDate(DateTime creationDate) {
-        this.creationDate = creationDate;
     }
 
     public Map<String, String> getWorkflowsMap() {
@@ -75,10 +66,6 @@ public class OnlineProcess {
 
     public String getCaseType() {
         return caseType;
-    }
-
-    public void setCaseType(String caseType) {
-        this.caseType = caseType;
     }
 
 }

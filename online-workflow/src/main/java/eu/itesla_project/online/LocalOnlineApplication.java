@@ -68,8 +68,6 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
 
     private ScheduledExecutorService ses;
 
-    private ExecutorService es;
-
     private final boolean enableJmx;
 
     private final ScheduledFuture<?> future;
@@ -83,13 +81,12 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
     private final AtomicInteger notificationIndex = new AtomicInteger();
 
     public LocalOnlineApplication(OnlineConfig config, ComputationManager computationManager,
-            ScheduledExecutorService ses, ExecutorService es, boolean enableJmx)
+            ScheduledExecutorService ses, boolean enableJmx)
                     throws IllegalAccessException, InstantiationException, InstanceAlreadyExistsException,
                     MBeanRegistrationException, MalformedObjectNameException, NotCompliantMBeanException, IOException {
         this.config = config;
-        this.computationManager = computationManager;
-        this.ses = ses;
-        this.es = es;
+        this.computationManager = Objects.requireNonNull(computationManager);
+        this.ses = Objects.requireNonNull(ses);
 
         LOGGER.info("Version: {}", Version.VERSION);
 
@@ -162,35 +159,22 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
     public String startProcess(String name, String owner, DateTime date, DateTime creationDate,
             OnlineWorkflowStartParameters start, OnlineWorkflowParameters params, DateTime[] basecases)
                     throws Exception {
+        Objects.requireNonNull(date);
+        Objects.requireNonNull(creationDate);
+        Objects.requireNonNull(params);
+        Objects.requireNonNull(basecases);
         config = OnlineConfig.load();
-        OnlineDb onlineDb = config.getOnlineDbFactoryClass().newInstance().create();
-        OnlineProcess proc = new OnlineProcess();
+        OnlineDb onlineDb = config.getOnlineDbFactoryClass().newInstance().create();      
         String processId = DateTimeFormat.forPattern("yyyyMMddHHmmSSS").print(new DateTime());
-        LOGGER.info("Starting process: " + processId);
-
-        proc.setId(processId);
-        proc.setName(name);
-        proc.setOwner(owner);
-        proc.setCaseType(params.getCaseType().toString());
-        if (date != null)
-            proc.setDate(date);
-        else
-            proc.setDate(new DateTime());
-        if (creationDate != null)
-            proc.setCreationDate(creationDate);
-        else
-            proc.setCreationDate(new DateTime());
-
+        LOGGER.info("Starting process: " + processId);      
+        OnlineProcess proc = new OnlineProcess(processId, name, owner, params.getCaseType().toString(), date, creationDate);
         for (DateTime bcase : basecases) {
             params.setBaseCaseDate(bcase);
-
             String id = startWorkflow(start, params);
             org.joda.time.format.DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
             String basecaseString = fmt.print(bcase);
             proc.addWorkflow(basecaseString, id);
-
         }
-
         onlineDb.storeProcess(proc);
         LOGGER.info("End of process: " + processId);
         return processId;
@@ -297,7 +281,6 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
     @Override
     public void close() throws Exception {
         future.cancel(true);
-        // histoDbClient.close();
 
         if (enableJmx) {
             // unregister application mbean
@@ -380,28 +363,6 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
 
     }
 
-    /*
-     * @Override public void onStableContingencies(StableContingenciesSynthesis
-     * stableContingencies) { sendNotification(new
-     * AttributeChangeNotification(this, notificationIndex.getAndIncrement(),
-     * System.currentTimeMillis(), "StableContingencies",
-     * STABLE_CONTINGENCIES_ATTRIBUTE, stableContingencies.getClass().getName(),
-     * null, stableContingencies));
-     * 
-     * }
-     * 
-     * @Override public void
-     * onUnstableContingencies(UnstableContingenciesSynthesis
-     * unstableContingencies) { sendNotification(new
-     * AttributeChangeNotification(this, notificationIndex.getAndIncrement(),
-     * System.currentTimeMillis(), "UnstableContingencies",
-     * UNSTABLE_CONTINGENCIES_ATTRIBUTE,
-     * unstableContingencies.getClass().getName(), null,
-     * unstableContingencies));
-     * 
-     * }
-     */
-
     @Override
     public void onWcaContingencies(WcaContingenciesSynthesis wcaContingencies) {
         sendNotification(new AttributeChangeNotification(this, notificationIndex.getAndIncrement(),
@@ -417,13 +378,11 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
 
     @Override
     public void onDisconnection() {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void onConnection() {
-        // TODO Auto-generated method stub
 
     }
 
@@ -433,7 +392,6 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
         try {
             close();
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
