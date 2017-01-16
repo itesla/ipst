@@ -77,39 +77,40 @@
         <pepite.libs.weightedtrees.version>1.1-ITESLA</pepite.libs.weightedtrees.version>
         <pepite.libs.version>1.0-ITESLA</pepite.libs.version>
 
-        <junit.version>4.12</junit.version>
-        <slf4j.version>1.7.21</slf4j.version>
-        <logback.version>1.1.7</logback.version>
-        <guava.version>20.0</guava.version>
-        <trove4j.version>3.0.3</trove4j.version>
-        <commonsmath3.version>3.6.1</commonsmath3.version>
-        <commonsio.version>2.4</commonsio.version>
-        <commonscli.version>1.3.1</commonscli.version>
-        <supercsv.version>2.4.0</supercsv.version>
-        <httpclient.version>4.5.2</httpclient.version>
-        <shrinkwrap.version>1.2.6</shrinkwrap.version>
-        <jodatime.version>2.9.6</jodatime.version>
         <autoservice.version>1.0-rc2</autoservice.version>
-        <sirocco.version>1.0</sirocco.version>
-        <jackson.version>2.7.3</jackson.version>
-        <h2database.version>1.4.191</h2database.version>
-        <gdata.version>1.41.1_1</gdata.version>
-        <commonslang.version>2.6</commonslang.version>
-        <commonscodec.version>1.10</commonscodec.version>
-        <json.version>20160212</json.version>
-        <commonslang3.version>3.4</commonslang3.version>
-        <javacsv.version>2.0</javacsv.version>
-        <jmatio.version>1.0</jmatio.version>
-        <jgrapht.version>0.9.1</jgrapht.version>
-        <graphvizapi.version>1.1</graphvizapi.version>
-        <mockito.version>1.10.19</mockito.version>
-        <commonsconfiguration.version>1.10</commonsconfiguration.version>
-        <poi.version>3.14</poi.version>
-        <gson.version>2.6.2</gson.version>
-        <jsonlib.version>2.4</jsonlib.version>
-        <xmlunit.version>2.3.0</xmlunit.version>
         <commons-compress.version>1.12</commons-compress.version>
+        <commonscli.version>1.3.1</commonscli.version>
+        <commonscodec.version>1.10</commonscodec.version>
+        <commonsconfiguration.version>1.10</commonsconfiguration.version>
+        <commonsio.version>2.4</commonsio.version>
+        <commonslang.version>2.6</commonslang.version>
+        <commonslang3.version>3.4</commonslang3.version>
+        <commonsmath3.version>3.6.1</commonsmath3.version>
+        <gdata.version>1.41.1_1</gdata.version>
+        <graphvizapi.version>1.1</graphvizapi.version>
+        <gson.version>2.6.2</gson.version>
+        <guava.version>20.0</guava.version>
+        <h2database.version>1.4.191</h2database.version>
+        <httpclient.version>4.5.2</httpclient.version>
         <ipstcore.version>0.1-SNAPSHOT</ipstcore.version>
+        <jackson.version>2.7.3</jackson.version>
+        <javacsv.version>2.0</javacsv.version>
+        <jgrapht.version>0.9.1</jgrapht.version>
+        <jimfs.version>1.1</jimfs.version>
+        <jmatio.version>1.0</jmatio.version>
+        <jodatime.version>2.9.6</jodatime.version>
+        <json.version>20160212</json.version>
+        <jsonlib.version>2.4</jsonlib.version>
+        <junit.version>4.12</junit.version>
+        <logback.version>1.1.7</logback.version>
+        <mockito.version>1.10.19</mockito.version>
+        <poi.version>3.14</poi.version>
+        <shrinkwrap.version>1.2.6</shrinkwrap.version>
+        <sirocco.version>1.0</sirocco.version>
+        <slf4j.version>1.7.21</slf4j.version>
+        <supercsv.version>2.4.0</supercsv.version>
+        <trove4j.version>3.0.3</trove4j.version>
+        <xmlunit.version>2.3.0</xmlunit.version>
     </properties>
 
     <licenses>
@@ -275,6 +276,11 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.jimfs</groupId>
+                <artifactId>jimfs</artifactId>
+                <version>${jimfs.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-cli</groupId>
