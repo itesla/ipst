@@ -13,6 +13,7 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.gdata.util.io.base.UnicodeReader;
 import eu.itesla_project.commons.config.PlatformConfig;
+import eu.itesla_project.iidm.datasource.DataSourceUtil;
 import eu.itesla_project.iidm.datasource.ReadOnlyDataSource;
 import eu.itesla_project.iidm.import_.Importer;
 import eu.itesla_project.iidm.import_.Importers;
@@ -38,7 +39,6 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- *
  * @author Olivier Bretteville <olivier.bretteville at rte-france.com>
  */
 @AutoService(Importer.class)
@@ -99,10 +99,10 @@ public class CIM1Importer implements Importer, CIM1Constants {
     }
 
     private Packaging detectPackaging(ReadOnlyDataSource dataSource) throws IOException {
-        if (dataSource.exists("_ME", "xml")) {
+        if (exists(dataSource, "_ME", "xml")) {
             return Packaging.MERGED;
         }
-        if (dataSource.exists("_EQ", "xml") && dataSource.exists("_TP", "xml") && dataSource.exists("_SV", "xml")) {
+        if (exists(dataSource, "_EQ", "xml") && exists(dataSource, "_TP", "xml") && exists(dataSource, "_SV", "xml")) {
             return Packaging.SPLIT;
         }
         return null;
@@ -158,11 +158,11 @@ public class CIM1Importer implements Importer, CIM1Constants {
             if (packaging != null) {
                 switch (packaging) {
                     case MERGED:
-                        try (InputStream is = dataSource.newInputStream("_ME", "xml")) {
+                        try (InputStream is = newInputStream(dataSource, "_ME", "xml")) {
                             return isCim14(is);
                         }
                     case SPLIT:
-                        try (InputStream eqIs = dataSource.newInputStream("_EQ", "xml")) { // just test eq file to save time
+                        try (InputStream eqIs = newInputStream(dataSource, "_EQ", "xml")) { // just test eq file to save time
                             return isCim14(eqIs);
                         }
                     default:
@@ -179,7 +179,7 @@ public class CIM1Importer implements Importer, CIM1Constants {
 
     private CIMModel loadMergedModel(ReadOnlyDataSource dataSource, Reader bseqr, Reader bstpr) throws Exception {
         CIMModel model = new CIMModel();
-        try (Reader mer = new UnicodeReader(dataSource.newInputStream("_ME", "xml"), null)) {
+        try (Reader mer = new UnicodeReader(newInputStream(dataSource, "_ME", "xml"), null)) {
 
             long startTime2 = System.currentTimeMillis();
 
@@ -195,9 +195,9 @@ public class CIM1Importer implements Importer, CIM1Constants {
 
     private CIMModel loadSplitModel(ReadOnlyDataSource dataSource, Reader bseqr, Reader bstpr) throws Exception {
         CIMModel model = new CIMModel();
-        try (Reader eqr = new UnicodeReader(dataSource.newInputStream("_EQ", "xml"), null);
-             Reader tpr = new UnicodeReader(dataSource.newInputStream("_TP", "xml"), null);
-             Reader svr = new UnicodeReader(dataSource.newInputStream("_SV", "xml"), null)) {
+        try (Reader eqr = new UnicodeReader(newInputStream(dataSource, "_EQ", "xml"), null);
+             Reader tpr = new UnicodeReader(newInputStream(dataSource, "_TP", "xml"), null);
+             Reader svr = new UnicodeReader(newInputStream(dataSource, "_SV", "xml"), null)) {
 
             long startTime2 = System.currentTimeMillis();
 
@@ -278,7 +278,7 @@ public class CIM1Importer implements Importer, CIM1Constants {
                 }
 
                 CIM1NamingStrategyFactory namingStrategyFactory;
-                try (InputStream eqIs = dataSource.newInputStream("_EQ", "xml")) { // just test eq file to save time
+                try (InputStream eqIs = newInputStream(dataSource, "_EQ", "xml")) { // just test eq file to save time
                     namingStrategyFactory = usePsseNamingStrategy && isPtiCim14(eqIs) ? new CIM1PSSENamingStrategyFactory()
                                                                                       : new CIM1DefaultNamingStrategyFactory();
                 }
@@ -301,4 +301,24 @@ public class CIM1Importer implements Importer, CIM1Constants {
         return network;
     }
 
+    private String getBaseName(ReadOnlyDataSource dataSource) {
+        String basename = dataSource.getBaseName();
+        if (basename.endsWith("_ME") || basename.endsWith("_EQ") || basename.endsWith("_TP") || basename.endsWith("_SV")) {
+            basename = basename.substring(0, basename.length() - 3);
+        }
+
+        return basename;
+    }
+
+    private InputStream newInputStream(ReadOnlyDataSource dataSource, String suffix, String ext) throws IOException {
+        String baseName = getBaseName(dataSource);
+        String fileName = DataSourceUtil.getFileName(baseName, suffix, ext);
+        return dataSource.newInputStream(fileName);
+    }
+
+    private boolean exists(ReadOnlyDataSource dataSource, String suffix, String ext) throws IOException {
+        String baseName = getBaseName(dataSource);
+        String fileName = DataSourceUtil.getFileName(baseName, suffix, ext);
+        return dataSource.exists(fileName);
+    }
 }
