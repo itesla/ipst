@@ -11,10 +11,8 @@ package eu.itesla_project.online.rest.api;
  * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
  */
 public class NotFoundException extends ApiException {
-    private int code;
 
     public NotFoundException(int code, String msg) {
         super(code, msg);
-        this.code = code;
     }
 }

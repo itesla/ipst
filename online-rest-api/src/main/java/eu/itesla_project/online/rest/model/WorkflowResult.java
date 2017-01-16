@@ -17,70 +17,57 @@ import java.util.List;
  */
 public class WorkflowResult {
 
-    private String processId = null;
-    private String workflowId = null;
-    private String basecase = null;
-    private List<PreContingencyResult> preContingency = new ArrayList<PreContingencyResult>();
-    private List<PostContingencyResult> postContingency = new ArrayList<PostContingencyResult>();
+    private final String processId;
+    private final String workflowId;
+    private final String basecase;
+    private final List<PreContingencyResult> preContingency = new ArrayList<PreContingencyResult>();
+    private final List<PostContingencyResult> postContingency = new ArrayList<PostContingencyResult>();
 
-    /**
-     **/
+    public WorkflowResult(String processId, String workflowId, String basecase) {
+        this.processId = Objects.requireNonNull(processId);
+        this.workflowId = Objects.requireNonNull(workflowId);
+        this.basecase = Objects.requireNonNull(basecase);
+    }
 
     @JsonProperty("processId")
     public String getProcessId() {
         return processId;
     }
 
-    public void setProcessId(String processId) {
-        this.processId = processId;
-    }
-
-    /**
-     **/
-
     @JsonProperty("workflowId")
     public String getWorkflowId() {
         return workflowId;
     }
-
-    public void setWorkflowId(String workflowId) {
-        this.workflowId = workflowId;
-    }
-
-    /**
-     **/
 
     @JsonProperty("basecase")
     public String getBasecase() {
         return basecase;
     }
 
-    public void setBasecase(String basecase) {
-        this.basecase = basecase;
-    }
-
-    /**
-     **/
-
     @JsonProperty("preContingency")
     public List<PreContingencyResult> getPreContingency() {
         return preContingency;
     }
 
-    public void setPreContingency(List<PreContingencyResult> preContingency) {
-        this.preContingency = preContingency;
+    public void addPreContingencies(List<PreContingencyResult> preContingency) {
+        this.preContingency.addAll(preContingency);
     }
 
-    /**
-     **/
+    public void addPreContingency(PreContingencyResult pcr) {
+        this.preContingency.add(pcr);
+    }
 
     @JsonProperty("postContingency")
     public List<PostContingencyResult> getPostContingency() {
         return postContingency;
     }
 
-    public void setPostContingency(List<PostContingencyResult> postContingency) {
-        this.postContingency = postContingency;
+    public void allPostContingencyList(List<PostContingencyResult> postContingencyList) {
+        this.postContingency.addAll(postContingencyList);
+    }
+
+    public void addPostContingency(PostContingencyResult pcr) {
+        this.postContingency.add(pcr);
     }
 
     @Override
@@ -128,4 +115,5 @@ public class WorkflowResult {
         }
         return o.toString().replace("\n", "\n    ");
     }
+
 }

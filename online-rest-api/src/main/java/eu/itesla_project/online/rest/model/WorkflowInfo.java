@@ -15,44 +15,29 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class WorkflowInfo {
 
-    private String id = null;
-    private String baseCase = null;
-    private WorkflowResult workflowResult = null;
+    private final String id;
+    private final String baseCase;
+    private final WorkflowResult workflowResult;
 
-    /**
-     **/
+    public WorkflowInfo(String workflowId, String baseCase, WorkflowResult workflowResult) {
+        this.id = Objects.requireNonNull(workflowId);
+        this.baseCase = Objects.requireNonNull(baseCase);
+        this.workflowResult = Objects.requireNonNull(workflowResult);
+    }
 
     @JsonProperty("id")
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    /**
-     **/
-
     @JsonProperty("baseCase")
     public String getBaseCase() {
         return baseCase;
     }
 
-    public void setBaseCase(String baseCase) {
-        this.baseCase = baseCase;
-    }
-
-    /**
-     **/
-
     @JsonProperty("workflowResult")
     public WorkflowResult getWorkflowResult() {
         return workflowResult;
-    }
-
-    public void setWorkflowResult(WorkflowResult workflowResult) {
-        this.workflowResult = workflowResult;
     }
 
     @Override

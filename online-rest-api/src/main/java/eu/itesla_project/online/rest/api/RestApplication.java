@@ -6,6 +6,7 @@
  */
 package eu.itesla_project.online.rest.api;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,10 +22,7 @@ public class RestApplication extends Application {
 
     @Override
     public Set<Class<?>> getClasses() {
-        HashSet<Class<?>> classes = new HashSet<Class<?>>();
-
-        classes.add(ProcessApi.class);
-        return classes;
+        return Collections.singleton(ProcessApi.class);
     }
 
 }

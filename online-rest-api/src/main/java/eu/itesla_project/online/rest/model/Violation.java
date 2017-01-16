@@ -15,83 +15,50 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class Violation {
 
-    private String equipment = null;
-    private String country = null;
-    private Integer voltageLevel = null;
-    private String type = null;
-    private Float value = null;
-    private Float limit = null;
+    private final String equipment;
+    private final String country;
+    private final Integer voltageLevel;
+    private final String type;
+    private final Float value;
+    private final Float limit;
 
-    /**
-     **/
+    public Violation(String country, String equipment, String type, float limit, float value, int voltageLevel) {
+        this.country = Objects.requireNonNull(country);
+        this.equipment = Objects.requireNonNull(equipment);
+        this.type = Objects.requireNonNull(type);
+        this.limit = Objects.requireNonNull(limit);
+        this.value = Objects.requireNonNull(value);
+        this.voltageLevel = Objects.requireNonNull(voltageLevel);
+    }
 
     @JsonProperty("equipment")
     public String getEquipment() {
         return equipment;
     }
 
-    public void setEquipment(String equipment) {
-        this.equipment = equipment;
-    }
-
-    /**
-     **/
-
     @JsonProperty("country")
     public String getCountry() {
         return country;
     }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    /**
-     **/
 
     @JsonProperty("voltageLevel")
     public Integer getVoltageLevel() {
         return voltageLevel;
     }
 
-    public void setVoltageLevel(Integer voltageLevel) {
-        this.voltageLevel = voltageLevel;
-    }
-
-    /**
-     **/
-
     @JsonProperty("type")
     public String getType() {
         return type;
     }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    /**
-     **/
 
     @JsonProperty("value")
     public Float getValue() {
         return value;
     }
 
-    public void setValue(Float value) {
-        this.value = value;
-    }
-
-    /**
-     **/
-
     @JsonProperty("limit")
     public Float getLimit() {
         return limit;
-    }
-
-    public void setLimit(Float limit) {
-        this.limit = limit;
     }
 
     @Override

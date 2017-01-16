@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -30,7 +30,6 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import eu.itesla_project.cases.CaseType;
-import eu.itesla_project.iidm.network.Country;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.modules.online.OnlineDb;
 import eu.itesla_project.modules.online.OnlineDbFactory;
@@ -57,7 +56,6 @@ import eu.itesla_project.security.LimitViolation;
 public class ProcessApiTest {
 
     private static UndertowJaxrsServer server;
-    // private final ProcessDBMock dbMock = new ProcessDBMock();
     private final ProcessDBUtils dbMock = new OnlineDBUtils(new OnlineDbFactoryMock());
 
     @BeforeClass
@@ -247,27 +245,16 @@ public class ProcessApiTest {
 
         public OnlineDbMock() {
             processMap = new HashMap<String, OnlineProcess>();
-            OnlineProcess p = new OnlineProcess();
-            p.setId("1111");
-            p.setName("name1");
-            p.setOwner("owner1");
             DateTime dt = new DateTime(2016, 1, 15, 01, 0, 0, 0);
-            p.setDate(dt);
-            p.setCreationDate(dt.plusMinutes(10));
+            OnlineProcess p = new OnlineProcess("1111", "name1", "owner1", CaseType.FO.toString(), dt,
+                    dt.plusMinutes(10));
             p.addWorkflow("2016-01-10T01:00:00.000+00:00", "1122");
-
-            OnlineProcess p2 = new OnlineProcess();
-            p2.setId("2222");
-            p2.setName("name2");
-            p2.setOwner("owwer2");
             dt = new DateTime(2016, 1, 16, 01, 0, 0, 0);
-            p2.setDate(dt);
-            dt.plusMinutes(10);
-            p2.setCreationDate(dt.plusMinutes(10));
+            OnlineProcess p2 = new OnlineProcess("2222", "name2", "owwer2", CaseType.FO.toString(), dt,
+                    dt.plusMinutes(10));
             p2.addWorkflow("2016-01-11T02:00:00.000+00:00", "2233");
 
             processMap.put(p.getId(), p);
-
             processMap.put(p2.getId(), p2);
 
             workflowMap = new HashMap<String, DateTime>();
@@ -338,7 +325,6 @@ public class ProcessApiTest {
             return null;
         }
 
-        
         @Override
         public void storeRulesResults(String workflowId, OnlineWorkflowRulesResults results) {
 
@@ -369,7 +355,7 @@ public class ProcessApiTest {
             DateTime dt = workflowMap.get(workflowId);
             OnlineWorkflowParameters param = new OnlineWorkflowParameters(dt, 0, new Interval(0, 0),
                     "OfflineworkflowId", TimeHorizon.DACF, workflowId, 0, false, false, false, null, CaseType.FO,
-                    new HashSet<Country>(), false, 0, false, 0);
+                    Collections.emptySet(), false, 0, false, 0);
 
             return param;
         }

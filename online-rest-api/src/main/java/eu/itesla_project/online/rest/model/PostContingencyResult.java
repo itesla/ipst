@@ -17,31 +17,23 @@ import java.util.List;
  */
 public class PostContingencyResult {
 
-    private String contingency = null;
-    private List<SimulationResult> results = new ArrayList<SimulationResult>();
+    private final String contingency;
+    private final List<SimulationResult> results = new ArrayList<>();
 
-    /**
-     **/
+    public PostContingencyResult(String cont, List<SimulationResult> results) {
+        this.contingency = Objects.requireNonNull(cont);
+        Objects.requireNonNull(results);
+        this.results.addAll(results);
+    }
 
     @JsonProperty("contingency")
     public String getContingency() {
         return contingency;
     }
 
-    public void setContingency(String contingency) {
-        this.contingency = contingency;
-    }
-
-    /**
-     **/
-
     @JsonProperty("results")
     public List<SimulationResult> getResults() {
         return results;
-    }
-
-    public void setResults(List<SimulationResult> results) {
-        this.results = results;
     }
 
     @Override

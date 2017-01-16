@@ -17,25 +17,19 @@ import java.util.List;
  */
 public class SimulationResult {
 
-    private Integer state = null;
+    private final Integer state;
     private Boolean convergence = Boolean.TRUE;
     private Boolean safe = Boolean.TRUE;
-    private List<Violation> violations = new ArrayList<Violation>();
+    private final List<Violation> violations = new ArrayList<>();
 
-    /**
-     **/
+    public SimulationResult(Integer state) {
+        this.state = Objects.requireNonNull(state);
+    }
 
     @JsonProperty("state")
     public Integer getState() {
         return state;
     }
-
-    public void setState(Integer state) {
-        this.state = state;
-    }
-
-    /**
-     **/
 
     @JsonProperty("convergence")
     public Boolean getConvergence() {
@@ -46,9 +40,6 @@ public class SimulationResult {
         this.convergence = convergence;
     }
 
-    /**
-     **/
-
     @JsonProperty("safe")
     public Boolean getSafe() {
         return safe;
@@ -58,16 +49,17 @@ public class SimulationResult {
         this.safe = safe;
     }
 
-    /**
-     **/
-
     @JsonProperty("violations")
     public List<Violation> getViolations() {
         return violations;
     }
 
-    public void setViolations(List<Violation> violations) {
-        this.violations = violations;
+    public void addViolations(List<Violation> violations) {
+        this.violations.addAll(violations);
+    }
+
+    public void addViolation(Violation violation) {
+        this.violations.add(violation);
     }
 
     @Override
@@ -113,4 +105,5 @@ public class SimulationResult {
         }
         return o.toString().replace("\n", "\n    ");
     }
+
 }

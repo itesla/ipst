@@ -6,6 +6,8 @@
  */
 package eu.itesla_project.online.rest.api;
 
+import java.util.Objects;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -20,9 +22,10 @@ import org.joda.time.format.ISODateTimeFormat;
  */
 public class DateTimeParameter {
 
-    private DateTime dateTime;
+    private final DateTime dateTime;
 
     public DateTimeParameter(String dateTime) throws ApiException {
+        Objects.requireNonNull(dateTime);
         DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
         try {
             this.dateTime = fmt.parseDateTime(dateTime);
@@ -34,10 +37,6 @@ public class DateTimeParameter {
 
     public DateTime getDateTime() {
         return dateTime;
-    }
-
-    public void setDateTime(DateTime dateTime) {
-        this.dateTime = dateTime;
     }
 
     public String toString() {

@@ -18,83 +18,53 @@ import java.util.List;
  */
 public class Process {
 
-    private String id = null;
-    private String name = null;
-    private String owner = null;
-    private Date date = null;
-    private Date creationDate = null;
-    private List<WorkflowInfo> workflows = new ArrayList<WorkflowInfo>();
+    private final String id;
+    private final String name;
+    private final String owner;
+    private final Date date;
+    private final Date creationDate;
+    private final List<WorkflowInfo> workflows = new ArrayList<>();
 
-    /**
-     **/
+    public Process(String id, String name, String owner, Date date, Date creationDate) {
+        this.id = Objects.requireNonNull(id);
+        this.name = name;
+        this.owner = owner;
+        this.date = Objects.requireNonNull(date);
+        this.creationDate = Objects.requireNonNull(creationDate);
+    }
 
     @JsonProperty("id")
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    /**
-     **/
-
     @JsonProperty("name")
     public String getName() {
         return name;
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     **/
 
     @JsonProperty("owner")
     public String getOwner() {
         return owner;
     }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
-    /**
-     **/
-
     @JsonProperty("date")
     public Date getDate() {
         return date;
     }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    /**
-     **/
 
     @JsonProperty("creationDate")
     public Date getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    /**
-     **/
-
     @JsonProperty("workflows")
     public List<WorkflowInfo> getWorkflows() {
         return workflows;
     }
 
-    public void setWorkflows(List<WorkflowInfo> workflows) {
-        this.workflows = workflows;
+    public void addWorkflowInfo(WorkflowInfo workflowInfo) {
+        this.workflows.add(workflowInfo);
     }
 
     @Override
@@ -141,4 +111,5 @@ public class Process {
         }
         return o.toString().replace("\n", "\n    ");
     }
+
 }

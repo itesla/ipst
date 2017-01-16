@@ -17,57 +17,43 @@ import java.util.List;
  */
 public class PreContingencyResult {
 
-    private Integer state = null;
-    private Boolean convergence = null;
-    private Boolean safe = null;
-    private List<Violation> violations = new ArrayList<Violation>();
+    private final Integer state;
+    private final Boolean convergence;
+    private final Boolean safe;
+    private final List<Violation> violations = new ArrayList<>();
 
-    /**
-     **/
+    public PreContingencyResult(Integer state, boolean safe, boolean convergence) {
+        this.state = Objects.requireNonNull(state);
+        this.safe = Objects.requireNonNull(safe);
+        this.convergence = Objects.requireNonNull(convergence);
+    }
 
     @JsonProperty("state")
     public Integer getState() {
         return state;
     }
 
-    public void setState(Integer state) {
-        this.state = state;
-    }
-
-    /**
-     **/
-
     @JsonProperty("convergence")
     public Boolean getConvergence() {
         return convergence;
     }
-
-    public void setConvergence(Boolean convergence) {
-        this.convergence = convergence;
-    }
-
-    /**
-     **/
 
     @JsonProperty("safe")
     public Boolean getSafe() {
         return safe;
     }
 
-    public void setSafe(Boolean safe) {
-        this.safe = safe;
-    }
-
-    /**
-     **/
-
     @JsonProperty("violations")
     public List<Violation> getViolations() {
         return violations;
     }
 
-    public void setViolations(List<Violation> violations) {
-        this.violations = violations;
+    public void addViolations(List<Violation> violations) {
+        this.violations.addAll(violations);
+    }
+
+    public void addViolation(Violation violation) {
+        this.violations.add(violation);
     }
 
     @Override
@@ -113,4 +99,5 @@ public class PreContingencyResult {
         }
         return o.toString().replace("\n", "\n    ");
     }
+
 }

@@ -11,7 +11,7 @@ package eu.itesla_project.online.rest.api;
  * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
  */
 public class ApiException extends Exception {
-    private int code;
+    private final int code;
 
     public int getCode() {
         return code;

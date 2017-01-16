@@ -29,20 +29,20 @@ public class ProcessApi {
             @QueryParam("name") String name, @QueryParam("date") DateTimeParameter date,
             @QueryParam("creationDate") DateTimeParameter creationDate, @Context SecurityContext securityContext)
                     throws ApiException {
-        return delegate.processGet(owner, basecase, name, date, creationDate, securityContext);
+        return delegate.getProcessList(owner, basecase, name, date, creationDate, securityContext);
     }
 
     @GET
     @Path("/{processId}")
     public Response processProcessIdGet(@PathParam("processId") String processId,
             @Context SecurityContext securityContext) throws ApiException {
-        return delegate.processProcessIdGet(processId, securityContext);
+        return delegate.getProcessById(processId, securityContext);
     }
 
     @GET
     @Path("/{processId}/{workflowId}")
     public Response processProcessIdWorkflowIdGet(@PathParam("processId") String processId,
             @PathParam("workflowId") String workflowId, @Context SecurityContext securityContext) throws ApiException {
-        return delegate.processProcessIdWorkflowIdGet(processId, workflowId, securityContext);
+        return delegate.getWorkflowResult(processId, workflowId, securityContext);
     }
 }
