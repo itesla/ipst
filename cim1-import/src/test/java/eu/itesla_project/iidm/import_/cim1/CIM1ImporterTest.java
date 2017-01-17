@@ -86,8 +86,7 @@ public class CIM1ImporterTest {
     }
 
     @Test
-    public void exists()
-    {
+    public void exists() {
         CIM1Importer importer = new CIM1Importer();
         Assert.assertEquals(true, importer.exists(fdsMerged));
         Assert.assertEquals(true, importer.exists(fdsUnzippedMerged));
