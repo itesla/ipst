@@ -7,7 +7,6 @@
 package eu.itesla_project.online.rest.api;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.ws.rs.ApplicationPath;

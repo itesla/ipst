@@ -48,31 +48,31 @@ public class OnlineDBUtils implements ProcessDBUtils {
      * (non-Javadoc)
      * 
      * @see
-     * eu.itesla_project.online.rest.api.util.ProcessDBUtils#getProcessList(java.
-     * lang.String, java.lang.String, java.lang.String,
+     * eu.itesla_project.online.rest.api.util.ProcessDBUtils#getProcessList(
+     * java. lang.String, java.lang.String, java.lang.String,
      * eu.itesla_project.online.rest.api.DateTimeParameter,
      * eu.itesla_project.online.rest.api.DateTimeParameter)
      */
     @Override
     public List<Process> getProcessList(String owner, String basecase, String name, DateTimeParameter date,
-            DateTimeParameter creationDate) {
+            DateTimeParameter creationDate) throws Exception {
         List<Process> processes = new ArrayList<>();
 
         List<OnlineProcess> storedProcesses = null;
         try (OnlineDb onlinedb = fact.create()) {
             storedProcesses = onlinedb.listProcesses();
+            if (storedProcesses != null) {
+                processes = storedProcesses.stream().filter(p -> (name == null) || name.equals(p.getName()))
+                        .filter(p -> (owner == null) || owner.equals(p.getOwner()))
+                        .filter(p -> (basecase == null) || p.getWorkflowsMap().containsKey(basecase))
+                        .filter(p -> (date == null) || date.getDateTime().getMillis() == p.getDate().getMillis())
+                        .filter(p -> (creationDate == null)
+                                || creationDate.getDateTime().getMillis() == p.getCreationDate().getMillis())
+                        .map(p -> toProcess(p)).collect(Collectors.toList());
+            }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-        }
-
-        if (storedProcesses != null) {
-            processes = storedProcesses.stream().filter(p -> (name == null) || name.equals(p.getName()))
-                    .filter(p -> (owner == null) || owner.equals(p.getOwner()))
-                    .filter(p -> (basecase == null) || p.getWorkflowsMap().containsKey(basecase))
-                    .filter(p -> (date == null) || date.getDateTime().getMillis() == p.getDate().getMillis())
-                    .filter(p -> (creationDate == null)
-                            || creationDate.getDateTime().getMillis() == p.getCreationDate().getMillis())
-                    .map(p -> toProcess(p)).collect(Collectors.toList());
+            throw new Exception(e.getMessage());
         }
         return processes;
     }
@@ -85,17 +85,18 @@ public class OnlineDBUtils implements ProcessDBUtils {
      * lang.String)
      */
     @Override
-    public Process getProcess(String processId) {
+    public Process getProcess(String processId) throws Exception {
         Objects.requireNonNull(processId);
         Process proc = null;
         OnlineProcess storedProcess = null;
         try (OnlineDb onlinedb = fact.create()) {
             storedProcess = onlinedb.getProcess(processId);
+            if (storedProcess != null) {
+                proc = toProcess(storedProcess);
+            }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-        }
-        if (storedProcess != null) {
-            proc = toProcess(storedProcess);
+            throw new Exception(e.getMessage());
         }
         return proc;
     }
@@ -108,7 +109,7 @@ public class OnlineDBUtils implements ProcessDBUtils {
      * java.lang.String, java.lang.String)
      */
     @Override
-    public WorkflowResult getWorkflowResult(String processId, String workflowId) {
+    public WorkflowResult getWorkflowResult(String processId, String workflowId) throws Exception {
         Objects.requireNonNull(processId);
         Objects.requireNonNull(workflowId);
         OnlineProcess p = null;
@@ -227,6 +228,7 @@ public class OnlineDBUtils implements ProcessDBUtils {
             }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
+            throw new Exception(e.getMessage());
         }
         return null;
     }
@@ -238,7 +240,12 @@ public class OnlineDBUtils implements ProcessDBUtils {
 
             @Override
             public void accept(String bscase, String workflowId) {
-                proc.addWorkflowInfo(new WorkflowInfo(workflowId, bscase, getWorkflowResult(p.getId(), workflowId)));
+                try {
+                    proc.addWorkflowInfo(
+                            new WorkflowInfo(workflowId, bscase, getWorkflowResult(p.getId(), workflowId)));
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
             }
         });
         return proc;

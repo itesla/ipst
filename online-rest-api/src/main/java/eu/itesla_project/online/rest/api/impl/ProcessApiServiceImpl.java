@@ -16,12 +16,8 @@ import javax.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.ws.rs.core.SecurityContext;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-import eu.itesla_project.online.rest.api.ApiException;
-import eu.itesla_project.online.rest.api.ApiResponseCodeEnum;
-import eu.itesla_project.online.rest.api.ApiResponseMessage;
 import eu.itesla_project.online.rest.api.DateTimeParameter;
 import eu.itesla_project.online.rest.api.ProcessApiService;
 import eu.itesla_project.online.rest.api.util.ProcessDBUtils;
@@ -48,55 +44,51 @@ public class ProcessApiServiceImpl extends ProcessApiService {
 
     @Override
     public Response getProcessList(String owner, String basecase, String name, DateTimeParameter date,
-            DateTimeParameter creationDate, SecurityContext securityContext) throws ApiException {
+            DateTimeParameter creationDate, SecurityContext securityContext) {
         LOGGER.info("Get process list: owner=" + owner + ", basecase=" + basecase + ", name=" + name + ", date=" + date
                 + ", creationDate=" + creationDate);
         String res = null;
         try {
             res = objectMapper.writer()
                     .writeValueAsString(utils.getProcessList(owner, basecase, name, date, creationDate));
-        } catch (JsonProcessingException e) {
+            return Response.ok().entity(res).build();
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            return Response.serverError().entity(new ApiResponseMessage(ApiResponseCodeEnum.ERROR, e.getMessage()))
-                    .build();
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
-        return Response.ok().entity(res).build();
     }
 
     @Override
-    public Response getProcessById(String processId, SecurityContext securityContext) throws ApiException {
+    public Response getProcessById(String processId, SecurityContext securityContext) {
         LOGGER.info("Get process : processId=" + processId);
-        Process entity = utils.getProcess(processId);
-        if (entity == null)
-            return Response.status(Status.NOT_FOUND).entity("Process not found").build();
         String res = null;
         try {
+            Process entity = utils.getProcess(processId);
+            if (entity == null)
+                return Response.status(Status.NOT_FOUND).entity("Process not found").build();
             res = objectMapper.writer().writeValueAsString(entity);
-        } catch (JsonProcessingException e) {
+            return Response.ok().entity(res).build();
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            return Response.serverError().entity(new ApiResponseMessage(ApiResponseCodeEnum.ERROR, e.getMessage()))
-                    .build();
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
-        return Response.ok().entity(res).build();
+
     }
 
     @Override
-    public Response getWorkflowResult(String processId, String workflowId, SecurityContext securityContext)
-            throws ApiException {
+    public Response getWorkflowResult(String processId, String workflowId, SecurityContext securityContext) {
         LOGGER.info("Get workflow result : processId=" + processId + " ,workflowId=" + workflowId);
-        WorkflowResult entity = utils.getWorkflowResult(processId, workflowId);
-        if (entity == null)
-            return Response.status(Status.NOT_FOUND).entity("Workflow not found").build();
-
         String res = null;
         try {
-            res = objectMapper.writer().writeValueAsString(entity);
-        } catch (JsonProcessingException e) {
-            LOGGER.error(e.getMessage(), e);
-            return Response.serverError().entity(new ApiResponseMessage(ApiResponseCodeEnum.ERROR, e.getMessage()))
-                    .build();
-        }
+            WorkflowResult entity = utils.getWorkflowResult(processId, workflowId);
+            if (entity == null)
+                return Response.status(Status.NOT_FOUND).entity("Workflow not found").build();
 
-        return Response.ok().entity(res).build();
+            res = objectMapper.writer().writeValueAsString(entity);
+            return Response.ok().entity(res).build();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
     }
 }

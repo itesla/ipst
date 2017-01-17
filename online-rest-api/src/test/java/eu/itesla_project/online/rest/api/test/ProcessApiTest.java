@@ -6,14 +6,19 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
+
 import org.jboss.resteasy.plugins.server.undertow.UndertowJaxrsServer;
 import org.jboss.resteasy.test.TestPortProvider;
 import org.joda.time.DateTime;
@@ -29,8 +34,12 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+
 import eu.itesla_project.cases.CaseType;
+import eu.itesla_project.iidm.network.Country;
 import eu.itesla_project.iidm.network.Network;
+import eu.itesla_project.iidm.network.NetworkFactory;
+import eu.itesla_project.modules.contingencies.ActionParameters;
 import eu.itesla_project.modules.online.OnlineDb;
 import eu.itesla_project.modules.online.OnlineDbFactory;
 import eu.itesla_project.modules.online.OnlineProcess;
@@ -42,12 +51,20 @@ import eu.itesla_project.modules.online.OnlineWorkflowRulesResults;
 import eu.itesla_project.modules.online.OnlineWorkflowWcaResults;
 import eu.itesla_project.modules.online.StateProcessingStatus;
 import eu.itesla_project.modules.online.TimeHorizon;
+import eu.itesla_project.modules.optimizer.CCOFinalStatus;
 import eu.itesla_project.online.rest.api.RestApplication;
 import eu.itesla_project.online.rest.api.factories.ProcessApiServiceFactory;
 import eu.itesla_project.online.rest.api.impl.ProcessApiServiceImpl;
 import eu.itesla_project.online.rest.api.util.OnlineDBUtils;
 import eu.itesla_project.online.rest.api.util.ProcessDBUtils;
+import eu.itesla_project.online.rest.model.PostContingencyResult;
+import eu.itesla_project.online.rest.model.PreContingencyResult;
+import eu.itesla_project.online.rest.model.SimulationResult;
+import eu.itesla_project.online.rest.model.Violation;
+import eu.itesla_project.online.rest.model.WorkflowInfo;
+import eu.itesla_project.online.rest.model.WorkflowResult;
 import eu.itesla_project.security.LimitViolation;
+import eu.itesla_project.security.LimitViolationType;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ProcessApiServiceFactory.class)
@@ -204,6 +221,17 @@ public class ProcessApiTest {
         Assert.assertEquals("Test processId not found", 404, res.getStatus());
         client.close();
     }
+    
+    @Test
+    public void testError() throws UnsupportedEncodingException {
+        PowerMockito.mockStatic(ProcessApiServiceFactory.class);
+        when(ProcessApiServiceFactory.getProcessApi()).thenReturn(new ProcessApiServiceImpl(dbMock));
+        Client client = ClientBuilder.newClient();
+        Response res = client.target(TestPortProvider.generateURL("/online-service/process/error")).request().get();
+        res.readEntity(String.class);
+        Assert.assertEquals("Test get process error", 500, res.getStatus());
+        client.close();
+    }
 
     @Test
     public void testGetByProcessAndWorkflowId() throws UnsupportedEncodingException {
@@ -229,6 +257,49 @@ public class ProcessApiTest {
         client.close();
     }
 
+    @Test
+    public void testModelEquality() throws UnsupportedEncodingException {
+        Date dt = new Date();
+        eu.itesla_project.online.rest.model.Process p1 = new eu.itesla_project.online.rest.model.Process("1", "n", "o",
+                dt, dt);
+        eu.itesla_project.online.rest.model.Process p2 = new eu.itesla_project.online.rest.model.Process("1", "n", "o",
+                dt, dt);
+        Assert.assertEquals(p1, p2);
+        Assert.assertEquals(p1.hashCode(), p2.hashCode());
+        Assert.assertEquals(p1.toString(), p2.toString());
+        PostContingencyResult pcr1 = new PostContingencyResult("c1", Collections.emptyList());
+        PostContingencyResult pcr2 = new PostContingencyResult("c1", Collections.emptyList());
+        Assert.assertEquals(pcr1, pcr2);
+        Assert.assertEquals(pcr1.hashCode(), pcr2.hashCode());
+        Assert.assertEquals(pcr1.toString(), pcr2.toString());
+        PreContingencyResult pre1 = new PreContingencyResult(1, true, true);
+        PreContingencyResult pre2 = new PreContingencyResult(1, true, true);
+        Assert.assertEquals(pre1, pre2);
+        Assert.assertEquals(pre1.hashCode(), pre2.hashCode());
+        Assert.assertEquals(pre1.toString(), pre2.toString());
+        SimulationResult s1 = new SimulationResult(1);
+        SimulationResult s2 = new SimulationResult(1);
+        Assert.assertEquals(s1, s2);
+        Assert.assertEquals(s1.hashCode(), s2.hashCode());
+        Assert.assertEquals(s1.toString(), s2.toString());
+        Violation v1 = new Violation("IT", "eq1", "test", 0, 0, 0);
+        Violation v2 = new Violation("IT", "eq1", "test", 0, 0, 0);
+        Assert.assertEquals(v1, v2);
+        Assert.assertEquals(v1.hashCode(), v2.hashCode());
+        Assert.assertEquals(v1.toString(), v2.toString());
+        WorkflowResult wr1 = new WorkflowResult("p1", "w1", "2017");
+        WorkflowResult wr2 = new WorkflowResult("p1", "w1", "2017");
+        Assert.assertEquals(wr1, wr2);
+        Assert.assertEquals(wr1.hashCode(), wr2.hashCode());
+        Assert.assertEquals(wr1.toString(), wr2.toString());
+
+        WorkflowInfo w1 = new WorkflowInfo("1", "2017", wr1);
+        WorkflowInfo w2 = new WorkflowInfo("1", "2017", wr2);
+        Assert.assertEquals(w1, w2);
+        Assert.assertEquals(w1.hashCode(), w2.hashCode());
+        Assert.assertEquals(w1.toString(), w2.toString());
+    }
+
     private class OnlineDbFactoryMock implements OnlineDbFactory {
 
         @Override
@@ -242,8 +313,12 @@ public class ProcessApiTest {
 
         private Map<String, OnlineProcess> processMap;
         private Map<String, DateTime> workflowMap;
+        private final Network network;
 
         public OnlineDbMock() {
+            network = NetworkFactory.create("test", "test");
+            network.newSubstation().setId("sub1").setName("substation1").setCountry(Country.FR).add();
+
             processMap = new HashMap<String, OnlineProcess>();
             DateTime dt = new DateTime(2016, 1, 15, 01, 0, 0, 0);
             OnlineProcess p = new OnlineProcess("1111", "name1", "owner1", CaseType.FO.toString(), dt,
@@ -302,7 +377,89 @@ public class ProcessApiTest {
 
         @Override
         public OnlineWorkflowResults getResults(String workflowId) {
-            return null;
+            if (!"1122".equals(workflowId))
+                return null;
+            OnlineWorkflowResults res = new OnlineWorkflowResults() {
+
+                @Override
+                public String getWorkflowId() {
+                    return workflowId;
+                }
+
+                @Override
+                public TimeHorizon getTimeHorizon() {
+                    return null;
+                }
+
+                @Override
+                public Collection<String> getContingenciesWithActions() {
+                    return null;
+                }
+
+                @Override
+                public Collection<String> getUnsafeContingencies() {
+                    List<String> res = new ArrayList<>();
+                    res.add("test_contingency");
+                    return res;
+                }
+
+                @Override
+                public Map<Integer, Boolean> getUnsafeStatesWithActions(String contingencyId) {
+                    return null;
+                }
+
+                @Override
+                public List<Integer> getUnstableStates(String contingencyId) {
+                    List<Integer> res = new ArrayList<>();
+                    res.add(0);
+                    return res;
+                }
+
+                @Override
+                public CCOFinalStatus getStateStatus(String contingencyId, Integer stateId) {
+                    return null;
+                }
+
+                @Override
+                public String getCause(String contingencyId, Integer stateId) {
+                    return null;
+                }
+
+                @Override
+                public String getActionPlan(String contingencyId, Integer stateId) {
+                    return null;
+                }
+
+                @Override
+                public List<String> getActionsIds(String contingencyId, Integer stateId) {
+                    return null;
+                }
+
+                @Override
+                public Map<String, Boolean> getIndexesData(String contingencyId, Integer stateId) {
+                    Map<String, Boolean> res = new HashMap<>();
+                    res.put("contingencyId", Boolean.TRUE);
+                    return res;
+                }
+
+                @Override
+                public List<String> getEquipmentsIds(String contingencyId, Integer stateId, String actionId) {
+                    return null;
+                }
+
+                @Override
+                public Map<String, ActionParameters> getEquipmentsWithParameters(String contingencyId, Integer stateId,
+                        String actionId) {
+                    return null;
+                }
+
+                @Override
+                public ActionParameters getParameters(String contingencyId, Integer stateId, String actionId,
+                        String equipmentId) {
+                    return null;
+                }
+            };
+            return res;
         }
 
         @Override
@@ -368,7 +525,24 @@ public class ProcessApiTest {
 
         @Override
         public Map<Integer, ? extends StateProcessingStatus> getStatesProcessingStatus(String workflowId) {
-            return null;
+
+            Map<Integer, StateProcessingStatus> res = new HashMap<>();
+            res.put(0, new StateProcessingStatus() {
+
+                @Override
+                public Map<String, String> getStatus() {
+                    Map<String, String> res = new HashMap<>();
+                    res.put("LOAD_FLOW", "SUCCESS");
+                    return res;
+                }
+
+                @Override
+                public String getDetail() {
+                    return null;
+                }
+            });
+
+            return res;
         }
 
         @Override
@@ -424,7 +598,15 @@ public class ProcessApiTest {
 
         @Override
         public Map<Integer, List<LimitViolation>> getViolations(String workflowId, OnlineStep step) {
-            return null;
+            if (!"1122".equals(workflowId))
+                return null;
+            Map<Integer, List<LimitViolation>> res = new HashMap<Integer, List<LimitViolation>>();
+            List<LimitViolation> viols = new ArrayList<>();
+            LimitViolation lv = new LimitViolation(network.getIdentifiable("sub1"), LimitViolationType.CURRENT, 100,
+                    "HIGH_CURRENT", 0, 200, Country.FR, 120);
+            viols.add(lv);
+            res.put(0, viols);
+            return res;
         }
 
         @Override
@@ -465,7 +647,17 @@ public class ProcessApiTest {
 
         @Override
         public Map<Integer, Map<String, List<LimitViolation>>> getPostContingencyViolations(String workflowId) {
-            return null;
+            if (!"1122".equals(workflowId))
+                return null;
+            Map<Integer, Map<String, List<LimitViolation>>> res = new HashMap<>();
+            Map<String, List<LimitViolation>> mmap = new HashMap<>();
+            List<LimitViolation> viols = new ArrayList<>();
+            LimitViolation lv = new LimitViolation(network.getIdentifiable("sub1"), LimitViolationType.CURRENT, 100,
+                    "HIGH_CURRENT", 0, 200, Country.FR, 120);
+            viols.add(lv);
+            mmap.put("test_contingency", viols);
+            res.put(0, mmap);
+            return res;
         }
 
         @Override
@@ -480,7 +672,13 @@ public class ProcessApiTest {
 
         @Override
         public Map<Integer, Map<String, Boolean>> getPostContingencyLoadflowConvergence(String workflowId) {
-            return null;
+            if (!"1122".equals(workflowId))
+                return null;
+            Map<Integer, Map<String, Boolean>> res = new HashMap<>();
+            Map<String, Boolean> mmap = new HashMap<>();
+            mmap.put("test_contingency", Boolean.TRUE);
+            res.put(0, mmap);
+            return res;
         }
 
         @Override
@@ -494,6 +692,8 @@ public class ProcessApiTest {
 
         @Override
         public OnlineProcess getProcess(String processId) throws IOException {
+            if("error".equals(processId))
+                throw new IOException();
             return processMap.get(processId);
         }
 

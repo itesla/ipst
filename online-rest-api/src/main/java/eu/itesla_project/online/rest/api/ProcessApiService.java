@@ -15,10 +15,9 @@ import javax.ws.rs.core.SecurityContext;
  */
 public abstract class ProcessApiService {
     public abstract Response getProcessList(String owner, String basecase, String name, DateTimeParameter date,
-            DateTimeParameter creationDate, SecurityContext securityContext) throws ApiException;
+            DateTimeParameter creationDate, SecurityContext securityContext);
 
-    public abstract Response getProcessById(String processId, SecurityContext securityContext) throws ApiException;
+    public abstract Response getProcessById(String processId, SecurityContext securityContext);
 
-    public abstract Response getWorkflowResult(String processId, String workflowId, SecurityContext securityContext)
-            throws ApiException;
+    public abstract Response getWorkflowResult(String processId, String workflowId, SecurityContext securityContext);
 }

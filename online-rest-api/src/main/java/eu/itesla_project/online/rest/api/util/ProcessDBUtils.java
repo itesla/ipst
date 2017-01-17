@@ -9,10 +9,10 @@ import eu.itesla_project.online.rest.model.WorkflowResult;
 public interface ProcessDBUtils {
 
     List<Process> getProcessList(String owner, String basecase, String name, DateTimeParameter date,
-            DateTimeParameter creationDate);
+            DateTimeParameter creationDate) throws Exception;
 
-    Process getProcess(String processId);
+    Process getProcess(String processId) throws Exception;
 
-    WorkflowResult getWorkflowResult(String processId, String workflowId);
+    WorkflowResult getWorkflowResult(String processId, String workflowId) throws Exception;
 
 }

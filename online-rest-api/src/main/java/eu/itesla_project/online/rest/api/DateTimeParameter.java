@@ -24,7 +24,7 @@ public class DateTimeParameter {
 
     private final DateTime dateTime;
 
-    public DateTimeParameter(String dateTime) throws ApiException {
+    public DateTimeParameter(String dateTime) throws Exception {
         Objects.requireNonNull(dateTime);
         DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
         try {
