@@ -43,36 +43,48 @@
             <artifactId>jgrapht-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>eu.itesla_project</groupId>
             <artifactId>iidm-network-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>eu.itesla_project</groupId>
             <artifactId>iidm-converter-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>eu.itesla_project</groupId>
             <artifactId>computation</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>eu.itesla_project</groupId>
             <artifactId>computation-local</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>case-repository</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>simulation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>eu.itesla_project</groupId>
             <artifactId>contingency-api</artifactId>
         </dependency>
         <dependency>
             <groupId>eu.itesla_project</groupId>
+            <artifactId>case-repository</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.itesla_project</groupId>
+            <artifactId>entsoe-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.itesla_project</groupId>
+            <artifactId>loadflow-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.itesla_project</groupId>
+            <artifactId>network-merge</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.itesla_project</groupId>
             <artifactId>security-analysis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.itesla_project</groupId>
+            <artifactId>simulation-api</artifactId>
         </dependency>
         <dependency>
             <groupId>eu.itesla_project</groupId>
@@ -89,10 +101,6 @@
         <dependency>
             <groupId>com.google.auto.service</groupId>
             <artifactId>auto-service</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>loadflow-api</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

@@ -479,6 +479,11 @@
             </dependency>
             <dependency>
                 <groupId>eu.itesla_project</groupId>
+                <artifactId>entsoe-util</artifactId>
+                <version>${ipstentsoe.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.itesla_project</groupId>
                 <artifactId>network-merge</artifactId>
                 <version>${ipstentsoe.version}</version>
             </dependency>
