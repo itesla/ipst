@@ -40,7 +40,6 @@ public class ProcessApiServiceImpl extends ProcessApiService {
 
     public ProcessApiServiceImpl(ProcessDBUtils utils) {
         this.utils = Objects.requireNonNull(utils);
-        ;
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JodaModule());
         objectMapper.configure(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);

@@ -109,7 +109,6 @@ public class OnlineDBUtils implements ProcessDBUtils {
      */
     @Override
     public WorkflowResult getWorkflowResult(String processId, String workflowId) {
-
         Objects.requireNonNull(processId);
         Objects.requireNonNull(workflowId);
         OnlineProcess p = null;
@@ -120,7 +119,7 @@ public class OnlineDBUtils implements ProcessDBUtils {
                     && onlinedb.getWorkflowDetails(workflowId) != null) {
 
                 OnlineWorkflowParameters params = onlinedb.getWorkflowParameters(workflowId);
-                final WorkflowResult res = new WorkflowResult(processId, workflowId,
+                WorkflowResult res = new WorkflowResult(processId, workflowId,
                         params.getBaseCaseDate().toDateTimeISO().toString());
 
                 Map<Integer, List<LimitViolation>> violations = onlinedb.getViolations(workflowId,
