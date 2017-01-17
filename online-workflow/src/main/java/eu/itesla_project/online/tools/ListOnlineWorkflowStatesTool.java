@@ -16,6 +16,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -77,7 +79,16 @@ public class ListOnlineWorkflowStatesTool implements Tool {
 			} else
 				System.out.println("No stores states for this workflow");			
 		} else
-			System.out.println("No stores states for this workflow");
+			System.out.println("No stored states for this workflow");
+
+		Map<Integer, Set<String>> storedPostContingenciesStates = onlinedb.listStoredPostContingencyStates(workflowId);
+		if ( storedPostContingenciesStates != null ) {
+			if ( !storedPostContingenciesStates.isEmpty() ) {
+				System.out.println("Stored post-contingencies states ( state id, contingencies ids ) = " + storedPostContingenciesStates.toString());
+			} else
+				System.out.println("No stored post-contingencies states for this workflow");
+		} else
+			System.out.println("No stored post-contingencies states for this workflow");
 		onlinedb.close();
 	}
 	

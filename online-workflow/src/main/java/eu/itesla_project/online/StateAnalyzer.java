@@ -7,53 +7,36 @@
  */
 package eu.itesla_project.online;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-
+import eu.itesla_project.contingency.Contingency;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.iidm.network.StateManager;
 import eu.itesla_project.loadflow.api.LoadFlow;
 import eu.itesla_project.loadflow.api.LoadFlowResult;
 import eu.itesla_project.modules.constraints.ConstraintsModifier;
 import eu.itesla_project.modules.contingencies.ActionParameters;
-import eu.itesla_project.contingency.Contingency;
 import eu.itesla_project.modules.mcla.MontecarloSampler;
-import eu.itesla_project.modules.online.OnlineDb;
-import eu.itesla_project.modules.online.OnlineRulesFacade;
-import eu.itesla_project.modules.online.OnlineStep;
-import eu.itesla_project.modules.online.OnlineWorkflowParameters;
-import eu.itesla_project.modules.online.RulesFacadeResults;
-import eu.itesla_project.modules.online.StateStatus;
+import eu.itesla_project.modules.online.*;
 import eu.itesla_project.modules.optimizer.CCOFinalStatus;
 import eu.itesla_project.modules.optimizer.CorrectiveControlOptimizer;
 import eu.itesla_project.modules.optimizer.CorrectiveControlOptimizerResult;
 import eu.itesla_project.modules.optimizer.PostContingencyState;
+import eu.itesla_project.online.OnlineWorkflowImpl.StateAnalizerListener;
 import eu.itesla_project.security.LimitViolation;
 import eu.itesla_project.security.Security;
 import eu.itesla_project.security.Security.CurrentLimitType;
+import eu.itesla_project.simulation.*;
 import eu.itesla_project.simulation.securityindexes.SecurityIndex;
-import eu.itesla_project.simulation.ImpactAnalysis;
-import eu.itesla_project.simulation.ImpactAnalysisResult;
-import eu.itesla_project.simulation.Stabilization;
-import eu.itesla_project.simulation.StabilizationResult;
-import eu.itesla_project.simulation.StabilizationStatus;
-import eu.itesla_project.online.OnlineWorkflowImpl.StateAnalizerListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -145,9 +128,9 @@ public class StateAnalyzer implements Callable<Void> {
             }
             status.put(currentStatus, result.isOk()?OnlineTaskStatus.SUCCESS:OnlineTaskStatus.FAILED);
 
-            if ( parameters.storeStates() ) {
+            if (parameters.storeStates() || ((parameters.analyseBasecase()) && (stateId == 0))) {
                 logger.info("{}: storing state in online db", stateId);
-                onlineDb.storeState(context.getWorkflowId(), stateId, context.getNetwork());
+                onlineDb.storeState(context.getWorkflowId(), stateId, context.getNetwork(), null);
             }
 
             if ( result.isOk() ) {
@@ -442,6 +425,12 @@ public class StateAnalyzer implements Callable<Void> {
                 // run load flow on post contingency state
                 logger.info("{}: running load flow on post contingency state {}", stateId, postContingencyStateId);
                 LoadFlowResult result = loadFlow.run();
+                // store post contingency state
+                Integer stateIdInt = Integer.parseInt(stateId);
+                if (parameters.storeStates() || ((parameters.analyseBasecase()) && (stateIdInt == 0))) {
+                    logger.info("{} {}: storing post contingency state in online db", stateIdInt, contingency.getId());
+                    onlineDb.storeState(context.getWorkflowId(), stateIdInt, network, contingency.getId());
+                }
                 if ( result.isOk() ) {
                     logger.info("{}: load flow on post contingency state {} converge", stateId, postContingencyStateId);
                     loadflowConverge = true;

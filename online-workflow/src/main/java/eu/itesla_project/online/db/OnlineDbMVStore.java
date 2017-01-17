@@ -7,10 +7,15 @@
  */
 package eu.itesla_project.online.db;
 
+import com.google.common.base.Splitter;
 import eu.itesla_project.cases.CaseType;
+import eu.itesla_project.computation.local.LocalComputationManager;
 import eu.itesla_project.iidm.datasource.DataSource;
 import eu.itesla_project.iidm.datasource.FileDataSource;
+import eu.itesla_project.iidm.datasource.GenericReadOnlyDataSource;
+import eu.itesla_project.iidm.datasource.GzFileDataSource;
 import eu.itesla_project.iidm.export.Exporters;
+import eu.itesla_project.iidm.import_.ImportConfig;
 import eu.itesla_project.iidm.import_.Importer;
 import eu.itesla_project.iidm.import_.Importers;
 import eu.itesla_project.iidm.network.Country;
@@ -104,6 +109,8 @@ public class OnlineDbMVStore implements OnlineDb {
     private static final String STORED_STATE_PROCESSING_STATUS_MAP_SUFFIX = "_processingstatus";
     private static final String STORED_WORKFLOW_STATES_FOLDER_PREFIX = "states-wf-";
     private static final String STORED_STATE_PREFIX = "state-";
+    private static final String STORED_STATE_POST_PREFIX = "post-state-";
+    private static final String STORED_STATE_CONT_PREFIX = "-cont-";
     private static final String STORED_VIOLATIONS_STEPS_MAP_NAME = "storedViolationsSteps";
     private static final String STORED_VIOLATIONS_STATES_MAP_SUFFIX = "_violationsstates";
     private static final String STORED_VIOLATIONS_STATES_MAP_NAME = "storedViolationsStates";
@@ -968,13 +975,22 @@ public class OnlineDbMVStore implements OnlineDb {
     }
 
     @Override
-    public void storeState(String workflowId, Integer stateId, Network network) {
+    public void storeState(String workflowId, Integer stateId, Network network, String contingencyId) {
         String stateIdStr = String.valueOf(stateId);
-        LOGGER.info("Storing state {} of workflow {}", stateIdStr, workflowId);
+        if (contingencyId !=null) {
+            LOGGER.info("Storing post contingency state {} , contingency {} of workflow {}", stateIdStr, contingencyId, workflowId);
+        } else {
+            LOGGER.info("Storing state {} of workflow {}", stateIdStr, workflowId);
+        }
         if (network.getStateManager().getStateIds().contains(stateIdStr)) {
             network.getStateManager().setWorkingState(stateIdStr);
             Path workflowStatesFolder = getWorkflowStatesFolder(workflowId);
-            Path stateFolder = Paths.get(workflowStatesFolder.toString(), STORED_STATE_PREFIX + stateId);
+            Path stateFolder;
+            if (contingencyId != null) {
+                stateFolder = Paths.get(workflowStatesFolder.toString(), STORED_STATE_POST_PREFIX + stateId + STORED_STATE_CONT_PREFIX +contingencyId);
+            } else {
+                stateFolder = Paths.get(workflowStatesFolder.toString(), STORED_STATE_PREFIX + stateId);
+            }
             if (Files.exists(stateFolder)) {
                 //remove current state file, if it already exists
                 for (int i = 0; i < XIIDMEXTENSIONS.length; i++) {
@@ -998,20 +1014,21 @@ public class OnlineDbMVStore implements OnlineDb {
                     throw new RuntimeException(errorMessage, e);
                 }
             }
-            DataSource dataSource = new FileDataSource(stateFolder, network.getId());
+            //DataSource dataSource = new FileDataSource(stateFolder, network.getId());
+            DataSource dataSource = new GzFileDataSource(stateFolder, network.getId());
             Properties parameters = new Properties();
             parameters.setProperty("iidm.export.xml.indent", "true");
             parameters.setProperty("iidm.export.xml.with-branch-state-variables", "true");
-            parameters.setProperty("iidm.export.xml.with-breakers", "true");
-            parameters.setProperty("iidm.export.xml.with-properties", "true");
             Exporters.export("XIIDM", network, parameters, dataSource);
             // store network state values, for later serialization
-            Map<HistoDbAttributeId, Object> networkValues = IIDM2DB.extractCimValues(network, new IIDM2DB.Config(network.getId(), true, true)).getSingleValueMap();
-            ConcurrentHashMap<Integer, Map<HistoDbAttributeId, Object>> workflowStates = new ConcurrentHashMap<Integer, Map<HistoDbAttributeId, Object>>();
-            if (workflowsStates.containsKey(workflowId))
-                workflowStates = workflowsStates.get(workflowId);
-            workflowStates.put(stateId, networkValues);
-            workflowsStates.put(workflowId, workflowStates);
+            if (contingencyId == null) {
+                Map<HistoDbAttributeId, Object> networkValues = IIDM2DB.extractCimValues(network, new IIDM2DB.Config(network.getId(), true, true)).getSingleValueMap();
+                ConcurrentHashMap<Integer, Map<HistoDbAttributeId, Object>> workflowStates = new ConcurrentHashMap<Integer, Map<HistoDbAttributeId, Object>>();
+                if (workflowsStates.containsKey(workflowId))
+                    workflowStates = workflowsStates.get(workflowId);
+                workflowStates.put(stateId, networkValues);
+                workflowsStates.put(workflowId, workflowStates);
+            }
         } else {
             String errorMessage = "online db: no state " + stateIdStr + " in network of workflow " + workflowId;
             LOGGER.error(errorMessage);
@@ -1087,29 +1104,60 @@ public class OnlineDbMVStore implements OnlineDb {
     }
 
     @Override
-    public Network getState(String workflowId, Integer stateId) {
+    public Map<Integer,Set<String>> listStoredPostContingencyStates(String workflowId) {
+        LOGGER.info("Getting list of stored post contingency states for workflow {}", workflowId);
+        Map<Integer, Set<String>> storedContingencyStates = new TreeMap<>();
+        if (workflowStatesFolderExists(workflowId)) {
+            Path workflowStatesFolder = getWorkflowStatesFolder(workflowId);
+            File[] files = workflowStatesFolder.toFile().listFiles(new FilenameFilter() {
+                public boolean accept(File dir, String name) {
+                    return name.toLowerCase().startsWith(STORED_STATE_POST_PREFIX);
+                }
+            });
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    List<String> stateIdContId=Splitter.on(STORED_STATE_CONT_PREFIX).omitEmptyStrings().trimResults().splitToList(file.getName().substring(STORED_STATE_POST_PREFIX.length()));
+                    Integer stateId=Integer.parseInt(stateIdContId.get(0));
+                    String contId=stateIdContId.get(1);
+                    if (storedContingencyStates.containsKey(stateId)) {
+                        storedContingencyStates.get(stateId).add(contId);
+                    } else {
+                        storedContingencyStates.put(stateId, new HashSet<String>(Arrays.asList(contId)));
+                    }
+                }
+            }
+            //LOGGER.info("Found {} state(s) for workflow {}", storedStates.size(), workflowId);
+        } else {
+            LOGGER.info("Found no state(s) for workflow {}", workflowId);
+        }
+        return storedContingencyStates;
+    }
+
+
+    @Override
+    public Network getState(String workflowId, Integer stateId, String contingencyId) {
         String stateIdStr = String.valueOf(stateId);
         LOGGER.info("Getting state {} of workflow {}", stateIdStr, workflowId);
         Path workflowStatesFolder = getWorkflowStatesFolder(workflowId);
-        Path stateFolder = Paths.get(workflowStatesFolder.toString(), STORED_STATE_PREFIX + stateIdStr);
+        Path stateFolder;
+        if (contingencyId==null) {
+            stateFolder = Paths.get(workflowStatesFolder.toString(), STORED_STATE_PREFIX + stateIdStr);
+        } else {
+            stateFolder = Paths.get(workflowStatesFolder.toString(), STORED_STATE_POST_PREFIX + stateIdStr+ STORED_STATE_CONT_PREFIX +contingencyId);
+        }
         if (Files.exists(stateFolder) && Files.isDirectory(stateFolder)) {
             if (stateFolder.toFile().list().length == 1) {
                 File stateFile = stateFolder.toFile().listFiles()[0];
-                String basename = stateFile.getName();
-                int extIndex = basename.lastIndexOf(".");
-                if (extIndex > 0) {
-                    basename = basename.substring(0, extIndex);
-                }
-                DataSource dataSource = new FileDataSource(stateFolder, basename);
-                //Network network = Importers.import_("XIIDM", dataSource, null);
-                // with the new post processors configuration, the post processing is applied also to xml import
-                Importer xmlImporter = Importers.getImporter("XIIDM");
-                Importer noppImporter = Importers.removePostProcessors(xmlImporter);
-                Network network = noppImporter.import_(dataSource, null);
+                Network network=Importers.loadNetwork(stateFile.toPath(), LocalComputationManager.getDefault(), new ImportConfig(), (Properties)null);
                 return network;
             }
         }
         return null;
+    }
+
+    @Override
+    public Network getState(String workflowId, Integer stateId) {
+        return getState(workflowId, stateId, null);
     }
 
     @Override
