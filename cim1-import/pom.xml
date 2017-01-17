@@ -23,13 +23,14 @@
     <name>CIM ENTSO-E V1 import</name>
 
     <dependencies>
+        <!-- Compilation dependencies -->
         <dependency>
             <groupId>com.google.auto.service</groupId>
             <artifactId>auto-service</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <groupId>com.google.jimfs</groupId>
+            <artifactId>jimfs</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.servicemix.bundles</groupId>
@@ -40,16 +41,20 @@
             <artifactId>jgrapht-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.itesla_project</groupId>
             <artifactId>iidm-converter-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>eu.itesla_project</groupId>
             <artifactId>iidm-network-api</artifactId>
         </dependency>
-        
+
         <dependency>
-            <groupId>eu.itesla_project</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>cim1-model</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -60,6 +65,11 @@
         </dependency>
 
         <!-- Test dependencies -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
