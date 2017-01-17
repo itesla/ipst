@@ -37,25 +37,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- importers -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>cim1-import</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>ucte-import</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <!-- case-repositories -->
-        <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>entsoe-case-repository</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
         <!-- Dynamic database (mysql) -->
         <dependency>
             <groupId>eu.itesla_project.iidm-ddb</groupId>
@@ -122,12 +103,6 @@
             <groupId>eu.itesla_project</groupId>
             <artifactId>iidm-actions-contingencies-xml-client</artifactId>
             <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>log4j-over-slf4j</artifactId>
-            <version>1.7.19</version>
         </dependency>
 
         <!-- Modelica exporter -->

@@ -137,7 +137,6 @@
         <dependency>
             <groupId>eu.itesla_project</groupId>
             <artifactId>cim1-import</artifactId>
-            <version>0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>

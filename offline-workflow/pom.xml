@@ -32,6 +32,26 @@
         </dependency>
         <!-- test dependencies -->
         <dependency>
+            <groupId>eu.itesla_project</groupId>
+            <artifactId>graph</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>eu.itesla_project</groupId>
+            <artifactId>iidm-network-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>eu.itesla_project</groupId>
+            <artifactId>iidm-network-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>eu.itesla_project</groupId>
+            <artifactId>network-merge</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
@@ -49,21 +69,6 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>iidm-network-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>iidm-network-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>graph</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

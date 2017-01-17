@@ -21,12 +21,8 @@
 
     <modules>
         <module>ampl-export</module>
-        <module>cim1-model</module>
-        <module>cim1-import</module>
         <module>distribution</module>
         <module>dymola-integration</module>
-        <module>entsoe-case-repository</module>
-        <module>entsoe-util</module>
         <module>EU2Mod_MB</module>
         <module>eurostag-ech-export</module>
         <module>eurostag-integration</module>
@@ -43,7 +39,6 @@
         <module>modelica-events-adder</module>
         <module>modelica-export</module>
         <module>modules</module>
-        <module>network-merge</module>
         <module>offline-mpi</module>
         <module>offline-server</module>
         <module>offline-workflow</module>
@@ -52,8 +47,6 @@
         <module>online-workflow</module>
         <module>pclfsim-integration</module>
         <module>sampling-integration</module>
-        <module>ucte-import</module>
-        <module>ucte-network</module>
         <module>wca-integration</module>
     </modules>
 
@@ -93,6 +86,7 @@
         <h2database.version>1.4.191</h2database.version>
         <httpclient.version>4.5.2</httpclient.version>
         <ipstcore.version>0.1-SNAPSHOT</ipstcore.version>
+        <ipstentsoe.version>0.1-SNAPSHOT</ipstentsoe.version>
         <jackson.version>2.7.3</jackson.version>
         <javacsv.version>2.0</javacsv.version>
         <jgrapht.version>0.9.1</jgrapht.version>
@@ -477,58 +471,18 @@
                 <version>${ipstcore.version}</version>
             </dependency>
 
-
-        <!--
-
-
-
-
-
-
+            <!-- ipst-entsoe dependencies -->
             <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-math3</artifactId>
-                <version>${commonsmath3.version}</version>
-            </dependency>
-
-
-            <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>${commonslang.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>${commonslang3.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jgrapht</groupId>
-                <artifactId>jgrapht-core</artifactId>
-                <version>${jgrapht.version}</version>
+                <groupId>eu.itesla_project</groupId>
+                <artifactId>cim1-import</artifactId>
+                <version>${ipstentsoe.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.kohsuke</groupId>
-                <artifactId>graphviz-api</artifactId>
-                <version>${graphvizapi.version}</version>
+                <groupId>eu.itesla_project</groupId>
+                <artifactId>network-merge</artifactId>
+                <version>${ipstentsoe.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-compress</artifactId>
-                <version>${commons-compress.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.xmlunit</groupId>
-                <artifactId>xmlunit-core</artifactId>
-                <version>${xmlunit.version}</version>
-                <scope>test</scope>
-            </dependency>
-            -->
-            
             <!-- Runtime dependencies -->
             <dependency>
                 <groupId>ch.qos.logback</groupId>
