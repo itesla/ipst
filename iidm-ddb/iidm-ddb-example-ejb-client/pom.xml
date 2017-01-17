@@ -8,8 +8,8 @@
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">   
-   <modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <artifactId>iidm-ddb</artifactId>
@@ -17,94 +17,101 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-   <artifactId>iidm-ddb-example-ejb-client</artifactId>
-   <packaging>jar</packaging>
-   <name>iidm ddb - ejb-remote-client-example</name>
+    <artifactId>iidm-ddb-example-ejb-client</artifactId>
+    <packaging>jar</packaging>
+    <name>iidm ddb - ejb-remote-client-example</name>
 
-   <properties>
-      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-       <!-- other plugin versions -->
-       <version.compiler.plugin>2.3.1</version.compiler.plugin>
-       <version.exec.plugin>1.2.1</version.exec.plugin>
+        <!-- other plugin versions -->
+        <version.compiler.plugin>2.3.1</version.compiler.plugin>
+        <version.exec.plugin>1.2.1</version.exec.plugin>
 
-       <!-- maven-compiler-plugin -->
-       <maven.compiler.target>1.7</maven.compiler.target>
-       <maven.compiler.source>1.7</maven.compiler.source>
-       
-       <!-- used in exec goal, only;  must point to a jboss server -->
-       <JBHOST>127.0.0.1</JBHOST>
-       <JBPORT>8080</JBPORT>
-   </properties>
+        <!-- maven-compiler-plugin -->
+        <maven.compiler.target>1.7</maven.compiler.target>
+        <maven.compiler.source>1.7</maven.compiler.source>
 
-   <dependencyManagement>
-      <dependencies>
-      </dependencies>
-   </dependencyManagement>
+        <!-- used in exec goal, only;  must point to a jboss server -->
+        <JBHOST>127.0.0.1</JBHOST>
+        <JBPORT>8080</JBPORT>
+    </properties>
 
-   <dependencies>
+    <dependencyManagement>
+        <dependencies>
+        </dependencies>
+    </dependencyManagement>
 
-       <!-- We depend on the EJB remote interfaces  of this application -->
-       <dependency>
-          <groupId>eu.itesla_project.iidm-ddb</groupId>
-          <artifactId>iidm-ddb-ejb</artifactId>
-         <version>0.0.1-SNAPSHOT</version>
-         <type>ejb-client</type>
-       </dependency>
+    <dependencies>
 
-       <dependency>
-          <groupId>eu.itesla_project.iidm-ddb</groupId>
-          <artifactId>iidm-ddb-ejb-remote-client-wildfly</artifactId>
-         <version>0.0.1-SNAPSHOT</version>
-       </dependency>
+        <!-- We depend on the EJB remote interfaces  of this application -->
+        <dependency>
+            <groupId>eu.itesla_project.iidm-ddb</groupId>
+            <artifactId>iidm-ddb-ejb</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <type>ejb-client</type>
+        </dependency>
 
-      <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-          <version>1.7.5</version>
-      </dependency>
+        <dependency>
+            <groupId>eu.itesla_project.iidm-ddb</groupId>
+            <artifactId>iidm-ddb-ejb-remote-client-wildfly</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
 
-   </dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.5</version>
+        </dependency>
 
-   <build>
-      <plugins>
-         <plugin>
-            <artifactId>maven-compiler-plugin</artifactId>
-             <version>${version.compiler.plugin}</version>
-             <configuration>
-                 <source>${maven.compiler.source}</source>
-                 <target>${maven.compiler.target}</target>
-            </configuration>
-         </plugin>
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-         <!-- Add the maven exec plugin to allow us to run a java program via maven -->
-         <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>${version.exec.plugin}</version>
-            <executions>
-              <execution>
-                  <goals>
-                     <goal>exec</goal>
-                  </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <executable>java</executable>
-              <workingDirectory>${project.build.directory}/..</workingDirectory>
-              <arguments>
-                <argument>-DJBHOST=${JBHOST}</argument>
-                <argument>-DJBPORT=${JBPORT}</argument>
-                <!-- automatically creates the classpath using all project dependencies,
-                     also adding the project build directory -->
-                <argument>-classpath</argument>
-                <classpath>
-                </classpath>
-                <argument>eu.itesla_project.iidm.ddb.examples.ejbclient.RemoteEJBClient</argument>
-              </arguments>
-            </configuration>
-        </plugin>
-      </plugins>
-   </build>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${version.compiler.plugin}</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+
+            <!-- Add the maven exec plugin to allow us to run a java program via maven -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>${version.exec.plugin}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <executable>java</executable>
+                    <workingDirectory>${project.build.directory}/..</workingDirectory>
+                    <arguments>
+                        <argument>-DJBHOST=${JBHOST}</argument>
+                        <argument>-DJBPORT=${JBPORT}</argument>
+                        <!-- automatically creates the classpath using all project dependencies,
+                             also adding the project build directory -->
+                        <argument>-classpath</argument>
+                        <classpath>
+                        </classpath>
+                        <argument>eu.itesla_project.iidm.ddb.examples.ejbclient.RemoteEJBClient</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
