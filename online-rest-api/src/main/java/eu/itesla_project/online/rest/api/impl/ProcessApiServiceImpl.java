@@ -55,7 +55,7 @@ public class ProcessApiServiceImpl extends ProcessApiService {
         String res = null;
         try {
             res = objectMapper.writer()
-                    .writeValueAsString(utils.listProcesses(owner, basecase, name, date, creationDate));
+                    .writeValueAsString(utils.getProcessList(owner, basecase, name, date, creationDate));
         } catch (JsonProcessingException e) {
             LOGGER.error(e.getMessage(), e);
             return Response.serverError().entity(new ApiResponseMessage(ApiResponseCodeEnum.ERROR, e.getMessage()))

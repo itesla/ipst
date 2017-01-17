@@ -48,13 +48,13 @@ public class OnlineDBUtils implements ProcessDBUtils {
      * (non-Javadoc)
      * 
      * @see
-     * eu.itesla_project.online.rest.api.util.ProcessDBUtils#listProcesses(java.
+     * eu.itesla_project.online.rest.api.util.ProcessDBUtils#getProcessList(java.
      * lang.String, java.lang.String, java.lang.String,
      * eu.itesla_project.online.rest.api.DateTimeParameter,
      * eu.itesla_project.online.rest.api.DateTimeParameter)
      */
     @Override
-    public List<Process> listProcesses(String owner, String basecase, String name, DateTimeParameter date,
+    public List<Process> getProcessList(String owner, String basecase, String name, DateTimeParameter date,
             DateTimeParameter creationDate) {
         List<Process> processes = new ArrayList<>();
 

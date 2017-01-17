@@ -8,7 +8,7 @@ import eu.itesla_project.online.rest.model.WorkflowResult;
 
 public interface ProcessDBUtils {
 
-    List<Process> listProcesses(String owner, String basecase, String name, DateTimeParameter date,
+    List<Process> getProcessList(String owner, String basecase, String name, DateTimeParameter date,
             DateTimeParameter creationDate);
 
     Process getProcess(String processId);
