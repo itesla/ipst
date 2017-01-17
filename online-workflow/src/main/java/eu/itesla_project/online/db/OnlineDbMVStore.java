@@ -11,12 +11,9 @@ import com.google.common.base.Splitter;
 import eu.itesla_project.cases.CaseType;
 import eu.itesla_project.computation.local.LocalComputationManager;
 import eu.itesla_project.iidm.datasource.DataSource;
-import eu.itesla_project.iidm.datasource.FileDataSource;
-import eu.itesla_project.iidm.datasource.GenericReadOnlyDataSource;
 import eu.itesla_project.iidm.datasource.GzFileDataSource;
 import eu.itesla_project.iidm.export.Exporters;
 import eu.itesla_project.iidm.import_.ImportConfig;
-import eu.itesla_project.iidm.import_.Importer;
 import eu.itesla_project.iidm.import_.Importers;
 import eu.itesla_project.iidm.network.Country;
 import eu.itesla_project.iidm.network.Network;
@@ -977,7 +974,7 @@ public class OnlineDbMVStore implements OnlineDb {
     @Override
     public void storeState(String workflowId, Integer stateId, Network network, String contingencyId) {
         String stateIdStr = String.valueOf(stateId);
-        if (contingencyId !=null) {
+        if (contingencyId != null) {
             LOGGER.info("Storing post contingency state {} , contingency {} of workflow {}", stateIdStr, contingencyId, workflowId);
         } else {
             LOGGER.info("Storing state {} of workflow {}", stateIdStr, workflowId);
@@ -987,7 +984,7 @@ public class OnlineDbMVStore implements OnlineDb {
             Path workflowStatesFolder = getWorkflowStatesFolder(workflowId);
             Path stateFolder;
             if (contingencyId != null) {
-                stateFolder = Paths.get(workflowStatesFolder.toString(), STORED_STATE_POST_PREFIX + stateId + STORED_STATE_CONT_PREFIX +contingencyId);
+                stateFolder = Paths.get(workflowStatesFolder.toString(), STORED_STATE_POST_PREFIX + stateId + STORED_STATE_CONT_PREFIX + contingencyId);
             } else {
                 stateFolder = Paths.get(workflowStatesFolder.toString(), STORED_STATE_PREFIX + stateId);
             }
@@ -1104,7 +1101,7 @@ public class OnlineDbMVStore implements OnlineDb {
     }
 
     @Override
-    public Map<Integer,Set<String>> listStoredPostContingencyStates(String workflowId) {
+    public Map<Integer, Set<String>> listStoredPostContingencyStates(String workflowId) {
         LOGGER.info("Getting list of stored post contingency states for workflow {}", workflowId);
         Map<Integer, Set<String>> storedContingencyStates = new TreeMap<>();
         if (workflowStatesFolderExists(workflowId)) {
@@ -1116,9 +1113,9 @@ public class OnlineDbMVStore implements OnlineDb {
             });
             for (File file : files) {
                 if (file.isDirectory()) {
-                    List<String> stateIdContId=Splitter.on(STORED_STATE_CONT_PREFIX).omitEmptyStrings().trimResults().splitToList(file.getName().substring(STORED_STATE_POST_PREFIX.length()));
-                    Integer stateId=Integer.parseInt(stateIdContId.get(0));
-                    String contId=stateIdContId.get(1);
+                    List<String> stateIdContId = Splitter.on(STORED_STATE_CONT_PREFIX).omitEmptyStrings().trimResults().splitToList(file.getName().substring(STORED_STATE_POST_PREFIX.length()));
+                    Integer stateId = Integer.parseInt(stateIdContId.get(0));
+                    String contId = stateIdContId.get(1);
                     if (storedContingencyStates.containsKey(stateId)) {
                         storedContingencyStates.get(stateId).add(contId);
                     } else {
@@ -1140,15 +1137,15 @@ public class OnlineDbMVStore implements OnlineDb {
         LOGGER.info("Getting state {} of workflow {}", stateIdStr, workflowId);
         Path workflowStatesFolder = getWorkflowStatesFolder(workflowId);
         Path stateFolder;
-        if (contingencyId==null) {
+        if (contingencyId == null) {
             stateFolder = Paths.get(workflowStatesFolder.toString(), STORED_STATE_PREFIX + stateIdStr);
         } else {
-            stateFolder = Paths.get(workflowStatesFolder.toString(), STORED_STATE_POST_PREFIX + stateIdStr+ STORED_STATE_CONT_PREFIX +contingencyId);
+            stateFolder = Paths.get(workflowStatesFolder.toString(), STORED_STATE_POST_PREFIX + stateIdStr + STORED_STATE_CONT_PREFIX + contingencyId);
         }
         if (Files.exists(stateFolder) && Files.isDirectory(stateFolder)) {
             if (stateFolder.toFile().list().length == 1) {
                 File stateFile = stateFolder.toFile().listFiles()[0];
-                Network network=Importers.loadNetwork(stateFile.toPath(), LocalComputationManager.getDefault(), new ImportConfig(), (Properties)null);
+                Network network = Importers.loadNetwork(stateFile.toPath(), LocalComputationManager.getDefault(), new ImportConfig(), (Properties) null);
                 return network;
             }
         }

@@ -6,19 +6,9 @@
  */
 package eu.itesla_project.online.tools;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Collectors;
-
+import com.google.auto.service.AutoService;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-
-import com.google.auto.service.AutoService;
-
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
 import eu.itesla_project.iidm.datasource.DataSource;
@@ -27,6 +17,14 @@ import eu.itesla_project.iidm.export.Exporters;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.online.OnlineDb;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *

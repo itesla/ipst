@@ -189,10 +189,10 @@ public interface OnlineDb extends AutoCloseable {
     /**
      * Store the network state of a workflow
      *
-     * @param workflowId the id of the workflow
-     * @param stateId    the id of the state
-     * @param network    the network
-     * @param contingencyId   the id of a contingency (not null when post contingency state)
+     * @param workflowId    the id of the workflow
+     * @param stateId       the id of the state
+     * @param network       the network
+     * @param contingencyId the id of a contingency (not null when post contingency state)
      */
     void storeState(String workflowId, Integer stateId, Network network, String contingencyId);
 
@@ -224,9 +224,9 @@ public interface OnlineDb extends AutoCloseable {
     /**
      * Get a network post-contingency state of a workflow
      *
-     * @param workflowId the id of the workflow
-     * @param stateId    the id of the state
-     * @param contingencyId    the id of the state
+     * @param workflowId    the id of the workflow
+     * @param stateId       the id of the state
+     * @param contingencyId the id of the state
      * @return the network state
      */
     Network getState(String workflowId, Integer stateId, String contingencyId);
