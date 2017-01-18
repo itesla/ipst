@@ -7,53 +7,63 @@
 
 -->
 <div class="panel-body">
-        <div class="row">
-
-            
-            <div class="col-md-6">        
-                   <div ng-if="!connected"><h4 class="error">JMX DISCONNECTED</h4></div>
-                   <button ng-if="connected" class="btn btn-primary"   ng-click="start()">Start Workflow</button>
-            </div>
-        </div>
-    </div>
+	<div class="row">
 
 
+		<div class="col-md-6">
+			<div ng-if="!connected">
+				<h4 class="error">JMX DISCONNECTED</h4>
+			</div>
+			<button ng-if="connected" class="btn btn-primary" ng-click="start()">Start
+				Workflow</button>
+		</div>
+	</div>
+</div>
 
-        <div class="panel panel-default"  >
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-md-6">
-                        <p class="panel-title">Workflows</p>
-                    </div>
-                    
-                </div>
-            </div>
-            <div class="panel-body">
-         
-            <table class="table table-bordered table-hover">
-		        <thead>
-		            <tr>
-		            	<th class="vert-align light-grey-green" rowspan="1">Workflow ID </th>  
-		                <th class="vert-align light-grey-green" rowspan="1">Status</th>               
-		            </tr>
-		           
-		        </thead>
-        		<tbody>
-               	
-        
-		            <tr ng-repeat="workflow in workflows | orderObjectBy:'worflowId':true">
-		            <td> 
-		             	<h4 ng-class="{  running: workflow.status == 'RUNNING'  }">
-		            		<a ng-click="$parent.activeWorkflowId = workflow.worflowId" href="#workflow?wfId={{workflow.worflowId}}" >{{workflow.worflowId}} </a></h4>
+
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<div class="row">
+			<div class="col-md-6">
+				<p class="panel-title">Workflows</p>
+			</div>
+
+		</div>
+	</div>
+	<div class="panel-body">
+
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th class="vert-align light-grey-green" rowspan="1">Workflow
+						ID</th>
+					<th class="vert-align light-grey-green" rowspan="1">Status</th>
+				</tr>
+
+			</thead>
+			<tbody>
+
+
+				<tr
+					ng-repeat="workflow in workflows | orderObjectBy:'worflowId':true">
+					<td>
+						<h4 ng-class="{  running: workflow.status == 'RUNNING'  }">
+							<a ng-click="$parent.activeWorkflowId = workflow.worflowId"
+								href="#workflow?wfId={{workflow.worflowId}}">{{workflow.worflowId}}
+							</a>
+						</h4>
 					</td>
-		            	<td ng-class="{  running: workflow.status == 'RUNNING'  }"><h4 ng-class="{  running: workflow.status == 'RUNNING'  }">{{workflow.status }}</h4></td>
-		            </tr>
-       		 	</tbody>
-        	</table>
+					<td ng-class="{  running: workflow.status == 'RUNNING'  }"><h4
+							ng-class="{  running: workflow.status == 'RUNNING'  }">{{workflow.status
+							}}</h4></td>
+				</tr>
+			</tbody>
+		</table>
 
-            </div>
-           
-        </div>
+	</div>
+
+</div>
 
 
 

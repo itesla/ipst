@@ -18,28 +18,27 @@ import eu.itesla_project.online.StatusSynthesis;
  * @author Quinary <itesla@quinary.com>
  */
 public class StatusMessage extends Message<StatusSynthesis> {
-	
-	public String type="status";
 
-	public StatusMessage(StatusSynthesis body) {
-		super(body);
-	}
+    public String type = "status";
 
-	 @Override
-	    protected String getType() {
-	        return type;
-	    }
+    public StatusMessage(StatusSynthesis body) {
+        super(body);
+    }
 
-	 @Override
-		public String toJson(){
-			Gson gson = new Gson();
-			return gson.toJson(this);  
-			
-			
-		}
+    @Override
+    protected String getType() {
+        return type;
+    }
 
-		@Override
-		public void toJson(JsonGenerator generator) {
-		}
+    @Override
+    public String toJson() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
+
+    }
+
+    @Override
+    public void toJson(JsonGenerator generator) {
+    }
 
 }

@@ -16,10 +16,13 @@ import com.sun.jndi.url.rmi.rmiURLContext;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class RMIContextFactory implements InitialContextFactory{
+public class RMIContextFactory implements InitialContextFactory {
 
-    /* (non-Javadoc)
-     * @see javax.naming.spi.InitialContextFactory#getInitialContext(java.util.Hashtable)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.naming.spi.InitialContextFactory#getInitialContext(java.util.
+     * Hashtable)
      */
     @Override
     public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {

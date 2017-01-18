@@ -259,7 +259,6 @@ public class OnlineApplicationBean {
 
     public WorkflowStatusEnum getWorkflowStatus(String workflowId) {
         return workflows.get(workflowId).getStatus();
-
     }
 
     public Collection<String> getWorkFlowIds() {

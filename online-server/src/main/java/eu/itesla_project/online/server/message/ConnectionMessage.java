@@ -15,29 +15,27 @@ import com.google.gson.Gson;
  * @author Quinary <itesla@quinary.com>
  */
 public class ConnectionMessage extends Message<Boolean> {
-	
-	private String type="connection";
 
-	public ConnectionMessage(Boolean body) {
-		super(body);
-	}
+    private String type = "connection";
 
-	 @Override
-	    protected String getType() {
-	        return type;
-	    }
+    public ConnectionMessage(Boolean body) {
+        super(body);
+    }
 
-	 @Override
-		public String toJson(){
-			Gson gson = new Gson();
-			return gson.toJson(this);  
-			
-			
-		}
+    @Override
+    protected String getType() {
+        return type;
+    }
 
-		@Override
-		protected void toJson(JsonGenerator generator) {
-			
+    @Override
+    public String toJson() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
 
-		}
+    }
+
+    @Override
+    protected void toJson(JsonGenerator generator) {
+
+    }
 }

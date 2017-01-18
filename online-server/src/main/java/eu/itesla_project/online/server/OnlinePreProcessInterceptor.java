@@ -29,41 +29,11 @@ import org.jboss.resteasy.spi.interception.PostProcessInterceptor;
  * @author Quinary <itesla@quinary.com>
  */
 @Provider
-public class OnlinePreProcessInterceptor implements ContainerRequestFilter{
+public class OnlinePreProcessInterceptor implements ContainerRequestFilter {
 
-	@Override
-	public void filter(ContainerRequestContext req) throws IOException {
-		/*
-		SecurityContext securityContext=req.getSecurityContext();
-		Principal principal=securityContext.getUserPrincipal();
-		
-		if(principal==null || (!securityContext.isUserInRole("user" )&& !securityContext.isUserInRole("admin" )))
-		{
-			System.out.println("PReProcess NOT AUTHORIZED");
-			ResponseBuilder rb=new ResponseBuilderImpl();
-			rb.status(Status.UNAUTHORIZED);
-			
-			
-			req.abortWith(rb.build());
-		}
-		if(req.getUriInfo().getPath().equals("/online/j_security_check")){
-			System.out.println("PReProcess redirect j_security_check to index");
-			ResponseBuilder rb=new ResponseBuilderImpl();
-			rb.status(Status.TEMPORARY_REDIRECT);
-			try {
-				rb.location(new URI("/online/index.html"));
-			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			req.abortWith(rb.build());
-		}
-		*/
-		
-	}
+    @Override
+    public void filter(ContainerRequestContext req) throws IOException {
 
-	
-
-	
+    }
 
 }
