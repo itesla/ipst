@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2016, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -25,20 +26,24 @@ public class WCAConfig {
     private final float reducedVariableRatio;
 
     private final boolean debug;
+    
+    private final boolean exportStates;
 
     public static WCAConfig load() {
         ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("wca");
         Path xpressHome = config.getPathProperty("xpressHome");
         float reducedVariableRatio = config.getFloatProperty("reducedVariableRatio", DEFAULT_REDUCED_VARIABLE_RATIO);
         boolean debug = config.getBooleanProperty("debug", false);
-        return new WCAConfig(xpressHome, reducedVariableRatio, debug);
+        boolean exportStates = config.getBooleanProperty("exportStates", false);
+        return new WCAConfig(xpressHome, reducedVariableRatio, debug, exportStates);
     }
 
-    public WCAConfig(Path xpressHome, float reducedVariableRatio, boolean debug) {
+    public WCAConfig(Path xpressHome, float reducedVariableRatio, boolean debug, boolean exportStates) {
         Objects.requireNonNull(xpressHome);
         this.xpressHome = xpressHome;
         this.reducedVariableRatio = reducedVariableRatio;
         this.debug = debug;
+        this.exportStates = exportStates;
     }
 
     public Path getXpressHome() {
@@ -52,12 +57,17 @@ public class WCAConfig {
     public boolean isDebug() {
         return debug;
     }
+    
+    public boolean isExportStates() {
+        return exportStates;
+    }
 
     @Override
     public String toString() {
         return getClass().getSimpleName() + " [xpressHome=" + xpressHome +
                 ", reducedVariableRatio=" + reducedVariableRatio +
                 ", debug=" + debug +
+                ", exportStates=" + exportStates +
                 "]";
     }
 }
