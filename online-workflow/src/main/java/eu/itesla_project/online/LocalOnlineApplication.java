@@ -250,9 +250,7 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
         } catch (Exception e) {
             LOGGER.error(e.toString(), e);
             if (workflow != null) {
-                StatusSynthesis st = new StatusSynthesis();
-                st.setWorkflowId(workflow.getId());
-                st.setStatus(StatusSynthesis.STATUS_ERROR);
+                StatusSynthesis st = new StatusSynthesis(workflow.getId(),WorkflowStatusEnum.ERROR);
                 onWorkflowUpdate(st);
             }
             throw new RuntimeException(e);
@@ -265,7 +263,6 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
     @Override
     public void stopWorkflow() {
 
-        // workflow.stop();
     }
 
     @Override

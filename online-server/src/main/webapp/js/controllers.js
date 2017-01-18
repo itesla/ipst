@@ -76,7 +76,7 @@ controllers.controller('OnLineWorkflowCtrl', ['OnlineWorkflowService', '$scope',
         if(!angular.isUndefined($scope.activeWorkflowId))
         {
         OnlineWorkflowService.getWorkflowStatus($scope.activeWorkflowId)
-        		.success(function(data) { $scope.workflowStatus = parseInt(data); })
+        		.success(function(data) { $scope.workflowStatus = data; })
                 .error(function(data) { $log.error(data); });
 
         OnlineWorkflowService.isRunning($scope.activeWorkflowId).success( function(data){ $scope.running=(data==='true'); })

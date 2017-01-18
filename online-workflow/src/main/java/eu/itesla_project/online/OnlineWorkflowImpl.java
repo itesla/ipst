@@ -152,7 +152,7 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
     public void start(OnlineWorkflowContext oCtx) throws Exception {
         logger.info("{} Online workflow processing, started.", id);
         for (OnlineApplicationListener l : listeners)
-            l.onWorkflowUpdate(new StatusSynthesis(id, StatusSynthesis.STATUS_RUNNING));
+            l.onWorkflowUpdate(new StatusSynthesis(id, WorkflowStatusEnum.RUNNING));
 
         Network network = null;
         if (parameters.getCaseFile() != null) {
@@ -269,7 +269,7 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
         logger.info("Results:\n" + oCtx.getResults().toString());
 
         for (OnlineApplicationListener l : listeners)
-            l.onWorkflowUpdate(new StatusSynthesis(id, StatusSynthesis.STATUS_TERMINATED));
+            l.onWorkflowUpdate(new StatusSynthesis(id, WorkflowStatusEnum.DONE));
 
         // store workflow parameters
         onlineDb.storeWorkflowParameters(id, parameters);
