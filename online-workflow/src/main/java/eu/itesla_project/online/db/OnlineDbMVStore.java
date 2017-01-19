@@ -22,6 +22,7 @@ import eu.itesla_project.modules.histo.HistoDbAttributeId;
 import eu.itesla_project.modules.histo.IIDM2DB;
 import eu.itesla_project.modules.online.*;
 import eu.itesla_project.modules.optimizer.CCOFinalStatus;
+import eu.itesla_project.online.OnlineUtils;
 import eu.itesla_project.online.db.debug.NetworkData;
 import eu.itesla_project.online.db.debug.NetworkDataExporter;
 import eu.itesla_project.online.db.debug.NetworkDataExtractor;
@@ -973,10 +974,12 @@ public class OnlineDbMVStore implements OnlineDb {
 
     @Override
     public void storeState(String workflowId, Integer stateId, Network network, String contingencyId) {
-        String stateIdStr = String.valueOf(stateId);
+        String stateIdStr;
         if (contingencyId != null) {
+            stateIdStr = OnlineUtils.getPostContingencyId(String.valueOf(stateId), contingencyId);
             LOGGER.info("Storing post contingency state {} , contingency {} of workflow {}", stateIdStr, contingencyId, workflowId);
         } else {
+            stateIdStr = String.valueOf(stateId);
             LOGGER.info("Storing state {} of workflow {}", stateIdStr, workflowId);
         }
         if (network.getStateManager().getStateIds().contains(stateIdStr)) {
@@ -1011,7 +1014,6 @@ public class OnlineDbMVStore implements OnlineDb {
                     throw new RuntimeException(errorMessage, e);
                 }
             }
-            //DataSource dataSource = new FileDataSource(stateFolder, network.getId());
             DataSource dataSource = new GzFileDataSource(stateFolder, network.getId());
             Properties parameters = new Properties();
             parameters.setProperty("iidm.export.xml.indent", "true");
@@ -1134,17 +1136,19 @@ public class OnlineDbMVStore implements OnlineDb {
     @Override
     public Network getState(String workflowId, Integer stateId, String contingencyId) {
         String stateIdStr = String.valueOf(stateId);
-        LOGGER.info("Getting state {} of workflow {}", stateIdStr, workflowId);
         Path workflowStatesFolder = getWorkflowStatesFolder(workflowId);
         Path stateFolder;
         if (contingencyId == null) {
+            LOGGER.info("Getting state {} of workflow {}", stateIdStr, workflowId);
             stateFolder = Paths.get(workflowStatesFolder.toString(), STORED_STATE_PREFIX + stateIdStr);
         } else {
+            LOGGER.info("Getting state {}, contingency {} of workflow {}", stateIdStr, contingencyId, workflowId);
             stateFolder = Paths.get(workflowStatesFolder.toString(), STORED_STATE_POST_PREFIX + stateIdStr + STORED_STATE_CONT_PREFIX + contingencyId);
         }
         if (Files.exists(stateFolder) && Files.isDirectory(stateFolder)) {
             if (stateFolder.toFile().list().length == 1) {
                 File stateFile = stateFolder.toFile().listFiles()[0];
+                LOGGER.debug("loading file {}", stateFile.getAbsolutePath());
                 Network network = Importers.loadNetwork(stateFile.toPath(), LocalComputationManager.getDefault(), new ImportConfig(), (Properties) null);
                 return network;
             }

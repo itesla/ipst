@@ -289,7 +289,7 @@ public class StateAnalyzer implements Callable<Void> {
 
                         @Override
                         public Void call() throws Exception {
-                            String postContingencyStateId = stateId + "-post-" + contingency.getId();
+                            String postContingencyStateId = OnlineUtils.getPostContingencyId(stateId, contingency.getId());
                             boolean loadflowConverge = computePostContingencyState(network, stateId, contingency, postContingencyStateId);
                             if (loadflowConverge) {
                                 logger.info("{}: adding state {} to post contingency states for optimizer", stateId, postContingencyStateId);
@@ -367,7 +367,7 @@ public class StateAnalyzer implements Callable<Void> {
                         public Void call() throws Exception {
                             List<LimitViolation> violations = new ArrayList<LimitViolation>();
                             // compute post contingency state
-                            String postContingencyStateId = stateId + "-post-" + contingency.getId();
+                            String postContingencyStateId = OnlineUtils.getPostContingencyId(stateId, contingency.getId());
                             boolean loadflowConverge = computePostContingencyState(network, stateId, contingency, postContingencyStateId);
                             if (loadflowConverge) {
                                 logger.info("{}: computing post contingency violations for contingency {}", stateId, contingency.getId());
@@ -400,7 +400,6 @@ public class StateAnalyzer implements Callable<Void> {
     private boolean computePostContingencyState(Network network, String stateId, Contingency contingency, String postContingencyStateId) {
         boolean loadflowConverge = false;
         logger.info("{}: computing post contingency state for contingency {}", stateId, contingency.getId());
-        //String postContingencyStateId = stateId + "-post-" + contingency.getId();
         boolean alreadyProcessed = false;
         synchronized (loadflowResults) {
             if (loadflowResults.containsKey(postContingencyStateId)) {

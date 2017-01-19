@@ -45,4 +45,8 @@ public class OnlineUtils {
         }
 		return true;
 	}
+
+	public static String getPostContingencyId(String stateId, String contingencyId) {
+		return stateId + "-post-" + contingencyId;
+	}
 }
