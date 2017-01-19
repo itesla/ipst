@@ -11,7 +11,7 @@ import com.google.common.base.Splitter;
 import eu.itesla_project.cases.CaseType;
 import eu.itesla_project.computation.local.LocalComputationManager;
 import eu.itesla_project.iidm.datasource.DataSource;
-import eu.itesla_project.iidm.datasource.GzFileDataSource;
+import eu.itesla_project.iidm.datasource.FileDataSource;
 import eu.itesla_project.iidm.export.Exporters;
 import eu.itesla_project.iidm.import_.ImportConfig;
 import eu.itesla_project.iidm.import_.Importers;
@@ -1014,7 +1014,7 @@ public class OnlineDbMVStore implements OnlineDb {
                     throw new RuntimeException(errorMessage, e);
                 }
             }
-            DataSource dataSource = new GzFileDataSource(stateFolder, network.getId());
+            DataSource dataSource = new FileDataSource(stateFolder, network.getId());
             Properties parameters = new Properties();
             parameters.setProperty("iidm.export.xml.indent", "true");
             parameters.setProperty("iidm.export.xml.with-branch-state-variables", "true");
