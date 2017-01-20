@@ -319,7 +319,7 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                         // write base state
                         new AmplNetworkWriter(network, dataSource, 0, 0, false, mapper, CLUSTERS_AMPL_EXPORT_CONFIG).write();
                         if (config.isExportStates()) {
-                            new WCAStateExporter(network, workingDir, 0, 0).export();
+                            WCAUtils.exportState(network, workingDir, 0, 0);
                         }
 
                         // write post contingency state
@@ -327,7 +327,7 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                         AmplUtil.fillMapper(mapper, network); // because action can create a new bus
                         new AmplNetworkWriter(network, dataSource, contingencyNum, 0, true, mapper, CLUSTERS_AMPL_EXPORT_CONFIG).write();
                         if (config.isExportStates()) {
-                            new WCAStateExporter(network, workingDir, contingencyNum, 0).export();
+                            WCAUtils.exportState(network, workingDir, contingencyNum, 0);
                         }
 
                         // write contingency description
@@ -346,7 +346,7 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                             AmplUtil.fillMapper(mapper, network); // because action can create a new bus
                             new AmplNetworkWriter(network, dataSource, contingencyNum, curativeActionNum, true, mapper, CLUSTERS_AMPL_EXPORT_CONFIG).write();
                             if (config.isExportStates()) {
-                                new WCAStateExporter(network, workingDir, contingencyNum, curativeActionNum).export();
+                                WCAUtils.exportState(network, workingDir, contingencyNum, curativeActionNum);
                             }
                         }
 
@@ -412,7 +412,7 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                         // write base state
                         new AmplNetworkWriter(network, dataSource, 0, 0, false, mapper, DOMAINS_AMPL_EXPORT_CONFIG).write();
                         if (config.isExportStates()) {
-                            new WCAStateExporter(network, workingDir, 0, 0).export();
+                            WCAUtils.exportState(network, workingDir, 0, 0);
                         }
 
                         // write contingency description
@@ -428,7 +428,7 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                             AmplUtil.fillMapper(mapper, network); // because action can create a new bus
                             new AmplNetworkWriter(network, dataSource, 0, preventiveActionNum, true, mapper, DOMAINS_AMPL_EXPORT_CONFIG).write();
                             if (config.isExportStates()) {
-                                new WCAStateExporter(network, workingDir, 0, preventiveActionNum).export();
+                                WCAUtils.exportState(network, workingDir, 0, preventiveActionNum);
                             }
                         }
                         

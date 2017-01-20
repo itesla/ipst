@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016, RTE (http://www.rte-france.com)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -19,21 +19,14 @@ import eu.itesla_project.iidm.network.Network;
  *
  * @author Massimo Ferraro <massimo.ferraro@techrain.it>
  */
-public class WCAStateExporter {
+public final class WCAUtils {
 
-    private final Network network;
-    private final Path folder;
-    private final int faultNum;
-    private final int actionNum;
-
-    public WCAStateExporter(Network network, Path folder, int faultNum, int actionNum) {
-        this.network = Objects.requireNonNull(network);
-        this.folder = Objects.requireNonNull(folder);
-        this.faultNum = faultNum;
-        this.actionNum = actionNum;
+    private WCAUtils() {
     }
 
-    public void export() {
+    public static void exportState(Network network, Path folder, int faultNum, int actionNum) {
+        Objects.requireNonNull(network);
+        Objects.requireNonNull(folder);
         Properties parameters = new Properties();
         parameters.setProperty("iidm.export.xml.indent", "true");
         parameters.setProperty("iidm.export.xml.with-branch-state-variables", "true");
