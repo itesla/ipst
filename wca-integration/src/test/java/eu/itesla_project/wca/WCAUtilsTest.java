@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.util.zip.GZIPInputStream;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -28,10 +29,10 @@ public class WCAUtilsTest {
     public TemporaryFolder testFolder = new TemporaryFolder();
     
     @Test
-    public void testInTempFolder() throws IOException, URISyntaxException {
+    public void testExportState() throws IOException, URISyntaxException {
         Path folder = testFolder.newFolder().toPath();
         Network network = NetworkTest1Factory.create();
-        network.setCaseDate(new DateTime(2017, 01, 01, 0, 0, 0, 0));
+        network.setCaseDate(new DateTime(2017, 01, 01, 0, 0, 0, 0).withZone(DateTimeZone.UTC));
         WCAUtils.exportState(network, folder, 0, 0);
         File exportedState = Paths.get(folder.toString(), network.getId() + "_0_0.xiidm.gz").toFile();
         assertTrue(exportedState.exists());
