@@ -58,7 +58,7 @@
         <maven.compiler.version>2.5.1</maven.compiler.version>
         <maven.findbugs.version>3.0.4</maven.findbugs.version>
         <maven.javadoc.version>2.10.4</maven.javadoc.version>
-        <maven.jacoco.version>0.7.7.201606060606</maven.jacoco.version>
+        <maven.jacoco.version>0.7.8</maven.jacoco.version>
         <maven.buildnumber.version>1.4</maven.buildnumber.version>
         <maven.surefire.version>2.19.1</maven.surefire.version>
         <maven.templating.version>1.0.0</maven.templating.version>
@@ -71,11 +71,11 @@
         <pepite.libs.version>1.0-ITESLA</pepite.libs.version>
 
         <autoservice.version>1.0-rc2</autoservice.version>
-        <commons-compress.version>1.12</commons-compress.version>
+        <commons-compress.version>1.13</commons-compress.version>
         <commonscli.version>1.3.1</commonscli.version>
         <commonscodec.version>1.10</commonscodec.version>
         <commonsconfiguration.version>1.10</commonsconfiguration.version>
-        <commonsio.version>2.4</commonsio.version>
+        <commonsio.version>2.5</commonsio.version>
         <commonslang.version>2.6</commonslang.version>
         <commonslang3.version>3.4</commonslang3.version>
         <commonsmath3.version>3.6.1</commonsmath3.version>
@@ -89,19 +89,19 @@
         <ipstentsoe.version>0.1-SNAPSHOT</ipstentsoe.version>
         <jackson.version>2.7.3</jackson.version>
         <javacsv.version>2.0</javacsv.version>
-        <jgrapht.version>0.9.1</jgrapht.version>
+        <jgrapht.version>1.0.1</jgrapht.version>
         <jimfs.version>1.1</jimfs.version>
         <jmatio.version>1.0</jmatio.version>
-        <jodatime.version>2.9.6</jodatime.version>
+        <jodatime.version>2.9.7</jodatime.version>
         <json.version>20160212</json.version>
         <jsonlib.version>2.4</jsonlib.version>
         <junit.version>4.12</junit.version>
-        <logback.version>1.1.7</logback.version>
+        <logback.version>1.1.8</logback.version>
         <mockito.version>1.10.19</mockito.version>
-        <poi.version>3.14</poi.version>
+        <poi.version>3.15</poi.version>
         <shrinkwrap.version>1.2.6</shrinkwrap.version>
         <sirocco.version>1.0</sirocco.version>
-        <slf4j.version>1.7.21</slf4j.version>
+        <slf4j.version>1.7.22</slf4j.version>
         <supercsv.version>2.4.0</supercsv.version>
         <trove4j.version>3.0.3</trove4j.version>
         <xmlunit.version>2.3.0</xmlunit.version>
