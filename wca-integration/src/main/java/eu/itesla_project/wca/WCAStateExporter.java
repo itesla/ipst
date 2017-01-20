@@ -7,6 +7,7 @@
 package eu.itesla_project.wca;
 
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.Properties;
 
 import eu.itesla_project.iidm.datasource.DataSource;
@@ -26,8 +27,8 @@ public class WCAStateExporter {
     private final int actionNum;
 
     public WCAStateExporter(Network network, Path folder, int faultNum, int actionNum) {
-        this.network = network;
-        this.folder = folder;
+        this.network = Objects.requireNonNull(network);
+        this.folder = Objects.requireNonNull(folder);
         this.faultNum = faultNum;
         this.actionNum = actionNum;
     }
