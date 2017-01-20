@@ -32,7 +32,7 @@ public class WCAUtilsTest {
     public void testExportState() throws IOException, URISyntaxException {
         Path folder = testFolder.newFolder().toPath();
         Network network = NetworkTest1Factory.create();
-        network.setCaseDate(new DateTime(2017, 01, 01, 0, 0, 0, 0).withZone(DateTimeZone.UTC));
+        network.setCaseDate(new DateTime(1483228800000l).withZone(DateTimeZone.UTC));
         WCAUtils.exportState(network, folder, 0, 0);
         File exportedState = Paths.get(folder.toString(), network.getId() + "_0_0.xiidm.gz").toFile();
         assertTrue(exportedState.exists());
