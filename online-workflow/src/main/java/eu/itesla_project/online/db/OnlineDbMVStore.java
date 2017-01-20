@@ -51,6 +51,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * @author Quinary <itesla@quinary.com>
@@ -1075,26 +1076,21 @@ public class OnlineDbMVStore implements OnlineDb {
 
     @Override
     public List<Integer> listStoredStates(String workflowId) {
+        Objects.requireNonNull(workflowId);
         LOGGER.info("Getting list of stored states for workflow {}", workflowId);
         List<Integer> storedStates = new ArrayList<Integer>();
         if (workflowStatesFolderExists(workflowId)) {
             Path workflowStatesFolder = getWorkflowStatesFolder(workflowId);
-            File[] files = workflowStatesFolder.toFile().listFiles(new FilenameFilter() {
-                public boolean accept(File dir, String name) {
-                    return name.toLowerCase().startsWith(STORED_STATE_PREFIX);
-                }
-            });
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    String stateId = file.getName().substring(STORED_STATE_PREFIX.length());
-                    storedStates.add(Integer.parseInt(stateId));
-                }
+            try {
+                storedStates = Files.walk(workflowStatesFolder)
+                        .filter(Files::isDirectory)
+                        .filter(stateDir -> stateDir.getFileName().toString().startsWith(STORED_STATE_PREFIX))
+                        .map(stateDir -> Integer.parseInt(stateDir.getFileName().toString().substring(STORED_STATE_PREFIX.length())))
+                        .sorted()
+                        .collect(Collectors.toList());
+            } catch (IOException e) {
+                throw new RuntimeException(e.getMessage(), e);
             }
-            Collections.sort(storedStates, new Comparator<Integer>() {
-                public int compare(Integer o1, Integer o2) {
-                    return o1.compareTo(o2);
-                }
-            });
             LOGGER.info("Found {} state(s) for workflow {}", storedStates.size(), workflowId);
         } else {
             LOGGER.info("Found no state(s) for workflow {}", workflowId);
@@ -1104,28 +1100,28 @@ public class OnlineDbMVStore implements OnlineDb {
 
     @Override
     public Map<Integer, Set<String>> listStoredPostContingencyStates(String workflowId) {
+        Objects.requireNonNull(workflowId);
         LOGGER.info("Getting list of stored post contingency states for workflow {}", workflowId);
         Map<Integer, Set<String>> storedContingencyStates = new TreeMap<>();
         if (workflowStatesFolderExists(workflowId)) {
             Path workflowStatesFolder = getWorkflowStatesFolder(workflowId);
-            File[] files = workflowStatesFolder.toFile().listFiles(new FilenameFilter() {
-                public boolean accept(File dir, String name) {
-                    return name.toLowerCase().startsWith(STORED_STATE_POST_PREFIX);
-                }
-            });
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    List<String> stateIdContId = Splitter.on(STORED_STATE_CONT_PREFIX).omitEmptyStrings().trimResults().splitToList(file.getName().substring(STORED_STATE_POST_PREFIX.length()));
-                    Integer stateId = Integer.parseInt(stateIdContId.get(0));
-                    String contId = stateIdContId.get(1);
-                    if (storedContingencyStates.containsKey(stateId)) {
-                        storedContingencyStates.get(stateId).add(contId);
-                    } else {
-                        storedContingencyStates.put(stateId, new HashSet<String>(Arrays.asList(contId)));
-                    }
-                }
+            try {
+                Files.walk(workflowStatesFolder)
+                        .filter(Files::isDirectory)
+                        .filter(stateDirPath -> stateDirPath.getFileName().toString().startsWith(STORED_STATE_POST_PREFIX))
+                        .forEach(statePostDirPath -> {
+                            List<String> statePostIdContId = Splitter.on(STORED_STATE_CONT_PREFIX).splitToList(statePostDirPath.getFileName().toString().substring(STORED_STATE_POST_PREFIX.length()));
+                            Integer statePostId = Integer.parseInt(statePostIdContId.get(0));
+                            String contId = statePostIdContId.get(1);
+                            if (storedContingencyStates.containsKey(statePostId)) {
+                                storedContingencyStates.get(statePostId).add(contId);
+                            } else {
+                                storedContingencyStates.put(statePostId, new HashSet<String>(Arrays.asList(contId)));
+                            }
+                        });
+            } catch (IOException e) {
+                throw new RuntimeException(e.getMessage(), e);
             }
-            //LOGGER.info("Found {} state(s) for workflow {}", storedStates.size(), workflowId);
         } else {
             LOGGER.info("Found no state(s) for workflow {}", workflowId);
         }
@@ -1135,6 +1131,8 @@ public class OnlineDbMVStore implements OnlineDb {
 
     @Override
     public Network getState(String workflowId, Integer stateId, String contingencyId) {
+        Objects.requireNonNull(workflowId);
+        Objects.requireNonNull(stateId);
         String stateIdStr = String.valueOf(stateId);
         Path workflowStatesFolder = getWorkflowStatesFolder(workflowId);
         Path stateFolder;
@@ -1145,12 +1143,13 @@ public class OnlineDbMVStore implements OnlineDb {
             LOGGER.info("Getting state {}, contingency {} of workflow {}", stateIdStr, contingencyId, workflowId);
             stateFolder = Paths.get(workflowStatesFolder.toString(), STORED_STATE_POST_PREFIX + stateIdStr + STORED_STATE_CONT_PREFIX + contingencyId);
         }
-        if (Files.exists(stateFolder) && Files.isDirectory(stateFolder)) {
-            if (stateFolder.toFile().list().length == 1) {
-                File stateFile = stateFolder.toFile().listFiles()[0];
-                LOGGER.debug("loading file {}", stateFile.getAbsolutePath());
-                Network network = Importers.loadNetwork(stateFile.toPath(), LocalComputationManager.getDefault(), new ImportConfig(), (Properties) null);
-                return network;
+        if (Files.isDirectory(stateFolder)) {
+            try {
+                Path stateFile = Files.list(stateFolder).findFirst().get();
+                LOGGER.debug("loading network from file {}", stateFile.toString());
+                return Importers.loadNetwork(stateFile, LocalComputationManager.getDefault(), new ImportConfig(), (Properties) null);
+            } catch (IOException e) {
+                throw new RuntimeException(e.getMessage(), e);
             }
         }
         return null;

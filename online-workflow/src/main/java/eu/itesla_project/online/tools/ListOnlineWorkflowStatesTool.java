@@ -73,22 +73,18 @@ public class ListOnlineWorkflowStatesTool implements Tool {
         OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
         String workflowId = line.getOptionValue("workflow");
         List<Integer> storedStates = onlinedb.listStoredStates(workflowId);
-        if (storedStates != null) {
-            if (!storedStates.isEmpty()) {
-                System.out.println("Stored States = " + storedStates.toString());
-            } else
-                System.out.println("No stores states for this workflow");
-        } else
+        if (!storedStates.isEmpty()) {
+            System.out.println("Stored States = " + storedStates.toString());
+        } else {
             System.out.println("No stored states for this workflow");
+        }
 
         Map<Integer, Set<String>> storedPostContingenciesStates = onlinedb.listStoredPostContingencyStates(workflowId);
-        if (storedPostContingenciesStates != null) {
-            if (!storedPostContingenciesStates.isEmpty()) {
-                System.out.println("Stored post-contingencies states ( state id, contingencies ids ) = " + storedPostContingenciesStates.toString());
-            } else
-                System.out.println("No stored post-contingencies states for this workflow");
-        } else
+        if (!storedPostContingenciesStates.isEmpty()) {
+            System.out.println("Stored post-contingencies states ( state id, contingencies ids ) = " + storedPostContingenciesStates.toString());
+        } else {
             System.out.println("No stored post-contingencies states for this workflow");
+        }
         onlinedb.close();
     }
 

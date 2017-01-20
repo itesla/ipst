@@ -24,10 +24,8 @@ import org.apache.commons.cli.Options;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
- *
  * @author Massimo Ferraro <massimo.ferraro@techrain.it>
  */
 @AutoService(Tool.class)
@@ -108,18 +106,18 @@ public class AmplExportOnlineWorkflowStatesTool implements Tool {
         int postcontingenciesStatesSize = postContingenciesStates
                 .keySet()
                 .stream()
-                .flatMap(key -> postContingenciesStates.get(key).stream())
-                .collect(Collectors.toList()).size();
+                .mapToInt(key -> postContingenciesStates.get(key).size())
+                .sum();
 
-        Path folder =  Paths.get(line.getOptionValue("folder"));
-        System.out.println("Exporting in AMPL format network data of workflow " + workflowId + ", " + states.size() + " state(s), " +postcontingenciesStatesSize + " post-contingencies states, to folder " + folder);
+        Path folder = Paths.get(line.getOptionValue("folder"));
+        System.out.println("Exporting in AMPL format network data of workflow " + workflowId + ", " + states.size() + " state(s), " + postcontingenciesStatesSize + " post-contingencies states, to folder " + folder);
         states.forEach(state -> {
             //exports pre-contingency state
             exportState(onlinedb, workflowId, state, null, folder);
             //exports post-contingencies states
             Set<String> contingenciesIds = postContingenciesStates.get(state);
             if (contingenciesIds != null) {
-                contingenciesIds.forEach( contingencyId -> {
+                contingenciesIds.forEach(contingencyId -> {
                     exportState(onlinedb, workflowId, state, contingencyId, folder);
                 });
             }
@@ -128,20 +126,20 @@ public class AmplExportOnlineWorkflowStatesTool implements Tool {
     }
 
     private void exportState(OnlineDb onlinedb, String workflowId, Integer stateId, String contingencyId, Path folder) {
-        String wfInfo="workflow " + workflowId + ", state " + stateId + ((contingencyId!= null) ? ", contingency " + contingencyId : "");
+        String wfInfo = "workflow " + workflowId + ", state " + stateId + ((contingencyId != null) ? ", contingency " + contingencyId : "");
         Network network = onlinedb.getState(workflowId, stateId, contingencyId);
         if (network == null) {
             System.out.println("Cannot export network data: no stored state for " + wfInfo);
             return;
         }
-        String baseName="wf_" + workflowId + "_state_" + stateId + ((contingencyId != null) ? "_cont_" + contingencyId : "");
+        String baseName = "wf_" + workflowId + "_state_" + stateId + ((contingencyId != null) ? "_cont_" + contingencyId : "");
         Path stateFolder = Paths.get(folder.toString(), baseName);
-        System.out.println("Exporting network data of " + wfInfo +" to folder " + stateFolder);
+        System.out.println("Exporting network data of " + wfInfo + " to folder " + stateFolder);
         if (stateFolder.toFile().exists()) {
-            System.out.println("Cannot export network data of "+ wfInfo + ": folder " + stateFolder + " already exists");
+            System.out.println("Cannot export network data of " + wfInfo + ": folder " + stateFolder + " already exists");
             return;
         }
-        if (! stateFolder.toFile().mkdirs()) {
+        if (!stateFolder.toFile().mkdirs()) {
             System.out.println("Cannot export network data of " + wfInfo + ": unable to create " + stateFolder + " folder");
             return;
         }

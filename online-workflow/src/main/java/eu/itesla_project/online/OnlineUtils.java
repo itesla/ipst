@@ -6,47 +6,48 @@
  */
 package eu.itesla_project.online;
 
-import java.util.*;
-
 import eu.itesla_project.contingency.Contingency;
 import eu.itesla_project.simulation.securityindexes.SecurityIndex;
 
+import java.util.*;
+
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 public class OnlineUtils {
 
-	public static Collection<Contingency> filterContingencies(List<Contingency> contingencies, List<String> contingenciesIds) {
-		Objects.requireNonNull(contingencies, "contingencies list is null");
-		Objects.requireNonNull(contingenciesIds, "contingenciesIds list is null");
-		List<Contingency> filteredContingencies = new ArrayList<>();
-		for (Contingency contingency : contingencies) {
-			if ( contingenciesIds.contains(contingency.getId()) )
-					filteredContingencies.add(contingency);
-		}
-		return filteredContingencies;
-	}
-	
-	public static Set<String> getContingencyIds(List<Contingency> contingencies) {
-		Objects.requireNonNull(contingencies, "contingencies list is null");
-		Set<String> contingencyIds = new HashSet<>();
-		for (Contingency contingency : contingencies) {
-			contingencyIds.add(contingency.getId());
-		}
-		return contingencyIds;
-	}
-	
-	public static boolean isSafe(Collection<SecurityIndex> securityIndexes) {
-		Objects.requireNonNull(securityIndexes, "security indexes collection is null");
-		for ( SecurityIndex index : securityIndexes ) {
-            if ( !index.isOk() )
-            	return false;
+    public static Collection<Contingency> filterContingencies(List<Contingency> contingencies, List<String> contingenciesIds) {
+        Objects.requireNonNull(contingencies, "contingencies list is null");
+        Objects.requireNonNull(contingenciesIds, "contingenciesIds list is null");
+        List<Contingency> filteredContingencies = new ArrayList<>();
+        for (Contingency contingency : contingencies) {
+            if (contingenciesIds.contains(contingency.getId()))
+                filteredContingencies.add(contingency);
         }
-		return true;
-	}
+        return filteredContingencies;
+    }
 
-	public static String getPostContingencyId(String stateId, String contingencyId) {
-		return stateId + "-post-" + contingencyId;
-	}
+    public static Set<String> getContingencyIds(List<Contingency> contingencies) {
+        Objects.requireNonNull(contingencies, "contingencies list is null");
+        Set<String> contingencyIds = new HashSet<>();
+        for (Contingency contingency : contingencies) {
+            contingencyIds.add(contingency.getId());
+        }
+        return contingencyIds;
+    }
+
+    public static boolean isSafe(Collection<SecurityIndex> securityIndexes) {
+        Objects.requireNonNull(securityIndexes, "security indexes collection is null");
+        for (SecurityIndex index : securityIndexes) {
+            if (!index.isOk())
+                return false;
+        }
+        return true;
+    }
+
+    public static String getPostContingencyId(String stateId, String contingencyId) {
+        Objects.requireNonNull(stateId, "state id is null");
+        Objects.requireNonNull(contingencyId, "contingency id is null");
+        return stateId + "-post-" + contingencyId;
+    }
 }

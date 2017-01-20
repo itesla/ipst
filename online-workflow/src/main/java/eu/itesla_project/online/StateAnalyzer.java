@@ -64,6 +64,17 @@ public class StateAnalyzer implements Callable<Void> {
                          OnlineRulesFacade rulesFacade, CorrectiveControlOptimizer optimizer, Stabilization stabilization,
                          ImpactAnalysis impactAnalysis, OnlineDb onlineDb, StateAnalizerListener stateListener, ConstraintsModifier constraintsModifier,
                          OnlineWorkflowParameters parameters) {
+        Objects.requireNonNull(context);
+        Objects.requireNonNull(sampler);
+        Objects.requireNonNull(loadFlow);
+        Objects.requireNonNull(rulesFacade);
+        Objects.requireNonNull(optimizer);
+        Objects.requireNonNull(stabilization);
+        Objects.requireNonNull(impactAnalysis);
+        Objects.requireNonNull(onlineDb);
+        Objects.requireNonNull(stateListener);
+        Objects.requireNonNull(constraintsModifier);
+        Objects.requireNonNull(parameters);
         this.context = context;
         this.sampler = sampler;
         this.loadFlow = loadFlow;
