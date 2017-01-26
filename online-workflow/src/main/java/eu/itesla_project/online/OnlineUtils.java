@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -9,7 +10,11 @@ package eu.itesla_project.online;
 import eu.itesla_project.contingency.Contingency;
 import eu.itesla_project.simulation.securityindexes.SecurityIndex;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Quinary <itesla@quinary.com>
@@ -19,21 +24,15 @@ public class OnlineUtils {
     public static Collection<Contingency> filterContingencies(List<Contingency> contingencies, List<String> contingenciesIds) {
         Objects.requireNonNull(contingencies, "contingencies list is null");
         Objects.requireNonNull(contingenciesIds, "contingenciesIds list is null");
-        List<Contingency> filteredContingencies = new ArrayList<>();
-        for (Contingency contingency : contingencies) {
-            if (contingenciesIds.contains(contingency.getId()))
-                filteredContingencies.add(contingency);
-        }
-        return filteredContingencies;
+        return contingencies
+                .stream()
+                .filter(contingency -> contingenciesIds.contains(contingency.getId()))
+                .collect(Collectors.toList());
     }
 
     public static Set<String> getContingencyIds(List<Contingency> contingencies) {
         Objects.requireNonNull(contingencies, "contingencies list is null");
-        Set<String> contingencyIds = new HashSet<>();
-        for (Contingency contingency : contingencies) {
-            contingencyIds.add(contingency.getId());
-        }
-        return contingencyIds;
+        return contingencies.stream().map(Contingency::getId).collect(Collectors.toSet());
     }
 
     public static boolean isSafe(Collection<SecurityIndex> securityIndexes) {
