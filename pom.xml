@@ -93,6 +93,7 @@
         <autoservice.version>1.0-rc2</autoservice.version>
         <sirocco.version>1.0</sirocco.version>
         <jackson.version>2.7.3</jackson.version>
+        <jackson-datatype-joda.version>2.4.1</jackson-datatype-joda.version>
         <h2database.version>1.4.191</h2database.version>
         <gdata.version>1.41.1_1</gdata.version>
         <commonslang.version>2.6</commonslang.version>
@@ -262,13 +263,18 @@
             <!-- Compile dependencies -->
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>            
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>
                 <artifactId>jackson-datatype-joda</artifactId>
-                <version>${jackson.version}</version>
+                <version>${jackson-datatype-joda.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.auto.service</groupId>
