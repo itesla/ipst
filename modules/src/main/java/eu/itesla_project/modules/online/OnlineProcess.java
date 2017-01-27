@@ -7,9 +7,10 @@
 package eu.itesla_project.modules.online;
 
 import java.util.HashMap;
+
 import java.util.Map;
 import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.joda.time.DateTime;
 
 /**
@@ -25,8 +26,8 @@ public class OnlineProcess {
     private final DateTime creationDate;
     private final String caseType;
     private final Map<String, String> workflowsMap = new HashMap<String, String>();
-
-    public OnlineProcess(String id, String name, String owner, String caseType, DateTime date, DateTime creationDate)
+    
+    public OnlineProcess(@JsonProperty("id")String id, @JsonProperty("name")String name, @JsonProperty("owner")String owner, @JsonProperty("caseType")String caseType, @JsonProperty("date")DateTime date, @JsonProperty("creationDate")DateTime creationDate)
     {
         this.id=Objects.requireNonNull(id);
         this.name=name;
