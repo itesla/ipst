@@ -19,7 +19,10 @@ import java.util.stream.Collectors;
 /**
  * @author Quinary <itesla@quinary.com>
  */
-public class OnlineUtils {
+public final class OnlineUtils {
+
+    private OnlineUtils() {
+    }
 
     public static Collection<Contingency> filterContingencies(List<Contingency> contingencies, List<String> contingenciesIds) {
         Objects.requireNonNull(contingencies, "contingencies list is null");
