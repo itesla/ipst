@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
- * Copyright (c) 2016, RTE (http://www.rte-france.com)
+ * Copyright (c) 2016-2017 RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -15,6 +15,7 @@ import org.joda.time.Interval;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Online Database
@@ -188,11 +189,12 @@ public interface OnlineDb extends AutoCloseable {
     /**
      * Store the network state of a workflow
      *
-     * @param workflowId the id of the workflow
-     * @param stateId    the id of the state
-     * @param network    the network
+     * @param workflowId    the id of the workflow
+     * @param stateId       the id of the state
+     * @param network       the network
+     * @param contingencyId the id of a contingency (not null when post contingency state)
      */
-    void storeState(String workflowId, Integer stateId, Network network);
+    void storeState(String workflowId, Integer stateId, Network network, String contingencyId);
 
     /**
      * List the ids of the stored states of a network
@@ -203,6 +205,14 @@ public interface OnlineDb extends AutoCloseable {
     List<Integer> listStoredStates(String workflowId);
 
     /**
+     * List the contingency ids for the stored post-constingency states of a network
+     *
+     * @param workflowId the if of the workflow
+     * @return the stored post-contingency contingencies ids,
+     */
+    Map<Integer, Set<String>> listStoredPostContingencyStates(String workflowId);
+
+    /**
      * Get a network state of a workflow
      *
      * @param workflowId the id of the workflow
@@ -210,6 +220,17 @@ public interface OnlineDb extends AutoCloseable {
      * @return the network state
      */
     Network getState(String workflowId, Integer stateId);
+
+    /**
+     * Get a network post-contingency state of a workflow
+     *
+     * @param workflowId    the id of the workflow
+     * @param stateId       the id of the state
+     * @param contingencyId the id of the state
+     * @return the network state
+     */
+    Network getState(String workflowId, Integer stateId, String contingencyId);
+
 
     /**
      * Export, in CSV format, the data of a network state of a workflow
