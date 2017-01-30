@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.google.gson.Gson;
 
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;

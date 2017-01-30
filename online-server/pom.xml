@@ -24,6 +24,13 @@
             <artifactId>online-workflow</artifactId>
             <version>0.1-SNAPSHOT</version>
         </dependency>
+
+        <!--dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>apogee-client</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency-->
+
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
@@ -40,6 +47,14 @@
             <version>${resteasy.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
     <build>
         <finalName>online-server</finalName>

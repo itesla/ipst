@@ -14,6 +14,7 @@ In order to build iPST you need:
   * CMake *(2.6 or greater)*
   * Recent C++ compiler (GNU g++ or Clang)
   * [ipst-core](https://github.com/itesla/ipst-core)
+  * [ipst-entsoe](https://github.com/itesla/ipst-entsoe)
   
 Optional C++ modules requires:
   * Intel Fortran Compiler 

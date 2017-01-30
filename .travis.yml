@@ -6,9 +6,12 @@ jdk:
 install:
 # Build iPST core
 - git clone https://github.com/itesla/ipst-core itesla/ipst-core
-- cd itesla/ipst-core && mvn install
+- pushd itesla/ipst-core && mvn install && popd
+
+# Build iPST entsoe
+- git clone https://github.com/itesla/ipst-entsoe itesla/ipst-entsoe
+- pushd itesla/ipst-entsoe && mvn install && popd
 
 script:
 - cd ${TRAVIS_BUILD_DIR}
 - mvn clean test jacoco:report coveralls:report
-
