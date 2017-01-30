@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.client.Client;
@@ -546,11 +547,6 @@ public class ProcessApiTest {
         }
 
         @Override
-        public void storeState(String workflowId, Integer stateId, Network network) {
-
-        }
-
-        @Override
         public List<Integer> listStoredStates(String workflowId) {
             return null;
         }
@@ -699,6 +695,21 @@ public class ProcessApiTest {
 
         @Override
         public List<String[]> getAllMetrics(String workflowId, OnlineStep step) {
+            return null;
+        }
+
+        @Override
+        public void storeState(String workflowId, Integer stateId, Network network, String contingencyId) {
+            
+        }
+
+        @Override
+        public Map<Integer, Set<String>> listStoredPostContingencyStates(String workflowId) {
+            return null;
+        }
+
+        @Override
+        public Network getState(String workflowId, Integer stateId, String contingencyId) {
             return null;
         }
 
