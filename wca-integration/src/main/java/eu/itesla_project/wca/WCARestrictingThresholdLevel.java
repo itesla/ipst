@@ -6,6 +6,9 @@
  */
 package eu.itesla_project.wca;
 
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 /**
  * @author Christian Biasuzzi <christian.biasuzzi@techrain.it>
  */
@@ -33,11 +36,9 @@ public enum WCARestrictingThresholdLevel {
     }
 
     public static WCARestrictingThresholdLevel fromLevel(int level) {
-        for (WCARestrictingThresholdLevel restThreshold : values()) {
-            if (restThreshold.level == level) {
-                return restThreshold;
-            }
-        }
-        return null;
+        return Arrays.stream(values())
+                .filter(restrLevel -> ( restrLevel.level == level))
+                .findFirst()
+                .orElse(null);
     }
 }

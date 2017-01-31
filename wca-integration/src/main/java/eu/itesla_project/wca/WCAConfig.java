@@ -46,7 +46,7 @@ public class WCAConfig {
         this.reducedVariableRatio = reducedVariableRatio;
         this.debug = debug;
         this.exportStates = exportStates;
-        this.restrictingThresholdLevel = Objects.requireNonNull(restrictingThresholdLevel);
+        this.restrictingThresholdLevel = Objects.requireNonNull(restrictingThresholdLevel, "invalid restrictingThresholdLevel");
     }
 
     public Path getXpressHome() {
