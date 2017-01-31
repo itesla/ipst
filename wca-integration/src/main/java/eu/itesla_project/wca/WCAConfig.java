@@ -65,7 +65,9 @@ public class WCAConfig {
         return exportStates;
     }
 
-    public WCARestrictingThresholdLevel getRestrictingThresholdLevel() { return restrictingThresholdLevel; }
+    public WCARestrictingThresholdLevel getRestrictingThresholdLevel() {
+        return restrictingThresholdLevel;
+    }
 
     @Override
     public String toString() {
