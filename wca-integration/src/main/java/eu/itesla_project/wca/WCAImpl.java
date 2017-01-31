@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
- * Copyright (c) 2016, RTE (http://www.rte-france.com)
+ * Copyright (c) 2016-2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -364,7 +364,8 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                                         Integer.toString(THREADS),
                                         Float.toString(config.getReducedVariableRatio()),
                                         Float.toString(UNCERTAINTY_THRESHOLD),
-                                        Integer.toString(config.isDebug() ? DETAILS_LEVEL_DEBUG : DETAILS_LEVEL_NORMAL))
+                                        Integer.toString(config.isDebug() ? DETAILS_LEVEL_DEBUG : DETAILS_LEVEL_NORMAL),
+                                        Integer.toString(config.getRestrictingThresholdLevel().getLevel()))
                                 .build();
                         return Arrays.asList(new CommandExecution(cmd, 1));
                     }
@@ -431,7 +432,7 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                                 WCAUtils.exportState(network, workingDir, 0, preventiveActionNum);
                             }
                         }
-                        
+
                         // write preventive action description
                         writeActions(preventiveActionIds, dataSource, mapper, "Preventive actions", AmplSubset.PREVENTIVE_ACTION);
 
@@ -450,7 +451,8 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                                         Float.toString(config.getReducedVariableRatio()),
                                         Float.toString(UNCERTAINTY_THRESHOLD),
                                         Integer.toString(SecurityIndexType.TSO_OVERLOAD.ordinal()),
-                                        Integer.toString(config.isDebug() ? DETAILS_LEVEL_DEBUG : DETAILS_LEVEL_NORMAL))
+                                        Integer.toString(config.isDebug() ? DETAILS_LEVEL_DEBUG : DETAILS_LEVEL_NORMAL),
+                                        Integer.toString(config.getRestrictingThresholdLevel().getLevel()))
                                 .build();
                         return Arrays.asList(new CommandExecution(cmd, 1));
                     }
@@ -490,7 +492,7 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                                                                    boolean stopWcaOnViolations) {
         return memoizedUncertaintiesFuture.get()
                 .thenCombine(histoLimitsFuture.get(), (uncertainties, histoLimits) -> Pair.of(uncertainties, histoLimits))
-                .thenCompose(p -> createDomainTask(contingency, baseStateId, securityRuleExpressions, p.getFirst(), p.getSecond(), mapper, 
+                .thenCompose(p -> createDomainTask(contingency, baseStateId, securityRuleExpressions, p.getFirst(), p.getSecond(), mapper,
                         preventiveStateIds, preventiveActionIds, stopWcaOnViolations));
     }
 
@@ -692,8 +694,8 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                                             continue;
                                         String preventiveStateId = StateManager.INITIAL_STATE_ID + "_" + preventiveActionId;
                                         preventiveActionTasks.add(CompletableFuture.runAsync(() -> {
-                                            LOGGER.info("Network {}, Preventive Action {}: starting analysis for {} violation on equipment {}", 
-                                                    network.getId(), 
+                                            LOGGER.info("Network {}, Preventive Action {}: starting analysis for {} violation on equipment {}",
+                                                    network.getId(),
                                                     preventiveActionId,
                                                     baseStateLimitViolation.getLimitType(),
                                                     baseStateLimitViolation.getSubject().getId());
@@ -713,8 +715,8 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                                                         .filter(preventiveStateLimitViolation -> preventiveStateLimitViolation.getSubject().getId().equals(baseStateLimitViolation.getSubject().getId()))
                                                         .findAny();
                                                 if ( notSolvedLimitViolation.isPresent() && parameters.stopWcaOnViolations() ) {
-                                                    LOGGER.warn("Network {}, Preventive Action {}: post action state still contains {} violation on equiment {}", 
-                                                            network.getId(), 
+                                                    LOGGER.warn("Network {}, Preventive Action {}: post action state still contains {} violation on equiment {}",
+                                                            network.getId(),
                                                             preventiveActionId,
                                                             baseStateLimitViolation.getLimitType(),
                                                             baseStateLimitViolation.getSubject().getId());
@@ -724,7 +726,7 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                                                     preventiveActionIdsForDomains.add(preventiveActionId);
                                                 }
                                             } else
-                                                LOGGER.warn("Network {}, Preventive Action {}: loadflow on post action state diverged", network.getId(), preventiveActionId); 
+                                                LOGGER.warn("Network {}, Preventive Action {}: loadflow on post action state diverged", network.getId(), preventiveActionId);
                                         })
                                         .exceptionally(throwable -> {
                                             if (throwable != null) {
@@ -742,7 +744,7 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                                 }
                                 LOGGER.info("Network {}: found {} preventive actions for 'domains' task", network.getId(), preventiveActionIdsForDomains.size());
                             }
-                            
+
                             // check offline rules
                             for (Contingency contingency : contingencies) {
                                 clusters.add(CompletableFuture
@@ -782,7 +784,7 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                                                                                                             WCAClusterOrigin.HADES_BASE_OFFLINE_RULE,
                                                                                                             causes));
                                             } else {
-                                                return createDomainTaskWithDeps(contingency, baseStateId, securityRuleExpressions, uncertainties, histoLimits, mapper, 
+                                                return createDomainTaskWithDeps(contingency, baseStateId, securityRuleExpressions, uncertainties, histoLimits, mapper,
                                                         preventiveStateIdsForDomains, preventiveActionIdsForDomains, parameters.stopWcaOnViolations())
                                                         .thenCompose(cluster -> {
                                                             if (cluster != null && parameters.stopWcaOnViolations()) {

@@ -14,7 +14,6 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 /**
- *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
 public class WCAConfig {
@@ -26,8 +25,10 @@ public class WCAConfig {
     private final float reducedVariableRatio;
 
     private final boolean debug;
-    
+
     private final boolean exportStates;
+
+    private final WCARestrictingThresholdLevel restrictingThresholdLevel;
 
     public static WCAConfig load() {
         ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("wca");
@@ -35,14 +36,17 @@ public class WCAConfig {
         float reducedVariableRatio = config.getFloatProperty("reducedVariableRatio", DEFAULT_REDUCED_VARIABLE_RATIO);
         boolean debug = config.getBooleanProperty("debug", false);
         boolean exportStates = config.getBooleanProperty("exportStates", false);
-        return new WCAConfig(xpressHome, reducedVariableRatio, debug, exportStates);
+        int restrictingThresholdLevelInt = config.getIntProperty("restrictingThresholdLevel", 0);
+        WCARestrictingThresholdLevel restrictingThresholdLevel = WCARestrictingThresholdLevel.fromLevel(restrictingThresholdLevelInt);
+        return new WCAConfig(xpressHome, reducedVariableRatio, debug, exportStates, restrictingThresholdLevel);
     }
 
-    public WCAConfig(Path xpressHome, float reducedVariableRatio, boolean debug, boolean exportStates) {
+    public WCAConfig(Path xpressHome, float reducedVariableRatio, boolean debug, boolean exportStates, WCARestrictingThresholdLevel restrictingThresholdLevel) {
         this.xpressHome = Objects.requireNonNull(xpressHome);
         this.reducedVariableRatio = reducedVariableRatio;
         this.debug = debug;
         this.exportStates = exportStates;
+        this.restrictingThresholdLevel = Objects.requireNonNull(restrictingThresholdLevel);
     }
 
     public Path getXpressHome() {
@@ -56,10 +60,12 @@ public class WCAConfig {
     public boolean isDebug() {
         return debug;
     }
-    
+
     public boolean isExportStates() {
         return exportStates;
     }
+
+    public WCARestrictingThresholdLevel getRestrictingThresholdLevel() { return restrictingThresholdLevel; }
 
     @Override
     public String toString() {
@@ -67,6 +73,7 @@ public class WCAConfig {
                 ", reducedVariableRatio=" + reducedVariableRatio +
                 ", debug=" + debug +
                 ", exportStates=" + exportStates +
+                ", restrictingThresholdLevel=" + restrictingThresholdLevel.getLevel() +
                 "]";
     }
 }
