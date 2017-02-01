@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -9,13 +10,13 @@ package eu.itesla_project.eurostag;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
 import eu.itesla_project.commons.Version;
+import eu.itesla_project.commons.config.ComponentDefaultConfig;
 import eu.itesla_project.computation.*;
 import eu.itesla_project.eurostag.network.EsgGeneralParameters;
 import eu.itesla_project.eurostag.network.EsgNetwork;
 import eu.itesla_project.eurostag.network.io.EsgWriter;
 import eu.itesla_project.eurostag.tools.EurostagNetworkModifier;
 import eu.itesla_project.iidm.datasource.FileDataSource;
-import eu.itesla_project.iidm.ddb.eurostag_imp_exp.IIDMDynamicDatabaseFactory;
 import eu.itesla_project.iidm.eurostag.export.BranchParallelIndexes;
 import eu.itesla_project.iidm.eurostag.export.EurostagDictionary;
 import eu.itesla_project.iidm.eurostag.export.EurostagEchExport;
@@ -113,7 +114,8 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
         this.network = network;
         this.computationManager = computationManager;
         this.priority = priority;
-        this.ddbClient = new IIDMDynamicDatabaseFactory().create(config.isDdbCaching());
+        ComponentDefaultConfig defaultConfig = ComponentDefaultConfig.load();
+        this.ddbClient = defaultConfig.newFactoryImpl(DynamicDatabaseClientFactory.class).create(config.isDdbCaching());
         this.config = config;
 
         LOGGER.info(config.toString());

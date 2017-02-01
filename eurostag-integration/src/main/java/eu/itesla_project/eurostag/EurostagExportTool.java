@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -17,7 +18,7 @@ import eu.itesla_project.eurostag.network.EsgNetwork;
 import eu.itesla_project.eurostag.network.io.EsgWriter;
 import eu.itesla_project.eurostag.tools.EurostagNetworkModifier;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClient;
-import eu.itesla_project.iidm.ddb.eurostag_imp_exp.IIDMDynamicDatabaseFactory;
+import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClientFactory;
 import eu.itesla_project.iidm.eurostag.export.BranchParallelIndexes;
 import eu.itesla_project.iidm.eurostag.export.EurostagDictionary;
 import eu.itesla_project.iidm.eurostag.export.EurostagEchExport;
@@ -57,7 +58,7 @@ public class EurostagExportTool implements Tool, EurostagConstants {
         if (!Files.isDirectory(outputDir)) {
             throw new RuntimeException(outputDir + " is not a directory");
         }
-        DynamicDatabaseClient ddbClient = new IIDMDynamicDatabaseFactory().create(eurostagConfig.isDdbCaching());
+        DynamicDatabaseClient ddbClient = defaultConfig.newFactoryImpl(DynamicDatabaseClientFactory.class).create(eurostagConfig.isDdbCaching());
 
         System.out.println("loading case...");
         // load network
