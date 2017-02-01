@@ -170,6 +170,12 @@ public class AmplUtil {
             mapper.newInt(AmplSubset.GENERATOR, g.getId());
         }
 
+        // static var compensators
+        network.getStaticVarCompensatorStream().forEach(svc -> mapper.newInt(AmplSubset.STATIC_VAR_COMPENSATOR, svc.getId()));
+
+        // HVDC lines
+        network.getHvdcLineStream().forEach(hvdc -> mapper.newInt(AmplSubset.HVDC_LINE, hvdc.getId()));
+
         // limits
         for (Line l : network.getLines()) {
             if (l.getCurrentLimits1() != null) {

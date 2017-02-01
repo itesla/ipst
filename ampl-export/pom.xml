@@ -21,19 +21,21 @@
     <name>AMPL export</name>
 
     <dependencies>
+        <!-- Compilation dependencies -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>eu.itesla_project</groupId>
             <artifactId>iidm-converter-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>eu.itesla_project</groupId>
             <artifactId>network-merge</artifactId>
-            <version>${project.version}</version>
         </dependency>
+
+        <!-- Test dependencies -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

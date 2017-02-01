@@ -10,6 +10,7 @@ import itesla.converter.Converter;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
@@ -21,7 +22,8 @@ public class iTesla {
 	@Test
 	public void test() throws IOException {
 		String pathFRM = getClass().getResource("/edftur1c.frm").toString();
-		String pathOUT = getClass().getResource("/output").toString();
+		String pathOUT = getClass().getResource("/output").toString();		
+		
 		converter = new Converter(pathFRM, pathOUT, false);
 		converter_init = new Converter(pathFRM, pathOUT, true);
 		try {

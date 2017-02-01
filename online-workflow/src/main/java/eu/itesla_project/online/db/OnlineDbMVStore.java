@@ -1,18 +1,19 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
- * Copyright (c) 2016, RTE (http://www.rte-france.com)
+ * Copyright (c) 2016-2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 package eu.itesla_project.online.db;
 
-import com.csvreader.CsvWriter;
+import com.google.common.base.Splitter;
 import eu.itesla_project.cases.CaseType;
+import eu.itesla_project.computation.local.LocalComputationManager;
 import eu.itesla_project.iidm.datasource.DataSource;
 import eu.itesla_project.iidm.datasource.FileDataSource;
 import eu.itesla_project.iidm.export.Exporters;
-import eu.itesla_project.iidm.import_.Importer;
+import eu.itesla_project.iidm.import_.ImportConfig;
 import eu.itesla_project.iidm.import_.Importers;
 import eu.itesla_project.iidm.network.Country;
 import eu.itesla_project.iidm.network.Network;
@@ -21,6 +22,7 @@ import eu.itesla_project.modules.histo.HistoDbAttributeId;
 import eu.itesla_project.modules.histo.IIDM2DB;
 import eu.itesla_project.modules.online.*;
 import eu.itesla_project.modules.optimizer.CCOFinalStatus;
+import eu.itesla_project.online.OnlineUtils;
 import eu.itesla_project.online.db.debug.NetworkData;
 import eu.itesla_project.online.db.debug.NetworkDataExporter;
 import eu.itesla_project.online.db.debug.NetworkDataExtractor;
@@ -39,13 +41,17 @@ import org.slf4j.LoggerFactory;
 import org.supercsv.io.CsvListWriter;
 import org.supercsv.prefs.CsvPreference;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * @author Quinary <itesla@quinary.com>
@@ -102,6 +108,8 @@ public class OnlineDbMVStore implements OnlineDb {
     private static final String STORED_STATE_PROCESSING_STATUS_MAP_SUFFIX = "_processingstatus";
     private static final String STORED_WORKFLOW_STATES_FOLDER_PREFIX = "states-wf-";
     private static final String STORED_STATE_PREFIX = "state-";
+    private static final String STORED_STATE_POST_PREFIX = "post-state-";
+    private static final String STORED_STATE_CONT_PREFIX = "-cont-";
     private static final String STORED_VIOLATIONS_STEPS_MAP_NAME = "storedViolationsSteps";
     private static final String STORED_VIOLATIONS_STATES_MAP_SUFFIX = "_violationsstates";
     private static final String STORED_VIOLATIONS_STATES_MAP_NAME = "storedViolationsStates";
@@ -146,7 +154,7 @@ public class OnlineDbMVStore implements OnlineDb {
             } catch (IOException e) {
                 String errorMessage = "online db folder " + storageFolder + " does not exist and cannot be created: " + e.getMessage();
                 LOGGER.error(errorMessage);
-                throw new RuntimeException(errorMessage);
+                throw new RuntimeException(errorMessage, e);
             }
         }
         mapBuilder = new MVMapConcurrent.Builder<String, String>();
@@ -209,7 +217,7 @@ public class OnlineDbMVStore implements OnlineDb {
         } catch (Throwable e) {
             String errorMessage = "Error storing metrics for wf " + workflowId + " in map " + mapName + ": " + e.getMessage();
             LOGGER.error(errorMessage);
-            throw new RuntimeException(errorMessage);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
@@ -231,7 +239,7 @@ public class OnlineDbMVStore implements OnlineDb {
         } catch (Throwable e) {
             String errorMessage = "Error storing metadata for wf " + workflowId + ", step " + step.name() + ", state " + stateId + ": " + e.getMessage();
             LOGGER.error(errorMessage);
-            throw new RuntimeException(errorMessage);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
@@ -250,7 +258,7 @@ public class OnlineDbMVStore implements OnlineDb {
 
     private Map<String, String> getMetrics(String workflowId, String mapName) {
         if (isWorkflowStored(workflowId)) {
-            HashMap<String, String> metrics = new HashMap<String, String>();
+            TreeMap<String, String> metrics = new TreeMap<>();
             MVStore wfMVStore = getStore(workflowId);
             if (wfMVStore.getMapNames().contains(mapName)) {
                 Map<String, String> storedMap = wfMVStore.openMap(mapName, mapBuilder);
@@ -266,11 +274,10 @@ public class OnlineDbMVStore implements OnlineDb {
     }
 
     @Override
-    public String getCsvMetrics(String workflowId, OnlineStep step) {
+    public List<String[]> getAllMetrics(String workflowId, OnlineStep step) {
         LOGGER.info("Preparing CSV data for wf {} and step {}", workflowId, step.name());
+        List<String[]> retTable = new ArrayList<>();
         if (isWorkflowStored(workflowId)) {
-            StringWriter content = new StringWriter();
-            CsvWriter cvsWriter = new CsvWriter(content, ',');
             try {
                 MVStore wfMVStore = getStore(workflowId);
                 // check if there are stored metrics
@@ -278,8 +285,7 @@ public class OnlineDbMVStore implements OnlineDb {
                 if (storedStepsMap.containsKey(step.name())) {
                     MVMap<String, String> stepParamsMap = wfMVStore.openMap(step.name() + STORED_METRICS_PARAMS_MAP_SUFFIX, mapBuilder);
                     MVMap<String, String> stepStatesMap = wfMVStore.openMap(step.name() + STORED_METRICS_STATES_MAP_SUFFIX, mapBuilder);
-                    // write headers
-                    //LOGGER.debug("Preparing CSV headers for wf {} and step {}", workflowId, step.name());
+                    // gets headers
                     String[] headers = new String[stepParamsMap.keySet().size() + 1];
                     headers[0] = "state";
                     HashMap<String, Integer> paramsIndexes = new HashMap<>();
@@ -289,34 +295,30 @@ public class OnlineDbMVStore implements OnlineDb {
                         paramsIndexes.put(parameter, i);
                         i++;
                     }
-                    cvsWriter.writeRecord(headers);
-                    // write step general metrics, if stored
+                    retTable.add(headers);
+                    // gets step general metrics, if stored
                     if (stepStatesMap.containsKey("_")) {
-                        //LOGGER.debug("Preparing CSV data for wf {} and step {} - general step metrics", workflowId, step.name());
-                        String[] values = getStoredMapValues(wfMVStore, "_", step, stepParamsMap.keySet().size(), paramsIndexes);
-                        cvsWriter.writeRecord(values);
+                        retTable.add(getStoredMapValues(wfMVStore, "_", step, stepParamsMap.keySet().size(), paramsIndexes));
                     }
-                    // write step metrics for each state, if stored
-                    for (String stateId : stepStatesMap.keySet()) {
-                        if (!"_".equals(stateId)) {
-                            //LOGGER.debug("Preparing CSV data for wf {} and step {} - state {} metrics", workflowId, step.name(), stateId);
-                            String[] values = getStoredMapValues(wfMVStore, stateId, step, stepParamsMap.keySet().size(), paramsIndexes);
-                            cvsWriter.writeRecord(values);
-                        }
-                    }
+                    // gets step metrics for each state, if stored
+                    stepStatesMap.keySet().stream()
+                            .filter(x -> (!"_".equals(x)))
+                            .sorted(Comparator.comparing(Integer::valueOf))
+                            .forEach(stateId -> {
+                                retTable.add(getStoredMapValues(wfMVStore, stateId, step, stepParamsMap.keySet().size(), paramsIndexes));
+                            });
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 String errorMessage = "error getting cvs data for step " + step.name() + " and wf id " + workflowId;
                 LOGGER.error(errorMessage);
-                throw new RuntimeException(errorMessage);
+                throw new RuntimeException(errorMessage, e);
             }
-            cvsWriter.flush();
-            return content.toString();
         } else {
             LOGGER.warn("No data about wf {}", workflowId);
-            return null;
         }
+        return retTable;
     }
+
 
     private String[] getStoredMapValues(MVStore wfMVStore, String stateId, OnlineStep step, int paramsN, HashMap<String, Integer> paramsIndexes) {
         String[] values = new String[paramsN + 1];
@@ -972,13 +974,24 @@ public class OnlineDbMVStore implements OnlineDb {
     }
 
     @Override
-    public void storeState(String workflowId, Integer stateId, Network network) {
-        String stateIdStr = String.valueOf(stateId);
-        LOGGER.info("Storing state {} of workflow {}", stateIdStr, workflowId);
+    public void storeState(String workflowId, Integer stateId, Network network, String contingencyId) {
+        String stateIdStr;
+        if (contingencyId != null) {
+            stateIdStr = OnlineUtils.getPostContingencyId(String.valueOf(stateId), contingencyId);
+            LOGGER.info("Storing post contingency state {} , contingency {} of workflow {}", stateIdStr, contingencyId, workflowId);
+        } else {
+            stateIdStr = String.valueOf(stateId);
+            LOGGER.info("Storing state {} of workflow {}", stateIdStr, workflowId);
+        }
         if (network.getStateManager().getStateIds().contains(stateIdStr)) {
             network.getStateManager().setWorkingState(stateIdStr);
             Path workflowStatesFolder = getWorkflowStatesFolder(workflowId);
-            Path stateFolder = Paths.get(workflowStatesFolder.toString(), STORED_STATE_PREFIX + stateId);
+            Path stateFolder;
+            if (contingencyId != null) {
+                stateFolder = Paths.get(workflowStatesFolder.toString(), STORED_STATE_POST_PREFIX + stateId + STORED_STATE_CONT_PREFIX + contingencyId);
+            } else {
+                stateFolder = Paths.get(workflowStatesFolder.toString(), STORED_STATE_PREFIX + stateId);
+            }
             if (Files.exists(stateFolder)) {
                 //remove current state file, if it already exists
                 for (int i = 0; i < XIIDMEXTENSIONS.length; i++) {
@@ -989,7 +1002,7 @@ public class OnlineDbMVStore implements OnlineDb {
                         String errorMessage = "online db: folder " + workflowStatesFolder + " for workflow " + workflowId
                                 + " , state " + stateIdStr + " ; cannot remove existing state file: " + e.getMessage();
                         LOGGER.error(errorMessage);
-                        throw new RuntimeException(errorMessage);
+                        throw new RuntimeException(errorMessage, e);
                     }
                 }
             } else {
@@ -999,23 +1012,23 @@ public class OnlineDbMVStore implements OnlineDb {
                     String errorMessage = "online db: folder " + workflowStatesFolder + " for workflow " + workflowId
                             + " and state " + stateIdStr + " cannot be created: " + e.getMessage();
                     LOGGER.error(errorMessage);
-                    throw new RuntimeException(errorMessage);
+                    throw new RuntimeException(errorMessage, e);
                 }
             }
             DataSource dataSource = new FileDataSource(stateFolder, network.getId());
             Properties parameters = new Properties();
             parameters.setProperty("iidm.export.xml.indent", "true");
             parameters.setProperty("iidm.export.xml.with-branch-state-variables", "true");
-            parameters.setProperty("iidm.export.xml.with-breakers", "true");
-            parameters.setProperty("iidm.export.xml.with-properties", "true");
             Exporters.export("XIIDM", network, parameters, dataSource);
             // store network state values, for later serialization
-            Map<HistoDbAttributeId, Object> networkValues = IIDM2DB.extractCimValues(network, new IIDM2DB.Config(network.getId(), true, true)).getSingleValueMap();
-            ConcurrentHashMap<Integer, Map<HistoDbAttributeId, Object>> workflowStates = new ConcurrentHashMap<Integer, Map<HistoDbAttributeId, Object>>();
-            if (workflowsStates.containsKey(workflowId))
-                workflowStates = workflowsStates.get(workflowId);
-            workflowStates.put(stateId, networkValues);
-            workflowsStates.put(workflowId, workflowStates);
+            if (contingencyId == null) {
+                Map<HistoDbAttributeId, Object> networkValues = IIDM2DB.extractCimValues(network, new IIDM2DB.Config(network.getId(), true, true)).getSingleValueMap();
+                ConcurrentHashMap<Integer, Map<HistoDbAttributeId, Object>> workflowStates = new ConcurrentHashMap<Integer, Map<HistoDbAttributeId, Object>>();
+                if (workflowsStates.containsKey(workflowId))
+                    workflowStates = workflowsStates.get(workflowId);
+                workflowStates.put(stateId, networkValues);
+                workflowsStates.put(workflowId, workflowStates);
+            }
         } else {
             String errorMessage = "online db: no state " + stateIdStr + " in network of workflow " + workflowId;
             LOGGER.error(errorMessage);
@@ -1063,26 +1076,21 @@ public class OnlineDbMVStore implements OnlineDb {
 
     @Override
     public List<Integer> listStoredStates(String workflowId) {
+        Objects.requireNonNull(workflowId);
         LOGGER.info("Getting list of stored states for workflow {}", workflowId);
         List<Integer> storedStates = new ArrayList<Integer>();
         if (workflowStatesFolderExists(workflowId)) {
             Path workflowStatesFolder = getWorkflowStatesFolder(workflowId);
-            File[] files = workflowStatesFolder.toFile().listFiles(new FilenameFilter() {
-                public boolean accept(File dir, String name) {
-                    return name.toLowerCase().startsWith(STORED_STATE_PREFIX);
-                }
-            });
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    String stateId = file.getName().substring(STORED_STATE_PREFIX.length());
-                    storedStates.add(Integer.parseInt(stateId));
-                }
+            try {
+                storedStates = Files.walk(workflowStatesFolder)
+                        .filter(Files::isDirectory)
+                        .filter(stateDir -> stateDir.getFileName().toString().startsWith(STORED_STATE_PREFIX))
+                        .map(stateDir -> Integer.parseInt(stateDir.getFileName().toString().substring(STORED_STATE_PREFIX.length())))
+                        .sorted()
+                        .collect(Collectors.toList());
+            } catch (IOException e) {
+                throw new RuntimeException(e.getMessage(), e);
             }
-            Collections.sort(storedStates, new Comparator<Integer>() {
-                public int compare(Integer o1, Integer o2) {
-                    return o1.compareTo(o2);
-                }
-            });
             LOGGER.info("Found {} state(s) for workflow {}", storedStates.size(), workflowId);
         } else {
             LOGGER.info("Found no state(s) for workflow {}", workflowId);
@@ -1091,29 +1099,65 @@ public class OnlineDbMVStore implements OnlineDb {
     }
 
     @Override
-    public Network getState(String workflowId, Integer stateId) {
+    public Map<Integer, Set<String>> listStoredPostContingencyStates(String workflowId) {
+        Objects.requireNonNull(workflowId);
+        LOGGER.info("Getting list of stored post contingency states for workflow {}", workflowId);
+        Map<Integer, Set<String>> storedContingencyStates = new TreeMap<>();
+        if (workflowStatesFolderExists(workflowId)) {
+            Path workflowStatesFolder = getWorkflowStatesFolder(workflowId);
+            try {
+                Files.walk(workflowStatesFolder)
+                        .filter(Files::isDirectory)
+                        .filter(stateDirPath -> stateDirPath.getFileName().toString().startsWith(STORED_STATE_POST_PREFIX))
+                        .forEach(statePostDirPath -> {
+                            List<String> statePostIdContId = Splitter.on(STORED_STATE_CONT_PREFIX).splitToList(statePostDirPath.getFileName().toString().substring(STORED_STATE_POST_PREFIX.length()));
+                            Integer statePostId = Integer.parseInt(statePostIdContId.get(0));
+                            String contId = statePostIdContId.get(1);
+                            if (storedContingencyStates.containsKey(statePostId)) {
+                                storedContingencyStates.get(statePostId).add(contId);
+                            } else {
+                                storedContingencyStates.put(statePostId, new HashSet<String>(Arrays.asList(contId)));
+                            }
+                        });
+            } catch (IOException e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
+        } else {
+            LOGGER.info("Found no state(s) for workflow {}", workflowId);
+        }
+        return storedContingencyStates;
+    }
+
+
+    @Override
+    public Network getState(String workflowId, Integer stateId, String contingencyId) {
+        Objects.requireNonNull(workflowId);
+        Objects.requireNonNull(stateId);
         String stateIdStr = String.valueOf(stateId);
-        LOGGER.info("Getting state {} of workflow {}", stateIdStr, workflowId);
         Path workflowStatesFolder = getWorkflowStatesFolder(workflowId);
-        Path stateFolder = Paths.get(workflowStatesFolder.toString(), STORED_STATE_PREFIX + stateIdStr);
-        if (Files.exists(stateFolder) && Files.isDirectory(stateFolder)) {
-            if (stateFolder.toFile().list().length == 1) {
-                File stateFile = stateFolder.toFile().listFiles()[0];
-                String basename = stateFile.getName();
-                int extIndex = basename.lastIndexOf(".");
-                if (extIndex > 0) {
-                    basename = basename.substring(0, extIndex);
-                }
-                DataSource dataSource = new FileDataSource(stateFolder, basename);
-                //Network network = Importers.import_("XIIDM", dataSource, null);
-                // with the new post processors configuration, the post processing is applied also to xml import
-                Importer xmlImporter = Importers.getImporter("XIIDM");
-                Importer noppImporter = Importers.removePostProcessors(xmlImporter);
-                Network network = noppImporter.import_(dataSource, null);
-                return network;
+        Path stateFolder;
+        if (contingencyId == null) {
+            LOGGER.info("Getting state {} of workflow {}", stateIdStr, workflowId);
+            stateFolder = Paths.get(workflowStatesFolder.toString(), STORED_STATE_PREFIX + stateIdStr);
+        } else {
+            LOGGER.info("Getting state {}, contingency {} of workflow {}", stateIdStr, contingencyId, workflowId);
+            stateFolder = Paths.get(workflowStatesFolder.toString(), STORED_STATE_POST_PREFIX + stateIdStr + STORED_STATE_CONT_PREFIX + contingencyId);
+        }
+        if (Files.isDirectory(stateFolder)) {
+            try {
+                Path stateFile = Files.list(stateFolder).findFirst().get();
+                LOGGER.debug("loading network from file {}", stateFile.toString());
+                return Importers.loadNetwork(stateFile, LocalComputationManager.getDefault(), new ImportConfig(), (Properties) null);
+            } catch (IOException e) {
+                throw new RuntimeException(e.getMessage(), e);
             }
         }
         return null;
+    }
+
+    @Override
+    public Network getState(String workflowId, Integer stateId) {
+        return getState(workflowId, stateId, null);
     }
 
     @Override
@@ -1238,7 +1282,7 @@ public class OnlineDbMVStore implements OnlineDb {
         } catch (Throwable e) {
             String errorMessage = "Error storing violations for wf " + workflowId + " in map " + mapName + ": " + e.getMessage();
             LOGGER.error(errorMessage);
-            throw new RuntimeException(errorMessage);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
@@ -1264,7 +1308,7 @@ public class OnlineDbMVStore implements OnlineDb {
         } catch (Throwable e) {
             String errorMessage = "Error storing violations metadata for wf " + workflowId + ", step " + step.name() + ", state " + stateId + ": " + e.getMessage();
             LOGGER.error(errorMessage);
-            throw new RuntimeException(errorMessage);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
@@ -1456,7 +1500,7 @@ public class OnlineDbMVStore implements OnlineDb {
         } catch (Throwable e) {
             String errorMessage = "Error storing pc violations metadata for wf " + workflowId + ", contingency " + contingencyId + ", state " + stateId + ": " + e.getMessage();
             LOGGER.error(errorMessage);
-            throw new RuntimeException(errorMessage);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
@@ -1489,7 +1533,7 @@ public class OnlineDbMVStore implements OnlineDb {
         } catch (Throwable e) {
             String errorMessage = "Error storing pc loadflow convergence for wf " + workflowId + ", contingency " + contingencyId + ", state " + stateId + ": " + e.getMessage();
             LOGGER.error(errorMessage);
-            throw new RuntimeException(errorMessage);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
@@ -1818,7 +1862,7 @@ public class OnlineDbMVStore implements OnlineDb {
             } catch (IOException e) {
                 String errorMessage = "online db: folder " + workflowStatesFolder + " for workflow " + workflowId + " cannot be created: " + e.getMessage();
                 LOGGER.error(errorMessage);
-                throw new RuntimeException(errorMessage);
+                throw new RuntimeException(errorMessage, e);
             }
 
         return workflowStatesFolder;
@@ -1890,5 +1934,4 @@ public class OnlineDbMVStore implements OnlineDb {
         }
         return storedMapList.toString();
     }
-
 }

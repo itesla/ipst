@@ -21,16 +21,37 @@
     <name>Offline workflow</name>
 
     <dependencies>
+        <!-- Compilation dependencies -->
         <dependency>
             <groupId>org.ow2.sirocco</groupId>
             <artifactId>sirocco-text-table-formatter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.itesla_project</groupId>
+            <artifactId>network-merge</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>modules</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- test dependencies -->
+
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>eu.itesla_project</groupId>
+            <artifactId>graph</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>eu.itesla_project</groupId>
+            <artifactId>iidm-network-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>eu.itesla_project</groupId>
+            <artifactId>iidm-network-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -49,21 +70,6 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>iidm-network-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>iidm-network-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>graph</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

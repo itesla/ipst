@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2016-2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -16,69 +17,75 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 @AutoService(Tool.class)
 public class ListOnlineWorkflowStatesTool implements Tool {
 
-	private static Command COMMAND = new Command() {
-		
-		@Override
-		public String getName() {
-			return "list-online-workflow-states";
-		}
+    private static Command COMMAND = new Command() {
 
-		@Override
-		public String getTheme() {
-			return Themes.ONLINE_WORKFLOW;
-		}
+        @Override
+        public String getName() {
+            return "list-online-workflow-states";
+        }
 
-		@Override
-		public String getDescription() {
-			return "List stored states ids of an online workflow";
-		}
+        @Override
+        public String getTheme() {
+            return Themes.ONLINE_WORKFLOW;
+        }
 
-		@Override
-		public Options getOptions() {
-			Options options = new Options();
-			options.addOption(Option.builder().longOpt("workflow")
-	                .desc("the workflow id")
-	                .hasArg()
-	                .required()
-	                .argName("ID")
-	                .build());
-			return options;
-		}
+        @Override
+        public String getDescription() {
+            return "List stored states ids of an online workflow";
+        }
 
-		@Override
-		public String getUsageFooter() {
-			return null;
-		}
-		
-	};
-	
-	@Override
-	public Command getCommand() {
-		return COMMAND;
-	}
+        @Override
+        public Options getOptions() {
+            Options options = new Options();
+            options.addOption(Option.builder().longOpt("workflow")
+                    .desc("the workflow id")
+                    .hasArg()
+                    .required()
+                    .argName("ID")
+                    .build());
+            return options;
+        }
 
-	@Override
-	public void run(CommandLine line) throws Exception {
-		OnlineConfig config = OnlineConfig.load();
-		OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
-		String workflowId = line.getOptionValue("workflow");
-		List<Integer> storedStates = onlinedb.listStoredStates(workflowId);
-		if ( storedStates != null ) {
-			if ( !storedStates.isEmpty() ) {
-				System.out.println("Stored States = " + storedStates.toString());
-			} else
-				System.out.println("No stores states for this workflow");			
-		} else
-			System.out.println("No stores states for this workflow");
-		onlinedb.close();
-	}
-	
+        @Override
+        public String getUsageFooter() {
+            return null;
+        }
+
+    };
+
+    @Override
+    public Command getCommand() {
+        return COMMAND;
+    }
+
+    @Override
+    public void run(CommandLine line) throws Exception {
+        OnlineConfig config = OnlineConfig.load();
+        OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
+        String workflowId = line.getOptionValue("workflow");
+        List<Integer> storedStates = onlinedb.listStoredStates(workflowId);
+        if (!storedStates.isEmpty()) {
+            System.out.println("Stored States = " + storedStates.toString());
+        } else {
+            System.out.println("No stored states for this workflow");
+        }
+
+        Map<Integer, Set<String>> storedPostContingenciesStates = onlinedb.listStoredPostContingencyStates(workflowId);
+        if (!storedPostContingenciesStates.isEmpty()) {
+            System.out.println("Stored post-contingencies states ( state id, contingencies ids ) = " + storedPostContingenciesStates.toString());
+        } else {
+            System.out.println("No stored post-contingencies states for this workflow");
+        }
+        onlinedb.close();
+    }
+
 }

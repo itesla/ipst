@@ -7,7 +7,7 @@ EU num;Eurostag Name;nInputPins;Modelica model;param 1;param 2;param 3;param 4;p
 6; SIMPLE-LAG;1;iPSL.NonElectrical.Continuous.SimpleLag;K;T;;;;;;y_start;
 7; LIMITED-INTEGRATOR;1;Modelica.Blocks.Continuous.LimIntegrator;outMax;k;outMin;;;;;y_start;
 8; LIMITED-SIMPLE-LAG;1;iPSL.NonElectrical.Continuous.SimpleLagLim;outMax;K;T;outMin;;;;y_start;
-9; DERIVATIVE-LAG;1;iPSL.NonElectrical.Continuous.DerivativeLag;K;T;y_start;;;;;x_start;
+9; DERIVATIVE-LAG;1;Modelica.Blocks.Continuous.Derivative;k;T;y_start;;;;;x_start;
 10; LEAD-LAG;1;iPSL.NonElectrical.Continuous.LeadLag;K;T1;T2;;;;;y_start;
 11; CONSTANT;0;Modelica.Blocks.Sources.Constant;k;;;;;;;;
 12; EXPONENTIAL;1;iPSL.NonElectrical.Eurostag.Math.ImExponential;A;B;;;;;;;

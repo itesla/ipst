@@ -27,7 +27,7 @@
             <artifactId>online-workflow</artifactId>
             <version>0.1-SNAPSHOT</version>
         </dependency>
-        
+
         <!--dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>apogee-client</artifactId>
@@ -35,24 +35,31 @@
         </dependency-->
 
         <dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-		</dependency>
-		
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
             <version>7.0</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxrs</artifactId>
-			<version>3.0.8.Final</version>
-			<scope>provided</scope>
-		</dependency>
-        
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jaxrs</artifactId>
+            <version>3.0.8.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
