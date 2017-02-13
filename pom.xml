@@ -450,22 +450,17 @@
             </dependency>
             <dependency>
                 <groupId>eu.itesla_project</groupId>
-                <artifactId>graph</artifactId>
-                <version>${ipstcore.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>eu.itesla_project</groupId>
                 <artifactId>iidm-converter-api</artifactId>
                 <version>${ipstcore.version}</version>
             </dependency>
             <dependency>
                 <groupId>eu.itesla_project</groupId>
-                <artifactId>iidm-network-api</artifactId>
+                <artifactId>iidm-api</artifactId>
                 <version>${ipstcore.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>iidm-network-impl</artifactId>
+                <artifactId>iidm-impl</artifactId>
                 <version>${ipstcore.version}</version>
             </dependency>
             <dependency>
@@ -577,7 +572,7 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>iidm-network-test</artifactId>
+                <artifactId>iidm-test</artifactId>
                 <version>${ipstcore.version}</version>
                 <scope>test</scope>
             </dependency>
