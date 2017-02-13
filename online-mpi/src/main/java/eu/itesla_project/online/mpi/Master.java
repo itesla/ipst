@@ -82,13 +82,13 @@ public class Master {
 
             MpiExecutorContext mpiExecutorContext = new MultiStateNetworkAwareMpiExecutorContext();
             ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
-            //ExecutorService executorService = MultiStateNetworkAwareExecutors.newCachedThreadPool();
+            ExecutorService executorService = MultiStateNetworkAwareExecutors.newCachedThreadPool();
             try {
                 MpiStatisticsFactory statisticsFactory = statisticsFactoryClass.asSubclass(MpiStatisticsFactory.class).newInstance();
                 MpiStatistics statistics = statisticsFactory.create(statisticsDbDir, statisticsDbName);
                 try (ComputationManager computationManager = new MpiComputationManager(tmpDir, statistics, mpiExecutorContext, coresPerRank, false, stdOutArchive)) {
                     OnlineConfig config = OnlineConfig.load();
-                    try (LocalOnlineApplication application = new LocalOnlineApplication(config, computationManager, scheduledExecutorService, true)) {
+                    try (LocalOnlineApplication application = new LocalOnlineApplication(config, computationManager, scheduledExecutorService, executorService, true)) {
                         switch (mode) {
                             case "ui":
                                 System.out.println("LocalOnlineApplication created");

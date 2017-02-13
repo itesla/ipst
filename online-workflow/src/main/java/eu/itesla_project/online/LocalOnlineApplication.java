@@ -67,6 +67,8 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
     private final ComputationManager computationManager;
 
     private ScheduledExecutorService ses;
+    
+    private ExecutorService executorService;
 
     private final boolean enableJmx;
 
@@ -80,14 +82,16 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
 
     private final AtomicInteger notificationIndex = new AtomicInteger();
 
+   
+
     public LocalOnlineApplication(OnlineConfig config, ComputationManager computationManager,
-            ScheduledExecutorService ses, boolean enableJmx)
+            ScheduledExecutorService ses, ExecutorService executorService, boolean enableJmx)
                     throws IllegalAccessException, InstantiationException, InstanceAlreadyExistsException,
                     MBeanRegistrationException, MalformedObjectNameException, NotCompliantMBeanException, IOException {
         this.config = config;
         this.computationManager = Objects.requireNonNull(computationManager);
         this.ses = Objects.requireNonNull(ses);
-
+        this.executorService = Objects.requireNonNull(executorService);
         LOGGER.info("Version: {}", Version.VERSION);
 
         this.enableJmx = enableJmx;
