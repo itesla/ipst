@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,9 +57,8 @@ public class OnlineDBUtils implements ProcessDBUtils {
             DateTimeParameter creationDate) throws Exception {
         List<Process> processes = new ArrayList<>();
 
-        List<OnlineProcess> storedProcesses = null;
         try (OnlineDb onlinedb = fact.create()) {
-            storedProcesses = onlinedb.listProcesses();
+            List<OnlineProcess> storedProcesses = onlinedb.listProcesses();
             if (storedProcesses != null) {
                 processes = storedProcesses.stream().filter(p -> (name == null) || name.equals(p.getName()))
                         .filter(p -> (owner == null) || owner.equals(p.getOwner()))
@@ -88,9 +86,8 @@ public class OnlineDBUtils implements ProcessDBUtils {
     public Process getProcess(String processId) throws Exception {
         Objects.requireNonNull(processId);
         Process proc = null;
-        OnlineProcess storedProcess = null;
         try (OnlineDb onlinedb = fact.create()) {
-            storedProcess = onlinedb.getProcess(processId);
+            OnlineProcess storedProcess = onlinedb.getProcess(processId);
             if (storedProcess != null) {
                 proc = toProcess(storedProcess);
             }
@@ -112,9 +109,8 @@ public class OnlineDBUtils implements ProcessDBUtils {
     public WorkflowResult getWorkflowResult(String processId, String workflowId) throws Exception {
         Objects.requireNonNull(processId);
         Objects.requireNonNull(workflowId);
-        OnlineProcess p = null;
         try (OnlineDb onlinedb = fact.create()) {
-            p = onlinedb.getProcess(processId);
+            OnlineProcess p = onlinedb.getProcess(processId);
 
             if (p != null && p.getWorkflowsMap().containsValue(workflowId)
                     && onlinedb.getWorkflowDetails(workflowId) != null) {
@@ -126,23 +122,18 @@ public class OnlineDBUtils implements ProcessDBUtils {
                 Map<Integer, List<LimitViolation>> violations = onlinedb.getViolations(workflowId,
                         OnlineStep.LOAD_FLOW);
                 if (violations != null) {
-                    violations.forEach(new BiConsumer<Integer, List<LimitViolation>>() {
-
-                        @Override
-                        public void accept(Integer state, List<LimitViolation> viols) {
-
-                            StateProcessingStatus sp = onlinedb.getStatesProcessingStatus(workflowId).get(state);
-                            String status = sp.getStatus().get("LOAD_FLOW");
-                            PreContingencyResult pcr = new PreContingencyResult(state, viols.isEmpty(),
-                                    status != null && "SUCCESS".equals(status));
-
-                            for (LimitViolation lv : viols) {
-                                pcr.addViolation(new Violation(lv.getCountry().toString(), lv.getSubject().getId(),
-                                        lv.getLimitType().name(), lv.getLimit(), lv.getValue(),
-                                        (int) lv.getBaseVoltage()));
-                            }
-                            res.addPreContingency(pcr);
-                        }
+                    
+                    violations.forEach( (state,viols) -> {
+                        StateProcessingStatus sp = onlinedb.getStatesProcessingStatus(workflowId).get(state);
+                        String status = sp.getStatus().get("LOAD_FLOW");
+                        PreContingencyResult pcr = new PreContingencyResult(state, viols.isEmpty(),
+                                status != null && "SUCCESS".equals(status));
+                        viols.forEach( lv -> {
+                            pcr.addViolation(new Violation(lv.getCountry().toString(), lv.getSubject().getId(),
+                                    lv.getLimitType().name(), lv.getLimit(), lv.getValue(),
+                                    (int) lv.getBaseVoltage()));
+                        });
+                        res.addPreContingency(pcr);
                     });
                 }
 
@@ -150,54 +141,45 @@ public class OnlineDBUtils implements ProcessDBUtils {
 
                 Map<Integer, Map<String, Boolean>> conv = onlinedb.getPostContingencyLoadflowConvergence(workflowId);
                 if (conv != null) {
-                    conv.forEach(new BiConsumer<Integer, Map<String, Boolean>>() {
-
-                        @Override
-                        public void accept(Integer state, Map<String, Boolean> convergenceMap) {
-
-                            for (String cont : convergenceMap.keySet()) {
-                                Map<Integer, SimulationResult> srMap = postMap.get(cont);
-                                if (srMap == null) {
-                                    srMap = new HashMap<Integer, SimulationResult>();
-                                    postMap.put(cont, srMap);
-                                }
-                                SimulationResult sr = srMap.get(state);
-                                if (sr == null) {
-                                    sr = new SimulationResult(state);
-                                    srMap.put(state, sr);
-                                }
-                                sr.setConvergence(convergenceMap.get(cont));
+                    conv.forEach( (state, convergenceMap) -> {                        
+                        convergenceMap.forEach( (cont, convergence) -> {
+                            Map<Integer, SimulationResult> srMap = postMap.get(cont);
+                            if (srMap == null) {
+                                srMap = new HashMap<Integer, SimulationResult>();
+                                postMap.put(cont, srMap);
                             }
-                        }
+                            SimulationResult sr = srMap.get(state);
+                            if (sr == null) {
+                                sr = new SimulationResult(state);
+                                srMap.put(state, sr);
+                            }
+                            sr.setConvergence(convergence);
+                        });
                     });
                 }
 
                 Map<Integer, Map<String, List<LimitViolation>>> violsMap = onlinedb
                         .getPostContingencyViolations(workflowId);
                 if (violsMap != null) {
-                    violsMap.forEach(new BiConsumer<Integer, Map<String, List<LimitViolation>>>() {
-
-                        @Override
-                        public void accept(Integer state, Map<String, List<LimitViolation>> contViolMap) {
-                            for (String cont : contViolMap.keySet()) {
-                                Map<Integer, SimulationResult> srMap = postMap.get(cont);
-                                if (srMap == null) {
-                                    srMap = new HashMap<Integer, SimulationResult>();
-                                    postMap.put(cont, srMap);
-                                }
-                                SimulationResult sr = srMap.get(state);
-                                if (sr == null) {
-                                    sr = new SimulationResult(state);
-                                    srMap.put(state, sr);
-                                }
-
-                                for (LimitViolation lv : contViolMap.get(cont)) {
-                                    sr.addViolation(new Violation(lv.getCountry().toString(), lv.getSubject().getId(),
-                                            lv.getLimitType().name(), lv.getLimit(), lv.getValue(),
-                                            (int) lv.getBaseVoltage()));
-                                }
+                    
+                    violsMap.forEach( (state, contViolMap) -> {
+                        contViolMap.forEach( (cont, contViols)  -> {
+                            Map<Integer, SimulationResult> srMap = postMap.get(cont);
+                            if (srMap == null) {
+                                srMap = new HashMap<Integer, SimulationResult>();
+                                postMap.put(cont, srMap);
                             }
-                        }
+                            SimulationResult sr = srMap.containsKey(state) ? srMap.get(state) : new SimulationResult(state);
+                            if (!srMap.containsKey(state))
+                                srMap.put(state, sr);
+                            
+                            contViols.forEach( lv -> {
+                                sr.addViolation(new Violation(lv.getCountry().toString(), lv.getSubject().getId(),
+                                        lv.getLimitType().name(), lv.getLimit(), lv.getValue(),
+                                        (int) lv.getBaseVoltage()));
+                            });
+                        });
+
                     });
                 }
 
@@ -216,13 +198,9 @@ public class OnlineDBUtils implements ProcessDBUtils {
                     }
                 }
 
-                postMap.forEach(new BiConsumer<String, Map<Integer, SimulationResult>>() {
-
-                    @Override
-                    public void accept(String cont, Map<Integer, SimulationResult> resultsMap) {
-                        res.addPostContingency(new PostContingencyResult(cont,
-                                resultsMap.values().stream().collect(Collectors.toList())));
-                    }
+                postMap.forEach( (cont, resultsMap) -> {
+                    res.addPostContingency(new PostContingencyResult(cont,
+                            resultsMap.values().stream().collect(Collectors.toList())));
                 });
                 return res;
             }
@@ -234,18 +212,16 @@ public class OnlineDBUtils implements ProcessDBUtils {
     }
 
     private Process toProcess(OnlineProcess p) {
+        Objects.requireNonNull(p);
         Process proc = new Process(p.getId(), p.getName(), p.getOwner(), p.getDate().toDate(),
                 p.getCreationDate().toDate());
-        p.getWorkflowsMap().forEach(new BiConsumer<String, String>() {
-
-            @Override
-            public void accept(String bscase, String workflowId) {
-                try {
-                    proc.addWorkflowInfo(
-                            new WorkflowInfo(workflowId, bscase, getWorkflowResult(p.getId(), workflowId)));
-                } catch (Exception e) {
-                    LOGGER.error(e.getMessage(), e);
-                }
+        
+        p.getWorkflowsMap().forEach( (bscase, workflowId) -> {
+            try {
+                proc.addWorkflowInfo(
+                        new WorkflowInfo(workflowId, bscase, getWorkflowResult(p.getId(), workflowId)));
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
             }
         });
         return proc;
