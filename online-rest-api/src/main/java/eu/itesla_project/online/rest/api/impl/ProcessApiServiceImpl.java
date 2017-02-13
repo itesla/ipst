@@ -21,25 +21,25 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
 import eu.itesla_project.online.rest.api.DateTimeParameter;
 import eu.itesla_project.online.rest.api.ProcessApiService;
 import eu.itesla_project.online.rest.api.util.ProcessDBUtils;
+import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS;
 
 /**
  *
  * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
  */
-public class ProcessApiServiceImpl extends ProcessApiService {
+public class ProcessApiServiceImpl implements ProcessApiService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcessApiServiceImpl.class);
 
     private final ProcessDBUtils utils;
     private final ObjectMapper objectMapper;
-    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
 
     public ProcessApiServiceImpl(ProcessDBUtils utils) {
         this.utils = Objects.requireNonNull(utils);
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JodaModule());
-        objectMapper.configure(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        objectMapper.setDateFormat(sdf);
+        objectMapper.configure(WRITE_DATES_AS_TIMESTAMPS, false);
+        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
     }
 
     @Override
@@ -61,12 +61,13 @@ public class ProcessApiServiceImpl extends ProcessApiService {
     @Override
     public Response getProcessById(String processId, SecurityContext securityContext) {
         LOGGER.info("Get process : processId=" + processId);
-        String res = null;
+        if(processId == null)
+            return Response.status(Status.BAD_REQUEST).entity("null proceesId parameter").build();
         try {
             Process entity = utils.getProcess(processId);
             if (entity == null)
                 return Response.status(Status.NOT_FOUND).entity("Process not found").build();
-            res = objectMapper.writer().writeValueAsString(entity);
+            String res = objectMapper.writer().writeValueAsString(entity);
             return Response.ok().entity(res).build();
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -78,13 +79,17 @@ public class ProcessApiServiceImpl extends ProcessApiService {
     @Override
     public Response getWorkflowResult(String processId, String workflowId, SecurityContext securityContext) {
         LOGGER.info("Get workflow result : processId=" + processId + " ,workflowId=" + workflowId);
-        String res = null;
+        if(processId == null)
+            return Response.status(Status.BAD_REQUEST).entity("null proceesId parameter").build();
+        if(workflowId == null)
+            return Response.status(Status.BAD_REQUEST).entity("null workflowId parameter").build();
+
         try {
             WorkflowResult entity = utils.getWorkflowResult(processId, workflowId);
             if (entity == null)
                 return Response.status(Status.NOT_FOUND).entity("Workflow not found").build();
 
-            res = objectMapper.writer().writeValueAsString(entity);
+            String res = objectMapper.writer().writeValueAsString(entity);
             return Response.ok().entity(res).build();
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
