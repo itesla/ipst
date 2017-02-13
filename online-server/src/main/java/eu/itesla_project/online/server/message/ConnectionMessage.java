@@ -18,7 +18,7 @@ public class ConnectionMessage extends Message<Boolean> {
 
     private String type = "connection";
 
-    public ConnectionMessage(Boolean body) {
+    public ConnectionMessage(boolean body) {
         super(body);
     }
 

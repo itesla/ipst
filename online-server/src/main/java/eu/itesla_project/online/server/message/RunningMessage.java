@@ -18,7 +18,7 @@ public class RunningMessage extends Message<Boolean> {
 
     private String type = "running";
 
-    public RunningMessage(Boolean body) {
+    public RunningMessage(boolean body) {
         super(body);
     }
 
