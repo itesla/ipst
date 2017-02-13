@@ -61,11 +61,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>iidm-network-api</artifactId>
+            <artifactId>iidm-api</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>iidm-network-impl</artifactId>
+            <artifactId>iidm-impl</artifactId>
         </dependency>
 
         <dependency>
