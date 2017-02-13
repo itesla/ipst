@@ -15,7 +15,7 @@ import eu.itesla_project.online.rest.api.util.OnlineDBUtils;
  *
  * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
  */
-public class ProcessApiServiceFactory {
+public final class ProcessApiServiceFactory {
 
     private final static ProcessApiService service = new ProcessApiServiceImpl(
             new OnlineDBUtils(new OnlineDbMVStoreFactory()));
