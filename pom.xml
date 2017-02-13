@@ -67,6 +67,7 @@
         <maven.assembly.version>3.0.0</maven.assembly.version>
         <maven.license.version>3.0</maven.license.version>
         <maven.coveralls.version>4.3.0</maven.coveralls.version>
+        <maven.war.version>2.4</maven.war.version>
 
         <pepite.libs.weightedtrees.version>1.1-ITESLA</pepite.libs.weightedtrees.version>
         <pepite.libs.version>1.0-ITESLA</pepite.libs.version>
@@ -88,6 +89,7 @@
         <httpclient.version>4.5.2</httpclient.version>
         <ipstcore.version>0.1-SNAPSHOT</ipstcore.version>
         <ipstentsoe.version>0.1-SNAPSHOT</ipstentsoe.version>
+        <javaee-api-version>7.0</javaee-api-version>
         <jackson.version>2.7.3</jackson.version>
         <jackson-datatype-joda.version>2.4.1</jackson-datatype-joda.version>
         <javacsv.version>2.0</javacsv.version>
@@ -103,6 +105,7 @@
         <poi.version>3.15</poi.version>
         <powermock.version>1.6.5</powermock.version>
         <resteasy.version>3.0.11.Final</resteasy.version>
+        <servlet-api-version>3.0.1</servlet-api-version>
         <shrinkwrap.version>1.2.6</shrinkwrap.version>
         <sirocco.version>1.0</sirocco.version>
         <slf4j.version>1.7.22</slf4j.version>
