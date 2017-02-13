@@ -111,9 +111,7 @@ public class OnlineApplicationResource {
         HttpSession session = req.getSession();
         if (session != null)
             try {
-
                 session.invalidate();
-
             } catch (Exception ex) {
             }
 

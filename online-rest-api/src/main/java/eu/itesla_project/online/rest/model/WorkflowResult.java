@@ -50,10 +50,12 @@ public class WorkflowResult {
     }
 
     public void addPreContingencies(List<PreContingencyResult> preContingency) {
+        Objects.requireNonNull(preContingency);
         this.preContingency.addAll(preContingency);
     }
 
     public void addPreContingency(PreContingencyResult pcr) {
+        Objects.requireNonNull(pcr);
         this.preContingency.add(pcr);
     }
 
@@ -63,10 +65,12 @@ public class WorkflowResult {
     }
 
     public void allPostContingencyList(List<PostContingencyResult> postContingencyList) {
+        Objects.requireNonNull(postContingencyList);
         this.postContingency.addAll(postContingencyList);
     }
 
     public void addPostContingency(PostContingencyResult pcr) {
+        Objects.requireNonNull(pcr);
         this.postContingency.add(pcr);
     }
 
@@ -94,13 +98,13 @@ public class WorkflowResult {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class WorkflowResult {\n");
+        sb.append("class WorkflowResult {").append(System.lineSeparator());
 
-        sb.append("    processId: ").append(toIndentedString(processId)).append("\n");
-        sb.append("    workflowId: ").append(toIndentedString(workflowId)).append("\n");
-        sb.append("    basecase: ").append(toIndentedString(basecase)).append("\n");
-        sb.append("    preContingency: ").append(toIndentedString(preContingency)).append("\n");
-        sb.append("    postContingency: ").append(toIndentedString(postContingency)).append("\n");
+        sb.append("    processId: ").append(toIndentedString(processId)).append(System.lineSeparator());
+        sb.append("    workflowId: ").append(toIndentedString(workflowId)).append(System.lineSeparator());
+        sb.append("    basecase: ").append(toIndentedString(basecase)).append(System.lineSeparator());
+        sb.append("    preContingency: ").append(toIndentedString(preContingency)).append(System.lineSeparator());
+        sb.append("    postContingency: ").append(toIndentedString(postContingency)).append(System.lineSeparator());
         sb.append("}");
         return sb.toString();
     }
@@ -113,7 +117,7 @@ public class WorkflowResult {
         if (o == null) {
             return "null";
         }
-        return o.toString().replace("\n", "\n    ");
+        return o.toString().replace(System.lineSeparator(), System.lineSeparator()+"    ");
     }
 
 }

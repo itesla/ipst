@@ -17,35 +17,35 @@ import java.util.List;
  */
 public class SimulationResult {
 
-    private final Integer state;
-    private Boolean convergence = Boolean.TRUE;
-    private Boolean safe = Boolean.TRUE;
+    private final int state;
+    private boolean convergence = true;
+    private boolean safe = true;
     private final List<Violation> violations = new ArrayList<>();
 
-    public SimulationResult(Integer state) {
-        this.state = Objects.requireNonNull(state);
+    public SimulationResult(int state) {
+        this.state = state;
     }
 
     @JsonProperty("state")
-    public Integer getState() {
+    public int getState() {
         return state;
     }
 
     @JsonProperty("convergence")
-    public Boolean getConvergence() {
+    public boolean getConvergence() {
         return convergence;
     }
 
-    public void setConvergence(Boolean convergence) {
+    public void setConvergence(boolean convergence) {
         this.convergence = convergence;
     }
 
     @JsonProperty("safe")
-    public Boolean getSafe() {
+    public boolean getSafe() {
         return safe;
     }
 
-    public void setSafe(Boolean safe) {
+    public void setSafe(boolean safe) {
         this.safe = safe;
     }
 
@@ -55,10 +55,12 @@ public class SimulationResult {
     }
 
     public void addViolations(List<Violation> violations) {
+        Objects.requireNonNull(violations);
         this.violations.addAll(violations);
     }
 
     public void addViolation(Violation violation) {
+        Objects.requireNonNull(violation);
         this.violations.add(violation);
     }
 
@@ -85,12 +87,12 @@ public class SimulationResult {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class SimulationResult {\n");
+        sb.append("class SimulationResult {").append(System.lineSeparator());
 
-        sb.append("    state: ").append(toIndentedString(state)).append("\n");
-        sb.append("    convergence: ").append(toIndentedString(convergence)).append("\n");
-        sb.append("    safe: ").append(toIndentedString(safe)).append("\n");
-        sb.append("    violations: ").append(toIndentedString(violations)).append("\n");
+        sb.append("    state: ").append(toIndentedString(state)).append(System.lineSeparator());
+        sb.append("    convergence: ").append(toIndentedString(convergence)).append(System.lineSeparator());
+        sb.append("    safe: ").append(toIndentedString(safe)).append(System.lineSeparator());
+        sb.append("    violations: ").append(toIndentedString(violations)).append(System.lineSeparator());
         sb.append("}");
         return sb.toString();
     }
@@ -103,7 +105,7 @@ public class SimulationResult {
         if (o == null) {
             return "null";
         }
-        return o.toString().replace("\n", "\n    ");
+        return o.toString().replace(System.lineSeparator(), System.lineSeparator()+"    ");
     }
 
 }

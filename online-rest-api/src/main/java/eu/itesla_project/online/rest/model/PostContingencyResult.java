@@ -57,10 +57,10 @@ public class PostContingencyResult {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class PostContingencyResult {\n");
+        sb.append("class PostContingencyResult {").append(System.lineSeparator());
 
-        sb.append("    contingency: ").append(toIndentedString(contingency)).append("\n");
-        sb.append("    results: ").append(toIndentedString(results)).append("\n");
+        sb.append("    contingency: ").append(toIndentedString(contingency)).append(System.lineSeparator());
+        sb.append("    results: ").append(toIndentedString(results)).append(System.lineSeparator());
         sb.append("}");
         return sb.toString();
     }
@@ -73,6 +73,6 @@ public class PostContingencyResult {
         if (o == null) {
             return "null";
         }
-        return o.toString().replace("\n", "\n    ");
+        return o.toString().replace(System.lineSeparator(), System.lineSeparator()+"    ");
     }
 }

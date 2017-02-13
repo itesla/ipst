@@ -27,8 +27,8 @@ public class Process {
 
     public Process(String id, String name, String owner, Date date, Date creationDate) {
         this.id = Objects.requireNonNull(id);
-        this.name = name;
-        this.owner = owner;
+        this.name = Objects.requireNonNull(name);
+        this.owner = Objects.requireNonNull(owner);
         this.date = Objects.requireNonNull(date);
         this.creationDate = Objects.requireNonNull(creationDate);
     }
@@ -64,6 +64,7 @@ public class Process {
     }
 
     public void addWorkflowInfo(WorkflowInfo workflowInfo) {
+        Objects.requireNonNull(workflowInfo);
         this.workflows.add(workflowInfo);
     }
 
@@ -89,14 +90,14 @@ public class Process {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class Process {\n");
+        sb.append("class Process {").append(System.lineSeparator());
 
-        sb.append("    id: ").append(toIndentedString(id)).append("\n");
-        sb.append("    name: ").append(toIndentedString(name)).append("\n");
-        sb.append("    owner: ").append(toIndentedString(owner)).append("\n");
-        sb.append("    date: ").append(toIndentedString(date)).append("\n");
-        sb.append("    creationDate: ").append(toIndentedString(creationDate)).append("\n");
-        sb.append("    workflows: ").append(toIndentedString(workflows)).append("\n");
+        sb.append("    id: ").append(toIndentedString(id)).append(System.lineSeparator());
+        sb.append("    name: ").append(toIndentedString(name)).append(System.lineSeparator());
+        sb.append("    owner: ").append(toIndentedString(owner)).append(System.lineSeparator());
+        sb.append("    date: ").append(toIndentedString(date)).append(System.lineSeparator());
+        sb.append("    creationDate: ").append(toIndentedString(creationDate)).append(System.lineSeparator());
+        sb.append("    workflows: ").append(toIndentedString(workflows)).append(System.lineSeparator());
         sb.append("}");
         return sb.toString();
     }
@@ -109,7 +110,7 @@ public class Process {
         if (o == null) {
             return "null";
         }
-        return o.toString().replace("\n", "\n    ");
+        return o.toString().replace(System.lineSeparator(), System.lineSeparator()+"    ");
     }
 
 }

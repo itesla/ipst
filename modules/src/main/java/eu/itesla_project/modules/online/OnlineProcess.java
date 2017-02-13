@@ -29,12 +29,12 @@ public class OnlineProcess {
     
     public OnlineProcess(@JsonProperty("id")String id, @JsonProperty("name")String name, @JsonProperty("owner")String owner, @JsonProperty("caseType")String caseType, @JsonProperty("date")DateTime date, @JsonProperty("creationDate")DateTime creationDate)
     {
-        this.id=Objects.requireNonNull(id);
-        this.name=name;
-        this.owner=owner;
-        this.caseType=Objects.requireNonNull(caseType);
-        this.date=Objects.requireNonNull(date);
-        this.creationDate=Objects.requireNonNull(creationDate);
+        this.id = Objects.requireNonNull(id);
+        this.name = Objects.requireNonNull(name);
+        this.owner = Objects.requireNonNull(owner);
+        this.caseType = Objects.requireNonNull(caseType);
+        this.date = Objects.requireNonNull(date);
+        this.creationDate = Objects.requireNonNull(creationDate);
     }
     
     public String getId() {
@@ -62,7 +62,7 @@ public class OnlineProcess {
     }
 
     public void addWorkflow(String bcase, String wid) {
-        workflowsMap.put(bcase, wid);
+        workflowsMap.put(Objects.requireNonNull(bcase), Objects.requireNonNull(wid));
     }
 
     public String getCaseType() {

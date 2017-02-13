@@ -61,11 +61,11 @@ public class WorkflowInfo {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class WorkflowInfo {\n");
+        sb.append("class WorkflowInfo {").append(System.lineSeparator());
 
-        sb.append("    id: ").append(toIndentedString(id)).append("\n");
-        sb.append("    baseCase: ").append(toIndentedString(baseCase)).append("\n");
-        sb.append("    workflowResult: ").append(toIndentedString(workflowResult)).append("\n");
+        sb.append("    id: ").append(toIndentedString(id)).append(System.lineSeparator());
+        sb.append("    baseCase: ").append(toIndentedString(baseCase)).append(System.lineSeparator());
+        sb.append("    workflowResult: ").append(toIndentedString(workflowResult)).append(System.lineSeparator());
         sb.append("}");
         return sb.toString();
     }
@@ -78,6 +78,6 @@ public class WorkflowInfo {
         if (o == null) {
             return "null";
         }
-        return o.toString().replace("\n", "\n    ");
+        return o.toString().replace(System.lineSeparator(), System.lineSeparator()+"    ");
     }
 }

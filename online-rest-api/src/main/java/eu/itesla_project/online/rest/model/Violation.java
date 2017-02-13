@@ -17,18 +17,18 @@ public class Violation {
 
     private final String equipment;
     private final String country;
-    private final Integer voltageLevel;
+    private final int voltageLevel;
     private final String type;
-    private final Float value;
-    private final Float limit;
+    private final float value;
+    private final float limit;
 
     public Violation(String country, String equipment, String type, float limit, float value, int voltageLevel) {
         this.country = Objects.requireNonNull(country);
         this.equipment = Objects.requireNonNull(equipment);
         this.type = Objects.requireNonNull(type);
-        this.limit = Objects.requireNonNull(limit);
-        this.value = Objects.requireNonNull(value);
-        this.voltageLevel = Objects.requireNonNull(voltageLevel);
+        this.limit = limit;
+        this.value = value;
+        this.voltageLevel = voltageLevel;
     }
 
     @JsonProperty("equipment")
@@ -42,7 +42,7 @@ public class Violation {
     }
 
     @JsonProperty("voltageLevel")
-    public Integer getVoltageLevel() {
+    public int getVoltageLevel() {
         return voltageLevel;
     }
 
@@ -52,12 +52,12 @@ public class Violation {
     }
 
     @JsonProperty("value")
-    public Float getValue() {
+    public float getValue() {
         return value;
     }
 
     @JsonProperty("limit")
-    public Float getLimit() {
+    public float getLimit() {
         return limit;
     }
 
@@ -83,14 +83,14 @@ public class Violation {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class Violation {\n");
+        sb.append("class Violation {").append(System.lineSeparator());
 
-        sb.append("    equipment: ").append(toIndentedString(equipment)).append("\n");
-        sb.append("    country: ").append(toIndentedString(country)).append("\n");
-        sb.append("    voltageLevel: ").append(toIndentedString(voltageLevel)).append("\n");
-        sb.append("    type: ").append(toIndentedString(type)).append("\n");
-        sb.append("    value: ").append(toIndentedString(value)).append("\n");
-        sb.append("    limit: ").append(toIndentedString(limit)).append("\n");
+        sb.append("    equipment: ").append(toIndentedString(equipment)).append(System.lineSeparator());
+        sb.append("    country: ").append(toIndentedString(country)).append(System.lineSeparator());
+        sb.append("    voltageLevel: ").append(toIndentedString(voltageLevel)).append(System.lineSeparator());
+        sb.append("    type: ").append(toIndentedString(type)).append(System.lineSeparator());
+        sb.append("    value: ").append(toIndentedString(value)).append(System.lineSeparator());
+        sb.append("    limit: ").append(toIndentedString(limit)).append(System.lineSeparator());
         sb.append("}");
         return sb.toString();
     }
@@ -103,6 +103,6 @@ public class Violation {
         if (o == null) {
             return "null";
         }
-        return o.toString().replace("\n", "\n    ");
+        return o.toString().replace(System.lineSeparator(), System.lineSeparator()+"    ");
     }
 }

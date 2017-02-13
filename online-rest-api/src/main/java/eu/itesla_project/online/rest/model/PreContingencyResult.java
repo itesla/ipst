@@ -17,29 +17,29 @@ import java.util.List;
  */
 public class PreContingencyResult {
 
-    private final Integer state;
-    private final Boolean convergence;
-    private final Boolean safe;
+    private final int state;
+    private final boolean convergence;
+    private final boolean safe;
     private final List<Violation> violations = new ArrayList<>();
 
-    public PreContingencyResult(Integer state, boolean safe, boolean convergence) {
-        this.state = Objects.requireNonNull(state);
-        this.safe = Objects.requireNonNull(safe);
-        this.convergence = Objects.requireNonNull(convergence);
+    public PreContingencyResult(int state, boolean safe, boolean convergence) {
+        this.state = state;
+        this.safe = safe;
+        this.convergence = convergence;
     }
 
     @JsonProperty("state")
-    public Integer getState() {
+    public int getState() {
         return state;
     }
 
     @JsonProperty("convergence")
-    public Boolean getConvergence() {
+    public boolean getConvergence() {
         return convergence;
     }
 
     @JsonProperty("safe")
-    public Boolean getSafe() {
+    public boolean getSafe() {
         return safe;
     }
 
@@ -49,10 +49,12 @@ public class PreContingencyResult {
     }
 
     public void addViolations(List<Violation> violations) {
+        Objects.requireNonNull(violations);
         this.violations.addAll(violations);
     }
 
     public void addViolation(Violation violation) {
+        Objects.requireNonNull(violation);
         this.violations.add(violation);
     }
 
@@ -79,12 +81,12 @@ public class PreContingencyResult {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class PreContingencyResult {\n");
+        sb.append("class PreContingencyResult {").append(System.lineSeparator());
 
-        sb.append("    state: ").append(toIndentedString(state)).append("\n");
-        sb.append("    convergence: ").append(toIndentedString(convergence)).append("\n");
-        sb.append("    safe: ").append(toIndentedString(safe)).append("\n");
-        sb.append("    violations: ").append(toIndentedString(violations)).append("\n");
+        sb.append("    state: ").append(toIndentedString(state)).append(System.lineSeparator());
+        sb.append("    convergence: ").append(toIndentedString(convergence)).append(System.lineSeparator());
+        sb.append("    safe: ").append(toIndentedString(safe)).append(System.lineSeparator());
+        sb.append("    violations: ").append(toIndentedString(violations)).append(System.lineSeparator());
         sb.append("}");
         return sb.toString();
     }
@@ -97,7 +99,7 @@ public class PreContingencyResult {
         if (o == null) {
             return "null";
         }
-        return o.toString().replace("\n", "\n    ");
+        return o.toString().replace(System.lineSeparator(), System.lineSeparator()+"    ");
     }
 
 }

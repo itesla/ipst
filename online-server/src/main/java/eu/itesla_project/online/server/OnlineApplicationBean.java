@@ -9,6 +9,7 @@ package eu.itesla_project.online.server;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -84,6 +85,7 @@ public class OnlineApplicationBean {
 
         @Override
         public void onWorkflowStateUpdate(WorkSynthesis status) {
+            Objects.requireNonNull(status);
             OnlineWorkflowInfo wi = workflows.get(status.getWorkflowId());
             wi.setWorkStatus(status.getStatus());
             sessions.send(new WorkStatusMessage(status));
@@ -91,6 +93,7 @@ public class OnlineApplicationBean {
 
         @Override
         public void onWorkflowUpdate(StatusSynthesis status) {
+            Objects.requireNonNull(status);
             OnlineWorkflowInfo wi = workflows.get(status.getWorkflowId());
             if (wi == null) {
                 wi = new OnlineWorkflowInfo(status.getWorkflowId());
@@ -104,6 +107,7 @@ public class OnlineApplicationBean {
 
         @Override
         public void onWcaUpdate(RunningSynthesis wcaRunning) {
+            Objects.requireNonNull(wcaRunning);
             OnlineWorkflowInfo wi = workflows.get(wcaRunning.getWorkflowId());
             wi.setWcaRunning(wcaRunning.isRunning());
             sessions.send(new WcaRunningMessage(wcaRunning));
@@ -111,6 +115,7 @@ public class OnlineApplicationBean {
 
         @Override
         public void onStatesWithActionsUpdate(ContingencyStatesActionsSynthesis statesActions) {
+            Objects.requireNonNull(statesActions);
             OnlineWorkflowInfo wi = workflows.get(statesActions.getWorkflowId());
             wi.setStatesActions(statesActions);
             sessions.send(new StatesWithActionsSynthesisMessage(statesActions));
@@ -118,6 +123,7 @@ public class OnlineApplicationBean {
 
         @Override
         public void onStatesWithIndexesUpdate(ContingencyStatesIndexesSynthesis unsafeContingencies) {
+            Objects.requireNonNull(unsafeContingencies);
             OnlineWorkflowInfo wi = workflows.get(unsafeContingencies.getWorkflowId());
             wi.setUnsafeContingencies(unsafeContingencies);
             sessions.send(new StatesWithIndexesSynthesisMessage(unsafeContingencies));
@@ -125,6 +131,7 @@ public class OnlineApplicationBean {
 
         @Override
         public void onWcaContingencies(WcaContingenciesSynthesis wcaContingencies) {
+            Objects.requireNonNull(wcaContingencies);
             OnlineWorkflowInfo wi = workflows.get(wcaContingencies.getWorkflowId());
             wi.setWcaContingencies(wcaContingencies);
             sessions.send(new WcaContingenciesMessage(wcaContingencies));
@@ -132,6 +139,7 @@ public class OnlineApplicationBean {
 
         @Override
         public void onStatesWithSecurityRulesResultsUpdate(IndexSecurityRulesResultsSynthesis indexResults) {
+            Objects.requireNonNull(indexResults);
             OnlineWorkflowInfo wfi = workflows.get(indexResults.getWorkflowId());
             wfi.setSecurityRulesIndexesApplication(indexResults);
             sessions.send(new StatesWithSecurityRulesResultSynthesisMessage(indexResults));
@@ -216,36 +224,43 @@ public class OnlineApplicationBean {
 
     boolean isWorkflowRunning(String workflowId) {
         LOGGER.info("IS WORKFLOW ID ::" + workflowId + "RUNNING");
+        Objects.requireNonNull(workflowId);
         OnlineWorkflowInfo wfi = workflows.get(workflowId);
         return wfi.getStatus().equals(WorkflowStatusEnum.RUNNING);
     }
 
     public boolean isWcaRunning(String workflowId) {
+        Objects.requireNonNull(workflowId);
         OnlineWorkflowInfo wfi = workflows.get(workflowId);
         return wfi.isWcaRunning();
     }
 
     public HashMap<Integer, WorkStatus> getWorkStatus(String workflowId) {
+        Objects.requireNonNull(workflowId);
         OnlineWorkflowInfo wfi = workflows.get(workflowId);
         return wfi.getWorkStatus();
     }
 
     public ContingencyStatesActionsSynthesis getStatesActions(String workflowId) {
+        Objects.requireNonNull(workflowId);
         OnlineWorkflowInfo wfi = workflows.get(workflowId);
         return wfi.getStatesActions();
     }
 
     public ContingencyStatesIndexesSynthesis getUnsafeContingencies(String workflowId) {
+        Objects.requireNonNull(workflowId);
         OnlineWorkflowInfo wfi = workflows.get(workflowId);
         return wfi.getUnsafeContingencies();
     }
 
     public IndexSecurityRulesResultsSynthesis getSecurityRulesIndexesApplication(String workflowId) {
+        Objects.requireNonNull(workflowId);
         OnlineWorkflowInfo wfi = workflows.get(workflowId);
         return wfi.getSecurityRulesIndexesApplication();
     }
 
     public WcaContingenciesSynthesis getWcaContingencies(String workflowId) {
+        Objects.requireNonNull(workflowId);
         OnlineWorkflowInfo wfi = workflows.get(workflowId);
         return wfi.getWcaContingencies();
     }
@@ -258,6 +273,7 @@ public class OnlineApplicationBean {
     }
 
     public WorkflowStatusEnum getWorkflowStatus(String workflowId) {
+        Objects.requireNonNull(workflowId);
         return workflows.get(workflowId).getStatus();
     }
 
