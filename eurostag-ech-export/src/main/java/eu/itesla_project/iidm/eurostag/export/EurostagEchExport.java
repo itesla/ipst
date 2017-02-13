@@ -159,8 +159,8 @@ public class EurostagEchExport {
         float bs1 = (b1 / parameters.getSnref()) * vnom2;
         float gs2 = (g2 / parameters.getSnref()) * vnom2;
         float bs2 = (b2 / parameters.getSnref()) * vnom2;
-        return new EsgDissymmetricalBranch(new EsgBranchName(new Esg8charName(bus1.getId()),
-                new Esg8charName(bus2.getId()),
+        return new EsgDissymmetricalBranch(new EsgBranchName(new Esg8charName(dictionary.getEsgId(bus1.getId())),
+                new Esg8charName(dictionary.getEsgId(bus2.getId())),
                 parallelIndexes.getParallelIndex(id)),
                 status, rb / 2, rxb / 2, gs1, bs1, rate, rb / 2, rxb / 2, gs2, bs2);
     }
