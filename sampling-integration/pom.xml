@@ -52,7 +52,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>iidm-network-api</artifactId>
+            <artifactId>iidm-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -94,7 +94,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>iidm-network-impl</artifactId>
+            <artifactId>iidm-impl</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
