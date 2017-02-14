@@ -23,11 +23,11 @@
     <name>iidm ddb - war package</name>
 
     <repositories>
-        <repository>
+        <!--<repository>
             <id>prime-repo</id>
             <name>Prime Repo</name>
             <url>http://repository.primefaces.org</url>
-        </repository>
+        </repository>-->
     </repositories>
 
     <dependencies>

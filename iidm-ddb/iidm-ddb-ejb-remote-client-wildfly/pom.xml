@@ -23,7 +23,7 @@
     <description>ejb remote wildfly client utils</description>
 
     <repositories>
-        <repository>
+        <!--<repository>
             <id>ibiblio.org-releases</id>
             <url>http://mirrors.ibiblio.org/maven2/</url>
         </repository>
@@ -31,7 +31,7 @@
         <repository>
             <id>jboss-releases</id>
             <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
-        </repository>
+        </repository> -->
     </repositories>
 
     <properties>
