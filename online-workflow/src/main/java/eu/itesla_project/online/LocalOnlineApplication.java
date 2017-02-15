@@ -67,7 +67,7 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
     private final ComputationManager computationManager;
 
     private ScheduledExecutorService ses;
-    
+
     private ExecutorService executorService;
 
     private final boolean enableJmx;
@@ -81,8 +81,6 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
     private final List<OnlineApplicationListener> listeners = new CopyOnWriteArrayList<>();
 
     private final AtomicInteger notificationIndex = new AtomicInteger();
-
-   
 
     public LocalOnlineApplication(OnlineConfig config, ComputationManager computationManager,
             ScheduledExecutorService ses, ExecutorService executorService, boolean enableJmx)
@@ -168,9 +166,9 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
         Objects.requireNonNull(params);
         Objects.requireNonNull(basecases);
         config = OnlineConfig.load();
-        OnlineDb onlineDb = config.getOnlineDbFactoryClass().newInstance().create();      
+        OnlineDb onlineDb = config.getOnlineDbFactoryClass().newInstance().create();
         String processId = DateTimeFormat.forPattern("yyyyMMddHHmmSSS").print(new DateTime());
-        LOGGER.info("Starting process: " + processId);      
+        LOGGER.info("Starting process: " + processId);
         OnlineProcess proc = new OnlineProcess(processId, name, owner, params.getCaseType().toString(), date, creationDate);
         for (DateTime bcase : basecases) {
             params.setBaseCaseDate(bcase);
@@ -229,7 +227,7 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
         OnlineWorkflowContext oCtx = new OnlineWorkflowContext();
         OnlineWorkflowStartParameters startParams = start != null ? start : OnlineWorkflowStartParameters.loadDefault();
         OnlineWorkflowParameters onlineParams = params != null ? params : OnlineWorkflowParameters.loadDefault();
-
+        OnlineApplicationListener additionalListener = null;
         LOGGER.info("Starting workflow: " + startParams.toString() + "\n" + onlineParams.toString());
 
         String wfId = null;
@@ -244,9 +242,8 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
                 workflow.addOnlineApplicationListener(l);
 
             if (startParams.getOnlineApplicationListenerFactoryClass() != null) {
-                OnlineApplicationListener listener = startParams.getOnlineApplicationListenerFactoryClass()
-                        .newInstance().create();
-                workflow.addOnlineApplicationListener(listener);
+                additionalListener = startParams.getOnlineApplicationListenerFactoryClass().newInstance().create();
+                workflow.addOnlineApplicationListener(additionalListener);
             }
 
             workflow.start(oCtx);
@@ -254,11 +251,32 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
         } catch (Exception e) {
             LOGGER.error(e.toString(), e);
             if (workflow != null) {
-                StatusSynthesis st = new StatusSynthesis(workflow.getId(),WorkflowStatusEnum.ERROR);
+                StatusSynthesis st = new StatusSynthesis(workflow.getId(), WorkflowStatusEnum.ERROR);
                 onWorkflowUpdate(st);
             }
             throw new RuntimeException(e);
         } finally {
+
+            if (workflow != null) {
+                try {
+                workflow.removeOnlineApplicationListener(this);
+                } catch (Exception ex) {
+                }
+                
+                for (OnlineApplicationListener l : listeners) {
+                    try {
+                        workflow.removeOnlineApplicationListener(l);
+                    } catch (Exception ex) {
+                    }
+                }
+
+                if (additionalListener != null) {
+                    try {
+                        workflow.removeOnlineApplicationListener(additionalListener);
+                    } catch (Exception ex) {
+                    }
+                }
+            }
             workflow = null;
         }
         return wfId;
@@ -271,11 +289,13 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
 
     @Override
     public void addListener(OnlineApplicationListener l) {
+        Objects.requireNonNull(l);
         listeners.add(l);
     }
 
     @Override
     public void removeListener(OnlineApplicationListener l) {
+        Objects.requireNonNull(l);
         listeners.remove(l);
     }
 
