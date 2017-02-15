@@ -120,7 +120,7 @@
         <dependency>
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
-            <version>3.5</version>
+            <version>4.0</version>
         </dependency>
         <!--  PrimeFaces file upload relies on Apache commons-file-upload and commons-io libraries  -->
         <dependency>
