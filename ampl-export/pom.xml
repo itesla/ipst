@@ -48,12 +48,12 @@
         </dependency>
         <dependency>
             <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-network-test</artifactId>
+            <artifactId>iidm-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-network-impl</artifactId>
+            <artifactId>iidm-impl</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

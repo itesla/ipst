@@ -163,7 +163,7 @@ public class EchUtil {
                  .limit(1)
                 .map(f -> f.bus)
                 .findFirst()
-                .get();
+                .orElse(null);
     }
 
 }

@@ -46,7 +46,7 @@
         <!-- network impl -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>iidm-network-impl</artifactId>
+            <artifactId>iidm-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
 
