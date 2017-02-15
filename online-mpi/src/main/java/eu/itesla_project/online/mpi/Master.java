@@ -110,7 +110,9 @@ public class Master {
                 }
             } finally {
                 mpiExecutorContext.shutdown();
+                executorService.shutdown();
                 scheduledExecutorService.shutdown();
+                executorService.awaitTermination(15, TimeUnit.MINUTES);
                 scheduledExecutorService.awaitTermination(15, TimeUnit.MINUTES);
             }
         } catch (ParseException e) {
