@@ -297,6 +297,7 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
      */
     @Override
     public void addOnlineApplicationListener(OnlineApplicationListener listener) {
+        Objects.requireNonNull(listener);
         listeners.add(listener);
     }
 
@@ -305,6 +306,7 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
      */
     @Override
     public void removeOnlineApplicationListener(OnlineApplicationListener listener) {
+        Objects.requireNonNull(listener);
         listeners.remove(listener);
 
     }
