@@ -22,14 +22,6 @@
 
     <name>iidm ddb - war package</name>
 
-    <repositories>
-        <!--<repository>
-            <id>prime-repo</id>
-            <name>Prime Repo</name>
-            <url>http://repository.primefaces.org</url>
-        </repository>-->
-    </repositories>
-
     <dependencies>
         <!-- Dependency on the EJB module so we can use it's services if needed -->
         <dependency>
