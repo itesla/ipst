@@ -70,7 +70,6 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
     private final MergeOptimizerFactory mergeOptimizerFactory;
     private final RulesFacadeFactory rulesFacadeFactory;
     private final OnlineWorkflowStartParameters startParameters;
-
     private String id;
 
     public OnlineWorkflowImpl(
@@ -137,8 +136,7 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
         this.id = DateTimeFormat.forPattern("yyyyMMdd_HHmm_").print(this.parameters.getBaseCaseDate()) + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
         logger.info(this.parameters.toString());
     }
-
-
+    
     /* (non-Javadoc)
      * @see eu.itesla_project.online.OnlineWorkflowInterface#getId()
      */
@@ -154,7 +152,7 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
     public void start(OnlineWorkflowContext oCtx) throws Exception {
         logger.info("{} Online workflow processing, started.", id);
         for (OnlineApplicationListener l : listeners)
-            l.onWorkflowUpdate(new StatusSynthesis(id, StatusSynthesis.STATUS_RUNNING));
+            l.onWorkflowUpdate(new StatusSynthesis(id, WorkflowStatusEnum.RUNNING));
 
         Network network = null;
         if (parameters.getCaseFile() != null) {
@@ -271,7 +269,7 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
         logger.info("Results:\n" + oCtx.getResults().toString());
 
         for (OnlineApplicationListener l : listeners)
-            l.onWorkflowUpdate(new StatusSynthesis(id, StatusSynthesis.STATUS_TERMINATED));
+            l.onWorkflowUpdate(new StatusSynthesis(id, WorkflowStatusEnum.DONE));
 
         // store workflow parameters
         onlineDb.storeWorkflowParameters(id, parameters);
@@ -299,6 +297,7 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
      */
     @Override
     public void addOnlineApplicationListener(OnlineApplicationListener listener) {
+        Objects.requireNonNull(listener);
         listeners.add(listener);
     }
 
@@ -307,6 +306,7 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
      */
     @Override
     public void removeOnlineApplicationListener(OnlineApplicationListener listener) {
+        Objects.requireNonNull(listener);
         listeners.remove(listener);
 
     }

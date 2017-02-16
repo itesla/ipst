@@ -14,12 +14,13 @@
         <div>Available cores: {{availableCores}}</div>
     </div>
     <div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">Real time monitoring</h3>
+        <div class="panel-heading">
+            <h3 class="panel-title">Real time monitoring</h3>
+        </div>
+        <div class="panel-body">
+            <real-time-area-chart width="960" height="500"
+                points="{{busyCores}}" />
+        </div>
     </div>
-    <div class="panel-body">
-        <real-time-area-chart width="960" height="500" points="{{busyCores}}" />
-    </div>
-</div>
 </div>
 

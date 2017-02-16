@@ -6,7 +6,6 @@
  */
 package eu.itesla_project.online.server.message;
 
-
 import javax.json.stream.JsonGenerator;
 import com.google.gson.Gson;
 import eu.itesla_project.online.WorkSynthesis;
@@ -17,30 +16,27 @@ import eu.itesla_project.online.WorkSynthesis;
  */
 public class WorkStatusMessage extends Message<WorkSynthesis> {
 
-	
-	public WorkStatusMessage(WorkSynthesis status) {
-		super(status);
-	}
-	
-	private String type="workStatus";
+    public WorkStatusMessage(WorkSynthesis status) {
+        super(status);
+    }
 
-	@Override
-	protected String getType() {
-		return type;
-	}
-	
-	@Override
-	public String toJson(){
-		Gson gson = new Gson();
-		return gson.toJson(this);  
-		
-		
-	}
+    private String type = "workStatus";
 
-	@Override
-	protected void toJson(JsonGenerator generator) {
-		
+    @Override
+    protected String getType() {
+        return type;
+    }
 
-	}
+    @Override
+    public String toJson() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
+
+    }
+
+    @Override
+    protected void toJson(JsonGenerator generator) {
+
+    }
 
 }

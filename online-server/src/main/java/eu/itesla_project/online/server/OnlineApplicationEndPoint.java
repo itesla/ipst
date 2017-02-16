@@ -28,23 +28,20 @@ import eu.itesla_project.online.server.message.encoder.WcaRunningMessageEncoder;
 import eu.itesla_project.online.server.message.encoder.WorkStatusMessageEncoder;
 import eu.itesla_project.online.server.message.encoder.WorkflowListMessageEncoder;
 
-
-@ServerEndpoint(value="/messages/online/workflow", encoders={StatusMessageEncoder.class,RunningMessageEncoder.class,WcaRunningMessageEncoder.class,
-															 BusyCoresMessageEncoder.class,StatesWithActionsSynthesisMessageEncoder.class,
-															 StatesWithIndexesSynthesisMessageEncoder.class, WorkStatusMessageEncoder.class, 
-															 //StableContingenciesMessageEncoder.class, 
-															 WorkflowListMessageEncoder.class,ConnectionMessageEncoder.class, 
-															 StatesWithSecurityRulesResultSynthesisMessageEncoder.class ,
-															 //unstableContingenciesMessageEncoder.class
-															 WcaContingenciesMessageEncoder.class})
+@ServerEndpoint(value = "/messages/online/workflow", encoders = { StatusMessageEncoder.class,
+        RunningMessageEncoder.class, WcaRunningMessageEncoder.class, BusyCoresMessageEncoder.class,
+        StatesWithActionsSynthesisMessageEncoder.class, StatesWithIndexesSynthesisMessageEncoder.class,
+        WorkStatusMessageEncoder.class,
+        WorkflowListMessageEncoder.class, ConnectionMessageEncoder.class,
+        StatesWithSecurityRulesResultSynthesisMessageEncoder.class,
+        WcaContingenciesMessageEncoder.class })
 /**
  *
  * @author Quinary <itesla@quinary.com>
  */
 public class OnlineApplicationEndPoint {
 
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(OnlineApplicationEndPoint.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OnlineApplicationEndPoint.class);
 
     @Inject
     private OnlineApplicationBean bean;

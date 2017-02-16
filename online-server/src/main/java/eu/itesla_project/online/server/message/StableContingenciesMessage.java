@@ -18,31 +18,29 @@ import eu.itesla_project.online.StableContingenciesSynthesis;
  */
 public class StableContingenciesMessage extends Message<StableContingenciesSynthesis> {
 
-	public StableContingenciesMessage(StableContingenciesSynthesis stableContingencies) {
-		super(stableContingencies);
-		
-	}
-	
-	String type= "stableContingencies";
+    public StableContingenciesMessage(StableContingenciesSynthesis stableContingencies) {
+        super(stableContingencies);
 
-	@Override
-	protected String getType() {
-		// TODO Auto-generated method stub
-		return type;
-	}
+    }
 
-	@Override
-	public String toJson(){
-		Gson gson = new Gson();
-		return gson.toJson(this);  
-		
-		
-	}
+    String type = "stableContingencies";
 
-	@Override
-	protected void toJson(JsonGenerator generator) {
-		
+    @Override
+    protected String getType() {
+        // TODO Auto-generated method stub
+        return type;
+    }
 
-	}
+    @Override
+    public String toJson() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
+
+    }
+
+    @Override
+    protected void toJson(JsonGenerator generator) {
+
+    }
 
 }
