@@ -12,6 +12,7 @@ import eu.itesla_project.security.LimitViolation;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -406,5 +407,11 @@ public interface OnlineDb extends AutoCloseable {
      * @return a map containing, for each state and contingency, the convergence of the post contingency load flow
      */
     Map<Integer, Map<String, Boolean>> getPostContingencyLoadflowConvergence(String workflowId);
+
+    void storeProcess(OnlineProcess proc) throws Exception;
+
+    List<OnlineProcess> listProcesses() throws IOException;
+
+    OnlineProcess getProcess(String processId) throws IOException;
 
 }

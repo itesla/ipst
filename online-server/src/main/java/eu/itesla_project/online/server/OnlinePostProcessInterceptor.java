@@ -21,14 +21,11 @@ import org.jboss.resteasy.spi.interception.PostProcessInterceptor;
  * @author Quinary <itesla@quinary.com>
  */
 @Provider
-public class OnlinePostProcessInterceptor implements ContainerResponseFilter{
+public class OnlinePostProcessInterceptor implements ContainerResponseFilter {
 
-	
+    @Override
+    public void filter(ContainerRequestContext request, ContainerResponseContext response) throws IOException {
 
-	@Override
-	public void filter(ContainerRequestContext request,
-			ContainerResponseContext response) throws IOException {
-	
-	}
+    }
 
 }

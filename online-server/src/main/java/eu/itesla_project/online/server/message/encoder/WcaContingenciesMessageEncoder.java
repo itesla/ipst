@@ -10,7 +10,6 @@ import javax.websocket.EncodeException;
 import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
 
-
 import eu.itesla_project.online.server.message.WcaContingenciesMessage;
 
 /**

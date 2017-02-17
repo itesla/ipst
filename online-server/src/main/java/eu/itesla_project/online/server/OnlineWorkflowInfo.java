@@ -6,8 +6,8 @@
  */
 package eu.itesla_project.online.server;
 
-
 import java.util.HashMap;
+import java.util.Objects;
 
 import eu.itesla_project.online.ContingencyStatesActionsSynthesis;
 import eu.itesla_project.online.ContingencyStatesIndexesSynthesis;
@@ -15,117 +15,94 @@ import eu.itesla_project.online.IndexSecurityRulesResultsSynthesis;
 import eu.itesla_project.online.StatusSynthesis;
 import eu.itesla_project.online.WcaContingenciesSynthesis;
 import eu.itesla_project.online.WorkStatus;
+import eu.itesla_project.online.WorkflowStatusEnum;
 
 /**
  *
  * @author Quinary <itesla@quinary.com>
  */
 public class OnlineWorkflowInfo {
-	
-	
-	private String worflowId;
-	private int status=StatusSynthesis.STATUS_UNDEFINED;
-	private boolean wcaRunning;
-	private HashMap<Integer,WorkStatus> workStatus;
-	private ContingencyStatesActionsSynthesis statesActions;
-	private ContingencyStatesIndexesSynthesis unsafeContingencies;
-	private IndexSecurityRulesResultsSynthesis  securityRulesIndexesApplication;
-	
-	//private UnstableContingenciesSynthesis unstableContingencies;
-	//private String[] stableContingencies;
-	//10/03/2015 Stable and ustable contingencies were merged into wcaContingencies
-	private WcaContingenciesSynthesis wcaContingencies;
-	
-	
-	public OnlineWorkflowInfo(String id)
-	{
-		worflowId=id;
-		status=StatusSynthesis.STATUS_IDLE;
-		workStatus=new HashMap<Integer,WorkStatus>();
-		
-	}
 
-	public String getWorflowId() {
-		return worflowId;
-	}
+    private String worflowId;
+    private WorkflowStatusEnum status = WorkflowStatusEnum.UNDEFINED;
+    private boolean wcaRunning;
+    private HashMap<Integer, WorkStatus> workStatus;
+    private ContingencyStatesActionsSynthesis statesActions;
+    private ContingencyStatesIndexesSynthesis unsafeContingencies;
+    private IndexSecurityRulesResultsSynthesis securityRulesIndexesApplication;
 
-	
-	public int getStatus() {
-		return status;
-	}
+    private WcaContingenciesSynthesis wcaContingencies;
 
-	public void setStatus(int status) {
-		this.status = status;
-	}
+    public OnlineWorkflowInfo(String id) {
+        Objects.requireNonNull(id);
+        worflowId = id;
+        status = WorkflowStatusEnum.IDLE;
+        workStatus = new HashMap<Integer, WorkStatus>();
+    }
 
-	public boolean isWcaRunning() {
-		return wcaRunning;
-	}
+    public String getWorflowId() {
+        return worflowId;
+    }
 
-	public void setWcaRunning(boolean wcaRunning2) {
-		this.wcaRunning = wcaRunning2;
-	}
+    public WorkflowStatusEnum getStatus() {
+        return status;
+    }
 
-	public HashMap<Integer, WorkStatus> getWorkStatus() {
-		return workStatus;
-	}
+    public void setStatus(WorkflowStatusEnum workflowStatusEnum) {
+        Objects.requireNonNull(workflowStatusEnum);
+        this.status = workflowStatusEnum;
+    }
 
-	public void setWorkStatus(HashMap<Integer, WorkStatus> workStatus) {
-		this.workStatus = workStatus;
-	}
+    public boolean isWcaRunning() {
+        return wcaRunning;
+    }
 
-	public ContingencyStatesActionsSynthesis getStatesActions() {
-		return statesActions;
-	}
+    public void setWcaRunning(boolean wcaRunning2) {
+        this.wcaRunning = wcaRunning2;
+    }
 
-	public void setStatesActions(
-			ContingencyStatesActionsSynthesis statesActions) {
-		this.statesActions = statesActions;
-	}
+    public HashMap<Integer, WorkStatus> getWorkStatus() {
+        return workStatus;
+    }
 
-	public ContingencyStatesIndexesSynthesis getUnsafeContingencies() {
-		return unsafeContingencies;
-	}
+    public void setWorkStatus(HashMap<Integer, WorkStatus> workStatus) {
+        Objects.requireNonNull(workStatus);
+        this.workStatus = workStatus;
+    }
 
-	public void setUnsafeContingencies(
-			ContingencyStatesIndexesSynthesis unsafeContingencies) {
-		this.unsafeContingencies = unsafeContingencies;
-	}
+    public ContingencyStatesActionsSynthesis getStatesActions() {
+        return statesActions;
+    }
 
-	/*public String[] getStableContingencies() {
-		return stableContingencies;
-	}
+    public void setStatesActions(ContingencyStatesActionsSynthesis statesActions) {
+        Objects.requireNonNull(statesActions);
+        this.statesActions = statesActions;
+    }
 
-	public void setStableContingencies(String[] stableContingencies) {
-		this.stableContingencies = stableContingencies;
-	}
-*/
+    public ContingencyStatesIndexesSynthesis getUnsafeContingencies() {
+        return unsafeContingencies;
+    }
 
-	public IndexSecurityRulesResultsSynthesis getSecurityRulesIndexesApplication() {
-		return securityRulesIndexesApplication;
-	}
+    public void setUnsafeContingencies(ContingencyStatesIndexesSynthesis unsafeContingencies) {
+        Objects.requireNonNull(unsafeContingencies);
+        this.unsafeContingencies = unsafeContingencies;
+    }
 
+    public IndexSecurityRulesResultsSynthesis getSecurityRulesIndexesApplication() {
+        return securityRulesIndexesApplication;
+    }
 
-	public void setSecurityRulesIndexesApplication(IndexSecurityRulesResultsSynthesis  indexesSecurityRulesApplicatio) {
-		this.securityRulesIndexesApplication = indexesSecurityRulesApplicatio;
-	}
-	
-/*
-	public UnstableContingenciesSynthesis getUnstableContingencies() {
-		return unstableContingencies;
-	}
+    public void setSecurityRulesIndexesApplication(IndexSecurityRulesResultsSynthesis indexesSecurityRulesApplicatio) {
+        Objects.requireNonNull(indexesSecurityRulesApplicatio);
+        this.securityRulesIndexesApplication = indexesSecurityRulesApplicatio;
+    }
 
+    public WcaContingenciesSynthesis getWcaContingencies() {
+        return wcaContingencies;
+    }
 
-	public void setUnstableContingencies(UnstableContingenciesSynthesis unstableContingencies) {
-		this.unstableContingencies = unstableContingencies;
-	}
-	*/
-
-	public WcaContingenciesSynthesis getWcaContingencies() {
-		return wcaContingencies;
-	}
-
-	public void setWcaContingencies(WcaContingenciesSynthesis wcaContingencies) {
-		this.wcaContingencies = wcaContingencies;
-	}
+    public void setWcaContingencies(WcaContingenciesSynthesis wcaContingencies) {
+        Objects.requireNonNull(wcaContingencies);
+        this.wcaContingencies = wcaContingencies;
+    }
 }

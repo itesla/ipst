@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
@@ -10,18 +11,19 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>eu.itesla_project</groupId>
         <artifactId>itesla-parent</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
-
     <artifactId>online-workflow</artifactId>
     <name>Online workflow</name>
-
     <dependencies>
         <!-- Compilation dependencies -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-joda</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.google.auto.service</groupId>
             <artifactId>auto-service</artifactId>
