@@ -33,7 +33,7 @@ public class WebSocketSessions {
     }
 
     public synchronized <T> void send(Message<T> message) {
-        for (Iterator<Session> it =  sessions.iterator(); it.hasNext();) {
+        for (Iterator<Session> it = sessions.iterator(); it.hasNext();) {
             Session session = it.next();
             if (session.isOpen()) {
                 try {

@@ -76,14 +76,14 @@ controllers.controller('OnLineWorkflowCtrl', ['OnlineWorkflowService', '$scope',
         if(!angular.isUndefined($scope.activeWorkflowId))
         {
         OnlineWorkflowService.getWorkflowStatus($scope.activeWorkflowId)
-        		.success(function(data) { $scope.workflowStatus = parseInt(data); })
+        		.success(function(data) { $scope.workflowStatus = data; })
                 .error(function(data) { $log.error(data); });
 
         OnlineWorkflowService.isRunning($scope.activeWorkflowId).success( function(data){ $scope.running=(data==='true'); })
 							.error(function(data){$scope.running=false;});
         
-		 OnlineWorkflowService.isWcaRunning($scope.activeWorkflowId).success( function(data){ $scope.wcaRunning=(data==='true'); })
-								.error(function(data){$scope.wcaRunning=false;});
+		OnlineWorkflowService.isWcaRunning($scope.activeWorkflowId).success( function(data){ $scope.wcaRunning=(data==='true'); })
+								.error(function(data){$scope.wcaRunning=undefined;});
 		
 		OnlineWorkflowService.getStatesWithActionsSyntesis($scope.activeWorkflowId)
 			.success(function(data){ if(data != null && data != "") $scope.statesWithActionsSyntesis=angular.fromJson(data).body;})
@@ -125,11 +125,13 @@ controllers.controller('OnLineWorkflowCtrl', ['OnlineWorkflowService', '$scope',
         $scope.busyCores = OnlineWorkflowService.getBusyCores();
         
         $scope.startDisabled = function(){
+        	
         	for (var w in $scope.workflows)
         	{	
         		if( $scope.workflows[w].status==1)
         			return true;
         	}
+        	
         	return false;
         };
         

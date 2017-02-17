@@ -7,6 +7,8 @@
  */
 package eu.itesla_project.online.db;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.common.base.Splitter;
 import eu.itesla_project.cases.CaseType;
 import eu.itesla_project.computation.local.LocalComputationManager;
@@ -29,6 +31,7 @@ import eu.itesla_project.online.db.debug.NetworkDataExtractor;
 import eu.itesla_project.security.LimitViolation;
 import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.h2.mvstore.MVMap;
 import org.h2.mvstore.MVMapConcurrent;
 import org.h2.mvstore.MVStore;
@@ -42,9 +45,11 @@ import org.supercsv.io.CsvListWriter;
 import org.supercsv.prefs.CsvPreference;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -134,7 +139,7 @@ public class OnlineDbMVStore implements OnlineDb {
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OnlineDbMVStore.class);
-
+    private static final String STORED_PROCESS_PREFIX = "prc_";
 
     private OnlineDbMVStoreConfig config = null;
 
@@ -1843,6 +1848,60 @@ public class OnlineDbMVStore implements OnlineDb {
             LOGGER.warn("No data about wf {}", workflowId);
             return null;
         }
+    }
+
+    public void storeProcess(OnlineProcess p) throws Exception {
+
+        Path procFile = Paths.get(config.getOnlineDbDir().toString(), STORED_PROCESS_PREFIX + p.getId());
+
+        FileWriter fileWriter = new FileWriter(procFile.toFile());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JodaModule());
+        objectMapper.configure(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+
+        fileWriter.write(objectMapper.writer().writeValueAsString(p));
+        // fileWriter.write(JSONSerializer.toJSON(p).toString());
+        // Gson gson = new Gson();
+
+        // fileWriter.write(gson.toJson(p));
+        fileWriter.close();
+
+    }
+
+    public OnlineProcess getProcess(String processId) throws IOException {
+        OnlineProcess proc = null;
+        Path procFile = Paths.get(config.getOnlineDbDir().toString(), STORED_PROCESS_PREFIX + processId);
+        if (Files.exists(procFile)) {
+            InputStream is = new FileInputStream(procFile.toFile());
+            String json = IOUtils.toString(is);
+            proc = OnlineDbMVStoreUtils.jsonToProcess(json);
+            is.close();
+        }
+        return proc;
+    }
+
+    public List<OnlineProcess> listProcesses() throws IOException {
+        FilenameFilter filter = new FilenameFilter() {
+
+            @Override
+            public boolean accept(File dir, String name) {
+
+                return name.startsWith(STORED_PROCESS_PREFIX);
+            }
+        };
+
+        File[] files = config.getOnlineDbDir().toFile().listFiles(filter);
+        List<OnlineProcess> processes = new ArrayList<OnlineProcess>();
+        for (File f : files) {
+            InputStream is = new FileInputStream(f);
+            String json = IOUtils.toString(is);
+            OnlineProcess proc = OnlineDbMVStoreUtils.jsonToProcess(json);
+            processes.add(proc);
+            is.close();
+        }
+        return processes;
+
     }
 
     @Override

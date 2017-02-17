@@ -6,6 +6,8 @@
  */
 package eu.itesla_project.online;
 
+import org.joda.time.DateTime;
+
 import eu.itesla_project.modules.online.OnlineWorkflowParameters;
 import eu.itesla_project.offline.forecast_errors.ForecastErrorsAnalysisParameters;
 
@@ -36,7 +38,7 @@ public interface LocalOnlineApplicationMBean {
 
     String WCA_CONTINGENCIES_ATTRIBUTE = "WcaContingencies";
 
-    //Apogee
+    // Apogee
     // String GENERATE_CARD_ATTRIBUTE = "Card";
 
     void ping();
@@ -53,7 +55,13 @@ public interface LocalOnlineApplicationMBean {
 
     void shutdown();
 
-    void runFeaAnalysis(OnlineWorkflowStartParameters startconfig, ForecastErrorsAnalysisParameters parameters, String timeHorizonS);
+    void runFeaAnalysis(OnlineWorkflowStartParameters startconfig, ForecastErrorsAnalysisParameters parameters,
+            String timeHorizonS);
 
-    void runTDSimulations(OnlineWorkflowStartParameters startconfig, String caseFile, String contingenciesIds, String emptyContingencyS, String outputFolderS);
+    void runTDSimulations(OnlineWorkflowStartParameters startconfig, String caseFile, String contingenciesIds,
+            String emptyContingencyS, String outputFolderS);
+
+    String startProcess(String name, String owner, DateTime date, DateTime creationDate,
+            OnlineWorkflowStartParameters start, OnlineWorkflowParameters params, DateTime[] basecases)
+                    throws Exception;
 }

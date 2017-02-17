@@ -14,14 +14,18 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:f="http://java.sun.com/jsf/core">
 
-<f:loadBundle basename="resources.application" var="msg"/>
+<f:loadBundle basename="resources.application" var="msg" />
 
 <head>
-    <title><h:outputText value="#{msg.welcomeTitle}" /></title>
+<title><h:outputText value="#{msg.welcomeTitle}" /></title>
 </head>
 
 <body>
-<h3><h:outputText value="#{msg.welcomeHeading}" /></h3>
-<p><h:outputText value="#{msg.welcomeMessage}" /></p>
+    <h3>
+        <h:outputText value="#{msg.welcomeHeading}" />
+    </h3>
+    <p>
+        <h:outputText value="#{msg.welcomeMessage}" />
+    </p>
 </body>
 </html>

@@ -6,6 +6,7 @@
  */
 package eu.itesla_project.online.db;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,6 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
@@ -24,6 +29,7 @@ import eu.itesla_project.modules.contingencies.ActionParameterFloatValue;
 import eu.itesla_project.modules.contingencies.ActionParameterIntegerValue;
 import eu.itesla_project.modules.contingencies.ActionParameterStringValue;
 import eu.itesla_project.modules.contingencies.ActionParameters;
+import eu.itesla_project.modules.online.OnlineProcess;
 import eu.itesla_project.security.LimitViolation;
 import eu.itesla_project.security.LimitViolationType;
 import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
@@ -211,6 +217,16 @@ public class OnlineDbMVStoreUtils {
 		List<String> countryNames = (List<String>) JSONSerializer.toJava(JSONSerializer.toJSON(json));
 		Set<Country> countries = countryNames.stream().map(Country::valueOf).collect(Collectors.toSet());
 		return countries;
+	}
+	
+
+	
+	public static OnlineProcess jsonToProcess(String json) throws JsonProcessingException, IOException {
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.registerModule(new JodaModule());
+		objectMapper.configure(com.fasterxml.jackson.databind.SerializationFeature.
+		    WRITE_DATES_AS_TIMESTAMPS , false);
+		return objectMapper.readValue(json,OnlineProcess.class);
 	}
 	
 	

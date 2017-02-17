@@ -6,9 +6,7 @@
  */
 package eu.itesla_project.online.server.message;
 
-
 import java.util.HashMap;
-
 
 import javax.json.stream.JsonGenerator;
 
@@ -20,34 +18,29 @@ import eu.itesla_project.online.server.OnlineWorkflowInfo;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class WorkflowListMessage extends Message<HashMap<String, OnlineWorkflowInfo>>  {
+public class WorkflowListMessage extends Message<HashMap<String, OnlineWorkflowInfo>> {
 
-  
-	private String type="workflows";
-    
+    private String type = "workflows";
 
     public WorkflowListMessage(HashMap<String, OnlineWorkflowInfo> workflows) {
-    	super(workflows);
-        
+        super(workflows);
+
     }
-  
 
-	@Override
-	protected String getType() {
-		return type;
-	}
-   
-	@Override
-	public String toJson(){
-		Gson gson = new Gson();
-		return gson.toJson(this);
-	}
+    @Override
+    protected String getType() {
+        return type;
+    }
 
-	
-	@Override
-	protected void toJson(JsonGenerator generator) {
-	
-	}
+    @Override
+    public String toJson() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
+    }
 
+    @Override
+    protected void toJson(JsonGenerator generator) {
+
+    }
 
 }

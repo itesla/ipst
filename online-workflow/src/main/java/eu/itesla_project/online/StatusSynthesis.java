@@ -18,22 +18,10 @@ public class StatusSynthesis implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private final String workflowId;
+	private final WorkflowStatusEnum status;
 	
-	public static int STATUS_UNDEFINED=-1;
-	public static int STATUS_IDLE=0;
-	public static int STATUS_RUNNING=1;
-	public static int STATUS_STOPPED=2;
-	public static int STATUS_TERMINATED=3;
-	
-	private String workflowId;
-	private int status;
-	
-	public StatusSynthesis()
-	{
-		
-	}
-	
-	public StatusSynthesis(String workflowId, int status)
+	public StatusSynthesis(String workflowId, WorkflowStatusEnum status)
 	{
 		this.workflowId=workflowId;
 		this.status=status;
@@ -42,19 +30,9 @@ public class StatusSynthesis implements Serializable{
 	public String getWorkflowId() {
 		return workflowId;
 	}
-	public void setWorkflowId(String workflowId) {
-		this.workflowId = workflowId;
-	}
-
-	public int getStatus() {
+	
+	public WorkflowStatusEnum getStatus() {
 		return status;
 	}
-
-	public void setStatus(int status) {
-		this.status = status;
-	}
-	
-	
-	
 
 }

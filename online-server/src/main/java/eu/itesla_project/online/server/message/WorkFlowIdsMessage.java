@@ -6,7 +6,6 @@
  */
 package eu.itesla_project.online.server.message;
 
-
 import java.util.Collection;
 
 import javax.json.stream.JsonGenerator;
@@ -17,35 +16,29 @@ import com.google.gson.Gson;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class WorkFlowIdsMessage extends Message<Collection<String>>  {
+public class WorkFlowIdsMessage extends Message<Collection<String>> {
 
-  
-	private String type="workflowIds";
-    
+    private String type = "workflowIds";
 
     public WorkFlowIdsMessage(Collection<String> workflowIds) {
-    	super(workflowIds);
-        
+        super(workflowIds);
+
     }
-  
 
-	@Override
-	protected String getType() {
-		return type;
-	}
-   
-	
-	@Override
-	public String toJson(){
-		Gson gson = new Gson();
-		return gson.toJson(this);
-	}
+    @Override
+    protected String getType() {
+        return type;
+    }
 
-	
-	@Override
-	protected void toJson(JsonGenerator generator) {
-	
-	}
+    @Override
+    public String toJson() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
+    }
 
+    @Override
+    protected void toJson(JsonGenerator generator) {
+
+    }
 
 }

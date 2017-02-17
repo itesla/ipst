@@ -6,9 +6,7 @@
  */
 package eu.itesla_project.online.server.message;
 
-
 import java.util.HashMap;
-
 
 import javax.json.stream.JsonGenerator;
 
@@ -16,39 +14,33 @@ import com.google.gson.Gson;
 
 import eu.itesla_project.online.server.OnlineWorkflowInfo;
 
-
 /**
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class SelectedWorkFlowInfoMessage extends Message<OnlineWorkflowInfo>  {
+public class SelectedWorkFlowInfoMessage extends Message<OnlineWorkflowInfo> {
 
-  
-	private String type="selectedWorkFlowInfo";
-    
+    private String type = "selectedWorkFlowInfo";
 
     public SelectedWorkFlowInfoMessage(OnlineWorkflowInfo workflow) {
-    	super(workflow);
-        
+        super(workflow);
+
     }
-  
 
-	@Override
-	protected String getType() {
-		return type;
-	}
-   
-	@Override
-	public String toJson(){
-		Gson gson = new Gson();
-		return gson.toJson(this);
-	}
+    @Override
+    protected String getType() {
+        return type;
+    }
 
-	
-	@Override
-	protected void toJson(JsonGenerator generator) {
-	
-	}
+    @Override
+    public String toJson() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
+    }
 
+    @Override
+    protected void toJson(JsonGenerator generator) {
+
+    }
 
 }

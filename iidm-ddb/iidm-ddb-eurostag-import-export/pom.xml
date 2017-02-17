@@ -56,7 +56,7 @@
       </dependency>
        <dependency>
            <groupId>eu.itesla_project</groupId>
-           <artifactId>iidm-network-api</artifactId>
+           <artifactId>iidm-api</artifactId>
        </dependency>
 
        <!-- We depend on the EJB remote interfaces  of this application -->
