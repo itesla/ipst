@@ -8,6 +8,8 @@ package eu.itesla_project.wca;
 
 import org.junit.Test;
 
+import java.util.EnumSet;
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -16,22 +18,15 @@ import static org.junit.Assert.assertEquals;
 public class WCARestrictingThresholdLevelTest {
 
     @Test
-    public void testIntToEnum() {
-        assertEquals(WCARestrictingThresholdLevel.fromLevel(0), WCARestrictingThresholdLevel.ZERO);
-        assertEquals(WCARestrictingThresholdLevel.fromLevel(1), WCARestrictingThresholdLevel.ONE);
-        assertEquals(WCARestrictingThresholdLevel.fromLevel(2), WCARestrictingThresholdLevel.TWO);
-        assertEquals(WCARestrictingThresholdLevel.fromLevel(3), WCARestrictingThresholdLevel.THREE);
-        assertEquals(WCARestrictingThresholdLevel.fromLevel(4), null);
+    public void testThresholdLevels() {
+        assertEquals(0, WCARestrictingThresholdLevel.getLevel(EnumSet.noneOf(WCARestrictingThresholdLevel.class)));
+        assertEquals(1, WCARestrictingThresholdLevel.getLevel(EnumSet.of(WCARestrictingThresholdLevel.NO_HV_THRESHOLDS)));
+        assertEquals(2, WCARestrictingThresholdLevel.getLevel(EnumSet.of(WCARestrictingThresholdLevel.NO_FOREIGN_THRESHOLDS)));
+        assertEquals(3, WCARestrictingThresholdLevel.getLevel(EnumSet.of(WCARestrictingThresholdLevel.NO_FOREIGN_THRESHOLDS, WCARestrictingThresholdLevel.NO_HV_THRESHOLDS)));
+        assertEquals(3, WCARestrictingThresholdLevel.getLevel(EnumSet.of(WCARestrictingThresholdLevel.NO_HV_THRESHOLDS, WCARestrictingThresholdLevel.NO_FOREIGN_THRESHOLDS)));
+        assertEquals(1, WCARestrictingThresholdLevel.getLevel(EnumSet.of(WCARestrictingThresholdLevel.NO_HV_THRESHOLDS, WCARestrictingThresholdLevel.NO_HV_THRESHOLDS)));
+        assertEquals(2, WCARestrictingThresholdLevel.getLevel(EnumSet.of(WCARestrictingThresholdLevel.NO_FOREIGN_THRESHOLDS, WCARestrictingThresholdLevel.NO_FOREIGN_THRESHOLDS)));
+        assertEquals(3, WCARestrictingThresholdLevel.getLevel(EnumSet.allOf(WCARestrictingThresholdLevel.class)));
     }
-
-    @Test
-    public void testEnumToInt() {
-        assertEquals(WCARestrictingThresholdLevel.ZERO.getLevel(), 0);
-        assertEquals(WCARestrictingThresholdLevel.ONE.getLevel(), 1);
-        assertEquals(WCARestrictingThresholdLevel.TWO.getLevel(), 2);
-        assertEquals(WCARestrictingThresholdLevel.THREE.getLevel(), 3);
-
-    }
-
 
 }

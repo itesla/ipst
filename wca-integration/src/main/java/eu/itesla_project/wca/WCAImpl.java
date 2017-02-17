@@ -362,7 +362,7 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                                         Float.toString(config.getReducedVariableRatio()),
                                         Float.toString(UNCERTAINTY_THRESHOLD),
                                         Integer.toString(config.isDebug() ? DETAILS_LEVEL_DEBUG : DETAILS_LEVEL_NORMAL),
-                                        Integer.toString(config.getRestrictingThresholdLevel().getLevel()))
+                                        Integer.toString(WCARestrictingThresholdLevel.getLevel(config.getRestrictingThresholdLevels())))
                                 .build();
                         return Arrays.asList(new CommandExecution(cmd, 1));
                     }
@@ -449,7 +449,7 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                                         Float.toString(UNCERTAINTY_THRESHOLD),
                                         Integer.toString(SecurityIndexType.TSO_OVERLOAD.ordinal()),
                                         Integer.toString(config.isDebug() ? DETAILS_LEVEL_DEBUG : DETAILS_LEVEL_NORMAL),
-                                        Integer.toString(config.getRestrictingThresholdLevel().getLevel()))
+                                        Integer.toString(WCARestrictingThresholdLevel.getLevel(config.getRestrictingThresholdLevels())))
                                 .build();
                         return Arrays.asList(new CommandExecution(cmd, 1));
                     }
