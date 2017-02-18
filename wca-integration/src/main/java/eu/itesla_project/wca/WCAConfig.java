@@ -11,10 +11,11 @@ import eu.itesla_project.commons.config.ModuleConfig;
 import eu.itesla_project.commons.config.PlatformConfig;
 
 import java.nio.file.Path;
+import java.util.EnumSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
- *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
 public class WCAConfig {
@@ -26,23 +27,31 @@ public class WCAConfig {
     private final float reducedVariableRatio;
 
     private final boolean debug;
-    
+
     private final boolean exportStates;
 
+    private final Set<WCARestrictingThresholdLevel> restrictingThresholdLevels;
+
     public static WCAConfig load() {
-        ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("wca");
+        return load(PlatformConfig.defaultConfig());
+    }
+
+    public static WCAConfig load(PlatformConfig platformConfig) {
+        ModuleConfig config = platformConfig.getModuleConfig("wca");
         Path xpressHome = config.getPathProperty("xpressHome");
         float reducedVariableRatio = config.getFloatProperty("reducedVariableRatio", DEFAULT_REDUCED_VARIABLE_RATIO);
         boolean debug = config.getBooleanProperty("debug", false);
         boolean exportStates = config.getBooleanProperty("exportStates", false);
-        return new WCAConfig(xpressHome, reducedVariableRatio, debug, exportStates);
+        Set<WCARestrictingThresholdLevel> restrictingThresholdLevels = config.getEnumSetProperty("restrictingThresholdLevels", WCARestrictingThresholdLevel.class, EnumSet.noneOf(WCARestrictingThresholdLevel.class));
+        return new WCAConfig(xpressHome, reducedVariableRatio, debug, exportStates, restrictingThresholdLevels);
     }
 
-    public WCAConfig(Path xpressHome, float reducedVariableRatio, boolean debug, boolean exportStates) {
+    public WCAConfig(Path xpressHome, float reducedVariableRatio, boolean debug, boolean exportStates, Set<WCARestrictingThresholdLevel> restrictingThresholdLevels) {
         this.xpressHome = Objects.requireNonNull(xpressHome);
         this.reducedVariableRatio = reducedVariableRatio;
         this.debug = debug;
         this.exportStates = exportStates;
+        this.restrictingThresholdLevels = Objects.requireNonNull(restrictingThresholdLevels, "invalid restrictingThresholdLevels");
     }
 
     public Path getXpressHome() {
@@ -56,9 +65,13 @@ public class WCAConfig {
     public boolean isDebug() {
         return debug;
     }
-    
+
     public boolean isExportStates() {
         return exportStates;
+    }
+
+    public Set<WCARestrictingThresholdLevel> getRestrictingThresholdLevels() {
+        return restrictingThresholdLevels;
     }
 
     @Override
@@ -67,6 +80,7 @@ public class WCAConfig {
                 ", reducedVariableRatio=" + reducedVariableRatio +
                 ", debug=" + debug +
                 ", exportStates=" + exportStates +
+                ", restrictingThresholdLevels=" + restrictingThresholdLevels + " -> level=" + WCARestrictingThresholdLevel.getLevel(restrictingThresholdLevels) +
                 "]";
     }
 }
