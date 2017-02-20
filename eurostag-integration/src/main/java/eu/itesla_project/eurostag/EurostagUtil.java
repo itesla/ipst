@@ -16,10 +16,7 @@ import eu.itesla_project.computation.ExecutionReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -61,9 +58,13 @@ public class EurostagUtil {
     public static Map<String, String> createEnv(EurostagConfig config) {
         Map<String, String> env = new HashMap<>();
         if (config.getEurostagHomeDir() != null) {
-            env.put("EUROSTAG", config.getEurostagHomeDir().toString());
-            env.put("PATH", config.getEurostagHomeDir().toString());
-            env.put("LD_LIBRARY_PATH",  config.getEurostagHomeDir().toString());
+            String eurostagHome = config.getEurostagHomeDir().toString();
+            String eurostagX64 = config.getEurostagHomeDir().toString() + File.separator + "x64";
+            env.put("EUROSTAG", eurostagHome);
+            env.put("PATH", eurostagHome + File.pathSeparator + eurostagX64);
+            env.put("LD_LIBRARY_PATH", eurostagHome + File.pathSeparator + eurostagX64);
+            env.put("EUROSTAG_EXE", eurostagX64);
+            env.put("DMA_LICENSE_FILE", eurostagHome + File.separator + "licenses");
         }
         if (config.getIndexesBinDir() != null) {
             if (env.containsKey("PATH")) {

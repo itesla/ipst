@@ -14,7 +14,7 @@ import eu.itesla_project.computation.Command;
  */
 public interface EurostagConstants {
 
-    String EUSTAG_CPT = "eustag_cpt.e";
+    String EUSTAG_CPT = "eustag_cpt_noGUI.e";
     String TSOINDEXES = "tsoindexes";
     String WP43 = "wp43_eurostag.sh";
 
