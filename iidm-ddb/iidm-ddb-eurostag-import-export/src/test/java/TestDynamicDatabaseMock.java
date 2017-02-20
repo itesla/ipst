@@ -64,6 +64,7 @@ public class TestDynamicDatabaseMock {
         assertEquals(CharStreams.toString(new InputStreamReader(Files.newInputStream(expectedDtaFile.toPath()))),
                 CharStreams.toString(new InputStreamReader(Files.newInputStream(testFile))));
 
+        //TODO test dummy regulators files
     }
 
 }
