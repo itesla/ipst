@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
- * Copyright (c) 2016, RTE (http://www.rte-france.com)
+ * Copyright (c) 2016-2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -11,11 +11,11 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.gdata.util.common.base.Pair;
-
 import eu.itesla_project.commons.io.table.Column;
 import eu.itesla_project.commons.io.table.TableFormatter;
 import eu.itesla_project.commons.util.StringToIntMapper;
 import eu.itesla_project.computation.*;
+import eu.itesla_project.contingency.Contingency;
 import eu.itesla_project.iidm.datasource.DataSource;
 import eu.itesla_project.iidm.datasource.FileDataSource;
 import eu.itesla_project.iidm.export.ampl.*;
@@ -28,20 +28,18 @@ import eu.itesla_project.loadflow.api.LoadFlowFactory;
 import eu.itesla_project.loadflow.api.LoadFlowParameters;
 import eu.itesla_project.modules.contingencies.Action;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
-import eu.itesla_project.contingency.Contingency;
 import eu.itesla_project.modules.histo.HistoDbAttributeId;
 import eu.itesla_project.modules.histo.HistoDbClient;
 import eu.itesla_project.modules.histo.IIDM2DB;
 import eu.itesla_project.modules.rules.*;
+import eu.itesla_project.modules.wca.*;
 import eu.itesla_project.security.LimitViolation;
 import eu.itesla_project.security.LimitViolationFilter;
 import eu.itesla_project.security.LimitViolationType;
 import eu.itesla_project.security.Security;
 import eu.itesla_project.simulation.securityindexes.SecurityIndexId;
 import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
-import eu.itesla_project.modules.wca.*;
 import eu.itesla_project.wca.uncertainties.UncertaintiesAmplWriter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +55,6 @@ import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
 /**
- *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
 public class WCAImpl implements WCA, WCAConstants, AmplConstants {
@@ -139,8 +136,8 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
 
         LOGGER.info(config.toString());
 
-        env = ImmutableMap.of("XPRESS",  config.getXpressHome().resolve("bin").toString(),
-                              "LD_LIBRARY_PATH", config.getXpressHome().resolve("lib").toString());
+        env = ImmutableMap.of("XPRESS", config.getXpressHome().resolve("bin").toString(),
+                "LD_LIBRARY_PATH", config.getXpressHome().resolve("lib").toString());
     }
 
     private Matcher parseOutFile(String cmdId, Pattern pattern, Path workingDir) throws IOException {
@@ -149,7 +146,7 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
         Path outGz = workingDir.resolve(cmdId + "_0.out.gz");
         if (Files.exists(out) || Files.exists(outGz)) {
             try (BufferedReader reader = (Files.exists(out)) ? Files.newBufferedReader(out, StandardCharsets.UTF_8)
-                                                             : new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(outGz.toFile()))))) {
+                    : new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(outGz.toFile()))))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     Matcher matcher = pattern.matcher(line);
@@ -224,7 +221,7 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
             .setPhaseShifterRegulationOn(false);
 
     private static final LimitViolationFilter CURRENT_FILTER = LimitViolationFilter.load()
-                                                                                   .setViolationTypes(EnumSet.of(LimitViolationType.CURRENT));
+            .setViolationTypes(EnumSet.of(LimitViolationType.CURRENT));
 
     private SecurityIndexType[] getSecurityIndexTypes(WCAParameters parameters) {
         return parameters.getSecurityIndexTypes() != null
@@ -234,13 +231,13 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
 
     private static void writeContingencies(Collection<Contingency> contingencies, DataSource dataSource, StringToIntMapper<AmplSubset> mapper) {
         try (TableFormatter formatter = new AmplDatTableFormatter(
-                    new OutputStreamWriter(dataSource.newOutputStream(FAULTS_FILE_SUFFIX, TXT_EXT, false), StandardCharsets.UTF_8),
-                    "Contingencies",
-                    INVALID_FLOAT_VALUE,
-                    true,
-                    LOCALE,
-                    new Column("num"),
-                    new Column("id"))) {
+                new OutputStreamWriter(dataSource.newOutputStream(FAULTS_FILE_SUFFIX, TXT_EXT, false), StandardCharsets.UTF_8),
+                "Contingencies",
+                INVALID_FLOAT_VALUE,
+                true,
+                LOCALE,
+                new Column("num"),
+                new Column("id"))) {
             for (Contingency contingency : contingencies) {
                 int contingencyNum = mapper.getInt(AmplSubset.FAULT, contingency.getId());
                 formatter.writeCell(contingencyNum)
@@ -252,15 +249,15 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
     }
 
     private static void writeActions(Collection<String> actionIds, DataSource dataSource, StringToIntMapper<AmplSubset> mapper,
-            String title, AmplSubset amplSubset) {
+                                     String title, AmplSubset amplSubset) {
         try (TableFormatter formatter = new AmplDatTableFormatter(
-                    new OutputStreamWriter(dataSource.newOutputStream(ACTIONS_FILE_SUFFIX, TXT_EXT, false), StandardCharsets.UTF_8),
-                    title,
-                    INVALID_FLOAT_VALUE,
-                    true,
-                    LOCALE,
-                    new Column("num"),
-                    new Column("id"))) {
+                new OutputStreamWriter(dataSource.newOutputStream(ACTIONS_FILE_SUFFIX, TXT_EXT, false), StandardCharsets.UTF_8),
+                title,
+                INVALID_FLOAT_VALUE,
+                true,
+                LOCALE,
+                new Column("num"),
+                new Column("id"))) {
             for (String actionId : actionIds) {
                 int actionNum = mapper.getInt(amplSubset, actionId);
                 formatter.writeCell(actionNum)
@@ -364,7 +361,8 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                                         Integer.toString(THREADS),
                                         Float.toString(config.getReducedVariableRatio()),
                                         Float.toString(UNCERTAINTY_THRESHOLD),
-                                        Integer.toString(config.isDebug() ? DETAILS_LEVEL_DEBUG : DETAILS_LEVEL_NORMAL))
+                                        Integer.toString(config.isDebug() ? DETAILS_LEVEL_DEBUG : DETAILS_LEVEL_NORMAL),
+                                        Integer.toString(WCARestrictingThresholdLevel.getLevel(config.getRestrictingThresholdLevels())))
                                 .build();
                         return Arrays.asList(new CommandExecution(cmd, 1));
                     }
@@ -431,7 +429,7 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                                 WCAUtils.exportState(network, workingDir, 0, preventiveActionNum);
                             }
                         }
-                        
+
                         // write preventive action description
                         writeActions(preventiveActionIds, dataSource, mapper, "Preventive actions", AmplSubset.PREVENTIVE_ACTION);
 
@@ -450,7 +448,8 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                                         Float.toString(config.getReducedVariableRatio()),
                                         Float.toString(UNCERTAINTY_THRESHOLD),
                                         Integer.toString(SecurityIndexType.TSO_OVERLOAD.ordinal()),
-                                        Integer.toString(config.isDebug() ? DETAILS_LEVEL_DEBUG : DETAILS_LEVEL_NORMAL))
+                                        Integer.toString(config.isDebug() ? DETAILS_LEVEL_DEBUG : DETAILS_LEVEL_NORMAL),
+                                        Integer.toString(WCARestrictingThresholdLevel.getLevel(config.getRestrictingThresholdLevels())))
                                 .build();
                         return Arrays.asList(new CommandExecution(cmd, 1));
                     }
@@ -490,7 +489,7 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                                                                    boolean stopWcaOnViolations) {
         return memoizedUncertaintiesFuture.get()
                 .thenCombine(histoLimitsFuture.get(), (uncertainties, histoLimits) -> Pair.of(uncertainties, histoLimits))
-                .thenCompose(p -> createDomainTask(contingency, baseStateId, securityRuleExpressions, p.getFirst(), p.getSecond(), mapper, 
+                .thenCompose(p -> createDomainTask(contingency, baseStateId, securityRuleExpressions, p.getFirst(), p.getSecond(), mapper,
                         preventiveStateIds, preventiveActionIds, stopWcaOnViolations));
     }
 
@@ -508,22 +507,22 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
 
         return CompletableFuture
                 .runAsync(() -> {
-                        // create post contingency state
-                        contingencyStateId[0] = baseStateId + "_" + contingency.getId();
-                        network.getStateManager().cloneState(baseStateId, contingencyStateId[0]);
-                        network.getStateManager().setWorkingState(contingencyStateId[0]);
+                    // create post contingency state
+                    contingencyStateId[0] = baseStateId + "_" + contingency.getId();
+                    network.getStateManager().cloneState(baseStateId, contingencyStateId[0]);
+                    network.getStateManager().setWorkingState(contingencyStateId[0]);
 
-                        // apply contingency to the network
-                        contingency.toTask().modify(network);
+                    // apply contingency to the network
+                    contingency.toTask().modify(network);
 
-                    }, computationManager.getExecutor())
+                }, computationManager.getExecutor())
                 .thenCompose(aVoid -> loadFlow.runAsync(contingencyStateId[0], LOAD_FLOW_PARAMETERS))
                 .thenCompose(loadFlowResult -> {
                     if (!loadFlowResult.isOk()) {
                         return CompletableFuture.completedFuture(new WCAClusterImpl(contingency,
-                                                                                    WCAClusterNum.FOUR,
-                                                                                    WCAClusterOrigin.HADES_POST_CONTINGENCY_DIVERGENCE,
-                                                                                    Collections.singletonList(contingency.getId())));
+                                WCAClusterNum.FOUR,
+                                WCAClusterOrigin.HADES_POST_CONTINGENCY_DIVERGENCE,
+                                Collections.singletonList(contingency.getId())));
                     } else {
                         network.getStateManager().setWorkingState(contingencyStateId[0]);
 
@@ -535,18 +534,18 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                             // check limits on contingency state
                             if (contingencyStateLimitViolations.size() > 0 && stopWcaOnViolations) {
                                 return CompletableFuture.completedFuture(new WCAClusterImpl(contingency,
-                                                                                            WCAClusterNum.FOUR,
-                                                                                            WCAClusterOrigin.HADES_POST_CONTINGENCY_LIMIT,
-                                                                                            Collections.singletonList(contingency.getId())));
+                                        WCAClusterNum.FOUR,
+                                        WCAClusterOrigin.HADES_POST_CONTINGENCY_LIMIT,
+                                        Collections.singletonList(contingency.getId())));
                             } else {
                                 return createClusterTaskWithDeps(contingency, Collections.emptyList(), baseStateId, contingencyStateId[0],
-                                                                 Collections.emptyList(), securityRuleExpressions, memoizedUncertaintiesFuture,
-                                                                 histoLimitsFuture, mapper, stopWcaOnViolations);
+                                        Collections.emptyList(), securityRuleExpressions, memoizedUncertaintiesFuture,
+                                        histoLimitsFuture, mapper, stopWcaOnViolations);
                             }
                         } else {
                             CompletableFuture<?>[] curativeActionTasks = new CompletableFuture[curativeActions.size()];
                             List<String> curativeStateIdsForClusters = Collections.synchronizedList(new ArrayList<>());
-                            List<String> curativeActionIdsForClusters  = Collections.synchronizedList(new ArrayList<>());
+                            List<String> curativeActionIdsForClusters = Collections.synchronizedList(new ArrayList<>());
 
                             // create post curative states
                             for (int i = 0; i < curativeActions.size(); i++) {
@@ -566,30 +565,30 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                                         subAction.toTask().modify(network);
                                     }
                                 }, computationManager.getExecutor())
-                                .thenCompose(ignored -> loadFlow.runAsync(curativeStateId, LOAD_FLOW_PARAMETERS))
-                                .thenAccept(loadFlowResult1 -> {
-                                    if (loadFlowResult1.isOk()) {
-                                        network.getStateManager().setWorkingState(curativeStateId);
+                                        .thenCompose(ignored -> loadFlow.runAsync(curativeStateId, LOAD_FLOW_PARAMETERS))
+                                        .thenAccept(loadFlowResult1 -> {
+                                            if (loadFlowResult1.isOk()) {
+                                                network.getStateManager().setWorkingState(curativeStateId);
 
-                                        List<LimitViolation> curativeStateLimitViolations = CURRENT_FILTER.apply(Security.checkLimits(network));
-                                        if (curativeStateLimitViolations.isEmpty() || !stopWcaOnViolations) {
-                                            curativeStateIdsForClusters.add(curativeStateId);
-                                            curativeActionIdsForClusters.add(curativeActionId);
-                                        }
-                                    }
-                                })
-                                .exceptionally(throwable -> {
-                                    if (throwable != null) {
-                                        LOGGER.error(throwable.toString(), throwable);
-                                    }
-                                    return null;
-                                });
+                                                List<LimitViolation> curativeStateLimitViolations = CURRENT_FILTER.apply(Security.checkLimits(network));
+                                                if (curativeStateLimitViolations.isEmpty() || !stopWcaOnViolations) {
+                                                    curativeStateIdsForClusters.add(curativeStateId);
+                                                    curativeActionIdsForClusters.add(curativeActionId);
+                                                }
+                                            }
+                                        })
+                                        .exceptionally(throwable -> {
+                                            if (throwable != null) {
+                                                LOGGER.error(throwable.toString(), throwable);
+                                            }
+                                            return null;
+                                        });
                             }
 
                             return CompletableFuture.allOf(curativeActionTasks)
                                     .thenComposeAsync(aVoid -> createClusterTaskWithDeps(contingency, curativeActionIds, baseStateId, contingencyStateId[0],
-                                                                                         curativeStateIds, securityRuleExpressions, memoizedUncertaintiesFuture,
-                                                                                         histoLimitsFuture, mapper, stopWcaOnViolations));
+                                            curativeStateIds, securityRuleExpressions, memoizedUncertaintiesFuture,
+                                            histoLimitsFuture, mapper, stopWcaOnViolations));
                         }
                     }
                 })
@@ -633,9 +632,9 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                     if (!loadFlowInBaseStateResult.isOk()) {
                         for (Contingency contingency : contingencies) {
                             clusters.add(CompletableFuture.completedFuture(new WCAClusterImpl(contingency,
-                                                                                              WCAClusterNum.FOUR,
-                                                                                              WCAClusterOrigin.HADES_BASE_DIVERGENCE,
-                                                                                              Collections.emptyList())));
+                                    WCAClusterNum.FOUR,
+                                    WCAClusterOrigin.HADES_BASE_DIVERGENCE,
+                                    Collections.emptyList())));
                         }
                     } else {
                         // check limits on base state
@@ -643,12 +642,12 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                         if (baseStateLimitViolations.size() > 0 && parameters.stopWcaOnViolations()) {
                             for (Contingency contingency : contingencies) {
                                 clusters.add(CompletableFuture.completedFuture(new WCAClusterImpl(contingency,
-                                                                                                  WCAClusterNum.FOUR,
-                                                                                                  WCAClusterOrigin.HADES_BASE_LIMIT,
-                                                                                                  baseStateLimitViolations.stream().map(LimitViolation::getSubject)
-                                                                                                                                   .map(Identifiable::getId)
-                                                                                                                                   .distinct()
-                                                                                                                                   .collect(Collectors.toList()))));
+                                        WCAClusterNum.FOUR,
+                                        WCAClusterOrigin.HADES_BASE_LIMIT,
+                                        baseStateLimitViolations.stream().map(LimitViolation::getSubject)
+                                                .map(Identifiable::getId)
+                                                .distinct()
+                                                .collect(Collectors.toList()))));
                             }
                         } else {
                             // commons tasks to all contingency task, a supplier is used to cache to completable future
@@ -665,35 +664,36 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
 
                             Supplier<CompletableFuture<WCAHistoLimits>> histoLimits
                                     = Suppliers.memoize(() -> CompletableFuture.supplyAsync(() -> {
-                                        network.getStateManager().setWorkingState(baseStateId);
-                                        try {
-                                            WCAHistoLimits limits = new WCAHistoLimits(parameters.getHistoInterval());
-                                            limits.load(network, histoDbClient);
-                                            return limits;
-                                        } catch (InterruptedException | IOException e) {
-                                            throw new RuntimeException(e);
-                                        }
-                                    }, computationManager.getExecutor()));
+                                network.getStateManager().setWorkingState(baseStateId);
+                                try {
+                                    WCAHistoLimits limits = new WCAHistoLimits(parameters.getHistoInterval());
+                                    limits.load(network, histoDbClient);
+                                    return limits;
+                                } catch (InterruptedException | IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }, computationManager.getExecutor()));
 
                             // get preventive actions for domains task
                             List<String> preventiveStateIdsForDomains = Collections.synchronizedList(new ArrayList<>());
-                            List<String> preventiveActionIdsForDomains  = Collections.synchronizedList(new ArrayList<>());
-                            if (baseStateLimitViolations.size() > 0 ) {
+                            List<String> preventiveActionIdsForDomains = Collections.synchronizedList(new ArrayList<>());
+                            if (baseStateLimitViolations.size() > 0) {
                                 LOGGER.info("Network {}: getting preventive actions for 'domains' task", network.getId());
-                                List<CompletableFuture<?>> preventiveActionTasks = Collections.synchronizedList(new ArrayList<>());;
+                                List<CompletableFuture<?>> preventiveActionTasks = Collections.synchronizedList(new ArrayList<>());
+                                ;
                                 for (LimitViolation baseStateLimitViolation : baseStateLimitViolations) {
                                     List<List<Action>> preventiveActions = contingencyDbFacade.getPreventiveActions(baseStateLimitViolation);
-                                    if ( preventiveActions.isEmpty() )
+                                    if (preventiveActions.isEmpty())
                                         continue;
                                     for (int i = 0; i < preventiveActions.size(); i++) {
                                         List<Action> preventiveAction = preventiveActions.get(i);
                                         String preventiveActionId = preventiveAction.stream().map(Action::getId).collect(Collectors.joining("+"));
-                                        if ( preventiveStateIdsForDomains.contains(preventiveActionId) )
+                                        if (preventiveStateIdsForDomains.contains(preventiveActionId))
                                             continue;
                                         String preventiveStateId = StateManager.INITIAL_STATE_ID + "_" + preventiveActionId;
                                         preventiveActionTasks.add(CompletableFuture.runAsync(() -> {
-                                            LOGGER.info("Network {}, Preventive Action {}: starting analysis for {} violation on equipment {}", 
-                                                    network.getId(), 
+                                            LOGGER.info("Network {}, Preventive Action {}: starting analysis for {} violation on equipment {}",
+                                                    network.getId(),
                                                     preventiveActionId,
                                                     baseStateLimitViolation.getLimitType(),
                                                     baseStateLimitViolation.getSubject().getId());
@@ -703,35 +703,35 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                                                 subAction.toTask().modify(network);
                                             }
                                         }, computationManager.getExecutor())
-                                        .thenCompose(ignored -> loadFlow.runAsync(preventiveStateId, LOAD_FLOW_PARAMETERS))
-                                        .thenAccept(loadFlowResult1 -> {
-                                            if (loadFlowResult1.isOk()) {
-                                                network.getStateManager().setWorkingState(preventiveStateId);
-                                                List<LimitViolation> preventiveStateLimitViolations = CURRENT_FILTER.apply(Security.checkLimits(network));
-                                                Optional<LimitViolation> notSolvedLimitViolation = preventiveStateLimitViolations
-                                                        .stream()
-                                                        .filter(preventiveStateLimitViolation -> preventiveStateLimitViolation.getSubject().getId().equals(baseStateLimitViolation.getSubject().getId()))
-                                                        .findAny();
-                                                if ( notSolvedLimitViolation.isPresent() && parameters.stopWcaOnViolations() ) {
-                                                    LOGGER.warn("Network {}, Preventive Action {}: post action state still contains {} violation on equiment {}", 
-                                                            network.getId(), 
-                                                            preventiveActionId,
-                                                            baseStateLimitViolation.getLimitType(),
-                                                            baseStateLimitViolation.getSubject().getId());
-                                                } else {
-                                                    LOGGER.info("Network {}, Preventive Action {}: adding action to list for 'domains' task", network.getId(), preventiveActionId);
-                                                    preventiveStateIdsForDomains.add(preventiveStateId);
-                                                    preventiveActionIdsForDomains.add(preventiveActionId);
-                                                }
-                                            } else
-                                                LOGGER.warn("Network {}, Preventive Action {}: loadflow on post action state diverged", network.getId(), preventiveActionId); 
-                                        })
-                                        .exceptionally(throwable -> {
-                                            if (throwable != null) {
-                                                LOGGER.error(throwable.toString(), throwable);
-                                            }
-                                            return null;
-                                        }));
+                                                .thenCompose(ignored -> loadFlow.runAsync(preventiveStateId, LOAD_FLOW_PARAMETERS))
+                                                .thenAccept(loadFlowResult1 -> {
+                                                    if (loadFlowResult1.isOk()) {
+                                                        network.getStateManager().setWorkingState(preventiveStateId);
+                                                        List<LimitViolation> preventiveStateLimitViolations = CURRENT_FILTER.apply(Security.checkLimits(network));
+                                                        Optional<LimitViolation> notSolvedLimitViolation = preventiveStateLimitViolations
+                                                                .stream()
+                                                                .filter(preventiveStateLimitViolation -> preventiveStateLimitViolation.getSubject().getId().equals(baseStateLimitViolation.getSubject().getId()))
+                                                                .findAny();
+                                                        if (notSolvedLimitViolation.isPresent() && parameters.stopWcaOnViolations()) {
+                                                            LOGGER.warn("Network {}, Preventive Action {}: post action state still contains {} violation on equiment {}",
+                                                                    network.getId(),
+                                                                    preventiveActionId,
+                                                                    baseStateLimitViolation.getLimitType(),
+                                                                    baseStateLimitViolation.getSubject().getId());
+                                                        } else {
+                                                            LOGGER.info("Network {}, Preventive Action {}: adding action to list for 'domains' task", network.getId(), preventiveActionId);
+                                                            preventiveStateIdsForDomains.add(preventiveStateId);
+                                                            preventiveActionIdsForDomains.add(preventiveActionId);
+                                                        }
+                                                    } else
+                                                        LOGGER.warn("Network {}, Preventive Action {}: loadflow on post action state diverged", network.getId(), preventiveActionId);
+                                                })
+                                                .exceptionally(throwable -> {
+                                                    if (throwable != null) {
+                                                        LOGGER.error(throwable.toString(), throwable);
+                                                    }
+                                                    return null;
+                                                }));
                                     }
 
                                 }
@@ -742,7 +742,7 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                                 }
                                 LOGGER.info("Network {}: found {} preventive actions for 'domains' task", network.getId(), preventiveActionIdsForDomains.size());
                             }
-                            
+
                             // check offline rules
                             for (Contingency contingency : contingencies) {
                                 clusters.add(CompletableFuture
@@ -778,18 +778,18 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                                             }
                                             if (causes.size() > 0 && parameters.stopWcaOnViolations()) {
                                                 return CompletableFuture.completedFuture(new WCAClusterImpl(contingency,
-                                                                                                            WCAClusterNum.FOUR,
-                                                                                                            WCAClusterOrigin.HADES_BASE_OFFLINE_RULE,
-                                                                                                            causes));
+                                                        WCAClusterNum.FOUR,
+                                                        WCAClusterOrigin.HADES_BASE_OFFLINE_RULE,
+                                                        causes));
                                             } else {
-                                                return createDomainTaskWithDeps(contingency, baseStateId, securityRuleExpressions, uncertainties, histoLimits, mapper, 
+                                                return createDomainTaskWithDeps(contingency, baseStateId, securityRuleExpressions, uncertainties, histoLimits, mapper,
                                                         preventiveStateIdsForDomains, preventiveActionIdsForDomains, parameters.stopWcaOnViolations())
                                                         .thenCompose(cluster -> {
                                                             if (cluster != null && parameters.stopWcaOnViolations()) {
                                                                 return CompletableFuture.completedFuture(cluster);
                                                             }
                                                             return createClusterWorkflowTask(contingency, baseStateId, contingencyDbFacade, securityRuleExpressions,
-                                                                                             uncertainties, histoLimits, mapper, loadFlow, parameters.stopWcaOnViolations());
+                                                                    uncertainties, histoLimits, mapper, loadFlow, parameters.stopWcaOnViolations());
                                                         });
                                             }
                                         }, computationManager.getExecutor()));
