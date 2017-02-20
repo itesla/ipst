@@ -22,18 +22,6 @@
     <name>iidm ddb - ejb-remote-client-wildfly package</name>
     <description>ejb remote wildfly client utils</description>
 
-    <repositories>
-        <repository>
-            <id>ibiblio.org-releases</id>
-            <url>http://mirrors.ibiblio.org/maven2/</url>
-        </repository>
-
-        <repository>
-            <id>jboss-releases</id>
-            <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
-        </repository>
-    </repositories>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 

@@ -102,6 +102,7 @@
         <junit.version>4.12</junit.version>
         <logback.version>1.1.8</logback.version>
         <mockito.version>1.10.19</mockito.version>
+        <primefaces.version>4.0</primefaces.version>
         <poi.version>3.15</poi.version>
         <powermock.version>1.6.5</powermock.version>
         <resteasy.version>3.0.11.Final</resteasy.version>
