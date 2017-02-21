@@ -43,11 +43,12 @@ class DynamicDatabaseMock implements DynamicDatabaseClient {
         Objects.requireNonNull(eurostagVersion);
         Objects.requireNonNull(iidm2eurostagId);
 
-        //uses the first generator that is available in the iidm2eurostag map
-        Generator generator = network.getGeneratorStream().filter(gen -> iidm2eurostagId.containsKey(gen.getId())).findFirst().get();
+        //uses the first connected generator that is available in the iidm2eurostag map
+        Generator generator = network.getGeneratorStream().filter(gen -> ((iidm2eurostagId.containsKey(gen.getId())) && (gen.getTerminal().isConnected()))).findFirst().get();
         if (generator == null) {
             throw new RuntimeException("could not find a suitable generator to use in " + fileName);
         }
+
         Bus bus = generator.getTerminal().getBusBreakerView().getConnectableBus();
         if ((bus == null) || (!iidm2eurostagId.containsKey(bus.getId()))) {
             throw new RuntimeException("suitable node not found");
