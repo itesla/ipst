@@ -18,29 +18,26 @@ import eu.itesla_project.online.ContingencyStatesActionsSynthesis;
  */
 public class StatesWithActionsSynthesisMessage extends Message<ContingencyStatesActionsSynthesis> {
 
-	public StatesWithActionsSynthesisMessage(ContingencyStatesActionsSynthesis contingecyStatesActions) {
-		super(contingecyStatesActions);
-	}
-	
-	private String type="statesWithActionsSyntesis";
+    public StatesWithActionsSynthesisMessage(ContingencyStatesActionsSynthesis contingecyStatesActions) {
+        super(contingecyStatesActions);
+    }
 
-	
-	@Override
-	protected String getType() {
-		return type;
-	}
-	
-	@Override
-	public String toJson(){
-		Gson gson = new Gson();
-		return gson.toJson(this);  
-		
-		
-	}
+    private String type = "statesWithActionsSyntesis";
 
-	@Override
-	public void toJson(JsonGenerator generator) {             
-	 }
-	    
-	
+    @Override
+    protected String getType() {
+        return type;
+    }
+
+    @Override
+    public String toJson() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
+
+    }
+
+    @Override
+    public void toJson(JsonGenerator generator) {
+    }
+
 }

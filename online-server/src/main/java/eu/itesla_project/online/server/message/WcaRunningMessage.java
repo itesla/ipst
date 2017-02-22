@@ -17,29 +17,27 @@ import eu.itesla_project.online.RunningSynthesis;
  * @author Quinary <itesla@quinary.com>
  */
 public class WcaRunningMessage extends Message<RunningSynthesis> {
-	
-	private String type="wcaRunning";
 
-	public WcaRunningMessage(RunningSynthesis wcaRunning) {
-		super(wcaRunning);
-	}
+    private String type = "wcaRunning";
 
-	 @Override
-	    protected String getType() {
-	        return type;
-	    }
+    public WcaRunningMessage(RunningSynthesis wcaRunning) {
+        super(wcaRunning);
+    }
 
-	 @Override
-		public String toJson(){
-			Gson gson = new Gson();
-			return gson.toJson(this);  
-			
-			
-		}
+    @Override
+    protected String getType() {
+        return type;
+    }
 
-		@Override
-		protected void toJson(JsonGenerator generator) {
-			
+    @Override
+    public String toJson() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
 
-		}
+    }
+
+    @Override
+    protected void toJson(JsonGenerator generator) {
+
+    }
 }

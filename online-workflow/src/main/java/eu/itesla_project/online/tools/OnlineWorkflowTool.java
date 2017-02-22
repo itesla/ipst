@@ -49,8 +49,10 @@ public class OnlineWorkflowTool implements Tool {
         System.err.println(message);
         System.err.println();
         HelpFormatter formatter = new HelpFormatter();
-        // it would be nice to have access to the private method  eu.itesla_project.commons.tools.Main.printCommandUsage
-        formatter.printHelp(80, getCommand().getName(), "", getCommand().getOptions(), "\n" + Objects.toString(getCommand().getUsageFooter(), ""), true);
+        // it would be nice to have access to the private method
+        // eu.itesla_project.commons.tools.Main.printCommandUsage
+        formatter.printHelp(80, getCommand().getName(), "", getCommand().getOptions(),
+                "\n" + Objects.toString(getCommand().getUsageFooter(), ""), true);
     }
 
     @Override
@@ -71,14 +73,18 @@ public class OnlineWorkflowTool implements Tool {
         Set<DateTime> baseCasesSet = null;
 
         OnlineWorkflowParameters params = OnlineWorkflowParameters.loadDefault();
-        boolean atLeastOneBaseCaseLineParam = line.hasOption(OnlineWorkflowCommand.CASE_TYPE) || line.hasOption(OnlineWorkflowCommand.COUNTRIES)
-                || line.hasOption(OnlineWorkflowCommand.BASE_CASE) || line.hasOption(OnlineWorkflowCommand.BASECASES_INTERVAL);
-        boolean allNeededBaseCaseLineParams = line.hasOption(OnlineWorkflowCommand.CASE_TYPE) && line.hasOption(OnlineWorkflowCommand.COUNTRIES)
-                && (line.hasOption(OnlineWorkflowCommand.BASE_CASE) || line.hasOption(OnlineWorkflowCommand.BASECASES_INTERVAL));
+        boolean atLeastOneBaseCaseLineParam = line.hasOption(OnlineWorkflowCommand.CASE_TYPE)
+                || line.hasOption(OnlineWorkflowCommand.COUNTRIES) || line.hasOption(OnlineWorkflowCommand.BASE_CASE)
+                || line.hasOption(OnlineWorkflowCommand.BASECASES_INTERVAL);
+        boolean allNeededBaseCaseLineParams = line.hasOption(OnlineWorkflowCommand.CASE_TYPE)
+                && line.hasOption(OnlineWorkflowCommand.COUNTRIES) && (line.hasOption(OnlineWorkflowCommand.BASE_CASE)
+                        || line.hasOption(OnlineWorkflowCommand.BASECASES_INTERVAL));
 
         if (line.hasOption(OnlineWorkflowCommand.CASE_FILE)) {
             if (atLeastOneBaseCaseLineParam) {
-                showHelp("parameter " + OnlineWorkflowCommand.CASE_FILE + " cannot be used together with parameters: " + OnlineWorkflowCommand.CASE_TYPE + ", " + OnlineWorkflowCommand.COUNTRIES + ", " + OnlineWorkflowCommand.BASE_CASE + ", " + OnlineWorkflowCommand.BASECASES_INTERVAL);
+                showHelp("parameter " + OnlineWorkflowCommand.CASE_FILE + " cannot be used together with parameters: "
+                        + OnlineWorkflowCommand.CASE_TYPE + ", " + OnlineWorkflowCommand.COUNTRIES + ", "
+                        + OnlineWorkflowCommand.BASE_CASE + ", " + OnlineWorkflowCommand.BASECASES_INTERVAL);
                 return;
             }
             params.setCaseFile(line.getOptionValue(OnlineWorkflowCommand.CASE_FILE));
@@ -86,7 +92,10 @@ public class OnlineWorkflowTool implements Tool {
             if (params.getCaseFile() != null) {
                 if (atLeastOneBaseCaseLineParam) {
                     if (!allNeededBaseCaseLineParams) {
-                        showHelp("to override default parameter " + OnlineWorkflowCommand.CASE_FILE + ", all these parameters must be specified: " + OnlineWorkflowCommand.CASE_TYPE + ", " + OnlineWorkflowCommand.COUNTRIES + ", " + OnlineWorkflowCommand.BASE_CASE + " or " + OnlineWorkflowCommand.BASECASES_INTERVAL);
+                        showHelp("to override default parameter " + OnlineWorkflowCommand.CASE_FILE
+                                + ", all these parameters must be specified: " + OnlineWorkflowCommand.CASE_TYPE + ", "
+                                + OnlineWorkflowCommand.COUNTRIES + ", " + OnlineWorkflowCommand.BASE_CASE + " or "
+                                + OnlineWorkflowCommand.BASECASES_INTERVAL);
                         return;
                     }
                     params.setCaseFile(null);
@@ -96,13 +105,14 @@ public class OnlineWorkflowTool implements Tool {
                 params.setCaseType(CaseType.valueOf(line.getOptionValue(OnlineWorkflowCommand.CASE_TYPE)));
             if (line.hasOption(OnlineWorkflowCommand.COUNTRIES)) {
                 params.setCountries(Arrays.stream(line.getOptionValue(OnlineWorkflowCommand.COUNTRIES).split(","))
-                        .map(Country::valueOf)
-                        .collect(Collectors.toSet()));
+                        .map(Country::valueOf).collect(Collectors.toSet()));
             }
             if (line.hasOption(OnlineWorkflowCommand.BASECASES_INTERVAL)) {
-                Interval basecasesInterval = Interval.parse(line.getOptionValue(OnlineWorkflowCommand.BASECASES_INTERVAL));
+                Interval basecasesInterval = Interval
+                        .parse(line.getOptionValue(OnlineWorkflowCommand.BASECASES_INTERVAL));
                 OnlineConfig oConfig = OnlineConfig.load();
-                CaseRepository caseRepo = oConfig.getCaseRepositoryFactoryClass().newInstance().create(new LocalComputationManager());
+                CaseRepository caseRepo = oConfig.getCaseRepositoryFactoryClass().newInstance()
+                        .create(new LocalComputationManager());
                 baseCasesSet = caseRepo.dataAvailable(params.getCaseType(), params.getCountries(), basecasesInterval);
                 System.out.println("Base cases available for interval " + basecasesInterval.toString());
                 baseCasesSet.forEach(x -> {
@@ -153,15 +163,15 @@ public class OnlineWorkflowTool implements Tool {
         if (line.hasOption(OnlineWorkflowCommand.VALIDATION)) {
             params.setValidation(true);
             params.setStoreStates(true); // if validation then store states
-            params.setAnalyseBasecase(true); // if validation then analyze base case
+            params.setAnalyseBasecase(true); // if validation then analyze base
+                                             // case
         }
 
         Set<SecurityIndexType> securityIndexes = null;
         if (line.hasOption(OnlineWorkflowCommand.SECURITY_INDEXES)) {
             if (!"ALL".equals(line.getOptionValue(OnlineWorkflowCommand.SECURITY_INDEXES)))
                 securityIndexes = Arrays.stream(line.getOptionValue(OnlineWorkflowCommand.SECURITY_INDEXES).split(","))
-                        .map(SecurityIndexType::valueOf)
-                        .collect(Collectors.toSet());
+                        .map(SecurityIndexType::valueOf).collect(Collectors.toSet());
             params.setSecurityIndexes(securityIndexes);
         }
 
@@ -174,14 +184,17 @@ public class OnlineWorkflowTool implements Tool {
 
         if (line.hasOption(OnlineWorkflowCommand.HANDLE_VIOLATION_IN_N)) {
             params.setHandleViolationsInN(true);
-            params.setAnalyseBasecase(true); // if I need to handle violations in N, I need to analyze base case
+            params.setAnalyseBasecase(true); // if I need to handle violations
+                                             // in N, I need to analyze base
+                                             // case
         }
 
         String constraintMargin = line.getOptionValue(OnlineWorkflowCommand.CONSTRAINT_MARGIN);
         if (constraintMargin != null)
             params.setConstraintMargin(Float.parseFloat(constraintMargin));
 
-        String urlString = "service:jmx:rmi:///jndi/rmi://" + startconfig.getJmxHost() + ":" + startconfig.getJmxPort() + "/jmxrmi";
+        String urlString = "service:jmx:rmi:///jndi/rmi://" + startconfig.getJmxHost() + ":" + startconfig.getJmxPort()
+                + "/jmxrmi";
 
         JMXServiceURL serviceURL = new JMXServiceURL(urlString);
         Map<String, String> jmxEnv = new HashMap<>();
@@ -189,7 +202,8 @@ public class OnlineWorkflowTool implements Tool {
         MBeanServerConnection mbsc = connector.getMBeanServerConnection();
 
         ObjectName name = new ObjectName(LocalOnlineApplicationMBean.BEAN_NAME);
-        LocalOnlineApplicationMBean application = MBeanServerInvocationHandler.newProxyInstance(mbsc, name, LocalOnlineApplicationMBean.class, false);
+        LocalOnlineApplicationMBean application = MBeanServerInvocationHandler.newProxyInstance(mbsc, name,
+                LocalOnlineApplicationMBean.class, false);
 
         if (line.hasOption(OnlineWorkflowCommand.START_CMD)) {
             if (params.getCaseFile() != null) {

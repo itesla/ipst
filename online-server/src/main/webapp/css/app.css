@@ -5,38 +5,37 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 svg {
-    font: 10px sans-serif;
+	font: 10px sans-serif;
 }
 
 .axis path {
-    fill: none;
-    stroke: #000;
-    shape-rendering: crispEdges;
+	fill: none;
+	stroke: #000;
+	shape-rendering: crispEdges;
 }
 
 td, th {
-    text-align: center;
+	text-align: center;
 }
 
 td.font12 {
 	font-size: 12px;
 	font-style: oblique;
-	text-align:left;
+	text-align: left;
 }
 
 .table thead>tr>th.vert-align {
-    vertical-align: middle;
+	vertical-align: middle;
 }
 
 .error {
-    color: #F7122D;
+	color: #F7122D;
 }
 
 .ok {
-    color: rgb(70, 136, 71);
-
-    background-color:  rgba(112, 199, 71, 0.51);
-    /*
+	color: rgb(70, 136, 71);
+	background-color: rgba(112, 199, 71, 0.51);
+	/*
     background: url('../img/ok.png') no-repeat 0 0;
     background-position: center; 
     
@@ -48,9 +47,9 @@ td.font12 {
 }
 
 .nok {
-    color: rgb(241, 241, 241);
-    background-color: #F7122D;
-    /*
+	color: rgb(241, 241, 241);
+	background-color: #F7122D;
+	/*
     background: url('../img/nok.png') no-repeat 0 0;
     background-position: center; 
      height: 50px;
@@ -60,12 +59,13 @@ td.font12 {
     */
 }
 
-.warning{
-   background-color:#FAA32F;
+.warning {
+	background-color: #FAA32F;
 }
+
 .ongoing {
-    background-color: rgb(255, 245, 210);
-    /*
+	background-color: rgb(255, 245, 210);
+	/*
     background: url('../img/ongoing.png') no-repeat 0 0;
     background-position: center; 
     height: 50px;
@@ -82,21 +82,16 @@ td.font12 {
     -webkit-animation-iteration-count: infinite;
     -webkit-animation-timing-function: linear;
     */
-
 }
 
 .idle {
-
-
-
-
+	
 }
 
 h4.running {
-    color: rgb(70, 136, 71);
+	color: rgb(70, 136, 71);
 
-
-    /*
+	/*
     
     background: url('../img/itesla.png') no-repeat 0 0;
     height: 50px;
@@ -116,108 +111,106 @@ h4.running {
 }
 
 .itesla-logo {
-    position: relative;
-    float: left;
-    height: 71px;
-    width: 90px;
-    top: 7px;
-    background:url(../img/itesla-full.png) no-repeat;
+	position: relative;
+	float: left;
+	height: 71px;
+	width: 90px;
+	top: 7px;
+	background: url(../img/itesla-full.png) no-repeat;
 }
 
-
-
-
 .login {
-    width: 350px;
+	width: 350px;
 }
 
 h2.form-signin-heading-color, .h2.form-signin-heading {
-    color: #117284;
+	color: #117284;
 }
 
 .btn-color {
-    color: #fff;
-    background-color: #9BC2B7;
-    border-color: #71AAA3;
+	color: #fff;
+	background-color: #9BC2B7;
+	border-color: #71AAA3;
 }
 
-.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open .dropdown-toggle.btn-primary {
-    color: #F5A200;
-    background-color: #20858F;
-    border-color: #F5A200;
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active,
+	.btn-primary.active, .open .dropdown-toggle.btn-primary {
+	color: #F5A200;
+	background-color: #20858F;
+	border-color: #F5A200;
 }
 
 .btn:hover, .btn:focus {
-    color: #F5A200;
-    text-decoration: none;
+	color: #F5A200;
+	text-decoration: none;
 }
 
 .form-control-border {
-    border: 1px solid #9FC29B;
+	border: 1px solid #9FC29B;
 }
 
 .form-control:focus {
-    border-color: #76AA71;
+	border-color: #76AA71;
 }
 
 .navbar-color {
-    position: relative;
-    height: 80px;
-    background: transparent url(../img/navbar-background.jpg) no-repeat center top;
+	position: relative;
+	height: 80px;
+	background: transparent url(../img/navbar-background.jpg) no-repeat
+		center top;
 }
 
-.panel-default > .panel-heading {
-    color: #fff;
-    background-color: #4D918E;
-    border-color: #AFAFAF;
+.panel-default>.panel-heading {
+	color: #fff;
+	background-color: #4D918E;
+	border-color: #AFAFAF;
 }
-
-
 
 body {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.42857143;
-    color: #117284;
-    background-color: #fff;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	line-height: 1.42857143;
+	color: #117284;
+	background-color: #fff;
 }
 
-
-.table-bordered > thead > tr > th, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > tbody > tr > td, .table-bordered > tfoot > tr > td {
-    border: 1px solid #A0AA9F;
+.table-bordered>thead>tr>th, .table-bordered>tbody>tr>th,
+	.table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td,
+	.table-bordered>tbody>tr>td, .table-bordered>tfoot>tr>td {
+	border: 1px solid #A0AA9F;
 }
 
 .light-grey {
-    background-color: #D2E8F3;
+	background-color: #D2E8F3;
 }
 
 .light-grey-green {
-    background-color: #B5D2D6;	
+	background-color: #B5D2D6;
 }
+
 .empty {
-	background-color:  #FFF;
+	background-color: #FFF;
 }
-
-
-
 
 div.texthover {
-    width:100%;
-    display:block;
-    position:relative;
-    text-align: center!important;
-    }
+	width: 100%;
+	display: block;
+	position: relative;
+	text-align: center !important;
+}
+
 div.texthover .overlay {
-    position:absolute;
-    padding:10px;
-    background-color:rgba(0, 0, 0, 0.3);
-    display:none;
-    white-space: nowrap;
-    z-index:4;
-	}
+	position: absolute;
+	padding: 10px;
+	background-color: rgba(0, 0, 0, 0.3);
+	display: none;
+	white-space: nowrap;
+	z-index: 4;
+}
+
 div.texthover:hover .overlay {
-    display:block;
-	}
+	display: block;
+}
 
 #boxDetails {
 	width: 400px;
@@ -227,12 +220,11 @@ div.texthover:hover .overlay {
 	overflow-y: scroll;
 }
 
-.ppp{
+.ppp {
 	display: none;
 	border: 1px dashed Navy;
 	padding: 10px 10px 10px 10px;
 	margin-top: 10px;
 	width: 500px;
 	text-align: justify;
-	}	
-	
+}

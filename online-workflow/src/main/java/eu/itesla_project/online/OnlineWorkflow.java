@@ -12,12 +12,12 @@ package eu.itesla_project.online;
  */
 public interface OnlineWorkflow {
 
-	String getId();
+    String getId();
 
-	void start(OnlineWorkflowContext oCtx) throws Exception;
+    void start(OnlineWorkflowContext oCtx) throws Exception;
 
-	void addOnlineApplicationListener(OnlineApplicationListener listener);
+    void addOnlineApplicationListener(OnlineApplicationListener listener);
 
-	void removeOnlineApplicationListener(OnlineApplicationListener listener);
+    void removeOnlineApplicationListener(OnlineApplicationListener listener);
 
 }
