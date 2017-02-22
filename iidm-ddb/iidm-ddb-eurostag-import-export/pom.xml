@@ -82,13 +82,13 @@
 
        <dependency>
            <groupId>eu.itesla_project</groupId>
-           <artifactId>iidm-network-impl</artifactId>
+           <artifactId>iidm-impl</artifactId>
            <version>0.1-SNAPSHOT</version>
            <scope>test</scope>
        </dependency>
        <dependency>
            <groupId>eu.itesla_project</groupId>
-           <artifactId>iidm-network-test</artifactId>
+           <artifactId>iidm-test</artifactId>
            <version>0.1-SNAPSHOT</version>
            <scope>test</scope>
         </dependency>
