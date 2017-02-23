@@ -13,8 +13,7 @@ public class IIDMDynamicDatabaseMockFactory implements DynamicDatabaseClientFact
 
     @Override
     public DynamicDatabaseClient create(boolean cache) {
-        DynamicDatabaseClient client = new DynamicDatabaseMock();
-        return client;
+        return new DynamicDatabaseMock();
     }
 
 }

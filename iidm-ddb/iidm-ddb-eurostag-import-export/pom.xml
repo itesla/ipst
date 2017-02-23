@@ -83,13 +83,13 @@
        <dependency>
            <groupId>eu.itesla_project</groupId>
            <artifactId>iidm-impl</artifactId>
-           <version>0.1-SNAPSHOT</version>
+           <version>${ipstcore.version}</version>
            <scope>test</scope>
        </dependency>
        <dependency>
            <groupId>eu.itesla_project</groupId>
            <artifactId>iidm-test</artifactId>
-           <version>0.1-SNAPSHOT</version>
+           <version>${ipstcore.version}</version>
            <scope>test</scope>
         </dependency>
        <dependency>

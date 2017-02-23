@@ -29,10 +29,10 @@ import java.util.Objects;
 class DynamicDatabaseMock implements DynamicDatabaseClient {
 
     private static final String MINIMAL_DTA_TEMPLATE = "/sim_min.dta";
-    private static List<String> MOCK_REG_FILES_PREFIXES = Arrays.asList("dummefd", "dummycm");
-    private static List<String> REG_EXTENSIONS = Arrays.asList("fri", "frm", "par", "pcp", "rcp");
+    private static final List<String> MOCK_REG_FILES_PREFIXES = Arrays.asList("dummefd", "dummycm");
+    private static final List<String> REG_EXTENSIONS = Arrays.asList("fri", "frm", "par", "pcp", "rcp");
 
-    static Logger LOGGER = LoggerFactory.getLogger(DynamicDatabaseMock.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DynamicDatabaseMock.class);
 
     @Override
     public void dumpDtaFile(Path workingDir, String fileName, Network network, Map<String, Character> parallelIndexes, String eurostagVersion, Map<String, String> iidm2eurostagId) {
@@ -44,10 +44,10 @@ class DynamicDatabaseMock implements DynamicDatabaseClient {
         Objects.requireNonNull(iidm2eurostagId);
 
         //uses the first connected generator that is available in the iidm2eurostag map
-        Generator generator = network.getGeneratorStream().filter(gen -> ((iidm2eurostagId.containsKey(gen.getId())) && (gen.getTerminal().isConnected()))).findFirst().get();
-        if (generator == null) {
-            throw new RuntimeException("could not find a suitable generator to use in " + fileName);
-        }
+        Generator generator = network.getGeneratorStream()
+                .filter(gen -> ((iidm2eurostagId.containsKey(gen.getId())) && (gen.getTerminal().isConnected())))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("could not find a suitable generator in network: " + network + ", to be used in: " + fileName));
 
         Bus bus = generator.getTerminal().getBusBreakerView().getConnectableBus();
         if ((bus == null) || (!iidm2eurostagId.containsKey(bus.getId()))) {
@@ -67,7 +67,7 @@ class DynamicDatabaseMock implements DynamicDatabaseClient {
                 String newDtaContents = dtaContents
                         .replace("NODENAME", mappedNodeName)
                         .replace("MINIMALI", mappedGenName);
-                try (BufferedWriter writer = java.nio.file.Files.newBufferedWriter(workingDir.resolve(fileName))) {
+                try (BufferedWriter writer = Files.newBufferedWriter(workingDir.resolve(fileName))) {
                     writer.write(newDtaContents);
                 }
             }
