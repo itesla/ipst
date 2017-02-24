@@ -112,8 +112,9 @@ public class MergeDataset extends MongoDataset
                                 log.warn("Failed to evaluate expression "+((FunctionalColumn)key).getExpression(), e);
                                 value = null;
                             }
-                        } else
-                            value = obj.get(key.getName());
+                        } else {
+                            value = bindings.get(key.getName());
+                        }
                         result.add(value);
                     }
                 else {
