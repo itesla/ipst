@@ -1,0 +1,27 @@
+HEADER     15/02/17 5.1
+
+M6       U         0.       0.
+MINIMALI NODENAME  100000.       1.       1.       1.       0.       4.
+               0.      0.3       1.      0.5                4.
+                                 1.                                     1 3      3
+        N       0        0        0        0        0  100000.  100000.
+
+
+RAMINIMALI
+DUMMYCM    1
+
+
+RVMINIMALI
+DUMMEFD    1
+
+
+LOADP   CH
+
+         VOLTA1         1.       1.       1.       1.       0.       0.
+
+
+
+
+CH
+CH       W
+
