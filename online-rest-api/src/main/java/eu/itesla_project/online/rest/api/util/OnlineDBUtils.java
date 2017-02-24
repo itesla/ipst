@@ -11,7 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import eu.itesla_project.modules.online.OnlineDb;
@@ -22,11 +27,18 @@ import eu.itesla_project.modules.online.OnlineWorkflowParameters;
 import eu.itesla_project.modules.online.OnlineWorkflowResults;
 import eu.itesla_project.modules.online.StateProcessingStatus;
 import eu.itesla_project.online.rest.api.DateTimeParameter;
+import eu.itesla_project.online.rest.model.Indicator;
+import eu.itesla_project.online.rest.model.IndicatorEnum;
 import eu.itesla_project.online.rest.model.PostContingencyResult;
 import eu.itesla_project.online.rest.model.PreContingencyResult;
 import eu.itesla_project.online.rest.model.Process;
+import eu.itesla_project.online.rest.model.ProcessSynthesis;
 import eu.itesla_project.online.rest.model.SimulationResult;
+import eu.itesla_project.online.rest.model.StateSynthesis;
+import eu.itesla_project.online.rest.model.TimeValue;
+import eu.itesla_project.online.rest.model.UnitEnum;
 import eu.itesla_project.online.rest.model.Violation;
+import eu.itesla_project.online.rest.model.ViolationSynthesis;
 import eu.itesla_project.online.rest.model.WorkflowInfo;
 import eu.itesla_project.online.rest.model.WorkflowResult;
 import eu.itesla_project.security.LimitViolation;
@@ -37,6 +49,7 @@ import eu.itesla_project.security.LimitViolation;
  */
 public class OnlineDBUtils implements ProcessDBUtils {
     private final OnlineDbFactory fact;
+    private static final DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
     private static final Logger LOGGER = LoggerFactory.getLogger(OnlineDBUtils.class);
 
     public OnlineDBUtils(OnlineDbFactory factory) {
@@ -122,16 +135,15 @@ public class OnlineDBUtils implements ProcessDBUtils {
                 Map<Integer, List<LimitViolation>> violations = onlinedb.getViolations(workflowId,
                         OnlineStep.LOAD_FLOW);
                 if (violations != null) {
-                    
-                    violations.forEach( (state,viols) -> {
+
+                    violations.forEach((state, viols) -> {
                         StateProcessingStatus sp = onlinedb.getStatesProcessingStatus(workflowId).get(state);
                         String status = sp.getStatus().get("LOAD_FLOW");
                         PreContingencyResult pcr = new PreContingencyResult(state, viols.isEmpty(),
                                 status != null && "SUCCESS".equals(status));
-                        viols.forEach( lv -> {
+                        viols.forEach(lv -> {
                             pcr.addViolation(new Violation(lv.getCountry().toString(), lv.getSubject().getId(),
-                                    lv.getLimitType().name(), lv.getLimit(), lv.getValue(),
-                                    (int) lv.getBaseVoltage()));
+                                    lv.getLimitType().name(), lv.getLimit(), lv.getValue(), (int) lv.getBaseVoltage()));
                         });
                         res.addPreContingency(pcr);
                     });
@@ -141,8 +153,8 @@ public class OnlineDBUtils implements ProcessDBUtils {
 
                 Map<Integer, Map<String, Boolean>> conv = onlinedb.getPostContingencyLoadflowConvergence(workflowId);
                 if (conv != null) {
-                    conv.forEach( (state, convergenceMap) -> {                        
-                        convergenceMap.forEach( (cont, convergence) -> {
+                    conv.forEach((state, convergenceMap) -> {
+                        convergenceMap.forEach((cont, convergence) -> {
                             Map<Integer, SimulationResult> srMap = postMap.get(cont);
                             if (srMap == null) {
                                 srMap = new HashMap<Integer, SimulationResult>();
@@ -161,19 +173,20 @@ public class OnlineDBUtils implements ProcessDBUtils {
                 Map<Integer, Map<String, List<LimitViolation>>> violsMap = onlinedb
                         .getPostContingencyViolations(workflowId);
                 if (violsMap != null) {
-                    
-                    violsMap.forEach( (state, contViolMap) -> {
-                        contViolMap.forEach( (cont, contViols)  -> {
+
+                    violsMap.forEach((state, contViolMap) -> {
+                        contViolMap.forEach((cont, contViols) -> {
                             Map<Integer, SimulationResult> srMap = postMap.get(cont);
                             if (srMap == null) {
                                 srMap = new HashMap<Integer, SimulationResult>();
                                 postMap.put(cont, srMap);
                             }
-                            SimulationResult sr = srMap.containsKey(state) ? srMap.get(state) : new SimulationResult(state);
+                            SimulationResult sr = srMap.containsKey(state) ? srMap.get(state)
+                                    : new SimulationResult(state);
                             if (!srMap.containsKey(state))
                                 srMap.put(state, sr);
-                            
-                            contViols.forEach( lv -> {
+
+                            contViols.forEach(lv -> {
                                 sr.addViolation(new Violation(lv.getCountry().toString(), lv.getSubject().getId(),
                                         lv.getLimitType().name(), lv.getLimit(), lv.getValue(),
                                         (int) lv.getBaseVoltage()));
@@ -198,9 +211,9 @@ public class OnlineDBUtils implements ProcessDBUtils {
                     }
                 }
 
-                postMap.forEach( (cont, resultsMap) -> {
-                    res.addPostContingency(new PostContingencyResult(cont,
-                            resultsMap.values().stream().collect(Collectors.toList())));
+                postMap.forEach((cont, resultsMap) -> {
+                    res.addPostContingency(
+                            new PostContingencyResult(cont, resultsMap.values().stream().collect(Collectors.toList())));
                 });
                 return res;
             }
@@ -211,15 +224,100 @@ public class OnlineDBUtils implements ProcessDBUtils {
         return null;
     }
 
+    @Override
+    public ProcessSynthesis getSynthesis(String processId) throws Exception {
+        Objects.requireNonNull(processId);
+        OnlineProcess p = null;
+        try (OnlineDb onlinedb = fact.create()) {
+            p = onlinedb.getProcess(processId);
+            if(p != null)
+            {
+                ProcessSynthesis result = new ProcessSynthesis(processId);
+                Map<Integer, StateSynthesis> statesMap = new HashMap<Integer, StateSynthesis>();
+    
+                p.getWorkflowsMap().forEach((basecase, workflowId) -> {
+                    DateTime dateTime = fmt.parseDateTime(basecase);
+                    Map<Integer, List<LimitViolation>> previolsMap = onlinedb.getViolations(workflowId, OnlineStep.LOAD_FLOW);
+    
+                    if(previolsMap != null)
+                    {
+                        previolsMap.forEach( (state, limitList) -> {               
+                            StateSynthesis statesynt = statesMap.get(state);
+                            if (statesynt == null) {
+                                statesynt = new StateSynthesis(state);
+                                statesMap.put(state, statesynt);
+                            }                  
+                            fillViolationSynthesis(dateTime, statesynt.getPreContingencyViolations(), limitList);
+                        });
+                    }
+    
+                    Map<Integer, Map<String, List<LimitViolation>>> violsMap = onlinedb
+                            .getPostContingencyViolations(workflowId);
+    
+                    if (violsMap != null) {
+                        violsMap.forEach((state, contingencyViolationMap) -> {
+                            StateSynthesis statesynt = statesMap.get(state);
+                            if (statesynt == null) {
+                                statesynt = new StateSynthesis(state);
+                                statesMap.put(state, statesynt);
+                            }
+    
+                            Map<String, List<ViolationSynthesis>> contingencyMap = statesynt.getPostContingencyViolations();
+    
+                            contingencyViolationMap.forEach( (cont, limitList) -> {
+                                List<ViolationSynthesis> violationList = contingencyMap.get(cont);
+                                if (violationList == null) {
+                                    violationList = new ArrayList();
+                                    contingencyMap.put(cont, violationList);
+                                }
+                                fillViolationSynthesis(dateTime, violationList, limitList);
+                            });
+                        });
+                    }
+                });
+    
+                result.addStateSynthesis(statesMap.values().stream().collect(Collectors.toList()));
+                return result;
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new Exception(e.getMessage());
+        }
+        return null;
+    }
+
+    private void fillViolationSynthesis( DateTime dateTime, List<ViolationSynthesis> violationList , List<LimitViolation> limitList ){
+        limitList.forEach( lv ->{
+            String violationType = lv.getLimitType().name();
+            String equipment = lv.getSubject().getId();
+            float limit = lv.getLimit();
+            float value = lv.getValue();
+            ViolationSynthesis synt;
+            Optional<ViolationSynthesis> search_synt = violationList.stream()
+                    .filter(v -> v.getEquipment().equals(equipment))
+                    .filter(v -> v.getType().equals(violationType)).findFirst();
+            if (search_synt.isPresent())
+                synt = search_synt.get();
+            else {
+                synt = new ViolationSynthesis(equipment, violationType, limit);
+                violationList.add(synt);
+            }
+
+            double perc = value / limit;
+            TimeValue tv = new TimeValue(dateTime);
+            tv.putIndicator(new Indicator(IndicatorEnum.RELATIVE, UnitEnum.PERCENTAGE, perc));
+            synt.addTimeValue(tv);
+        });
+    }
+
     private Process toProcess(OnlineProcess p) {
         Objects.requireNonNull(p);
         Process proc = new Process(p.getId(), p.getName(), p.getOwner(), p.getDate().toDate(),
                 p.getCreationDate().toDate());
-        
-        p.getWorkflowsMap().forEach( (bscase, workflowId) -> {
+
+        p.getWorkflowsMap().forEach((bscase, workflowId) -> {
             try {
-                proc.addWorkflowInfo(
-                        new WorkflowInfo(workflowId, bscase, getWorkflowResult(p.getId(), workflowId)));
+                proc.addWorkflowInfo(new WorkflowInfo(workflowId, bscase, getWorkflowResult(p.getId(), workflowId)));
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
