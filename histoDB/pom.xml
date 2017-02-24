@@ -22,6 +22,9 @@
         <version.junit>4.10</version.junit>
         <version.slf4j>1.6.0</version.slf4j>
         <version.spring>3.1.0.RELEASE</version.spring>
+        <ipstcore.version>0.1-SNAPSHOT</ipstcore.version>
+        <ipstentsoe.version>0.1-SNAPSHOT</ipstentsoe.version>
+        <ipst.version>0.1-SNAPSHOT</ipst.version>
     </properties>
 
     <modules>
