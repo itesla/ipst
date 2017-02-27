@@ -100,13 +100,11 @@ public class DicoEurostagNamingStrategy implements EurostagNamingStrategy {
         iidmIds.forEach(iidmId -> {
             if (!dictionary.iidmIdExists(iidmId)) {
                 String esgId;
-                if ((nameType == NameType.GENERATOR) && (dicoMap.containsKey(iidmId))) {
+                if (dicoMap.containsKey(iidmId)) {
                     esgId = dicoMap.get(iidmId);
                 } else {
                     esgId = defaultStrategy.getEsgId(dictionary, nameType, iidmId);
-                    if (nameType == NameType.GENERATOR) {
-                        LOGGER.warn(" dico mapping not found for iidmId: '{}'; esgId: '{}' generated using CutName strategy", iidmId, esgId);
-                    }
+                    LOGGER.warn(" dico mapping not found for iidmId: '{}'; esgId: '{}' generated using CutName strategy", iidmId, esgId);
                 }
                 dictionary.add(iidmId, esgId);
                 LOGGER.debug("iidmId: '{}' ; esgId: '{}'", iidmId, esgId);
