@@ -48,6 +48,7 @@ public class OnlineDbMock implements OnlineDb {
         OnlineProcess p = new OnlineProcess("1111", "name1", "owner1", CaseType.FO.toString(), dt,
                 dt.plusMinutes(10));
         p.addWorkflow("2016-01-10T01:00:00.000+00:00", "1122");
+        p.addWorkflow("2016-01-10T02:00:00.000+00:00", "1123");
         dt = new DateTime(2016, 1, 16, 01, 0, 0, 0);
         OnlineProcess p2 = new OnlineProcess("2222", "name2", "owwer2", CaseType.FO.toString(), dt,
                 dt.plusMinutes(10));
@@ -60,6 +61,8 @@ public class OnlineDbMock implements OnlineDb {
 
         DateTime wdt = new DateTime(2016, 1, 10, 01, 0, 0, 0);
         workflowMap.put("1122", wdt);
+        DateTime wdt12 = new DateTime(2016, 1, 10, 02, 0, 0, 0);
+        workflowMap.put("1123", wdt12);
 
         DateTime wdt2 = new DateTime(2016, 1, 11, 02, 0, 0, 0);
         workflowMap.put("2233", wdt2);
@@ -317,12 +320,12 @@ public class OnlineDbMock implements OnlineDb {
 
     @Override
     public Map<Integer, List<LimitViolation>> getViolations(String workflowId, OnlineStep step) {
-        if (!"1122".equals(workflowId))
+        if (!"1122".equals(workflowId) && !"1123".equals(workflowId))
             return null;
         Map<Integer, List<LimitViolation>> res = new HashMap<Integer, List<LimitViolation>>();
         List<LimitViolation> viols = new ArrayList<>();
         LimitViolation lv = new LimitViolation(network.getIdentifiable("sub1"), LimitViolationType.CURRENT, 100,
-                "HIGH_CURRENT", 0, 200, Country.FR, 120);
+                "HIGH_CURRENT", 0, 110, Country.FR, 240);
         viols.add(lv);
         res.put(0, viols);
         return res;
@@ -366,7 +369,7 @@ public class OnlineDbMock implements OnlineDb {
 
     @Override
     public Map<Integer, Map<String, List<LimitViolation>>> getPostContingencyViolations(String workflowId) {
-        if (!"1122".equals(workflowId))
+        if (!"1122".equals(workflowId) && !"1123".equals(workflowId))
             return null;
         Map<Integer, Map<String, List<LimitViolation>>> res = new HashMap<>();
         Map<String, List<LimitViolation>> mmap = new HashMap<>();

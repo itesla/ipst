@@ -20,4 +20,6 @@ public interface ProcessApiService {
     public Response getProcessById(String processId, SecurityContext securityContext);
 
     public Response getWorkflowResult(String processId, String workflowId, SecurityContext securityContext);
+
+    public Response getProcessSynthesis(String processId, SecurityContext securityContext);
 }
