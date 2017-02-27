@@ -308,7 +308,7 @@ public class ProcessApiTest {
         when(ProcessApiServiceFactory.getProcessApi()).thenReturn(new ProcessApiServiceImpl(dbMock));
         Client client = ClientBuilder.newClient();
         Response res = client.target(TestPortProvider.generateURL("/online-service/synthesis/1111")).request().get();
-        System.out.println(res.readEntity(String.class));
+        res.readEntity(String.class);
         Assert.assertEquals("Test get process synthesis by processId", 200, res.getStatus());
         client.close();
     }
@@ -319,7 +319,7 @@ public class ProcessApiTest {
         when(ProcessApiServiceFactory.getProcessApi()).thenReturn(new ProcessApiServiceImpl(dbMock));
         Client client = ClientBuilder.newClient();
         Response res = client.target(TestPortProvider.generateURL("/online-service/synthesis/1234")).request().get();
-        System.out.println(res.readEntity(String.class));
+        res.readEntity(String.class);
         Assert.assertEquals("Test process synthesis not found", 404, res.getStatus());
         client.close();
     }
