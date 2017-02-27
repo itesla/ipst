@@ -10,31 +10,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import eu.itesla_project.security.LimitViolationType;
+
 /**
 *
 * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
 */
 public class ViolationSynthesis {
     private final String equipment;
-    private final String type;
+    private final LimitViolationType type;
     private final float limit;
     private final List<TimeValue> timeValues = new ArrayList<TimeValue>();
 
-    public ViolationSynthesis(String equipment, String type, float limit ) {
-        Objects.requireNonNull(equipment);
-        Objects.requireNonNull(type);
-        this.equipment = equipment;
-        this.type = type;
+    public ViolationSynthesis(String equipment, LimitViolationType type, float limit ) {
+        this.equipment = Objects.requireNonNull(equipment);
+        this.type = Objects.requireNonNull(type);
         this.limit = limit;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((equipment == null) ? 0 : equipment.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        return result;
+        return Objects.hash(equipment, type);
     }
 
     @Override
@@ -46,24 +42,14 @@ public class ViolationSynthesis {
         if (getClass() != obj.getClass())
             return false;
         ViolationSynthesis other = (ViolationSynthesis) obj;
-        if (equipment == null) {
-            if (other.equipment != null)
-                return false;
-        } else if (!equipment.equals(other.equipment))
-            return false;
-        if (type == null) {
-            if (other.type != null)
-                return false;
-        } else if (!type.equals(other.type))
-            return false;
-        return true;
+        return (equipment.equals(other.equipment) && type.equals(other.type));
     }
 
     public String getEquipment() {
         return equipment;
     }
 
-    public String getType() {
+    public LimitViolationType getType() {
         return type;
     }
 
