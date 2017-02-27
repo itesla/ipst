@@ -19,8 +19,7 @@ public class ProcessSynthesis {
     private final List<StateSynthesis> states = new ArrayList();
 
     public ProcessSynthesis(String processId) {
-        Objects.requireNonNull(processId);
-        this.processId = processId;
+        this.processId = Objects.requireNonNull(processId);
     }
 
     public String getProcessId() {

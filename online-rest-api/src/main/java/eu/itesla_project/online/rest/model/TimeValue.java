@@ -22,8 +22,7 @@ public class TimeValue {
     private final Map<IndicatorEnum, Indicator> indicators = new HashMap<IndicatorEnum, Indicator>();
 
     public TimeValue(DateTime timestamp) {
-        Objects.requireNonNull(timestamp);
-        this.timestamp = timestamp;
+        this.timestamp = Objects.requireNonNull(timestamp);
     }
 
     public DateTime getTimestamp() {

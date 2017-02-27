@@ -18,10 +18,8 @@ public class Indicator {
     private final double value;
 
     public Indicator(IndicatorEnum id, UnitEnum unit, double value) {
-        Objects.requireNonNull(id);
-        Objects.requireNonNull(unit);
-        this.id = id;
-        this.unit = unit;
+        this.id = Objects.requireNonNull(id);
+        this.unit = Objects.requireNonNull(unit);
         this.value = value;
     }
 

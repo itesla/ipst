@@ -17,7 +17,7 @@ public enum UnitEnum {
 
     private final String value;
 
-    private UnitEnum(String value)
+    UnitEnum(String value)
     {
         this.value = value;
     }

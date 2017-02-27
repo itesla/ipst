@@ -42,6 +42,7 @@ import eu.itesla_project.online.rest.model.ViolationSynthesis;
 import eu.itesla_project.online.rest.model.WorkflowInfo;
 import eu.itesla_project.online.rest.model.WorkflowResult;
 import eu.itesla_project.security.LimitViolation;
+import eu.itesla_project.security.LimitViolationType;
 
 /**
  *
@@ -227,9 +228,8 @@ public class OnlineDBUtils implements ProcessDBUtils {
     @Override
     public ProcessSynthesis getSynthesis(String processId) throws Exception {
         Objects.requireNonNull(processId);
-        OnlineProcess p = null;
         try (OnlineDb onlinedb = fact.create()) {
-            p = onlinedb.getProcess(processId);
+            OnlineProcess p = onlinedb.getProcess(processId);
             if(p != null)
             {
                 ProcessSynthesis result = new ProcessSynthesis(processId);
@@ -275,8 +275,7 @@ public class OnlineDBUtils implements ProcessDBUtils {
                         });
                     }
                 });
-    
-                result.addStateSynthesis(statesMap.values().stream().collect(Collectors.toList()));
+                result.addStateSynthesis(new ArrayList<>( statesMap.values()));
                 return result;
             }
         } catch (Exception e) {
@@ -288,7 +287,7 @@ public class OnlineDBUtils implements ProcessDBUtils {
 
     private void fillViolationSynthesis( DateTime dateTime, List<ViolationSynthesis> violationList , List<LimitViolation> limitList ){
         limitList.forEach( lv ->{
-            String violationType = lv.getLimitType().name();
+            LimitViolationType violationType = lv.getLimitType();
             String equipment = lv.getSubject().getId();
             float limit = lv.getLimit();
             float value = lv.getValue();
