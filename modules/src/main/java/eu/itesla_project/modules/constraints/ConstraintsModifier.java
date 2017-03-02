@@ -6,7 +6,6 @@
  */
 package eu.itesla_project.modules.constraints;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,7 +20,6 @@ import eu.itesla_project.iidm.network.TwoWindingsTransformer;
 import eu.itesla_project.iidm.network.VoltageLevel;
 import eu.itesla_project.security.LimitViolation;
 import eu.itesla_project.security.LimitViolationFilter;
-import eu.itesla_project.security.LimitViolationType;
 import eu.itesla_project.security.Security;
 
 /**

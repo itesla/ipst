@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
- * Copyright (c) 2016, RTE (http://www.rte-france.com)
+ * Copyright (c) 2016-2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -8,6 +8,7 @@
 package eu.itesla_project.modules.wca;
 
 import com.google.auto.service.AutoService;
+
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
 import eu.itesla_project.computation.ComputationManager;
@@ -22,6 +23,7 @@ import eu.itesla_project.modules.offline.OfflineConfig;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.rules.RulesDbClient;
 import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -32,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -52,12 +55,10 @@ import java.util.stream.Collectors;
 public class WCATool implements Tool {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WCATool.class);
-
+    
     private static final double DEFAULT_PURITY_THRESHOLD = 0.95;
 
     private static final char CSV_SEPARATOR = ';';
-
-    private static final boolean DEFAULT_STOP_WCA_ON_VIOLATIONS = true;
 
     private static Command COMMAND = new Command() {
 
@@ -116,10 +117,10 @@ public class WCATool implements Tool {
                     .hasArg()
                     .argName("FILE")
                     .build());
-            options.addOption(Option.builder().longOpt("stop-on-violations")
-                    .desc("stop WCA if there are violations, default is " + DEFAULT_STOP_WCA_ON_VIOLATIONS)
+            options.addOption(Option.builder().longOpt("reports-folder")
+                    .desc("folder where to store the csv reports")
                     .hasArg()
-                    .argName("true/false")
+                    .argName("FOLDER")
                     .build());
             return options;
         }
@@ -225,13 +226,9 @@ public class WCATool implements Tool {
         if (line.hasOption("output-csv-file")) {
             outputCsvFile = Paths.get(line.getOptionValue("output-csv-file"));
         }
-        boolean stopWcaOnViolations = DEFAULT_STOP_WCA_ON_VIOLATIONS;
-        if (line.hasOption("stop-on-violations")) {
-            stopWcaOnViolations = Boolean.parseBoolean(line.getOptionValue("stop-on-violations"));
-        }
 
         try (ComputationManager computationManager = new LocalComputationManager()) {
-            WCAParameters parameters = new WCAParameters(histoInterval, offlineWorkflowId, securityIndexTypes, purityThreshold, stopWcaOnViolations);
+			WCAParameters parameters = new WCAParameters(histoInterval, offlineWorkflowId, securityIndexTypes, purityThreshold);
             OnlineConfig config = OnlineConfig.load();
             ContingenciesAndActionsDatabaseClient contingenciesDb = config.getContingencyDbClientFactoryClass().newInstance().create();
             LoadFlowFactory loadFlowFactory = config.getLoadFlowFactoryClass().newInstance();
@@ -272,10 +269,10 @@ public class WCATool implements Tool {
 
                                 if (cluster != null) {
                                     System.out.println("contingency " + cluster.getContingency().getId() + " done: "
-                                            + cluster.getNum() + " (" + cluster.getOrigin() + ")");
+                                            + cluster.getNum() + " " + cluster.getOrigin());
 
                                     table.addCell(cluster.getContingency().getId());
-                                    table.addCell(cluster.getNum() + " (" + cluster.getOrigin() + ")");
+                                    table.addCell(cluster.getNum() + " " + cluster.getOrigin());
                                     List<String> sortedCauses = cluster.getCauses().stream().sorted().collect(Collectors.toList());
                                     if (sortedCauses != null && sortedCauses.size() > 0) {
                                         table.addCell(sortedCauses.get(0));
@@ -291,7 +288,12 @@ public class WCATool implements Tool {
                             }
                         }
                     }
-
+                    if ( line.hasOption("reports-folder") ) {
+                        Path reportsFolder = Paths.get(line.getOptionValue("reports-folder"));
+                        if ( !wca.getReport().exportCsv(reportsFolder) ) {
+                            System.out.println("Could not store reports for nbetwork " + network.getId() + " in folder " + reportsFolder);
+                        }
+                    }
                     System.out.println(table.render());
                 } else if (Files.isDirectory(caseFile)){
                     if (outputCsvFile == null) {
@@ -333,6 +335,12 @@ public class WCATool implements Tool {
                             }
 
                             clusterPerContingencyPerBaseCase.put(network.getId(), clusterPerContingency);
+                            if ( line.hasOption("reports-folder") ) {
+                                Path reportsFolder = Paths.get(line.getOptionValue("reports-folder") + File.separator + network.getId());
+                                if ( !wca.getReport().exportCsv(reportsFolder) ) {
+                                    System.out.println("Could not store reports for nbetwork " + network.getId() + " in folder " + reportsFolder);
+                                }
+                            }
                         } catch (Exception e) {
                             LOGGER.error(e.toString(), e);
                         }
