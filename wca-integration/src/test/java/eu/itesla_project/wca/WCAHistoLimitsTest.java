@@ -59,12 +59,12 @@ public class WCAHistoLimitsTest {
         histoLimits.load(network, histoDbClient);
         histoLimits.write(dataSource, mapper);
 
-        String fileContent = "#loads historical data 2013-01-01T00:00:00.000+01:00/2013-01-31T23:59:00.000+01:00" + System.lineSeparator()  + 
+        String fileContent = "#loads historical data " + histoInterval + System.lineSeparator()  + 
                              "#\"num\" \"min p (MW)\" \"max p (MW)\" \"id\"" + System.lineSeparator() +
                              "1 0.00000 20.0000 \""+ network.getLoads().iterator().next().getId() + "\"" + System.lineSeparator();
         assertEquals(fileContent, new String(dataSource.getData(WCAConstants.HISTO_LOADS_FILE_SUFFIX, WCAConstants.TXT_EXT), StandardCharsets.UTF_8));
 
-        fileContent = "#generators historical data 2013-01-01T00:00:00.000+01:00/2013-01-31T23:59:00.000+01:00" + System.lineSeparator()  + 
+        fileContent = "#generators historical data " + histoInterval + System.lineSeparator()  + 
                       "#\"num\" \"min p (MW)\" \"max p (MW)\" \"id\"" + System.lineSeparator() +
                       "1 200.000 900.000 \""+ network.getGenerators().iterator().next().getId() + "\"" + System.lineSeparator();
         assertEquals(fileContent, new String(dataSource.getData(WCAConstants.HISTO_GENERATORS_FILE_SUFFIX, WCAConstants.TXT_EXT), StandardCharsets.UTF_8));
