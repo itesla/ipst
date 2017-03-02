@@ -12,8 +12,15 @@ install_prerequisites: True
 ## install_MCR - (Matlab Compiler Runtime, default is False)
 install_MCR: False
 
-## sources_path - (default is {{ ansible_env.HOME }}/ipst_ansible/ipst  )
-sources_path: "{{ ansible_env.HOME }}/ipst_ansible/ipst"
+## user_ipst_sources_path - (default is {{ ansible_env.HOME }}/ipst_ansible/ipst  )
+user_ipst_sources_path: "{{ ansible_env.HOME }}/ipst_ansible/ipst"
+
+## user_core_sources_path - (default is {{ ansible_env.HOME }}/ipst_ansible/ipst-core  )
+user_core_sources_path: "{{ ansible_env.HOME }}/ipst_ansible/ipst-core"
+
+## user_entsoe_sources_path - (default is {{ ansible_env.HOME }}/ipst_ansible/ipst-entsoe  )
+user_entsoe_sources_path: "{{ ansible_env.HOME }}/ipst_ansible/ipst-entsoe"
+
 
 ## thirdparty_path - (default is {{ ansible_env.HOME }}/ipst_ansible/thirdparty )
 thirdparty_path: "{{ ansible_env.HOME }}/ipst_ansible/thirdparty"

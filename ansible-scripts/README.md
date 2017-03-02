@@ -31,6 +31,8 @@ builds the 'platform distribution' and installs it, in place.
 
 The default target directories for iPST are (these are all configurable, see below in the usage section): 
  - $HOME/ipst_ansible/ipst  (iPST sources) 
+ - $HOME/ipst_ansible/ipst-core  (iPST-core sources)
+ - $HOME/ipst_ansible/ipst-entsoe (iPST-entsoe sources)
  - $HOME/ipst_ansible/thirdparty  (thirdparty libraries: boost, hdf5, etc.)
  - $HOME/itesla (iPST binaries)
 
@@ -66,9 +68,14 @@ install_prerequisites: True
 ## install_MCR - (Matlab Compiler Runtime, default is False)
 install_MCR: False
 
+## user_ipst_sources_path - (default is {{ ansible_env.HOME }}/ipst_ansible/ipst  )
+user_ipst_sources_path: "{{ ansible_env.HOME }}/ipst_ansible/ipst"
 
-## sources_path - (default is {{ ansible_env.HOME }}/ipst_ansible/ipst  )
-sources_path: "{{ ansible_env.HOME }}/ipst_ansible/ipst"
+## user_core_sources_path - (default is {{ ansible_env.HOME }}/ipst_ansible/ipst-core  )
+user_core_sources_path: "{{ ansible_env.HOME }}/ipst_ansible/ipst-core"
+
+## user_entsoe_sources_path - (default is {{ ansible_env.HOME }}/ipst_ansible/ipst-entsoe  )
+user_entsoe_sources_path: "{{ ansible_env.HOME }}/ipst_ansible/ipst-entsoe"
 
 
 ## thirdparty_path - (default is {{ ansible_env.HOME }}/ipst_ansible/thirdparty )

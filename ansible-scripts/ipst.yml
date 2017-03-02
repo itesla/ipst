@@ -55,9 +55,17 @@
 # if set to True, always triggers the ipst platfrom build, even if there are no updates from github
     forceBuild: "{{ force_build|default('True') }}"
 
+# path on target OS where ipst-core sources will be cloned/updated
+    core_sources_path_default: "{{  ansible_env.HOME }}/ipst_ansible/ipst-core"
+    core_sources_path: "{{ user_core_sources_path|default(core_sources_path_default) }}"
+
+# path on target OS where ipst-entsoe sources will be cloned/updated
+    entsoe_sources_path_default: "{{  ansible_env.HOME }}/ipst_ansible/ipst-entsoe"
+    entsoe_sources_path: "{{ user_entsoe_sources_path|default(entsoe_sources_path_default) }}"
+
 # path on target OS where ipst sources will be cloned/updated
     ipst_sources_path_default: "{{  ansible_env.HOME }}/ipst_ansible/ipst"
-    ipst_sources_path: "{{ sources_path|default(ipst_sources_path_default) }}"
+    ipst_sources_path: "{{ user_ipst_sources_path|default(ipst_sources_path_default) }}"
 
 # path on target OS where ipst thirdparty libraries will be installed
     ipst_thirdparty_path_default: "{{  ansible_env.HOME }}/ipst_ansible/thirdparty"
@@ -72,7 +80,11 @@
 
 # ipst github project details
 ## TODO branchname must be set to master, eventually
-    ipst_github_branchname: "{{ github_branchname|default('ansible2') }}"
+    ipst_github_branchname: "{{ github_branchname|default('master') }}"
+
+    core_github_branchname: "{{ github_branchname|default('master') }}"
+
+    entsoe_github_branchname: "{{ github_branchname|default('master') }}"
 
 # ipst_thirdparty_packs
     ipst_thirdparty_packs_path_default: "{{  ansible_env.HOME }}/ipst_ansible/thirdparty_packs"
@@ -83,6 +95,7 @@
 ### dump variable's content
 
   pre_tasks:
+  - debug: var="forceBuild"
   - debug: var="installPrerequisites"
   - debug: var="installMCR"
   - debug: var="ipst_github_enabled"
@@ -90,6 +103,11 @@
   - debug: var="ipst_sources_path"
   - debug: var="ipst_install_path"
   - debug: var="ipst_thirdparty_path"
+  - debug: var="environment"
+  - debug: var="core_sources_path"
+  - debug: var="core_github_branchname"
+  - debug: var="entsoe_sources_path"
+  - debug: var="entsoe_github_branchname"
 
 ###
 ###

@@ -1,9 +1,28 @@
 ---
 # defaults file for ipst
 
+#
 maven_proxies: []
 
+#-- ipst
+# ipst github repo
 ipst_github_uri: https://github.com/itesla/ipst.git
 
 # ipst installation script (not expected to be edited)
-installCmd: "./install.sh --prefix={{ ipst_install_path }} --thirdparty-prefix={{ ipst_thirdparty_path }}"
+ipst_install_cmd: "./install.sh --prefix {{ ipst_install_path }} --thirdparty-prefix {{ ipst_thirdparty_path }}"
+
+
+#-- ipst-core
+# core github repo
+core_github_uri: https://github.com/itesla/ipst-core.git
+
+# ipst-core installation script (not expected to be edited)
+core_install_cmd: "./install.sh --prefix {{ ipst_install_path }} --thirdparty-prefix {{ ipst_thirdparty_path }}"
+
+
+#-- ipst-entsoe
+# entsoe github repo
+entsoe_github_uri: https://github.com/iTesla/ipst-entsoe.git
+
+# ipst-entsoe installation script (not expected to be edited)
+entsoe_install_cmd: "./install.sh  --prefix {{ ipst_install_path }}"
