@@ -12,18 +12,18 @@
 # =============================================================================
 
 if (NOT EUROSTAG_SDK_HOME AND NOT $ENV{EUROSTAG_SDK_HOME} STREQUAL "")
-	set(EUROSTAG_SDK_HOME $ENV{EUROSTAG_SDK_HOME})
+    set(EUROSTAG_SDK_HOME $ENV{EUROSTAG_SDK_HOME})
 endif()
 
 if (NOT EUROSTAG_SDK_HOME AND NOT $ENV{EUROSTAG_SDK_ROOT} STREQUAL "")
-	set(EUROSTAG_SDK_HOME $ENV{EUROSTAG_SDK_ROOT})
+    set(EUROSTAG_SDK_HOME $ENV{EUROSTAG_SDK_ROOT})
 endif()
 
 if (NOT EUROSTAG_SDK_HOME)
     message(FATAL_ERROR "Eurostag SDK not found. The variable EUROSTAG_SDK_HOME is NOT set or is NOT a valid directory")
 endif()
 
-find_path(Eurostag_INCLUDE_DIR NAME api_eurostag.h HINTS ${EUROSTAG_SDK_HOME}/include)
+find_path(Eurostag_INCLUDE_DIR NAME api_eurostag.h HINTS ${EUROSTAG_SDK_HOME}/include NO_DEFAULT_PATH)
 mark_as_advanced(Eurostag_INCLUDE_DIR)
 
 set(components
@@ -42,7 +42,7 @@ foreach(component ${components})
     string(TOUPPER ${component} COMPONENT)
     set(Eurostag_${component}_FIND_QUIETLY true)
 
-    find_library(Eurostag_${component}_LIBRARY lib${component}.a HINTS ${EUROSTAG_SDK_HOME}/lib)
+    find_library(Eurostag_${component}_LIBRARY lib${component}.a HINTS ${EUROSTAG_SDK_HOME}/lib NO_DEFAULT_PATH)
     mark_as_advanced(Eurostag_${component}_LIBRARY)
     find_package_handle_standard_args(Eurostag_${component} DEFAULT_MSG Eurostag_${component}_LIBRARY)
 
