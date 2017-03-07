@@ -39,14 +39,12 @@ if (download)
     set(boost_url http://sourceforge.net/projects/boost/files/boost/1.57.0/boost_1_57_0.tar.gz/download)
     set(log4cpp_url http://sourceforge.net/projects/log4cpp/files/log4cpp-1.1.x%20%28new%29/log4cpp-1.1/log4cpp-1.1.1.tar.gz)
     set(szip_url https://support.hdfgroup.org/ftp/lib-external/szip/2.1/src/szip-2.1.tar.gz)
-    set(zlib_url https://support.hdfgroup.org/ftp/lib-external/zlib/zlib-1.2.5.tar.gz)
     set(hdf5_url https://support.hdfgroup.org/ftp/HDF5//releases/hdf5-1.8.13/src/hdf5-1.8.13.tar.gz)
     set(matio_url http://downloads.sourceforge.net/project/matio/matio/1.5.2/matio-1.5.2.tar.gz)
 else()
     set(boost_url ${packs}/boost_1_57_0.tar.gz)
     set(log4cpp_url ${packs}/log4cpp-1.1.1.tar.gz)
     set(szip_url ${packs}/szip-2.1.tar.gz)
-    set(zlib_url ${packs}/zlib-1.2.5.tar.gz)
     set(hdf5_url ${packs}/hdf5-1.8.13.tar.gz)
     set(matio_url ${packs}/matio-1.5.2.tar.gz)
 endif()
@@ -85,21 +83,12 @@ ExternalProject_Add(szip_project
 ExternalProject_Get_Property(szip_project install_dir)
 set(szip_install_dir ${install_dir})
 
-# zlib
-ExternalProject_Add(zlib_project
-    INSTALL_DIR ${prefix}/zlib
-    URL ${zlib_url}
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR> -DCMAKE_C_FLAGS=-fPIC -DCMAKE_LDFLAGS=-fPIC
-)
-ExternalProject_Get_Property(zlib_project install_dir)
-set(zlib_install_dir ${install_dir})
-
 # HDF5
 ExternalProject_Add(hdf5_project
-    DEPENDS szip_project zlib_project
+    DEPENDS szip_project
     INSTALL_DIR ${prefix}/hdf5
     URL ${hdf5_url}
-    CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR> --with-zlib=${zlib_install_dir} --with-szlib=${szip_install_dir} CXXFLAGS=-fPIC LDFLAGS=-fPIC
+    CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR> --with-szlib=${szip_install_dir} CXXFLAGS=-fPIC LDFLAGS=-fPIC
     BUILD_COMMAND make
     INSTALL_COMMAND make install
 )
@@ -111,7 +100,7 @@ ExternalProject_Add(matio_project
     DEPENDS hdf5_project
     INSTALL_DIR ${prefix}/matio
     URL ${matio_url}
-    CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR> --with-zlib=${zlib_install_dir} --with-hdf5=${hdf5_install_dir} CXXFLAGS=-fPIC LDFLAGS=-fPIC
+    CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR> --with-hdf5=${hdf5_install_dir} CXXFLAGS=-fPIC LDFLAGS=-fPIC
     BUILD_COMMAND make
     INSTALL_COMMAND make install
 )
