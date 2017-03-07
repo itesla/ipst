@@ -27,22 +27,22 @@ endfunction()
 
 
 if (NOT MATIO_HOME AND NOT $ENV{MATIO_HOME} STREQUAL "")
-	set(MATIO_HOME $ENV{MATIO_HOME})
+    set(MATIO_HOME $ENV{MATIO_HOME})
 endif()
 
 if (NOT MATIO_HOME AND NOT $ENV{MATIO_ROOT} STREQUAL "")
-	set(MATIO_HOME $ENV{MATIO_ROOT})
+    set(MATIO_HOME $ENV{MATIO_ROOT})
 endif()
 
 if (NOT MATIO_HOME)
     message(FATAL_ERROR "Matio libraries not found. The variable MATIO_HOME is NOT set or is NOT a valid directory")
 endif()
 
-find_path(Matio_INCLUDE_DIR NAME matio.h matio_pubconf.h HINTS ${MATIO_HOME}/include)
+find_path(Matio_INCLUDE_DIR NAME matio.h matio_pubconf.h HINTS ${MATIO_HOME}/include NO_DEFAULT_PATH)
 if (USE_STATIC_LIBS)
-    find_library(Matio_LIBRARY libmatio.a HINTS ${MATIO_HOME}/lib)
+    find_library(Matio_LIBRARY libmatio.a HINTS ${MATIO_HOME}/lib NO_DEFAULT_PATH)
 else()
-    find_library(Matio_LIBRARY matio HINTS ${MATIO_HOME}/lib)
+    find_library(Matio_LIBRARY matio HINTS ${MATIO_HOME}/lib NO_DEFAULT_PATH)
 endif()
 
 mark_as_advanced(Matio_INCLUDE_DIR Matio_LIBRARY)
