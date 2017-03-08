@@ -48,10 +48,6 @@
         </dependency>
         <dependency>
             <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>eu.itesla_project</groupId>
             <artifactId>computation</artifactId>
         </dependency>
         <dependency>
