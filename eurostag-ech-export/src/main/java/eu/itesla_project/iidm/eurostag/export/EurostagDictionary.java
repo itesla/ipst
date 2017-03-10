@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -34,8 +35,10 @@ public class EurostagDictionary {
 
     private final BiMap<String, String> iidmId2esgId;
 
+    private final EurostagEchExportConfig config;
+
     public static EurostagDictionary create(Network network, BranchParallelIndexes parallelIndexes, EurostagEchExportConfig config) {
-        EurostagDictionary dictionary = new EurostagDictionary();
+        EurostagDictionary dictionary = new EurostagDictionary(config);
 
         dictionary.addIfNotExist(EchUtil.FAKE_NODE_NAME1, EchUtil.FAKE_NODE_NAME1);
         dictionary.addIfNotExist(EchUtil.FAKE_NODE_NAME2, EchUtil.FAKE_NODE_NAME2);
@@ -99,12 +102,13 @@ public class EurostagDictionary {
         return dictionary;
     }
 
-    private EurostagDictionary() {
-        this(new HashMap<>());
+    private EurostagDictionary(EurostagEchExportConfig config) {
+        this(new HashMap<>(), config);
     }
 
-    private EurostagDictionary(Map<String, String> iidmId2esgId) {
+    private EurostagDictionary(Map<String, String> iidmId2esgId, EurostagEchExportConfig config) {
         this.iidmId2esgId = HashBiMap.create(iidmId2esgId);
+        this.config = config;
     }
 
     public void add(String iidmId, String esgId) {
@@ -178,6 +182,10 @@ public class EurostagDictionary {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public EurostagEchExportConfig getConfig() {
+        return config;
     }
 
 }
