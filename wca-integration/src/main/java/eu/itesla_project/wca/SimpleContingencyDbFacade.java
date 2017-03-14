@@ -51,7 +51,7 @@ public class SimpleContingencyDbFacade implements ContingencyDbFacade {
                     } else {
                         for (LimitViolation limitViolation : limitViolations) {
                             if (limitViolation.getLimitType() == LimitViolationType.CURRENT
-                                    && limitViolation.getSubject().getId().equals(constraint.getEquipment())) {
+                                    && limitViolation.getSubjectId().equals(constraint.getEquipment())) {
                                 return true;
                             }
                         }
@@ -105,12 +105,12 @@ public class SimpleContingencyDbFacade implements ContingencyDbFacade {
     @Override
     public synchronized List<List<Action>> getPreventiveActions(LimitViolation limitViolation) {
         Objects.requireNonNull(limitViolation, "limit violation is null");
-        LOGGER.info("Getting preventive actions for {} violation on equipment {}", limitViolation.getLimitType(), limitViolation.getSubject().getId());
+        LOGGER.info("Getting preventive actions for {} violation on equipment {}", limitViolation.getLimitType(), limitViolation.getSubjectId());
         List<List<Action>> preventiveActions = new ArrayList<>();
         if( !limitViolation.getLimitType().equals(LimitViolationType.CURRENT) ) // just branch overload id handled, so far
             return preventiveActions;
         for ( ActionsContingenciesAssociation association : contingenciesActionsDbClient.getActionsCtgAssociationsByConstraint(
-                limitViolation.getSubject().getId(), ConstraintType.BRANCH_OVERLOAD) ) {
+                limitViolation.getSubjectId(), ConstraintType.BRANCH_OVERLOAD) ) {
             if ( !association.getContingenciesId().isEmpty() ) { // getting only actions not associated to a contingency
                 continue;
             }
@@ -130,12 +130,12 @@ public class SimpleContingencyDbFacade implements ContingencyDbFacade {
                             }
                         }
                     } else {
-                        LOGGER.error("Action {} not found for {} violation on equipment {}", actionId , limitViolation.getLimitType(), limitViolation.getSubject().getId());
+                        LOGGER.error("Action {} not found for {} violation on equipment {}", actionId , limitViolation.getLimitType(), limitViolation.getSubjectId());
                     }
                 }
             }
         }
-        LOGGER.info("Found {} preventive actions for {} violation on equipment {}", preventiveActions.size(), limitViolation.getLimitType(), limitViolation.getSubject().getId());
+        LOGGER.info("Found {} preventive actions for {} violation on equipment {}", preventiveActions.size(), limitViolation.getLimitType(), limitViolation.getSubjectId());
         return preventiveActions;
     }
 }

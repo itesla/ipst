@@ -109,7 +109,7 @@ public class RunTDSimulation implements Tool {
                 for (String caseBasename : networksViolations.keySet()) {
                     for (LimitViolation violation : networksViolations.get(caseBasename)) {
                         String[] values = new String[]{caseBasename,
-                                violation.getSubject().getId(),
+                                violation.getSubjectId(),
                                 violation.getLimitType().name(),
                                 Float.toString(violation.getValue()),
                                 Float.toString(violation.getLimit())};

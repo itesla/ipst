@@ -106,7 +106,7 @@ public class OnlineDbMVStoreUtils {
 	
 	public static String limitViolationToJson(LimitViolation violation) {
 		Map<String,String> limitViolation = new HashMap<String,String>();
-		limitViolation.put("Subject", violation.getSubject().getId());
+		limitViolation.put("Subject", violation.getSubjectId());
 		limitViolation.put("LimitType", violation.getLimitType().name());
 		limitViolation.put("Limit", Float.toString(violation.getLimit()));
 		limitViolation.put("LimitReduction", Float.toString(violation.getLimitReduction()));
@@ -119,27 +119,26 @@ public class OnlineDbMVStoreUtils {
 	public static LimitViolation jsonToLimitViolation(String json, Network network) {
 		JSONObject jsonObj = (JSONObject) JSONSerializer.toJSON(json);
 		Map<String,String> limitViolation = (Map<String, String>) JSONObject.toBean(jsonObj, Map.class);
-		Identifiable subject = network.getIdentifiable(limitViolation.get("Subject"));
-		if ( subject != null ) {
-			Country country = null;
-			if ( limitViolation.containsKey("Country") )
-				country = Country.valueOf(limitViolation.get("Country"));
-			float baseVoltage = Float.NaN;
-			if ( limitViolation.containsKey("BaseVoltage") )
-				baseVoltage = Float.parseFloat(limitViolation.get("BaseVoltage"));
-			float limitReduction = 1f;
-			if ( limitViolation.containsKey("LimitReduction") )
-				limitReduction = Float.parseFloat(limitViolation.get("LimitReduction"));
-			return new LimitViolation(subject, 
-								 LimitViolationType.valueOf(limitViolation.get("LimitType")), 
-								 Float.parseFloat(limitViolation.get("Limit")),
-							 	 null,
-								 limitReduction,
-								 Float.parseFloat(limitViolation.get("Value")),
-								 country,
-								 baseVoltage);
-		}
-		return null;
+	    Country country = null;
+	    if ( limitViolation.containsKey("Country") ) {
+	        country = Country.valueOf(limitViolation.get("Country"));
+	    }
+	    float baseVoltage = Float.NaN;
+	    if ( limitViolation.containsKey("BaseVoltage") ) {
+	        baseVoltage = Float.parseFloat(limitViolation.get("BaseVoltage"));
+	    }
+	    float limitReduction = 1f;
+	    if ( limitViolation.containsKey("LimitReduction") ) {
+	        limitReduction = Float.parseFloat(limitViolation.get("LimitReduction"));
+	    }
+	    return new LimitViolation(limitViolation.get("Subject"), 
+								  LimitViolationType.valueOf(limitViolation.get("LimitType")), 
+								  Float.parseFloat(limitViolation.get("Limit")),
+								  null,
+								  limitReduction,
+								  Float.parseFloat(limitViolation.get("Value")),
+								  country,
+								  baseVoltage);
 	}
 	
 	public static String actionParametersToJson(ActionParameters actionParameters) {
