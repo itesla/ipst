@@ -137,22 +137,22 @@ public final class WCAUtils {
         Objects.requireNonNull(domainsPrefix);
         Objects.requireNonNull(workingDir);
         Objects.requireNonNull(uncertaintiesFile);
-        WCADomainsResult domainsResults = new WCADomainsResult();
+        boolean foundBasicViolations = false;
+        boolean rulesViolated = false;
+        int preventiveActionIndex = 0;
         Matcher matcher = parseOutFile(domainsPrefix, DOMAINS_RESULTS_PATTERN, workingDir);
         if (matcher != null) {
             int basicViolation = Integer.parseInt(matcher.group(1));
             int ruleViolation = Integer.parseInt(matcher.group(2));
-            int preventiveActionIndex = Integer.parseInt(matcher.group(3));
+            preventiveActionIndex = Integer.parseInt(matcher.group(3));
             if (basicViolation == 1) {
-                domainsResults.setFoundBasicViolations(true);
+                foundBasicViolations = true;
             }
             if (ruleViolation == 1) {
-                domainsResults.setRulesViolated(true);
+                rulesViolated = true;
             }
-            domainsResults.setPreventiveActionIndex(preventiveActionIndex);
         }
-        domainsResults.setInjections(parseUncertaintiesFile(uncertaintiesFile, workingDir));
-        return domainsResults;
+        return new WCADomainsResult(foundBasicViolations, rulesViolated, preventiveActionIndex, parseUncertaintiesFile(uncertaintiesFile, workingDir));
     }
     
     private static final Pattern CLUSTER_INDEX_PATTERN = Pattern.compile(" WCA Result : contingency_index (\\d*) contingency_cluster_index (\\d*) curative_action_index (\\d*)");
@@ -161,35 +161,34 @@ public final class WCAUtils {
         Objects.requireNonNull(clustersPrefix);
         Objects.requireNonNull(workingDir);
         Objects.requireNonNull(uncertaintiesFile);
-        WCAClustersResult clustersResults = new WCAClustersResult();
+        WCAClusterNum clusterNum = WCAClusterNum.UNDEFINED;
+        int curativeActionIndex = 0;
         Matcher matcher = parseOutFile(clustersPrefix, CLUSTER_INDEX_PATTERN, workingDir);
         if (matcher != null) {
             int clusterValue = Integer.parseInt(matcher.group(2));
             switch (clusterValue) {
             case 1:
-                clustersResults.setClusterNum(WCAClusterNum.ONE);
+                clusterNum = WCAClusterNum.ONE;
                 break;
             case 2:
-                clustersResults.setClusterNum(WCAClusterNum.TWO);
+                clusterNum = WCAClusterNum.TWO;
                 break;
             case 3:
-                clustersResults.setClusterNum(WCAClusterNum.THREE);
+                clusterNum = WCAClusterNum.THREE;
                 break;
             case 4:
-                clustersResults.setClusterNum(WCAClusterNum.FOUR);
+                clusterNum = WCAClusterNum.FOUR;
                 break;
             case -1:
-                clustersResults.setClusterNum(WCAClusterNum.UNDEFINED);
+                clusterNum = WCAClusterNum.UNDEFINED;
                 break;
             default:
                 throw new AssertionError("Undefined cluster value " + clusterValue);
             }
-            int curativeActionIndex = Integer.parseInt(matcher.group(3));
-            clustersResults.setCurativeActionIndex(curativeActionIndex);
+            curativeActionIndex = Integer.parseInt(matcher.group(3));
         }
-        clustersResults.setFoundViolations(flowsWithViolations(flowsFile, workingDir));
-        clustersResults.setInjections(parseUncertaintiesFile(uncertaintiesFile, workingDir));
-        return clustersResults;
+        return new WCAClustersResult(clusterNum, flowsWithViolations(flowsFile, workingDir), curativeActionIndex, 
+                                     parseUncertaintiesFile(uncertaintiesFile, workingDir));
     }
     
     public static void writeContingencies(Collection<Contingency> contingencies, DataSource dataSource, StringToIntMapper<AmplSubset> mapper) {

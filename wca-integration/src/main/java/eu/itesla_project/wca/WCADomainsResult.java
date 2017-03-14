@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.wca;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -15,30 +15,38 @@ import java.util.Objects;
  * @author Massimo Ferraro <massimo.ferraro@techrain.it>
  */
 public class WCADomainsResult {
+    
+    private static final boolean FOUND_BASIC_VIOLATIONS_DEFAULT = false;
+    private static final boolean RULES_VIOLATED_DEFAULT = false;
+    private static final int PREVENTIVE_ACTION_INDEX_DEFAULT = 0;
+    private static final Map<String, Float> INJECTIONS_DEFAULT = Collections.emptyMap();
 
-    private boolean foundBasicViolations = false;
-    private boolean rulesViolated = false;
-    private int preventiveActionIndex = 0;
-    private Map<String, Float> injections = new HashMap<String, Float>();
+    private final boolean foundBasicViolations;
+    private final boolean rulesViolated;
+    private final int preventiveActionIndex;
+    private final Map<String, Float> injections;
 
+    public WCADomainsResult() {
+        this.foundBasicViolations = FOUND_BASIC_VIOLATIONS_DEFAULT;
+        this.rulesViolated = RULES_VIOLATED_DEFAULT;
+        this.preventiveActionIndex = PREVENTIVE_ACTION_INDEX_DEFAULT;
+        this.injections = INJECTIONS_DEFAULT;
+    }
+    
+    public WCADomainsResult(boolean foundBasicViolations, boolean rulesViolated, 
+                            int preventiveActionIndex, Map<String, Float> injections) {
+        this.foundBasicViolations = foundBasicViolations;
+        this.rulesViolated = rulesViolated;
+        this.preventiveActionIndex = preventiveActionIndex;
+        this.injections = Objects.requireNonNull(injections);
+    }
+    
     public boolean foundBasicViolations() {
         return foundBasicViolations;
     }
 
-    public void setFoundBasicViolations(boolean foundBasicViolations) {
-        this.foundBasicViolations = foundBasicViolations;
-    }
-
     public boolean areRulesViolated() {
         return rulesViolated;
-    }
-
-    public void setRulesViolated(boolean rulesViolated) {
-        this.rulesViolated = rulesViolated;
-    }
-
-    public void setPreventiveActionIndex(int actionIndex) {
-        this.preventiveActionIndex = actionIndex;
     }
 
     public int getPreventiveActionIndex() {
@@ -47,10 +55,6 @@ public class WCADomainsResult {
 
     public Map<String, Float> getInjections() {
         return injections;
-    }
-
-    public void setInjections(Map<String, Float> injections) {
-        this.injections = Objects.requireNonNull(injections);
     }
 
     @Override

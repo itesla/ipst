@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.wca;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -17,37 +17,38 @@ import eu.itesla_project.modules.wca.WCAClusterNum;
  * @author Massimo Ferraro <massimo.ferraro@techrain.it>
  */
 public class WCAClustersResult {
+    
+    private WCAClusterNum CLUSTER_NUM_DEFAULT = WCAClusterNum.UNDEFINED;
+    private static final boolean FOUND_VIOLATIONS_DEFAULT = false;
+    private static final int CURATIVE_ACTION_INDEX_DEFAULT = 0;
+    private static final Map<String, Float> INJECTIONS_DEFAULT = Collections.emptyMap();
 
-    private WCAClusterNum clusterNum = WCAClusterNum.UNDEFINED;
-    private boolean foundViolations = false;
-    private int curativeActionIndex = 0;
-    private Map<String, Float> injections = new HashMap<String, Float>();
+    private final WCAClusterNum clusterNum;
+    private final boolean foundViolations;
+    private final int curativeActionIndex;
+    private final Map<String, Float> injections;
 
     public WCAClustersResult() {
+        this.clusterNum = CLUSTER_NUM_DEFAULT;
+        this.foundViolations = FOUND_VIOLATIONS_DEFAULT;
+        this.curativeActionIndex = CURATIVE_ACTION_INDEX_DEFAULT;
+        this.injections = INJECTIONS_DEFAULT;
     }
 
-    public WCAClustersResult(WCAClusterNum clusterNum) {
+    public WCAClustersResult(WCAClusterNum clusterNum, boolean foundViolations, 
+                             int curativeActionIndex, Map<String, Float> injections) {
         this.clusterNum = Objects.requireNonNull(clusterNum);
+        this.foundViolations = foundViolations;
+        this.curativeActionIndex = curativeActionIndex;
+        this.injections = Objects.requireNonNull(injections);
     }
 
     public WCAClusterNum getClusterNum() {
         return clusterNum;
     }
-
-    public void setClusterNum(WCAClusterNum clusterNum) {
-        this.clusterNum = Objects.requireNonNull(clusterNum);
-    }
     
     public boolean foundViolations() {
         return foundViolations;
-    }
-
-    public void setFoundViolations(boolean foundViolations) {
-        this.foundViolations = foundViolations;
-    }
-    
-    public void setCurativeActionIndex(int actionIndex) {
-        this.curativeActionIndex = actionIndex;
     }
 
     public int getCurativeActionIndex() {
@@ -56,10 +57,6 @@ public class WCAClustersResult {
 
     public Map<String, Float> getInjections() {
         return injections;
-    }
-
-    public void setInjections(Map<String, Float> injections) {
-        this.injections = Objects.requireNonNull(injections);
     }
 
     @Override

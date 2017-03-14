@@ -195,9 +195,7 @@ public class WCAImplTest {
 
     @Test
     public void testRunWithCurativeActions() throws Exception {
-        WCAClustersResult clustersResult = new WCAClustersResult(WCAClusterNum.TWO);
-        clustersResult.setCurativeActionIndex(1);
-        clustersResult.setFoundViolations(true);
+        WCAClustersResult clustersResult = new WCAClustersResult(WCAClusterNum.TWO, true, 1, Collections.emptyMap());
         Mockito.when(computationManager.execute(Mockito.any(ExecutionEnvironment.class), Mockito.any()))
                .thenReturn(CompletableFuture.completedFuture(clustersResult));
 
@@ -313,9 +311,7 @@ public class WCAImplTest {
         Mockito.when(contingenciesActionsDbClient.getActionsCtgAssociationsByConstraint(constraint2.getEquipment(), constraint2.getType()))
                .thenReturn(Arrays.asList(association2));
 
-        WCADomainsResult domainsResult = new WCADomainsResult();
-        domainsResult.setFoundBasicViolations(true);
-        domainsResult.setPreventiveActionIndex(1);
+        WCADomainsResult domainsResult = new WCADomainsResult(true, false, 1, Collections.emptyMap());
         Mockito.when(computationManager.execute(Mockito.any(ExecutionEnvironment.class), Mockito.any()))
                .thenReturn(CompletableFuture.completedFuture(domainsResult));
 
@@ -434,8 +430,7 @@ public class WCAImplTest {
         Mockito.when(rulesDbClient.getRules(workflowId, RuleAttributeSet.MONTE_CARLO, contingency.getId(), SecurityIndexType.TSO_OVERLOAD))
                .thenReturn(Collections.emptyList());
 
-        WCADomainsResult domainsResult = new WCADomainsResult();
-        domainsResult.setRulesViolated(true);
+        WCADomainsResult domainsResult = new WCADomainsResult(false, true, 0, Collections.emptyMap());
         Mockito.when(computationManager.execute(Mockito.any(ExecutionEnvironment.class), Mockito.any()))
                .thenReturn(CompletableFuture.completedFuture(domainsResult));
 
