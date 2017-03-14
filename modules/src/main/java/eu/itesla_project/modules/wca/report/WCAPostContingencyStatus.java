@@ -7,7 +7,7 @@
 package eu.itesla_project.modules.wca.report;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 import eu.itesla_project.security.LimitViolation;
@@ -20,11 +20,11 @@ public class WCAPostContingencyStatus {
 
     private final String contingencyId;
     private final WCALoadflowResult postContingencyLoadflowResult;
-    private Collection<LimitViolation> postContingencyViolationsWithoutUncertainties = new ArrayList<>();
+    private List<LimitViolation> postContingencyViolationsWithoutUncertainties = new ArrayList<>();
     private WCALoadflowResult postContingencyWithUncertaintiesLoadflowResult;
-    private Collection<LimitViolation> postContingencyViolationsWithUncertainties = new ArrayList<>();
+    private List<LimitViolation> postContingencyViolationsWithUncertainties = new ArrayList<>();
     private boolean curativeActionsAvailable;
-    private Collection<WCAActionApplication> curativeActionsApplication = new ArrayList<>();
+    private List<WCAActionApplication> curativeActionsApplication = new ArrayList<>();
 
     public WCAPostContingencyStatus(String contingencyId, WCALoadflowResult postContingencyLoadflowResult) {
         this.contingencyId = Objects.requireNonNull(contingencyId);
@@ -39,11 +39,11 @@ public class WCAPostContingencyStatus {
         return postContingencyLoadflowResult;
     }
 
-    public Collection<LimitViolation> getPostContingencyViolationsWithoutUncertainties() {
+    public List<LimitViolation> getPostContingencyViolationsWithoutUncertainties() {
         return postContingencyViolationsWithoutUncertainties;
     }
 
-    public void setPostContingencyViolationsWithoutUncertainties(Collection<LimitViolation> postContingencyViolations) {
+    public void setPostContingencyViolationsWithoutUncertainties(List<LimitViolation> postContingencyViolations) {
         this.postContingencyViolationsWithoutUncertainties = Objects.requireNonNull(postContingencyViolations);
     }
     
@@ -55,11 +55,11 @@ public class WCAPostContingencyStatus {
         this.postContingencyWithUncertaintiesLoadflowResult = Objects.requireNonNull(postContingencyLoadflowResult);
     }
     
-    public Collection<LimitViolation> getPostContingencyViolationsWithUncertainties() {
+    public List<LimitViolation> getPostContingencyViolationsWithUncertainties() {
         return postContingencyViolationsWithUncertainties;
     }
 
-    public void setPostContingencyViolationsWithUncertainties(Collection<LimitViolation> postContingencyViolations) {
+    public void setPostContingencyViolationsWithUncertainties(List<LimitViolation> postContingencyViolations) {
         this.postContingencyViolationsWithUncertainties = Objects.requireNonNull(postContingencyViolations);
     }
 
@@ -71,11 +71,11 @@ public class WCAPostContingencyStatus {
         this.curativeActionsAvailable = curativeActionsAvailable;
     }
 
-    public Collection<WCAActionApplication> getCurativeActionsApplication() {
+    public List<WCAActionApplication> getCurativeActionsApplication() {
         return curativeActionsApplication;
     }
 
-    public void setCurativeActionsApplication(Collection<WCAActionApplication> curativeActionsApplication) {
+    public void setCurativeActionsApplication(List<WCAActionApplication> curativeActionsApplication) {
         this.curativeActionsApplication = Objects.requireNonNull(curativeActionsApplication);
     }
 

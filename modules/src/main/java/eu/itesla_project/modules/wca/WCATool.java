@@ -228,7 +228,7 @@ public class WCATool implements Tool {
         }
 
         try (ComputationManager computationManager = new LocalComputationManager()) {
-			WCAParameters parameters = new WCAParameters(histoInterval, offlineWorkflowId, securityIndexTypes, purityThreshold);
+            WCAParameters parameters = new WCAParameters(histoInterval, offlineWorkflowId, securityIndexTypes, purityThreshold);
             OnlineConfig config = OnlineConfig.load();
             ContingenciesAndActionsDatabaseClient contingenciesDb = config.getContingencyDbClientFactoryClass().newInstance().create();
             LoadFlowFactory loadFlowFactory = config.getLoadFlowFactoryClass().newInstance();

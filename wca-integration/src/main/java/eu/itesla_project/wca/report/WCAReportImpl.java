@@ -13,9 +13,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -61,14 +61,14 @@ public class WCAReportImpl implements WCAReport {
 
     private final String basecase;
     private WCALoadflowResult baseStateLoadflowResult;
-    private Collection<LimitViolation> preContingencyViolationsWithoutUncertainties = Collections.synchronizedList(new ArrayList<>());
+    private List<LimitViolation> preContingencyViolationsWithoutUncertainties = Collections.synchronizedList(new ArrayList<>());
     private WCALoadflowResult baseStateWithUncertaintiesLoadflowResult;
-    private Collection<LimitViolation> preContingencyViolationsWithUncertainties = Collections.synchronizedList(new ArrayList<>());
+    private List<LimitViolation> preContingencyViolationsWithUncertainties = Collections.synchronizedList(new ArrayList<>());
     private Map<String, WCAActionApplication> preventiveActionsApplication = Collections.synchronizedMap(new HashMap<String, WCAActionApplication>());
-    private Collection<LimitViolation> postPreventiveActionsViolationsWithUncertainties = Collections.synchronizedList(new ArrayList<>());
-    private Collection<LimitViolation> baseStateRemainingViolations = Collections.synchronizedList(new ArrayList<>());
-    private Collection<WCASecurityRuleApplication> securityRulesApplication = Collections.synchronizedList(new ArrayList<>());
-    private Collection<WCAPostContingencyStatus> postContingenciesStatus = Collections.synchronizedList(new ArrayList<>());
+    private List<LimitViolation> postPreventiveActionsViolationsWithUncertainties = Collections.synchronizedList(new ArrayList<>());
+    private List<LimitViolation> baseStateRemainingViolations = Collections.synchronizedList(new ArrayList<>());
+    private List<WCASecurityRuleApplication> securityRulesApplication = Collections.synchronizedList(new ArrayList<>());
+    private List<WCAPostContingencyStatus> postContingenciesStatus = Collections.synchronizedList(new ArrayList<>());
 
     public WCAReportImpl(String basecase) {
         this.basecase = Objects.requireNonNull(basecase);
@@ -85,7 +85,7 @@ public class WCAReportImpl implements WCAReport {
     }
 
     @Override
-    public Collection<LimitViolation> getPreContingencyViolationsWithoutUncertainties() {
+    public List<LimitViolation> getPreContingencyViolationsWithoutUncertainties() {
         return preContingencyViolationsWithoutUncertainties;
     }
     
@@ -95,32 +95,32 @@ public class WCAReportImpl implements WCAReport {
     }
 
     @Override
-    public Collection<LimitViolation> getPreContingencyViolationsWithUncertainties() {
+    public List<LimitViolation> getPreContingencyViolationsWithUncertainties() {
         return preContingencyViolationsWithUncertainties;
     }
 
     @Override
-    public Collection<WCAActionApplication> getPreventiveActionsApplication() {
-        return preventiveActionsApplication.values();
+    public List<WCAActionApplication> getPreventiveActionsApplication() {
+        return new ArrayList<>(preventiveActionsApplication.values());
     }
 
     @Override
-    public Collection<LimitViolation> getPostPreventiveActionsViolationsWithUncertainties() {
+    public List<LimitViolation> getPostPreventiveActionsViolationsWithUncertainties() {
         return postPreventiveActionsViolationsWithUncertainties;
     }
 
     @Override
-    public Collection<LimitViolation> getBaseStateRemainingViolations() {
+    public List<LimitViolation> getBaseStateRemainingViolations() {
         return baseStateRemainingViolations;
     }
 
     @Override
-    public Collection<WCASecurityRuleApplication> getSecurityRulesApplication() {
+    public List<WCASecurityRuleApplication> getSecurityRulesApplication() {
         return securityRulesApplication;
     }
 
     @Override
-    public Collection<WCAPostContingencyStatus> getPostContingenciesStatus() {
+    public List<WCAPostContingencyStatus> getPostContingenciesStatus() {
         return postContingenciesStatus;
     }
 
@@ -150,7 +150,7 @@ public class WCAReportImpl implements WCAReport {
         this.baseStateLoadflowResult = wcaLoadflowResult;
     }
 
-    public void setPreContingencyViolationsWithoutUncertainties(Collection<LimitViolation> preContingencyViolations) {
+    public void setPreContingencyViolationsWithoutUncertainties(List<LimitViolation> preContingencyViolations) {
         this.preContingencyViolationsWithoutUncertainties = Objects.requireNonNull(preContingencyViolations);
     }
     
@@ -158,7 +158,7 @@ public class WCAReportImpl implements WCAReport {
         this.baseStateWithUncertaintiesLoadflowResult = wcaLoadflowResult;
     }
 
-    public void setPreContingencyViolationsWithUncertainties(Collection<LimitViolation> preContingencyViolations) {
+    public void setPreContingencyViolationsWithUncertainties(List<LimitViolation> preContingencyViolations) {
         this.preContingencyViolationsWithUncertainties = Objects.requireNonNull(preContingencyViolations);
     }
 
@@ -173,11 +173,11 @@ public class WCAReportImpl implements WCAReport {
             preventiveActionsApplication.get(actionId).setActionApplied(true);;
     }
 
-    public void setPostPreventiveActionsViolationsWithUncertainties(Collection<LimitViolation> postPreventiveActionsViolations) {
+    public void setPostPreventiveActionsViolationsWithUncertainties(List<LimitViolation> postPreventiveActionsViolations) {
         this.postPreventiveActionsViolationsWithUncertainties = Objects.requireNonNull(postPreventiveActionsViolations);
     }
 
-    public void setBaseStateRemainingViolations(Collection<LimitViolation> baseStateRemainingViolations) {
+    public void setBaseStateRemainingViolations(List<LimitViolation> baseStateRemainingViolations) {
         this.baseStateRemainingViolations = Objects.requireNonNull(baseStateRemainingViolations);
     }
 
@@ -192,7 +192,7 @@ public class WCAReportImpl implements WCAReport {
     }
     
     private void writeViolations(TableFormatter formatter, String contingencyId, WCALoadflowResult loadflowResult, 
-                                 Collection<LimitViolation> violations) {
+                                 List<LimitViolation> violations) {
         if (loadflowResult != null && !loadflowResult.loadflowConverged()) {
             try {
                 formatter.writeCell(basecase);
@@ -233,7 +233,7 @@ public class WCAReportImpl implements WCAReport {
     }
 
     private void exportViolations(Path folder, String file, String title, WCALoadflowResult loadflowResult, 
-                                  Collection<LimitViolation> violations) throws IOException {
+                                  List<LimitViolation> violations) throws IOException {
         Path violationsPath = folder.resolve(file);
         Column[] COLUMNS = {
                 new Column("Basecase"),
@@ -273,7 +273,7 @@ public class WCAReportImpl implements WCAReport {
     }
     
     private void writeActionsApplications(TableFormatter formatter, String contingencyId, 
-                                          Collection<WCAActionApplication> actionsApplication) {
+                                          List<WCAActionApplication> actionsApplication) {
         if ( !actionsApplication.isEmpty() ) {
             actionsApplication.forEach( actionApplication -> {
                 try {
@@ -328,7 +328,7 @@ public class WCAReportImpl implements WCAReport {
         CsvTableFormatterFactory factory = new CsvTableFormatterFactory();
         try (Writer writer = Files.newBufferedWriter(violationsPath, StandardCharsets.UTF_8);
              TableFormatter formatter = factory.create(writer, POST_PREVENTIVE_ACTIONS_TITLE, TABLE_FORMATTER_CONFIG, COLUMNS)) {
-            writeActionsApplications(formatter, null, preventiveActionsApplication.values());
+            writeActionsApplications(formatter, null, new ArrayList<>(preventiveActionsApplication.values()));
         }
     }
     

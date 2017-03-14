@@ -8,9 +8,9 @@ package eu.itesla_project.wca;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,10 +29,10 @@ public class WCAFilteredClusters {
     private static final Logger LOGGER = LoggerFactory.getLogger(WCAFilteredClusters.class);
 
     private final String networkId;
-    private Map<String, Collection<WCAClusterNum>> contingencyClusters = new ConcurrentHashMap<String, Collection<WCAClusterNum>>();
-    private Map<String, Collection<WCAClusterOrigin>> contingencyFlags = new ConcurrentHashMap<String, Collection<WCAClusterOrigin>>();
+    private Map<String, List<WCAClusterNum>> contingencyClusters = new ConcurrentHashMap<String, List<WCAClusterNum>>();
+    private Map<String, List<WCAClusterOrigin>> contingencyFlags = new ConcurrentHashMap<String, List<WCAClusterOrigin>>();
 
-    public WCAFilteredClusters(String networkId, Collection<String> contingenciesIds) {
+    public WCAFilteredClusters(String networkId, List<String> contingenciesIds) {
         Objects.requireNonNull(networkId,"network id is null");
         Objects.requireNonNull(contingenciesIds,"contigencies list is null");
         this.networkId = networkId;
@@ -46,7 +46,7 @@ public class WCAFilteredClusters {
         LOGGER.info("Network {}, contingency {}: removing clusters {} for {}", networkId, contingencyId, Arrays.toString(clustersNums), flag);
         if ( contingencyClusters.containsKey(contingencyId) ) {
             // remove clusters from the list of the contingency
-            Collection<WCAClusterNum> clusters = contingencyClusters.get(contingencyId);
+            List<WCAClusterNum> clusters = contingencyClusters.get(contingencyId);
             for (int i = 0; i < clustersNums.length; i++) {
                 if ( clusters.contains(clustersNums[i]) ) {
                     clusters.remove(clustersNums[i]);
@@ -55,7 +55,7 @@ public class WCAFilteredClusters {
             contingencyClusters.put(contingencyId, clusters);
             if ( flag != null ) {
                 // add flag to the list of the contingency
-                Collection<WCAClusterOrigin> flags = new ArrayList<WCAClusterOrigin>();
+                List<WCAClusterOrigin> flags = new ArrayList<WCAClusterOrigin>();
                 if ( contingencyFlags.containsKey(contingencyId) ) {
                     flags = contingencyFlags.get(contingencyId);
                 }
@@ -75,7 +75,7 @@ public class WCAFilteredClusters {
         LOGGER.info("Network {}, contingency {}: adding clusters {} for {}", networkId, contingencyId, Arrays.toString(clustersNums), flag);
         if ( contingencyClusters.containsKey(contingencyId) ) {
             // add clusters to the list of the contingency
-            Collection<WCAClusterNum> clusters = contingencyClusters.get(contingencyId);
+            List<WCAClusterNum> clusters = contingencyClusters.get(contingencyId);
             for (int i = 0; i < clustersNums.length; i++) {
                 if ( !clusters.contains(clustersNums[i]) ) {
                     clusters.add(clustersNums[i]);
@@ -84,7 +84,7 @@ public class WCAFilteredClusters {
             contingencyClusters.put(contingencyId, clusters);
             if ( flag != null ) {
                 // add flag to the list of the contingency
-                Collection<WCAClusterOrigin> flags = new ArrayList<WCAClusterOrigin>();
+                List<WCAClusterOrigin> flags = new ArrayList<WCAClusterOrigin>();
                 if ( contingencyFlags.containsKey(contingencyId) ) {
                     flags = contingencyFlags.get(contingencyId);
                 }
@@ -105,7 +105,7 @@ public class WCAFilteredClusters {
         return contingencyClusters.containsKey(contingencyId) && contingencyClusters.get(contingencyId).contains(clustersNum);
     }
 
-    public Collection<WCAClusterNum> getClusters(String contingencyId) {
+    public List<WCAClusterNum> getClusters(String contingencyId) {
         Objects.requireNonNull(contingencyId,"contingency id is null");
         LOGGER.warn("Network {}, contingency {}: getting clusters", networkId, contingencyId);
         if ( contingencyClusters.containsKey(contingencyId) ) {
@@ -125,7 +125,7 @@ public class WCAFilteredClusters {
         return WCAClusterNum.UNDEFINED;
     }
 
-    public Collection<WCAClusterOrigin> getFlags(String contingencyId) {
+    public List<WCAClusterOrigin> getFlags(String contingencyId) {
         Objects.requireNonNull(contingencyId,"contingency id is null");
         if ( contingencyFlags.containsKey(contingencyId) ) {
             return contingencyFlags.get(contingencyId);
@@ -143,7 +143,7 @@ public class WCAFilteredClusters {
                 contingencyClusters.put(contingencyId, new ArrayList<WCAClusterNum>(Collections.singleton(clusterNum)));
                 if ( flag != null ) {
                     // add flag to the list of the contingency
-                    Collection<WCAClusterOrigin> flags = new ArrayList<WCAClusterOrigin>();
+                    List<WCAClusterOrigin> flags = new ArrayList<WCAClusterOrigin>();
                     if ( contingencyFlags.containsKey(contingencyId) )
                         flags = contingencyFlags.get(contingencyId);
                     if ( !flags.contains(flag) ) {

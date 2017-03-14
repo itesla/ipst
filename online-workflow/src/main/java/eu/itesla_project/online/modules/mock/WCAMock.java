@@ -44,9 +44,6 @@ public class WCAMock implements WCA {
 
     @Override
     public WCAResult run(WCAParameters parameters) throws Exception {
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {}
         // classify all the contingencies in the same cluster
         List<WCACluster> clusters = new ArrayList<>();
         for (Contingency contingency: contingenciesActionsDbClient.getContingencies(network)) {

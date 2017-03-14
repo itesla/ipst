@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -78,7 +77,7 @@ public class WCAConfigTest {
         boolean applyPreventiveActions = true;
         WCACurativeActionsOptimizer curativeActionsOptimizer = WCACurativeActionsOptimizer.LF_HEURISTIC;
         float voltageLevelConstraintFilter = 400;
-        Collection<Country> countryConstraintFilter = EnumSet.of(Country.FR);
+        Set<Country> countryConstraintFilter = EnumSet.of(Country.FR);
         boolean filterPreventiveActions = false;
         boolean filterCurativeActions = false;
         boolean loosenConstraints = true;
@@ -113,7 +112,7 @@ public class WCAConfigTest {
                              boolean deactivateFiltering, WCAPreventiveActionsFilter preventiveActionsFilter, 
                              WCAPreventiveActionsOptimizer preventiveActionsOptimizer, boolean applyPreventiveActions, 
                              WCACurativeActionsOptimizer curativeActionsOptimizer, float voltageLevelConstraintFilter, 
-                             Collection<Country> countryConstraintFilter, boolean filterPreventiveActions, boolean filterCurativeActions,
+                             Set<Country> countryConstraintFilter, boolean filterPreventiveActions, boolean filterCurativeActions,
                              boolean loosenConstraints) {
         assertEquals(xpressHome, config.getXpressHome());
         assertEquals(reducedVariableRatio, config.getReducedVariableRatio(), 0);

@@ -883,7 +883,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
 
         for (SwitchOperation swOp : ele.getSwitchOperation()) {
             String switchId = swOp.getId();
-            Switch sw = (Switch) network.getIdentifiable(switchId);             
+            Switch sw = network.getSwitch(switchId);             
             if (sw != null) {
                 if (swOp.getAction().equals("opening"))
                     elements.add(new SwitchOpeningAction(sw.getVoltageLevel().getId(), switchId, swOp.getImplementationTime(), swOp.getAchievmentIndex()));

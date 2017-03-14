@@ -7,7 +7,7 @@
 package eu.itesla_project.modules.wca.report;
 
 import java.nio.file.Path;
-import java.util.Collection;
+import java.util.List;
 
 import eu.itesla_project.security.LimitViolation;
 
@@ -21,21 +21,21 @@ public interface WCAReport {
 
     WCALoadflowResult getBaseStateLoadflowResult();
 
-    Collection<LimitViolation> getPreContingencyViolationsWithoutUncertainties();
+    List<LimitViolation> getPreContingencyViolationsWithoutUncertainties();
     
     WCALoadflowResult getBaseStateWithUncertaintiesLoadflowResult();
 
-    Collection<LimitViolation> getPreContingencyViolationsWithUncertainties();
+    List<LimitViolation> getPreContingencyViolationsWithUncertainties();
 
-    Collection<WCAActionApplication> getPreventiveActionsApplication();
+    List<WCAActionApplication> getPreventiveActionsApplication();
 
-    Collection<LimitViolation> getPostPreventiveActionsViolationsWithUncertainties();
+    List<LimitViolation> getPostPreventiveActionsViolationsWithUncertainties();
 
-    Collection<LimitViolation> getBaseStateRemainingViolations();
+    List<LimitViolation> getBaseStateRemainingViolations();
 
-    Collection<WCASecurityRuleApplication> getSecurityRulesApplication();
+    List<WCASecurityRuleApplication> getSecurityRulesApplication();
 
-    Collection<WCAPostContingencyStatus> getPostContingenciesStatus();
+    List<WCAPostContingencyStatus> getPostContingenciesStatus();
 
     boolean exportCsv(Path folder);
 

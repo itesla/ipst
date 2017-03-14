@@ -260,10 +260,10 @@ public class WCAReportImplTest {
         
         WCAReportImpl wcaReport = new WCAReportImpl("network1");
         WCAPostContingencyStatus postContingencyStatus1 = new WCAPostContingencyStatus("fault1", new WCALoadflowResult(true, null));
-        postContingencyStatus1.setPostContingencyViolationsWithoutUncertainties(Collections.singleton(line1Violation));
+        postContingencyStatus1.setPostContingencyViolationsWithoutUncertainties(Collections.singletonList(line1Violation));
         wcaReport.addPostContingencyStatus(postContingencyStatus1);
         WCAPostContingencyStatus postContingencyStatus2 = new WCAPostContingencyStatus("fault2", new WCALoadflowResult(true, null));
-        postContingencyStatus2.setPostContingencyViolationsWithoutUncertainties(Collections.singleton(line2Violation));
+        postContingencyStatus2.setPostContingencyViolationsWithoutUncertainties(Collections.singletonList(line2Violation));
         wcaReport.addPostContingencyStatus(postContingencyStatus2);
         wcaReport.exportCsv(folder);
         
@@ -303,11 +303,11 @@ public class WCAReportImplTest {
         WCAReportImpl wcaReport = new WCAReportImpl("network1");
         WCAPostContingencyStatus postContingencyStatus1 = new WCAPostContingencyStatus("fault1", new WCALoadflowResult(true, null));
         postContingencyStatus1.setPostContingencyWithUncertaintiesLoadflowResult(new WCALoadflowResult(true, null));
-        postContingencyStatus1.setPostContingencyViolationsWithUncertainties(Collections.singleton(line1Violation));
+        postContingencyStatus1.setPostContingencyViolationsWithUncertainties(Collections.singletonList(line1Violation));
         wcaReport.addPostContingencyStatus(postContingencyStatus1);
         WCAPostContingencyStatus postContingencyStatus2 = new WCAPostContingencyStatus("fault2", new WCALoadflowResult(true, null));
         postContingencyStatus2.setPostContingencyWithUncertaintiesLoadflowResult(new WCALoadflowResult(true, null));
-        postContingencyStatus2.setPostContingencyViolationsWithUncertainties(Collections.singleton(line2Violation));
+        postContingencyStatus2.setPostContingencyViolationsWithUncertainties(Collections.singletonList(line2Violation));
         wcaReport.addPostContingencyStatus(postContingencyStatus2);
         wcaReport.exportCsv(folder);
         

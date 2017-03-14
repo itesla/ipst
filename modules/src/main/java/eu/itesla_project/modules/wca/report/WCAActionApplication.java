@@ -7,7 +7,7 @@
 package eu.itesla_project.modules.wca.report;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 import eu.itesla_project.security.LimitViolation;
@@ -24,7 +24,7 @@ public class WCAActionApplication {
     private final boolean violationsRemoved;
     private boolean actionApplied;
     private final String comment;
-    private Collection<LimitViolation> postActionViolations = new ArrayList<>();
+    private List<LimitViolation> postActionViolations = new ArrayList<>();
 
     public WCAActionApplication(String actionId, LimitViolation violation, WCALoadflowResult loadflowResult, 
             boolean violationsRemoved, boolean actionApplied, String comment) {
@@ -60,7 +60,7 @@ public class WCAActionApplication {
         return comment;
     }
 
-    public Collection<LimitViolation> getPostActionViolations() {
+    public List<LimitViolation> getPostActionViolations() {
         return postActionViolations;
     }
     
@@ -68,7 +68,7 @@ public class WCAActionApplication {
         this.actionApplied = actionApplied;
     }
     
-    public void setPostActionViolations(Collection<LimitViolation> postActionViolations) {
+    public void setPostActionViolations(List<LimitViolation> postActionViolations) {
         this.postActionViolations = Objects.requireNonNull(postActionViolations);
     }
 

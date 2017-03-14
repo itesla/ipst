@@ -177,7 +177,7 @@ public class WCAImpl implements WCA, WCAConstants {
 
         this.violationsFilter = new LimitViolationFilter().setViolationTypes(config.ignoreVoltageConstraints() ? EnumSet.of(LimitViolationType.CURRENT) : null)
                                                           .setMinBaseVoltage(config.getVoltageLevelConstraintFilter())
-                                                          .setCountries(config.getCountryConstraintFilter().isEmpty() ? null : new HashSet<>(config.getCountryConstraintFilter()));
+                                                          .setCountries(config.getCountryConstraintFilter().isEmpty() ? null : config.getCountryConstraintFilter());
 
         this.wcaReport = new WCAReportImpl(network.getId());
 
@@ -518,7 +518,7 @@ public class WCAImpl implements WCA, WCAConstants {
                             } else {
                                 List<String> curativeStateIdsForClusters = Collections.synchronizedList(new ArrayList<>());
                                 List<String> curativeActionIdsForClusters  = Collections.synchronizedList(new ArrayList<>());
-                                Collection<WCAActionApplication> curativeActionsApplication = Collections.synchronizedList(new ArrayList<>());
+                                List<WCAActionApplication> curativeActionsApplication = Collections.synchronizedList(new ArrayList<>());
                                 curativeActions.sort((o1, o2) -> o1.stream().map(Action::getId).collect(Collectors.joining("+")).compareTo(o2.stream().map(Action::getId).collect(Collectors.joining("+"))));
                                 String previousState = contingencyStateId[0];
                                 for (int i = 0; i < curativeActions.size(); i++) {
@@ -981,7 +981,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                         LOGGER.warn("Network {}: loosening the basecase constraints for remaining violations:\n{}", 
                                                     network.getId(), Security.printLimitsViolations(new ArrayList<>(wcaReport.getBaseStateRemainingViolations()), violationsFilter));
                                         ConstraintsModifierConfig constraintsModifierConfig = new ConstraintsModifierConfig(
-                                                new HashSet<>(config.getCountryConstraintFilter()), 
+                                                config.getCountryConstraintFilter(), 
                                                 config.ignoreVoltageConstraints() ? EnumSet.of(LimitViolationType.CURRENT) : EnumSet.allOf(LimitViolationType.class)
                                                 );
                                         ConstraintsModifier constraintsModifier = new ConstraintsModifier(network, constraintsModifierConfig);

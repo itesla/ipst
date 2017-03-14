@@ -7,16 +7,15 @@
  */
 package eu.itesla_project.wca;
 
+import java.nio.file.Path;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
 import eu.itesla_project.commons.config.ModuleConfig;
 import eu.itesla_project.commons.config.PlatformConfig;
 import eu.itesla_project.iidm.network.Country;
-
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.EnumSet;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
@@ -35,7 +34,7 @@ public class WCAConfig {
     public static final boolean DEFAULT_APPLY_PREVENTIVE_ACTIONS = false;
     public static final WCACurativeActionsOptimizer DEFAULT_CURATIVE_ACTIONS_OPTIMIZER = WCACurativeActionsOptimizer.CLUSTERS;
     public static final float DEFAULT_VOLTAGE_LEVEL_CONSTRAINTS_FILTER = 0f;
-    public static final Collection<Country> DEFAULT_COUNTRY_CONSTRAINTS_FILTER = EnumSet.noneOf(Country.class);
+    public static final Set<Country> DEFAULT_COUNTRY_CONSTRAINTS_FILTER = EnumSet.noneOf(Country.class);
     public static final boolean DEFAULT_FILTER_PREVENTIVE_ACTIONS = true;
     public static final boolean DEFAULT_FILTER_CURATIVE_ACTIONS = true;
     public static final boolean DEFAULT_LOOOSEN_CONSTRAINTS = false;
@@ -53,7 +52,7 @@ public class WCAConfig {
     private final boolean applyPreventiveActions;
     private final WCACurativeActionsOptimizer curativeActionsOptimizer;
     private final float voltageLevelConstraintFilter;
-    private final Collection<Country> countryConstraintFilter;
+    private final Set<Country> countryConstraintFilter;
     private final boolean filterPreventiveActions;
     private final boolean filterCurativeActions;
     private final boolean loosenConstraints;
@@ -77,7 +76,7 @@ public class WCAConfig {
         boolean applyPreventiveActions = config.getBooleanProperty("applyPreventiveActions", DEFAULT_APPLY_PREVENTIVE_ACTIONS);
         WCACurativeActionsOptimizer curativeActionsOptimizer = config.getEnumProperty("curativeActionsOptimizer", WCACurativeActionsOptimizer.class, DEFAULT_CURATIVE_ACTIONS_OPTIMIZER);
         float voltageLevelConstraintFilter = Float.parseFloat(config.getStringProperty("voltageLevelConstraintFilter", Float.toString(DEFAULT_VOLTAGE_LEVEL_CONSTRAINTS_FILTER)));
-        Collection<Country> countryConstraintFilter = config.getEnumSetProperty("countryConstraintFilter", Country.class, new HashSet<Country>(DEFAULT_COUNTRY_CONSTRAINTS_FILTER));
+        Set<Country> countryConstraintFilter = config.getEnumSetProperty("countryConstraintFilter", Country.class, new HashSet<Country>(DEFAULT_COUNTRY_CONSTRAINTS_FILTER));
         boolean filterPreventiveActions = config.getBooleanProperty("filterPreventiveActions", DEFAULT_FILTER_PREVENTIVE_ACTIONS);
         boolean filterCurativeActions = config.getBooleanProperty("filterCurativeActions", DEFAULT_FILTER_CURATIVE_ACTIONS);
         boolean loosenConstraints = config.getBooleanProperty("loosenConstraints", DEFAULT_LOOOSEN_CONSTRAINTS);
@@ -89,7 +88,7 @@ public class WCAConfig {
     public WCAConfig(Path xpressHome, float reducedVariableRatio, boolean debug, boolean exportStates, Set<WCARestrictingThresholdLevel> restrictingThresholdLevels, 
                      float margin, boolean ignoreVoltageConstraints, boolean deactivateFiltering, WCAPreventiveActionsFilter preventiveActionsFilter, 
                      WCAPreventiveActionsOptimizer preventiveActionsOptimizer, boolean applyPreventiveActions, WCACurativeActionsOptimizer curativeActionsOptimizer, 
-                     float voltageLevelConstraintFilter, Collection<Country> countryConstraintFilter, boolean filterPreventiveActions, boolean filterCurativeActions,
+                     float voltageLevelConstraintFilter, Set<Country> countryConstraintFilter, boolean filterPreventiveActions, boolean filterCurativeActions,
                      boolean loosenConstraints) {
         this.xpressHome = Objects.requireNonNull(xpressHome);
         this.reducedVariableRatio = reducedVariableRatio;
@@ -162,7 +161,7 @@ public class WCAConfig {
         return voltageLevelConstraintFilter;
     }
 
-    public Collection<Country> getCountryConstraintFilter() {
+    public Set<Country> getCountryConstraintFilter() {
         return countryConstraintFilter;
     }
 
