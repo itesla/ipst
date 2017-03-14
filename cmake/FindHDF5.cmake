@@ -16,22 +16,22 @@
 # =============================================================================
 
 if (NOT HDF5_HOME AND NOT $ENV{HDF5_HOME} STREQUAL "")
-	set(HDF5_HOME $ENV{HDF5_HOME})
+    set(HDF5_HOME $ENV{HDF5_HOME})
 endif()
 
 if (NOT HDF5_HOME AND NOT $ENV{HDF5_ROOT} STREQUAL "")
-	set(HDF5_HOME $ENV{HDF5_ROOT})
+    set(HDF5_HOME $ENV{HDF5_ROOT})
 endif()
 
 if (NOT HDF5_HOME)
     message(FATAL_ERROR "HDF5 libraries not found. The variable HDF5_HOME is NOT set or is NOT a valid directory")
 endif()
 
-find_path(HDF5_INCLUDE_DIR NAME hdf5.h H5pubconf.h HINTS ${HDF5_HOME}/include)
+find_path(HDF5_INCLUDE_DIR NAME hdf5.h H5pubconf.h HINTS ${HDF5_HOME}/include NO_DEFAULT_PATH)
 if (USE_STATIC_LIBS)
-    find_library(HDF5_LIBRARY libhdf5.a HINTS ${HDF5_HOME}/lib)
+    find_library(HDF5_LIBRARY libhdf5.a HINTS ${HDF5_HOME}/lib NO_DEFAULT_PATH)
 else()
-    find_library(HDF5_LIBRARY hdf5 HINTS ${HDF5_HOME}/lib)
+    find_library(HDF5_LIBRARY hdf5 HINTS ${HDF5_HOME}/lib NO_DEFAULT_PATH)
 endif()
 
 mark_as_advanced(HDF5_INCLUDE_DIR HDF5_LIBRARY)
