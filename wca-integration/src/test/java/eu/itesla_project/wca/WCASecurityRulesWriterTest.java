@@ -75,12 +75,13 @@ public class WCASecurityRulesWriterTest {
 
         new WCASecurityRulesWriter(network, rules, dataSource, mapper, false, false).write();
 
-        String fileContent = "#(("+ network.getLoads().iterator().next().getId() + "_P >= 10.0) AND ("+ network.getGenerators().iterator().next().getId() + "_Q < 5.0))" + System.lineSeparator()  + 
-                             "#Security rules" + System.lineSeparator() +
-                             "#\"inequality num\" \"convex num\" \"var type (1: P, 2: Q, 3: V)\" \"entity type (1: branch, 2: load, 3: generator, 4: compensator shunt, 5: substation)\" \"entity num\" \"branch side (1 or 2, 0 if NA)\" \"inequality coeff.\" \"constant value\" \"contingency num\" \"security index type\" \"attribute set (0: active only, 1: active/reactive)\"" + System.lineSeparator() +
-                             "1 1 1 2 1 0 -1.00000 -10.0000 1 4 0" + System.lineSeparator() +
-                             "2 1 2 3 1 0 1.00000 5.00000 1 4 0" + System.lineSeparator();
-        assertEquals(fileContent, new String(dataSource.getData(WCAConstants.SECURITY_RULES_FILE_SUFFIX, WCAConstants.TXT_EXT), StandardCharsets.UTF_8));
+        String fileContent = String.join(System.lineSeparator(),
+                                         "#(("+ network.getLoads().iterator().next().getId() + "_P >= 10.0) AND ("+ network.getGenerators().iterator().next().getId() + "_Q < 5.0))",
+                                         "#Security rules",
+                                         "#\"inequality num\" \"convex num\" \"var type (1: P, 2: Q, 3: V)\" \"entity type (1: branch, 2: load, 3: generator, 4: compensator shunt, 5: substation)\" \"entity num\" \"branch side (1 or 2, 0 if NA)\" \"inequality coeff.\" \"constant value\" \"contingency num\" \"security index type\" \"attribute set (0: active only, 1: active/reactive)\"",
+                                         "1 1 1 2 1 0 -1.00000 -10.0000 1 4 0",
+                                         "2 1 2 3 1 0 1.00000 5.00000 1 4 0");
+        assertEquals(fileContent, new String(dataSource.getData(WCAConstants.SECURITY_RULES_FILE_SUFFIX, WCAConstants.TXT_EXT), StandardCharsets.UTF_8).trim());
     }
 
 }

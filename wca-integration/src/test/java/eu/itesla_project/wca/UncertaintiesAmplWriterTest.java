@@ -45,23 +45,26 @@ public class UncertaintiesAmplWriterTest {
 
         new UncertaintiesAmplWriter(uncertainties, dataSource, mapper).write();
 
-        String fileContent = "#Reduction matrix" + System.lineSeparator()  + 
-                             "#\"inj. type\" \"inj. num\" \"var. num\" \"coeff.\"" + System.lineSeparator() +
-                             "L 1 1 1.00000" + System.lineSeparator() +
-                             "G 1 2 1.00000" + System.lineSeparator();
-        assertEquals(fileContent, new String(dataSource.getData(WCAConstants.REDUCTION_MATRIX_FILE_SUFFIX, WCAConstants.TXT_EXT), StandardCharsets.UTF_8));
+        String fileContent = String.join(System.lineSeparator(), 
+                                         "#Reduction matrix",
+                                         "#\"inj. type\" \"inj. num\" \"var. num\" \"coeff.\"",
+                                         "L 1 1 1.00000",
+                                         "G 1 2 1.00000");
+        assertEquals(fileContent, new String(dataSource.getData(WCAConstants.REDUCTION_MATRIX_FILE_SUFFIX, WCAConstants.TXT_EXT), StandardCharsets.UTF_8).trim());
 
-        fileContent = "#Trust intervals" + System.lineSeparator()  + 
-                      "#\"var. num\" \"min\" \"max\"" + System.lineSeparator() +
-                      "1 -1.00000 1.00000" + System.lineSeparator() +
-                      "2 -90.0000 90.0000" + System.lineSeparator();
-        assertEquals(fileContent, new String(dataSource.getData(WCAConstants.TRUST_INTERVAL_FILE_SUFFIX, WCAConstants.TXT_EXT), StandardCharsets.UTF_8));
+        fileContent = String.join(System.lineSeparator(),
+                                  "#Trust intervals",
+                                  "#\"var. num\" \"min\" \"max\"",
+                                  "1 -1.00000 1.00000",
+                                  "2 -90.0000 90.0000");
+        assertEquals(fileContent, new String(dataSource.getData(WCAConstants.TRUST_INTERVAL_FILE_SUFFIX, WCAConstants.TXT_EXT), StandardCharsets.UTF_8).trim());
 
-        fileContent = "#Means" + System.lineSeparator()  + 
-                      "#\"inj. type\" \"inj. num\" \"mean\"" + System.lineSeparator() +
-                      "L 1 10.0000" + System.lineSeparator() +
-                      "G 1 900.000" + System.lineSeparator();
-        assertEquals(fileContent, new String(dataSource.getData(WCAConstants.MEANS_FILE_SUFFIX, WCAConstants.TXT_EXT), StandardCharsets.UTF_8));
+        fileContent = String.join(System.lineSeparator(),
+                                  "#Means",
+                                  "#\"inj. type\" \"inj. num\" \"mean\"",
+                                  "L 1 10.0000",
+                                  "G 1 900.000");
+        assertEquals(fileContent, new String(dataSource.getData(WCAConstants.MEANS_FILE_SUFFIX, WCAConstants.TXT_EXT), StandardCharsets.UTF_8).trim());
     }
 
 }

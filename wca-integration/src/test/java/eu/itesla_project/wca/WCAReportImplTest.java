@@ -81,10 +81,11 @@ public class WCAReportImplTest {
         
         Path report = folder.resolve(WCAReportImpl.PRE_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_FILE);
         assertTrue(Files.exists(report));
-        String reportContent = WCAReportImpl.PRE_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_TITLE + System.lineSeparator() + 
-                               "Basecase;FailureStep;FailureDescription;ViolationType;Equipment;Value;Limit;Country;BaseVoltage" + System.lineSeparator() +
-                               "network1;Loadflow;base state loadflow diverged;;;;;;" + System.lineSeparator();
-        assertEquals(reportContent, CharStreams.toString(new InputStreamReader(Files.newInputStream(report))));
+        String reportContent = String.join(System.lineSeparator(),
+                                           WCAReportImpl.PRE_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_TITLE,
+                                           "Basecase;FailureStep;FailureDescription;ViolationType;Equipment;Value;Limit;Country;BaseVoltage",
+                                           "network1;Loadflow;base state loadflow diverged;;;;;;");
+        assertEquals(reportContent, CharStreams.toString(new InputStreamReader(Files.newInputStream(report))).trim());
     }
     
     @Test
@@ -98,13 +99,14 @@ public class WCAReportImplTest {
         
         Path report = folder.resolve(WCAReportImpl.PRE_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_FILE);
         assertTrue(Files.exists(report));
-        String reportContent = WCAReportImpl.PRE_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_TITLE + System.lineSeparator() + 
-                               "Basecase;FailureStep;FailureDescription;ViolationType;Equipment;Value;Limit;Country;BaseVoltage" + System.lineSeparator() +
-                               "network1;;;CURRENT;line1;" + String.format(Locale.getDefault(),"%g",1100f) + ";" + String.format(Locale.getDefault(),"%g",1000f)
-                               + ";FR" + ";" + String.format(Locale.getDefault(),"%g",380f) + System.lineSeparator() +
-                               "network1;;;CURRENT;line2;" + String.format(Locale.getDefault(),"%g",950f) + ";" + String.format(Locale.getDefault(),"%g",900f)
-                               + ";FR" + ";" + String.format(Locale.getDefault(),"%g",380f) + System.lineSeparator();
-        assertEquals(reportContent, CharStreams.toString(new InputStreamReader(Files.newInputStream(report))));
+        String reportContent = String.join(System.lineSeparator(),
+                                           WCAReportImpl.PRE_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_TITLE,
+                                           "Basecase;FailureStep;FailureDescription;ViolationType;Equipment;Value;Limit;Country;BaseVoltage",
+                                           "network1;;;CURRENT;line1;" + String.format(Locale.getDefault(),"%g",1100f) + ";" + String.format(Locale.getDefault(),"%g",1000f)
+                                           + ";FR" + ";" + String.format(Locale.getDefault(),"%g",380f),
+                                           "network1;;;CURRENT;line2;" + String.format(Locale.getDefault(),"%g",950f) + ";" + String.format(Locale.getDefault(),"%g",900f)
+                                           + ";FR" + ";" + String.format(Locale.getDefault(),"%g",380f));
+        assertEquals(reportContent, CharStreams.toString(new InputStreamReader(Files.newInputStream(report))).trim());
     }
     
     @Test
@@ -117,10 +119,11 @@ public class WCAReportImplTest {
         
         Path report = folder.resolve(WCAReportImpl.PRE_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_FILE);
         assertTrue(Files.exists(report));
-        String reportContent = WCAReportImpl.PRE_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_TITLE + System.lineSeparator() + 
-                               "Basecase;FailureStep;FailureDescription;ViolationType;Equipment;Value;Limit;Country;BaseVoltage" + System.lineSeparator() +
-                               "network1;Loadflow;base state with uncertainties loadflow diverged;;;;;;" + System.lineSeparator();
-        assertEquals(reportContent, CharStreams.toString(new InputStreamReader(Files.newInputStream(report))));
+        String reportContent = String.join(System.lineSeparator(),
+                                           WCAReportImpl.PRE_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_TITLE,
+                                           "Basecase;FailureStep;FailureDescription;ViolationType;Equipment;Value;Limit;Country;BaseVoltage",
+                                           "network1;Loadflow;base state with uncertainties loadflow diverged;;;;;;");
+        assertEquals(reportContent, CharStreams.toString(new InputStreamReader(Files.newInputStream(report))).trim());
     }
     
     @Test
@@ -134,13 +137,14 @@ public class WCAReportImplTest {
         
         Path report = folder.resolve(WCAReportImpl.PRE_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_FILE);
         assertTrue(Files.exists(report));
-        String reportContent = WCAReportImpl.PRE_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_TITLE + System.lineSeparator() + 
-                               "Basecase;FailureStep;FailureDescription;ViolationType;Equipment;Value;Limit;Country;BaseVoltage" + System.lineSeparator() +
-                               "network1;;;CURRENT;line1;" + String.format(Locale.getDefault(),"%g",1100f) + ";" + String.format(Locale.getDefault(),"%g",1000f)
-                               + ";FR" + ";" + String.format(Locale.getDefault(),"%g",380f) + System.lineSeparator() +
-                               "network1;;;CURRENT;line2;" + String.format(Locale.getDefault(),"%g",950f) + ";" + String.format(Locale.getDefault(),"%g",900f)
-                               + ";FR" + ";" + String.format(Locale.getDefault(),"%g",380f) + System.lineSeparator();
-        assertEquals(reportContent, CharStreams.toString(new InputStreamReader(Files.newInputStream(report))));
+        String reportContent = String.join(System.lineSeparator(),
+                                           WCAReportImpl.PRE_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_TITLE,
+                                           "Basecase;FailureStep;FailureDescription;ViolationType;Equipment;Value;Limit;Country;BaseVoltage",
+                                           "network1;;;CURRENT;line1;" + String.format(Locale.getDefault(),"%g",1100f) + ";" + String.format(Locale.getDefault(),"%g",1000f)
+                                           + ";FR" + ";" + String.format(Locale.getDefault(),"%g",380f),
+                                           "network1;;;CURRENT;line2;" + String.format(Locale.getDefault(),"%g",950f) + ";" + String.format(Locale.getDefault(),"%g",900f)
+                                           + ";FR" + ";" + String.format(Locale.getDefault(),"%g",380f));
+        assertEquals(reportContent, CharStreams.toString(new InputStreamReader(Files.newInputStream(report))).trim());
     }
     
     @Test
@@ -170,12 +174,13 @@ public class WCAReportImplTest {
         
         Path report = folder.resolve(WCAReportImpl.POST_PREVENTIVE_ACTIONS_FILE);
         assertTrue(Files.exists(report));
-        String reportContent = WCAReportImpl.POST_PREVENTIVE_ACTIONS_TITLE + System.lineSeparator() + 
-                               "Basecase;ActionId;ViolatedEquipment;ViolationType;FailureStep;FailureDescription;ViolationRemoved;ActionApplied;Comment" + System.lineSeparator() +
-                               "network1;action1;line1;CURRENT;;;false;false;post action state contains new violations" + System.lineSeparator() +
-                               "network1;action2;line1;CURRENT;;;true;true;" + System.lineSeparator() +
-                               "network1;action3;line2;CURRENT;Loadflow;loadflow on post action state diverged;false;false;" + System.lineSeparator();
-        assertEquals(reportContent, CharStreams.toString(new InputStreamReader(Files.newInputStream(report))));
+        String reportContent = String.join(System.lineSeparator(),
+                                           WCAReportImpl.POST_PREVENTIVE_ACTIONS_TITLE,
+                                           "Basecase;ActionId;ViolatedEquipment;ViolationType;FailureStep;FailureDescription;ViolationRemoved;ActionApplied;Comment",
+                                           "network1;action1;line1;CURRENT;;;false;false;post action state contains new violations",
+                                           "network1;action2;line1;CURRENT;;;true;true;",
+                                           "network1;action3;line2;CURRENT;Loadflow;loadflow on post action state diverged;false;false;");
+        assertEquals(reportContent, CharStreams.toString(new InputStreamReader(Files.newInputStream(report))).trim());
     }
     
     @Test
@@ -189,13 +194,14 @@ public class WCAReportImplTest {
         
         Path report = folder.resolve(WCAReportImpl.POST_PREVENTIVE_ACTIONS_VIOLATIONS_WITH_UNCERTAINTIES_FILE);
         assertTrue(Files.exists(report));
-        String reportContent = WCAReportImpl.POST_PREVENTIVE_ACTIONS_VIOLATIONS_WITH_UNCERTAINTIES_TITLE + System.lineSeparator() + 
-                               "Basecase;FailureStep;FailureDescription;ViolationType;Equipment;Value;Limit;Country;BaseVoltage" + System.lineSeparator() +
-                               "network1;;;CURRENT;line1;" + String.format(Locale.getDefault(),"%g",1100f) + ";" + String.format(Locale.getDefault(),"%g",1000f) 
-                               + ";FR" + ";" + String.format(Locale.getDefault(),"%g",380f) + System.lineSeparator() +
-                               "network1;;;CURRENT;line2;" + String.format(Locale.getDefault(),"%g",950f) + ";" + String.format(Locale.getDefault(),"%g",900f)
-                               + ";FR" + ";" + String.format(Locale.getDefault(),"%g",380f) + System.lineSeparator();
-        assertEquals(reportContent, CharStreams.toString(new InputStreamReader(Files.newInputStream(report))));
+        String reportContent = String.join(System.lineSeparator(),
+                                           WCAReportImpl.POST_PREVENTIVE_ACTIONS_VIOLATIONS_WITH_UNCERTAINTIES_TITLE,
+                                           "Basecase;FailureStep;FailureDescription;ViolationType;Equipment;Value;Limit;Country;BaseVoltage",
+                                           "network1;;;CURRENT;line1;" + String.format(Locale.getDefault(),"%g",1100f) + ";" + String.format(Locale.getDefault(),"%g",1000f) 
+                                           + ";FR" + ";" + String.format(Locale.getDefault(),"%g",380f),
+                                           "network1;;;CURRENT;line2;" + String.format(Locale.getDefault(),"%g",950f) + ";" + String.format(Locale.getDefault(),"%g",900f)
+                                           + ";FR" + ";" + String.format(Locale.getDefault(),"%g",380f));
+        assertEquals(reportContent, CharStreams.toString(new InputStreamReader(Files.newInputStream(report))).trim());
     }
 
     @Test
@@ -229,12 +235,13 @@ public class WCAReportImplTest {
         
         Path report = folder.resolve(WCAReportImpl.SECURITY_RULES_VIOLATIONS_WITHOUT_UNCERTAINTIES_FILE);
         assertTrue(Files.exists(report));
-        String reportContent = WCAReportImpl.SECURITY_RULES_VIOLATIONS_WITHOUT_UNCERTAINTIES_TITLE + System.lineSeparator() + 
-                               "Basecase;ContingencyId;SecurityRule;WorkflowId;RuleViolated;ViolationType;Cause" + System.lineSeparator() +
-                               "network1;fault1;"+rule1.getId().toString()+";workflow-0;true;MISSING_ATTRIBUTE;Missing attributes for rule " + rule1.getId()+ ": attribute1" + System.lineSeparator() +
-                               "network1;fault1;"+rule2.getId().toString()+";workflow-0;false;NO_VIOLATION;Rule " + rule2.getId() + " verified" + System.lineSeparator() +
-                               "network1;fault2;;;true;MISSING_RULE;"+ missingRuleMessage + System.lineSeparator();
-        assertEquals(reportContent, CharStreams.toString(new InputStreamReader(Files.newInputStream(report))));
+        String reportContent = String.join(System.lineSeparator(),
+                                           WCAReportImpl.SECURITY_RULES_VIOLATIONS_WITHOUT_UNCERTAINTIES_TITLE,
+                                           "Basecase;ContingencyId;SecurityRule;WorkflowId;RuleViolated;ViolationType;Cause",
+                                           "network1;fault1;"+rule1.getId().toString()+";workflow-0;true;MISSING_ATTRIBUTE;Missing attributes for rule " + rule1.getId()+ ": attribute1",
+                                           "network1;fault1;"+rule2.getId().toString()+";workflow-0;false;NO_VIOLATION;Rule " + rule2.getId() + " verified",
+                                           "network1;fault2;;;true;MISSING_RULE;"+ missingRuleMessage);
+        assertEquals(reportContent, CharStreams.toString(new InputStreamReader(Files.newInputStream(report))).trim());
     }
     
     @Test
@@ -248,10 +255,11 @@ public class WCAReportImplTest {
         
         Path report = folder.resolve(WCAReportImpl.POST_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_FILE);
         assertTrue(Files.exists(report));
-        String reportContent = WCAReportImpl.POST_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_TITLE + System.lineSeparator() + 
-                               "Basecase;Contingency;FailureStep;FailureDescription;ViolationType;Equipment;Value;Limit;Country;BaseVoltage" + System.lineSeparator() +
-                               "network1;fault1;Loadflow;post contingency loadflow diverged;;;;;;" + System.lineSeparator();
-        assertEquals(reportContent, CharStreams.toString(new InputStreamReader(Files.newInputStream(report))));
+        String reportContent = String.join(System.lineSeparator(),
+                                           WCAReportImpl.POST_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_TITLE,
+                                           "Basecase;Contingency;FailureStep;FailureDescription;ViolationType;Equipment;Value;Limit;Country;BaseVoltage",
+                                           "network1;fault1;Loadflow;post contingency loadflow diverged;;;;;;");
+        assertEquals(reportContent, CharStreams.toString(new InputStreamReader(Files.newInputStream(report))).trim());
     }
     
     @Test
@@ -269,13 +277,14 @@ public class WCAReportImplTest {
         
         Path report = folder.resolve(WCAReportImpl.POST_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_FILE);
         assertTrue(Files.exists(report));
-        String reportContent = WCAReportImpl.POST_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_TITLE + System.lineSeparator() + 
-                               "Basecase;Contingency;FailureStep;FailureDescription;ViolationType;Equipment;Value;Limit;Country;BaseVoltage" + System.lineSeparator() +
-                               "network1;fault1;;;CURRENT;line1;" + String.format(Locale.getDefault(),"%g",1100f) + ";" + String.format(Locale.getDefault(),"%g",1000f)
-                               + ";FR" + ";" + String.format(Locale.getDefault(),"%g",380f) + System.lineSeparator() +
-                               "network1;fault2;;;CURRENT;line2;" + String.format(Locale.getDefault(),"%g",950f) + ";" + String.format(Locale.getDefault(),"%g",900f)
-                               + ";FR" + ";" + String.format(Locale.getDefault(),"%g",380f) + System.lineSeparator();
-        assertEquals(reportContent, CharStreams.toString(new InputStreamReader(Files.newInputStream(report))));
+        String reportContent = String.join(System.lineSeparator(),
+                                           WCAReportImpl.POST_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_TITLE,
+                                           "Basecase;Contingency;FailureStep;FailureDescription;ViolationType;Equipment;Value;Limit;Country;BaseVoltage",
+                                           "network1;fault1;;;CURRENT;line1;" + String.format(Locale.getDefault(),"%g",1100f) + ";" + String.format(Locale.getDefault(),"%g",1000f)
+                                           + ";FR" + ";" + String.format(Locale.getDefault(),"%g",380f),
+                                           "network1;fault2;;;CURRENT;line2;" + String.format(Locale.getDefault(),"%g",950f) + ";" + String.format(Locale.getDefault(),"%g",900f)
+                                           + ";FR" + ";" + String.format(Locale.getDefault(),"%g",380f));
+        assertEquals(reportContent, CharStreams.toString(new InputStreamReader(Files.newInputStream(report))).trim());
     }
     
     @Test
@@ -290,10 +299,11 @@ public class WCAReportImplTest {
         
         Path report = folder.resolve(WCAReportImpl.POST_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_FILE);
         assertTrue(Files.exists(report));
-        String reportContent = WCAReportImpl.POST_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_TITLE + System.lineSeparator() + 
-                               "Basecase;Contingency;FailureStep;FailureDescription;ViolationType;Equipment;Value;Limit;Country;BaseVoltage" + System.lineSeparator() +
-                               "network1;fault1;Loadflow;post contingency with uncertainties loadflow diverged;;;;;;" + System.lineSeparator();
-        assertEquals(reportContent, CharStreams.toString(new InputStreamReader(Files.newInputStream(report))));
+        String reportContent = String.join(System.lineSeparator(),
+                                           WCAReportImpl.POST_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_TITLE,
+                                           "Basecase;Contingency;FailureStep;FailureDescription;ViolationType;Equipment;Value;Limit;Country;BaseVoltage",
+                                           "network1;fault1;Loadflow;post contingency with uncertainties loadflow diverged;;;;;;");
+        assertEquals(reportContent, CharStreams.toString(new InputStreamReader(Files.newInputStream(report))).trim());
     }
     
     @Test
@@ -313,13 +323,14 @@ public class WCAReportImplTest {
         
         Path report = folder.resolve(WCAReportImpl.POST_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_FILE);
         assertTrue(Files.exists(report));
-        String reportContent = WCAReportImpl.POST_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_TITLE + System.lineSeparator() + 
-                               "Basecase;Contingency;FailureStep;FailureDescription;ViolationType;Equipment;Value;Limit;Country;BaseVoltage" + System.lineSeparator() +
-                               "network1;fault1;;;CURRENT;line1;" + String.format(Locale.getDefault(),"%g",1100f) + ";" + String.format(Locale.getDefault(),"%g",1000f)
-                               + ";FR" + ";" + String.format(Locale.getDefault(),"%g",380f) + System.lineSeparator() +
-                               "network1;fault2;;;CURRENT;line2;" + String.format(Locale.getDefault(),"%g",950f) + ";" + String.format(Locale.getDefault(),"%g",900f)
-                               + ";FR" + ";" + String.format(Locale.getDefault(),"%g",380f) + System.lineSeparator();
-        assertEquals(reportContent, CharStreams.toString(new InputStreamReader(Files.newInputStream(report))));
+        String reportContent = String.join(System.lineSeparator(),
+                                           WCAReportImpl.POST_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_TITLE,
+                                           "Basecase;Contingency;FailureStep;FailureDescription;ViolationType;Equipment;Value;Limit;Country;BaseVoltage",
+                                           "network1;fault1;;;CURRENT;line1;" + String.format(Locale.getDefault(),"%g",1100f) + ";" + String.format(Locale.getDefault(),"%g",1000f)
+                                           + ";FR" + ";" + String.format(Locale.getDefault(),"%g",380f),
+                                           "network1;fault2;;;CURRENT;line2;" + String.format(Locale.getDefault(),"%g",950f) + ";" + String.format(Locale.getDefault(),"%g",900f)
+                                           + ";FR" + ";" + String.format(Locale.getDefault(),"%g",380f));
+        assertEquals(reportContent, CharStreams.toString(new InputStreamReader(Files.newInputStream(report))).trim());
     }
     
     @Test
@@ -353,12 +364,13 @@ public class WCAReportImplTest {
         
         Path report = folder.resolve(WCAReportImpl.POST_CURATIVE_ACTIONS_FILE);
         assertTrue(Files.exists(report));
-        String reportContent = WCAReportImpl.POST_CURATIVE_ACTIONS_TITLE + System.lineSeparator() + 
-                               "Basecase;Contingency;ActionId;ViolatedEquipment;ViolationType;FailureStep;FailureDescription;ViolationRemoved;ActionApplied;Comment" + System.lineSeparator() +
-                               "network1;fault1;action1;;;;;false;false;violantions found in post action state" + System.lineSeparator() +
-                               "network1;fault1;action2;;;;;true;true;" + System.lineSeparator() +
-                               "network1;fault2;action3;;;Loadflow;loadflow on post action state diverged;false;false;" + System.lineSeparator();
-        assertEquals(reportContent, CharStreams.toString(new InputStreamReader(Files.newInputStream(report))));
+        String reportContent = String.join(System.lineSeparator(),
+                                           WCAReportImpl.POST_CURATIVE_ACTIONS_TITLE,
+                                           "Basecase;Contingency;ActionId;ViolatedEquipment;ViolationType;FailureStep;FailureDescription;ViolationRemoved;ActionApplied;Comment",
+                                           "network1;fault1;action1;;;;;false;false;violantions found in post action state",
+                                           "network1;fault1;action2;;;;;true;true;",
+                                           "network1;fault2;action3;;;Loadflow;loadflow on post action state diverged;false;false;");
+        assertEquals(reportContent, CharStreams.toString(new InputStreamReader(Files.newInputStream(report))).trim());
     }
     
     @Test

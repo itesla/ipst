@@ -59,15 +59,17 @@ public class WCAHistoLimitsTest {
         histoLimits.load(network, histoDbClient);
         histoLimits.write(dataSource, mapper);
 
-        String fileContent = "#loads historical data " + histoInterval + System.lineSeparator()  + 
-                             "#\"num\" \"min p (MW)\" \"max p (MW)\" \"id\"" + System.lineSeparator() +
-                             "1 0.00000 20.0000 \""+ network.getLoads().iterator().next().getId() + "\"" + System.lineSeparator();
-        assertEquals(fileContent, new String(dataSource.getData(WCAConstants.HISTO_LOADS_FILE_SUFFIX, WCAConstants.TXT_EXT), StandardCharsets.UTF_8));
+        String fileContent = String.join(System.lineSeparator(),
+                                         "#loads historical data " + histoInterval,
+                                         "#\"num\" \"min p (MW)\" \"max p (MW)\" \"id\"",
+                                         "1 0.00000 20.0000 \""+ network.getLoads().iterator().next().getId() + "\"");
+        assertEquals(fileContent, new String(dataSource.getData(WCAConstants.HISTO_LOADS_FILE_SUFFIX, WCAConstants.TXT_EXT), StandardCharsets.UTF_8).trim());
 
-        fileContent = "#generators historical data " + histoInterval + System.lineSeparator()  + 
-                      "#\"num\" \"min p (MW)\" \"max p (MW)\" \"id\"" + System.lineSeparator() +
-                      "1 200.000 900.000 \""+ network.getGenerators().iterator().next().getId() + "\"" + System.lineSeparator();
-        assertEquals(fileContent, new String(dataSource.getData(WCAConstants.HISTO_GENERATORS_FILE_SUFFIX, WCAConstants.TXT_EXT), StandardCharsets.UTF_8));
+        fileContent = String.join(System.lineSeparator(),
+                                  "#generators historical data " + histoInterval,
+                                  "#\"num\" \"min p (MW)\" \"max p (MW)\" \"id\"",
+                                  "1 200.000 900.000 \""+ network.getGenerators().iterator().next().getId() + "\"");
+        assertEquals(fileContent, new String(dataSource.getData(WCAConstants.HISTO_GENERATORS_FILE_SUFFIX, WCAConstants.TXT_EXT), StandardCharsets.UTF_8).trim());
     }
 
 }
