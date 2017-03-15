@@ -98,7 +98,7 @@ public class ConstraintsModifierTestUtils {
         return n;
     }
 
-    public static List<LimitViolation> getViolations(Network network) {
+    public static List<LimitViolation> getViolations() {
         List<LimitViolation> violations = new ArrayList<LimitViolation>();
         violations.add(new LimitViolation(LINE_ID, LimitViolationType.CURRENT, CURRENT_LIMIT, null, 1, CURRENT_VALUE, COUNTRY, Float.NaN));
         violations.add(new LimitViolation(VOLTAGE_LEVEL_1_ID, LimitViolationType.HIGH_VOLTAGE, HIGH_VOLTAGE_LIMIT, null, 1, V, COUNTRY, Float.NaN));

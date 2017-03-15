@@ -12,11 +12,9 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.itesla_project.iidm.network.Line;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.iidm.network.StateManager;
 import eu.itesla_project.iidm.network.TwoTerminalsConnectable;
-import eu.itesla_project.iidm.network.TwoWindingsTransformer;
 import eu.itesla_project.iidm.network.VoltageLevel;
 import eu.itesla_project.security.LimitViolation;
 import eu.itesla_project.security.LimitViolationFilter;
@@ -128,24 +126,17 @@ public class ConstraintsModifier {
                         newLimit);
                 branch.newCurrentLimits1().setPermanentLimit(newLimit).add();
                 if ( applyToBaseCase && !StateManager.INITIAL_STATE_ID.equals(stateId) ) { // change the limit also to basecase
-                    String initialStateId = StateManager.INITIAL_STATE_ID;
-                    network.getStateManager().setWorkingState(initialStateId);
+                    network.getStateManager().setWorkingState(StateManager.INITIAL_STATE_ID);
                     branch = network.getLine(violation.getSubjectId());
                     if ( branch == null ) {
                         branch = network.getTwoWindingsTransformer(violation.getSubjectId());
                     }
-                    if ( branch != null ) {
-                        LOGGER.debug("State {}: changing current limit 1 of branch {}: {} -> {}", 
-                                initialStateId, 
+                    LOGGER.debug("State {}: changing current limit 1 of branch {}: {} -> {}", 
+                                StateManager.INITIAL_STATE_ID, 
                                 branch.getId(), 
                                 violation.getLimit(), 
                                 newLimit);
-                        branch.newCurrentLimits1().setPermanentLimit(newLimit).add();
-                    } else {
-                        LOGGER.warn("State {}: cannot change current limit of branch {}: no branch with this id in the network", 
-                                initialStateId, 
-                                violation.getSubjectId());
-                    }
+                    branch.newCurrentLimits1().setPermanentLimit(newLimit).add();
                     network.getStateManager().setWorkingState(stateId);
                 }
             } else if ( branch.getTerminal2().getI() == violation.getValue() ) {
@@ -156,24 +147,17 @@ public class ConstraintsModifier {
                         newLimit);
                 branch.newCurrentLimits2().setPermanentLimit(newLimit).add();
                 if ( applyToBaseCase && !StateManager.INITIAL_STATE_ID.equals(stateId) ) { // change the limit also to basecase
-                    String initialStateId = StateManager.INITIAL_STATE_ID;
-                    network.getStateManager().setWorkingState(initialStateId);
+                    network.getStateManager().setWorkingState(StateManager.INITIAL_STATE_ID);
                     branch = network.getLine(violation.getSubjectId());
                     if ( branch == null ) {
                         branch = network.getTwoWindingsTransformer(violation.getSubjectId());
                     }
-                    if ( branch != null ) {
-                        LOGGER.debug("State {}: changing current limit 2 of branch {}: {} -> {}", 
-                                initialStateId, 
+                    LOGGER.debug("State {}: changing current limit 2 of branch {}: {} -> {}", 
+                                StateManager.INITIAL_STATE_ID, 
                                 branch.getId(), 
                                 violation.getLimit(), 
                                 newLimit);
-                        branch.newCurrentLimits2().setPermanentLimit(newLimit).add();
-                    } else {
-                        LOGGER.warn("State {}: cannot change current limit of branch {}: no branch with this id in the network", 
-                                initialStateId, 
-                                violation.getSubjectId());
-                    }
+                    branch.newCurrentLimits2().setPermanentLimit(newLimit).add();
                     network.getStateManager().setWorkingState(stateId);
                 }
             }
@@ -196,21 +180,14 @@ public class ConstraintsModifier {
                         newLimit);
                 voltageLevel.setHighVoltageLimit(newLimit);
                 if ( applyToBaseCase && !StateManager.INITIAL_STATE_ID.equals(stateId) ) { // change the limit also to basecase
-                    String initialStateId = StateManager.INITIAL_STATE_ID;
-                    network.getStateManager().setWorkingState(initialStateId);
+                    network.getStateManager().setWorkingState(StateManager.INITIAL_STATE_ID);
                     voltageLevel = network.getVoltageLevel(violation.getSubjectId());
-                    if ( voltageLevel != null ) {
-                        LOGGER.debug("State {}: changing high voltage limit of voltage level {}: {} -> {}", 
-                                initialStateId, 
+                    LOGGER.debug("State {}: changing high voltage limit of voltage level {}: {} -> {}", 
+                                StateManager.INITIAL_STATE_ID, 
                                 voltageLevel.getId(), 
                                 violation.getLimit(), 
                                 newLimit);
-                        voltageLevel.setHighVoltageLimit(newLimit);
-                    } else {
-                        LOGGER.warn("State {}: cannot change high voltage limit of voltage level {}: no voltage level with this id in the network", 
-                                initialStateId, 
-                                violation.getSubjectId());
-                    }
+                    voltageLevel.setHighVoltageLimit(newLimit);
                     network.getStateManager().setWorkingState(stateId);
                 }
             }
