@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016, RTE (http://www.rte-france.com)
+ * Copyright (c) 2016-2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -210,22 +210,14 @@ public class ConstraintsModifier {
                         newLimit);
                 voltageLevel.setLowVoltageLimit(newLimit);
                 if ( applyToBaseCase && !StateManager.INITIAL_STATE_ID.equals(stateId) ) { // change the limit also to basecase
-                    String initialStateId = StateManager.INITIAL_STATE_ID;
-                    network.getStateManager().setWorkingState(initialStateId);
+                    network.getStateManager().setWorkingState(StateManager.INITIAL_STATE_ID);
                     voltageLevel = network.getVoltageLevel(violation.getSubjectId());
-                    if ( voltageLevel != null ) {
-                        LOGGER.debug("State {}: changing low voltage limit of voltage level {}: {} -> {}", 
-                                initialStateId, 
+                    LOGGER.debug("State {}: changing low voltage limit of voltage level {}: {} -> {}", 
+                                StateManager.INITIAL_STATE_ID, 
                                 voltageLevel.getId(), 
                                 violation.getLimit(), 
                                 newLimit);
-                        voltageLevel.setLowVoltageLimit(newLimit);
-                    } else {
-                        LOGGER.warn("State {}: cannot change high voltage limit of voltage level {}: no voltage level with this id in the network", 
-                                initialStateId, 
-                                violation.getSubjectId());
-                    }
-                    network.getStateManager().setWorkingState(stateId);
+                    voltageLevel.setLowVoltageLimit(newLimit);
                 }
             }
         } else {
