@@ -143,7 +143,7 @@ public class OnlineDBUtils implements ProcessDBUtils {
                         PreContingencyResult pcr = new PreContingencyResult(state, viols.isEmpty(),
                                 status != null && "SUCCESS".equals(status));
                         viols.forEach(lv -> {
-                            pcr.addViolation(new Violation(lv.getCountry().toString(), lv.getSubject().getId(),
+                            pcr.addViolation(new Violation(lv.getCountry().toString(), lv.getSubjectId(),
                                     lv.getLimitType().name(), lv.getLimit(), lv.getValue(), (int) lv.getBaseVoltage()));
                         });
                         res.addPreContingency(pcr);
@@ -188,7 +188,7 @@ public class OnlineDBUtils implements ProcessDBUtils {
                                 srMap.put(state, sr);
 
                             contViols.forEach(lv -> {
-                                sr.addViolation(new Violation(lv.getCountry().toString(), lv.getSubject().getId(),
+                                sr.addViolation(new Violation(lv.getCountry().toString(), lv.getSubjectId(),
                                         lv.getLimitType().name(), lv.getLimit(), lv.getValue(),
                                         (int) lv.getBaseVoltage()));
                             });
@@ -288,7 +288,7 @@ public class OnlineDBUtils implements ProcessDBUtils {
     private void fillViolationSynthesis( DateTime dateTime, List<ViolationSynthesis> violationList , List<LimitViolation> limitList ){
         limitList.forEach( lv ->{
             LimitViolationType violationType = lv.getLimitType();
-            String equipment = lv.getSubject().getId();
+            String equipment = lv.getSubjectId();
             float limit = lv.getLimit();
             float value = lv.getValue();
             ViolationSynthesis synt;
