@@ -1286,7 +1286,7 @@ public class OnlineDbMVStore implements OnlineDb {
             Map<String, String> metricsMap = wfMVStore.openMap(mapName, mapBuilder);
             int violationIndex = 0;
             for (LimitViolation limitViolation : violations) {
-                String violationId = limitViolation.getSubject().getId() + "_" + violationIndex;
+                String violationId = limitViolation.getSubjectId() + "_" + violationIndex;
                 metricsMap.put(violationId, OnlineDbMVStoreUtils.limitViolationToJson(limitViolation));
                 violationIndex++;
             }
