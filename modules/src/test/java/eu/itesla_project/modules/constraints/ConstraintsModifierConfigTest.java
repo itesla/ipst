@@ -45,7 +45,7 @@ public class ConstraintsModifierConfigTest {
         fileSystem = ShrinkWrapFileSystems.newFileSystem(archive);
         platformConfig = new InMemoryPlatformConfig(fileSystem);
         network = ConstraintsModifierTestUtils.getNetwork();
-        violations = ConstraintsModifierTestUtils.getViolations(network);
+        violations = ConstraintsModifierTestUtils.getViolations();
     }
 
     @After

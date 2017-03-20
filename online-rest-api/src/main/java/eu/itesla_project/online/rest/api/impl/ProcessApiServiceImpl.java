@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Objects;
 
 import eu.itesla_project.online.rest.model.Process;
+import eu.itesla_project.online.rest.model.ProcessSynthesis;
 import eu.itesla_project.online.rest.model.WorkflowResult;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -96,4 +97,23 @@ public class ProcessApiServiceImpl implements ProcessApiService {
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
     }
+
+    @Override
+    public Response getProcessSynthesis(String processId, SecurityContext securityContext) {
+        LOGGER.info("Get process synthesis : processId=" + processId);
+        if(processId == null)
+            return Response.status(Status.BAD_REQUEST).entity("Null proceesId parameter").build();
+        try{
+            ProcessSynthesis entity = utils.getSynthesis(processId);
+            if (entity == null)
+                return Response.status(Status.NOT_FOUND).entity("Process not found").build();
+            String res = objectMapper.writer().writeValueAsString(entity);
+            return Response.ok().entity(res).build();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+
+    }
+
 }

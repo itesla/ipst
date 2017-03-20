@@ -81,6 +81,23 @@
       </dependency>
 
        <dependency>
+           <groupId>eu.itesla_project</groupId>
+           <artifactId>iidm-impl</artifactId>
+           <version>${ipstcore.version}</version>
+           <scope>test</scope>
+       </dependency>
+       <dependency>
+           <groupId>eu.itesla_project</groupId>
+           <artifactId>iidm-test</artifactId>
+           <version>${ipstcore.version}</version>
+           <scope>test</scope>
+        </dependency>
+       <dependency>
+           <groupId>com.google.jimfs</groupId>
+           <artifactId>jimfs</artifactId>
+           <scope>test</scope>
+       </dependency>
+       <dependency>
            <groupId>junit</groupId>
            <artifactId>junit</artifactId>
        </dependency>

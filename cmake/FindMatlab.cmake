@@ -10,18 +10,18 @@
 # =============================================================================
 
 if (NOT MATLAB_HOME AND NOT $ENV{MATLAB_HOME} STREQUAL "")
-	set(MATLAB_HOME $ENV{MATLAB_HOME})
+    set(MATLAB_HOME $ENV{MATLAB_HOME})
 endif()
 
 if (NOT MATLAB_HOME AND NOT $ENV{MATLAB_ROOT} STREQUAL "")
-	set(MATLAB_HOME $ENV{MATLAB_ROOT})
+    set(MATLAB_HOME $ENV{MATLAB_ROOT})
 endif()
 
 if (NOT MATLAB_HOME)
     message(FATAL_ERROR "Matlab not found. The variable MATLAB_HOME is NOT set or is NOT a valid directory")
 endif()
 
-find_program(Matlab_COMPILER mcc HINTS ${MATLAB_HOME}/bin)
+find_program(Matlab_COMPILER mcc HINTS ${MATLAB_HOME}/bin NO_DEFAULT_PATH)
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Matlab "Matlab compiler not found." Matlab_COMPILER)
 
