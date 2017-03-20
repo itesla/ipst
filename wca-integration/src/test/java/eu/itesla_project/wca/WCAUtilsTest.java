@@ -29,7 +29,6 @@ import org.joda.time.DateTimeZone;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
@@ -41,7 +40,6 @@ import eu.itesla_project.contingency.ContingencyElement;
 import eu.itesla_project.contingency.ContingencyImpl;
 import eu.itesla_project.iidm.datasource.MemDataSource;
 import eu.itesla_project.iidm.export.ampl.AmplSubset;
-import eu.itesla_project.iidm.network.Identifiable;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.iidm.network.StateManager;
 import eu.itesla_project.iidm.network.test.NetworkTest1Factory;
@@ -186,15 +184,9 @@ public class WCAUtilsTest {
 
     @Test
     public void testContainsViolation() {
-        Identifiable line1 = Mockito.mock(Identifiable.class);
-        Mockito.when(line1.getId()).thenReturn("line1");
-        LimitViolation line1Violation = new LimitViolation(line1, LimitViolationType.CURRENT, 1000f, "10'", 1100f);
-        Identifiable line2 = Mockito.mock(Identifiable.class);
-        Mockito.when(line2.getId()).thenReturn("line2");
-        LimitViolation line2Violation = new LimitViolation(line2, LimitViolationType.CURRENT, 900f, "20'", 950f);
-        Identifiable line3 = Mockito.mock(Identifiable.class);
-        Mockito.when(line3.getId()).thenReturn("line3");
-        LimitViolation line3Violation = new LimitViolation(line3, LimitViolationType.CURRENT, 1000f, "30'", 1300f);
+        LimitViolation line1Violation = new LimitViolation("line1", LimitViolationType.CURRENT, 1000f, "10'", 1100f);
+        LimitViolation line2Violation = new LimitViolation("line2", LimitViolationType.CURRENT, 900f, "20'", 950f);
+        LimitViolation line3Violation = new LimitViolation("line3", LimitViolationType.CURRENT, 1000f, "30'", 1300f);
 
         assertFalse(WCAUtils.containsViolation(Arrays.asList(line1Violation, line3Violation), line2Violation));
         assertTrue(WCAUtils.containsViolation(Arrays.asList(line1Violation, line2Violation, line3Violation), line2Violation));

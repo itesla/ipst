@@ -36,7 +36,7 @@ public class ConstraintsModifierTest {
     @Before
     public void setUp() throws Exception {
         network = ConstraintsModifierTestUtils.getNetwork();
-        violations = ConstraintsModifierTestUtils.getViolations(network);
+        violations = ConstraintsModifierTestUtils.getViolations();
         Set<LimitViolationType> violationTypes = EnumSet.of(LimitViolationType.CURRENT,
                 LimitViolationType.HIGH_VOLTAGE,
                 LimitViolationType.LOW_VOLTAGE);

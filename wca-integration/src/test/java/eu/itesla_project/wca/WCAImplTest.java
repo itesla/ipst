@@ -215,10 +215,10 @@ public class WCAImplTest {
         WCAPostContingencyStatus postContingencyStatus = report.getPostContingenciesStatus().iterator().next();
         assertEquals(contingency.getId(), postContingencyStatus.getContingencyId());
         assertEquals(1, postContingencyStatus.getPostContingencyViolationsWithoutUncertainties().size());
-        assertEquals("NHV1_NHV2_2", postContingencyStatus.getPostContingencyViolationsWithoutUncertainties().iterator().next().getSubject().getId());
+        assertEquals("NHV1_NHV2_2", postContingencyStatus.getPostContingencyViolationsWithoutUncertainties().iterator().next().getSubjectId());
         assertEquals(LimitViolationType.CURRENT, postContingencyStatus.getPostContingencyViolationsWithoutUncertainties().iterator().next().getLimitType());
         assertEquals(1, postContingencyStatus.getPostContingencyViolationsWithUncertainties().size());
-        assertEquals("NHV1_NHV2_2", postContingencyStatus.getPostContingencyViolationsWithUncertainties().iterator().next().getSubject().getId());
+        assertEquals("NHV1_NHV2_2", postContingencyStatus.getPostContingencyViolationsWithUncertainties().iterator().next().getSubjectId());
         assertEquals(LimitViolationType.CURRENT, postContingencyStatus.getPostContingencyViolationsWithUncertainties().iterator().next().getLimitType());
         assertEquals(1, postContingencyStatus.getCurativeActionsApplication().size());
         WCAActionApplication actionApplication = postContingencyStatus.getCurativeActionsApplication().iterator().next();
@@ -328,13 +328,13 @@ public class WCAImplTest {
         assertEquals(2, report.getPreContingencyViolationsWithoutUncertainties().size());
         report.getPreContingencyViolationsWithoutUncertainties().forEach( violation -> 
         {
-            assertTrue(Arrays.asList("NHV1_NHV2_2","NHV1_NHV2_1").contains(violation.getSubject().getId()));
+            assertTrue(Arrays.asList("NHV1_NHV2_2","NHV1_NHV2_1").contains(violation.getSubjectId()));
             assertEquals(LimitViolationType.CURRENT, violation.getLimitType());
         });
         assertEquals(2, report.getPreContingencyViolationsWithUncertainties().size());
         report.getPreContingencyViolationsWithUncertainties().forEach( violation -> 
         {
-            assertTrue(Arrays.asList("NHV1_NHV2_2","NHV1_NHV2_1").contains(violation.getSubject().getId()));
+            assertTrue(Arrays.asList("NHV1_NHV2_2","NHV1_NHV2_1").contains(violation.getSubjectId()));
             assertEquals(LimitViolationType.CURRENT, violation.getLimitType());
         });
         assertEquals(2, report.getPreventiveActionsApplication().size());
@@ -343,18 +343,18 @@ public class WCAImplTest {
             assertTrue(Arrays.asList(action1.getId(),action2.getId()).contains(actionApplication.getActionId()));
             assertEquals(LimitViolationType.CURRENT, actionApplication.getViolation().getLimitType());
             if ( action1.getId().equals(actionApplication.getActionId()) ) {
-                assertEquals("NHV1_NHV2_2", actionApplication.getViolation().getSubject().getId());
+                assertEquals("NHV1_NHV2_2", actionApplication.getViolation().getSubjectId());
                 assertTrue(actionApplication.areViolationsRemoved());
                 assertTrue(actionApplication.isActionApplied());
             }
             if ( action2.getId().equals(actionApplication.getActionId()) ) {
-                assertEquals("NHV1_NHV2_1", actionApplication.getViolation().getSubject().getId());
+                assertEquals("NHV1_NHV2_1", actionApplication.getViolation().getSubjectId());
                 assertFalse(actionApplication.areViolationsRemoved());
                 assertFalse(actionApplication.isActionApplied());
             }
         });
         assertEquals(1, report.getPostPreventiveActionsViolationsWithUncertainties().size());
-        assertEquals("NHV1_NHV2_1", report.getPostPreventiveActionsViolationsWithUncertainties().iterator().next().getSubject().getId());
+        assertEquals("NHV1_NHV2_1", report.getPostPreventiveActionsViolationsWithUncertainties().iterator().next().getSubjectId());
         assertEquals(LimitViolationType.CURRENT, report.getPostPreventiveActionsViolationsWithUncertainties().iterator().next().getLimitType());
     }
 

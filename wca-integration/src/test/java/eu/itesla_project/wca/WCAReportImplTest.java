@@ -29,7 +29,6 @@ import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 
 import eu.itesla_project.iidm.network.Country;
-import eu.itesla_project.iidm.network.Identifiable;
 import eu.itesla_project.modules.rules.RuleAttributeSet;
 import eu.itesla_project.modules.rules.RuleId;
 import eu.itesla_project.modules.rules.SecurityRule;
@@ -58,12 +57,8 @@ public class WCAReportImplTest {
     public void setUp() throws Exception {
         fileSystem = Jimfs.newFileSystem(Configuration.unix());
 
-        Identifiable line1 = Mockito.mock(Identifiable.class);
-        Mockito.when(line1.getId()).thenReturn("line1");
-        line1Violation = new LimitViolation(line1, LimitViolationType.CURRENT, 1000f, "20'", 1, 1100f, Country.FR, 380f);
-        Identifiable line2 = Mockito.mock(Identifiable.class);
-        Mockito.when(line2.getId()).thenReturn("line2");
-        line2Violation = new LimitViolation(line2, LimitViolationType.CURRENT, 900f, "10'", 1, 950f, Country.FR, 380f);
+        line1Violation = new LimitViolation("line1", LimitViolationType.CURRENT, 1000f, "20'", 1, 1100f, Country.FR, 380f);
+        line2Violation = new LimitViolation("line2", LimitViolationType.CURRENT, 900f, "10'", 1, 950f, Country.FR, 380f);
     }
 
     @After

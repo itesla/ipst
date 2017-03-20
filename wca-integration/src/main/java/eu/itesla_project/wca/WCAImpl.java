@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -819,7 +818,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                         }
                                         String preventiveStateId = previousState + "_" + preventiveActionId;
                                         LOGGER.info("Network {}, preventive action {}: starting analysis for {} violation on equipment {}", 
-                                                    network.getId(), preventiveActionId, violationToBePrevented.getLimitType(), violationToBePrevented.getSubject().getId());
+                                                    network.getId(), preventiveActionId, violationToBePrevented.getLimitType(), violationToBePrevented.getSubjectId());
                                         possibleActionsToApply.put(preventiveActionId, preventiveAction);
                                         network.getStateManager().cloneState(previousState, preventiveStateId);
                                         network.getStateManager().setWorkingState(preventiveStateId);
@@ -833,7 +832,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                                 List<LimitViolation> preventiveStateLimitViolations = violationsFilter.apply(Security.checkLimits(network));
                                                 Optional<LimitViolation> notSolvedLimitViolation = preventiveStateLimitViolations
                                                         .stream()
-                                                        .filter(preventiveStateLimitViolation -> preventiveStateLimitViolation.getSubject().getId().equals(violationToBePrevented.getSubject().getId()))
+                                                        .filter(preventiveStateLimitViolation -> preventiveStateLimitViolation.getSubjectId().equals(violationToBePrevented.getSubjectId()))
                                                         .findAny();
                                                 Optional<LimitViolation> previouslySolvedLimitViolation = preventiveStateLimitViolations
                                                         .stream()
@@ -847,7 +846,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                                     String message = null;
                                                     if ( notSolvedLimitViolation.isPresent() ) {
                                                         message = "post preventive action state still contains " + violationToBePrevented.getLimitType() 
-                                                                + " violation on equiment " + violationToBePrevented.getSubject().getId();
+                                                                + " violation on equiment " + violationToBePrevented.getSubjectId();
                                                     } else if ( previouslySolvedLimitViolation.isPresent() ) {
                                                         message = "post preventive action state contains previously solved violations";
                                                     } else if ( newLimitViolation.isPresent() ) {
@@ -873,7 +872,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                                     wcaReport.addPreventiveActionApplication(actionApplication);
                                                 } else {
                                                     LOGGER.info("Network {}, preventive action {} solves {} violation on equiment {}: adding preventive action to list", 
-                                                                network.getId(), preventiveActionId, violationToBePrevented.getLimitType(), violationToBePrevented.getSubject().getId());
+                                                                network.getId(), preventiveActionId, violationToBePrevented.getLimitType(), violationToBePrevented.getSubjectId());
                                                     preventiveStateIdsForDomains.add(preventiveStateId);
                                                     preventiveActionIdsForDomains.add(preventiveActionId);
                                                     previousState = preventiveStateId;

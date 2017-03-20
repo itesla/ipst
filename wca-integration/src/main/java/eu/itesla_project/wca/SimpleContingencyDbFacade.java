@@ -52,7 +52,7 @@ public class SimpleContingencyDbFacade implements ContingencyDbFacade {
                     } else {
                         for (LimitViolation limitViolation : limitViolations) {
                             if (limitViolation.getLimitType() == LimitViolationType.CURRENT
-                                    && limitViolation.getSubject().getId().equals(constraint.getEquipment())) {
+                                    && limitViolation.getSubjectId().equals(constraint.getEquipment())) {
                                 return true;
                             }
                         }
@@ -107,14 +107,14 @@ public class SimpleContingencyDbFacade implements ContingencyDbFacade {
     public synchronized List<List<Action>> getPreventiveActions(LimitViolation limitViolation) {
         Objects.requireNonNull(limitViolation, "limit violation is null");
         LOGGER.info("Network {}: getting preventive actions for {} violation on equipment {}", 
-                    network.getId(), limitViolation.getLimitType(), limitViolation.getSubject().getId());
+                    network.getId(), limitViolation.getLimitType(), limitViolation.getSubjectId());
         List<List<Action>> preventiveActions = new ArrayList<>();
         if( !limitViolation.getLimitType().equals(LimitViolationType.CURRENT) ) { // just branch overload is handled, so far
             LOGGER.warn("Network {}: no preventive actions found for {} violation on equipment {}, as just branch overload is handled, so far", 
-                        network.getId(), limitViolation.getLimitType(), limitViolation.getSubject().getId());
+                        network.getId(), limitViolation.getLimitType(), limitViolation.getSubjectId());
             return preventiveActions;
         }
-        for ( ActionsContingenciesAssociation association : contingenciesActionsDbClient.getActionsCtgAssociationsByConstraint(limitViolation.getSubject().getId(), 
+        for ( ActionsContingenciesAssociation association : contingenciesActionsDbClient.getActionsCtgAssociationsByConstraint(limitViolation.getSubjectId(), 
                                                                                                                                ConstraintType.BRANCH_OVERLOAD) ) {
             if ( !association.getContingenciesId().isEmpty() ) { // getting only actions not associated to a contingency
                 continue;
@@ -136,13 +136,13 @@ public class SimpleContingencyDbFacade implements ContingencyDbFacade {
                         }
                     } else {
                         LOGGER.error("Network {}: action {} not found for {} violation on equipment {}", 
-                                     network.getId(), actionId , limitViolation.getLimitType(), limitViolation.getSubject().getId());
+                                     network.getId(), actionId , limitViolation.getLimitType(), limitViolation.getSubjectId());
                     }
                 }
             }
         }
         LOGGER.info("Network {}: found {} preventive actions for {} violation on equipment {}", 
-                    network.getId(), preventiveActions.size(), limitViolation.getLimitType(), limitViolation.getSubject().getId());
+                    network.getId(), preventiveActions.size(), limitViolation.getLimitType(), limitViolation.getSubjectId());
         return preventiveActions;
     }
 }

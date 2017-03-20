@@ -191,7 +191,7 @@ public class SimpleContingencyDbFacadeTest {
                 .setB2(0)
                 .add();
         // limit violation
-        LimitViolation mockLimitViolation = new LimitViolation(mockLine, LimitViolationType.CURRENT, Float.NaN, null, Float.NaN);
+        LimitViolation mockLimitViolation = new LimitViolation(mockLineId, LimitViolationType.CURRENT, Float.NaN, null, Float.NaN);
         List<LimitViolation> mockLimitViolations = Arrays.asList(mockLimitViolation);
         // contingency
         String mockContingencyId = "mockContingency";
@@ -268,7 +268,7 @@ public class SimpleContingencyDbFacadeTest {
                 .setB2(0)
                 .add();
         // limit violation
-        LimitViolation mockLimitViolation = new LimitViolation(mockLine, LimitViolationType.CURRENT, Float.NaN, null, Float.NaN);
+        LimitViolation mockLimitViolation = new LimitViolation(mockLineId, LimitViolationType.CURRENT, Float.NaN, null, Float.NaN);
         // action
         String mockActionId = "mockAction";
         Action mockAction = new ActionImpl(mockActionId, true, true, new SwitchClosingAction("mockVoltageLevel", "mockSwitch"));

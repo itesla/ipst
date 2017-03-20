@@ -220,7 +220,7 @@ public class WCAReportImpl implements WCAReport {
                     formatter.writeEmptyCell()
                              .writeEmptyCell()
                              .writeCell(violation.getLimitType().name())
-                             .writeCell(violation.getSubject().getId())
+                             .writeCell(violation.getSubjectId())
                              .writeCell(violation.getValue())
                              .writeCell(violation.getLimit())
                              .writeCell(violation.getCountry().name())
@@ -283,7 +283,7 @@ public class WCAReportImpl implements WCAReport {
                     }
                     formatter.writeCell(actionApplication.getActionId());
                     if ( actionApplication.getViolation() != null ) {
-                        formatter.writeCell(actionApplication.getViolation().getSubject().getId())
+                        formatter.writeCell(actionApplication.getViolation().getSubjectId())
                                  .writeCell(actionApplication.getViolation().getLimitType().name());
                     } else {
                         formatter.writeEmptyCell()

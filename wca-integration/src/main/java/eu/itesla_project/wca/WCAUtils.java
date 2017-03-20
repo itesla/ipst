@@ -275,7 +275,7 @@ public final class WCAUtils {
         Objects.requireNonNull(violation);
         Optional<LimitViolation> foundLimitViolation = violations
                 .stream()
-                .filter(limitViolation -> limitViolation.getSubject().getId().equals(violation.getSubject().getId()) 
+                .filter(limitViolation -> limitViolation.getSubjectId().equals(violation.getSubjectId()) 
                         && limitViolation.getLimitType().equals(violation.getLimitType()))
                 .findAny();
         return foundLimitViolation.isPresent();
