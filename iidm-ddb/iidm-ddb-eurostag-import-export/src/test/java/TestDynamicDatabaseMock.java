@@ -10,6 +10,7 @@ import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClient;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.IIDMDynamicDatabaseMockFactory;
+import eu.itesla_project.iidm.ddb.eurostag_imp_exp.IIDMDynamicDatabaseSVCMockFactory;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.iidm.network.test.EurostagTutorialExample1Factory;
 import eu.itesla_project.iidm.network.test.SvcTestCaseFactory;
@@ -111,7 +112,7 @@ public class TestDynamicDatabaseMock {
 
         Path workingDir = Files.createDirectory(fileSystem.getPath("/workingdir"));
 
-        DynamicDatabaseClient ddbClient = new IIDMDynamicDatabaseMockFactory().create(false);
+        DynamicDatabaseClient ddbClient = new IIDMDynamicDatabaseSVCMockFactory().create(false);
         ddbClient.dumpDtaFile(workingDir, DTA_FILENAME, network, new HashMap<String, Character>(), "mock", iidm2eurostag);
 
         File expectedDtaFile = new File(getClass().getResource("/sim_test_svc.dta").toURI());

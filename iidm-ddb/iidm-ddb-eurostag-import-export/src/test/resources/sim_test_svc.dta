@@ -19,9 +19,9 @@ DUMMEFD    1
 
 
 M21                0.       0.
-SVC2          C                        0        0                       250.
+SVC2              C                        0        0                       250.
 
-R SVC2
+R SVC2    
 INTERDUM   1
 
 
