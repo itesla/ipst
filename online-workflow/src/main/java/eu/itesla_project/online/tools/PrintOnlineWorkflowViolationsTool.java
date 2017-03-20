@@ -188,12 +188,12 @@ public class PrintOnlineWorkflowViolationsTool implements Tool {
             }
             violations
                     .stream()
-                    .sorted((o1, o2) -> o1.getSubject().getId().compareTo(o2.getSubject().getId()))
+                    .sorted((o1, o2) -> o1.getSubjectId().compareTo(o2.getSubjectId()))
                     .forEach(violation -> {
                         try {
                             formatter.writeCell(stateId);
                             formatter.writeCell(step.name());
-                            formatter.writeCell(violation.getSubject().getId());
+                            formatter.writeCell(violation.getSubjectId());
                             formatter.writeCell(violation.getLimitType().name());
                             formatter.writeCell(violation.getValue());
                             formatter.writeCell(violation.getLimit());
