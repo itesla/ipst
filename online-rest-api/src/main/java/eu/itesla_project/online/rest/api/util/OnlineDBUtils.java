@@ -298,13 +298,14 @@ public class OnlineDBUtils implements ProcessDBUtils {
             if (search_synt.isPresent())
                 synt = search_synt.get();
             else {
-                synt = new ViolationSynthesis(equipment, violationType, limit);
+                synt = new ViolationSynthesis(equipment, lv.getBaseVoltage(), violationType, limit, lv.getLimitName());
                 violationList.add(synt);
             }
 
             double perc = value / limit;
             TimeValue tv = new TimeValue(dateTime);
             tv.putIndicator(new Indicator(IndicatorEnum.RELATIVE, UnitEnum.PERCENTAGE, perc));
+            tv.putIndicator(new Indicator(IndicatorEnum.ABSOLUTE, value, violationType));
             synt.addTimeValue(tv);
         });
     }

@@ -19,13 +19,17 @@ import eu.itesla_project.security.LimitViolationType;
 public class ViolationSynthesis {
     private final String equipment;
     private final LimitViolationType type;
+    private final String limitName;
     private final float limit;
+    private final float voltageLevel;
     private final List<TimeValue> timeValues = new ArrayList<TimeValue>();
 
-    public ViolationSynthesis(String equipment, LimitViolationType type, float limit ) {
+    public ViolationSynthesis(String equipment, float voltageLevel, LimitViolationType type, float limit, String limitName ) {
         this.equipment = Objects.requireNonNull(equipment);
         this.type = Objects.requireNonNull(type);
         this.limit = limit;
+        this.voltageLevel=voltageLevel;
+        this.limitName=limitName;
     }
 
     @Override
@@ -65,5 +69,13 @@ public class ViolationSynthesis {
         Objects.requireNonNull(val);
         timeValues.add(val);
     }
+
+	public String getLimitName() {
+		return limitName;
+	}
+
+	public float getVoltageLevel() {
+		return voltageLevel;
+	}
     
 }

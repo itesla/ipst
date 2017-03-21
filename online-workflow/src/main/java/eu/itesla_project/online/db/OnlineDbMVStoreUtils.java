@@ -113,6 +113,8 @@ public class OnlineDbMVStoreUtils {
 		limitViolation.put("Value", Float.toString(violation.getValue()));
 		limitViolation.put("Country", violation.getCountry().name());
 		limitViolation.put("BaseVoltage", Float.toString(violation.getBaseVoltage()));
+		if(violation.getLimitName() != null)
+            limitViolation.put("LimitName", violation.getLimitName());
 		return JSONSerializer.toJSON(limitViolation).toString();
 	}
 	
@@ -134,7 +136,7 @@ public class OnlineDbMVStoreUtils {
 	    return new LimitViolation(limitViolation.get("Subject"), 
 								  LimitViolationType.valueOf(limitViolation.get("LimitType")), 
 								  Float.parseFloat(limitViolation.get("Limit")),
-								  null,
+								  limitViolation.get("LimitName"),
 								  limitReduction,
 								  Float.parseFloat(limitViolation.get("Value")),
 								  country,
