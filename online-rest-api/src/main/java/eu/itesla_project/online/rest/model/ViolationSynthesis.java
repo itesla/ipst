@@ -28,8 +28,8 @@ public class ViolationSynthesis {
         this.equipment = Objects.requireNonNull(equipment);
         this.type = Objects.requireNonNull(type);
         this.limit = limit;
-        this.voltageLevel=voltageLevel;
-        this.limitName=limitName;
+        this.voltageLevel = voltageLevel;
+        this.limitName = limitName;
     }
 
     @Override
