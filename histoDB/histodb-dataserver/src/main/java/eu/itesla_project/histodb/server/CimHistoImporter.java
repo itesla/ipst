@@ -20,11 +20,13 @@ import eu.itesla_project.modules.histo.IIDM2DB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.lang.RuntimeException;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created with IntelliJ IDEA.
@@ -40,27 +42,21 @@ public class CimHistoImporter {
     private ITeslaDatasource datasource;
 
     private static final ComputationManager computationManager;
-
-    private static final Importer importerCim;
-    private static final Importer importerXml;
     private static final List<Importer> importers;
 
     static {
         try {
-            importers=new ArrayList<>();
             computationManager = new LocalComputationManager();
-            importerCim = Importers.getImporter("CIM1", computationManager);
-            if (importerCim!=null) {
-                importers.add(importerCim);
-            } else {
-                log.warn("CIM importer implementation not found");
-            }
-            importerXml = Importers.getImporter("XIIDM", computationManager);
-            if (importerXml!=null) {
-                importers.add(importerXml);
-            } else {
-                log.warn("iidm-xml importer implementation not found");
-            }
+            importers = Stream.of("CIM1", "XIIDM", "UCTE")
+                    .map(importerID -> {
+                        Importer importer = Importers.getImporter(importerID, computationManager);
+                        if (importer == null) {
+                            log.warn(importerID + " importer implementation not found");
+                        }
+                        return importer;
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

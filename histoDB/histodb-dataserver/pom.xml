@@ -153,10 +153,15 @@
         </dependency>
 
         <dependency>
+            <groupId>eu.itesla_project</groupId>
+            <artifactId>ucte-import</artifactId>
+            <version>${ipstentsoe.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
         </dependency>
-
 
         <dependency>
             <groupId>be.pepite.dataserver</groupId>
