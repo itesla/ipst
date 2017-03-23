@@ -7,6 +7,7 @@
  */
 package eu.itesla_project.wca;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,11 +25,11 @@ class WCAClusterImpl implements WCACluster {
 
     private final WCAClusterNum num;
 
-    private final List<WCAClusterOrigin> origins;
+    private final EnumSet<WCAClusterOrigin> origins;
 
     private final List<String> causes;
 
-    WCAClusterImpl(Contingency contingency, WCAClusterNum num, List<WCAClusterOrigin> origins, List<String> causes) {
+    WCAClusterImpl(Contingency contingency, WCAClusterNum num, EnumSet<WCAClusterOrigin> origins, List<String> causes) {
         this.contingency = Objects.requireNonNull(contingency);
         this.num =  Objects.requireNonNull(num);
         this.origins = Objects.requireNonNull(origins);

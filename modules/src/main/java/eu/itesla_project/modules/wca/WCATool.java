@@ -291,7 +291,7 @@ public class WCATool implements Tool {
                     if ( line.hasOption("reports-folder") ) {
                         Path reportsFolder = Paths.get(line.getOptionValue("reports-folder"));
                         if ( !wca.getReport().exportCsv(reportsFolder) ) {
-                            System.out.println("Could not store reports for nbetwork " + network.getId() + " in folder " + reportsFolder);
+                            System.out.println("Could not store reports for network " + network.getId() + " in folder " + reportsFolder);
                         }
                     }
                     System.out.println(table.render());
@@ -338,7 +338,7 @@ public class WCATool implements Tool {
                             if ( line.hasOption("reports-folder") ) {
                                 Path reportsFolder = Paths.get(line.getOptionValue("reports-folder") + File.separator + network.getId());
                                 if ( !wca.getReport().exportCsv(reportsFolder) ) {
-                                    System.out.println("Could not store reports for nbetwork " + network.getId() + " in folder " + reportsFolder);
+                                    System.out.println("Could not store reports for network " + network.getId() + " in folder " + reportsFolder);
                                 }
                             }
                         } catch (Exception e) {

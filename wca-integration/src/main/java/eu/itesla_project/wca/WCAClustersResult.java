@@ -18,7 +18,7 @@ import eu.itesla_project.modules.wca.WCAClusterNum;
  */
 public class WCAClustersResult {
     
-    private WCAClusterNum CLUSTER_NUM_DEFAULT = WCAClusterNum.UNDEFINED;
+    private static final WCAClusterNum CLUSTER_NUM_DEFAULT = WCAClusterNum.UNDEFINED;
     private static final boolean FOUND_VIOLATIONS_DEFAULT = false;
     private static final int CURATIVE_ACTION_INDEX_DEFAULT = 0;
     private static final Map<String, Float> INJECTIONS_DEFAULT = Collections.emptyMap();
@@ -29,10 +29,7 @@ public class WCAClustersResult {
     private final Map<String, Float> injections;
 
     public WCAClustersResult() {
-        this.clusterNum = CLUSTER_NUM_DEFAULT;
-        this.foundViolations = FOUND_VIOLATIONS_DEFAULT;
-        this.curativeActionIndex = CURATIVE_ACTION_INDEX_DEFAULT;
-        this.injections = INJECTIONS_DEFAULT;
+        this(CLUSTER_NUM_DEFAULT, FOUND_VIOLATIONS_DEFAULT, CURATIVE_ACTION_INDEX_DEFAULT, INJECTIONS_DEFAULT);
     }
 
     public WCAClustersResult(WCAClusterNum clusterNum, boolean foundViolations, 

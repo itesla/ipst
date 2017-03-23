@@ -59,7 +59,6 @@ public class WCAMock implements WCA {
 
     @Override
     public WCAReport getReport() {
-        // TODO Auto-generated method stub
         return null;
     }
 }

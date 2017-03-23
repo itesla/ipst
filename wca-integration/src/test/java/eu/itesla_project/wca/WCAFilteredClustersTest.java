@@ -9,9 +9,8 @@ package eu.itesla_project.wca;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 
 import org.junit.Test;
 
@@ -30,54 +29,54 @@ public class WCAFilteredClustersTest {
         checkValues(filteredClusters, 
                     contingencyId, 
                     WCAClusterNum.FOUR, 
-                    Arrays.asList(WCAClusterNum.ONE, WCAClusterNum.TWO, WCAClusterNum.THREE, WCAClusterNum.FOUR), 
-                    Collections.emptyList());
+                    EnumSet.of(WCAClusterNum.ONE, WCAClusterNum.TWO, WCAClusterNum.THREE, WCAClusterNum.FOUR), 
+                    EnumSet.noneOf(WCAClusterOrigin.class));
 
-        filteredClusters.removeClusters(contingencyId, new WCAClusterNum[]{WCAClusterNum.ONE,WCAClusterNum.FOUR}, WCAClusterOrigin.LF_BASIC_VIOLATION);
+        filteredClusters.removeClusters(contingencyId, EnumSet.of(WCAClusterNum.ONE,WCAClusterNum.FOUR), WCAClusterOrigin.LF_BASIC_VIOLATION);
         checkValues(filteredClusters, 
                     contingencyId, 
                     WCAClusterNum.THREE, 
-                    Arrays.asList(WCAClusterNum.TWO, WCAClusterNum.THREE), 
-                    Arrays.asList(WCAClusterOrigin.LF_BASIC_VIOLATION));
+                    EnumSet.of(WCAClusterNum.TWO, WCAClusterNum.THREE), 
+                    EnumSet.of(WCAClusterOrigin.LF_BASIC_VIOLATION));
 
-        filteredClusters.addClusters(contingencyId, new WCAClusterNum[]{WCAClusterNum.FOUR}, WCAClusterOrigin.CLUSTERS_ANALYSIS);
+        filteredClusters.addClusters(contingencyId, EnumSet.of(WCAClusterNum.FOUR), WCAClusterOrigin.CLUSTERS_ANALYSIS);
         checkValues(filteredClusters, 
                     contingencyId, 
                     WCAClusterNum.FOUR, 
-                    Arrays.asList(WCAClusterNum.TWO, WCAClusterNum.THREE, WCAClusterNum.FOUR), 
-                    Arrays.asList(WCAClusterOrigin.LF_BASIC_VIOLATION, WCAClusterOrigin.CLUSTERS_ANALYSIS));
+                    EnumSet.of(WCAClusterNum.TWO, WCAClusterNum.THREE, WCAClusterNum.FOUR), 
+                    EnumSet.of(WCAClusterOrigin.LF_BASIC_VIOLATION, WCAClusterOrigin.CLUSTERS_ANALYSIS));
 
-        filteredClusters.removeClusters(contingencyId, new WCAClusterNum[]{WCAClusterNum.TWO,WCAClusterNum.THREE,WCAClusterNum.FOUR}, WCAClusterOrigin.LF_DIVERGENCE);
+        filteredClusters.removeClusters(contingencyId, EnumSet.of(WCAClusterNum.TWO,WCAClusterNum.THREE,WCAClusterNum.FOUR), WCAClusterOrigin.LF_DIVERGENCE);
         checkValues(filteredClusters, 
                     contingencyId, 
                     WCAClusterNum.UNDEFINED, 
-                    Collections.emptyList(), 
-                    Arrays.asList(WCAClusterOrigin.LF_BASIC_VIOLATION, WCAClusterOrigin.CLUSTERS_ANALYSIS, WCAClusterOrigin.LF_DIVERGENCE));
+                    EnumSet.noneOf(WCAClusterNum.class), 
+                    EnumSet.of(WCAClusterOrigin.LF_BASIC_VIOLATION, WCAClusterOrigin.CLUSTERS_ANALYSIS, WCAClusterOrigin.LF_DIVERGENCE));
         
-        filteredClusters.addClusters(contingencyId, new WCAClusterNum[]{WCAClusterNum.ONE, WCAClusterNum.TWO, WCAClusterNum.THREE, WCAClusterNum.FOUR}, WCAClusterOrigin.LF_RULE_VIOLATION);
+        filteredClusters.addClusters(contingencyId, EnumSet.of(WCAClusterNum.ONE, WCAClusterNum.TWO, WCAClusterNum.THREE, WCAClusterNum.FOUR), WCAClusterOrigin.LF_RULE_VIOLATION);
         checkValues(filteredClusters, 
                     contingencyId, 
                     WCAClusterNum.FOUR, 
-                    Arrays.asList(WCAClusterNum.ONE, WCAClusterNum.TWO, WCAClusterNum.THREE, WCAClusterNum.FOUR), 
-                    Arrays.asList(WCAClusterOrigin.LF_BASIC_VIOLATION, WCAClusterOrigin.CLUSTERS_ANALYSIS, WCAClusterOrigin.LF_DIVERGENCE, WCAClusterOrigin.LF_RULE_VIOLATION));
+                    EnumSet.of(WCAClusterNum.ONE, WCAClusterNum.TWO, WCAClusterNum.THREE, WCAClusterNum.FOUR), 
+                    EnumSet.of(WCAClusterOrigin.LF_BASIC_VIOLATION, WCAClusterOrigin.CLUSTERS_ANALYSIS, WCAClusterOrigin.LF_DIVERGENCE, WCAClusterOrigin.LF_RULE_VIOLATION));
         
         filteredClusters.removeAllButCluster(contingencyId, WCAClusterNum.TWO, WCAClusterOrigin.LF_DIVERGENCE);
         checkValues(filteredClusters, 
                     contingencyId, 
                     WCAClusterNum.TWO, 
-                    Arrays.asList(WCAClusterNum.TWO), 
-                    Arrays.asList(WCAClusterOrigin.LF_BASIC_VIOLATION, WCAClusterOrigin.CLUSTERS_ANALYSIS, WCAClusterOrigin.LF_DIVERGENCE, WCAClusterOrigin.LF_RULE_VIOLATION));
+                    EnumSet.of(WCAClusterNum.TWO), 
+                    EnumSet.of(WCAClusterOrigin.LF_BASIC_VIOLATION, WCAClusterOrigin.CLUSTERS_ANALYSIS, WCAClusterOrigin.LF_DIVERGENCE, WCAClusterOrigin.LF_RULE_VIOLATION));
         
         filteredClusters.removeAllButCluster(contingencyId, WCAClusterNum.ONE, WCAClusterOrigin.CLUSTERS_ANALYSIS);
         checkValues(filteredClusters, 
                     contingencyId, 
                     WCAClusterNum.TWO, 
-                    Arrays.asList(WCAClusterNum.TWO), 
-                    Arrays.asList(WCAClusterOrigin.LF_BASIC_VIOLATION, WCAClusterOrigin.CLUSTERS_ANALYSIS, WCAClusterOrigin.LF_DIVERGENCE, WCAClusterOrigin.LF_RULE_VIOLATION));
+                    EnumSet.of(WCAClusterNum.TWO), 
+                    EnumSet.of(WCAClusterOrigin.LF_BASIC_VIOLATION, WCAClusterOrigin.CLUSTERS_ANALYSIS, WCAClusterOrigin.LF_DIVERGENCE, WCAClusterOrigin.LF_RULE_VIOLATION));
     }
 
     private void checkValues(WCAFilteredClusters filteredClusters, String contingencyId, WCAClusterNum expectedClusterNum,
-                             Collection<WCAClusterNum> expectedClusterNums, Collection<WCAClusterOrigin> expectedFlags) {
+                             EnumSet<WCAClusterNum> expectedClusterNums, EnumSet<WCAClusterOrigin> expectedFlags) {
 
         assertEquals(expectedClusterNum, filteredClusters.getCluster(contingencyId));
 
@@ -85,11 +84,9 @@ public class WCAFilteredClustersTest {
             assertTrue(filteredClusters.hasCluster(contingencyId, expectedClusterNum));
         }
 
-        assertEquals(expectedClusterNums.size(), filteredClusters.getClusters(contingencyId).size());
-        expectedClusterNums.forEach(clusterNum -> assertTrue(filteredClusters.getClusters(contingencyId).contains(clusterNum)));
+        assertEquals(expectedClusterNums, filteredClusters.getClusters(contingencyId));
 
-        assertEquals(expectedFlags.size(), filteredClusters.getFlags(contingencyId).size());
-        expectedFlags.forEach(flag -> assertTrue(filteredClusters.getFlags(contingencyId).contains(flag)));
+        assertEquals(expectedFlags, filteredClusters.getFlags(contingencyId));
     }
 
 }

@@ -196,7 +196,7 @@ public class WCAImplTest {
                .thenReturn(CompletableFuture.completedFuture(clustersResult));
 
         WCAConfig config = new WCAConfig(Paths.get("/xpress-home"), 1f, true, false, EnumSet.noneOf(WCARestrictingThresholdLevel.class), 
-                                         0f, true, true, WCAPreventiveActionsFilter.LF, WCAPreventiveActionsOptimizer.NONE, false, 
+                                         0f, true, false, WCAPreventiveActionsFilter.LF, WCAPreventiveActionsOptimizer.NONE, false, 
                                          WCACurativeActionsOptimizer.CLUSTERS, 0f, EnumSet.noneOf(Country.class), true, true, false);
         WCAParameters parameters = new WCAParameters(histoInterval, null, null, 1);
         WCA wca = new WCAImpl(network, computationManager, histoDbClient, rulesDbClient, uncertaintiesAnalyserFactory, 
@@ -255,7 +255,7 @@ public class WCAImplTest {
                .thenReturn(loadFlow);
 
         WCAConfig config = new WCAConfig(Paths.get("/xpress-home"), 1f, true, false, EnumSet.noneOf(WCARestrictingThresholdLevel.class), 
-                                         0f, true, true, WCAPreventiveActionsFilter.LF, WCAPreventiveActionsOptimizer.NONE, false, 
+                                         0f, true, false, WCAPreventiveActionsFilter.LF, WCAPreventiveActionsOptimizer.NONE, false, 
                                          WCACurativeActionsOptimizer.NONE, 0f, EnumSet.noneOf(Country.class), true, true, false);
         WCAParameters parameters = new WCAParameters(histoInterval, null, null, 1);
         WCA wca = new WCAImpl(network, computationManager, histoDbClient, rulesDbClient, uncertaintiesAnalyserFactory, 
@@ -312,7 +312,7 @@ public class WCAImplTest {
                .thenReturn(CompletableFuture.completedFuture(domainsResult));
 
         WCAConfig config = new WCAConfig(Paths.get("/xpress-home"), 1f, true, false, EnumSet.noneOf(WCARestrictingThresholdLevel.class), 
-                                         0f, true, true, WCAPreventiveActionsFilter.DOMAINS, WCAPreventiveActionsOptimizer.DOMAINS, true, 
+                                         0f, true, false, WCAPreventiveActionsFilter.DOMAINS, WCAPreventiveActionsOptimizer.DOMAINS, true, 
                                          WCACurativeActionsOptimizer.NONE, 0f, EnumSet.noneOf(Country.class), true, true, true);
         WCAParameters parameters = new WCAParameters(histoInterval, null, null, 1);
         WCA wca = new WCAImpl(network, computationManager, histoDbClient, rulesDbClient, uncertaintiesAnalyserFactory, 
@@ -387,7 +387,7 @@ public class WCAImplTest {
                .thenReturn(loadFlow);
 
         WCAConfig config = new WCAConfig(Paths.get("/xpress-home"), 1f, true, false, EnumSet.noneOf(WCARestrictingThresholdLevel.class), 
-                                         0f, true, true, WCAPreventiveActionsFilter.LF, WCAPreventiveActionsOptimizer.NONE, false, 
+                                         0f, true, false, WCAPreventiveActionsFilter.LF, WCAPreventiveActionsOptimizer.NONE, false, 
                                          WCACurativeActionsOptimizer.NONE, 0f, EnumSet.noneOf(Country.class), true, true, false);
         WCAParameters parameters = new WCAParameters(histoInterval, null, null, 1);
         WCA wca = new WCAImpl(network, computationManager, histoDbClient, rulesDbClient, uncertaintiesAnalyserFactory, 
@@ -431,7 +431,7 @@ public class WCAImplTest {
                .thenReturn(CompletableFuture.completedFuture(domainsResult));
 
         WCAConfig config = new WCAConfig(Paths.get("/xpress-home"), 1f, true, false, EnumSet.noneOf(WCARestrictingThresholdLevel.class), 
-                                         0f, true, true, WCAPreventiveActionsFilter.LF, WCAPreventiveActionsOptimizer.NONE, false, 
+                                         0f, true, false, WCAPreventiveActionsFilter.LF, WCAPreventiveActionsOptimizer.NONE, false, 
                                          WCACurativeActionsOptimizer.NONE, 0f, EnumSet.noneOf(Country.class), true, true, false);
         WCAParameters parameters = new WCAParameters(histoInterval, workflowId, Collections.singleton(SecurityIndexType.TSO_OVERLOAD), 1);
         WCA wca = new WCAImpl(network, computationManager, histoDbClient, rulesDbClient, uncertaintiesAnalyserFactory, 

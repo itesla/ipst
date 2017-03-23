@@ -49,15 +49,16 @@ public class WCASecurityRulesWriter implements AmplConstants, WCAConstants {
 
     private final boolean debug;
     
-    private final boolean deactivateFiltering;
+    private final boolean activateFiltering;
 
-    public WCASecurityRulesWriter(Network network, List<SecurityRuleExpression> rules, DataSource dataSource, StringToIntMapper<AmplSubset> mapper, boolean debug, boolean deactivateFiltering) {
+    public WCASecurityRulesWriter(Network network, List<SecurityRuleExpression> rules, DataSource dataSource, 
+                                  StringToIntMapper<AmplSubset> mapper, boolean debug, boolean activateFiltering) {
         this.dataSource = Objects.requireNonNull(dataSource);
         this.network = Objects.requireNonNull(network);
         this.rules = Objects.requireNonNull(rules);
         this.mapper = Objects.requireNonNull(mapper);
         this.debug = debug;
-        this.deactivateFiltering = deactivateFiltering;
+        this.activateFiltering = activateFiltering;
     }
 
     private static class WCAEntity {
@@ -177,7 +178,7 @@ public class WCASecurityRulesWriter implements AmplConstants, WCAConstants {
                 final int attributeSetNum = attributeSet.ordinal();
 
                 if (rule.getStatus() == SecurityRuleStatus.ALWAYS_UNSECURE) {
-                    if ( !deactivateFiltering )
+                    if ( activateFiltering )
                         throw new RuntimeException("Always unsecure rule " + ruleId);
                     else
                         continue;

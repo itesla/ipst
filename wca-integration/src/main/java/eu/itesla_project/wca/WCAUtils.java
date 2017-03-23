@@ -165,26 +165,7 @@ public final class WCAUtils {
         int curativeActionIndex = 0;
         Matcher matcher = parseOutFile(clustersPrefix, CLUSTER_INDEX_PATTERN, workingDir);
         if (matcher != null) {
-            int clusterValue = Integer.parseInt(matcher.group(2));
-            switch (clusterValue) {
-            case 1:
-                clusterNum = WCAClusterNum.ONE;
-                break;
-            case 2:
-                clusterNum = WCAClusterNum.TWO;
-                break;
-            case 3:
-                clusterNum = WCAClusterNum.THREE;
-                break;
-            case 4:
-                clusterNum = WCAClusterNum.FOUR;
-                break;
-            case -1:
-                clusterNum = WCAClusterNum.UNDEFINED;
-                break;
-            default:
-                throw new AssertionError("Undefined cluster value " + clusterValue);
-            }
+            clusterNum = WCAClusterNum.fromInt(Integer.parseInt(matcher.group(2)));
             curativeActionIndex = Integer.parseInt(matcher.group(3));
         }
         return new WCAClustersResult(clusterNum, flowsWithViolations(flowsFile, workingDir), curativeActionIndex, 

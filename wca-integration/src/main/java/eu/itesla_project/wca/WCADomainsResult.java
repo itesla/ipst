@@ -27,10 +27,7 @@ public class WCADomainsResult {
     private final Map<String, Float> injections;
 
     public WCADomainsResult() {
-        this.foundBasicViolations = FOUND_BASIC_VIOLATIONS_DEFAULT;
-        this.rulesViolated = RULES_VIOLATED_DEFAULT;
-        this.preventiveActionIndex = PREVENTIVE_ACTION_INDEX_DEFAULT;
-        this.injections = INJECTIONS_DEFAULT;
+        this(FOUND_BASIC_VIOLATIONS_DEFAULT, RULES_VIOLATED_DEFAULT, PREVENTIVE_ACTION_INDEX_DEFAULT, INJECTIONS_DEFAULT);
     }
     
     public WCADomainsResult(boolean foundBasicViolations, boolean rulesViolated, 

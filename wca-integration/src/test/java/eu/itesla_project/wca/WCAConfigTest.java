@@ -57,7 +57,7 @@ public class WCAConfigTest {
         
         checkValues(config, xpressHome, WCAConfig.DEFAULT_REDUCED_VARIABLE_RATIO, WCAConfig.DEFAULT_DEBUG, WCAConfig.DEFAULT_EXPORT_STATE, 
                     WCAConfig.DEFAULT_RESTRICTING_THRESHOLD_LEVELS, WCAConfig.DEFAULT_MARGIN, WCAConfig.DEFAULT_IGNORE_VOLTAGE_CONSTRAINTS, 
-                    WCAConfig.DEFAULT_DEACTIVATE_FILTERING, WCAConfig.DEFAULT_PREVENTIVE_ACTIONS_FILTER, WCAConfig.DEFAULT_PREVENTIVE_ACTIONS_OPTIMIZER, 
+                    WCAConfig.DEFAULT_ACTIVATE_FILTERING, WCAConfig.DEFAULT_PREVENTIVE_ACTIONS_FILTER, WCAConfig.DEFAULT_PREVENTIVE_ACTIONS_OPTIMIZER, 
                     WCAConfig.DEFAULT_APPLY_PREVENTIVE_ACTIONS, WCAConfig.DEFAULT_CURATIVE_ACTIONS_OPTIMIZER, WCAConfig.DEFAULT_VOLTAGE_LEVEL_CONSTRAINTS_FILTER, 
                     WCAConfig.DEFAULT_COUNTRY_CONSTRAINTS_FILTER, WCAConfig.DEFAULT_FILTER_PREVENTIVE_ACTIONS, WCAConfig.DEFAULT_FILTER_CURATIVE_ACTIONS, 
                     WCAConfig.DEFAULT_LOOOSEN_CONSTRAINTS);
@@ -71,7 +71,7 @@ public class WCAConfigTest {
         float margin = 1;
         Set<WCARestrictingThresholdLevel> restrictingThresholdLevels = EnumSet.of(WCARestrictingThresholdLevel.NO_FOREIGN_THRESHOLDS);
         boolean ignoreVoltageConstraints = true;
-        boolean deactivateFiltering = false;
+        boolean activateFiltering = true;
         WCAPreventiveActionsFilter preventiveActionsFilter = WCAPreventiveActionsFilter.LF;
         WCAPreventiveActionsOptimizer preventiveActionsOptimizer = WCAPreventiveActionsOptimizer.LF_HEURISTIC;
         boolean applyPreventiveActions = true;
@@ -88,7 +88,7 @@ public class WCAConfigTest {
         moduleConfig.setStringListProperty("restrictingThresholdLevels", Arrays.asList(WCARestrictingThresholdLevel.NO_FOREIGN_THRESHOLDS.name()));
         moduleConfig.setStringListProperty("margin", Arrays.asList(Float.toString(margin)));
         moduleConfig.setStringListProperty("ignoreVoltageConstraints", Arrays.asList(Boolean.toString(ignoreVoltageConstraints)));
-        moduleConfig.setStringListProperty("deactivateFiltering", Arrays.asList(Boolean.toString(deactivateFiltering)));
+        moduleConfig.setStringListProperty("activateFiltering", Arrays.asList(Boolean.toString(activateFiltering)));
         moduleConfig.setStringListProperty("preventiveActionsFilter", Arrays.asList(preventiveActionsFilter.name()));
         moduleConfig.setStringListProperty("preventiveActionsOptimizer", Arrays.asList(preventiveActionsOptimizer.name()));
         moduleConfig.setStringListProperty("applyPreventiveActions", Arrays.asList(Boolean.toString(applyPreventiveActions)));
@@ -102,14 +102,14 @@ public class WCAConfigTest {
         WCAConfig parameters = WCAConfig.load(platformConfig);
 
         checkValues(parameters, xpressHome, reducedVariableRatio, debug, exportStates, restrictingThresholdLevels, margin, 
-                    ignoreVoltageConstraints, deactivateFiltering, preventiveActionsFilter, preventiveActionsOptimizer, 
+                    ignoreVoltageConstraints, activateFiltering, preventiveActionsFilter, preventiveActionsOptimizer, 
                     applyPreventiveActions, curativeActionsOptimizer, voltageLevelConstraintFilter, countryConstraintFilter, 
                     filterPreventiveActions, filterCurativeActions, loosenConstraints);
     }
 
     private void checkValues(WCAConfig config, Path xpressHome, float reducedVariableRatio, boolean debug, boolean exportStates,
                              Set<WCARestrictingThresholdLevel> restrictingThresholdLevels, float margin, boolean ignoreVoltageConstraints, 
-                             boolean deactivateFiltering, WCAPreventiveActionsFilter preventiveActionsFilter, 
+                             boolean activateFiltering, WCAPreventiveActionsFilter preventiveActionsFilter, 
                              WCAPreventiveActionsOptimizer preventiveActionsOptimizer, boolean applyPreventiveActions, 
                              WCACurativeActionsOptimizer curativeActionsOptimizer, float voltageLevelConstraintFilter, 
                              Set<Country> countryConstraintFilter, boolean filterPreventiveActions, boolean filterCurativeActions,
@@ -121,7 +121,7 @@ public class WCAConfigTest {
         assertEquals(restrictingThresholdLevels, config.getRestrictingThresholdLevels());
         assertEquals(margin, config.getMargin(), 0);
         assertEquals(ignoreVoltageConstraints, config.ignoreVoltageConstraints());
-        assertEquals(deactivateFiltering, config.deactivateFiltering());
+        assertEquals(activateFiltering, config.activateFiltering());
         assertEquals(preventiveActionsFilter, config.getPreventiveActionsFilter());
         assertEquals(preventiveActionsOptimizer, config.getPreventiveActionsOptimizer());
         assertEquals(applyPreventiveActions, config.applyPreventiveActions());

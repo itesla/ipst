@@ -28,7 +28,7 @@ public class WCAConfig {
     public static final Set<WCARestrictingThresholdLevel> DEFAULT_RESTRICTING_THRESHOLD_LEVELS = EnumSet.noneOf(WCARestrictingThresholdLevel.class);
     public static final float DEFAULT_MARGIN = 0f;
     public static final boolean DEFAULT_IGNORE_VOLTAGE_CONSTRAINTS = false;
-    public static final boolean DEFAULT_DEACTIVATE_FILTERING = true;
+    public static final boolean DEFAULT_ACTIVATE_FILTERING = false;
     public static final WCAPreventiveActionsFilter DEFAULT_PREVENTIVE_ACTIONS_FILTER = WCAPreventiveActionsFilter.LF;
     public static final WCAPreventiveActionsOptimizer DEFAULT_PREVENTIVE_ACTIONS_OPTIMIZER = WCAPreventiveActionsOptimizer.DOMAINS;
     public static final boolean DEFAULT_APPLY_PREVENTIVE_ACTIONS = false;
@@ -46,7 +46,7 @@ public class WCAConfig {
     private final Set<WCARestrictingThresholdLevel> restrictingThresholdLevels;
     private final float margin;
     private final boolean ignoreVoltageConstraints;
-    private final boolean deactivateFiltering;
+    private final boolean activateFiltering;
     private final WCAPreventiveActionsFilter preventiveActionsFilter;
     private final WCAPreventiveActionsOptimizer preventiveActionsOptimizer;
     private final boolean applyPreventiveActions;
@@ -70,7 +70,7 @@ public class WCAConfig {
         Set<WCARestrictingThresholdLevel> restrictingThresholdLevels = config.getEnumSetProperty("restrictingThresholdLevels", WCARestrictingThresholdLevel.class, DEFAULT_RESTRICTING_THRESHOLD_LEVELS);
         float margin = Float.parseFloat(config.getStringProperty("margin", Float.toString(DEFAULT_MARGIN)));
         boolean ignoreVoltageConstraints = config.getBooleanProperty("ignoreVoltageConstraints", DEFAULT_IGNORE_VOLTAGE_CONSTRAINTS);
-        boolean deactivateFiltering = config.getBooleanProperty("deactivateFiltering", DEFAULT_DEACTIVATE_FILTERING);
+        boolean activateFiltering = config.getBooleanProperty("activateFiltering", DEFAULT_ACTIVATE_FILTERING);
         WCAPreventiveActionsFilter preventiveActionsFilter = config.getEnumProperty("preventiveActionsFilter", WCAPreventiveActionsFilter.class, DEFAULT_PREVENTIVE_ACTIONS_FILTER);
         WCAPreventiveActionsOptimizer preventiveActionsOptimizer = config.getEnumProperty("preventiveActionsOptimizer", WCAPreventiveActionsOptimizer.class, DEFAULT_PREVENTIVE_ACTIONS_OPTIMIZER);
         boolean applyPreventiveActions = config.getBooleanProperty("applyPreventiveActions", DEFAULT_APPLY_PREVENTIVE_ACTIONS);
@@ -81,12 +81,12 @@ public class WCAConfig {
         boolean filterCurativeActions = config.getBooleanProperty("filterCurativeActions", DEFAULT_FILTER_CURATIVE_ACTIONS);
         boolean loosenConstraints = config.getBooleanProperty("loosenConstraints", DEFAULT_LOOOSEN_CONSTRAINTS);
         return new WCAConfig(xpressHome, reducedVariableRatio, debug, exportStates, restrictingThresholdLevels, margin, ignoreVoltageConstraints, 
-                             deactivateFiltering, preventiveActionsFilter, preventiveActionsOptimizer, applyPreventiveActions, curativeActionsOptimizer,
+                             activateFiltering, preventiveActionsFilter, preventiveActionsOptimizer, applyPreventiveActions, curativeActionsOptimizer,
                              voltageLevelConstraintFilter, countryConstraintFilter, filterPreventiveActions, filterCurativeActions, loosenConstraints);
     }
 
     public WCAConfig(Path xpressHome, float reducedVariableRatio, boolean debug, boolean exportStates, Set<WCARestrictingThresholdLevel> restrictingThresholdLevels, 
-                     float margin, boolean ignoreVoltageConstraints, boolean deactivateFiltering, WCAPreventiveActionsFilter preventiveActionsFilter, 
+                     float margin, boolean ignoreVoltageConstraints, boolean activateFiltering, WCAPreventiveActionsFilter preventiveActionsFilter, 
                      WCAPreventiveActionsOptimizer preventiveActionsOptimizer, boolean applyPreventiveActions, WCACurativeActionsOptimizer curativeActionsOptimizer, 
                      float voltageLevelConstraintFilter, Set<Country> countryConstraintFilter, boolean filterPreventiveActions, boolean filterCurativeActions,
                      boolean loosenConstraints) {
@@ -97,7 +97,7 @@ public class WCAConfig {
         this.margin = margin;
         this.restrictingThresholdLevels = Objects.requireNonNull(restrictingThresholdLevels, "invalid restrictingThresholdLevels");
         this.ignoreVoltageConstraints = ignoreVoltageConstraints;
-        this.deactivateFiltering = deactivateFiltering;
+        this.activateFiltering = activateFiltering;
         this.preventiveActionsFilter = Objects.requireNonNull(preventiveActionsFilter);
         this.preventiveActionsOptimizer = Objects.requireNonNull(preventiveActionsOptimizer);
         this.applyPreventiveActions = applyPreventiveActions;
@@ -137,8 +137,8 @@ public class WCAConfig {
         return ignoreVoltageConstraints;
     }
 
-    public boolean deactivateFiltering() {
-        return deactivateFiltering;
+    public boolean activateFiltering() {
+        return activateFiltering;
     }
 
     public WCAPreventiveActionsFilter getPreventiveActionsFilter() {
@@ -186,7 +186,7 @@ public class WCAConfig {
                 ", restrictingThresholdLevels=" + restrictingThresholdLevels + " -> level=" + WCARestrictingThresholdLevel.getLevel(restrictingThresholdLevels) +
                 ", margin=" + margin +
                 ", ignoreVoltageConstraints=" + ignoreVoltageConstraints +
-                ", deactivateFiltering=" + deactivateFiltering +
+                ", activateFiltering=" + activateFiltering +
                 ", preventiveActionsFilter=" + preventiveActionsFilter +
                 ", preventiveActionsOptimizer=" + preventiveActionsOptimizer +
                 ", applyPreventiveActions=" + applyPreventiveActions + 
