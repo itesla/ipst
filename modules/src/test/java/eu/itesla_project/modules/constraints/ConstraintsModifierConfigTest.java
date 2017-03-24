@@ -14,9 +14,8 @@ import java.nio.file.FileSystem;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.nio.file.ShrinkWrapFileSystems;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import com.google.common.jimfs.Configuration;
+import com.google.common.jimfs.Jimfs;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,8 +40,7 @@ public class ConstraintsModifierConfigTest {
 
     @Before
     public void setUp() throws Exception {
-        JavaArchive archive = ShrinkWrap.create(JavaArchive.class);
-        fileSystem = ShrinkWrapFileSystems.newFileSystem(archive);
+        fileSystem = Jimfs.newFileSystem(Configuration.unix());
         platformConfig = new InMemoryPlatformConfig(fileSystem);
         network = ConstraintsModifierTestUtils.getNetwork();
         violations = ConstraintsModifierTestUtils.getViolations(network);
