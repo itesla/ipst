@@ -1,0 +1,72 @@
+---
+#
+# Copyright (c) 2016, RTE (http://www.rte-france.com)
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+
+
+#
+- name: hades disclamer
+  when: hades_isDisclamerPrompt
+  pause: prompt="{{ hades_disclamer }}"
+
+# copy and extract hades bin
+- name: hades extract
+  unarchive: src="{{ hades_src }}"
+             dest="{{ hades_dst }}"
+             creates="{{ hades_create }}"
+  register: hadesInstalled
+
+#
+- name: hades create link
+  file: src="{{ hades_create }}/jar/{{ item.src }}"
+        dest="{{ ipst_install_path }}/share/java/{{ item.src }}"
+        state=link
+        force=yes
+        #owner=root
+        #group=root
+  with_items:
+    - { src: "adn-export-0.1-SNAPSHOT.jar"}
+    - { src: "hades2-integration-0.1-SNAPSHOT.jar"}
+    - { src: "iidm-cvg-extensions-0.1-SNAPSHOT.jar"}
+
+
+# configure Hades
+- name: hades configure
+  when: hadesInstalled|success
+  register: hadesConfig
+  template: src=itesla_config.xml.j2
+            dest="~/.itesla/config.xml"
+
+#
+- name: create directory
+  file: state=directory
+        path={{ hades_situations_dst }}
+
+# IIDM files
+- copy: src={{ hades_situations_src }}
+        dest={{ hades_situations_dst }}
+#  with_fileglob:
+#    - "{{ hades_situations_src }}"
+
+#
+- name: hades check
+  command: "{{ipst_install_path}}/bin/itools security-analysis -case-file {{ hades_situations_dst }}/{{ hades_situation_test }} --output-csv ~/security-analysis-result.txt"
+  register: checkHades
+  #in case, ignore errors (to proceed to next steps and possibly log the errors)
+  ignore_errors: True
+
+#local dumps a per-host log of iPST install script execution
+- name: hades dump log, to
+  local_action: copy content="cmd=> {{ checkHades.cmd }}\nstart=> {{ checkHades.start }}\nend=> {{ checkHades.end }}\n===== DUMP OUT =====\n{{ checkHades.stdout }}\n===== DUMP ERR =====\n{{ checkHades.stderr }}"
+                dest="~/{{ inventory_hostname }}_tmp"
+  when: checkHades is defined
+
+# format log file
+- name: hades format log
+  local_action: shell /usr/bin/sed 's/\\n/\n/g' <~/{{ inventory_hostname }}_tmp >{{ playbook_dir }}/install_hades_{{ inventory_hostname }}.log && rm ~/{{ inventory_hostname }}_tmp
+  when: checkHades is defined
+
+
