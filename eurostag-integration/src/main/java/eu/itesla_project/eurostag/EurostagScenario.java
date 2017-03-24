@@ -7,18 +7,21 @@
 package eu.itesla_project.eurostag;
 
 import com.google.common.base.Strings;
+import com.google.common.io.ByteStreams;
+import com.google.common.jimfs.Configuration;
+import com.google.common.jimfs.Jimfs;
 import eu.itesla_project.contingency.Contingency;
 import eu.itesla_project.contingency.ContingencyElement;
 import eu.itesla_project.iidm.eurostag.export.EurostagDictionary;
 import eu.itesla_project.iidm.network.*;
 import eu.itesla_project.simulation.SimulationParameters;
-import org.jboss.shrinkwrap.api.Domain;
-import org.jboss.shrinkwrap.api.GenericArchive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.nio.file.ShrinkWrapFileSystems;
+import net.java.truevfs.comp.zip.ZipEntry;
+import net.java.truevfs.comp.zip.ZipOutputStream;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
@@ -245,17 +248,22 @@ public class EurostagScenario {
         writer.newLine();
     }
 
-    public GenericArchive writeFaultSeqArchive(List<Contingency> contingencies, Network network, EurostagDictionary dictionary, Function<Integer, String> seqFileNameFct) throws IOException {
-        return writeFaultSeqArchive(ShrinkWrap.createDomain(), contingencies, network, dictionary, seqFileNameFct);
-    }
-
-    public GenericArchive writeFaultSeqArchive(Domain domain, List<Contingency> contingencies, Network network, EurostagDictionary dictionary, Function<Integer, String> seqFileNameFct) throws IOException {
+    public void writeFaultSeqArchive(
+            OutputStream os,
+            List<Contingency> contingencies,
+            Network network,
+            EurostagDictionary dictionary,
+            Function<Integer, String> seqFileNameFct
+    ) throws IOException {
+        //
         if ((contingencies == null) || (contingencies.isEmpty())) {
             throw new RuntimeException("contingencies list is empty, cannot write .seq scenario files");
         }
-        GenericArchive archive = domain.getArchiveFactory().create(GenericArchive.class);
-        try (FileSystem fileSystem = ShrinkWrapFileSystems.newFileSystem(archive)) {
-            Path rootDir = fileSystem.getPath("/");
+
+        //
+        try (FileSystem fs = Jimfs.newFileSystem(Configuration.unix())) {
+            //
+            Path rootDir = fs.getPath("/");
             for (int i = 0; i < contingencies.size(); i++) {
                 Contingency contingency = contingencies.get(i);
                 Path seqFile = rootDir.resolve(seqFileNameFct.apply(i));
@@ -263,8 +271,22 @@ public class EurostagScenario {
                     writeFaultSeq(writer, contingency, network, dictionary);
                 }
             }
+
+            //
+            Files.list(rootDir)
+                    .filter(Files::isRegularFile)
+                    .forEach(file -> {
+                        try (InputStream is = Files.newInputStream(file)) {
+                            ((ZipOutputStream)os).putNextEntry(new ZipEntry(file.toString()));
+                            ByteStreams.copy(is, os);
+                            ((ZipOutputStream)os).closeEntry();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
         }
-        return archive;
+
+
     }
 
 }

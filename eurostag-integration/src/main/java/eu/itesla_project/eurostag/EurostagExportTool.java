@@ -26,10 +26,11 @@ import eu.itesla_project.iidm.eurostag.export.EurostagEchExportConfig;
 import eu.itesla_project.iidm.import_.Importers;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.simulation.SimulationParameters;
+import net.java.truevfs.comp.zip.ZipOutputStream;
 import org.apache.commons.cli.CommandLine;
-import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 
 import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -91,19 +92,28 @@ public class EurostagExportTool implements Tool, EurostagConstants {
 
         System.out.println("exporting seq...");
 
-            // export .seq
-            EurostagScenario scenario = new EurostagScenario(SimulationParameters.load(), eurostagConfig);
-            try (BufferedWriter writer = Files.newBufferedWriter(outputDir.resolve(PRE_FAULT_SEQ_FILE_NAME), StandardCharsets.UTF_8)) {
-                scenario.writePreFaultSeq(writer, PRE_FAULT_SAC_FILE_NAME);
-            }
-            ContingenciesProvider contingenciesProvider = defaultConfig.newFactoryImpl(ContingenciesProviderFactory.class).create();
-            scenario.writeFaultSeqArchive(contingenciesProvider.getContingencies(network), network, dictionary, faultNum -> FAULT_SEQ_FILE_NAME.replace(eu.itesla_project.computation.Command.EXECUTION_NUMBER_PATTERN, Integer.toString(faultNum)))
-                    .as(ZipExporter.class).exportTo(outputDir.resolve(ALL_SCENARIOS_ZIP_FILE_NAME).toFile());
+        // export .seq
+        EurostagScenario scenario = new EurostagScenario(SimulationParameters.load(), eurostagConfig);
+        try (BufferedWriter writer = Files.newBufferedWriter(outputDir.resolve(PRE_FAULT_SEQ_FILE_NAME), StandardCharsets.UTF_8)) {
+            scenario.writePreFaultSeq(writer, PRE_FAULT_SAC_FILE_NAME);
+        }
+        ContingenciesProvider contingenciesProvider = defaultConfig.newFactoryImpl(ContingenciesProviderFactory.class).create();
+        //
+        try (ZipOutputStream os = new ZipOutputStream( new FileOutputStream( outputDir.resolve(ALL_SCENARIOS_ZIP_FILE_NAME).toFile()))) {
+            scenario.writeFaultSeqArchive(
+                    os,
+                    contingenciesProvider.getContingencies(network),
+                    network,
+                    dictionary,
+                    faultNum -> FAULT_SEQ_FILE_NAME.replace(eu.itesla_project.computation.Command.EXECUTION_NUMBER_PATTERN, Integer.toString(faultNum))
+            );
+        }
 
         // export limits
         try (OutputStream os = Files.newOutputStream(outputDir.resolve(LIMITS_ZIP_FILE_NAME))) {
             EurostagImpactAnalysis.writeLimits(network, dictionary, os);
         }
+
     }
 
 }

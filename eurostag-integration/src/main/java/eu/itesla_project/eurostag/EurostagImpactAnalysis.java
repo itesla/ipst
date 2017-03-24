@@ -6,10 +6,11 @@
  */
 package eu.itesla_project.eurostag;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.io.ByteStreams;
+import com.google.common.jimfs.Configuration;
+import com.google.common.jimfs.Jimfs;
 import eu.itesla_project.commons.Version;
 import eu.itesla_project.commons.config.PlatformConfig;
 import eu.itesla_project.computation.*;
@@ -24,14 +25,11 @@ import eu.itesla_project.simulation.securityindexes.SecurityIndex;
 import eu.itesla_project.simulation.securityindexes.SecurityIndexParser;
 import eu.itesla_project.simulation.*;
 import eu.itesla_project.simulation.ImpactAnalysis;
+import net.java.truevfs.comp.zip.ZipEntry;
+import net.java.truevfs.comp.zip.ZipOutputStream;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalINIConfiguration;
 import org.apache.commons.configuration.SubnodeConfiguration;
-import org.jboss.shrinkwrap.api.Domain;
-import org.jboss.shrinkwrap.api.GenericArchive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.exporter.ZipExporter;
-import org.jboss.shrinkwrap.api.nio.file.ShrinkWrapFileSystems;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -157,24 +155,24 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
         return new GroupCommandBuilder()
                 .id("esg_fs")
                 .inputFiles(new InputFile(PRE_FAULT_SAC_GZ_FILE_NAME, FILE_GUNZIP),
-                            new InputFile(LIMITS_ZIP_FILE_NAME, ARCHIVE_UNZIP),
-                            new InputFile(scenarioZipFileName, ARCHIVE_UNZIP),
-                            new InputFile(wp43ConfigsZipFileName, ARCHIVE_UNZIP),
-                            new InputFile(DDB_DICT_GENS_CSV))
+                        new InputFile(LIMITS_ZIP_FILE_NAME, ARCHIVE_UNZIP),
+                        new InputFile(scenarioZipFileName, ARCHIVE_UNZIP),
+                        new InputFile(wp43ConfigsZipFileName, ARCHIVE_UNZIP),
+                        new InputFile(DDB_DICT_GENS_CSV))
                 .subCommand()
-                    .program(EUSTAG_CPT)
-                    .args("-s", FAULT_SEQ_FILE_NAME, PRE_FAULT_SAC_FILE_NAME)
-                    .timeout(config.getSimTimeout())
+                .program(EUSTAG_CPT)
+                .args("-s", FAULT_SEQ_FILE_NAME, PRE_FAULT_SAC_FILE_NAME)
+                .timeout(config.getSimTimeout())
                 .add()
                 .subCommand()
-                    .program(TSOINDEXES)
-                    .args(".", FAULT_BASE_NAME)
-                    .timeout(config.getIdxTimeout())
+                .program(TSOINDEXES)
+                .args(".", FAULT_BASE_NAME)
+                .timeout(config.getIdxTimeout())
                 .add()
                 .subCommand()
-                    .program(WP43)
-                    .args("./", FAULT_BASE_NAME, WP43_CONFIGS_PER_FAULT_FILE_NAME)
-                    .timeout(config.getIdxTimeout())
+                .program(WP43)
+                .args("./", FAULT_BASE_NAME, WP43_CONFIGS_PER_FAULT_FILE_NAME)
+                .timeout(config.getIdxTimeout())
                 .add()
                 .outputFiles(new OutputFile(TSO_LIMITS_SECURITY_INDEX_FILE_NAME),
                         new OutputFile(WP43_SMALLSIGNAL_SECURITY_INDEX_FILE_NAME),
@@ -193,9 +191,9 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
     @Override
     public String getVersion() {
         return ImmutableMap.builder().put("eurostagVersion", EurostagUtil.VERSION)
-                                     .putAll(Version.VERSION.toMap())
-                                     .build()
-                                     .toString();
+                .putAll(Version.VERSION.toMap())
+                .build()
+                .toString();
     }
 
     //needed by wp43 integration
@@ -203,8 +201,8 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
     private static void dumpLinesDictionary(Network network, EurostagDictionary dictionary, Path dir) throws IOException {
         try (BufferedWriter os = Files.newBufferedWriter(dir.resolve("dict_lines.csv"), StandardCharsets.UTF_8)) {
             for (Identifiable obj : Identifiables.sort(Iterables.concat(network.getLines(),
-                                                                        network.getTwoWindingsTransformers(),
-                                                                        network.getDanglingLines()))) {
+                    network.getTwoWindingsTransformers(),
+                    network.getDanglingLines()))) {
                 os.write(obj.getId() + ";" + dictionary.getEsgId(obj.getId()));
                 os.newLine();
             }
@@ -249,10 +247,12 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
         writer.newLine();
     }
 
-    private static void writeLimits(Network network, EurostagDictionary dictionary, Domain domain, OutputStream os) throws IOException {
-        GenericArchive archive = domain.getArchiveFactory().create(GenericArchive.class);
-        try (FileSystem fileSystem = ShrinkWrapFileSystems.newFileSystem(archive)) {
+    static void writeLimits(Network network, EurostagDictionary dictionary, OutputStream os) throws IOException {
+        //
+        try (FileSystem fileSystem = Jimfs.newFileSystem(Configuration.unix())) {
+            //
             Path rootDir = fileSystem.getPath("/");
+
             // dump first current limits for each of the branches
             try (BufferedWriter writer = Files.newBufferedWriter(rootDir.resolve(CURRENT_LIMITS_CSV), StandardCharsets.UTF_8)) {
                 for (Line l : network.getLines()) {
@@ -263,12 +263,13 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
                 }
                 for (DanglingLine dl : network.getDanglingLines()) {
                     dumpLimits(dictionary, writer, dl.getId(),
-                                       dl.getCurrentLimits(),
-                                       null,
-                                       dl.getTerminal().getVoltageLevel().getNominalV(),
-                                       dl.getTerminal().getVoltageLevel().getNominalV());
+                            dl.getCurrentLimits(),
+                            null,
+                            dl.getTerminal().getVoltageLevel().getNominalV(),
+                            dl.getTerminal().getVoltageLevel().getNominalV());
                 }
             }
+            //
             try (BufferedWriter writer = Files.newBufferedWriter(rootDir.resolve(VOLTAGE_LIMITS_CSV), StandardCharsets.UTF_8)) {
                 for (Bus b : network.getBusBreakerView().getBuses()) {
                     VoltageLevel vl = b.getVoltageLevel();
@@ -289,27 +290,65 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
             dumpLinesDictionary(network, dictionary, rootDir);
             //dump buses dictionary, for WP43 integration
             dumpBusesDictionary(network, dictionary, rootDir);
+
+            // insert all files into wp43 archive
+            Files.list(rootDir)
+                    .filter(Files::isRegularFile)
+                    .forEach(file -> {
+                        try (InputStream is = Files.newInputStream(file)) {
+                            ((ZipOutputStream)os).putNextEntry(new ZipEntry(file.toString()));
+                            ByteStreams.copy(is, os);
+                            ((ZipOutputStream)os).closeEntry();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
         }
 
-        archive.as(ZipExporter.class).exportTo(os);
     }
 
-    private void writeLimits(Domain domain, OutputStream os) throws IOException {
-        writeLimits(network, dictionary, domain, os);
+    private void writeLimits(OutputStream os) throws IOException {
+        writeLimits(network, dictionary, os);
     }
 
-    static void writeLimits(Network network, EurostagDictionary dictionary, OutputStream os) throws IOException {
-        writeLimits(network, dictionary, ShrinkWrap.createDomain(), os);
+
+    private void copyToArchive(Path workingDir, OutputStream os) throws IOException {
+        Files.list(workingDir)
+                .filter(Files::isRegularFile)
+                .forEach(file -> {
+                    try (InputStream is = Files.newInputStream(file)) {
+                        ((ZipOutputStream)os).putNextEntry(new ZipEntry(file.toString()));
+                        ByteStreams.copy(is, os);
+                        ((ZipOutputStream)os).closeEntry();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+
     }
 
-    private void writeScenarios(Domain domain, List<Contingency> contingencies, OutputStream os) throws IOException {
-        GenericArchive archive = new EurostagScenario(parameters, config).writeFaultSeqArchive(domain, contingencies, network, dictionary,
-                faultNum -> FAULT_SEQ_FILE_NAME.replace(Command.EXECUTION_NUMBER_PATTERN, Integer.toString(faultNum)));
-        archive.as(ZipExporter.class).exportTo(os);
+    private void writeScenarios( List<Contingency> contingencies, OutputStream os) throws IOException {
+        //
+        try (FileSystem fs = Jimfs.newFileSystem(Configuration.unix())) {
+            // copy wp43 configuration files into memory filesystem
+            Path rootDir = fs.getPath("/");
+            new EurostagScenario(parameters, config)
+                    .writeFaultSeqArchive(
+                            os,
+                            contingencies,
+                            network,
+                            dictionary,
+                            faultNum -> FAULT_SEQ_FILE_NAME.replace(Command.EXECUTION_NUMBER_PATTERN, Integer.toString(faultNum))
+                    );
+
+            // insert all files into wp43 archive
+            copyToArchive( rootDir, os);
+        }
+
     }
 
-    private void writeAllScenarios(Domain domain, OutputStream os) throws IOException {
-        writeScenarios(domain, allContingencies, os);
+    private void writeAllScenarios(OutputStream os) throws IOException {
+        writeScenarios(allContingencies, os);
     }
 
     private double getFaultDuration(Contingency contingency, ContingencyElement element) {
@@ -349,18 +388,20 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
         }
     }
 
-    private void writeWp43Configs(Domain domain, List<Contingency> contingencies, OutputStream os) throws IOException, ConfigurationException {
-        // copy wp43 configuration files
-        GenericArchive archive = domain.getArchiveFactory().create(GenericArchive.class);
-        try (FileSystem fileSystem = ShrinkWrapFileSystems.newFileSystem(archive)) {
-            Path rootDir = fileSystem.getPath("/");
+    private void writeWp43Configs( List<Contingency> contingencies, OutputStream os) throws IOException, ConfigurationException {
+        //
+        try (FileSystem fs = Jimfs.newFileSystem(Configuration.unix())) {
+            // copy wp43 configuration files into memory filesystem
+            Path rootDir = fs.getPath("/");
             writeWp43Configs(contingencies, rootDir);
+
+            // insert all files into wp43 archive
+            copyToArchive( rootDir, os);
         }
-        archive.as(ZipExporter.class).exportTo(os);
     }
 
-    private void writeAllWp43Configs(Domain domain, OutputStream os) throws IOException, ConfigurationException {
-        writeWp43Configs(domain, allContingencies, os);
+    private void writeAllWp43Configs( OutputStream os) throws IOException, ConfigurationException {
+        writeWp43Configs(allContingencies, os);
     }
 
     private void readSecurityIndexes(List<Contingency> contingencies, Path workingDir, ImpactAnalysisResult result) throws IOException {
@@ -370,10 +411,10 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
         for (int i = 0; i < contingencies.size(); i++) {
             Contingency contingency = contingencies.get(i);
             for (String securityIndexFileName : Arrays.asList(TSO_LIMITS_SECURITY_INDEX_FILE_NAME,
-                                                              WP43_SMALLSIGNAL_SECURITY_INDEX_FILE_NAME,
-                                                              WP43_TRANSIENT_SECURITY_INDEX_FILE_NAME,
-                                                              WP43_OVERLOAD_SECURITY_INDEX_FILE_NAME,
-                                                              WP43_UNDEROVERVOLTAGE_SECURITY_INDEX_FILE_NAME)) {
+                    WP43_SMALLSIGNAL_SECURITY_INDEX_FILE_NAME,
+                    WP43_TRANSIENT_SECURITY_INDEX_FILE_NAME,
+                    WP43_OVERLOAD_SECURITY_INDEX_FILE_NAME,
+                    WP43_UNDEROVERVOLTAGE_SECURITY_INDEX_FILE_NAME)) {
                 Path file = workingDir.resolve(securityIndexFileName.replace(Command.EXECUTION_NUMBER_PATTERN, Integer.toString(i)));
                 if (Files.exists(file)) {
                     try (BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
@@ -383,7 +424,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
                     }
                     files++;
                 }
-	        }
+            }
             // also scan errors in output
             EurostagUtil.searchErrorMessage(workingDir.resolve(FAULT_OUT_GZ_FILE_NAME.replace(Command.EXECUTION_NUMBER_PATTERN, Integer.toString(i))), result.getMetrics(), i);
         }
@@ -414,15 +455,17 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
         allContingencies.addAll(contingenciesProvider.getContingencies(network));
 
         if (config.isUseBroadcast()) {
-            Domain domain = ShrinkWrap.createDomain();
-            try (OutputStream os = computationManager.newCommonFile(ALL_SCENARIOS_ZIP_FILE_NAME)) {
-                writeAllScenarios(domain, os);
+            //
+            try (OutputStream os = new ZipOutputStream(computationManager.newCommonFile(ALL_SCENARIOS_ZIP_FILE_NAME))) {
+                writeAllScenarios(os);
             }
-            try (OutputStream os = computationManager.newCommonFile(WP43_ALL_CONFIGS_ZIP_FILE_NAME)) {
-                writeAllWp43Configs(domain, os);
+            //
+            try (OutputStream os = new ZipOutputStream(computationManager.newCommonFile(WP43_ALL_CONFIGS_ZIP_FILE_NAME))) {
+                writeAllWp43Configs(os);
             }
-            try (OutputStream os = computationManager.newCommonFile(LIMITS_ZIP_FILE_NAME)) {
-                writeLimits(domain, os);
+            //
+            try (OutputStream os = new ZipOutputStream(computationManager.newCommonFile(LIMITS_ZIP_FILE_NAME))) {
+                writeLimits( os);
             }
         }
     }
@@ -445,19 +488,21 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
             Networks.dumpStateId(workingDir, state.getName());
         }
 
+        //
         try (OutputStream os = Files.newOutputStream(workingDir.resolve(PRE_FAULT_SAC_GZ_FILE_NAME))) {
             os.write(((EurostagState) state).getSacGz());
         }
 
-        Supplier<Domain> domain = Suppliers.memoize(ShrinkWrap::createDomain);
+        //
         if (!config.isUseBroadcast()) {
             Files.write(workingDir.resolve(DDB_DICT_GENS_CSV), ((EurostagState) state).getDictGensCsv());
 
             try (OutputStream os = Files.newOutputStream(workingDir.resolve(LIMITS_ZIP_FILE_NAME))) {
-                writeLimits(domain.get(), os);
+                writeLimits( os);
             }
         }
 
+        //
         Command cmd;
         if (contingencyIds == null) {
             // take all contingencies
@@ -467,11 +512,13 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
             if (config.isUseBroadcast()) {
                 // all scenarios zip file has already been sent in the common dir
             } else {
+                //
                 try (OutputStream os = Files.newOutputStream(workingDir.resolve(ALL_SCENARIOS_ZIP_FILE_NAME))) {
-                    writeAllScenarios(domain.get(), os);
+                    writeAllScenarios( os);
                 }
+                //
                 try (OutputStream os = Files.newOutputStream(workingDir.resolve(WP43_ALL_CONFIGS_ZIP_FILE_NAME))) {
-                    writeAllWp43Configs(domain.get(), os);
+                    writeAllWp43Configs( os);
                 } catch (ConfigurationException e) {
                     throw new RuntimeException(e);
                 }
@@ -487,10 +534,13 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
 
             // write scenarios subset in the working dir
             try (OutputStream os = Files.newOutputStream(workingDir.resolve(PARTIAL_SCENARIOS_ZIP_FILE_NAME))) {
-                writeScenarios(domain.get(), contingencies, os);
+                writeScenarios( contingencies, os);
+
             }
+
+            //
             try (OutputStream os = Files.newOutputStream(workingDir.resolve(WP43_PARTIAL_CONFIGS_ZIP_FILE_NAME))) {
-                writeWp43Configs(domain.get(), contingencies, os);
+                writeWp43Configs( contingencies, os);
             } catch (ConfigurationException e) {
                 throw new RuntimeException(e);
             }

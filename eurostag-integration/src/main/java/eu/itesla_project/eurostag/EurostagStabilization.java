@@ -9,6 +9,8 @@ package eu.itesla_project.eurostag;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
+import com.google.common.jimfs.Configuration;
+import com.google.common.jimfs.Jimfs;
 import eu.itesla_project.commons.Version;
 import eu.itesla_project.commons.config.ComponentDefaultConfig;
 import eu.itesla_project.computation.*;
@@ -31,11 +33,8 @@ import eu.itesla_project.simulation.SimulationParameters;
 import eu.itesla_project.simulation.Stabilization;
 import eu.itesla_project.simulation.StabilizationResult;
 import eu.itesla_project.simulation.StabilizationStatus;
-import org.jboss.shrinkwrap.api.Domain;
-import org.jboss.shrinkwrap.api.GenericArchive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.exporter.ZipExporter;
-import org.jboss.shrinkwrap.api.nio.file.ShrinkWrapFileSystems;
+import net.java.truevfs.comp.zip.ZipEntry;
+import net.java.truevfs.comp.zip.ZipOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,18 +126,18 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
                         new InputFile(PRE_FAULT_SEQ_FILE_NAME),
                         new InputFile(DDB_ZIP_FILE_NAME, ARCHIVE_UNZIP))
                 .subCommand()
-                    .program(EUSTAG_CPT)
-                    .args("-lf", ECH_FILE_NAME)
-                    .timeout(config.getLfTimeout())
+                .program(EUSTAG_CPT)
+                .args("-lf", ECH_FILE_NAME)
+                .timeout(config.getLfTimeout())
                 .add()
                 .subCommand()
-                    .program(EUSTAG_CPT)
-                    .args("-s", PRE_FAULT_SEQ_FILE_NAME, DTA_FILE_NAME, SAV_FILE_NAME)
-                    .timeout(config.getSimTimeout())
+                .program(EUSTAG_CPT)
+                .args("-s", PRE_FAULT_SEQ_FILE_NAME, DTA_FILE_NAME, SAV_FILE_NAME)
+                .timeout(config.getSimTimeout())
                 .add()
                 .subCommand()
-                    .program(TSEXTRACT)
-                    .args(PRE_FAULT_RES_FILE_NAME, "unused", "INTEGRATION_STEP", INTEGRATION_STEP_FILE_NAME)
+                .program(TSEXTRACT)
+                .args(PRE_FAULT_RES_FILE_NAME, "unused", "INTEGRATION_STEP", INTEGRATION_STEP_FILE_NAME)
                 .add()
                 .outputFiles(new OutputFile(LF_FILE_NAME, FILE_GZIP),
                         new OutputFile(PRE_FAULT_SAC_FILE_NAME, FILE_GZIP),
@@ -155,22 +154,42 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
     @Override
     public String getVersion() {
         return ImmutableMap.builder().put("eurostagVersion", EurostagUtil.VERSION)
-                                     .putAll(Version.VERSION.toMap())
-                                     .build()
-                                     .toString();
+                .putAll(Version.VERSION.toMap())
+                .build()
+                .toString();
     }
 
-    private void writeDtaAndControls(Domain domain, OutputStream ddbOs, OutputStream dictGensOs) throws IOException {
-        GenericArchive archive = domain.getArchiveFactory().create(GenericArchive.class);
-        try (FileSystem fileSystem = ShrinkWrapFileSystems.newFileSystem(archive)) {
-            Path rootDir = fileSystem.getPath("/");
+    private void writeDtaAndControls(OutputStream ddbOs, OutputStream dictGensOs) throws IOException {
+        //
+        final boolean[] flags = { false };
+
+        //
+        try (FileSystem fs = Jimfs.newFileSystem(Configuration.unix())) {
+            Path rootDir = fs.getPath("/");
             ddbClient.dumpDtaFile(rootDir, DTA_FILE_NAME, network, parallelIndexes.toMap(), EurostagUtil.VERSION, dictionary.toMap());
+
+            // insert all files into wp43 archive
+            Files.list(rootDir)
+                    .filter(Files::isRegularFile)
+                    .forEach(file -> {
+                        try (InputStream is = Files.newInputStream(file)) {
+                            //
+                            ((ZipOutputStream) ddbOs).putNextEntry(new ZipEntry(file.toString()));
+                            ByteStreams.copy(is, ddbOs);
+                            ((ZipOutputStream) ddbOs).closeEntry();
+
+                            //put just the generators dict csv file (extracted from the ddb files) in the common files set, to be used by wp43 transient stability index
+                            if (DDB_DICT_GENS_CSV.equalsIgnoreCase(file.getFileName().toString())) {
+                                ByteStreams.copy(is, dictGensOs);
+                                flags[0] = true;
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
         }
-        archive.as(ZipExporter.class).exportTo(ddbOs);
-        //put just the generators dict csv file (extracted from the ddb files) in the common files set, to be used by wp43 transient stability index
-        if (archive.get(DDB_DICT_GENS_CSV) != null) {
-            ByteStreams.copy(archive.get(DDB_DICT_GENS_CSV).getAsset().openStream(), dictGensOs);
-        } else {
+
+        if (!flags[0]) {
             LOGGER.warn(DDB_DICT_GENS_CSV + " is missing in the dynamic data files set: some security indexers (e.g. transient stability) need this file");
         }
     }
@@ -209,11 +228,12 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
         dictionary = EurostagDictionary.create(network, parallelIndexes, exportConfig);
 
         if (config.isUseBroadcast()) {
-            Domain domain = ShrinkWrap.createDomain();
-            try (OutputStream ddbOs = computationManager.newCommonFile(DDB_ZIP_FILE_NAME);
+            // ok
+            try (OutputStream ddbOs = new ZipOutputStream(computationManager.newCommonFile(DDB_ZIP_FILE_NAME));
                  OutputStream dictGensOs = computationManager.newCommonFile(DDB_DICT_GENS_CSV)) {
-                writeDtaAndControls(domain, ddbOs, dictGensOs);
+                writeDtaAndControls( ddbOs, dictGensOs);
             }
+            // ok
             try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(computationManager.newCommonFile(PRE_FAULT_SEQ_FILE_NAME), StandardCharsets.UTF_8))) {
                 writePreFaultSeq(writer);
             }
@@ -249,11 +269,11 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
 
         EurostagContext context = new EurostagContext();
 
+        // ok
         if (!config.isUseBroadcast()) {
-            Domain domain = ShrinkWrap.createDomain();
-            try (OutputStream ddbOs = Files.newOutputStream(workingDir.resolve(DDB_ZIP_FILE_NAME));
+            try (OutputStream ddbOs = new ZipOutputStream(Files.newOutputStream(workingDir.resolve(DDB_ZIP_FILE_NAME)));
                  ByteArrayOutputStream dictGensOs = new ByteArrayOutputStream()) {
-                writeDtaAndControls(domain, ddbOs, dictGensOs);
+                writeDtaAndControls( ddbOs, dictGensOs);
                 dictGensOs.flush();
                 context.dictGensCsv = dictGensOs.toByteArray();
             }
@@ -317,8 +337,8 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
             status = EurostagUtil.isSteadyStateReached(workingDir.resolve(INTEGRATION_STEP_FILE_NAME), config.getMinStepAtEndOfStabilization())
                     ? StabilizationStatus.COMPLETED : StabilizationStatus.COMPLETED_BUT_NOT_TO_STEADY_STATE;
             state = new EurostagState(network.getStateManager().getWorkingStateId(),
-                                      Files.readAllBytes(workingDir.resolve(PRE_FAULT_SAC_GZ_FILE_NAME)),
-                                      context.dictGensCsv);
+                    Files.readAllBytes(workingDir.resolve(PRE_FAULT_SAC_GZ_FILE_NAME)),
+                    context.dictGensCsv);
         } else {
             status = StabilizationStatus.FAILED;
         }
