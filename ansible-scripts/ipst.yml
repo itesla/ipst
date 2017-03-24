@@ -51,7 +51,13 @@
 # if set to False, do not try installing the matlab runtime;
 #  useful if already available on the target OS and no admin rights are available
     installMCR: "{{ install_MCR|default('False') }}"
-    
+
+# if set to False, do not try installing the DBMaria and WildFly
+    finalyzeBDD: "{{ finalyze_BDD|default('False') }}"
+
+# if set to False, do not try installing the DBMaria and WildFly
+    installHades: "{{ install_hades|default('False') }}"
+
 # if set to True, always triggers the ipst platfrom build, even if there are no updates from github
     forceBuild: "{{ force_build|default('True') }}"
 
@@ -90,24 +96,35 @@
     ipst_thirdparty_packs_path_default: "{{  ansible_env.HOME }}/ipst_ansible/thirdparty_packs"
     ipst_thirdparty_packs_path: "{{  thirdparty_packs|default(ipst_thirdparty_packs_path_default) }}"
 
+
+
 ###
 ###
 ### dump variable's content
 
   pre_tasks:
-  - debug: var="forceBuild"
-  - debug: var="installPrerequisites"
-  - debug: var="installMCR"
-  - debug: var="ipst_github_enabled"
-  - debug: var="ipst_github_branchname"
-  - debug: var="ipst_sources_path"
-  - debug: var="ipst_install_path"
-  - debug: var="ipst_thirdparty_path"
-  - debug: var="environment"
-  - debug: var="core_sources_path"
-  - debug: var="core_github_branchname"
-  - debug: var="entsoe_sources_path"
-  - debug: var="entsoe_github_branchname"
+
+  - debug:
+      var="{{ item }}"
+    when: "0==0"
+    with_items:
+      - forceBuild
+      - installPrerequisites
+      - installMCR
+      - installBDD
+      - install_hades
+      - installHades
+      - ipst_github_enabled
+      - ipst_github_branchname
+      - ipst_sources_path
+      - ipst_install_path
+      - ipst_thirdparty_path
+      - environment
+      - core_sources_path
+      - core_github_branchname
+      - entsoe_sources_path
+      - entsoe_github_branchname
+      - user_ipst_sources_path
 
 ###
 ###
@@ -118,5 +135,9 @@
     - { role: ipst.openmpi, when: "installPrerequisites == True", become: "yes" }
     - { role: ipst.jdk8, when: "installPrerequisites == True", become: "yes" }
     - { role: ipst.maven, when: "installPrerequisites == True", become: "yes" }
+    - { role: ipst.wildfly, when: "installPrerequisites == True", become: "yes" }
     - { role: ipst.mcr, when: "installMCR == True", become: "yes" }
     - { role: ipst.ipst }
+    - { role: ipst.final } #, when: "finalyzeBDD == True", become: "yes" }
+    - { role: ipst.hades } #, when: "installHades == True", become: "yes" }
+

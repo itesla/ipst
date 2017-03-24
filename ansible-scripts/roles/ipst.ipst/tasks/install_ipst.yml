@@ -24,7 +24,7 @@
     file: path={{ ipst_sources_path }}/install.cfg state=absent
     when: (gitop.changed or forceBuild)
 
-  # install entsoe
+  # install ipst
   - name: ipst build and install ipst
     # Using shell because 'command' does not handle well redirections, pipes, etc.  Using -l to inherit the environment variables, correctly
     shell: /bin/bash -lc "{{ ipst_install_cmd }}"
@@ -37,7 +37,8 @@
 
   #local dumps a per-host log of iPST install script execution
   - name: ipst dump log, to
-    local_action: copy content="cmd=> {{ installScript.cmd }}\nstart=> {{ installScript.start }}\nend=> {{ installScript.end }}\n===== DUMP OUT =====\n{{ installScript.stdout }}\n===== DUMP ERR =====\n{{ installScript.stderr }}" dest="~/{{ inventory_hostname }}_tmp"
+    local_action: copy content="cmd=> {{ installScript.cmd }}\nstart=> {{ installScript.start }}\nend=> {{ installScript.end }}\n===== DUMP OUT =====\n{{ installScript.stdout }}\n===== DUMP ERR =====\n{{ installScript.stderr }}"
+                  dest="~/{{ inventory_hostname }}_tmp"
     when: installScript is defined and installScript.skipped is not defined
 
   # format log file

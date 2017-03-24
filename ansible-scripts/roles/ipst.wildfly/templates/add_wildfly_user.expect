@@ -1,0 +1,33 @@
+#!/usr/bin/expect -f
+
+spawn $JBOSS_HOME/bin/add-user.sh
+
+expect "b) Application User"
+send "b\r"
+
+expect "Username"
+send "user\r"
+
+
+expect "Password"
+send "password\r"
+
+
+expect "Are you sure you want to use the password entered"
+send "yes\r"
+
+
+expect "Re-enter Password\r"
+send "password\r"
+
+expect "What groups do you want this user to belong to?"
+send "\r"
+
+expect "Is this correct"
+send "yes\r"
+
+
+expect "Is this new user going to be used for one AS process to connect to another AS process"
+send "yes\r"
+
+expect eof

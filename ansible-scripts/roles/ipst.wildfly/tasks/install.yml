@@ -1,0 +1,139 @@
+---
+#
+# Copyright (c) 2016, RTE (http://www.rte-france.com)
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+
+
+# install tasks file for ipst.wildfly
+
+#
+#- name: remove wildfly
+#  file: state=absent path={{ wildfly_prefix }}
+
+#
+- name: wildfly download
+  command: "wget -q -O /tmp/{{ wildfly_archivename }} --no-check-certificate --no-cookies --header 'Cookie: oraclelicense=accept-securebackup-cookie' {{ wildfly_url }} creates=/tmp/{{ wildfly_archivename }}"
+
+#
+- name: wildfly extract
+  unarchive: copy=no src="/tmp/{{ wildfly_archivename }}" dest="{{ wildfly_dest_path }}" creates="{{ wildfly_prefix }}" owner=root group=root mode=0755
+  register: wildflyinstalled
+
+#
+- name: add environment variables config file
+  when: wildflyinstalled|success
+  register: wildfly_envvars_config
+  template: src=wildfly_env.sh.j2 dest="/etc/profile.d/wildfly_env.sh" owner=root group=root
+
+#
+- name: Fix ownership
+  file: state=directory path={{ wildfly_prefix }} owner=root group=root recurse=yes
+
+#
+- name: create mysql connector directory
+  file: path="$JBOSS_HOME/modules/com/mysql/main"
+        state=directory
+
+#
+- name: download mysql connector
+  command: "wget -q -O $JBOSS_HOME/modules/com/mysql/main/mysql-connector-java-5.1.23-bin.jar --no-check-certificate --no-cookies --header 'Cookie: oraclelicense=accept-securebackup-cookie' http://www.java2s.com/Code/JarDownload/mysql/mysql-connector-java-5.1.23-bin.jar.zip creates=/tmp/mysql-connector-java-5.1.23-bin.jar"
+  when: wildflyinstalled|success
+
+#
+- name: Creates mysql directory
+  file: path=$JBOSS_HOME/modules/com/mysql/main state=directory
+
+#
+- name: add mysql connector config
+  when: wildflyinstalled|success
+  register: wildfly_module
+  template: src=connector.j2 dest="$JBOSS_HOME/modules/com/mysql/main/module.xml" owner=root group=root
+
+#
+- name: add standalone to standalone
+  when: wildflyinstalled|success
+  register: wildfly_standalone
+  template: src=standalone.j2 dest="$JBOSS_HOME/standalone/configuration/standalone.xml" owner=root group=root
+
+#
+- name: add module2
+  when: wildflyinstalled|success
+  register: wildfly_standalone
+  template: src=module2.j2 dest="$JBOSS_HOME/modules/system/layers/base/sun/jdk/main/module.xlm" owner=root group=root
+
+
+#
+#- name: remove user
+#  shell: $JBOSS_HOME/bin/add-user.sh -d
+
+# add application user
+- name: add application user
+  shell: $JBOSS_HOME/bin/add-user.sh --silent -e -a -u user -p password -g user
+  args:
+    executable: /bin/bash
+  register: res
+
+# add Management user
+- name: add Management user
+  shell: $JBOSS_HOME/bin/add-user.sh --silent -e -u admin -p password
+  args:
+    executable: /bin/bash
+  register: res
+
+
+
+#  add user with expect, expect tools should be set in the ipst.common task
+#- name: Add User interactive
+#  #sudo: yes
+#  #sudo_user: root
+#  #become_user: root
+#  shell: |+
+#    set timeout 10
+#    spawn {{wildfly_prefix}}/bin/add-user.sh
+#
+#    expect "b) Application User"
+#    send "b\r"
+#
+#    expect "Username"
+#    send "user500\r"
+#
+#    expect "Password"
+#    send "password\r"
+#
+#    expect "Are you sure you want to use the password entered"
+#    send "yes\r"
+#
+#    expect "Re-enter Password\r"
+#    send "password\r"
+#
+#    expect "What groups do you want this user to belong to?"
+#    send "\r"
+#
+#    expect "Is this correct"
+#    send "yes\r"
+#
+#    expect "Is this new user going to be used for one AS process to connect to another AS process"
+#    send "yes\r"
+#
+#    expect {
+#      timeout { send_user "\nadd_user failed. timeout.\n"; exit 1}
+#      "*\$ "
+#    }
+#
+#    close
+#  args:
+#    executable: /usr/bin/expect
+#  register: res
+
+#- debug: var=res
+
+  #become: yes
+  #become_method: sudo
+
+#
+- name: remove tmp
+  file: state=absent path=/tmp/{{ wildfly_archivename }}
+
