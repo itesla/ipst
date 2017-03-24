@@ -18,7 +18,7 @@
 
     <logger name="ch.qos.logback.classic" level="ERROR" />
 
-    <!-- logger name="eu.itesla_project.iidm.ddb" level="WARN" /-->
+    <logger name="eu.itesla_project" level="DEBUG" />
     <!-- logger name="eu.itesla_project.computation" level="TRACE" /-->
 
     <root level="INFO">
