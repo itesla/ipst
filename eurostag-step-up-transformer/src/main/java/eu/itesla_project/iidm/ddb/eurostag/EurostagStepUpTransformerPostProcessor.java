@@ -12,9 +12,7 @@ import com.google.common.base.Suppliers;
 import eu.itesla_project.computation.ComputationManager;
 import eu.itesla_project.iidm.import_.ImportPostProcessor;
 import eu.itesla_project.iidm.network.Network;
-import org.jboss.shrinkwrap.api.GenericArchive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.nio.file.ShrinkWrapFileSystems;
+import net.java.truevfs.access.TPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,22 +29,39 @@ import java.util.List;
 @AutoService(ImportPostProcessor.class)
 public class EurostagStepUpTransformerPostProcessor implements ImportPostProcessor {
 
+    //
     private static final Logger LOGGER = LoggerFactory.getLogger(EurostagStepUpTransformerPostProcessor.class);
 
+    /**
+     *
+     */
     private final Supplier<EurostagStepUpTransformerConfig> config = Suppliers.memoize(() -> {
         EurostagStepUpTransformerConfig config = EurostagStepUpTransformerConfig.load();
         LOGGER.info(config.toString());
         return config;
     });
 
+    /**
+     *
+     */
     public EurostagStepUpTransformerPostProcessor() {
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getName() {
         return "stepUpTransformers";
     }
 
+    /**
+     *
+     * @param network
+     * @param computationManager
+     * @throws Exception
+     */
     @Override
     public void process(Network network, ComputationManager computationManager) throws Exception {
         List<Path> ddbPath = new ArrayList<>();
@@ -55,6 +70,7 @@ public class EurostagStepUpTransformerPostProcessor implements ImportPostProcess
         List<String> statorVoltageLevels = new ArrayList<>();
         List<FileSystem> zipFsLs = new ArrayList<>();
         try {
+            //
             for (Path p : config.get().getDdbPath()) {
                 if (!Files.exists(p)) {
                     throw new RuntimeException("DDB dir " + p + " does not exist");
@@ -62,14 +78,15 @@ public class EurostagStepUpTransformerPostProcessor implements ImportPostProcess
                 if (Files.isDirectory(p)) {
                     ddbPath.add(p);
                 } else if (Files.isRegularFile(p) && p.getFileName().toString().endsWith(".zip")) {
-                    GenericArchive archive = ShrinkWrap.createFromZipFile(GenericArchive.class, p.toFile());
-                    FileSystem zipFs = ShrinkWrapFileSystems.newFileSystem(archive);
-                    zipFsLs.add(zipFs);
-                    ddbPath.add(zipFs.getPath("/"));
+                    TPath archive = new TPath(p);
+                    zipFsLs.add( archive.getFileSystem() );
+                    ddbPath.add( archive.getFileSystem().getPath("/"));
                 } else {
                     throw new RuntimeException("Bad path element " + p);
                 }
             }
+
+            //
             for (Path ddbDir : ddbPath) {
                 Path genDictFile = ddbDir.resolve(config.get().getGenDictFileName());
                 if (Files.exists(genDictFile)) {
@@ -84,19 +101,21 @@ public class EurostagStepUpTransformerPostProcessor implements ImportPostProcess
                 }
             }
 
+            //
             if (genDict.size() == 0) {
                 throw new RuntimeException("Generator dictionary is empty");
             }
+
+            //
             if (auxDict.size() == 0) {
                 throw new RuntimeException("Auxiliary dictionary is empty");
             }
+
+            //
             EurostagStepUpTransformerInserter.insert(network, config.get().getLoadFlowFactoryClass().newInstance(), computationManager, ddbPath, genDict, auxDict, statorVoltageLevels, config.get());
+
         } catch (IllegalAccessException|InstantiationException e) {
             throw new RuntimeException(e);
-        } finally {
-            for (FileSystem zipFs : zipFsLs) {
-                zipFs.close();
-            }
         }
     }
 
