@@ -9,6 +9,7 @@
 
 # main tasks file for ipst.jdk8
 
+
 - name: check if already installed
   stat: path={{ jdk8_prefix }}
   register: jdk8_dir

@@ -1,8 +1,12 @@
 ---
 # defaults file for ipst.jdk8
 
-jdk8_url: http://download.oracle.com/otn-pub/java/jdk/8u92-b14/jdk-8u92-linux-x64.tar.gz
-jdk8_archivename: jdk-8u92-linux-x64.tar.gz
-jdk8_dest_path: /opt
-jdk8_prefix: "{{ jdk8_dest_path  }}/jdk1.8.0_92"
+#jdk8_archivename: jdk-8u92-linux-x64.tar.gz
+#jdk8_url: http://download.oracle.com/otn-pub/java/jdk/8u92-b14/jdk-8u92-linux-x64.tar.gz
+#jdk8_dest_path: /opt
+#jdk8_prefix: "{{ jdk8_dest_path  }}/jdk1.8.0_92"
 
+jdk8_archivename: jdk-8u112-linux-x64.tar.gz
+jdk8_url: http://download.oracle.com/otn-pub/java/jdk/8u112-b15/{{ jdk8_archivename }}
+jdk8_dest_path: "~/"
+jdk8_prefix: "{{ jdk8_dest_path  }}/jdk1.8.0_112"
