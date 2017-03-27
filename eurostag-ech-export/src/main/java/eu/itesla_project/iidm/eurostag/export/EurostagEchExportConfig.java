@@ -21,12 +21,12 @@ public class EurostagEchExportConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EurostagEchExportConfig.class);
 
-    protected static final String EUROSTAG_ECH_EXPORT_CONFIG = "eurostag-ech-export";
+    private static final String EUROSTAG_ECH_EXPORT_CONFIG = "eurostag-ech-export";
 
-    protected final static String DEFAULT_FORBIDDEN_CHARACTERS = "/%()^$,;?";
-    protected final static Character DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT = '#';
-    protected final static boolean DEFAULTNOGENERATORMINMAXQ = false;
-    protected final static boolean DEFAULTNOSWITCH = false;
+    private final static String DEFAULT_FORBIDDEN_CHARACTERS = "/%()^$,;?";
+    private final static Character DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT = '#';
+    private final static boolean DEFAULT_NOGENERATORMINMAXQ = false;
+    private final static boolean DEFAULT_NOSWITCH = false;
 
     private boolean noGeneratorMinMaxQ;
 
@@ -77,8 +77,8 @@ public class EurostagEchExportConfig {
     public static EurostagEchExportConfig load(PlatformConfig platformConfig) {
         if (platformConfig.moduleExists(EUROSTAG_ECH_EXPORT_CONFIG)) {
             ModuleConfig config = platformConfig.getModuleConfig(EUROSTAG_ECH_EXPORT_CONFIG);
-            boolean noGeneratorMinMaxQ = config.getBooleanProperty("noGeneratorMinMaxQ", DEFAULTNOGENERATORMINMAXQ);
-            boolean noSwitch = config.getBooleanProperty("noSwitch", DEFAULTNOSWITCH);
+            boolean noGeneratorMinMaxQ = config.getBooleanProperty("noGeneratorMinMaxQ", DEFAULT_NOGENERATORMINMAXQ);
+            boolean noSwitch = config.getBooleanProperty("noSwitch", DEFAULT_NOSWITCH);
             String forbiddenCharacters = config.getStringProperty("forbiddenCharacters", DEFAULT_FORBIDDEN_CHARACTERS);
             String replacementCharString = config.getStringProperty("forbiddenCharactersReplacement", DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT.toString());
             if (replacementCharString.length() != 1) {
@@ -88,7 +88,7 @@ public class EurostagEchExportConfig {
             return new EurostagEchExportConfig(noGeneratorMinMaxQ, noSwitch, forbiddenCharacters, forbiddenCharactersReplacement);
         } else {
             LOGGER.warn("no eurostag-ech-export config found: Using defaults.");
-            return new EurostagEchExportConfig(DEFAULTNOGENERATORMINMAXQ, DEFAULTNOSWITCH, DEFAULT_FORBIDDEN_CHARACTERS, DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT);
+            return new EurostagEchExportConfig(DEFAULT_NOGENERATORMINMAXQ, DEFAULT_NOSWITCH, DEFAULT_FORBIDDEN_CHARACTERS, DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT);
         }
     }
 

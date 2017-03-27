@@ -93,7 +93,7 @@ public class EurostagNamingStrategyTest {
     private EurostagEchExportConfig getConfig(String forbiddenChars, String forbiddenCharactersReplacement) {
         FileSystem fileSystem = Jimfs.newFileSystem(Configuration.unix());
         InMemoryPlatformConfig platformConfig = new InMemoryPlatformConfig(fileSystem);
-        MapModuleConfig moduleConfig = platformConfig.createModuleConfig(EurostagEchExportConfig.EUROSTAG_ECH_EXPORT_CONFIG);
+        MapModuleConfig moduleConfig = platformConfig.createModuleConfig("eurostag-ech-export");
         moduleConfig.setStringProperty("noGeneratorMinMaxQ", "false");
         moduleConfig.setStringProperty("noSwitch", "false");
         if (forbiddenChars != null) {
