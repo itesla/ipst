@@ -9,6 +9,14 @@
 
 # main tasks file for ipst.jdk8
 
+- debug:
+    var="{{ item }}"
+  when: "0==0"
+  with_items:
+    - jdk8_archivename
+    - jdk8_url
+    - jdk8_dest_path
+    - jdk8_prefix
 
 - name: check if already installed
   stat: path={{ jdk8_prefix }}
