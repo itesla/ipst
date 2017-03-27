@@ -20,8 +20,6 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import static org.junit.Assert.assertTrue;
 
@@ -40,13 +38,13 @@ public class DymolaImpactAnalysisTest {
 
     /**
      * return true if archive contain the expected files
-     * @param workingDir
-     * @param zipFileName
-     * @param expectedFileList
+     * @param workingDir working directory
+     * @param zipFileName archive
+     * @param expectedFileList expected files inside archive
      */
     private void checkArchive(Path workingDir, String zipFileName, String[] expectedFileList) {
         //
-        System.out.println(" archive: " + zipFileName);
+        LOGGER.debug(" archive: " + zipFileName);
 
         assertTrue(String.format("missing archive %s/%s", workingDir, zipFileName), Files.exists(workingDir.resolve(zipFileName)));
 
@@ -58,11 +56,11 @@ public class DymolaImpactAnalysisTest {
                     assertTrue(String.format("in archive %s/%s missing file %s ", workingDir, zipFileName, fileName), ze != null && ze.getSize() > 0);
                 }
             } else {
-                System.out.println(" archive 2: " + zipFileName+ " "+zipFile.size());
+                LOGGER.debug(" archive 2: " + zipFileName+ " "+zipFile.size());
                 Enumeration enumEntries = zipFile.entries();
                 while (enumEntries.hasMoreElements()) {
                     net.java.truevfs.comp.zip.ZipEntry ze = (net.java.truevfs.comp.zip.ZipEntry) enumEntries.nextElement();
-                    System.out.println("    - " + ze.getName()+ " "+ze.getSize());
+                    LOGGER.debug("    - " + ze.getName()+ " "+ze.getSize());
                 }
             }
 
@@ -139,7 +137,6 @@ public class DymolaImpactAnalysisTest {
             }
 
             private ExecutionReport execute(Path workingDir, List<CommandExecution> commandExecutionList) throws IOException, InterruptedException {
-                System.out.println(">>>>> toto");
 
                 //
                 List<ExecutionError> errors = new ArrayList<>();
@@ -167,7 +164,7 @@ public class DymolaImpactAnalysisTest {
                 //checkArchive( commonDir.toPath(), initModelZipFileName, initModelFiles);
                 //checkArchive( commonDir.toPath(), initTopoModelZipFileName, initTopoModelFiles);
 
-                // pour l instant je  ne sais pas
+                //
                 //checkArchive( workingDir, networkAllFileName, networkAllFiles);
 
                 //
