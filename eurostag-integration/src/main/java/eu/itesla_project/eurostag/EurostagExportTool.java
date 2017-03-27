@@ -8,6 +8,9 @@
 package eu.itesla_project.eurostag;
 
 import com.google.auto.service.AutoService;
+import com.google.common.io.ByteStreams;
+import com.google.common.jimfs.Configuration;
+import com.google.common.jimfs.Jimfs;
 import eu.itesla_project.commons.config.ComponentDefaultConfig;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
@@ -26,17 +29,13 @@ import eu.itesla_project.iidm.eurostag.export.EurostagEchExportConfig;
 import eu.itesla_project.iidm.import_.Importers;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.simulation.SimulationParameters;
+import net.java.truevfs.comp.zip.ZipEntry;
 import net.java.truevfs.comp.zip.ZipOutputStream;
 import org.apache.commons.cli.CommandLine;
 
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.io.Writer;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 
 /**
  *
@@ -98,21 +97,43 @@ public class EurostagExportTool implements Tool, EurostagConstants {
             scenario.writePreFaultSeq(writer, PRE_FAULT_SAC_FILE_NAME);
         }
         ContingenciesProvider contingenciesProvider = defaultConfig.newFactoryImpl(ContingenciesProviderFactory.class).create();
+
         //
-        try (ZipOutputStream os = new ZipOutputStream( new FileOutputStream( outputDir.resolve(ALL_SCENARIOS_ZIP_FILE_NAME).toFile()))) {
+        try (FileSystem fs = Jimfs.newFileSystem(Configuration.unix());
+             ZipOutputStream os = new ZipOutputStream( new FileOutputStream( outputDir.resolve(ALL_SCENARIOS_ZIP_FILE_NAME).toFile()))
+        ) {
+            Path rootDir = fs.getPath("/");
             scenario.writeFaultSeqArchive(
-                    os,
+                    rootDir,
                     contingenciesProvider.getContingencies(network),
                     network,
                     dictionary,
                     faultNum -> FAULT_SEQ_FILE_NAME.replace(eu.itesla_project.computation.Command.EXECUTION_NUMBER_PATTERN, Integer.toString(faultNum))
             );
+            copyToArchive( rootDir, os);
         }
+
 
         // export limits
         try (OutputStream os = Files.newOutputStream(outputDir.resolve(LIMITS_ZIP_FILE_NAME))) {
             EurostagImpactAnalysis.writeLimits(network, dictionary, os);
         }
+
+    }
+
+    private void copyToArchive(Path workingDir, OutputStream os) throws IOException {
+        Files.list(workingDir)
+                .filter(Files::isRegularFile)
+                .forEach(file -> {
+                    System.out.println("   " + file);
+                    try (InputStream is = Files.newInputStream(file)) {
+                        ((ZipOutputStream)os).putNextEntry(new ZipEntry(file.toString()));
+                        ByteStreams.copy(is, os);
+                        ((ZipOutputStream)os).closeEntry();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
 
     }
 

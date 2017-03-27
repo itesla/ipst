@@ -316,6 +316,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
         Files.list(workingDir)
                 .filter(Files::isRegularFile)
                 .forEach(file -> {
+                    System.out.println("   " + file);
                     try (InputStream is = Files.newInputStream(file)) {
                         ((ZipOutputStream)os).putNextEntry(new ZipEntry(file.toString()));
                         ByteStreams.copy(is, os);
@@ -334,7 +335,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
             Path rootDir = fs.getPath("/");
             new EurostagScenario(parameters, config)
                     .writeFaultSeqArchive(
-                            os,
+                            rootDir,
                             contingencies,
                             network,
                             dictionary,
@@ -342,6 +343,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
                     );
 
             // insert all files into wp43 archive
+            System.out.println(">>>" + ALL_SCENARIOS_ZIP_FILE_NAME);
             copyToArchive( rootDir, os);
         }
 
@@ -583,7 +585,11 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
     public CompletableFuture<ImpactAnalysisResult> runAsync(SimulationState state, Set<String> contingencyIds, ImpactAnalysisProgressListener listener) {
         checkState(state);
 
-        return computationManager.execute(new ExecutionEnvironment(EurostagUtil.createEnv(config), WORKING_DIR_PREFIX, config.isDebug()),
+        return computationManager.execute(
+                new ExecutionEnvironment(
+                        EurostagUtil.createEnv(config),
+                        WORKING_DIR_PREFIX, config.isDebug()
+                ),
                 new DefaultExecutionHandler<ImpactAnalysisResult>() {
 
                     private final List<Contingency> contingencies = new ArrayList<>();

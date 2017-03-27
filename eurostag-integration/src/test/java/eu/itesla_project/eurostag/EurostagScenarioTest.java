@@ -181,20 +181,23 @@ public class EurostagScenarioTest {
         };
 
         //
-        try (OutputStream o = Files.newOutputStream(workingDir.resolve("test.zip"));
-             OutputStream os = new ZipOutputStream( o )
+        try (
+                FileSystem fs2 = Jimfs.newFileSystem(Configuration.unix());
         ) {
+            Path rootDir = fs2.getPath("/");
             eurostagScenario.writeFaultSeqArchive(
-                    os,
+                    rootDir,
                     contingenciesProvider.getContingencies(network),
                     network,
                     m.get("dictionary"),
                     faultNum -> FAULT_SEQ_FILE_NAME.replace(Command.EXECUTION_NUMBER_PATTERN, Integer.toString(faultNum))
             );
+
+            assertTrue( Files.exists(rootDir.resolve("sim_fault_0.seq")));
         }
 
         //
-        checkArchive( workingDir, "test.zip", testFiles);
+        //checkArchive( workingDir, "test.zip", testFiles);
         //checkArchive( workingDir, "test.zip", null);
 
     }

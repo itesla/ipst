@@ -212,7 +212,8 @@ public class EurostagImpactAnalysisTest {
                 errors.add(new ExecutionError(commandExecutionList.get(0).getCommand(), 0, 0));
 
                 // assert archive production
-                //checkArchive( workingDir, "sim_pre_fault.sac.gz", null);
+                //checkArchive( workingDir, "sim_pre_fault.sac.gz", null);    String ALL_SCENARIOS_ZIP_FILE_NAME = "eurostag-all-scenarios.zip";
+
                 checkArchive( commonDir.toPath(), "eurostag-all-scenarios.zip", null);
                 checkArchive( commonDir.toPath(),"eurostag-limits.zip", null);
                 checkArchive( commonDir.toPath(), "wp43-all-configs.zip", null);
