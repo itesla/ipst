@@ -20,10 +20,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -107,6 +104,8 @@ public class EurostagDictionary {
     }
 
     private EurostagDictionary(Map<String, String> iidmId2esgId, EurostagEchExportConfig config) {
+        Objects.requireNonNull(iidmId2esgId);
+        Objects.requireNonNull(config);
         this.iidmId2esgId = HashBiMap.create(iidmId2esgId);
         this.config = config;
     }

@@ -21,9 +21,9 @@ public class CutEurostagNamingStrategy implements EurostagNamingStrategy {
     public void fillDictionary(EurostagDictionary dictionary, NameType nameType, Set<String> iidmIds) {
         EurostagEchExportConfig config = dictionary.getConfig();
         String forbiddenChars = config.getForbiddenCharactersString();
-        Character replacementChar = config.getDefaultEurostagForbiddenCharactersReplacement();
-        String regex=(forbiddenChars.length()>0) ? "[" + Pattern.quote(forbiddenChars) + "]" : null;
-        String repl= (replacementChar != null) ? Matcher.quoteReplacement(""+replacementChar) : null;
+        Character replacementChar = config.getForbiddenCharactersReplacement();
+        String regex = (forbiddenChars.length() > 0) ? "[" + Pattern.quote(forbiddenChars) + "]" : null;
+        String repl = Matcher.quoteReplacement(replacementChar.toString());
 
         iidmIds.forEach(iidmId -> {
             if (!dictionary.iidmIdExists(iidmId)) {
@@ -36,7 +36,7 @@ public class CutEurostagNamingStrategy implements EurostagNamingStrategy {
     private String getEsgId(EurostagDictionary dictionary, NameType nameType, String iidmId, String regex, String repl) {
         String esgId = iidmId.length() > nameType.getLength() ? iidmId.substring(0, nameType.getLength())
                 : Strings.padEnd(iidmId, nameType.getLength(), ' ');
-        if ((regex!=null) && (repl!=null)) {
+        if (regex != null) {
             esgId = esgId.replaceAll(regex, repl);
         }
         int counter = 0;

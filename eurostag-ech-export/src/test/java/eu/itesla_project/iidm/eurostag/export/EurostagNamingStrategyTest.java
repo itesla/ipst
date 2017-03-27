@@ -96,8 +96,12 @@ public class EurostagNamingStrategyTest {
         MapModuleConfig moduleConfig = platformConfig.createModuleConfig(EurostagEchExportConfig.EUROSTAG_ECH_EXPORT_CONFIG);
         moduleConfig.setStringProperty("noGeneratorMinMaxQ", "false");
         moduleConfig.setStringProperty("noSwitch", "false");
-        moduleConfig.setStringProperty("forbiddenCharacters", forbiddenChars);
-        moduleConfig.setStringProperty("forbiddenCharactersReplacement", forbiddenCharactersReplacement);
+        if (forbiddenChars != null) {
+            moduleConfig.setStringProperty("forbiddenCharacters", forbiddenChars);
+        }
+        if (forbiddenCharactersReplacement != null) {
+            moduleConfig.setStringProperty("forbiddenCharactersReplacement", forbiddenCharactersReplacement);
+        }
 
         return EurostagEchExportConfig.load(platformConfig);
     }
@@ -130,7 +134,7 @@ public class EurostagNamingStrategyTest {
 
     @Test
     public void testDefaultCharsConfig() throws IOException {
-        EurostagEchExportConfig config = EurostagEchExportConfig.load();
+        EurostagEchExportConfig config = getConfig(null, null);
         EurostagDictionary ed = EurostagDictionary.create(network, null, config);
         ed.toMap().forEach((iidmId, esgId) -> {
             assertTrue(isValid(config, esgId));

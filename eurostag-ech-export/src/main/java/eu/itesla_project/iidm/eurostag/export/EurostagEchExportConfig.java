@@ -9,6 +9,8 @@ package eu.itesla_project.iidm.eurostag.export;
 
 import eu.itesla_project.commons.config.ModuleConfig;
 import eu.itesla_project.commons.config.PlatformConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
@@ -17,13 +19,14 @@ import java.util.Objects;
  */
 public class EurostagEchExportConfig {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(EurostagEchExportConfig.class);
+
     protected static final String EUROSTAG_ECH_EXPORT_CONFIG = "eurostag-ech-export";
 
-    protected final static String DEFAULTEUROSTAGFORBIDDENCHARACTERS = "/%()^$,;?";
-    protected final static Character DEFAULTEUROSTAGFORBIDDENCHARACTERSREPLACEMENT = '#';
+    protected final static String DEFAULT_FORBIDDEN_CHARACTERS = "/%()^$,;?";
+    protected final static Character DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT = '#';
     protected final static boolean DEFAULTNOGENERATORMINMAXQ = false;
     protected final static boolean DEFAULTNOSWITCH = false;
-    protected final static Class DEFAULTNAMINGFACTORY = DicoEurostagNamingStrategyFactory.class;
 
     private boolean noGeneratorMinMaxQ;
 
@@ -34,23 +37,21 @@ public class EurostagEchExportConfig {
     private final Character forbiddenCharactersReplacement;
 
     public EurostagEchExportConfig() {
-        this(false, false, DEFAULTEUROSTAGFORBIDDENCHARACTERS, DEFAULTEUROSTAGFORBIDDENCHARACTERSREPLACEMENT);
+        this(false, false, DEFAULT_FORBIDDEN_CHARACTERS, DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT);
     }
 
     public EurostagEchExportConfig(boolean noGeneratorMinMaxQ) {
-        this(noGeneratorMinMaxQ, false, DEFAULTEUROSTAGFORBIDDENCHARACTERS, DEFAULTEUROSTAGFORBIDDENCHARACTERSREPLACEMENT);
+        this(noGeneratorMinMaxQ, false, DEFAULT_FORBIDDEN_CHARACTERS, DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT);
     }
 
     public EurostagEchExportConfig(boolean noGeneratorMinMaxQ, boolean noSwitch, String forbiddenCharacters, Character forbiddenCharactersReplacement) {
-        Objects.requireNonNull(forbiddenCharacters, "forbiddenCharacters string must be not null");
-        Objects.requireNonNull(forbiddenCharactersReplacement, "forbiddenCharactersReplacement (single char) string must not be null");
+        this.forbiddenCharacters = Objects.requireNonNull(forbiddenCharacters, "forbiddenCharacters string must be not null");
+        this.forbiddenCharactersReplacement = Objects.requireNonNull(forbiddenCharactersReplacement, "forbiddenCharactersReplacement (single char) string must not be null");
         this.noGeneratorMinMaxQ = noGeneratorMinMaxQ;
         this.noSwitch = noSwitch;
-        this.forbiddenCharacters = forbiddenCharacters;
-        if (forbiddenCharacters.contains("" + forbiddenCharactersReplacement)) {
+        if (forbiddenCharacters.contains(forbiddenCharactersReplacement.toString())) {
             throw new IllegalArgumentException("forbiddenCharactersReplacement " + forbiddenCharactersReplacement + " must not appear also in the forbiddenCharacters string: " + forbiddenCharacters);
         }
-        this.forbiddenCharactersReplacement = forbiddenCharactersReplacement;
     }
 
     public boolean isNoGeneratorMinMaxQ() {
@@ -65,7 +66,7 @@ public class EurostagEchExportConfig {
         return forbiddenCharacters;
     }
 
-    public Character getDefaultEurostagForbiddenCharactersReplacement() {
+    public Character getForbiddenCharactersReplacement() {
         return forbiddenCharactersReplacement;
     }
 
@@ -78,16 +79,16 @@ public class EurostagEchExportConfig {
             ModuleConfig config = platformConfig.getModuleConfig(EUROSTAG_ECH_EXPORT_CONFIG);
             boolean noGeneratorMinMaxQ = config.getBooleanProperty("noGeneratorMinMaxQ", DEFAULTNOGENERATORMINMAXQ);
             boolean noSwitch = config.getBooleanProperty("noSwitch", DEFAULTNOSWITCH);
-            String forbiddenCharacters = config.getStringProperty("forbiddenCharacters", DEFAULTEUROSTAGFORBIDDENCHARACTERS);
-            String replacementCharString = config.getStringProperty("forbiddenCharactersReplacement", "" + DEFAULTEUROSTAGFORBIDDENCHARACTERSREPLACEMENT);
-            if (replacementCharString.length() > 1) {
+            String forbiddenCharacters = config.getStringProperty("forbiddenCharacters", DEFAULT_FORBIDDEN_CHARACTERS);
+            String replacementCharString = config.getStringProperty("forbiddenCharactersReplacement", DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT.toString());
+            if (replacementCharString.length() != 1) {
                 throw new IllegalArgumentException("forbiddenCharactersReplacement must be a single character: " + replacementCharString);
             }
             Character forbiddenCharactersReplacement = replacementCharString.charAt(0);
             return new EurostagEchExportConfig(noGeneratorMinMaxQ, noSwitch, forbiddenCharacters, forbiddenCharactersReplacement);
         } else {
-            System.out.println("no eurostag-ech-export config found: Using defaults.");
-            return new EurostagEchExportConfig(DEFAULTNOGENERATORMINMAXQ, DEFAULTNOSWITCH, DEFAULTEUROSTAGFORBIDDENCHARACTERS, DEFAULTEUROSTAGFORBIDDENCHARACTERSREPLACEMENT);
+            LOGGER.warn("no eurostag-ech-export config found: Using defaults.");
+            return new EurostagEchExportConfig(DEFAULTNOGENERATORMINMAXQ, DEFAULTNOSWITCH, DEFAULT_FORBIDDEN_CHARACTERS, DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT);
         }
     }
 

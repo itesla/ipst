@@ -104,14 +104,14 @@ public class DicoEurostagNamingStrategy implements EurostagNamingStrategy {
         dicoPartioned.get(true).forEach(iidmId -> {
             if (!dictionary.iidmIdExists(iidmId)) {
                 String esgId = dicoMap.get(iidmId);
-                LOGGER.debug(" dico mapping found for iidmId: '{}'; esgId: '{}'", iidmId, esgId);
+                LOGGER.debug("dico mapping found for iidmId: '{}'; esgId: '{}'", iidmId, esgId);
                 dictionary.add(iidmId, esgId);
             }
         });
 
         //then process the entry that aren't, with the default strategy
         if (dicoPartioned.get(false).size() > 0) {
-            LOGGER.warn(" dico mapping not found for iidmId ids: {}", dicoPartioned.get(false));
+            LOGGER.warn("dico mapping not found for iidmId ids: {}", dicoPartioned.get(false));
             defaultStrategy.fillDictionary(dictionary, nameType, new HashSet(dicoPartioned.get(false)));
         }
     }
