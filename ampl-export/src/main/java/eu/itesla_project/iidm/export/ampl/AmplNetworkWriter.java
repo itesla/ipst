@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
- * Copyright (c) 2016, RTE (http://www.rte-france.com)
+ * Copyright (c) 2016-2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -1207,6 +1207,8 @@ public class AmplNetworkWriter implements AmplConstants {
                 !append,
                 LOCALE,
                 new Column("num"),
+                new Column("fault"),
+                new Column(config.getActionType().getLabel()),
                 new Column("id"))) {
             List<String> skipped = new ArrayList<>();
             for (StaticVarCompensator svc : network.getStaticVarCompensators()) {
@@ -1214,6 +1216,8 @@ public class AmplNetworkWriter implements AmplConstants {
                 String id = svc.getId();
                 int num = mapper.getInt(AmplSubset.STATIC_VAR_COMPENSATOR, id);
                 formatter.writeCell(num)
+                         .writeCell(faultNum)
+                         .writeCell(actionNum)
                          .writeCell(id);
             }
             if (skipped.size() > 0) {
@@ -1398,6 +1402,8 @@ public class AmplNetworkWriter implements AmplConstants {
                 !append,
                 LOCALE,
                 new Column("num"),
+                new Column("fault"),
+                new Column(config.getActionType().getLabel()),
                 new Column("id"))) {
             List<String> skipped = new ArrayList<>();
             for (HvdcLine hvdcLine : network.getHvdcLines()) {
@@ -1405,6 +1411,8 @@ public class AmplNetworkWriter implements AmplConstants {
                 String id = hvdcLine.getId();
                 int num = mapper.getInt(AmplSubset.HVDC_LINE, id);
                 formatter.writeCell(num)
+                         .writeCell(faultNum)
+                         .writeCell(actionNum)
                          .writeCell(id);
             }
             if (skipped.size() > 0) {
