@@ -9,9 +9,8 @@ import com.google.common.io.CharStreams;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClient;
-import eu.itesla_project.iidm.ddb.eurostag_imp_exp.IIDMDynamicDatabaseMockFactory;
 import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.test.EurostagTutorialExample1Factory;
+import eu.itesla_project.iidm.network.test.SvcTestCaseFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,17 +31,21 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Christian Biasuzzi <christian.biasuzzi@techrain.it>
  */
-public class TestDynamicDatabaseMock {
+public class TestDynamicDatabaseSVCMock {
 
     private FileSystem fileSystem;
 
     private static final String DTA_FILENAME = "sim.dta";
-    private static final List<String> REGULATORS_FILENAMES = Arrays.asList("dummefd.fri",
+    private static final List<String> SVC_REGULATORS_FILENAMES = Arrays.asList("dummefd.fri",
             "dummefd.frm",
             "dummefd.par",
             "dummycm.fri",
             "dummycm.frm",
-            "dummycm.par");
+            "dummycm.par",
+            "interdum.frm",
+            "interdum.par",
+            "interdum.fri");
+
 
     @Before
     public void setUp() throws Exception {
@@ -55,26 +58,29 @@ public class TestDynamicDatabaseMock {
     }
 
     @Test
-    public void test_TutorialExample1() throws Exception {
-        Network network = EurostagTutorialExample1Factory.create();
+    public void test_SvcTestCase() throws Exception {
+        Network network = SvcTestCaseFactory.create();
 
         Map<String, String> iidm2eurostag = new HashMap<>();
-        iidm2eurostag.put("GEN", "GEN");
-        iidm2eurostag.put("NGEN", "NGEN");
+        iidm2eurostag.put("G1", "G1");
+        iidm2eurostag.put("B1", "B1");
+        iidm2eurostag.put("SVC2", "SVC2");
+        iidm2eurostag.put("B2", "B2");
 
         Path workingDir = Files.createDirectory(fileSystem.getPath("/workingdir"));
 
-        DynamicDatabaseClient ddbClient = new IIDMDynamicDatabaseMockFactory().create(false);
+        DynamicDatabaseClient ddbClient = new IIDMDynamicDatabaseSVCMockFactory().create(false);
         ddbClient.dumpDtaFile(workingDir, DTA_FILENAME, network, new HashMap<String, Character>(), "mock", iidm2eurostag);
 
-        File expectedDtaFile = new File(getClass().getResource("/sim_test00.dta").toURI());
+        File expectedDtaFile = new File(getClass().getResource("/sim_test_svc.dta").toURI());
         Path testFile = workingDir.resolve(DTA_FILENAME);
-
         assertEquals(CharStreams.toString(new InputStreamReader(Files.newInputStream(expectedDtaFile.toPath()))),
                 CharStreams.toString(new InputStreamReader(Files.newInputStream(testFile))));
 
-        REGULATORS_FILENAMES.stream()
+        SVC_REGULATORS_FILENAMES.stream()
                 .forEach(filename -> assertTrue(Files.isRegularFile(workingDir.resolve(filename))));
+
     }
+
 
 }

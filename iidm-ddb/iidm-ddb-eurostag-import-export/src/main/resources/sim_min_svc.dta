@@ -1,0 +1,49 @@
+HEADER     06/03/17 5.1
+
+M1       S         0.       0.
+MINIMALI NODENAME    1150.      24.       1.       1.       0.      6.3
+            0.004    0.219    2.351       0.  0.01723  0.12825  0.00113  0.24253
+                              2.351            0.0193  0.08921  0.03923  1.78484 3
+        N                                                1000.    1100.
+              0.1    6.025      0.1    6.025
+
+R MINIMALI
+DUMMYCM    1
+
+
+
+R MINIMALI
+DUMMEFD    1
+
+
+
+
+M21                0.       0.
+SVCDUMMY          C                        0        0                       250.
+
+R SVCDUMMY
+INTERDUM   1
+
+
+
+
+LOADP   CH
+
+         VOLTA1         1.       1.       2.       2.       0.       0.
+
+
+
+
+CH
+CH       W
+
+
+A11
+MINIMALI NODENAME      0.7    0.707      0.7       0.       0.
+         NODENAME      1.2    1.188       3.       0.       0.
+FINA11
+
+A12
+MINIMALI     47.5       1.      55.       1.       0.
+FINA12
+

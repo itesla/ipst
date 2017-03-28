@@ -4,12 +4,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package eu.itesla_project.iidm.ddb.eurostag_imp_exp;
 
 import com.google.common.collect.ImmutableMap;
+import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClient;
+import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseMockUtils;
 import eu.itesla_project.iidm.network.Bus;
 import eu.itesla_project.iidm.network.Generator;
 import eu.itesla_project.iidm.network.Network;
+import eu.itesla_project.iidm.network.StaticVarCompensator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,12 +24,12 @@ import java.util.Objects;
 /**
  * @author Christian Biasuzzi <christian.biasuzzi@techrain.it>
  */
-class DynamicDatabaseMock implements DynamicDatabaseClient {
+class DynamicDatabaseSVCMock implements DynamicDatabaseClient {
 
-    private static final String MINIMAL_DTA_TEMPLATE = "/sim_min.dta";
-    private static final List<String> MOCK_REG_FILES_PREFIXES = Arrays.asList("dummefd", "dummycm");
+    private static final String MINIMAL_DTA_TEMPLATE = "/sim_min_svc.dta";
+    private static final List<String> MOCK_REG_FILES_PREFIXES = Arrays.asList("dummefd", "dummycm", "interdum");
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DynamicDatabaseMock.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DynamicDatabaseSVCMock.class);
 
     @Override
     public void dumpDtaFile(Path workingDir, String fileName, Network network, Map<String, Character> parallelIndexes, String eurostagVersion, Map<String, String> iidm2eurostagId) {
@@ -58,14 +60,22 @@ class DynamicDatabaseMock implements DynamicDatabaseClient {
         LOGGER.info("generator:  iidm {}, eurostag {}", generator.getId(), mappedGenName);
         LOGGER.info("node:  iidm {}, eurostag {}", generator.getTerminal().getBusBreakerView().getConnectableBus().getId(), mappedNodeName);
 
+        //uses the first connected SVC that is available in the iidm2eurostag map
+        StaticVarCompensator svc1 = network.getStaticVarCompensatorStream()
+                .filter(svc -> ((iidm2eurostagId.containsKey(svc.getId())) && (svc.getTerminal().isConnected())))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("could not find a suitable svc in network: " + network + ", to be used in: "));
+        String mappedSvcName = mockUtils.formatString8(iidm2eurostagId.get(svc1.getId()));
+        LOGGER.info("svc:  iidm {}, eurostag {}", svc1.getId(), mappedSvcName);
+
         mockUtils.copyDynamicDataFiles(MINIMAL_DTA_TEMPLATE, workingDir, fileName,
-                ImmutableMap.of("NODENAME", mappedNodeName, "MINIMALI", mappedGenName),
+                ImmutableMap.of("NODENAME", mappedNodeName, "MINIMALI", mappedGenName, "SVCDUMMY", mappedSvcName),
                 MOCK_REG_FILES_PREFIXES);
     }
 
     @Override
     public String getName() {
-        return "mock DDB";
+        return "mock DDB SVC";
     }
 
     @Override
