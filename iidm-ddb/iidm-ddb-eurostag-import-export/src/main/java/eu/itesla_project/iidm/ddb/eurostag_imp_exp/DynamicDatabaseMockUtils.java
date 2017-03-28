@@ -22,9 +22,9 @@ import java.util.Map;
 /**
  * @author Christian Biasuzzi <christian.biasuzzi@techrain.it>
  */
-class DynamicDatabaseMockUtils {
+public class DynamicDatabaseMockUtils {
 
-    private static final List<String> REG_EXTENSIONS = Arrays.asList("fri", "frm", "par", "pcp", "rcp");
+    private static final List<String> REG_EXTENSIONS = Arrays.asList("fri", "frm", "par");
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DynamicDatabaseMockUtils.class);
 
@@ -65,7 +65,7 @@ class DynamicDatabaseMockUtils {
     }
 
 
-    String formatString8(String string) {
+    public String formatString8(String string) {
         return Strings.padEnd((string.length() > 8) ? string.substring(0, 8) : string, 8, ' ');
     }
 
