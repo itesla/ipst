@@ -8,8 +8,6 @@
 package eu.itesla_project.histodb.server;
 
 import be.pepite.dataserver.api.ColumnDescriptor;
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.computation.local.LocalComputationManager;
 import eu.itesla_project.iidm.datasource.GenericReadOnlyDataSource;
 import eu.itesla_project.iidm.import_.Importer;
 import eu.itesla_project.iidm.import_.Importers;
@@ -25,8 +23,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created with IntelliJ IDEA.
@@ -41,26 +37,7 @@ public class CimHistoImporter {
 
     private ITeslaDatasource datasource;
 
-    private static final ComputationManager computationManager;
-    private static final List<Importer> importers;
-
-    static {
-        try {
-            computationManager = new LocalComputationManager();
-            importers = Stream.of("CIM1", "XIIDM", "UCTE")
-                    .map(importerID -> {
-                        Importer importer = Importers.getImporter(importerID, computationManager);
-                        if (importer == null) {
-                            log.warn(importerID + " importer implementation not found");
-                        }
-                        return importer;
-                    })
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private static final Collection<Importer> importers = Importers.list();
 
     public CimHistoImporter(ITeslaDatasource datasource) {
         this.datasource = datasource;
