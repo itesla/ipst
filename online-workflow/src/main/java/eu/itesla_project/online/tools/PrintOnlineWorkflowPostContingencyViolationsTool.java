@@ -188,12 +188,12 @@ public class PrintOnlineWorkflowPostContingencyViolationsTool implements Tool {
             }
             violations
                     .stream()
-                    .sorted(Comparator.comparing(o -> o.getSubject().getId()))
+                    .sorted(Comparator.comparing(o -> o.getSubjectId()))
                     .forEach(violation -> {
                         try {
                             formatter.writeCell(stateId);
                             formatter.writeCell(contingencyId);
-                            formatter.writeCell(violation.getSubject().getId());
+                            formatter.writeCell(violation.getSubjectId());
                             formatter.writeCell(violation.getLimitType().name());
                             formatter.writeCell(violation.getValue());
                             formatter.writeCell(violation.getLimit());

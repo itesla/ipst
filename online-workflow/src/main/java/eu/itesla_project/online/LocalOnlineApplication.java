@@ -455,7 +455,7 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
     private void writeCsvViolations(String basecase, List<LimitViolation> networkViolations, CsvWriter cvsWriter)
             throws IOException {
         for (LimitViolation violation : networkViolations) {
-            String[] values = new String[] { basecase, violation.getSubject().getId(), violation.getLimitType().name(),
+            String[] values = new String[] { basecase, violation.getSubjectId(), violation.getLimitType().name(),
                     Float.toString(violation.getValue()), Float.toString(violation.getLimit()) };
             cvsWriter.writeRecord(values);
         }

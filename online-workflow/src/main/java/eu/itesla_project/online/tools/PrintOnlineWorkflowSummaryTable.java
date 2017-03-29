@@ -206,7 +206,7 @@ public class PrintOnlineWorkflowSummaryTable implements Tool {
                         formatter.writeCell(ViolationType.STEADY_STATE.name());
                         formatter.writeCell(violation.getLimitType().name());
                         formatter.writeCell(step.name());
-                        formatter.writeCell(violation.getSubject().getId());
+                        formatter.writeCell(violation.getSubjectId());
                         formatter.writeCell(violation.getValue());
                         formatter.writeCell(violation.getLimit());
                     } catch (IOException e) {

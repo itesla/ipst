@@ -644,8 +644,7 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                                 clusters.add(CompletableFuture.completedFuture(new WCAClusterImpl(contingency,
                                         WCAClusterNum.FOUR,
                                         WCAClusterOrigin.HADES_BASE_LIMIT,
-                                        baseStateLimitViolations.stream().map(LimitViolation::getSubject)
-                                                .map(Identifiable::getId)
+                                        baseStateLimitViolations.stream().map(LimitViolation::getSubjectId)
                                                 .distinct()
                                                 .collect(Collectors.toList()))));
                             }
@@ -696,7 +695,7 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                                                     network.getId(),
                                                     preventiveActionId,
                                                     baseStateLimitViolation.getLimitType(),
-                                                    baseStateLimitViolation.getSubject().getId());
+                                                    baseStateLimitViolation.getSubjectId());
                                             network.getStateManager().cloneState(StateManager.INITIAL_STATE_ID, preventiveStateId);
                                             network.getStateManager().setWorkingState(preventiveStateId);
                                             for (Action subAction : preventiveAction) {
@@ -710,14 +709,14 @@ public class WCAImpl implements WCA, WCAConstants, AmplConstants {
                                                         List<LimitViolation> preventiveStateLimitViolations = CURRENT_FILTER.apply(Security.checkLimits(network));
                                                         Optional<LimitViolation> notSolvedLimitViolation = preventiveStateLimitViolations
                                                                 .stream()
-                                                                .filter(preventiveStateLimitViolation -> preventiveStateLimitViolation.getSubject().getId().equals(baseStateLimitViolation.getSubject().getId()))
+                                                                .filter(preventiveStateLimitViolation -> preventiveStateLimitViolation.getSubjectId().equals(baseStateLimitViolation.getSubjectId()))
                                                                 .findAny();
                                                         if (notSolvedLimitViolation.isPresent() && parameters.stopWcaOnViolations()) {
                                                             LOGGER.warn("Network {}, Preventive Action {}: post action state still contains {} violation on equiment {}",
                                                                     network.getId(),
                                                                     preventiveActionId,
                                                                     baseStateLimitViolation.getLimitType(),
-                                                                    baseStateLimitViolation.getSubject().getId());
+                                                                    baseStateLimitViolation.getSubjectId());
                                                         } else {
                                                             LOGGER.info("Network {}, Preventive Action {}: adding action to list for 'domains' task", network.getId(), preventiveActionId);
                                                             preventiveStateIdsForDomains.add(preventiveStateId);

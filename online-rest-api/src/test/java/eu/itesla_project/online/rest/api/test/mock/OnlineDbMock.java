@@ -324,8 +324,7 @@ public class OnlineDbMock implements OnlineDb {
             return null;
         Map<Integer, List<LimitViolation>> res = new HashMap<Integer, List<LimitViolation>>();
         List<LimitViolation> viols = new ArrayList<>();
-        LimitViolation lv = new LimitViolation(network.getIdentifiable("sub1"), LimitViolationType.CURRENT, 100,
-                "HIGH_CURRENT", 0, 110, Country.FR, 240);
+        LimitViolation lv = new LimitViolation("sub1", LimitViolationType.CURRENT, 100, "HIGH_CURRENT", 0, 110, Country.FR, 240);
         viols.add(lv);
         res.put(0, viols);
         return res;
@@ -374,8 +373,7 @@ public class OnlineDbMock implements OnlineDb {
         Map<Integer, Map<String, List<LimitViolation>>> res = new HashMap<>();
         Map<String, List<LimitViolation>> mmap = new HashMap<>();
         List<LimitViolation> viols = new ArrayList<>();
-        LimitViolation lv = new LimitViolation(network.getIdentifiable("sub1"), LimitViolationType.CURRENT, 100,
-                "HIGH_CURRENT", 0, 200, Country.FR, 120);
+        LimitViolation lv = new LimitViolation("sub1", LimitViolationType.CURRENT, 100, "HIGH_CURRENT", 0, 200, Country.FR, 120);
         viols.add(lv);
         mmap.put("test_contingency", viols);
         res.put(0, mmap);
