@@ -1,0 +1,23 @@
+ WCA Result : contingency index 1 curative 0 line or transformer "LINE_1" flow 2017.46 A threshold 1800 A sending end  
+ WCA Result : contingency index 1 curative 0 line or transformer "LINE_1" flow 2017.46 A threshold 1800 A receiving end
+ WCA Result : contingency index 1 contingency name "CONTINGENCY_1" line or transformer deleted "LINE_2"
+ WCA Result : contingency index 1 contingency name "CONTINGENCY_1" line or transformer deleted "LINE_3"
+ WCA Result : contingency index 1 no security rules
+ WCA Result : contingency index 1 curative 0 BILEVEL contingency name "CONTINGENCY_1"
+ WCA Result : contingency index 1 curative 0 BILEVEL flow with uncertainties 1377.68 MW without 1374.9 MW limit 1217.8 MW line or transformer "LINE_1"
+ WCA Result : contingency index 1 curative 0 BILEVEL flow with uncertainties 176.878 MW without 177.982 MW limit 423.985 MW PST "LINE_4"
+ WCA Result : contingency index 1 curative 0 BILEVEL flow with uncertainties 338.112 MW without 338.422 MW limit 1000.01 MW PST "LINE_5"
+ WCA Result : contingency index 1 curative 0 BILEVEL flow with uncertainties 47.6029 MW without 48.125 MW limit 380.893 MW PST "LINE_6"
+ WCA Result : contingency index 1 curative 0 BILEVEL flow with uncertainties 250.246 MW without 248.895 MW limit 41193.6 MW PST "LINE_7"
+ WCA Result : contingency index 1 curative 0 BILEVEL flow with uncertainties -1377.68 MW without -1374.9 MW limit 1217.8 MW PST "LINE_1"
+ WCA Result : contingency index 1 curative 0 BILEVEL flow with uncertainties 52.3156 MW without 51.5405 MW limit 430.983 MW PST "LINE_8"
+ WCA Result : contingency index 1 curative 1 BILEVEL curative name "ACTION_1"
+ WCA Result : contingency index 1 curative 1 BILEVEL contingency name "CONTINGENCY_1"
+ WCA Result : contingency index 1 curative 1 BILEVEL flow with uncertainties 1167.94 MW without 1165.19 MW limit 1235.1 MW line or transformer "LINE_1
+ WCA Result : contingency index 1 curative 1 BILEVEL flow with uncertainties 176.801 MW without 177.905 MW limit 423.981 MW PST "LINE_4"
+ WCA Result : contingency index 1 curative 1 BILEVEL flow with uncertainties 339.532 MW without 339.84 MW limit 999.526 MW PST "LINE_5"
+ WCA Result : contingency index 1 curative 1 BILEVEL flow with uncertainties 47.7227 MW without 48.2442 MW limit 380.89 MW PST "LINE_6"
+ WCA Result : contingency index 1 curative 1 BILEVEL flow with uncertainties 247.674 MW without 246.325 MW limit 41196 MW PST "LINE_7"
+ WCA Result : contingency index 1 curative 1 BILEVEL flow with uncertainties -1167.94 MW without -1165.19 MW limit 1235.1 MW PST "LINE_1"
+ WCA Result : contingency index 1 curative 1 BILEVEL flow with uncertainties 52.1049 MW without 51.3264 MW limit 430.987 MW PST "LINE_8"
+ WCA Result : contingency_index 1 contingency_cluster_index 2 curative_action_index 1

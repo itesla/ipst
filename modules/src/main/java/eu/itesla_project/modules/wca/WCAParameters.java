@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
- * Copyright (c) 2016, RTE (http://www.rte-france.com)
+ * Copyright (c) 2016-2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -27,15 +27,11 @@ public class WCAParameters {
 
     private final double purityThreshold;
 
-    private final boolean stopWcaOnViolations;
-
-    public WCAParameters(Interval histoInterval, String offlineWorkflowId, Set<SecurityIndexType> securityIndexTypes, double purityThreshold, 
-            boolean stopWcaOnViolations) {
+    public WCAParameters(Interval histoInterval, String offlineWorkflowId, Set<SecurityIndexType> securityIndexTypes, double purityThreshold) {
         this.histoInterval = Objects.requireNonNull(histoInterval);
         this.offlineWorkflowId = offlineWorkflowId;
         this.securityIndexTypes = securityIndexTypes;
         this.purityThreshold = purityThreshold;
-        this.stopWcaOnViolations = stopWcaOnViolations;
     }
 
     public Interval getHistoInterval() {
@@ -54,17 +50,12 @@ public class WCAParameters {
         return purityThreshold;
     }
 
-    public boolean stopWcaOnViolations() {
-        return stopWcaOnViolations;
-    }
-
     @Override
     public String toString() {
         return getClass().getSimpleName() + " [histoInterval=" + histoInterval +
                 ", offlineWorkflowId=" + offlineWorkflowId +
                 ", securityIndexTypes=" + securityIndexTypes +
                 ", purityThreshold=" + purityThreshold +
-                ", stopWcaOnViolations=" + stopWcaOnViolations +
                 "]";
     }
 }
