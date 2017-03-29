@@ -40,13 +40,9 @@ public class TestDynamicDatabaseMock {
     private static final List<String> REGULATORS_FILENAMES = Arrays.asList("dummefd.fri",
             "dummefd.frm",
             "dummefd.par",
-            "dummefd.pcp",
-            "dummefd.rcp",
             "dummycm.fri",
             "dummycm.frm",
-            "dummycm.par",
-            "dummycm.pcp",
-            "dummycm.rcp");
+            "dummycm.par");
 
     @Before
     public void setUp() throws Exception {
@@ -59,7 +55,7 @@ public class TestDynamicDatabaseMock {
     }
 
     @Test
-    public void test_00() throws Exception {
+    public void test_TutorialExample1() throws Exception {
         Network network = EurostagTutorialExample1Factory.create();
 
         Map<String, String> iidm2eurostag = new HashMap<>();

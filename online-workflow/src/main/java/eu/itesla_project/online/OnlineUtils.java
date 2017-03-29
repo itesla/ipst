@@ -8,8 +8,8 @@
 package eu.itesla_project.online;
 
 import eu.itesla_project.contingency.Contingency;
+import eu.itesla_project.security.LimitViolationType;
 import eu.itesla_project.simulation.securityindexes.SecurityIndex;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -52,4 +52,18 @@ public final class OnlineUtils {
         Objects.requireNonNull(contingencyId, "contingency id is null");
         return stateId + "-post-" + contingencyId;
     }
+
+    public static UnitEnum getUnit(LimitViolationType type) {
+        Objects.requireNonNull(type);
+        switch (type) {
+        case CURRENT:
+            return UnitEnum.MW;
+        case LOW_VOLTAGE:
+        case HIGH_VOLTAGE:
+            return UnitEnum.KV;
+        default:
+            throw new IllegalArgumentException();
+        }
+    }
+
 }

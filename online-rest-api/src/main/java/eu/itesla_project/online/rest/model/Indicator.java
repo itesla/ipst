@@ -7,6 +7,7 @@
 package eu.itesla_project.online.rest.model;
 
 import java.util.Objects;
+import eu.itesla_project.online.UnitEnum;
 
 /**
 *
