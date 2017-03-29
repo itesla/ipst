@@ -1,0 +1,11 @@
+ WCA Result : contingency index 1 contingency name "CONTINGENCY_1" line or transformer deleted "LINE_1"
+ WCA Result : contingency index 1 contingency name "CONTINGENCY_1" line or transformer deleted "LINE_2"
+ WCA Result : contingency index 1 no security rules
+ WCA Result : contingency index 1 curative 0 BILEVEL contingency name "CONTINGENCY_1"
+ WCA Result : contingency index 1 curative 0 BILEVEL flow with uncertainties 344.338 MW without 340.317 MW limit 393.245 MW line or transformer "LINE_3"
+ WCA Result : contingency index 1 curative 0 BILEVEL flow with uncertainties 199.696 MW without 199.604 MW limit 425.85 MW PST "LINE_4"
+ WCA Result : contingency index 1 curative 0 BILEVEL flow with uncertainties 517.658 MW without 514.512 MW limit 997.169 MW PST "LINE_5"
+ WCA Result : contingency index 1 curative 0 BILEVEL flow with uncertainties 286.464 MW without 289.696 MW limit 41160.9 MW PST "LINE_6"
+ WCA Result : contingency index 1 curative 0 BILEVEL flow with uncertainties -513.326 MW without -515.407 MW limit 1249.4 MW PST "LINE_7"
+ WCA Result : contingency index 1 curative 0 BILEVEL flow with uncertainties 29.0083 MW without 31.4338 MW limit 434.166 MW PST "LINE_8"
+ WCA Result : contingency_index 1 contingency_cluster_index 1 curative_action_index 0

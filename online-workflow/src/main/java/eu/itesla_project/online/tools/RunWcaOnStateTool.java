@@ -44,8 +44,6 @@ import java.util.stream.Collectors;
 @AutoService(Tool.class)
 public class RunWcaOnStateTool implements Tool {
 
-    private static final boolean DEFAULT_STOP_WCA_ON_VIOLATIONS = true;
-
     private static Command COMMAND = new Command() {
 
         @Override
@@ -98,11 +96,6 @@ public class RunWcaOnStateTool implements Tool {
                     .hasArg()
                     .argName("INDEX_TYPE,INDEX_TYPE,...")
                     .build());
-            options.addOption(Option.builder().longOpt("stop-on-violations")
-                    .desc("stop WCA if there are violations, default is true")
-                    .hasArg()
-                    .argName("true/false")
-                    .build());
             return options;
         }
 
@@ -144,13 +137,9 @@ public class RunWcaOnStateTool implements Tool {
                         .map(SecurityIndexType::valueOf)
                         .collect(Collectors.toSet());
             }
-            boolean stopWcaOnViolations = DEFAULT_STOP_WCA_ON_VIOLATIONS;
-            if (line.hasOption("stop-on-violations")) {
-                stopWcaOnViolations = Boolean.parseBoolean(line.getOptionValue("stop-on-violations"));
-            }
             ComputationManager computationManager = new LocalComputationManager();
             network.getStateManager().allowStateMultiThreadAccess(true);
-            WCAParameters wcaParameters = new WCAParameters(histoInterval, offlineWorkflowId, securityIndexTypes, purityThreshold, stopWcaOnViolations);
+            WCAParameters wcaParameters = new WCAParameters(histoInterval, offlineWorkflowId, securityIndexTypes, purityThreshold);
             ContingenciesAndActionsDatabaseClient contingenciesDb = config.getContingencyDbClientFactoryClass().newInstance().create();
             LoadFlowFactory loadFlowFactory = config.getLoadFlowFactoryClass().newInstance();
             try (HistoDbClient histoDbClient = config.getHistoDbClientFactoryClass().newInstance().create();
