@@ -26,6 +26,8 @@ import eu.itesla_project.modules.online.OnlineStep;
 import eu.itesla_project.modules.online.OnlineWorkflowParameters;
 import eu.itesla_project.modules.online.OnlineWorkflowResults;
 import eu.itesla_project.modules.online.StateProcessingStatus;
+import eu.itesla_project.online.OnlineUtils;
+import eu.itesla_project.online.UnitEnum;
 import eu.itesla_project.online.rest.api.DateTimeParameter;
 import eu.itesla_project.online.rest.model.Indicator;
 import eu.itesla_project.online.rest.model.IndicatorEnum;
@@ -36,7 +38,6 @@ import eu.itesla_project.online.rest.model.ProcessSynthesis;
 import eu.itesla_project.online.rest.model.SimulationResult;
 import eu.itesla_project.online.rest.model.StateSynthesis;
 import eu.itesla_project.online.rest.model.TimeValue;
-import eu.itesla_project.online.rest.model.UnitEnum;
 import eu.itesla_project.online.rest.model.Violation;
 import eu.itesla_project.online.rest.model.ViolationSynthesis;
 import eu.itesla_project.online.rest.model.WorkflowInfo;
@@ -305,7 +306,7 @@ public class OnlineDBUtils implements ProcessDBUtils {
             double perc = value / limit;
             TimeValue tv = new TimeValue(dateTime);
             tv.putIndicator(new Indicator(IndicatorEnum.RELATIVE, UnitEnum.PERCENTAGE, perc));
-            tv.putIndicator(new Indicator(IndicatorEnum.ABSOLUTE, value, violationType));
+            tv.putIndicator(new Indicator(IndicatorEnum.ABSOLUTE, OnlineUtils.getUnit(violationType), value));
             synt.addTimeValue(tv);
         });
     }

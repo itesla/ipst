@@ -7,7 +7,7 @@
 package eu.itesla_project.online.rest.model;
 
 import java.util.Objects;
-import eu.itesla_project.security.LimitViolationType;
+import eu.itesla_project.online.UnitEnum;
 
 /**
 *
@@ -23,12 +23,6 @@ public class Indicator {
         this.unit = Objects.requireNonNull(unit);
         this.value = value;
     }
-
-    public Indicator(IndicatorEnum id, float value, LimitViolationType violationType) {
-        this.id = Objects.requireNonNull(id);
-        this.unit = Objects.requireNonNull(violationType).equals(LimitViolationType.CURRENT)?UnitEnum.MW:UnitEnum.KV;
-        this.value = value;
-	}
 
     public IndicatorEnum getId() {
         return id;
