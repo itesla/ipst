@@ -138,6 +138,7 @@
             <groupId>eu.itesla_project</groupId>
             <artifactId>cim1-import</artifactId>
             <version>${ipstentsoe.version}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
@@ -153,10 +154,16 @@
         </dependency>
 
         <dependency>
+            <groupId>eu.itesla_project</groupId>
+            <artifactId>ucte-import</artifactId>
+            <version>${ipstentsoe.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
         </dependency>
-
 
         <dependency>
             <groupId>be.pepite.dataserver</groupId>
