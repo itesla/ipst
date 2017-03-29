@@ -38,7 +38,7 @@
   when: hadesInstalled|success
   register: hadesConfig
   template: src=itesla_config.xml.j2
-            dest="~/.itesla/config.xml"
+            dest="{{ ansible_env.HOME }}/.itesla/config.xml"
 
 #
 - name: create directory
@@ -53,7 +53,7 @@
 
 #
 - name: hades check
-  command: "{{ipst_install_path}}/bin/itools security-analysis -case-file {{ hades_situations_dst }}/{{ hades_situation_test }} --output-csv ~/security-analysis-result.txt"
+  command: "{{ipst_install_path}}/bin/itools security-analysis -case-file {{ hades_situations_dst }}/{{ hades_situation_test }} --output-csv {{ ansible_env.HOME }}/security-analysis-result.txt"
   register: checkHades
   #in case, ignore errors (to proceed to next steps and possibly log the errors)
   ignore_errors: True

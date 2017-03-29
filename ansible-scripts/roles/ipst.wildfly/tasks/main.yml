@@ -9,10 +9,28 @@
 
 # main tasks file for ipst.wildfly
 
+- debug:
+    var="{{ item }}"
+  when: "0==1"
+  with_items:
+    - ansible_env
+    - wildfly_url
+    - wildfly_archivename
+    - wildfly_dest_path
+    - wildfly_prefix
+
+
+#- name: remove wildfly
+#  file: state=absent path={{ wildfly_prefix }}
+
+#
 - name: check if already installed
   stat: path={{ wildfly_prefix }}
   register: wildfly_dir
   changed_when: wildfly_dir.stat.exists == False
 
+#
+- debug: var="wildfly_dir"
+#
 - include: install.yml
   when: wildfly_dir.stat.exists == False

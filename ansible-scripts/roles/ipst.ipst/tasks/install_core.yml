@@ -37,7 +37,8 @@
 
   # local dumps a per-host log of iPST install script execution
   - name: core dump log, to
-    local_action: copy content="cmd=> {{ installCoreScript.cmd }}\nstart=> {{ installCoreScript.start }}\nend=> {{ installCoreScript.end }}\n===== DUMP OUT =====\n{{ installCoreScript.stdout }}\n===== DUMP ERR =====\n{{ installCoreScript.stderr }}" dest="~/{{ inventory_hostname }}_tmp"
+    local_action: copy content="cmd=> {{ installCoreScript.cmd }}\nstart=> {{ installCoreScript.start }}\nend=> {{ installCoreScript.end }}\n===== DUMP OUT =====\n{{ installCoreScript.stdout }}\n===== DUMP ERR =====\n{{ installCoreScript.stderr }}"
+                  dest="~/{{ inventory_hostname }}_tmp"
     when: installCoreScript is defined and installCoreScript.skipped is not defined
 
   # format log file

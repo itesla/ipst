@@ -3,11 +3,11 @@
 # ipst.hades
 hades_archive_name: hades2LF.zip
 hades_src: "~/tmp/hades/{{ hades_archive_name }}"
-hades_dst: "~"
+hades_dst: "{{ ansible_env.HOME }}"
 hades_create: "{{ hades_dst  }}/hades2LF"
 hades_situation_test: "20160101_0030_FO5_FR0.xiidm.gz"
 hades_situations_src: "~/tmp/situations/grovslb1/local/DATA/IIDM/FO/2016/01/01/{{ hades_situation_test }}"
-hades_situations_dst: "~/situations/DATA/IIDM/FO/2016/01/01"
+hades_situations_dst: "{{ ansible_env.HOME }}/situations/DATA/IIDM/FO/2016/01/01"
 
 #
 hades_isDisclamerPrompt: False

@@ -15,13 +15,13 @@
 
 #
 - name: wildfly download
-  command: "wget -q -O /tmp/{{ wildfly_archivename }} --no-check-certificate --no-cookies --header 'Cookie: oraclelicense=accept-securebackup-cookie' {{ wildfly_url }} creates=/tmp/{{ wildfly_archivename }}"
+  command: "wget -q -O /tmp/{{ wildfly_archivename }} --no-check-certificate --no-cookies --header 'Cookie: oraclelicense=accept-securebackup-cookie' {{ wildfly_url }}"
 
 #
 - name: wildfly extract
-  unarchive: copy=no src="/tmp/{{ wildfly_archivename }}" dest="{{ wildfly_dest_path }}" creates="{{ wildfly_prefix }}" owner=root group=root mode=0755
+  unarchive: copy=no src="/tmp/{{ wildfly_archivename }}" dest="{{ wildfly_dest_path }}" creates="{{ wildfly_prefix }}" owner=root group=root
   register: wildflyinstalled
-
+#- debug: var="wildflyinstalled"
 #
 - name: add environment variables config file
   when: wildflyinstalled|success
@@ -29,22 +29,30 @@
   template: src=wildfly_env.sh.j2 dest="/etc/profile.d/wildfly_env.sh" owner=root group=root
 
 #
-- name: Fix ownership
-  file: state=directory path={{ wildfly_prefix }} owner=root group=root recurse=yes
+#- name: Fix ownership
+#  file: state=directory path={{ wildfly_prefix }} owner=root group=root recurse=yes
 
 #
 - name: create mysql connector directory
   file: path="$JBOSS_HOME/modules/com/mysql/main"
-        state=directory
+        state=directory owner=root group=root
 
 #
 - name: download mysql connector
-  command: "wget -q -O $JBOSS_HOME/modules/com/mysql/main/mysql-connector-java-5.1.23-bin.jar --no-check-certificate --no-cookies --header 'Cookie: oraclelicense=accept-securebackup-cookie' http://www.java2s.com/Code/JarDownload/mysql/mysql-connector-java-5.1.23-bin.jar.zip creates=/tmp/mysql-connector-java-5.1.23-bin.jar"
+  command: "wget -q -O /tmp/mysql-connector-java-5.1.23-bin.jar.zip --no-check-certificate --no-cookies --header 'Cookie: oraclelicense=accept-securebackup-cookie' http://www.java2s.com/Code/JarDownload/mysql/mysql-connector-java-5.1.23-bin.jar.zip"
   when: wildflyinstalled|success
+  register: res
+- debug: var="res"
 
 #
-- name: Creates mysql directory
-  file: path=$JBOSS_HOME/modules/com/mysql/main state=directory
+- name: connector extract
+  unarchive: copy=no src="/tmp/mysql-connector-java-5.1.23-bin.jar.zip" dest="$JBOSS_HOME/modules/com/mysql/main" creates="$JBOSS_HOME/modules/com/mysql/main/mysql-connector-java-5.1.23-bin.jar" owner=root group=root
+  register: wildflyinstalled
+
+
+#
+#- name: Creates mysql directory
+#  file: path=$JBOSS_HOME/modules/com/mysql/main state=directory
 
 #
 - name: add mysql connector config
@@ -58,11 +66,11 @@
   register: wildfly_standalone
   template: src=standalone.j2 dest="$JBOSS_HOME/standalone/configuration/standalone.xml" owner=root group=root
 
-#
+#JBOSS_HOME\modules\system\layers\base\sun\jdk\main
 - name: add module2
   when: wildflyinstalled|success
   register: wildfly_standalone
-  template: src=module2.j2 dest="$JBOSS_HOME/modules/system/layers/base/sun/jdk/main/module.xlm" owner=root group=root
+  template: src=module.j2 dest="$JBOSS_HOME/modules/system/layers/base/sun/jdk/main/module.xml" owner=root group=root
 
 
 #
@@ -71,10 +79,12 @@
 
 # add application user
 - name: add application user
-  shell: $JBOSS_HOME/bin/add-user.sh --silent -e -a -u user -p password -g user
+  shell: $JBOSS_HOME/bin/add-user.sh --silent -e -a -u user -g user -p password
   args:
     executable: /bin/bash
   register: res
+#- debug: var="res"
+
 
 # add Management user
 - name: add Management user
@@ -82,7 +92,24 @@
   args:
     executable: /bin/bash
   register: res
+#- debug: var="res"
 
+
+- name: Copy the init script
+  copy:
+    remote_src: True
+    src: $JBOSS_HOME/bin/init.d/wildfly-init-redhat.sh
+    dest: /etc/init.d/wildfly
+    mode: 0755
+  become: true
+  become_user: root
+
+#
+- name: Copy wildfly conf
+  become: true
+  become_user: root
+  template: src=wildfly.conf.j2
+            dest="/etc/default/wildfly.conf"
 
 
 #  add user with expect, expect tools should be set in the ipst.common task
@@ -134,6 +161,6 @@
   #become_method: sudo
 
 #
-- name: remove tmp
-  file: state=absent path=/tmp/{{ wildfly_archivename }}
+#- name: remove tmp
+#  file: state=absent path=/tmp/{{ wildfly_archivename }}
 

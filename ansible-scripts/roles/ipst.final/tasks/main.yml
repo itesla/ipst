@@ -6,32 +6,31 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 
+#
+- name: Copy EAR
+  copy: remote_src=True
+        src={{ ansible_env.HOME }}/ipst_ansible/ipst/iidm-ddb/iidm-ddb-ear/target/iidm-ddb-ear.ear
+        dest=$JBOSS_HOME/standalone/deployments/iidm-ddb-ear.ear
+  become: true
+  become_user: root
+
 # minimal test data
 - name: extract minimalist DDB
   unarchive: src="~/minimalist_DDB.zip"
-             dest="~"
-             creates="~/minimalist_DDB"
+             dest="{{ ansible_env.HOME }}"
+             creates="{{ ansible_env.HOME }}/minimalist_DDB"
   register: hadesInstalled
 
 
 #
 - name: remove archive
-  file: state=absent path=~/minimalist_DDB.zip
-
-#
-- name: check redis status
-  #sudo: yes
-  become: true
-  become_user: root
-  command: sudo service mysqld status
-  ignore_errors: yes
-  register: res
+  file: state=absent path={{ ansible_env.HOME }}/minimalist_DDB.zip
 
 #
 # service mysqld start
 # service mysqld stop
 # service mysqld restart
-- name: Start Mysql Service
+- name: Start dbmaria Service
   become: true
   become_user: root
   command: sudo service mysqld start
@@ -47,45 +46,78 @@
       {{ dbmaria_start.stderr }}
   when: dbmaria_start | failed
 
+- name: Create init db script
+  template: src=init_dbmaria.j2
+            dest="{{ ansible_env.HOME }}/init_dbmaria.sql"
+
+
 #
-- name: start wildfly
+- name: Initialize DB
+  shell: mysql < init_dbmaria.sql
+  register: dbmaria_init
   become: true
   become_user: root
-  shell: "$JBOSS_HOME/bin/standalone.sh&"
+
+#
+- name: remove init db script
+  file: state=absent
+        path={{ ansible_env.HOME }}/init_dbmaria.sql
+
+#
+- name: wildFly start service
+  service: name=wildfly enabled=yes state=started
+  become: true
+  become_user: root
   register: wildfly_start
   ignore_errors: yes
 
 #
-- name: Report start of wildfly
+- name: wildfly log
+  command: cat /var/log/wildfly/console.log
+  register: wildfly_start_cat
+
+#
+- name: Report start of Wildfly
   fail:
     msg: |
-      WildFly is not running.
+      Service wildfly is not running.
       {{ wildfly_start.stdout }}
       {{ wildfly_start.stderr }}
   when: wildfly_start | failed
+
+#
+- name: test
+  become: true
+  become_user: root
+  shell: "netstat -lntup"
+  register: netstatB
 
 #
 - name: unload previous data
   command: "{{ipst_install_path}}/bin/itools ddb-unload --host 127.0.0.1 --port 8080 --user user --password password"
   register: ddb_unload
 
-
 #
 - name: load new data
-  command: "{{ipst_install_path}}/bin/itools ddb-load-eurostag --host 127.0.0.1 --port 8080 --user user --password password --eurostag-version 5.1.1 --data-dir ~/minimalist_DDB"
+  command: "{{ipst_install_path}}/bin/itools ddb-load-eurostag --host 127.0.0.1 --port 8080 --user user --password password --eurostag-version 5.1.1 --data-dir {{ ansible_env.HOME }}/minimalist_DDB"
   register: ddb_load
   #in case, ignore errors (to proceed to next steps and possibly log the errors)
   ignore_errors: True
+
 
 #
 - debug:
     var="{{ item }}"
   when: "1==0"
   with_items:
-      - dbmaria_start
+      - test_analysis
       - wildfly_start
-      - ddb_unload
-      - ddb_load
+      - wildfly_start_cat
+      - dbmaria_start
+      - dbmaria_init
+      - ddb_unload.stdout_lines
+      - ddb_load.stdout_lines
+      - netstatB.stdout_lines
 
 #local dumps a per-host log of iPST install script execution
 - name: load dump log, to
@@ -97,3 +129,11 @@
 - name: load format log
   local_action: shell /usr/bin/sed 's/\\n/\n/g' <~/{{ inventory_hostname }}_tmp >{{ playbook_dir }}/install_ddb_{{ inventory_hostname }}.log && rm ~/{{ inventory_hostname }}_tmp
   when: ddb_load is defined
+
+#
+- name: check load data
+  fail:
+    msg: |
+      Loading test data fail
+      please check install_ddb_XXX.log file
+  when: '" ERROR " in ddb_load.stdout'

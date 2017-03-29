@@ -3,6 +3,6 @@
 
 wildfly_url: http://download.jboss.org/wildfly/8.1.0.Final/wildfly-8.1.0.Final.zip
 wildfly_archivename: wildfly-8.1.0.Final.zip
-wildfly_dest_path: /home/ansible
+wildfly_dest_path: "{{ ansible_env.HOME }}"
 wildfly_prefix: "{{ wildfly_dest_path  }}/wildfly-8.1.0.Final"
 
