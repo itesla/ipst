@@ -46,10 +46,10 @@
       {{ dbmaria_start.stderr }}
   when: dbmaria_start | failed
 
+#
 - name: Create init db script
   template: src=init_dbmaria.j2
             dest="{{ ansible_env.HOME }}/init_dbmaria.sql"
-
 
 #
 - name: Initialize DB
@@ -96,6 +96,7 @@
 - name: unload previous data
   command: "{{ipst_install_path}}/bin/itools ddb-unload --host 127.0.0.1 --port 8080 --user user --password password"
   register: ddb_unload
+  ignore_errors: True
 
 #
 - name: load new data
@@ -112,28 +113,40 @@
   with_items:
       - test_analysis
       - wildfly_start
-      - wildfly_start_cat
+      #- wildfly_start_cat
       - dbmaria_start
       - dbmaria_init
-      - ddb_unload.stdout_lines
-      - ddb_load.stdout_lines
-      - netstatB.stdout_lines
+      - ddb_unload
+      - ddb_load
+      - netstatB
 
-#local dumps a per-host log of iPST install script execution
-- name: load dump log, to
-  local_action: copy content="cmd=> {{ ddb_load.cmd }}\nstart=> {{ ddb_load.start }}\nend=> {{ ddb_load.end }}\n===== DUMP OUT =====\n{{ ddb_load.stdout }}\n===== DUMP ERR =====\n{{ ddb_load.stderr }}"
-                dest="~/{{ inventory_hostname }}_tmp"
-  when: ddb_load is defined
+#
+- name: remove lineinfile
+  local_action: file state=absent path="{{ playbook_dir }}/install_final_{{ inventory_hostname }}.log"
 
-# format log file
-- name: load format log
-  local_action: shell /usr/bin/sed 's/\\n/\n/g' <~/{{ inventory_hostname }}_tmp >{{ playbook_dir }}/install_ddb_{{ inventory_hostname }}.log && rm ~/{{ inventory_hostname }}_tmp
-  when: ddb_load is defined
+#
+- name: lineinfile
+  local_action: lineinfile
+      dest="{{ playbook_dir }}/install_final_{{ inventory_hostname }}.log"
+      line="{{ {'_name':item._name|default('n/a') ,'cmd':item.cmd|default('n/a') ,'delta':item.delta|default('n/a') ,'end':item.end|default('n/a') ,'rc':item.rc|default('n/a') ,'state':item.state|default('n/a') ,'start':item.start|default('n/a') ,'stdout_lines':item.stdout_lines|default('n/a')} | to_nice_json }}"
+      state=present
+      insertafter=EOF
+      create=True
+  when: item is defined
+  no_log: True
+  with_items:
+      - "{{ wildfly_start |combine({'_name':'wildfly_start'}) }}"
+      - "{{ wildfly_start_cat |combine({'_name':'wildfly_start_cat'}) }}"
+      - "{{ dbmaria_start |combine({'_name':'dbmaria_start'}) }}"
+      - "{{ dbmaria_init |combine({'_name':'dbmaria_init'}) }}"
+      - "{{ ddb_unload |combine({'_name':'ddb_unload'}) }}"
+      - "{{ ddb_load |combine({'_name':'ddb_load'}) }}"
+      - "{{ netstatB |combine({'_name':'netstatB'}) }}"
 
 #
 - name: check load data
   fail:
     msg: |
       Loading test data fail
-      please check install_ddb_XXX.log file
+      please check install_final_XXX.log file
   when: '" ERROR " in ddb_load.stdout'
