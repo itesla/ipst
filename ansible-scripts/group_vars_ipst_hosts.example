@@ -1,10 +1,13 @@
 # file: group_vars/ipst_hosts
 ---
-
 ## ipst_environment - (default is not set)
 #ipst_environment:
 #    http_proxy: http://proxyhttp.mydomain.com:port
 #    https_proxy: https://proxyhttps.mydomain.com:port
+
+
+## ipst_environment - (default is not set)
+ipst_environment: {}
 
 ## install_prerequisites - (default is True)
 install_prerequisites: True
@@ -12,22 +15,220 @@ install_prerequisites: True
 ## install_MCR - (Matlab Compiler Runtime, default is False)
 install_MCR: False
 
-## user_ipst_sources_path - (default is {{ ansible_env.HOME }}/ipst_ansible/ipst  )
-user_ipst_sources_path: "{{ ansible_env.HOME }}/ipst_ansible/ipst"
-
-## user_core_sources_path - (default is {{ ansible_env.HOME }}/ipst_ansible/ipst-core  )
-user_core_sources_path: "{{ ansible_env.HOME }}/ipst_ansible/ipst-core"
-
-## user_entsoe_sources_path - (default is {{ ansible_env.HOME }}/ipst_ansible/ipst-entsoe  )
-user_entsoe_sources_path: "{{ ansible_env.HOME }}/ipst_ansible/ipst-entsoe"
+## True force source build (default value is False)
+force_build: False
 
 
-## thirdparty_path - (default is {{ ansible_env.HOME }}/ipst_ansible/thirdparty )
-thirdparty_path: "{{ ansible_env.HOME }}/ipst_ansible/thirdparty"
 
-## install_path - (default is {{ ansible_env.HOME }}/itesla )
-install_path: "{{ ansible_env.HOME }}/itesla"
 
-## maven_proxies - (default is not set )
-#maven_proxies:
-# - {host: "proxyhttps.mydomain.com", port: "443", username: "username", password: "password", protocol: "https"}
+##--------------------------------------------------------------------------
+##-- ispt parameters
+
+## project_home - OS target project root path, will be contain all source and binary files
+##   (default value is ansible_env.HOME)
+user_project_home: "{{ ansible_env.HOME }}/itesla_project"
+
+## project_temporary - OS target project temporary file path, relative to user_project_home
+##   (default value is /tmp)
+user_project_temporary: "/tmp"
+
+## log_file_prefix - prefix for all locale log file
+##   (default value is {{ playbook_dir }}/install)
+user_log_file_prefix: "{{ playbook_dir }}/install"
+
+## log_file_postfix - postfix for all locale log file
+##   (default value is {{ inventory_hostname+'.log' }})
+user_log_file_postfix: "{{ inventory_hostname+'.log' }}"
+
+
+
+
+## project_bin - OS target binary directory relative to user_project_home
+##    (default value is /itesla)
+user_project_bin: "/itesla"
+
+## project_branch - github branch project
+##    (default value is master)
+user_project_branch: "master"
+
+## source_root - OS target source project directory relative to user_project_home
+##    (default value is /ipst_ansible)
+user_source_root: "/ipst_ansible"
+
+## ipst_source - OS target source ipst module directory relative to user_source_home
+##    (default value is /ipst)
+user_ipst_source: "/ipst"
+
+## ipst_github - ipst github repository
+##    (default value is https://github.com/itesla/ipst.git)
+user_ipst_github: "https://github.com/itesla/ipst.git"
+
+
+
+## core_source - OS target source core module directory relative to user_source_home
+##    (default value is /ipst-core )
+user_core_source: "/ipst-core"
+
+## core_github - core github repository
+##    (default value is https://github.com/itesla/ipst-core.git)
+user_core_github: https://github.com/itesla/ipst-core.git
+
+
+
+## entsoe_source - OS target source entsoe module directory relative to user_source_home
+##    (default value is /ipst-entsoe)
+user_entsoe_source: "/ipst-entsoe"
+
+## entsoe_github - entsoe github repository
+##    (default value is https://github.com/iTesla/ipst-entsoe.git)
+user_entsoe_github: https://github.com/iTesla/ipst-entsoe.git
+
+
+## source_thirdparty - OS target source thirdparty module directory relative to user_source_home
+##    (default value is /thirdparty)
+user_source_thirdparty: "/thirdparty"
+
+
+
+
+
+##--------------------------------------------------------------------------
+##-- define java user parameters
+
+##- jdk8_url - define jdk url
+##    (default value is http://download.oracle.com/otn-pub/java/jdk/8u112-b15/jdk-8u112-linux-x64.tar.gz)
+user_jdk8_url: http://download.oracle.com/otn-pub/java/jdk/8u112-b15/jdk-8u112-linux-x64.tar.gz
+
+##- jdk8_home - OS target jdk home
+##    (default value is /HOME/ansible_user/jdk1.8.0_112)
+user_jdk8_home: "{{ ansible_env.HOME }}/java/jdk1.8.0_112"
+
+##- jdk8_log - 0 no screen debug
+##    (default value is 0)
+user_jdk8_log: 1
+
+
+
+##--------------------------------------------------------------------------
+##-- define maven user parameters
+##    ipst.maven/defaults/main.yml file define default values
+
+## maven_version - maven install version
+##    (default value is 3.0.5)
+user_maven_version: "3.0.5"
+
+## maven_dest_path - OS target maven install path
+##    (default value is /opt)
+user_maven_dest_path: "/opt"
+
+## maven_mirror - maven mirror prefix url
+##    (default value is http://archive.apache.org/dist/maven/binaries)
+user_maven_mirror: "http://archive.apache.org/dist/maven/binaries"
+
+## maven_proxies - maven proxies
+##    (default value is none)
+#user_maven_proxies:
+#    - {host: "proxyhttps.mydomain.com", port: "443", username: "username", password: "password", protocol: "https"}
+
+
+##--------------------------------------------------------------------------
+##-- define wildfly user options
+##    ipst.wildfly/defaults/main.yml file define default values
+
+## wildfly_url - wildfly url binary download
+##    (default value is http://download.jboss.org/wildfly/8.1.0.Final/wildfly-8.1.0.Final.zip)
+user_wildfly_url: http://download.jboss.org/wildfly/8.1.0.Final/wildfly-8.1.0.Final.zip
+
+## wildfly_dest_path - OS target wildfly install path
+##    (default value is ansible_env.HOME)
+user_wildfly_dest_path: "{{ ansible_env.HOME }}/wildfly"
+
+
+
+
+##--------------------------------------------------------------------------
+## ear_name - ear name
+##    (default value is iidm-ddb-ear.ear)
+user_ear_name: "iidm-ddb-ear.ear"
+
+## ear_path - ear source path, relative to the source install path
+##    (default value is /iidm-ddb/iidm-ddb-ear/target)
+user_ear_path: "/iidm-ddb/iidm-ddb-ear/target"
+
+
+##--------------------------------------------------------------------------
+## ddb-load-eurostag Part
+
+## ddb_process - (provide database with data and test the integration, default is False)
+user_ddb_process: False
+
+## ddb_archive_name - data archive to integrate
+##    (default value is minimalist_DDB.zip)
+user_ddb_archive_name: "minimalist_DDB.zip"
+
+## ddb_locale_path - locale path of the data archive
+##    (default value is ~/)
+user_ddb_locale_path: "~/"
+
+## ddb_remote_path - OS target full path for the data
+##    (default value is {{ ansible_env.HOME + '/minimalist_DDB' }})
+user_ddb_remote_path: "{{ ansible_env.HOME + '/minimalist_DDB' }}"
+
+## ddb_eurostag_version - define the eurostag version
+##     (default value is 5.1.1)
+user_ddb_eurostag_version: "5.1.1"
+
+
+##--------------------------------------------------------------------------
+##- security-analysis Part
+
+## hades_process - process_hades - (install and process hades test, default is False)
+user_hades_process: False
+
+## hades_archive_name - hades binary archive name
+##    (default value is hades2LF.zip)
+user_hades_archive_name: hades2LF.zip
+
+## hades_src - local hades binary path archive
+##    (default value is ~/tmp/hades)
+user_hades_src: "~/tmp/hades"
+
+## hades_dst - OS target hades binary prefix destination path
+##    (default value is {{ ansible_env.HOME }})
+user_hades_dst: "{{ ansible_env.HOME }}/hades"
+
+## hades_create - OS target hades binary destination path relative to user_hades_dst
+##    (default value is /hades2LF)
+user_hades_create: "/hades2LF"
+
+## hades_situation_test - this is the situation to integrate to hades
+##    (default value is 20160101_0030_FO5_FR0.xiidm.gz)
+user_hades_situation_test: "20160101_0030_FO5_FR0.xiidm.gz"
+
+## hades_situation_prefix - hades data prefix path, relative to user_hades_situations_prefix_src on local machine, relative to user_hades_situations_home on OS target
+##    (default value is /DATA/IIDM/FO/2016/01/01)
+user_hades_situation_prefix: "/DATA/IIDM/FO/2016/01/01"
+
+## hades_situations_prefix_src - local hades data path prefix
+##    (default value is ~/tmp/situations/grovslb1/local)
+user_hades_situations_prefix_src: "~/tmp/situations/grovslb1/local"
+
+## OS target situation path
+##    (default value is {{ ansible_env.HOME }})
+user_hades_situations_home: "{{ ansible_env.HOME }}"
+
+## OS target hades processing result
+##    (default value is {{ ansible_env.HOME+'/security-analysis-result.txt' }})
+user_hades_result_file: "{{ ansible_env.HOME+'/security-analysis-result.txt' }}"
+
+## activate a disclaimer for hades usage, if activate, process is stopped meanwhile user press [Enter] key
+##    (default value is false)
+user_hades_isDisclaimerPrompt: False
+
+## the disclaimer
+##    (default value is 'no disclaimer')
+user_hades_disclaimer: 'Disclaimer
+ Please confirm you want to ...
+ Press return to continue.
+ Press Ctrl+c and then "a" to abort'
+

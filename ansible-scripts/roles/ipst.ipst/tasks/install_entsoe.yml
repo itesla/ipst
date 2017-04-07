@@ -1,5 +1,9 @@
 ---
 
+#
+  - debug:
+      msg: " log file: {{ entsoe_log_file }}"
+
 # clone/update ipst-core project from github
 # Note: update does not work when there are local modifications (e.g. when some of the project's file are edited on-site)
   - name: entsoe retrieve ipst-entsoe sources from github
@@ -35,15 +39,24 @@
     #in case, ignore errors (to proceed to next steps and possibly log the errors)
     ignore_errors: True
 
-  #local dumps a per-host log of iPST install script execution
-  - name: entsoe dump log, to
-    local_action: copy content="cmd=> {{ installEntsoeScript.cmd }}\nstart=> {{ installEntsoeScript.start }}\nend=> {{ installEntsoeScript.end }}\n===== DUMP OUT =====\n{{ installEntsoeScript.stdout }}\n===== DUMP ERR =====\n{{ installEntsoeScript.stderr }}" dest="~/{{ inventory_hostname }}_tmp"
-    when: installEntsoeScript is defined and installEntsoeScript.skipped is not defined
-
-  # format log file
-  - name: entsoe format log
-    local_action: shell /usr/bin/sed 's/\\n/\n/g' <~/{{ inventory_hostname }}_tmp >{{ playbook_dir }}/install_entsoe_{{ inventory_hostname }}.log && rm ~/{{ inventory_hostname }}_tmp
-    when: installEntsoeScript is defined and installEntsoeScript.skipped is not defined
+  # log to file some variables
+  - name: remove previous log file
+    local_action: file state=absent path="{{ entsoe_log_file }}"
+    when: installEntsoeScript is defined
+      and installEntsoeScript.skipped is not defined
+  - name: log file
+    local_action: lineinfile
+      dest="{{ entsoe_log_file }}"
+      line="{{ {'_name':item._name|default('n/a') ,'cmd':item.cmd|default('n/a') ,'delta':item.delta|default('n/a') ,'end':item.end|default('n/a') ,'rc':item.rc|default('n/a') ,'state':item.state|default('n/a') ,'start':item.start|default('n/a') ,'stdout_lines':item.stdout_lines|default('n/a')} | to_nice_json }}"
+      state=present
+      insertafter=EOF
+      create=True
+    when: item is defined
+      and installEntsoeScript is defined
+      and installEntsoeScript.skipped is not defined
+    no_log: True
+    with_items:
+      - "{{ installEntsoeScript |combine({'_name':'installEntsoeScript'}) }}"
 
 
   - name: entsoe stop execution in case of failure

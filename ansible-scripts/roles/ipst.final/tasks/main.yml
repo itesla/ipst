@@ -7,26 +7,28 @@
 #
 
 #
+# this module execute the ddb-load-eurostag tools with test data
+
+- debug:
+    msg: " log file: {{ ddb_log_file }}"
+
+##
 - name: Copy EAR
   copy: remote_src=True
-        src={{ ansible_env.HOME }}/ipst_ansible/ipst/iidm-ddb/iidm-ddb-ear/target/iidm-ddb-ear.ear
-        dest=$JBOSS_HOME/standalone/deployments/iidm-ddb-ear.ear
+        src="{{ ipst_sources_path+ear_path+'/'+ear_name }}"
+        dest=$JBOSS_HOME/standalone/deployments/{{ ear_name }}
   become: true
   become_user: root
 
-# minimal test data
-- name: extract minimalist DDB
-  unarchive: src="~/minimalist_DDB.zip"
-             dest="{{ ansible_env.HOME }}"
-             creates="{{ ansible_env.HOME }}/minimalist_DDB"
-  register: hadesInstalled
+## test data
+- name: Extract data
+  unarchive: src="{{ ddb_locale_path+ddb_archive_name }}"
+             dest="{{ ddb_remote_path.split("/")[0:-1]|join("/") }}"
+             creates="{{ ddb_remote_path }}"
+  register: ddb_installed
 
 
-#
-- name: remove archive
-  file: state=absent path={{ ansible_env.HOME }}/minimalist_DDB.zip
-
-#
+##
 # service mysqld start
 # service mysqld stop
 # service mysqld restart
@@ -37,7 +39,7 @@
   register: dbmaria_start
   ignore_errors: yes
 
-#
+##
 - name: Report start of mysql
   fail:
     msg: |
@@ -46,24 +48,24 @@
       {{ dbmaria_start.stderr }}
   when: dbmaria_start | failed
 
-#
-- name: Create init db script
+##
+- name: Create init dbmaria script
   template: src=init_dbmaria.j2
-            dest="{{ ansible_env.HOME }}/init_dbmaria.sql"
+            dest="{{ project_temporary }}/init_dbmaria.sql"
 
-#
-- name: Initialize DB
-  shell: mysql < init_dbmaria.sql
+##
+- name: Initialize dbmaria
+  shell: "mysql < {{ project_temporary + '/init_dbmaria.sql' }}"
   register: dbmaria_init
   become: true
   become_user: root
 
-#
-- name: remove init db script
+##
+- name: remove init dbmaria script
   file: state=absent
-        path={{ ansible_env.HOME }}/init_dbmaria.sql
+        path={{ project_temporary }}/init_dbmaria.sql
 
-#
+##
 - name: wildFly start service
   service: name=wildfly enabled=yes state=started
   become: true
@@ -71,12 +73,12 @@
   register: wildfly_start
   ignore_errors: yes
 
-#
+##
 - name: wildfly log
   command: cat /var/log/wildfly/console.log
   register: wildfly_start_cat
 
-#
+##
 - name: Report start of Wildfly
   fail:
     msg: |
@@ -85,68 +87,70 @@
       {{ wildfly_start.stderr }}
   when: wildfly_start | failed
 
-#
-- name: test
-  become: true
-  become_user: root
-  shell: "netstat -lntup"
-  register: netstatB
-
-#
+## clean ddb
 - name: unload previous data
   command: "{{ipst_install_path}}/bin/itools ddb-unload --host 127.0.0.1 --port 8080 --user user --password password"
   register: ddb_unload
   ignore_errors: True
 
-#
+## load new data
 - name: load new data
-  command: "{{ipst_install_path}}/bin/itools ddb-load-eurostag --host 127.0.0.1 --port 8080 --user user --password password --eurostag-version 5.1.1 --data-dir {{ ansible_env.HOME }}/minimalist_DDB"
+  command: "{{ipst_install_path}}/bin/itools ddb-load-eurostag --host 127.0.0.1 --port 8080 --user user --password password --eurostag-version {{ ddb_eurostag_version }} --data-dir {{ ddb_remote_path }}"
   register: ddb_load
   #in case, ignore errors (to proceed to next steps and possibly log the errors)
   ignore_errors: True
 
+##
+- name: wildFly stop service
+  service: name=wildfly enabled=yes state=stopped
+  become: true
+  become_user: root
+  register: wildfly_stop
+  ignore_errors: yes
 
-#
-- debug:
-    var="{{ item }}"
-  when: "1==0"
-  with_items:
-      - test_analysis
-      - wildfly_start
-      #- wildfly_start_cat
-      - dbmaria_start
-      - dbmaria_init
-      - ddb_unload
-      - ddb_load
-      - netstatB
+##
+- name: format itools result
+  shell: 'echo "{{ ddb_load.stderr }}" |/bin/sed "s/\\t/    /g" |/bin/sed "s/\\n/\n/g"'
+  when: ddb_load is defined
+  register: ddb_load_stderr
+  ignore_errors: True
 
-#
-- name: remove lineinfile
-  local_action: file state=absent path="{{ playbook_dir }}/install_final_{{ inventory_hostname }}.log"
 
-#
-- name: lineinfile
+## log to file some variables
+- name: remove previous log file
+  local_action: file
+    state=absent
+    path="{{ ddb_log_file }}"
+  become: False
+
+##
+- name: log file
   local_action: lineinfile
-      dest="{{ playbook_dir }}/install_final_{{ inventory_hostname }}.log"
-      line="{{ {'_name':item._name|default('n/a') ,'cmd':item.cmd|default('n/a') ,'delta':item.delta|default('n/a') ,'end':item.end|default('n/a') ,'rc':item.rc|default('n/a') ,'state':item.state|default('n/a') ,'start':item.start|default('n/a') ,'stdout_lines':item.stdout_lines|default('n/a')} | to_nice_json }}"
+      dest="{{ ddb_log_file }}"
+      line="{{ {'_name':item._name|default('n/a') ,'cmd':item.cmd|default('n/a') ,'delta':item.delta|default('n/a') ,'end':item.end|default('n/a') ,'rc':item.rc|default('n/a') ,'state':item.state|default('n/a') ,'start':item.start|default('n/a') ,'stdout_lines':item.stdout_lines|default('n/a'), 'stderr':item.stderr_lines|default(omit)} | to_nice_json }}"
       state=present
       insertafter=EOF
       create=True
+  become: False
   when: item is defined
   no_log: True
   with_items:
-      - "{{ wildfly_start |combine({'_name':'wildfly_start'}) }}"
-      - "{{ wildfly_start_cat |combine({'_name':'wildfly_start_cat'}) }}"
-      - "{{ dbmaria_start |combine({'_name':'dbmaria_start'}) }}"
-      - "{{ dbmaria_init |combine({'_name':'dbmaria_init'}) }}"
-      - "{{ ddb_unload |combine({'_name':'ddb_unload'}) }}"
-      - "{{ ddb_load |combine({'_name':'ddb_load'}) }}"
-      - "{{ netstatB |combine({'_name':'netstatB'}) }}"
+    - "{{ {'_name':'ddb_archive_name' ,'stdout_lines':ddb_archive_name} }}"
+    - "{{ {'_name':'ddb_locale_path'  ,'stdout_lines':ddb_locale_path} }}"
+    - "{{ {'_name':'ddb_remote_path'  ,'stdout_lines':ddb_remote_path} }}"
+    - "{{ {'_name':'ear_name'         ,'stdout_lines':ear_name} }}"
+    - "{{ {'_name':'ear_path'         ,'stdout_lines':ear_path} }}"
+    - "{{ wildfly_start |combine({'_name':'wildfly_start'}) }}"
+    - "{{ wildfly_start_cat |combine({'_name':'wildfly_start_cat'}) }}"
+    - "{{ dbmaria_start |combine({'_name':'dbmaria_start'}) }}"
+    - "{{ dbmaria_init |combine({'_name':'dbmaria_init'}) }}"
+    - "{{ ddb_unload |combine({'_name':'ddb_unload'}) }}"
+    - "{{ ddb_load |combine({'_name':'ddb_load'}) |combine({'stderr_lines':ddb_load_stderr.stdout_lines|default([])}) }}"
 
-#
-- name: check load data
+## abort task in failure case
+- name: check
   fail:
     msg: |
       Loading test data fail
-      please check install_final_XXX.log file
+      please check log file {{ ddb_log_file }}
   when: '" ERROR " in ddb_load.stdout'

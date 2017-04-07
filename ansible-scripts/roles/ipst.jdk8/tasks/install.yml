@@ -6,19 +6,31 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 
-#
+# download the jdk
 - name: Download jdk8
   command: "wget -O /tmp/{{ jdk8_archivename }} --no-check-certificate --no-cookies --header 'Cookie: oraclelicense=accept-securebackup-cookie' {{ jdk8_url }} creates=/tmp/{{ jdk8_archivename }}"
-#  ignore_errors: yes
   register: download
 #- debug: var="download"
+#  when: "{{ jdk8_log == '1' }}"
+
+# create the java home directory if not exist
+- name: create dest folder
+  file: state=directory
+        path="{{ jdk8_home }}"
+  register: jdk_create_folder_log
+- debug: var="jdk_create_folder_log"
+  when: "{{ jdk8_log == '1' }}"
 
 # extract jdk
 - name: extract jdk8
-  unarchive: copy=no src="/tmp/{{ jdk8_archivename }}" dest="{{ jdk8_dest_path }}" creates="{{ jdk8_prefix }}" #owner=root group=root mode=0755
+  unarchive:
+    copy: no
+    src: "/tmp/{{ jdk8_archivename }}"
+    dest: "{{ jdk8_home }}"
+    extra_opts: ['--strip=1']
   register: jdk8installed
-  ignore_errors: yes
 - debug: var="jdk8installed"
+  when: "{{ jdk8_log == '1' }}"
 
 #
 #- name: Fix ownership
@@ -28,14 +40,15 @@
 #- name: Make Java available for system
 #  command: 'alternatives --install "/usr/bin/java" "java" "{{ jdk8_prefix }}/bin/java" 2000'
 
-#
+# remove downloaded archive
 - name: remove tmp
   file: state=absent path=/tmp/{{ jdk8_archivename }}
 
-#
+# define env variables
 - name: add environment variables config file
   when: jdk8installed|success
   register: jdk8_envvars_config
   template: src=jdk8_env.sh.j2 dest="/etc/profile.d/jdk8_env.sh" owner=root group=root
-
+- debug: var="jdk8_envvars_config"
+  when: "{{ jdk8_log == '1' }}"
 

@@ -6,37 +6,81 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 
+#
+# this module execute the security-analysis tools with test data
+
 
 #
-- name: hades disclamer
-  when: hades_isDisclamerPrompt
-  pause: prompt="{{ hades_disclamer }}"
+- debug:
+    msg: " log file: {{ hades_log_file }}"
+
+- debug:
+    var="{{ item }}"
+  when: "1==0"
+  with_items:
+      - hades_process
+      - hades_archive_name
+      - hades_src
+      - hades_dst
+      - hades_create
+      - hades_situation_test
+      - hades_situation_prefix
+      - hades_situations_src
+      - hades_situations_dst
+      - hades_result_file
+
+# show disclaimer and wait user [entrer] key press
+- name: hades disclaimer
+  when: hades_isDisclaimerPrompt
+  pause: prompt="{{ hades_disclaimer }}"
 
 # copy and extract hades bin
-- name: hades extract
+- name: hades extract binary
   unarchive: src="{{ hades_src }}"
              dest="{{ hades_dst }}"
              creates="{{ hades_create }}"
-  register: hadesInstalled
+             #owner=root
+             #group=root
+  register: hades_install
+  ignore_errors: True
+
+#
+#- name: Fix ownership
+#  file:
+#    state=directory
+#    path={{ hades_create }}
+#    mode=0755
+#    owner=root
+#    group=root
+#    recurse=yes
+#  become: true
+#  become_user: root
+
 
 #
 - name: hades create link
-  file: src="{{ hades_create }}/jar/{{ item.src }}"
+  file: src="{{ hades_create }}/share/java/{{ item.src }}"
         dest="{{ ipst_install_path }}/share/java/{{ item.src }}"
         state=link
         force=yes
-        #owner=root
-        #group=root
+#        owner=root
+#        group=root
+  register: hadesLink
+#  become: true
+#  become_user: root
+  when: hades_install|success
+#  no_log: True
   with_items:
     - { src: "adn-export-0.1-SNAPSHOT.jar"}
     - { src: "hades2-integration-0.1-SNAPSHOT.jar"}
     - { src: "iidm-cvg-extensions-0.1-SNAPSHOT.jar"}
 
 
-# configure Hades
+# configure itesla for Hades process
 - name: hades configure
-  when: hadesInstalled|success
+  when: hades_install|success
   register: hadesConfig
+  become: false
   template: src=itesla_config.xml.j2
             dest="{{ ansible_env.HOME }}/.itesla/config.xml"
 
@@ -46,27 +90,62 @@
         path={{ hades_situations_dst }}
 
 # IIDM files
-- copy: src={{ hades_situations_src }}
+- name: Hades data prepare
+  copy: src={{ hades_situations_src }}
         dest={{ hades_situations_dst }}
 #  with_fileglob:
 #    - "{{ hades_situations_src }}"
 
+##
+- name: wildFly start service
+  service: name=wildfly enabled=yes state=started
+  become: true
+  become_user: root
+  register: wildfly_start
+  ignore_errors: yes
+
 #
-- name: hades check
-  command: "{{ipst_install_path}}/bin/itools security-analysis -case-file {{ hades_situations_dst }}/{{ hades_situation_test }} --output-csv {{ ansible_env.HOME }}/security-analysis-result.txt"
+- name: hades security-analysis tools call
+  command: "{{ipst_install_path}}/bin/itools security-analysis -case-file {{ hades_situations_dst }}/{{ hades_situation_test }} --output-csv {{ hades_result_file }}"
   register: checkHades
+  become: false
   #in case, ignore errors (to proceed to next steps and possibly log the errors)
   ignore_errors: True
 
-#local dumps a per-host log of iPST install script execution
-- name: hades dump log, to
-  local_action: copy content="cmd=> {{ checkHades.cmd }}\nstart=> {{ checkHades.start }}\nend=> {{ checkHades.end }}\n===== DUMP OUT =====\n{{ checkHades.stdout }}\n===== DUMP ERR =====\n{{ checkHades.stderr }}"
-                dest="~/{{ inventory_hostname }}_tmp"
-  when: checkHades is defined
+##
+- name: wildFly stop service
+  service: name=wildfly enabled=yes state=stopped
+  become: true
+  become_user: root
+  register: wildfly_stop
+  ignore_errors: yes
 
-# format log file
-- name: hades format log
-  local_action: shell /usr/bin/sed 's/\\n/\n/g' <~/{{ inventory_hostname }}_tmp >{{ playbook_dir }}/install_hades_{{ inventory_hostname }}.log && rm ~/{{ inventory_hostname }}_tmp
-  when: checkHades is defined
 
+#
+- name: remove previous log file
+  local_action: file
+    state=absent
+    path="{{ hades_log_file }}"
+  become: false
+
+#
+- name: format hades result
+  shell: 'echo "{{ checkHades.stderr }}" |/bin/sed "s/\\t/    /g" |/bin/sed "s/\\n/\n/g"'
+  when: checkHades
+  register: stderr
+  ignore_errors: True
+
+# local dumps a per-host log of iPST install script execution
+- name: logging
+  local_action: lineinfile
+      dest="{{ hades_log_file }}"
+      line="{{ {'_name':item._name|default('n/a') ,'cmd':item.cmd|default('n/a'), 'delta':item.delta|default('n/a') ,'end':item.end|default('n/a') ,'rc':item.rc|default('n/a') ,'state':item.state|default('n/a') ,'start':item.start|default('n/a') ,'stdout_lines':item.stdout_lines|default('n/a'), 'stderr':item.stderr_lines } | to_nice_json }}"
+      state=present
+      insertafter=EOF
+      create=True
+  become: false
+  when: item is defined
+  no_log: True
+  with_items:
+      - "{{ checkHades |combine({'_name':'checkHades'}) |combine({'stderr_lines':stderr.stdout_lines|default([])}) }}"
 

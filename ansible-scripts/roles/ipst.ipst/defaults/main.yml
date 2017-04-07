@@ -1,28 +1,38 @@
 ---
 # defaults file for ipst
 
-#
-maven_proxies: []
+##
+maven_proxies: "{{ user_maven_proxies |default([]) }}"
 
-#-- ipst
-# ipst github repo
-ipst_github_uri: https://github.com/itesla/ipst.git
+##-- ipst
+## ipst github repo
+ipst_github_uri: "{{ user_ipst_github |default('https://github.com/itesla/ipst.git') }}"
 
-# ipst installation script (not expected to be edited)
+## ipst installation script (not expected to be edited)
 ipst_install_cmd: "./install.sh --prefix {{ ipst_install_path }} --thirdparty-prefix {{ ipst_thirdparty_path }}"
 
+## ipst log file install
+ipst_log_file: "{{ log_file_prefix+'_ipst_'+log_file_postfix }}"
 
-#-- ipst-core
-# core github repo
-core_github_uri: https://github.com/itesla/ipst-core.git
 
-# ipst-core installation script (not expected to be edited)
+
+##-- ipst-core
+## core github repo
+core_github_uri: "{{ user_core_github |default('https://github.com/itesla/ipst-core.git')  }}"
+
+## ipst-core installation script (not expected to be edited)
 core_install_cmd: "./install.sh --prefix {{ ipst_install_path }} --thirdparty-prefix {{ ipst_thirdparty_path }}"
 
+## core log file install
+core_log_file: "{{ log_file_prefix+'_core_'+log_file_postfix }}"
 
-#-- ipst-entsoe
-# entsoe github repo
-entsoe_github_uri: https://github.com/iTesla/ipst-entsoe.git
 
-# ipst-entsoe installation script (not expected to be edited)
+##-- ipst-entsoe
+## entsoe github repo
+entsoe_github_uri: "{{ user_entsoe_github |default('https://github.com/itesla/ipst-entsoe.git')  }}"
+
+## ipst-entsoe installation script (not expected to be edited)
 entsoe_install_cmd: "./install.sh  --prefix {{ ipst_install_path }}"
+
+## entsoe log file install
+entsoe_log_file: "{{ log_file_prefix+'_entsoe_'+log_file_postfix }}"

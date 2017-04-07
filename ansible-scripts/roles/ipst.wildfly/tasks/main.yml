@@ -30,7 +30,5 @@
   changed_when: wildfly_dir.stat.exists == False
 
 #
-- debug: var="wildfly_dir"
-#
 - include: install.yml
   when: wildfly_dir.stat.exists == False

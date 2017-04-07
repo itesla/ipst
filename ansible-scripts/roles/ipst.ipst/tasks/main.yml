@@ -10,10 +10,8 @@
 # maven: create a settings.xml for the current user, with proxy info (if a setting.xml file does not already exist)
   - stat: path={{ ansible_env.HOME }}/.m2/settings.xml
     register: maven_user_settings
-
   - name: if it does not exist
     file: path={{ ansible_env.HOME }}/.m2 state=directory
-
   - name: create a maven settings.xml
     template: src=maven_settings.xml.j2 dest={{ ansible_env.HOME }}/.m2/settings.xml
     when: not maven_user_settings.stat.exists

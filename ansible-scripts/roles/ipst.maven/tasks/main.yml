@@ -10,7 +10,7 @@
 # main tasks file for ipst.maven
 
 - name: check if already installed
-  stat: path="{{ maven_dest_path }}"
+  stat: path="{{ maven_home }}"
   register: maven_dir
   changed_when: maven_dir.stat.exists == False
 

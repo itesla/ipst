@@ -8,14 +8,11 @@
 
 # ipst.commons:  installs development tools and some libraries: c/c++, make, cmake, etc.
 
+#
 - name: install development tools from CentOS mirror
   yum: name="@Development tools" state=present
 
-# note pour utiliser mysql, dbmaria
-# service mysqld start
-# service mysqld stop
-# service mysqld start
-# mysql --user root --execute "select version()"
+#
 - name: install packages from CentOS mirror
   yum: state=present name={{ item }}
   with_items:
@@ -27,4 +24,4 @@
     - zlib-devel
     - wget
     - mysql-server
-    - expect          # peut etre pas util
+#    - expect

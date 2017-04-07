@@ -10,18 +10,24 @@
 # install tasks file for ipst.wildfly
 
 #
-#- name: remove wildfly
-#  file: state=absent path={{ wildfly_prefix }}
-
-#
 - name: wildfly download
   command: "wget -q -O /tmp/{{ wildfly_archivename }} --no-check-certificate --no-cookies --header 'Cookie: oraclelicense=accept-securebackup-cookie' {{ wildfly_url }}"
 
+# create the wildfly home directory if not exist
+- name: create home folder
+  file: state=directory
+        path="{{ wildfly_prefix }}"
+  register: wildfly_create_folder_log
+
 #
 - name: wildfly extract
-  unarchive: copy=no src="/tmp/{{ wildfly_archivename }}" dest="{{ wildfly_dest_path }}" creates="{{ wildfly_prefix }}" owner=root group=root
+  unarchive:
+      copy: no
+      src: "/tmp/{{ wildfly_archivename }}"
+      dest: "{{ wildfly_dest_path }}"
+  ignore_errors: True
   register: wildflyinstalled
-#- debug: var="wildflyinstalled"
+
 #
 - name: add environment variables config file
   when: wildflyinstalled|success
@@ -49,11 +55,6 @@
   unarchive: copy=no src="/tmp/mysql-connector-java-5.1.23-bin.jar.zip" dest="$JBOSS_HOME/modules/com/mysql/main" creates="$JBOSS_HOME/modules/com/mysql/main/mysql-connector-java-5.1.23-bin.jar" owner=root group=root
   register: wildflyinstalled
 
-
-#
-#- name: Creates mysql directory
-#  file: path=$JBOSS_HOME/modules/com/mysql/main state=directory
-
 #
 - name: add mysql connector config
   when: wildflyinstalled|success
@@ -66,16 +67,12 @@
   register: wildfly_standalone
   template: src=standalone.j2 dest="$JBOSS_HOME/standalone/configuration/standalone.xml" owner=root group=root
 
-#JBOSS_HOME\modules\system\layers\base\sun\jdk\main
+#
 - name: add module2
   when: wildflyinstalled|success
   register: wildfly_standalone
   template: src=module.j2 dest="$JBOSS_HOME/modules/system/layers/base/sun/jdk/main/module.xml" owner=root group=root
 
-
-#
-#- name: remove user
-#  shell: $JBOSS_HOME/bin/add-user.sh -d
 
 # add application user
 - name: add application user
@@ -83,7 +80,6 @@
   args:
     executable: /bin/bash
   register: res
-#- debug: var="res"
 
 
 # add Management user
@@ -92,9 +88,8 @@
   args:
     executable: /bin/bash
   register: res
-#- debug: var="res"
 
-
+# install wildfly as service
 - name: Copy the init script
   copy:
     remote_src: True
@@ -103,8 +98,6 @@
     mode: 0755
   become: true
   become_user: root
-
-#
 - name: Copy wildfly conf
   become: true
   become_user: root
@@ -161,6 +154,6 @@
   #become_method: sudo
 
 #
-#- name: remove tmp
-#  file: state=absent path=/tmp/{{ wildfly_archivename }}
+- name: remove tmp
+  file: state=absent path=/tmp/{{ wildfly_archivename }}
 

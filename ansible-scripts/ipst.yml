@@ -16,9 +16,13 @@
 #     -C/C++development tools (gcc, g++, make, git, etc)
 #     -CMake
 #     -OpenMPI (sources installation + local build with flag --enable-mpi-thread-multiple)
-#     -Oracle JDK8 
+#     -Oracle JDK8
 #     -Apache Maven
+#     -DBMaria
+#     -WildFly
 #     -MATLAB Runtime (MCR)
+#     -Hades
+#     -default data in case of itesla testing
 #
 #  Notes:
 #      1) admin rights are required to install all the above mentioned packages and runtimes
@@ -26,6 +30,7 @@
 #
 # B) on the target server(s): it clones the IPST project sources from GitHub (or pull onto an existing repository), builds the  'platform distribution' and installs it
 #
+# C) on the target server(s): can integrate a situation/network data and test two base tools (security-analysis and ddb-load-eurostag)
 #
 
 ##
@@ -41,60 +46,171 @@
 ###
   vars:
 
-# if set, clone/updates the ipst repository on target OS from github
+## if set, clone/updates the ipst repository on target OS from github
     ipst_github_enabled: "{{ github_enabled|default('True') }}"
 
-# if set to False, do not try installing all the prerequisite packages: common development tools, openmpi libraries, jdk, maven;
-#  useful if already available on the target OS and no admin rights are available
+## if set to False, do not try installing all the prerequisite packages: common development tools, openmpi libraries, jdk, maven;
+##  useful if already available on the target OS and no admin rights are available
     installPrerequisites: "{{ install_prerequisites|default('True') }}"
 
-# if set to False, do not try installing the matlab runtime;
-#  useful if already available on the target OS and no admin rights are available
+## if set to False, do not try installing the matlab runtime;
+##  useful if already available on the target OS and no admin rights are available
     installMCR: "{{ install_MCR|default('False') }}"
 
-# if set to False, do not try installing the DBMaria and WildFly
-    finalyzeBDD: "{{ finalyze_BDD|default('False') }}"
 
-# if set to False, do not try installing the DBMaria and WildFly
-    installHades: "{{ install_hades|default('False') }}"
 
-# if set to True, always triggers the ipst platfrom build, even if there are no updates from github
-    forceBuild: "{{ force_build|default('True') }}"
+## if set to True, always triggers the ipst platfrom build, even if there are no updates from github
+    forceBuild: "{{ force_build|default('False') }}"
 
-# path on target OS where ipst-core sources will be cloned/updated
-    core_sources_path_default: "{{  ansible_env.HOME }}/ipst_ansible/ipst-core"
-    core_sources_path: "{{ user_core_sources_path|default(core_sources_path_default) }}"
 
-# path on target OS where ipst-entsoe sources will be cloned/updated
-    entsoe_sources_path_default: "{{  ansible_env.HOME }}/ipst_ansible/ipst-entsoe"
-    entsoe_sources_path: "{{ user_entsoe_sources_path|default(entsoe_sources_path_default) }}"
+## OS target project root path, contains source and binary files
+    project_home: "{{ user_project_home |default( ansible_env.HOME) }}"
 
-# path on target OS where ipst sources will be cloned/updated
-    ipst_sources_path_default: "{{  ansible_env.HOME }}/ipst_ansible/ipst"
-    ipst_sources_path: "{{ user_ipst_sources_path|default(ipst_sources_path_default) }}"
+## OS target temporary path, relative to project_home
+    project_temporary: "{{ project_home + user_project_temporary |default('/tmp') }}"
 
-# path on target OS where ipst thirdparty libraries will be installed
-    ipst_thirdparty_path_default: "{{  ansible_env.HOME }}/ipst_ansible/thirdparty"
-    ipst_thirdparty_path: "{{ thirdparty_path | default(ipst_thirdparty_path_default) }}"
+## prefix for locale log file
+    log_file_prefix_default: "{{ playbook_dir }}/install"
+    log_file_prefix: "{{ user_log_file_prefix |default(log_file_prefix_default) }}"
 
-# path on target OS where ipst will be installed
-    ipst_install_path_default: "{{  ansible_env.HOME }}/itesla"
-    ipst_install_path: "{{ install_path|default(ipst_install_path_default) }}"
+# postfix for locale log file
+    log_file_postfix_default: "{{ inventory_hostname+'.log' }}"
+    log_file_postfix: "{{ user_log_file_postfix |default(log_file_postfix_default) }}"
 
-# path on local OS, source of additional thirdparty libraries to be installed (as-is: untgz to ipst_install_path)
+
+
+## source root path on target OS where sources will be cloned/updated, relative to project_home
+    root_sources_path_default: "/ipst_ansible"
+    root_sources_path: "{{ project_home + user_source_root |default(root_sources_path_default) }}"
+
+## path on target OS where ipst-core sources will be cloned/updated, relative to root_sources_path
+    core_sources_path_default: "/ipst-core"
+    core_sources_path: "{{ root_sources_path + user_core_source |default(core_sources_path_default) }}"
+
+## path on target OS where ipst-entsoe sources will be cloned/updated, relative to root_sources_path
+    entsoe_sources_path_default: "/ipst-entsoe"
+    entsoe_sources_path: "{{ root_sources_path + user_entsoe_source |default(entsoe_sources_path_default) }}"
+
+## path on target OS where ipst sources will be cloned/updated, relative to root_sources_path
+    ipst_sources_path_default: "/ipst"
+    ipst_sources_path: "{{ root_sources_path + user_ipst_source |default(ipst_sources_path_default) }}"
+
+## path on target OS where ipst thirdparty libraries will be installed, relative to root_sources_path
+    ipst_thirdparty_path_default: "/thirdparty"
+    ipst_thirdparty_path: "{{ root_sources_path + user_source_thirdparty |default(ipst_thirdparty_path_default) }}"
+
+## path on target OS where ipst will be installed, relative to project_home
+    ipst_install_path_default: "/itesla"
+    ipst_install_path: "{{ project_home + user_project_bin |default(ipst_install_path_default) }}"
+
+## path on local OS, source of additional thirdparty libraries to be installed (as-is: untgz to ipst_install_path)
     misc_thirdparties_path: "./misc"
 
-# ipst github project details
-## TODO branchname must be set to master, eventually
-    ipst_github_branchname: "{{ github_branchname|default('master') }}"
+## ipst github project details
+### TODO branchname must be set to master, eventually
+    ipst_github_branchname: "{{ user_project_branch |default('master') }}"
 
-    core_github_branchname: "{{ github_branchname|default('master') }}"
+    core_github_branchname: "{{ user_project_branch |default('master') }}"
 
-    entsoe_github_branchname: "{{ github_branchname|default('master') }}"
+    entsoe_github_branchname: "{{ user_project_branch |default('master') }}"
 
-# ipst_thirdparty_packs
-    ipst_thirdparty_packs_path_default: "{{  ansible_env.HOME }}/ipst_ansible/thirdparty_packs"
+## ipst_thirdparty_packs
+    ipst_thirdparty_packs_path_default: "{{ ansible_env.HOME }}/ipst_ansible/thirdparty_packs"
     ipst_thirdparty_packs_path: "{{  thirdparty_packs|default(ipst_thirdparty_packs_path_default) }}"
+
+
+##----------------------------------------------------------------------------------------------------------
+## jdk install
+##
+## jdk archive url
+    jdk8_url_default: "http://download.oracle.com/otn-pub/java/jdk/8u112-b15/jdk-8u112-linux-x64.tar.gz"
+    jdk8_url: "{{ user_jdk8_url |default(jdk8_url_default) }}"
+
+## OS target jdk installation path
+    jdk8_home_default: "{{ ansible_env.HOME+'/jdk1.8.0_112' }}"
+    jdk8_home: "{{ user_jdk8_home |default( jdk8_home_default ) }}"
+
+## 1= log is activate, log is inactivate otherwise
+    jdk8_log: "{{ user_jdk8_log |default(0) }}"
+
+
+##----------------------------------------------------------------------------------------------------------
+## database parameters
+##
+
+## if set to True, database loading
+    ddb_process: "{{ user_ddb_process|default('False') }}"
+
+## define the eurostag version
+    ddb_eurostag_version: "{{ user_ddb_eurostag_version|default('5.1.1') }}"
+
+## test data archive name
+    ddb_archive_name_default: 'minimalist_DDB.zip'
+    ddb_archive_name: "{{ user_ddb_archive_name |default(ddb_archive_name_default) }}"
+
+## local archive path of the data to integrate
+    ddb_locale_path_default: "~/"
+    ddb_locale_path: "{{ user_ddb_locale_path |default(ddb_locale_path_default) }}"
+
+## OS target data path to integrate
+    ddb_remote_path_default: "{{ ansible_env.HOME+'/minimalist_DDB' }}"
+    ddb_remote_path: "{{ user_ddb_remote_path |default(ddb_remote_path_default) }}"
+
+## local db log file
+    ddb_log_file: "{{ log_file_prefix+'_ddb_'+log_file_postfix }}"
+
+
+## the project ear name
+    ear_name_default: "iidm-ddb-ear.ear"
+    ear_name: "{{ user_ear_name |default(ear_name_default) }}"
+
+## ear remote path relative to the install path
+    ear_path_default: "/iidm-ddb/iidm-ddb-ear/target"
+    ear_path: "{{ user_ear_path |default(ear_path_default) }}"
+
+##----------------------------------------------------------------------------------------------------------
+## hades parameters
+
+## if set to True, do test Hades part
+    hades_process: "{{ user_hades_process|default('False') }}"
+
+## hades binary archive name
+    hades_archive_name: "{{ user_hades_archive_name |default('hades2LF.zip') }}"
+
+## local hades binary archive path
+    hades_src: "{{ user_hades_src |default('~/tmp/hades') + '/'+hades_archive_name }}"
+
+## target OS hades prefix path install
+    hades_dst: "{{ user_hades_dst |default( ansible_env.HOME ) }}"
+
+## target OS hades path install
+    hades_create: "{{ hades_dst + user_hades_create |default('/hades2LF') }}"
+
+## test situation file name
+    hades_situation_test: "{{ user_hades_situation_test |default('20160101_0030_FO5_FR0.xiidm.gz') }}"
+
+##
+    hades_situation_prefix: "{{ user_hades_situation_prefix |default('/DATA/IIDM/FO/2016/01/01') }}"
+
+## local test situation path
+    hades_situations_src: "{{ user_hades_situations_prefix_src |default('~/tmp/situations/grovslb1/local') + hades_situation_prefix + '/'+ hades_situation_test }}"
+
+
+
+## target OS test situation path
+    hades_situations_dst: "{{ user_hades_situations_home|default( ansible_env.HOME) +'/situations' + hades_situation_prefix }}"
+
+## result filename
+    hades_result_file: "{{ user_hades_result_file |default(ansible_env.HOME+'/security-analysis-result.txt') }}"
+
+## show discalmer, default is no
+    hades_isDisclaimerPrompt: "{{ user_hades_isDisclaimerPrompt |default(False) }}"
+
+## disclaimer
+    hades_disclaimer: "{{ user_hades_disclaimer |default('no disclaimer') }}"
+
+## hades_log_file
+    hades_log_file: "{{ log_file_prefix+'_hades_'+log_file_postfix }}"
 
 
 
@@ -108,24 +224,30 @@
       var="{{ item }}"
     when: "0==0"
     with_items:
-      - ansible_env
-      - forceBuild
-      - installPrerequisites
-      - installMCR
-      - installBDD
-      - install_hades
-      - installHades
-      - ipst_github_enabled
       - ipst_github_branchname
+      - core_github_branchname
+      - entsoe_github_branchname
+      - root_sources_path
       - ipst_sources_path
       - ipst_install_path
       - ipst_thirdparty_path
-      - environment
       - core_sources_path
       - core_github_branchname
       - entsoe_sources_path
       - entsoe_github_branchname
-      - user_ipst_sources_path
+
+
+    #
+  - name: create directory
+    file: state=directory
+            path={{ item }}
+    with_items:
+      - "{{ project_home }}"
+      - "{{ project_temporary }}"
+      - "{{ hades_dst }}"
+      #- "{{ hades_situations_dst }}"
+
+
 
 ###
 ###
@@ -139,6 +261,6 @@
     - { role: ipst.wildfly, when: "installPrerequisites == True", become: "yes" }
     - { role: ipst.mcr, when: "installMCR == True", become: "yes" }
     - { role: ipst.ipst }
-    - { role: ipst.final } #, when: "finalyzeBDD == True", become: "yes" }
-    - { role: ipst.hades } #, when: "installHades == True", become: "yes" }
+    - { role: ipst.final , when: "ddb_process == True", become: "yes" }
+    - { role: ipst.hades , when: "hades_process == True", become: "yes" }
 

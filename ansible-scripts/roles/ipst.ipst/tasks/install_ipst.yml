@@ -1,5 +1,9 @@
 ---
 
+#
+  - debug:
+      msg: " log file: {{ ipst_log_file }}"
+
 # clone/update ipst project from github
 # Note: update does not work when there are local modifications (e.g. when some of the project's file are edited on-site)
   - name: ipst retrieve sources from github
@@ -35,16 +39,25 @@
     #in case, ignore errors (to proceed to next steps and possibly log the errors)
     ignore_errors: True
 
-  #local dumps a per-host log of iPST install script execution
-  - name: ipst dump log, to
-    local_action: copy content="cmd=> {{ installScript.cmd }}\nstart=> {{ installScript.start }}\nend=> {{ installScript.end }}\n===== DUMP OUT =====\n{{ installScript.stdout }}\n===== DUMP ERR =====\n{{ installScript.stderr }}"
-                  dest="~/{{ inventory_hostname }}_tmp"
-    when: installScript is defined and installScript.skipped is not defined
+  # log to file some variables
+  - name: remove previous log file
+    local_action: file state=absent path="{{ ipst_log_file }}"
+    when: installScript is defined
+      and installScript.skipped is not defined
+  - name: log file
+    local_action: lineinfile
+      dest="{{ ipst_log_file }}"
+      line="{{ {'_name':item._name|default('n/a') ,'cmd':item.cmd|default('n/a') ,'delta':item.delta|default('n/a') ,'end':item.end|default('n/a') ,'rc':item.rc|default('n/a') ,'state':item.state|default('n/a') ,'start':item.start|default('n/a') ,'stdout_lines':item.stdout_lines|default('n/a')} | to_nice_json }}"
+      state=present
+      insertafter=EOF
+      create=True
+    when: item is defined
+      and installScript is defined
+      and installScript.skipped is not defined
+    no_log: True
+    with_items:
+      - "{{ installScript |combine({'_name':'installScript'}) }}"
 
-  # format log file
-  - name: ipst format log
-    local_action: shell /usr/bin/sed 's/\\n/\n/g' <~/{{ inventory_hostname }}_tmp >{{ playbook_dir }}/install_ipst_{{ inventory_hostname }}.log && rm ~/{{ inventory_hostname }}_tmp
-    when: installScript is defined and installScript.skipped is not defined
 
   #
   - name: ipst stop execution in case of failure
