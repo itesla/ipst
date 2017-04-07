@@ -248,47 +248,17 @@ public class EurostagScenario {
         writer.newLine();
     }
 
-//    public void writeFaultSeqArchive(
-//            OutputStream os,
-//            List<Contingency> contingencies,
-//            Network network,
-//            EurostagDictionary dictionary,
-//            Function<Integer, String> seqFileNameFct
-//    ) throws IOException {
-//        //
-//        if ((contingencies == null) || (contingencies.isEmpty())) {
-//            throw new RuntimeException("contingencies list is empty, cannot write .seq scenario files");
-//        }
-//
-//        //
-//        try (FileSystem fs = Jimfs.newFileSystem(Configuration.unix())) {
-//            //
-//            Path rootDir = fs.getPath("/");
-//            for (int i = 0; i < contingencies.size(); i++) {
-//                Contingency contingency = contingencies.get(i);
-//                Path seqFile = rootDir.resolve(seqFileNameFct.apply(i));
-//                try (BufferedWriter writer = Files.newBufferedWriter(seqFile, StandardCharsets.UTF_8)) {
-//                    writeFaultSeq(writer, contingency, network, dictionary);
-//                }
-//            }
-//
-//            //
-//            Files.list(rootDir)
-//                    .filter(Files::isRegularFile)
-//                    .forEach(file -> {
-//                        try (InputStream is = Files.newInputStream(file)) {
-//                            ((ZipOutputStream)os).putNextEntry(new ZipEntry(file.toString()));
-//                            ByteStreams.copy(is, os);
-//                            ((ZipOutputStream)os).closeEntry();
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
-//                    });
-//        }
-//
-//
-//    }
 
+    /**
+     * dump into files network data
+     *
+     * @param workingDir
+     * @param contingencies contingencies
+     * @param network network to process
+     * @param dictionary dictionary
+     * @param seqFileNameFct destination file
+     * @throws IOException IOException
+     */
     public void writeFaultSeqArchive(
             Path workingDir,
             List<Contingency> contingencies,
@@ -305,7 +275,6 @@ public class EurostagScenario {
         for (int i = 0; i < contingencies.size(); i++) {
             Contingency contingency = contingencies.get(i);
             Path seqFile = workingDir.resolve(seqFileNameFct.apply(i));
-            System.out.println("writer:" + seqFile);
             try (BufferedWriter writer = Files.newBufferedWriter(seqFile, StandardCharsets.UTF_8)) {
                 writeFaultSeq(writer, contingency, network, dictionary);
             }

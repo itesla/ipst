@@ -146,8 +146,6 @@ public class DymolaImpactAnalysisTest {
 
                 Command command = commandExecutionList.get(0).getCommand();
                 for (InputFile file : command.getInputFiles(Integer.toString(0))) {
-
-                    System.out.println(">>filename=" + file.getName());
                     Path path = workingDir.resolve(file.getName());
                     if (!Files.exists(path)) {
                         // if not check if the file exists in the common directory

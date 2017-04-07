@@ -316,7 +316,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
         Files.list(workingDir)
                 .filter(Files::isRegularFile)
                 .forEach(file -> {
-                    System.out.println("   " + file);
+                    LOGGER.debug("   " + file);
                     try (InputStream is = Files.newInputStream(file)) {
                         ((ZipOutputStream)os).putNextEntry(new ZipEntry(file.toString()));
                         ByteStreams.copy(is, os);
@@ -343,7 +343,6 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
                     );
 
             // insert all files into wp43 archive
-            System.out.println(">>>" + ALL_SCENARIOS_ZIP_FILE_NAME);
             copyToArchive( rootDir, os);
         }
 
