@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -48,19 +49,22 @@ public class EurostagEchExport {
     private final EurostagEchExportConfig config;
     private final BranchParallelIndexes parallelIndexes;
     private final EurostagDictionary dictionary;
+    private final EurostagFakeNodes fakeNodes;
 
-    public EurostagEchExport(Network network, EurostagEchExportConfig config, BranchParallelIndexes parallelIndexes, EurostagDictionary dictionary) {
+    public EurostagEchExport(Network network, EurostagEchExportConfig config, BranchParallelIndexes parallelIndexes, EurostagDictionary dictionary, EurostagFakeNodes fakeNodes) {
         this.network = Objects.requireNonNull(network);
         this.config = Objects.requireNonNull(config);
         this.parallelIndexes = Objects.requireNonNull(parallelIndexes);
         this.dictionary = Objects.requireNonNull(dictionary);
+        this.fakeNodes = Objects.requireNonNull(fakeNodes);
     }
 
     public EurostagEchExport(Network network, EurostagEchExportConfig config) {
         this.network = Objects.requireNonNull(network);
         this.config = config;
-        this.parallelIndexes = BranchParallelIndexes.build(network, config);
-        this.dictionary = EurostagDictionary.create(network, parallelIndexes, config);
+        this.fakeNodes = EurostagFakeNodes.build(network, config);
+        this.parallelIndexes = BranchParallelIndexes.build(network, config, fakeNodes);
+        this.dictionary = EurostagDictionary.create(network, parallelIndexes, config, fakeNodes);
     }
 
     public EurostagEchExport(Network network) {
@@ -88,11 +92,13 @@ public class EurostagEchExport {
     }
 
     private void createNodes(EsgNetwork esgNetwork) {
-        esgNetwork.addNode(createNode(EchUtil.FAKE_NODE_NAME1, EchUtil.FAKE_AREA, 380f, 380f, 0f, false));
-        esgNetwork.addNode(createNode(EchUtil.FAKE_NODE_NAME2, EchUtil.FAKE_AREA, 380f, 380f, 0f, false));
+        fakeNodes.refEsgIdsAsStream().forEach(esgId -> {
+            esgNetwork.addNode(createNode(esgId, EchUtil.FAKE_AREA, 380f, 380f, 0f, false));
+        });
+
         Bus sb = EchUtil.selectSlackbus(network, config);
         if (sb == null) {
-            throw new RuntimeException("Stack bus not found");
+            throw new RuntimeException("Slack bus not found");
         }
         LOGGER.debug("Slack bus: {} ({})", sb, sb.getVoltageLevel().getId());
         for (Bus b : Identifiables.sort(EchUtil.getBuses(network, config))) {
@@ -167,8 +173,8 @@ public class EurostagEchExport {
 
     private void createLines(EsgNetwork esgNetwork, EsgGeneralParameters parameters) {
         for (Line l : Identifiables.sort(network.getLines())) {
-            ConnectionBus bus1 = ConnectionBus.fromTerminal(l.getTerminal1(), config, EchUtil.FAKE_NODE_NAME1);
-            ConnectionBus bus2 = ConnectionBus.fromTerminal(l.getTerminal2(), config, EchUtil.FAKE_NODE_NAME2);
+            ConnectionBus bus1 = ConnectionBus.fromTerminal(l.getTerminal1(), config, fakeNodes);
+            ConnectionBus bus2 = ConnectionBus.fromTerminal(l.getTerminal2(), config, fakeNodes);
             // if the admittance are the same in the both side of PI line model
             if (Math.abs(l.getG1() - l.getG2()) < G_EPSILON && Math.abs(l.getB1() - l.getB2()) < B_EPSILON) {
                 //...create a simple line
@@ -181,7 +187,7 @@ public class EurostagEchExport {
             }
         }
         for (DanglingLine dl : Identifiables.sort(network.getDanglingLines())) {
-            ConnectionBus bus1 = ConnectionBus.fromTerminal(dl.getTerminal(), config, EchUtil.FAKE_NODE_NAME1);
+            ConnectionBus bus1 = ConnectionBus.fromTerminal(dl.getTerminal(), config, fakeNodes);
             ConnectionBus bus2 = new ConnectionBus(true, EchUtil.getBusId(dl));
             esgNetwork.addLine(createLine(dl.getId(), bus1, bus2, dl.getTerminal().getVoltageLevel().getNominalV(),
                     dl.getR(), dl.getX(), dl.getG() / 2, dl.getB() / 2, parameters));
@@ -216,8 +222,9 @@ public class EurostagEchExport {
 
     private void createTransformers(EsgNetwork esgNetwork, EsgGeneralParameters parameters) {
         for (TwoWindingsTransformer twt : Identifiables.sort(network.getTwoWindingsTransformers())) {
-            ConnectionBus bus1 = ConnectionBus.fromTerminal(twt.getTerminal1(), config, EchUtil.FAKE_NODE_NAME1);
-            ConnectionBus bus2 = ConnectionBus.fromTerminal(twt.getTerminal2(), config, EchUtil.FAKE_NODE_NAME2);
+            ConnectionBus bus1 = ConnectionBus.fromTerminal(twt.getTerminal1(), config, fakeNodes);
+            ConnectionBus bus2 = ConnectionBus.fromTerminal(twt.getTerminal2(), config, fakeNodes);
+
             EsgBranchConnectionStatus status = getStatus(bus1, bus2);
 
             //...IIDM gives no rate value. we take rate = 100 MVA But we have to find the corresponding pcu, pfer ...
@@ -341,7 +348,7 @@ public class EurostagEchExport {
 
     private void createLoads(EsgNetwork esgNetwork) {
         for (Load l : Identifiables.sort(network.getLoads())) {
-            ConnectionBus bus = ConnectionBus.fromTerminal(l.getTerminal(), config, EchUtil.FAKE_NODE_NAME1);
+            ConnectionBus bus = ConnectionBus.fromTerminal(l.getTerminal(), config, fakeNodes);
             esgNetwork.addLoad(createLoad(bus, l.getId(), l.getP0(), l.getQ0()));
         }
         for (DanglingLine dl : Identifiables.sort(network.getDanglingLines())) {
@@ -352,7 +359,8 @@ public class EurostagEchExport {
 
     private void createGenerators(EsgNetwork esgNetwork) {
         for (Generator g : Identifiables.sort(network.getGenerators())) {
-            ConnectionBus bus = ConnectionBus.fromTerminal(g.getTerminal(), config, EchUtil.FAKE_NODE_NAME1);
+            ConnectionBus bus = ConnectionBus.fromTerminal(g.getTerminal(), config, fakeNodes);
+
             EsgConnectionStatus status = bus.isConnected() ? EsgConnectionStatus.CONNECTED : EsgConnectionStatus.NOT_CONNECTED;
             float pgen = g.getTargetP();
             float qgen = g.getTargetQ();
@@ -365,19 +373,26 @@ public class EurostagEchExport {
             float vregge = g.isVoltageRegulatorOn() ? g.getTargetV() : Float.NaN;
             float qgensh = 1.f;
 
-            Bus regulatingBus = g.getRegulatingTerminal().getBusBreakerView().getConnectableBus();
+            //fails, when noSwitch is true !!
+            //Bus regulatingBus = g.getRegulatingTerminal().getBusBreakerView().getConnectableBus();
+            ConnectionBus regulatingBus = ConnectionBus.fromTerminal(g.getRegulatingTerminal(), config, fakeNodes);
 
-            esgNetwork.addGenerator(new EsgGenerator(new Esg8charName(dictionary.getEsgId(g.getId())),
-                    new Esg8charName(dictionary.getEsgId(bus.getId())),
-                    pgmin, pgen, pgmax, qgmin, qgen, qgmax, mode, vregge,
-                    new Esg8charName(dictionary.getEsgId(regulatingBus.getId())),
-                    qgensh, status));
+            try {
+                esgNetwork.addGenerator(new EsgGenerator(new Esg8charName(dictionary.getEsgId(g.getId())),
+                        new Esg8charName(dictionary.getEsgId(bus.getId())),
+                        pgmin, pgen, pgmax, qgmin, qgen, qgmax, mode, vregge,
+                        new Esg8charName(dictionary.getEsgId(regulatingBus.getId())),
+                        qgensh, status));
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
         }
     }
 
     private void createBanks(EsgNetwork esgNetwork) {
         for (ShuntCompensator sc : Identifiables.sort(network.getShunts())) {
-            ConnectionBus bus = ConnectionBus.fromTerminal(sc.getTerminal(), config, EchUtil.FAKE_NODE_NAME1);
+            ConnectionBus bus = ConnectionBus.fromTerminal(sc.getTerminal(), config, fakeNodes);
+
             //...number of steps in service
             int ieleba = bus.isConnected() ? sc.getCurrentSectionCount() : 0; // not really correct, because it can be connected with zero section, EUROSTAG should be modified...
             float plosba = 0.f; // no active lost in the iidm shunt compensator
@@ -393,7 +408,8 @@ public class EurostagEchExport {
 
     private void createStaticVarCompensators(EsgNetwork esgNetwork) {
         for (StaticVarCompensator svc : Identifiables.sort(network.getStaticVarCompensators())) {
-            ConnectionBus bus = ConnectionBus.fromTerminal(svc.getTerminal(), config, EchUtil.FAKE_NODE_NAME1);
+            ConnectionBus bus = ConnectionBus.fromTerminal(svc.getTerminal(), config, fakeNodes);
+
             Esg8charName znamsvc = new Esg8charName(dictionary.getEsgId(svc.getId()));
             EsgConnectionStatus xsvcst = bus.isConnected() ? EsgConnectionStatus.CONNECTED : EsgConnectionStatus.NOT_CONNECTED;
             Esg8charName znodsvc = new Esg8charName(dictionary.getEsgId(bus.getId()));
@@ -416,9 +432,6 @@ public class EurostagEchExport {
         // areas
         createAreas(esgNetwork);
 
-        // nodes
-        createNodes(esgNetwork);
-
         // coupling devices
         createCouplingDevices(esgNetwork);
 
@@ -439,6 +452,9 @@ public class EurostagEchExport {
 
         // static VAR compensators
         createStaticVarCompensators(esgNetwork);
+
+        // nodes
+        createNodes(esgNetwork);
 
         return esgNetwork;
     }

@@ -19,10 +19,7 @@ import eu.itesla_project.eurostag.network.io.EsgWriter;
 import eu.itesla_project.eurostag.tools.EurostagNetworkModifier;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClient;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClientFactory;
-import eu.itesla_project.iidm.eurostag.export.BranchParallelIndexes;
-import eu.itesla_project.iidm.eurostag.export.EurostagDictionary;
-import eu.itesla_project.iidm.eurostag.export.EurostagEchExport;
-import eu.itesla_project.iidm.eurostag.export.EurostagEchExportConfig;
+import eu.itesla_project.iidm.eurostag.export.*;
 import eu.itesla_project.iidm.import_.Importers;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.simulation.SimulationParameters;
@@ -38,7 +35,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
 @AutoService(Tool.class)
@@ -70,16 +66,17 @@ public class EurostagExportTool implements Tool, EurostagConstants {
 
         System.out.println("exporting ech...");
         // export .ech and dictionary
-        EurostagEchExportConfig exportConfig = new EurostagEchExportConfig();
-        BranchParallelIndexes parallelIndexes = BranchParallelIndexes.build(network, exportConfig);
-        EurostagDictionary dictionary = EurostagDictionary.create(network, parallelIndexes, exportConfig);
-        new EurostagEchExport(network, exportConfig, parallelIndexes, dictionary).write(outputDir.resolve("sim.ech"));
+        EurostagEchExportConfig exportConfig = EurostagEchExportConfig.load();
+        EurostagFakeNodes fakeNodes = EurostagFakeNodes.build(network, exportConfig);
+        BranchParallelIndexes parallelIndexes = BranchParallelIndexes.build(network, exportConfig, fakeNodes);
+        EurostagDictionary dictionary = EurostagDictionary.create(network, parallelIndexes, exportConfig, fakeNodes);
+        new EurostagEchExport(network, exportConfig, parallelIndexes, dictionary, fakeNodes).write(outputDir.resolve("sim.ech"));
 
         try (Writer writer = Files.newBufferedWriter(outputDir.resolve("sim.ech"), StandardCharsets.UTF_8)) {
             EsgGeneralParameters parameters = new EsgGeneralParameters();
             parameters.setTransformerVoltageControl(false);
             parameters.setSvcVoltageControl(false);
-            EsgNetwork networkEch = new EurostagEchExport(network, exportConfig, parallelIndexes, dictionary).createNetwork(parameters);
+            EsgNetwork networkEch = new EurostagEchExport(network, exportConfig, parallelIndexes, dictionary, fakeNodes).createNetwork(parameters);
             new EurostagNetworkModifier().hvLoadModelling(networkEch);
             new EsgWriter(networkEch, parameters).write(writer, network.getId() + "/" + network.getStateManager().getWorkingStateId());
         }
@@ -91,14 +88,14 @@ public class EurostagExportTool implements Tool, EurostagConstants {
 
         System.out.println("exporting seq...");
 
-            // export .seq
-            EurostagScenario scenario = new EurostagScenario(SimulationParameters.load(), eurostagConfig);
-            try (BufferedWriter writer = Files.newBufferedWriter(outputDir.resolve(PRE_FAULT_SEQ_FILE_NAME), StandardCharsets.UTF_8)) {
-                scenario.writePreFaultSeq(writer, PRE_FAULT_SAC_FILE_NAME);
-            }
-            ContingenciesProvider contingenciesProvider = defaultConfig.newFactoryImpl(ContingenciesProviderFactory.class).create();
-            scenario.writeFaultSeqArchive(contingenciesProvider.getContingencies(network), network, dictionary, faultNum -> FAULT_SEQ_FILE_NAME.replace(eu.itesla_project.computation.Command.EXECUTION_NUMBER_PATTERN, Integer.toString(faultNum)))
-                    .as(ZipExporter.class).exportTo(outputDir.resolve(ALL_SCENARIOS_ZIP_FILE_NAME).toFile());
+        // export .seq
+        EurostagScenario scenario = new EurostagScenario(SimulationParameters.load(), eurostagConfig);
+        try (BufferedWriter writer = Files.newBufferedWriter(outputDir.resolve(PRE_FAULT_SEQ_FILE_NAME), StandardCharsets.UTF_8)) {
+            scenario.writePreFaultSeq(writer, PRE_FAULT_SAC_FILE_NAME);
+        }
+        ContingenciesProvider contingenciesProvider = defaultConfig.newFactoryImpl(ContingenciesProviderFactory.class).create();
+        scenario.writeFaultSeqArchive(contingenciesProvider.getContingencies(network), network, dictionary, faultNum -> FAULT_SEQ_FILE_NAME.replace(eu.itesla_project.computation.Command.EXECUTION_NUMBER_PATTERN, Integer.toString(faultNum)))
+                .as(ZipExporter.class).exportTo(outputDir.resolve(ALL_SCENARIOS_ZIP_FILE_NAME).toFile());
 
         // export limits
         try (OutputStream os = Files.newOutputStream(outputDir.resolve(LIMITS_ZIP_FILE_NAME))) {

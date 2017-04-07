@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -14,16 +15,16 @@ import eu.itesla_project.commons.Version;
 import eu.itesla_project.commons.config.PlatformConfig;
 import eu.itesla_project.computation.*;
 import eu.itesla_project.contingency.ContingenciesProvider;
+import eu.itesla_project.contingency.Contingency;
+import eu.itesla_project.contingency.ContingencyElement;
+import eu.itesla_project.iidm.eurostag.export.EchUtil;
 import eu.itesla_project.iidm.eurostag.export.EurostagDictionary;
 import eu.itesla_project.iidm.network.*;
 import eu.itesla_project.iidm.network.util.Identifiables;
 import eu.itesla_project.iidm.network.util.Networks;
-import eu.itesla_project.contingency.Contingency;
-import eu.itesla_project.contingency.ContingencyElement;
+import eu.itesla_project.simulation.*;
 import eu.itesla_project.simulation.securityindexes.SecurityIndex;
 import eu.itesla_project.simulation.securityindexes.SecurityIndexParser;
-import eu.itesla_project.simulation.*;
-import eu.itesla_project.simulation.ImpactAnalysis;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalINIConfiguration;
 import org.apache.commons.configuration.SubnodeConfiguration;
@@ -50,26 +51,26 @@ import static eu.itesla_project.computation.FilePreProcessor.FILE_GUNZIP;
 /**
  * Example:
  * <p><pre>
- *import eu.itesla_project.modules.Stabilization;
- *import eu.itesla_project.modules.ImpactAnalysis;
- *import eu.itesla_project.modules.SimulationParameters;
- *import eu.itesla_project.modules.StabilizationResult;
- *import eu.itesla_project.modules.ImpactAnalysisResult;
- *import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClient;
- *import eu.itesla_project.modules.ContingenciesAndActionsDatabaseClient;
- *import eu.itesla_project.modules.test.AutomaticContingenciesAndActionsDatabaseClient;
- *import eu.itesla_project.computation.ComputationPlatformClient;
- *import eu.itesla_project.computation.local.LocalComputationPlatformClient;
- *import eu.itesla_project.eurostag.EurostagConfig;
- *import eu.itesla_project.eurostag.EurostagStabilization;
- *import eu.itesla_project.eurostag.EurostagImpactAnalysis;
- *import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DdbDtaImpExp;
- *import eu.itesla_project.iidm.network.Network;
- *import java.nio.file.Path;
- *import java.nio.file.Paths;
- *
- *public class EurostagDemo {
- *
+ * import eu.itesla_project.modules.Stabilization;
+ * import eu.itesla_project.modules.ImpactAnalysis;
+ * import eu.itesla_project.modules.SimulationParameters;
+ * import eu.itesla_project.modules.StabilizationResult;
+ * import eu.itesla_project.modules.ImpactAnalysisResult;
+ * import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClient;
+ * import eu.itesla_project.modules.ContingenciesAndActionsDatabaseClient;
+ * import eu.itesla_project.modules.test.AutomaticContingenciesAndActionsDatabaseClient;
+ * import eu.itesla_project.computation.ComputationPlatformClient;
+ * import eu.itesla_project.computation.local.LocalComputationPlatformClient;
+ * import eu.itesla_project.eurostag.EurostagConfig;
+ * import eu.itesla_project.eurostag.EurostagStabilization;
+ * import eu.itesla_project.eurostag.EurostagImpactAnalysis;
+ * import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DdbDtaImpExp;
+ * import eu.itesla_project.iidm.network.Network;
+ * import java.nio.file.Path;
+ * import java.nio.file.Paths;
+ * <p>
+ * public class EurostagDemo {
+ * <p>
  *    public static void main(String[] args) throws Exception {
  *        Network network = ...;
  *        ComputationPlatformClient cpClient = new LocalComputationPlatformClient(Paths.get("/tmp"));
@@ -87,8 +88,9 @@ import static eu.itesla_project.computation.FilePreProcessor.FILE_GUNZIP;
  *            System.out.println("Simulation complete");
  *        }
  *    }
- *}
+ * }
  * </pre>
+ *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
 public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants {
@@ -157,24 +159,24 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
         return new GroupCommandBuilder()
                 .id("esg_fs")
                 .inputFiles(new InputFile(PRE_FAULT_SAC_GZ_FILE_NAME, FILE_GUNZIP),
-                            new InputFile(LIMITS_ZIP_FILE_NAME, ARCHIVE_UNZIP),
-                            new InputFile(scenarioZipFileName, ARCHIVE_UNZIP),
-                            new InputFile(wp43ConfigsZipFileName, ARCHIVE_UNZIP),
-                            new InputFile(DDB_DICT_GENS_CSV))
+                        new InputFile(LIMITS_ZIP_FILE_NAME, ARCHIVE_UNZIP),
+                        new InputFile(scenarioZipFileName, ARCHIVE_UNZIP),
+                        new InputFile(wp43ConfigsZipFileName, ARCHIVE_UNZIP),
+                        new InputFile(DDB_DICT_GENS_CSV))
                 .subCommand()
-                    .program(EUSTAG_CPT)
-                    .args("-s", FAULT_SEQ_FILE_NAME, PRE_FAULT_SAC_FILE_NAME)
-                    .timeout(config.getSimTimeout())
+                .program(EUSTAG_CPT)
+                .args("-s", FAULT_SEQ_FILE_NAME, PRE_FAULT_SAC_FILE_NAME)
+                .timeout(config.getSimTimeout())
                 .add()
                 .subCommand()
-                    .program(TSOINDEXES)
-                    .args(".", FAULT_BASE_NAME)
-                    .timeout(config.getIdxTimeout())
+                .program(TSOINDEXES)
+                .args(".", FAULT_BASE_NAME)
+                .timeout(config.getIdxTimeout())
                 .add()
                 .subCommand()
-                    .program(WP43)
-                    .args("./", FAULT_BASE_NAME, WP43_CONFIGS_PER_FAULT_FILE_NAME)
-                    .timeout(config.getIdxTimeout())
+                .program(WP43)
+                .args("./", FAULT_BASE_NAME, WP43_CONFIGS_PER_FAULT_FILE_NAME)
+                .timeout(config.getIdxTimeout())
                 .add()
                 .outputFiles(new OutputFile(TSO_LIMITS_SECURITY_INDEX_FILE_NAME),
                         new OutputFile(WP43_SMALLSIGNAL_SECURITY_INDEX_FILE_NAME),
@@ -193,9 +195,9 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
     @Override
     public String getVersion() {
         return ImmutableMap.builder().put("eurostagVersion", EurostagUtil.VERSION)
-                                     .putAll(Version.VERSION.toMap())
-                                     .build()
-                                     .toString();
+                .putAll(Version.VERSION.toMap())
+                .build()
+                .toString();
     }
 
     //needed by wp43 integration
@@ -203,8 +205,8 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
     private static void dumpLinesDictionary(Network network, EurostagDictionary dictionary, Path dir) throws IOException {
         try (BufferedWriter os = Files.newBufferedWriter(dir.resolve("dict_lines.csv"), StandardCharsets.UTF_8)) {
             for (Identifiable obj : Identifiables.sort(Iterables.concat(network.getLines(),
-                                                                        network.getTwoWindingsTransformers(),
-                                                                        network.getDanglingLines()))) {
+                    network.getTwoWindingsTransformers(),
+                    network.getDanglingLines()))) {
                 os.write(obj.getId() + ";" + dictionary.getEsgId(obj.getId()));
                 os.newLine();
             }
@@ -218,7 +220,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
     //contains buses, only
     private static void dumpBusesDictionary(Network network, EurostagDictionary dictionary, Path dir) throws IOException {
         try (BufferedWriter os = Files.newBufferedWriter(dir.resolve("dict_buses.csv"), StandardCharsets.UTF_8)) {
-            for (Bus bus: Identifiables.sort(network.getBusBreakerView().getBuses())) {
+            for (Bus bus : Identifiables.sort(EchUtil.getBuses(network, dictionary.getConfig()))) {
                 os.write(bus.getId() + ";" + dictionary.getEsgId(bus.getId()));
                 os.newLine();
             }
@@ -263,14 +265,14 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
                 }
                 for (DanglingLine dl : network.getDanglingLines()) {
                     dumpLimits(dictionary, writer, dl.getId(),
-                                       dl.getCurrentLimits(),
-                                       null,
-                                       dl.getTerminal().getVoltageLevel().getNominalV(),
-                                       dl.getTerminal().getVoltageLevel().getNominalV());
+                            dl.getCurrentLimits(),
+                            null,
+                            dl.getTerminal().getVoltageLevel().getNominalV(),
+                            dl.getTerminal().getVoltageLevel().getNominalV());
                 }
             }
             try (BufferedWriter writer = Files.newBufferedWriter(rootDir.resolve(VOLTAGE_LIMITS_CSV), StandardCharsets.UTF_8)) {
-                for (Bus b : network.getBusBreakerView().getBuses()) {
+                for (Bus b : EchUtil.getBuses(network, dictionary.getConfig())) {
                     VoltageLevel vl = b.getVoltageLevel();
                     if (!Float.isNaN(vl.getLowVoltageLimit()) && !Float.isNaN(vl.getHighVoltageLimit())) {
                         writer.write(dictionary.getEsgId(b.getId()));
@@ -318,7 +320,8 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
                 return parameters.getGeneratorFaultShortCircuitDuration(contingency.getId(), element.getId());
             case LINE:
                 return parameters.getBranchFaultShortCircuitDuration(contingency.getId(), element.getId());
-            default: throw new AssertionError();
+            default:
+                throw new AssertionError();
         }
     }
 
@@ -370,10 +373,10 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
         for (int i = 0; i < contingencies.size(); i++) {
             Contingency contingency = contingencies.get(i);
             for (String securityIndexFileName : Arrays.asList(TSO_LIMITS_SECURITY_INDEX_FILE_NAME,
-                                                              WP43_SMALLSIGNAL_SECURITY_INDEX_FILE_NAME,
-                                                              WP43_TRANSIENT_SECURITY_INDEX_FILE_NAME,
-                                                              WP43_OVERLOAD_SECURITY_INDEX_FILE_NAME,
-                                                              WP43_UNDEROVERVOLTAGE_SECURITY_INDEX_FILE_NAME)) {
+                    WP43_SMALLSIGNAL_SECURITY_INDEX_FILE_NAME,
+                    WP43_TRANSIENT_SECURITY_INDEX_FILE_NAME,
+                    WP43_OVERLOAD_SECURITY_INDEX_FILE_NAME,
+                    WP43_UNDEROVERVOLTAGE_SECURITY_INDEX_FILE_NAME)) {
                 Path file = workingDir.resolve(securityIndexFileName.replace(Command.EXECUTION_NUMBER_PATTERN, Integer.toString(i)));
                 if (Files.exists(file)) {
                     try (BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
@@ -383,7 +386,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
                     }
                     files++;
                 }
-	        }
+            }
             // also scan errors in output
             EurostagUtil.searchErrorMessage(workingDir.resolve(FAULT_OUT_GZ_FILE_NAME.replace(Command.EXECUTION_NUMBER_PATTERN, Integer.toString(i))), result.getMetrics(), i);
         }

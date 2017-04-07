@@ -17,10 +17,7 @@ import eu.itesla_project.eurostag.network.EsgNetwork;
 import eu.itesla_project.eurostag.network.io.EsgWriter;
 import eu.itesla_project.eurostag.tools.EurostagNetworkModifier;
 import eu.itesla_project.iidm.datasource.FileDataSource;
-import eu.itesla_project.iidm.eurostag.export.BranchParallelIndexes;
-import eu.itesla_project.iidm.eurostag.export.EurostagDictionary;
-import eu.itesla_project.iidm.eurostag.export.EurostagEchExport;
-import eu.itesla_project.iidm.eurostag.export.EurostagEchExportConfig;
+import eu.itesla_project.iidm.eurostag.export.*;
 import eu.itesla_project.iidm.export.Exporter;
 import eu.itesla_project.iidm.export.Exporters;
 import eu.itesla_project.iidm.network.Network;
@@ -92,6 +89,8 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
     private final EurostagConfig config;
 
     private final Command cmd;
+
+    private EurostagFakeNodes fakeNodes;
 
     private EurostagEchExportConfig exportConfig;
 
@@ -186,7 +185,7 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
             parameters.setSvcVoltageControl(false);
             parameters.setMaxNumIteration(config.getLfMaxNumIteration());
             parameters.setStartMode(config.isLfWarmStart() ? EsgGeneralParameters.StartMode.WARM_START : EsgGeneralParameters.StartMode.FLAT_START);
-            EsgNetwork networkEch = new EurostagEchExport(network, exportConfig, parallelIndexes, dictionary).createNetwork(parameters);
+            EsgNetwork networkEch = new EurostagEchExport(network, exportConfig, parallelIndexes, dictionary, fakeNodes).createNetwork(parameters);
             networkModifier.hvLoadModelling(networkEch);
             new EsgWriter(networkEch, parameters).write(writer, network.getId() + "/" + network.getStateManager().getWorkingStateId());
         }
@@ -202,11 +201,16 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
 
         this.parameters = parameters;
 
-        exportConfig = new EurostagEchExportConfig(config.isLfNoGeneratorMinMaxQ());
-        parallelIndexes = BranchParallelIndexes.build(network, exportConfig);
+        // exportConfig = new EurostagEchExportConfig(config.isLfNoGeneratorMinMaxQ());
+        // isLfNoGeneratorMinMaxQ must now be configured in eurostag-ech-export section
+        exportConfig = EurostagEchExportConfig.load();
+
+        fakeNodes = EurostagFakeNodes.build(network, exportConfig);
+
+        parallelIndexes = BranchParallelIndexes.build(network, exportConfig, fakeNodes);
 
         // fill iTesla id to Esg id dictionary
-        dictionary = EurostagDictionary.create(network, parallelIndexes, exportConfig);
+        dictionary = EurostagDictionary.create(network, parallelIndexes, exportConfig, fakeNodes);
 
         if (config.isUseBroadcast()) {
             Domain domain = ShrinkWrap.createDomain();
