@@ -8,14 +8,17 @@ package eu.itesla_project.online;
 
 import eu.itesla_project.contingency.Contingency;
 import eu.itesla_project.contingency.ContingencyImpl;
+import eu.itesla_project.security.LimitViolationType;
 import eu.itesla_project.simulation.securityindexes.SecurityIndex;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -75,5 +78,12 @@ public class OnlineUtilsTest {
     @Test
     public void getPostContingencyIdTest() {
         assertEquals("state-post-contingency", OnlineUtils.getPostContingencyId("state", "contingency"));
+    }
+    
+    @Test
+    public void getUnitEnumTest() {        
+        Stream.of( LimitViolationType.values()).forEach( t ->
+            assertNotNull(OnlineUtils.getUnit(t))
+        );       
     }
 }

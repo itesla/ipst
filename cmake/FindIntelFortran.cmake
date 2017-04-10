@@ -12,11 +12,11 @@
 # =============================================================================
 
 if (NOT INTEL_HOME AND NOT $ENV{INTEL_HOME} STREQUAL "")
-	set(INTEL_HOME $ENV{INTEL_HOME})
+    set(INTEL_HOME $ENV{INTEL_HOME})
 endif()
 
 if (NOT INTEL_HOME AND NOT $ENV{INTEL_ROOT} STREQUAL "")
-	set(INTEL_HOME $ENV{INTEL_ROOT})
+    set(INTEL_HOME $ENV{INTEL_ROOT})
 endif()
 
 if (NOT INTEL_HOME)
@@ -28,7 +28,7 @@ foreach (component ${IntelFortran_FIND_COMPONENTS})
     string(TOUPPER ${component} COMPONENT)
     set(IntelFortran_${component}_FIND_QUIETLY true)
 
-    find_library(IntelFortran_${component}_LIBRARY ${component} HINTS ${INTEL_HOME}/lib/intel64)
+    find_library(IntelFortran_${component}_LIBRARY ${component} HINTS ${INTEL_HOME}/lib/intel64 NO_DEFAULT_PATH)
     mark_as_advanced(IntelFortran_${component}_LIBRARY)
     find_package_handle_standard_args(IntelFortran_${component} DEFAULT_MSG IntelFortran_${component}_LIBRARY)
 

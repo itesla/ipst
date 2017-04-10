@@ -176,14 +176,14 @@ class PostContLoadFlowSimImpactAnalysis implements ImpactAnalysis, PostContLoadF
                 if (config.isBaseCaseConstraintsFiltered()) {
                     equipmentsViolatedInBaseState = baseViolationsByType.get(violationType)
                             .stream()
-                            .map(violation -> violation.getSubject().getId())
+                            .map(violation -> violation.getSubjectId())
                             .collect(Collectors.toSet());
                 } else {
                     equipmentsViolatedInBaseState = Collections.emptySet();
                 }
 
                 List<String> equipments = violations2.stream()
-                        .map(violation -> violation.getSubject().getId())
+                        .map(violation -> violation.getSubjectId())
                         .filter(equipment -> !equipmentsViolatedInBaseState.contains(equipment))
                         .distinct()
                         .collect(Collectors.toList());

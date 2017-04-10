@@ -18,26 +18,26 @@ import eu.itesla_project.online.UnstableContingenciesSynthesis;
  */
 public class UnstableContingenciesMessage extends Message<UnstableContingenciesSynthesis> {
 
-	public UnstableContingenciesMessage(UnstableContingenciesSynthesis unstableContingencies) {
-		super(unstableContingencies);
-		
-	}
-	
-	String type= "unstableContingencies";
+    public UnstableContingenciesMessage(UnstableContingenciesSynthesis unstableContingencies) {
+        super(unstableContingencies);
 
-	@Override
-	protected String getType() {
-		return type;
-	}
+    }
 
-	@Override
-	public String toJson(){
-		Gson gson = new Gson();
-		return gson.toJson(this);
-	}
+    String type = "unstableContingencies";
 
-	@Override
-	protected void toJson(JsonGenerator generator) {
-	}
+    @Override
+    protected String getType() {
+        return type;
+    }
+
+    @Override
+    public String toJson() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
+    }
+
+    @Override
+    protected void toJson(JsonGenerator generator) {
+    }
 
 }

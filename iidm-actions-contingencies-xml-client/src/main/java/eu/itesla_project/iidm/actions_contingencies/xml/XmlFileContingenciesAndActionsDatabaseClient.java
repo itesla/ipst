@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
- * Copyright (c) 2016, RTE (http://www.rte-france.com)
+ * Copyright (c) 2016-2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -33,7 +32,6 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import eu.itesla_project.iidm.actions_contingencies.xml.mapping.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -42,8 +40,32 @@ import eu.itesla_project.contingency.ContingencyElement;
 import eu.itesla_project.contingency.ContingencyImpl;
 import eu.itesla_project.contingency.GeneratorContingency;
 import eu.itesla_project.contingency.LineContingency;
+import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Action;
+import eu.itesla_project.iidm.actions_contingencies.xml.mapping.ActionCtgAssociations;
+import eu.itesla_project.iidm.actions_contingencies.xml.mapping.ActionPlan;
+import eu.itesla_project.iidm.actions_contingencies.xml.mapping.ActionsContingencies;
+import eu.itesla_project.iidm.actions_contingencies.xml.mapping.And;
+import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Association;
+import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Constraint;
+import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Contingency;
+import eu.itesla_project.iidm.actions_contingencies.xml.mapping.ElementaryAction;
+import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Equipment;
+import eu.itesla_project.iidm.actions_contingencies.xml.mapping.GenerationOperation;
+import eu.itesla_project.iidm.actions_contingencies.xml.mapping.LineOperation;
+import eu.itesla_project.iidm.actions_contingencies.xml.mapping.LogicalExpression;
+import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Operand;
+import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Or;
+import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Parameter;
+import eu.itesla_project.iidm.actions_contingencies.xml.mapping.PstOperation;
+import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Redispatching;
+import eu.itesla_project.iidm.actions_contingencies.xml.mapping.SwitchOperation;
+import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Then;
+import eu.itesla_project.iidm.actions_contingencies.xml.mapping.VoltageLevel;
+import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Zone;
+import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Zones;
 import eu.itesla_project.iidm.network.Line;
 import eu.itesla_project.iidm.network.Network;
+import eu.itesla_project.iidm.network.Switch;
 import eu.itesla_project.iidm.network.TieLine;
 import eu.itesla_project.modules.contingencies.ActionElement;
 import eu.itesla_project.modules.contingencies.ActionPlanOption;
@@ -859,51 +881,16 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
                 LOGGER.warn("GenerationOperation : generator id not found: " + genId);
         }
 
-        for (SwitchOperation sw : ele.getSwitchOperation()) {
-
-            String switchId = sw.getId();
-            String vlId = null;
-            Zones eleZones = ele.getZones();
-            if ( eleZones != null ) {
-                for(BigInteger zoneNum : eleZones.getNum()) {
-                    String zoneId = zonesMapping.get(zoneNum);
-                    eu.itesla_project.modules.contingencies.Zone z = getZone(zoneId);
-                    Collection<eu.itesla_project.modules.contingencies.VoltageLevel> levels = z.getVoltageLevels();
-                    for (eu.itesla_project.modules.contingencies.VoltageLevel l : levels) {
-                        String lid = l.getId();
-                        eu.itesla_project.iidm.network.VoltageLevel vl = network
-                                .getVoltageLevel(lid);
-                        if (vl != null
-                                && vl.getBusBreakerView().getSwitch(switchId) != null) {
-                            vlId = vl.getId();
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if (vlId == null) // search all network
-            {
-                LOGGER.info("No match found for "+switchId +" among the switches of the switch zones voltage levels. Search continues on all network switches... " );
-                Iterator<eu.itesla_project.iidm.network.VoltageLevel> it = network
-                        .getVoltageLevels().iterator();
-                while (it.hasNext()) {
-                    eu.itesla_project.iidm.network.VoltageLevel vl = it.next();
-                    if (vl.getBusBreakerView().getSwitch(switchId) != null) {
-                        vlId = vl.getId();
-                        break;
-                    }
-
-                }
-            }
-
-            if (vlId != null) {
-                if (sw.getAction().equals("opening"))
-                    elements.add(new SwitchOpeningAction(vlId, switchId, sw.getImplementationTime(), sw.getAchievmentIndex()));
-                else if (sw.getAction().equals("closing"))
-                    elements.add(new SwitchClosingAction(vlId, switchId, sw.getImplementationTime(), sw.getAchievmentIndex()));
+        for (SwitchOperation swOp : ele.getSwitchOperation()) {
+            String switchId = swOp.getId();
+            Switch sw = network.getSwitch(switchId);             
+            if (sw != null) {
+                if (swOp.getAction().equals("opening"))
+                    elements.add(new SwitchOpeningAction(sw.getVoltageLevel().getId(), switchId, swOp.getImplementationTime(), swOp.getAchievmentIndex()));
+                else if (swOp.getAction().equals("closing"))
+                    elements.add(new SwitchClosingAction(sw.getVoltageLevel().getId(), switchId, swOp.getImplementationTime(), swOp.getAchievmentIndex()));
             } else
-                LOGGER.warn("No match found for " + switchId + " among all network switches. The switch is eliminated from the action element list");
+                LOGGER.warn("SwitchOperation : switch id not found: " + switchId);
 
         }
 

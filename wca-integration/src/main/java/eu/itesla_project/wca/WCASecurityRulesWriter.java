@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
- * Copyright (c) 2016, RTE (http://www.rte-france.com)
+ * Copyright (c) 2016-2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -49,15 +49,16 @@ public class WCASecurityRulesWriter implements AmplConstants, WCAConstants {
 
     private final boolean debug;
     
-    private final boolean stopWcaOnViolations;
+    private final boolean activateFiltering;
 
-    public WCASecurityRulesWriter(Network network, List<SecurityRuleExpression> rules, DataSource dataSource, StringToIntMapper<AmplSubset> mapper, boolean debug, boolean stopWcaOnViolations) {
+    public WCASecurityRulesWriter(Network network, List<SecurityRuleExpression> rules, DataSource dataSource, 
+                                  StringToIntMapper<AmplSubset> mapper, boolean debug, boolean activateFiltering) {
         this.dataSource = Objects.requireNonNull(dataSource);
         this.network = Objects.requireNonNull(network);
         this.rules = Objects.requireNonNull(rules);
         this.mapper = Objects.requireNonNull(mapper);
         this.debug = debug;
-        this.stopWcaOnViolations = stopWcaOnViolations;
+        this.activateFiltering = activateFiltering;
     }
 
     private static class WCAEntity {
@@ -177,7 +178,7 @@ public class WCASecurityRulesWriter implements AmplConstants, WCAConstants {
                 final int attributeSetNum = attributeSet.ordinal();
 
                 if (rule.getStatus() == SecurityRuleStatus.ALWAYS_UNSECURE) {
-                    if ( stopWcaOnViolations )
+                    if ( activateFiltering )
                         throw new RuntimeException("Always unsecure rule " + ruleId);
                     else
                         continue;

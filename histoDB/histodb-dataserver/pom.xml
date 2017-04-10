@@ -107,55 +107,63 @@
         <dependency>
             <groupId>eu.itesla_project</groupId>
             <artifactId>modules</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>${ipst.version}</version>
         </dependency>
 
         <dependency>
             <groupId>eu.itesla_project</groupId>
             <artifactId>iidm-converter-api</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>${ipstcore.version}</version>
         </dependency>
 
         <dependency>
             <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-network-api</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <artifactId>iidm-api</artifactId>
+            <version>${ipstcore.version}</version>
         </dependency>
 
         <dependency>
             <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-network-impl</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <artifactId>iidm-impl</artifactId>
+            <version>${ipstcore.version}</version>
         </dependency>
 
         <dependency>
             <groupId>eu.itesla_project</groupId>
             <artifactId>eurostag-step-up-transformer</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>${ipst.version}</version>
         </dependency>
 
         <dependency>
             <groupId>eu.itesla_project</groupId>
             <artifactId>cim1-import</artifactId>
+            <version>${ipstentsoe.version}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>eu.itesla_project</groupId>
             <artifactId>iidm-xml-converter</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>${ipstcore.version}</version>
         </dependency>
 
         <dependency>
             <groupId>eu.itesla_project</groupId>
             <artifactId>computation-local</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>${ipstcore.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>eu.itesla_project</groupId>
+            <artifactId>ucte-import</artifactId>
+            <version>${ipstentsoe.version}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
         </dependency>
-
 
         <dependency>
             <groupId>be.pepite.dataserver</groupId>

@@ -18,26 +18,26 @@ import eu.itesla_project.online.WcaContingenciesSynthesis;
  */
 public class WcaContingenciesMessage extends Message<WcaContingenciesSynthesis> {
 
-	public WcaContingenciesMessage(WcaContingenciesSynthesis wcaContingencies) {
-		super(wcaContingencies);
-		
-	}
-	
-	String type= "wcaContingencies";
+    public WcaContingenciesMessage(WcaContingenciesSynthesis wcaContingencies) {
+        super(wcaContingencies);
 
-	@Override
-	protected String getType() {
-		return type;
-	}
+    }
 
-	@Override
-	public String toJson(){
-		Gson gson = new Gson();
-		return gson.toJson(this);
-	}
+    String type = "wcaContingencies";
 
-	@Override
-	protected void toJson(JsonGenerator generator) {
-	}
+    @Override
+    protected String getType() {
+        return type;
+    }
+
+    @Override
+    public String toJson() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
+    }
+
+    @Override
+    protected void toJson(JsonGenerator generator) {
+    }
 
 }

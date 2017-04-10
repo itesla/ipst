@@ -6,7 +6,6 @@
  */
 package eu.itesla_project.online.server.message;
 
-
 import javax.json.stream.JsonGenerator;
 
 import com.google.gson.Gson;
@@ -17,31 +16,28 @@ import eu.itesla_project.online.ContingencyStatesIndexesSynthesis;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class StatesWithIndexesSynthesisMessage extends Message <ContingencyStatesIndexesSynthesis>  {
+public class StatesWithIndexesSynthesisMessage extends Message<ContingencyStatesIndexesSynthesis> {
 
-	public StatesWithIndexesSynthesisMessage(ContingencyStatesIndexesSynthesis   contingencyStatesIndexesSynthesis) {
-		super(contingencyStatesIndexesSynthesis);
-	}
+    public StatesWithIndexesSynthesisMessage(ContingencyStatesIndexesSynthesis contingencyStatesIndexesSynthesis) {
+        super(contingencyStatesIndexesSynthesis);
+    }
 
-	private String type="statesWithIndexesSyntesis";
-	
-	 @Override
-	    protected String getType() {
-	        return type;
-	    }
+    private String type = "statesWithIndexesSyntesis";
 
-	 
-	 @Override
-		public String toJson(){
-			Gson gson = new Gson();
-			return gson.toJson(this);  
-			
-			
-		}
+    @Override
+    protected String getType() {
+        return type;
+    }
 
-		@Override
-		public void toJson(JsonGenerator generator) {
-		}
+    @Override
+    public String toJson() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
 
-		    
+    }
+
+    @Override
+    public void toJson(JsonGenerator generator) {
+    }
+
 }

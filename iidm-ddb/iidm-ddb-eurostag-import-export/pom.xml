@@ -56,7 +56,7 @@
       </dependency>
        <dependency>
            <groupId>eu.itesla_project</groupId>
-           <artifactId>iidm-network-api</artifactId>
+           <artifactId>iidm-api</artifactId>
        </dependency>
 
        <!-- We depend on the EJB remote interfaces  of this application -->
@@ -81,9 +81,32 @@
       </dependency>
 
        <dependency>
+           <groupId>eu.itesla_project</groupId>
+           <artifactId>iidm-impl</artifactId>
+           <version>${ipstcore.version}</version>
+           <scope>test</scope>
+       </dependency>
+       <dependency>
+           <groupId>eu.itesla_project</groupId>
+           <artifactId>iidm-test</artifactId>
+           <version>${ipstcore.version}</version>
+           <scope>test</scope>
+        </dependency>
+       <dependency>
+           <groupId>com.google.jimfs</groupId>
+           <artifactId>jimfs</artifactId>
+           <scope>test</scope>
+       </dependency>
+       <dependency>
            <groupId>junit</groupId>
            <artifactId>junit</artifactId>
        </dependency>
+       <dependency>
+           <groupId>org.slf4j</groupId>
+           <artifactId>slf4j-simple</artifactId>
+           <scope>test</scope>
+       </dependency>
+
    </dependencies>
 
    <build>

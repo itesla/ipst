@@ -44,11 +44,7 @@
         </dependency>
         <dependency>
             <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-network-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-converter-api</artifactId>
+            <artifactId>iidm-api</artifactId>
         </dependency>
         <dependency>
             <groupId>eu.itesla_project</groupId>
@@ -96,6 +92,10 @@
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
         </dependency>
         <dependency>
@@ -139,12 +139,12 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>iidm-network-impl</artifactId>
+            <artifactId>iidm-impl</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>iidm-network-test</artifactId>
+            <artifactId>iidm-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

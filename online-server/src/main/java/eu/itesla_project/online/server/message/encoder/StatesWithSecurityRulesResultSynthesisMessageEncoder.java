@@ -16,7 +16,8 @@ import eu.itesla_project.online.server.message.StatesWithSecurityRulesResultSynt
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class StatesWithSecurityRulesResultSynthesisMessageEncoder implements Encoder.Text<StatesWithSecurityRulesResultSynthesisMessage> {
+public class StatesWithSecurityRulesResultSynthesisMessageEncoder
+        implements Encoder.Text<StatesWithSecurityRulesResultSynthesisMessage> {
 
     @Override
     public String encode(StatesWithSecurityRulesResultSynthesisMessage message) throws EncodeException {

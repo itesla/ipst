@@ -7,6 +7,8 @@
  */
 package eu.itesla_project.online.db;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.common.base.Splitter;
 import eu.itesla_project.cases.CaseType;
 import eu.itesla_project.computation.local.LocalComputationManager;
@@ -29,6 +31,7 @@ import eu.itesla_project.online.db.debug.NetworkDataExtractor;
 import eu.itesla_project.security.LimitViolation;
 import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.h2.mvstore.MVMap;
 import org.h2.mvstore.MVMapConcurrent;
 import org.h2.mvstore.MVStore;
@@ -42,9 +45,11 @@ import org.supercsv.io.CsvListWriter;
 import org.supercsv.prefs.CsvPreference;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -134,7 +139,7 @@ public class OnlineDbMVStore implements OnlineDb {
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OnlineDbMVStore.class);
-
+    private static final String STORED_PROCESS_PREFIX = "prc_";
 
     private OnlineDbMVStoreConfig config = null;
 
@@ -840,60 +845,67 @@ public class OnlineDbMVStore implements OnlineDb {
         Objects.requireNonNull(workflowId, "workflow id is null");
         LOGGER.info("Getting configuration parameters of wf {}", workflowId);
         if (isWorkflowStored(workflowId)) {
-            MVStore wfMVStore = getStore(workflowId);
-            if (wfMVStore.hasMap(STORED_PARAMETERS_MAP_NAME)) {
-                MVMap<String, String> storedParametersMap = wfMVStore.openMap(STORED_PARAMETERS_MAP_NAME, mapBuilder);
-                DateTime baseCaseDate = DateTime.parse(storedParametersMap.get(STORED_PARAMETERS_BASECASE_KEY));
-                int states = Integer.parseInt(storedParametersMap.get(STORED_PARAMETERS_STATE_NUMBER_KEY));
-                String offlineWorkflowId = storedParametersMap.get(STORED_PARAMETERS_OFFLINE_WF_ID_KEY);
-                TimeHorizon timeHorizon = TimeHorizon.fromName(storedParametersMap.get(STORED_RESULTS_TIMEHORIZON_KEY));
-                Interval histoInterval = Interval.parse(storedParametersMap.get(STORED_PARAMETERS_HISTO_INTERVAL_KEY));
-                String feAnalysisId = storedParametersMap.get(STORED_PARAMETERS_FEA_ID_KEY);
-                double rulesPurityThreshold = Double.parseDouble((storedParametersMap.get(STORED_PARAMETERS_RULES_PURITY_KEY) == null) ? "1" : storedParametersMap.get(STORED_PARAMETERS_RULES_PURITY_KEY));
-                boolean storeStates = Boolean.parseBoolean(storedParametersMap.get(STORED_PARAMETERS_STORE_STATES_KEY));
-                boolean analyseBasecase = Boolean.parseBoolean(storedParametersMap.get(STORED_PARAMETERS_ANALYSE_BASECASE_KEY));
-                boolean validation = Boolean.parseBoolean(storedParametersMap.get(STORED_PARAMETERS_VALIDATION_KEY));
-                Set<SecurityIndexType> securityIndexes = null;
-                if (storedParametersMap.containsKey(STORED_PARAMETERS_SECURITY_INDEXES_KEY))
-                    securityIndexes = OnlineDbMVStoreUtils.jsonToIndexesTypes(storedParametersMap.get(STORED_PARAMETERS_SECURITY_INDEXES_KEY));
-                CaseType caseType = CaseType.valueOf(storedParametersMap.get(STORED_PARAMETERS_CASE_TYPE_KEY));
-                Set<Country> countries = OnlineDbMVStoreUtils.jsonToCountries(storedParametersMap.get(STORED_PARAMETERS_COUNTRIES_KEY));
-                boolean mergeOptimized = OnlineWorkflowParameters.DEFAULT_MERGE_OPTIMIZED;
-                if (storedParametersMap.containsKey(STORED_PARAMETERS_MERGE_OPTIMIZED_KEY))
-                    mergeOptimized = Boolean.parseBoolean(storedParametersMap.get(STORED_PARAMETERS_MERGE_OPTIMIZED_KEY));
-                float limitReduction = OnlineWorkflowParameters.DEFAULT_LIMIT_REDUCTION;
-                if (storedParametersMap.containsKey(STORED_PARAMETERS_LIMIT_REDUCTION_KEY))
-                    limitReduction = Float.parseFloat(storedParametersMap.get(STORED_PARAMETERS_LIMIT_REDUCTION_KEY));
-                boolean handleViolations = OnlineWorkflowParameters.DEFAULT_HANDLE_VIOLATIONS_IN_N;
-                if (storedParametersMap.containsKey(STORED_PARAMETERS_HANDLE_VIOLATIONS_KEY))
-                    handleViolations = Boolean.parseBoolean(storedParametersMap.get(STORED_PARAMETERS_HANDLE_VIOLATIONS_KEY));
-                float constraintMargin = OnlineWorkflowParameters.DEFAULT_CONSTRAINT_MARGIN;
-                if (storedParametersMap.containsKey(STORED_PARAMETERS_CONSTRAINT_MARGIN_KEY))
-                    constraintMargin = Float.parseFloat(storedParametersMap.get(STORED_PARAMETERS_CONSTRAINT_MARGIN_KEY));
-                OnlineWorkflowParameters onlineWfPars = new OnlineWorkflowParameters(baseCaseDate,
-                        states,
-                        histoInterval,
-                        offlineWorkflowId,
-                        timeHorizon,
-                        feAnalysisId,
-                        rulesPurityThreshold,
-                        storeStates,
-                        analyseBasecase,
-                        validation,
-                        securityIndexes,
-                        caseType,
-                        countries,
-                        mergeOptimized,
-                        limitReduction,
-                        handleViolations,
-                        constraintMargin);
-                if (storedParametersMap.containsKey(STORED_PARAMETERS_CASE_FILE_KEY)) {
-                    onlineWfPars.setCaseFile(storedParametersMap.get(STORED_PARAMETERS_CASE_FILE_KEY));
+            MVStore wfMVStore = null;
+            try {
+                wfMVStore = MVStore.open(config.getOnlineDbDir().toString() + File.separator + STORED_WORKFLOW_PREFIX + workflowId);
+                if (wfMVStore.hasMap(STORED_PARAMETERS_MAP_NAME)) {
+                    MVMap<String, String> storedParametersMap = wfMVStore.openMap(STORED_PARAMETERS_MAP_NAME, mapBuilder);
+                    DateTime baseCaseDate = DateTime.parse(storedParametersMap.get(STORED_PARAMETERS_BASECASE_KEY));
+                    int states = Integer.parseInt(storedParametersMap.get(STORED_PARAMETERS_STATE_NUMBER_KEY));
+                    String offlineWorkflowId = storedParametersMap.get(STORED_PARAMETERS_OFFLINE_WF_ID_KEY);
+                    TimeHorizon timeHorizon = TimeHorizon.fromName(storedParametersMap.get(STORED_RESULTS_TIMEHORIZON_KEY));
+                    Interval histoInterval = Interval.parse(storedParametersMap.get(STORED_PARAMETERS_HISTO_INTERVAL_KEY));
+                    String feAnalysisId = storedParametersMap.get(STORED_PARAMETERS_FEA_ID_KEY);
+                    double rulesPurityThreshold = Double.parseDouble((storedParametersMap.get(STORED_PARAMETERS_RULES_PURITY_KEY) == null) ? "1" : storedParametersMap.get(STORED_PARAMETERS_RULES_PURITY_KEY));
+                    boolean storeStates = Boolean.parseBoolean(storedParametersMap.get(STORED_PARAMETERS_STORE_STATES_KEY));
+                    boolean analyseBasecase = Boolean.parseBoolean(storedParametersMap.get(STORED_PARAMETERS_ANALYSE_BASECASE_KEY));
+                    boolean validation = Boolean.parseBoolean(storedParametersMap.get(STORED_PARAMETERS_VALIDATION_KEY));
+                    Set<SecurityIndexType> securityIndexes = null;
+                    if (storedParametersMap.containsKey(STORED_PARAMETERS_SECURITY_INDEXES_KEY))
+                        securityIndexes = OnlineDbMVStoreUtils.jsonToIndexesTypes(storedParametersMap.get(STORED_PARAMETERS_SECURITY_INDEXES_KEY));
+                    CaseType caseType = CaseType.valueOf(storedParametersMap.get(STORED_PARAMETERS_CASE_TYPE_KEY));
+                    Set<Country> countries = OnlineDbMVStoreUtils.jsonToCountries(storedParametersMap.get(STORED_PARAMETERS_COUNTRIES_KEY));
+                    boolean mergeOptimized = OnlineWorkflowParameters.DEFAULT_MERGE_OPTIMIZED;
+                    if (storedParametersMap.containsKey(STORED_PARAMETERS_MERGE_OPTIMIZED_KEY))
+                        mergeOptimized = Boolean.parseBoolean(storedParametersMap.get(STORED_PARAMETERS_MERGE_OPTIMIZED_KEY));
+                    float limitReduction = OnlineWorkflowParameters.DEFAULT_LIMIT_REDUCTION;
+                    if (storedParametersMap.containsKey(STORED_PARAMETERS_LIMIT_REDUCTION_KEY))
+                        limitReduction = Float.parseFloat(storedParametersMap.get(STORED_PARAMETERS_LIMIT_REDUCTION_KEY));
+                    boolean handleViolations = OnlineWorkflowParameters.DEFAULT_HANDLE_VIOLATIONS_IN_N;
+                    if (storedParametersMap.containsKey(STORED_PARAMETERS_HANDLE_VIOLATIONS_KEY))
+                        handleViolations = Boolean.parseBoolean(storedParametersMap.get(STORED_PARAMETERS_HANDLE_VIOLATIONS_KEY));
+                    float constraintMargin = OnlineWorkflowParameters.DEFAULT_CONSTRAINT_MARGIN;
+                    if (storedParametersMap.containsKey(STORED_PARAMETERS_CONSTRAINT_MARGIN_KEY))
+                        constraintMargin = Float.parseFloat(storedParametersMap.get(STORED_PARAMETERS_CONSTRAINT_MARGIN_KEY));
+                    OnlineWorkflowParameters onlineWfPars = new OnlineWorkflowParameters(baseCaseDate,
+                            states,
+                            histoInterval,
+                            offlineWorkflowId,
+                            timeHorizon,
+                            feAnalysisId,
+                            rulesPurityThreshold,
+                            storeStates,
+                            analyseBasecase,
+                            validation,
+                            securityIndexes,
+                            caseType,
+                            countries,
+                            mergeOptimized,
+                            limitReduction,
+                            handleViolations,
+                            constraintMargin);
+                    if (storedParametersMap.containsKey(STORED_PARAMETERS_CASE_FILE_KEY)) {
+                        onlineWfPars.setCaseFile(storedParametersMap.get(STORED_PARAMETERS_CASE_FILE_KEY));
+                    }
+                    return onlineWfPars;
+                } else {
+                    LOGGER.warn("No configuration parameters of wf {} stored in online db", workflowId);
+                    return null;
                 }
-                return onlineWfPars;
-            } else {
-                LOGGER.warn("No configuration parameters of wf {} stored in online db", workflowId);
-                return null;
+            } finally {
+                if (wfMVStore != null) {
+                    wfMVStore.close();
+                }
             }
         } else {
             LOGGER.warn("No data about wf {}", workflowId);
@@ -1274,7 +1286,7 @@ public class OnlineDbMVStore implements OnlineDb {
             Map<String, String> metricsMap = wfMVStore.openMap(mapName, mapBuilder);
             int violationIndex = 0;
             for (LimitViolation limitViolation : violations) {
-                String violationId = limitViolation.getSubject().getId() + "_" + violationIndex;
+                String violationId = limitViolation.getSubjectId() + "_" + violationIndex;
                 metricsMap.put(violationId, OnlineDbMVStoreUtils.limitViolationToJson(limitViolation));
                 violationIndex++;
             }
@@ -1836,6 +1848,60 @@ public class OnlineDbMVStore implements OnlineDb {
             LOGGER.warn("No data about wf {}", workflowId);
             return null;
         }
+    }
+
+    public void storeProcess(OnlineProcess p) throws Exception {
+
+        Path procFile = Paths.get(config.getOnlineDbDir().toString(), STORED_PROCESS_PREFIX + p.getId());
+
+        FileWriter fileWriter = new FileWriter(procFile.toFile());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JodaModule());
+        objectMapper.configure(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+
+        fileWriter.write(objectMapper.writer().writeValueAsString(p));
+        // fileWriter.write(JSONSerializer.toJSON(p).toString());
+        // Gson gson = new Gson();
+
+        // fileWriter.write(gson.toJson(p));
+        fileWriter.close();
+
+    }
+
+    public OnlineProcess getProcess(String processId) throws IOException {
+        OnlineProcess proc = null;
+        Path procFile = Paths.get(config.getOnlineDbDir().toString(), STORED_PROCESS_PREFIX + processId);
+        if (Files.exists(procFile)) {
+            InputStream is = new FileInputStream(procFile.toFile());
+            String json = IOUtils.toString(is);
+            proc = OnlineDbMVStoreUtils.jsonToProcess(json);
+            is.close();
+        }
+        return proc;
+    }
+
+    public List<OnlineProcess> listProcesses() throws IOException {
+        FilenameFilter filter = new FilenameFilter() {
+
+            @Override
+            public boolean accept(File dir, String name) {
+
+                return name.startsWith(STORED_PROCESS_PREFIX);
+            }
+        };
+
+        File[] files = config.getOnlineDbDir().toFile().listFiles(filter);
+        List<OnlineProcess> processes = new ArrayList<OnlineProcess>();
+        for (File f : files) {
+            InputStream is = new FileInputStream(f);
+            String json = IOUtils.toString(is);
+            OnlineProcess proc = OnlineDbMVStoreUtils.jsonToProcess(json);
+            processes.add(proc);
+            is.close();
+        }
+        return processes;
+
     }
 
     @Override
