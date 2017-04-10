@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -17,9 +18,7 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -31,7 +30,7 @@ public class DicoEurostagNamingStrategy implements EurostagNamingStrategy {
 
     private BiMap<String, String> dicoMap = HashBiMap.create();
 
-    private CutEurostagNamingStrategy defaultStrategy = new CutEurostagNamingStrategy();
+    private final CutEurostagNamingStrategy defaultStrategy = new CutEurostagNamingStrategy();
 
     class DicoCsvReader {
 
@@ -97,21 +96,24 @@ public class DicoEurostagNamingStrategy implements EurostagNamingStrategy {
 
     @Override
     public void fillDictionary(EurostagDictionary dictionary, NameType nameType, Set<String> iidmIds) {
-        iidmIds.forEach(iidmId -> {
+        //partition the iidmIds set in two: tiidms with a dico mapping and iidms without a dico mapping
+        Map<Boolean, List<String>> dicoPartioned =
+                iidmIds.stream().collect(Collectors.partitioningBy(iidmId -> dicoMap.containsKey(iidmId)));
+
+        //first process the entry that are in the dico mapping
+        dicoPartioned.get(true).forEach(iidmId -> {
             if (!dictionary.iidmIdExists(iidmId)) {
-                String esgId;
-                if ((nameType == NameType.GENERATOR) && (dicoMap.containsKey(iidmId))) {
-                    esgId = dicoMap.get(iidmId);
-                } else {
-                    esgId = defaultStrategy.getEsgId(dictionary, nameType, iidmId);
-                    if (nameType == NameType.GENERATOR) {
-                        LOGGER.warn(" dico mapping not found for iidmId: '{}'; esgId: '{}' generated using CutName strategy", iidmId, esgId);
-                    }
-                }
+                String esgId = dicoMap.get(iidmId);
+                LOGGER.debug("dico mapping found for iidmId: '{}'; esgId: '{}'", iidmId, esgId);
                 dictionary.add(iidmId, esgId);
-                LOGGER.debug("iidmId: '{}' ; esgId: '{}'", iidmId, esgId);
             }
         });
+
+        //then process the entry that aren't, with the default strategy
+        if (dicoPartioned.get(false).size() > 0) {
+            LOGGER.warn("dico mapping not found for iidmId ids: {}", dicoPartioned.get(false));
+            defaultStrategy.fillDictionary(dictionary, nameType, new HashSet(dicoPartioned.get(false)));
+        }
     }
 }
 

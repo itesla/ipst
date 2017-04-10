@@ -8,8 +8,6 @@
 package eu.itesla_project.histodb.server;
 
 import be.pepite.dataserver.api.ColumnDescriptor;
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.computation.local.LocalComputationManager;
 import eu.itesla_project.iidm.datasource.GenericReadOnlyDataSource;
 import eu.itesla_project.iidm.import_.Importer;
 import eu.itesla_project.iidm.import_.Importers;
@@ -20,8 +18,8 @@ import eu.itesla_project.modules.histo.IIDM2DB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.lang.RuntimeException;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -39,32 +37,7 @@ public class CimHistoImporter {
 
     private ITeslaDatasource datasource;
 
-    private static final ComputationManager computationManager;
-
-    private static final Importer importerCim;
-    private static final Importer importerXml;
-    private static final List<Importer> importers;
-
-    static {
-        try {
-            importers=new ArrayList<>();
-            computationManager = new LocalComputationManager();
-            importerCim = Importers.getImporter("CIM1", computationManager);
-            if (importerCim!=null) {
-                importers.add(importerCim);
-            } else {
-                log.warn("CIM importer implementation not found");
-            }
-            importerXml = Importers.getImporter("XIIDM", computationManager);
-            if (importerXml!=null) {
-                importers.add(importerXml);
-            } else {
-                log.warn("iidm-xml importer implementation not found");
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private static final Collection<Importer> importers = Importers.list();
 
     public CimHistoImporter(ITeslaDatasource datasource) {
         this.datasource = datasource;

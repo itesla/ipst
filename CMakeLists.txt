@@ -34,7 +34,6 @@ endif()
 set(BOOST_ROOT ${thirdparty_prefix}/boost)
 set(LOG4CPP_HOME ${thirdparty_prefix}/log4cpp)
 set(SZIP_HOME ${thirdparty_prefix}/szip)
-set(ZLIB_HOME ${thirdparty_prefix}/zlib)
 set(HDF5_HOME ${thirdparty_prefix}/hdf5)
 set(MATIO_HOME ${thirdparty_prefix}/matio)
 

@@ -43,7 +43,7 @@ public class ConstraintsModifierConfigTest {
         fileSystem = Jimfs.newFileSystem(Configuration.unix());
         platformConfig = new InMemoryPlatformConfig(fileSystem);
         network = ConstraintsModifierTestUtils.getNetwork();
-        violations = ConstraintsModifierTestUtils.getViolations(network);
+        violations = ConstraintsModifierTestUtils.getViolations();
     }
 
     @After

@@ -10,11 +10,11 @@
 # =============================================================================
 
 if (NOT DYMOLA_HOME AND NOT $ENV{DYMOLA_HOME} STREQUAL "")
-	set(DYMOLA_HOME $ENV{DYMOLA_HOME})
+    set(DYMOLA_HOME $ENV{DYMOLA_HOME})
 endif()
 
 if (NOT DYMOLA_HOME AND NOT $ENV{DYMOLA_ROOT} STREQUAL "")
-	set(DYMOLA_HOME $ENV{DYMOLA_ROOT})
+    set(DYMOLA_HOME $ENV{DYMOLA_ROOT})
 endif()
 
 if (NOT DYMOLA_HOME OR NOT IS_DIRECTORY "${DYMOLA_HOME}")

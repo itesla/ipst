@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
- * Copyright (c) 2016, RTE (http://www.rte-france.com)
+ * Copyright (c) 2016-2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -33,12 +33,13 @@ public class SimpleContingencyDbFacade implements ContingencyDbFacade {
     private final Network network;
 
     public SimpleContingencyDbFacade(ContingenciesAndActionsDatabaseClient contingenciesActionsDbClient, Network network) {
-        this.contingenciesActionsDbClient = contingenciesActionsDbClient;
-        this.network = network;
+        this.contingenciesActionsDbClient = Objects.requireNonNull(contingenciesActionsDbClient, "contingencies and actions db client is null");
+        this.network = Objects.requireNonNull(network, "network is null");
     }
 
     @Override
     public synchronized List<Contingency> getContingencies() {
+        LOGGER.info("Network {}: getting contingencies", network.getId());
         return contingenciesActionsDbClient.getContingencies(network);
     }
 
@@ -51,7 +52,7 @@ public class SimpleContingencyDbFacade implements ContingencyDbFacade {
                     } else {
                         for (LimitViolation limitViolation : limitViolations) {
                             if (limitViolation.getLimitType() == LimitViolationType.CURRENT
-                                    && limitViolation.getSubject().getId().equals(constraint.getEquipment())) {
+                                    && limitViolation.getSubjectId().equals(constraint.getEquipment())) {
                                 return true;
                             }
                         }
@@ -68,7 +69,7 @@ public class SimpleContingencyDbFacade implements ContingencyDbFacade {
     @Override
     public synchronized List<List<Action>> getCurativeActions(Contingency contingency, List<LimitViolation> limitViolations) {
         Objects.requireNonNull(contingency, "contingency is null");
-        LOGGER.info("Getting curative actions for contingency {}", contingency.getId());
+        LOGGER.info("Network {}: getting curative actions for contingency {}", network.getId(), contingency.getId());
         List<List<Action>> curativeActions = new ArrayList<>();
         for (ActionsContingenciesAssociation association : contingenciesActionsDbClient.getActionsCtgAssociations(network)) {
             if (!association.getContingenciesId().contains(contingency.getId())) {
@@ -93,24 +94,28 @@ public class SimpleContingencyDbFacade implements ContingencyDbFacade {
                             }
                         }
                     } else {
-                        LOGGER.error("Action {} not found for contingency {}", actionId , contingency.getId());
+                        LOGGER.error("Network {}: action {} not found for contingency {}", network.getId(), actionId , contingency.getId());
                     }
                 }
             }
         }
-        LOGGER.info("Found {} curative actions for contingency {}", curativeActions.size(), contingency.getId());
+        LOGGER.info("Network {}: found {} curative actions for contingency {}", network.getId(), curativeActions.size(), contingency.getId());
         return curativeActions;
     }
 
     @Override
     public synchronized List<List<Action>> getPreventiveActions(LimitViolation limitViolation) {
         Objects.requireNonNull(limitViolation, "limit violation is null");
-        LOGGER.info("Getting preventive actions for {} violation on equipment {}", limitViolation.getLimitType(), limitViolation.getSubject().getId());
+        LOGGER.info("Network {}: getting preventive actions for {} violation on equipment {}", 
+                    network.getId(), limitViolation.getLimitType(), limitViolation.getSubjectId());
         List<List<Action>> preventiveActions = new ArrayList<>();
-        if( !limitViolation.getLimitType().equals(LimitViolationType.CURRENT) ) // just branch overload id handled, so far
+        if( !limitViolation.getLimitType().equals(LimitViolationType.CURRENT) ) { // just branch overload is handled, so far
+            LOGGER.warn("Network {}: no preventive actions found for {} violation on equipment {}, as just branch overload is handled, so far", 
+                        network.getId(), limitViolation.getLimitType(), limitViolation.getSubjectId());
             return preventiveActions;
-        for ( ActionsContingenciesAssociation association : contingenciesActionsDbClient.getActionsCtgAssociationsByConstraint(
-                limitViolation.getSubject().getId(), ConstraintType.BRANCH_OVERLOAD) ) {
+        }
+        for ( ActionsContingenciesAssociation association : contingenciesActionsDbClient.getActionsCtgAssociationsByConstraint(limitViolation.getSubjectId(), 
+                                                                                                                               ConstraintType.BRANCH_OVERLOAD) ) {
             if ( !association.getContingenciesId().isEmpty() ) { // getting only actions not associated to a contingency
                 continue;
             }
@@ -130,12 +135,14 @@ public class SimpleContingencyDbFacade implements ContingencyDbFacade {
                             }
                         }
                     } else {
-                        LOGGER.error("Action {} not found for {} violation on equipment {}", actionId , limitViolation.getLimitType(), limitViolation.getSubject().getId());
+                        LOGGER.error("Network {}: action {} not found for {} violation on equipment {}", 
+                                     network.getId(), actionId , limitViolation.getLimitType(), limitViolation.getSubjectId());
                     }
                 }
             }
         }
-        LOGGER.info("Found {} preventive actions for {} violation on equipment {}", preventiveActions.size(), limitViolation.getLimitType(), limitViolation.getSubject().getId());
+        LOGGER.info("Network {}: found {} preventive actions for {} violation on equipment {}", 
+                    network.getId(), preventiveActions.size(), limitViolation.getLimitType(), limitViolation.getSubjectId());
         return preventiveActions;
     }
 }
