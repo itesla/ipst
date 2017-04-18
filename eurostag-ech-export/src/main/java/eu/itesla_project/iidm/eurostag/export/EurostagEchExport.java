@@ -181,9 +181,18 @@ public class EurostagEchExport {
                 esgNetwork.addLine(createLine(l.getId(), bus1, bus2, l.getTerminal1().getVoltageLevel().getNominalV(),
                         l.getR(), l.getX(), l.getG1(), l.getB1(), parameters));
             } else {
-                // create a dissymmetrical branch
-                esgNetwork.addDissymmetricalBranch(createDissymmetricalBranch(l.getId(), bus1, bus2, l.getTerminal1().getVoltageLevel().getNominalV(),
-                        l.getR(), l.getX(), l.getG1(), l.getB1(), l.getG2(), l.getB2(), parameters));
+                EsgBranchConnectionStatus status = getStatus(bus1, bus2);
+                if (status.equals(EsgBranchConnectionStatus.CLOSED_AT_BOTH_SIDE)) {
+                    // create a dissymmetrical branch
+                    esgNetwork.addDissymmetricalBranch(createDissymmetricalBranch(l.getId(), bus1, bus2, l.getTerminal1().getVoltageLevel().getNominalV(),
+                            l.getR(), l.getX(), l.getG1(), l.getB1(), l.getG2(), l.getB2(), parameters));
+                } else {
+                    // half connected dissymmetrical branches are not allowed: remove the dissymmetry (by averaging B1 and B2, G1 and G2) and create a simple line
+                    // This is an approximation: the best electrotechnical solution would require an additional fake node and a coupling on each disconnected end of the DyssimmetricalBranch.
+                    LOGGER.warn("line {}: half connected dissymmetrical branches are not allowed; removes the dissymmetry by averaging line's B1 {} and B2 {} , G1 {} and  G2 {}", l, l.getB1(), l.getB2(), l.getG1(), l.getG2());
+                    esgNetwork.addLine(createLine(l.getId(), bus1, bus2, l.getTerminal1().getVoltageLevel().getNominalV(),
+                            l.getR(), l.getX(), (l.getG1() + l.getG2()) / 2, (l.getB1() + l.getB2()) / 2, parameters));
+                }
             }
         }
         for (DanglingLine dl : Identifiables.sort(network.getDanglingLines())) {
