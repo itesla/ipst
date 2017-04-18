@@ -1,20 +1,24 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 package eu.itesla_project.offline.forecast_errors;
 
-import eu.itesla_project.loadflow.api.LoadFlowFactory;
-import eu.itesla_project.merge.MergeOptimizerFactory;
-import eu.itesla_project.merge.MergeUtil;
+import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.itesla_project.cases.CaseRepository;
 import eu.itesla_project.computation.ComputationManager;
 import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.cases.CaseRepository;
+import eu.itesla_project.loadflow.api.LoadFlowFactory;
+import eu.itesla_project.merge.MergeOptimizerFactory;
+import eu.itesla_project.merge.MergeUtil;
+import eu.itesla_project.modules.histo.HistoDbClient;
 import eu.itesla_project.modules.mcla.ForecastErrorsAnalyzer;
 import eu.itesla_project.modules.mcla.ForecastErrorsAnalyzerFactory;
 import eu.itesla_project.modules.mcla.ForecastErrorsAnalyzerParameters;
@@ -37,18 +41,20 @@ public class ForecastErrorsAnalysis {
     private final ForecastErrorsAnalyzerFactory forecastErrorsAnalyzerFactory;
 	private final LoadFlowFactory loadFlowFactory;
 	private final MergeOptimizerFactory mergeOptimizerFactory;
+	private final HistoDbClient histoDbClient;
 
-	public ForecastErrorsAnalysis(
-			ComputationManager computationManager,
-			ForecastErrorsAnalysisConfig config,
-			ForecastErrorsAnalysisParameters parameters) throws InstantiationException, IllegalAccessException {
-		this.computationManager = computationManager;
-		this.parameters = parameters;
+    public ForecastErrorsAnalysis(ComputationManager computationManager,
+	                              ForecastErrorsAnalysisConfig config,
+	                              ForecastErrorsAnalysisParameters parameters) throws InstantiationException, IllegalAccessException {
+        Objects.requireNonNull(config);
+        this.computationManager = Objects.requireNonNull(computationManager);
+        this.parameters = Objects.requireNonNull(parameters);
 		this.caseRepository = config.getCaseRepositoryFactoryClass().newInstance().create(computationManager);
 		this.feDataStorage = config.getForecastErrorsDataStorageFactoryClass().newInstance().create();
 		this.forecastErrorsAnalyzerFactory = config.getForecastErrorsAnalyzerFactoryClass().newInstance();
 		this.loadFlowFactory = config.getLoadFlowFactoryClass().newInstance();
 		this.mergeOptimizerFactory = config.getMergeOtimizerFactoryClass().newInstance();
+        this.histoDbClient = config.getHistoDbClientFactoryClass().newInstance().create();
 		logger.info(config.toString());
 	}
 
@@ -71,7 +77,7 @@ public class ForecastErrorsAnalysis {
         logger.info("- Network id: " + network.getId());
         logger.info("- Network name: "+ network.getName());
 
-		ForecastErrorsAnalyzer feAnalyzer = forecastErrorsAnalyzerFactory.create(network, computationManager, feDataStorage);
+		ForecastErrorsAnalyzer feAnalyzer = forecastErrorsAnalyzerFactory.create(network, computationManager, feDataStorage, histoDbClient);
 		feAnalyzer.init(new ForecastErrorsAnalyzerParameters(
 				parameters.getHistoInterval(), parameters.getFeAnalysisId(),
 				parameters.getIr(), parameters.getFlagPQ(), parameters.getMethod(),

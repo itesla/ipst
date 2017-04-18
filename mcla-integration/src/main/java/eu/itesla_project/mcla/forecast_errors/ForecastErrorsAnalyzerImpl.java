@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
- * Copyright (c) 2016, RTE (http://www.rte-france.com)
+ * Copyright (c) 2016-2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -11,10 +11,12 @@ import eu.itesla_project.computation.*;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.mcla.NetworkUtils;
 import eu.itesla_project.mcla.forecast_errors.data.ForecastErrorsHistoricalData;
+import eu.itesla_project.modules.histo.HistoDbClient;
 import eu.itesla_project.modules.mcla.ForecastErrorsAnalyzer;
 import eu.itesla_project.modules.mcla.ForecastErrorsAnalyzerParameters;
 import eu.itesla_project.modules.mcla.ForecastErrorsDataStorage;
 import eu.itesla_project.modules.online.TimeHorizon;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +57,7 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
 
 	private final ComputationManager computationManager;
 	private final ForecastErrorsDataStorage forecastErrorsDataStorage;
+    private final HistoDbClient histoDbClient;
 
 	private Network network;
 	private ForecastErrorsAnalyzerConfig config = null;
@@ -62,22 +65,21 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
 	private ArrayList<String> generatorsIds = new ArrayList<String>();
 	private ArrayList<String> loadsIds = new ArrayList<String>();
 
-	public ForecastErrorsAnalyzerImpl(Network network, ComputationManager computationManager, ForecastErrorsDataStorage forecastErrorsDataStorage,
-										ForecastErrorsAnalyzerConfig config) {
-		Objects.requireNonNull(network, "network is null");
-		Objects.requireNonNull(computationManager, "computation manager is null");
-		Objects.requireNonNull(forecastErrorsDataStorage, "forecast errors data storage is null");
-		Objects.requireNonNull(config, "config is null");
-		LOGGER.info(config.toString());
-		this.network = network;
-		this.computationManager = computationManager;
-		this.forecastErrorsDataStorage = forecastErrorsDataStorage;
-		this.config = config;
-	}
+    public ForecastErrorsAnalyzerImpl(Network network, ComputationManager computationManager, 
+                                      ForecastErrorsDataStorage forecastErrorsDataStorage,
+                                      HistoDbClient histoDbClient, ForecastErrorsAnalyzerConfig config) {
+        this.network = Objects.requireNonNull(network, "network is null");
+        this.computationManager = Objects.requireNonNull(computationManager, "computation manager is null");
+        this.forecastErrorsDataStorage = Objects.requireNonNull(forecastErrorsDataStorage, "forecast errors data storage is null");
+        this.histoDbClient = Objects.requireNonNull(histoDbClient, "HistoDb client is null");
+        this.config = Objects.requireNonNull(config, "config is null");
+        LOGGER.info(config.toString());
+    }
 
-	public ForecastErrorsAnalyzerImpl(Network network, ComputationManager computationManager, ForecastErrorsDataStorage forecastErrorsDataStorage) {
-		this(network, computationManager, forecastErrorsDataStorage, ForecastErrorsAnalyzerConfig.load());
-	}
+    public ForecastErrorsAnalyzerImpl(Network network, ComputationManager computationManager, 
+                                      ForecastErrorsDataStorage forecastErrorsDataStorage, HistoDbClient histoDbClient) {
+        this(network, computationManager, forecastErrorsDataStorage, histoDbClient, ForecastErrorsAnalyzerConfig.load());
+    }
 
 	@Override
 	public String getName() {
@@ -110,19 +112,12 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
 			final Path workingDir = executor.getWorkingDir();
 
 			// get forecast errors historical data from histodb
-			FEAHistoDBFacade histoDBFacade = new FEAHistoDBFacade(
-					new DataMiningFacadeRestConfig(
-							config.getHistoDBServiceUrl(),
-							config.getHistoDBUser(),
-							config.getHistoDBPassword(),
-							workingDir,
-							config.isDebug()),
-					timeHorizon,
-					parameters.getHistoInterval(),
-					generatorsIds,
-					loadsIds);
-			Path historicalDataCsvFile = Paths.get(workingDir.toString(), FEACSVFILENAME);
-			histoDBFacade.historicalDataToCsvFile(historicalDataCsvFile);
+            Path historicalDataCsvFile = workingDir.resolve(FEACSVFILENAME);
+            FEAHistoDBFacade.historicalDataToCsvFile(histoDbClient,
+                                                     generatorsIds,
+                                                     loadsIds,
+                                                     parameters.getHistoInterval(),
+                                                     historicalDataCsvFile);
 
 			//Path historicalDataCsvFile = Paths.get("/itesla_data/MAT", "forecastsDiff_7nodes.csv");
 			ForecastErrorsHistoricalData forecastErrorsHistoricalData = new HistoricalDataCreator(network, generatorsIds, loadsIds)
