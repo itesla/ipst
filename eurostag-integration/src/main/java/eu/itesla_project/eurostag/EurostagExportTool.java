@@ -76,6 +76,8 @@ public class EurostagExportTool implements Tool, EurostagConstants {
             EsgGeneralParameters parameters = new EsgGeneralParameters();
             parameters.setTransformerVoltageControl(false);
             parameters.setSvcVoltageControl(false);
+            parameters.setMaxNumIteration(eurostagConfig.getLfMaxNumIteration());
+            parameters.setStartMode(eurostagConfig.isLfWarmStart() ? EsgGeneralParameters.StartMode.WARM_START : EsgGeneralParameters.StartMode.FLAT_START);
             EsgNetwork networkEch = new EurostagEchExport(network, exportConfig, parallelIndexes, dictionary, fakeNodes).createNetwork(parameters);
             new EurostagNetworkModifier().hvLoadModelling(networkEch);
             new EsgWriter(networkEch, parameters).write(writer, network.getId() + "/" + network.getStateManager().getWorkingStateId());
