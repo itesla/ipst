@@ -43,7 +43,7 @@ from here on let's call <JBOSS_HOME> the JBoss top folder
 JBoss configuration 
 --------------------
 
-1) JBoss does not come with MYSQL JDBC drivers, to install them, copy  mysql-connector-java-5.1.23-bin.jar file (found in  Mysql JDBC drivers .tar.gz archive )
+1) JBoss does not come with MYSQL JDBC drivers, to install them, copy  mysql-connector-java-5.1.23-bin.jar file (found in  Mysql JDBC drivers .tar.gz archive at https://dev.mysql.com/downloads/connector/j/)
 in JBOSS_HOME/modules/com/mysql/main folder and, in order to make the application server aware of the new connectors, create a new JBOSS_HOME/modules/com/mysql/main/module.xml with the following content
 
 <?xml version="1.0" encoding="UTF-8"?>
@@ -82,7 +82,7 @@ in 'subsystem' section, edit property default-missing-method-permissions-deny-ac
   <default-missing-method-permissions-deny-access value="false"/>   
 
 
-3) edit JBOSS_HOME\modules\system\layers\base\sun\jdk\main\module.xlm
+3) edit JBOSS_HOME/modules/system/layers/base/sun/jdk/main/module.xml
    add  <path name="com/sun/jndi/url/rmi"/>
 
 
