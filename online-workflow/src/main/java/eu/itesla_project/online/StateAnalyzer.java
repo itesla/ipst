@@ -149,6 +149,15 @@ public class StateAnalyzer implements Callable<Void> {
                 List<LimitViolation> violations = Security.checkLimits(context.getNetwork(),
                         CurrentLimitType.PATL,
                         parameters.getLimitReduction());
+                List<LimitViolation> temp_violations = Security.checkLimits(context.getNetwork(),
+                        CurrentLimitType.TATL,
+                        parameters.getLimitReduction());
+                if(violations == null)
+                    violations = temp_violations;
+                else
+                    if (temp_violations != null)
+                        violations.addAll(temp_violations);
+                
                 if (violations != null && !violations.isEmpty()) {
                     onlineDb.storeViolations(context.getWorkflowId(), stateId, OnlineStep.LOAD_FLOW, violations);
                     if (parameters.isHandleViolationsInN()) {
@@ -383,6 +392,13 @@ public class StateAnalyzer implements Callable<Void> {
                             if (loadflowConverge) {
                                 logger.info("{}: computing post contingency violations for contingency {}", stateId, contingency.getId());
                                 violations = Security.checkLimits(network, CurrentLimitType.PATL, parameters.getLimitReduction());
+                                List<LimitViolation> temp_violations = Security.checkLimits(network, CurrentLimitType.TATL, parameters.getLimitReduction());
+                                if(violations == null)
+                                    violations = temp_violations;
+                                else
+                                    if (temp_violations != null)
+                                        violations.addAll(temp_violations);
+                                
                                 if (violations == null || violations.isEmpty()) {
                                     logger.info("{}: no post contingency violations for contingency {}", stateId, contingency.getId());
                                     violations = new ArrayList<LimitViolation>();
