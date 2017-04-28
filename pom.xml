@@ -90,7 +90,7 @@
         <ipstcore.version>0.1-SNAPSHOT</ipstcore.version>
         <ipstentsoe.version>0.1-SNAPSHOT</ipstentsoe.version>
         <javaee-api-version>7.0</javaee-api-version>
-        <jackson.version>2.7.3</jackson.version>
+        <jackson.version>2.8.7</jackson.version>
         <jackson-datatype-joda.version>2.4.1</jackson-datatype-joda.version>
         <javacsv.version>2.0</javacsv.version>
         <jgrapht.version>1.0.1</jgrapht.version>
