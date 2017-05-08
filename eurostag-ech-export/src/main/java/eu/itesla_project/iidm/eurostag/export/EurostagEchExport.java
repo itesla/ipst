@@ -92,8 +92,10 @@ public class EurostagEchExport {
     }
 
     private void createNodes(EsgNetwork esgNetwork) {
-        fakeNodes.refEsgIdsAsStream().forEach(esgId -> {
-            esgNetwork.addNode(createNode(esgId, EchUtil.FAKE_AREA, 380f, 380f, 0f, false));
+        fakeNodes.referencedEsgIdsAsStream().forEach(esgId -> {
+            VoltageLevel vlevel = fakeNodes.getVoltageLevelByEsgId(esgId);
+            float nominalV = ((vlevel != null) ? vlevel.getNominalV() : 380f);
+            esgNetwork.addNode(createNode(esgId, EchUtil.FAKE_AREA, nominalV, nominalV, 0f, false));
         });
 
         Bus sb = EchUtil.selectSlackbus(network, config);
@@ -168,7 +170,7 @@ public class EurostagEchExport {
         return new EsgDissymmetricalBranch(new EsgBranchName(new Esg8charName(dictionary.getEsgId(bus1.getId())),
                 new Esg8charName(dictionary.getEsgId(bus2.getId())),
                 parallelIndexes.getParallelIndex(id)),
-                status, rb / 2, rxb / 2, gs1, bs1, rate, rb / 2, rxb / 2, gs2, bs2);
+                status, rb, rxb, gs1, bs1, rate, rb, rxb, gs2, bs2);
     }
 
     private void createLines(EsgNetwork esgNetwork, EsgGeneralParameters parameters) {
@@ -422,11 +424,11 @@ public class EurostagEchExport {
             Esg8charName znamsvc = new Esg8charName(dictionary.getEsgId(svc.getId()));
             EsgConnectionStatus xsvcst = bus.isConnected() ? EsgConnectionStatus.CONNECTED : EsgConnectionStatus.NOT_CONNECTED;
             Esg8charName znodsvc = new Esg8charName(dictionary.getEsgId(bus.getId()));
-            float factor = (float) Math.pow(svc.getTerminal().getVoltageLevel().getNominalV() / 100.0, 2);
-            float bmin = svc.getBmin() * factor;
-            float binit = svc.getReactivePowerSetPoint();
-            float bmax = svc.getBmax() * factor;
-            EsgRegulatingMode xregsvc = (svc.getRegulationMode() == StaticVarCompensator.RegulationMode.VOLTAGE) ? EsgRegulatingMode.REGULATING : EsgRegulatingMode.NOT_REGULATING;
+            float factor = (float) Math.pow(svc.getTerminal().getVoltageLevel().getNominalV(), 2);
+            float bmin = (config.isSvcAsFixedInjectionInLF() == false) ? svc.getBmin() * factor : -9999999; // [Mvar]
+            float binit = (config.isSvcAsFixedInjectionInLF() == false) ? svc.getReactivePowerSetPoint() : svc.getTerminal().getQ() * (float) Math.pow(svc.getTerminal().getVoltageLevel().getNominalV() / EchUtil.getBus(svc.getTerminal(), config).getV(), 2); // [Mvar]
+            float bmax = (config.isSvcAsFixedInjectionInLF() == false) ? svc.getBmax() * factor : 9999999; // [Mvar]
+            EsgRegulatingMode xregsvc = ((svc.getRegulationMode() == StaticVarCompensator.RegulationMode.VOLTAGE) && (!config.isSvcAsFixedInjectionInLF()))? EsgRegulatingMode.REGULATING : EsgRegulatingMode.NOT_REGULATING;
             float vregsvc = svc.getVoltageSetPoint();
             float qsvsch = 1.0f;
             esgNetwork.addStaticVarCompensator(

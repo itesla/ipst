@@ -108,7 +108,7 @@ public class EsgWriter {
         if (node.isSlackBus()) {
             recordWriter.addValue("5", 1);
             recordWriter.addValue(node.getName().toString(), 4, 11);
-            recordWriter.addValue("0.", 40, 47, RecordWriter.Justification.Right);
+            recordWriter.addValue(node.getVangl(), 40, 47);
             recordWriter.newLine();
         }
     }

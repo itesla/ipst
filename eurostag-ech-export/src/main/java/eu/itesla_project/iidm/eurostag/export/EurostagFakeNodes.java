@@ -35,6 +35,7 @@ public class EurostagFakeNodes {
 
     private final BiMap<String, String> fakeNodesMap;
     final AtomicLongMap<String> countUsesMap;
+    private final Network network;
 
     private static String newEsgId(BiMap<String, String> fakeNodesMap, String iidmId) {
         String esgId = PREFIX + (iidmId.length() > FAKENODELENGTH ? iidmId.substring(0, FAKENODELENGTH)
@@ -66,10 +67,11 @@ public class EurostagFakeNodes {
         Identifiables.sort(network.getVoltageLevels()).stream().map(VoltageLevel::getId).forEach(vlId ->
                 fakeNodesMap.put(vlId, newEsgId(fakeNodesMap, vlId)));
 
-        return new EurostagFakeNodes(fakeNodesMap, countUsesMap);
+        return new EurostagFakeNodes(fakeNodesMap, countUsesMap, network);
     }
 
-    private EurostagFakeNodes(Map<String, String> fakeNodesMap, AtomicLongMap<String> countUsesMap) {
+    private EurostagFakeNodes(Map<String, String> fakeNodesMap, AtomicLongMap<String> countUsesMap, Network network) {
+        this.network = network;
         this.fakeNodesMap = HashBiMap.create(fakeNodesMap);
         this.countUsesMap = countUsesMap;
     }
@@ -82,7 +84,8 @@ public class EurostagFakeNodes {
         return countUsesMap.get(id);
     }
 
-    public Stream<String> refEsgIdsAsStream() {
+    //the esg nodes ids that are referenced at least once
+    public Stream<String> referencedEsgIdsAsStream() {
         return fakeNodesMap.values().stream().filter(esgId -> (countUses(esgId) > 0));
     }
 
@@ -92,6 +95,11 @@ public class EurostagFakeNodes {
 
     public String getEsgIdAndIncCounter(Terminal t) {
         return getEsgIdAndIncCounter(t.getVoltageLevel());
+    }
+
+    public VoltageLevel getVoltageLevelByEsgId(String esgId) {
+        String voltageLevelId = fakeNodesMap.inverse().get(esgId);
+        return (voltageLevelId != null ? network.getVoltageLevel(voltageLevelId) : null);
     }
 
     private String getEsgIdAndIncCounter(VoltageLevel vl) {

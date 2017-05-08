@@ -27,32 +27,40 @@ public class EurostagEchExportConfig {
     private final static Character DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT = '#';
     private final static boolean DEFAULT_NOGENERATORMINMAXQ = false;
     private final static boolean DEFAULT_NOSWITCH = false;
+    private final static boolean DEFAULT_SVC_AS_FIXED_INJECTION_IN_LF = false;
 
     private boolean noGeneratorMinMaxQ;
 
     private boolean noSwitch;
+
+    private boolean svcAsFixedInjectionInLF;
 
     private final String forbiddenCharacters;
 
     private final Character forbiddenCharactersReplacement;
 
     public EurostagEchExportConfig() {
-        this(false, false, DEFAULT_FORBIDDEN_CHARACTERS, DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT);
+        this(false, false, DEFAULT_FORBIDDEN_CHARACTERS, DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT, DEFAULT_SVC_AS_FIXED_INJECTION_IN_LF);
     }
 
     public EurostagEchExportConfig(boolean noGeneratorMinMaxQ) {
-        this(noGeneratorMinMaxQ, false, DEFAULT_FORBIDDEN_CHARACTERS, DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT);
+        this(noGeneratorMinMaxQ, false, DEFAULT_FORBIDDEN_CHARACTERS, DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT, DEFAULT_SVC_AS_FIXED_INJECTION_IN_LF);
     }
 
     public EurostagEchExportConfig(boolean noGeneratorMinMaxQ, boolean noSwitch) {
-        this(noGeneratorMinMaxQ, noSwitch, DEFAULT_FORBIDDEN_CHARACTERS, DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT);
+        this(noGeneratorMinMaxQ, noSwitch, DEFAULT_FORBIDDEN_CHARACTERS, DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT, DEFAULT_SVC_AS_FIXED_INJECTION_IN_LF);
     }
 
-    public EurostagEchExportConfig(boolean noGeneratorMinMaxQ, boolean noSwitch, String forbiddenCharacters, Character forbiddenCharactersReplacement) {
+    public EurostagEchExportConfig(boolean noGeneratorMinMaxQ, boolean noSwitch, boolean svcAsFixedInjectionInLF) {
+        this(noGeneratorMinMaxQ, noSwitch, DEFAULT_FORBIDDEN_CHARACTERS, DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT, svcAsFixedInjectionInLF);
+    }
+
+    public EurostagEchExportConfig(boolean noGeneratorMinMaxQ, boolean noSwitch, String forbiddenCharacters, Character forbiddenCharactersReplacement, boolean svcAsFixedInjectionInLF) {
         this.forbiddenCharacters = Objects.requireNonNull(forbiddenCharacters, "forbiddenCharacters string must be not null");
         this.forbiddenCharactersReplacement = Objects.requireNonNull(forbiddenCharactersReplacement, "forbiddenCharactersReplacement (single char) string must not be null");
         this.noGeneratorMinMaxQ = noGeneratorMinMaxQ;
         this.noSwitch = noSwitch;
+        this.svcAsFixedInjectionInLF = svcAsFixedInjectionInLF;
         if (forbiddenCharacters.contains(forbiddenCharactersReplacement.toString())) {
             throw new IllegalArgumentException("forbiddenCharactersReplacement " + forbiddenCharactersReplacement + " must not appear also in the forbiddenCharacters string: " + forbiddenCharacters);
         }
@@ -64,6 +72,10 @@ public class EurostagEchExportConfig {
 
     public boolean isNoSwitch() {
         return noSwitch;
+    }
+
+    public boolean isSvcAsFixedInjectionInLF() {
+        return svcAsFixedInjectionInLF;
     }
 
     public String getForbiddenCharactersString() {
@@ -83,16 +95,17 @@ public class EurostagEchExportConfig {
             ModuleConfig config = platformConfig.getModuleConfig(EUROSTAG_ECH_EXPORT_CONFIG);
             boolean noGeneratorMinMaxQ = config.getBooleanProperty("noGeneratorMinMaxQ", DEFAULT_NOGENERATORMINMAXQ);
             boolean noSwitch = config.getBooleanProperty("noSwitch", DEFAULT_NOSWITCH);
+            boolean svcAsFixedInjectionInLF = config.getBooleanProperty("svcAsFixedInjectionInLF", DEFAULT_SVC_AS_FIXED_INJECTION_IN_LF);
             String forbiddenCharacters = config.getStringProperty("forbiddenCharacters", DEFAULT_FORBIDDEN_CHARACTERS);
             String replacementCharString = config.getStringProperty("forbiddenCharactersReplacement", DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT.toString());
             if (replacementCharString.length() != 1) {
                 throw new IllegalArgumentException("forbiddenCharactersReplacement must be a single character: " + replacementCharString);
             }
             Character forbiddenCharactersReplacement = replacementCharString.charAt(0);
-            return new EurostagEchExportConfig(noGeneratorMinMaxQ, noSwitch, forbiddenCharacters, forbiddenCharactersReplacement);
+            return new EurostagEchExportConfig(noGeneratorMinMaxQ, noSwitch, forbiddenCharacters, forbiddenCharactersReplacement, svcAsFixedInjectionInLF);
         } else {
             LOGGER.warn("no eurostag-ech-export config found: Using defaults.");
-            return new EurostagEchExportConfig(DEFAULT_NOGENERATORMINMAXQ, DEFAULT_NOSWITCH, DEFAULT_FORBIDDEN_CHARACTERS, DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT);
+            return new EurostagEchExportConfig(DEFAULT_NOGENERATORMINMAXQ, DEFAULT_NOSWITCH, DEFAULT_FORBIDDEN_CHARACTERS, DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT, DEFAULT_SVC_AS_FIXED_INJECTION_IN_LF);
         }
     }
 
@@ -102,6 +115,7 @@ public class EurostagEchExportConfig {
                 ", noSwitch=" + noSwitch +
                 ", forbiddenCharacters=" + forbiddenCharacters +
                 ", forbiddenCharactersReplacement=" + forbiddenCharactersReplacement +
+                ", svcAsFixedInjectionInLF=" + svcAsFixedInjectionInLF +
                 "]";
     }
 
