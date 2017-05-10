@@ -71,7 +71,6 @@ public class EurostagExportTool implements Tool, EurostagConstants {
         EurostagFakeNodes fakeNodes = EurostagFakeNodes.build(network, exportConfig);
         BranchParallelIndexes parallelIndexes = BranchParallelIndexes.build(network, exportConfig, fakeNodes);
         EurostagDictionary dictionary = EurostagDictionary.create(network, parallelIndexes, exportConfig, fakeNodes);
-        new EurostagEchExport(network, exportConfig, parallelIndexes, dictionary, fakeNodes).write(outputDir.resolve("sim.ech"));
 
         try (Writer writer = Files.newBufferedWriter(outputDir.resolve("sim.ech"), StandardCharsets.UTF_8)) {
             EsgGeneralParameters parameters = new EsgGeneralParameters();
