@@ -15,6 +15,7 @@ import eu.itesla_project.contingency.ContingenciesProvider;
 import eu.itesla_project.contingency.ContingenciesProviderFactory;
 import eu.itesla_project.eurostag.network.EsgGeneralParameters;
 import eu.itesla_project.eurostag.network.EsgNetwork;
+import eu.itesla_project.eurostag.network.EsgSpecialParameters;
 import eu.itesla_project.eurostag.network.io.EsgWriter;
 import eu.itesla_project.eurostag.tools.EurostagNetworkModifier;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClient;
@@ -78,9 +79,11 @@ public class EurostagExportTool implements Tool, EurostagConstants {
             parameters.setSvcVoltageControl(false);
             parameters.setMaxNumIteration(eurostagConfig.getLfMaxNumIteration());
             parameters.setStartMode(eurostagConfig.isLfWarmStart() ? EsgGeneralParameters.StartMode.WARM_START : EsgGeneralParameters.StartMode.FLAT_START);
+            EsgSpecialParameters specialParameters = new EsgSpecialParameters();
+            specialParameters.setZmin(eurostagConfig.isLfWarmStart() ? EsgSpecialParameters.ZMIN_LOW : EsgSpecialParameters.ZMIN_HIGH);
             EsgNetwork networkEch = new EurostagEchExport(network, exportConfig, parallelIndexes, dictionary, fakeNodes).createNetwork(parameters);
             new EurostagNetworkModifier().hvLoadModelling(networkEch);
-            new EsgWriter(networkEch, parameters).write(writer, network.getId() + "/" + network.getStateManager().getWorkingStateId());
+            new EsgWriter(networkEch, parameters, specialParameters).write(writer, network.getId() + "/" + network.getStateManager().getWorkingStateId());
         }
         dictionary.dump(outputDir.resolve("dict.csv"));
         System.out.println("exporting dta...");

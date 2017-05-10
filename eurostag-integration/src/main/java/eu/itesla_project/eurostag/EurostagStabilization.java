@@ -14,16 +14,17 @@ import eu.itesla_project.commons.config.ComponentDefaultConfig;
 import eu.itesla_project.computation.*;
 import eu.itesla_project.eurostag.network.EsgGeneralParameters;
 import eu.itesla_project.eurostag.network.EsgNetwork;
+import eu.itesla_project.eurostag.network.EsgSpecialParameters;
 import eu.itesla_project.eurostag.network.io.EsgWriter;
 import eu.itesla_project.eurostag.tools.EurostagNetworkModifier;
 import eu.itesla_project.iidm.datasource.FileDataSource;
+import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClient;
+import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClientFactory;
 import eu.itesla_project.iidm.eurostag.export.*;
 import eu.itesla_project.iidm.export.Exporter;
 import eu.itesla_project.iidm.export.Exporters;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.iidm.network.util.Networks;
-import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClient;
-import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClientFactory;
 import eu.itesla_project.simulation.SimulationParameters;
 import eu.itesla_project.simulation.Stabilization;
 import eu.itesla_project.simulation.StabilizationResult;
@@ -185,9 +186,11 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
             parameters.setSvcVoltageControl(false);
             parameters.setMaxNumIteration(config.getLfMaxNumIteration());
             parameters.setStartMode(config.isLfWarmStart() ? EsgGeneralParameters.StartMode.WARM_START : EsgGeneralParameters.StartMode.FLAT_START);
+            EsgSpecialParameters specialParameters = new EsgSpecialParameters();
+            specialParameters.setZmin(config.isLfWarmStart() ? EsgSpecialParameters.ZMIN_LOW : EsgSpecialParameters.DEFAULT_ZMIN);
             EsgNetwork networkEch = new EurostagEchExport(network, exportConfig, parallelIndexes, dictionary, fakeNodes).createNetwork(parameters);
             networkModifier.hvLoadModelling(networkEch);
-            new EsgWriter(networkEch, parameters).write(writer, network.getId() + "/" + network.getStateManager().getWorkingStateId());
+            new EsgWriter(networkEch, parameters, specialParameters).write(writer, network.getId() + "/" + network.getStateManager().getWorkingStateId());
         }
         if (config.isDebug()) {
             dictionary.dump(workingDir.resolve("dict.csv"));

@@ -428,7 +428,7 @@ public class EurostagEchExport {
             float bmin = (config.isSvcAsFixedInjectionInLF() == false) ? svc.getBmin() * factor : -9999999; // [Mvar]
             float binit = (config.isSvcAsFixedInjectionInLF() == false) ? svc.getReactivePowerSetPoint() : svc.getTerminal().getQ() * (float) Math.pow(svc.getTerminal().getVoltageLevel().getNominalV() / EchUtil.getBus(svc.getTerminal(), config).getV(), 2); // [Mvar]
             float bmax = (config.isSvcAsFixedInjectionInLF() == false) ? svc.getBmax() * factor : 9999999; // [Mvar]
-            EsgRegulatingMode xregsvc = ((svc.getRegulationMode() == StaticVarCompensator.RegulationMode.VOLTAGE) && (!config.isSvcAsFixedInjectionInLF()))? EsgRegulatingMode.REGULATING : EsgRegulatingMode.NOT_REGULATING;
+            EsgRegulatingMode xregsvc = ((svc.getRegulationMode() == StaticVarCompensator.RegulationMode.VOLTAGE) && (!config.isSvcAsFixedInjectionInLF())) ? EsgRegulatingMode.REGULATING : EsgRegulatingMode.NOT_REGULATING;
             float vregsvc = svc.getVoltageSetPoint();
             float qsvsch = 1.0f;
             esgNetwork.addStaticVarCompensator(
@@ -470,23 +470,23 @@ public class EurostagEchExport {
         return esgNetwork;
     }
 
-    public void write(Writer writer, EsgGeneralParameters parameters) throws IOException {
+    public void write(Writer writer, EsgGeneralParameters parameters, EsgSpecialParameters specialParameters) throws IOException {
         EsgNetwork esgNetwork = createNetwork(parameters);
-        new EsgWriter(esgNetwork, parameters).write(writer, network.getId() + "/" + network.getStateManager().getWorkingStateId());
+        new EsgWriter(esgNetwork, parameters, specialParameters).write(writer, network.getId() + "/" + network.getStateManager().getWorkingStateId());
     }
 
     public void write(Writer writer) throws IOException {
-        write(writer, new EsgGeneralParameters());
+        write(writer, new EsgGeneralParameters(), new EsgSpecialParameters());
     }
 
-    public void write(Path file, EsgGeneralParameters parameters) throws IOException {
+    public void write(Path file, EsgGeneralParameters parameters, EsgSpecialParameters specialParameters) throws IOException {
         try (Writer writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
-            write(writer, parameters);
+            write(writer, parameters, specialParameters);
         }
     }
 
     public void write(Path file) throws IOException {
-        write(file, new EsgGeneralParameters());
+        write(file, new EsgGeneralParameters(), new EsgSpecialParameters());
     }
 
 }

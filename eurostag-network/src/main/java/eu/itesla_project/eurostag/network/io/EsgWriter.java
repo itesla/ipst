@@ -21,9 +21,12 @@ public class EsgWriter {
 
     private final EsgGeneralParameters parameters;
 
-    public EsgWriter(EsgNetwork network, EsgGeneralParameters parameters) {
+    private final EsgSpecialParameters specialParameters;
+
+    public EsgWriter(EsgNetwork network, EsgGeneralParameters parameters, EsgSpecialParameters specialParameters) {
         this.network = Objects.requireNonNull(network);
         this.parameters = Objects.requireNonNull(parameters);
+        this.specialParameters = Objects.requireNonNull(specialParameters);
     }
 
     private void writeHeader(RecordWriter recordWriter) throws IOException {
@@ -66,6 +69,38 @@ public class EsgWriter {
         recordWriter.addValue(parameters.getSnref(), 67, 74);           //...100. Mva
         recordWriter.addValue(toChar(parameters.isTransformerVoltageControl()), 76); //...1 = No
         recordWriter.addValue(toChar(parameters.isSvcVoltageControl()), 78);           //...
+        recordWriter.newLine();
+        recordWriter.newLine();
+    }
+
+    private void writeSpecialParameters(RecordWriter recordWriter) throws IOException {
+        recordWriter.addValue("SP", 1, 2);
+        recordWriter.addValue("INPVPQ", 4, 11);
+        recordWriter.addValue(specialParameters.getInpvpq(), 13, 22);
+        recordWriter.newLine();
+        recordWriter.addValue("SP", 1, 2);
+        recordWriter.addValue("THMAX", 4, 11);
+        recordWriter.addValue(specialParameters.getThmax(), 13, 22);
+        recordWriter.newLine();
+        recordWriter.addValue("SP", 1, 2);
+        recordWriter.addValue("EMAXF", 4, 11);
+        recordWriter.addValue(specialParameters.getEmaxf(), 13, 22);
+        recordWriter.newLine();
+        recordWriter.addValue("SP", 1, 2);
+        recordWriter.addValue("ZMIN", 4, 11);
+        recordWriter.addValue(specialParameters.getZmin(), 13, 22);
+        recordWriter.newLine();
+        recordWriter.addValue("SP", 1, 2);
+        recordWriter.addValue("RAMIN", 4, 11);
+        recordWriter.addValue(specialParameters.getRamin(), 13, 22);
+        recordWriter.newLine();
+        recordWriter.addValue("SP", 1, 2);
+        recordWriter.addValue("RAMAX", 4, 11);
+        recordWriter.addValue(specialParameters.getRamax(), 13, 22);
+        recordWriter.newLine();
+        recordWriter.addValue("SP", 1, 2);
+        recordWriter.addValue("TOLPLO", 4, 11);
+        recordWriter.addValue(specialParameters.getTolplo(), 13, 22);
         recordWriter.newLine();
         recordWriter.newLine();
     }
@@ -335,6 +370,7 @@ public class EsgWriter {
 
         writeHeader(recordWriter);
         writeGeneralParameters(recordWriter);
+        writeSpecialParameters(recordWriter);
         writeGeneralComment(recordWriter, comment);
 
         if (network.getAreas().size() > 0) {

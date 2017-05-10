@@ -8,6 +8,7 @@ package eu.itesla_project.iidm.eurostag.export;
 
 import com.google.common.io.CharStreams;
 import eu.itesla_project.eurostag.network.EsgGeneralParameters;
+import eu.itesla_project.eurostag.network.EsgSpecialParameters;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.iidm.network.test.EurostagTutorialExample1Factory;
 import eu.itesla_project.iidm.network.test.SvcTestCaseFactory;
@@ -30,7 +31,8 @@ public class EurostagEchExportTest {
         StringWriter writer = new StringWriter();
         EsgGeneralParameters parameters = new EsgGeneralParameters();
         parameters.setEditDate(editDate);
-        new EurostagEchExport(network).write(writer, parameters);
+        EsgSpecialParameters specialParameters = new EsgSpecialParameters();
+        new EurostagEchExport(network).write(writer, parameters, specialParameters);
         writer.close();
         assertEquals(CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream(reference), StandardCharsets.UTF_8)), writer.toString());
     }
