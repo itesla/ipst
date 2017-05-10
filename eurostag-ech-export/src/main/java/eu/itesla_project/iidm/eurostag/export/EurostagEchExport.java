@@ -315,6 +315,16 @@ public class EurostagEchExport {
                 throw new RuntimeException("Transformer " + twt.getId() + "  with voltage and phase tap changer not yet supported");
             }
 
+            // trick to handle the fact that Eurostag model allows only the impedance to change and not the resistance.
+            // As an approximation, the resistance is fixed to the value it has for the initial step,
+            // but discrepancies will occur if the step is changed.
+            if ((ptc != null) || (rtc != null)) {
+                float dr = (rtc != null) ? rtc.getStep(rtc.getTapPosition()).getR() : ptc.getStep(ptc.getTapPosition()).getR();
+                float tap_adjusted_r = twt.getR() * (1 + dr / 100.0f);
+                float rpu2_adjusted = (tap_adjusted_r * parameters.getSnref()) / nomiU2 / nomiU2;
+                pcu = rpu2_adjusted * rate * 100f / parameters.getSnref();
+            }
+
             float pregmin = Float.NaN; //...?
             float pregmax = Float.NaN; //...?
 
