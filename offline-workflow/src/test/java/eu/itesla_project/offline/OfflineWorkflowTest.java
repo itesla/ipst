@@ -8,6 +8,8 @@ package eu.itesla_project.offline;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
+import com.google.common.jimfs.Configuration;
+import com.google.common.jimfs.Jimfs;
 import eu.itesla_project.commons.io.CacheManager;
 import eu.itesla_project.commons.config.PlatformConfig;
 import eu.itesla_project.commons.config.XmlPlatformConfig;
@@ -40,9 +42,6 @@ import eu.itesla_project.simulation.*;
 import eu.itesla_project.modules.topo.TopologyMiner;
 import eu.itesla_project.modules.topo.TopologyMinerFactory;
 import eu.itesla_project.modules.validation.ValidationDb;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.nio.file.ShrinkWrapFileSystems;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.junit.BeforeClass;
@@ -79,10 +78,13 @@ public class OfflineWorkflowTest {
     @Test
     public void test() throws Exception {
 
-        JavaArchive archive = ShrinkWrap.create(JavaArchive.class);
-        try (FileSystem fileSystem = ShrinkWrapFileSystems.newFileSystem(archive)) {
+        try (FileSystem fileSystem = Jimfs.newFileSystem(Configuration.unix() )) {
+
             Path cfgDir = fileSystem.getPath("/config");
+            Files.createDirectory(cfgDir);
+
             Path cacheDir = fileSystem.getPath("/cache");
+            Files.createDirectory(cacheDir);
 
             try (OutputStream os = Files.newOutputStream(cfgDir.resolve("config.xml"))) {
                 ByteStreams.copy(OfflineWorkflowTest.class.getResourceAsStream("/config.xml"), os);

@@ -7,20 +7,20 @@
 package eu.itesla_project.rulesdb.fs;
 
 import com.google.common.collect.Sets;
+import com.google.common.jimfs.Configuration;
+import com.google.common.jimfs.Jimfs;
 import eu.itesla_project.modules.rules.RuleAttributeSet;
 import eu.itesla_project.modules.rules.RuleId;
 import eu.itesla_project.modules.rules.SecurityRule;
 import eu.itesla_project.simulation.securityindexes.SecurityIndexId;
 import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.nio.file.ShrinkWrapFileSystems;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.nio.file.FileSystem;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -37,9 +37,13 @@ public class LocalFileSystemRulesDbClientTest {
 
     @Before
     public void setUp() throws Exception {
-        JavaArchive archive = ShrinkWrap.create(JavaArchive.class);
-        fileSystem = ShrinkWrapFileSystems.newFileSystem(archive);
+
+        //
+        fileSystem = Jimfs.newFileSystem(Configuration.unix());
         dbDir = fileSystem.getPath("db");
+        Files.createDirectory(dbDir);
+
+        //
         SecurityRuleSerializerLoaderMock loader = new SecurityRuleSerializerLoaderMock();
         loader.addSerializer(new SecurityRuleSerializerMock());
         rulesDbClient = new LocalFileSystemRulesDbClient(dbDir, loader);

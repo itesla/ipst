@@ -18,77 +18,18 @@
     <artifactId>modules</artifactId>
     <name>Modules API</name>
     <dependencies>
+        <!-- external dependencies -->
         <dependency>
-            <groupId>org.ow2.sirocco</groupId>
-            <artifactId>sirocco-text-table-formatter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.supercsv</groupId>
-            <artifactId>super-csv</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
+            <groupId>com.google.auto.service</groupId>
+            <artifactId>auto-service</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jgrapht</groupId>
-            <artifactId>jgrapht-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>computation</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>computation-local</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>contingency-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>case-repository</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>entsoe-util</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>loadflow-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>network-merge</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>security-analysis</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>simulation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-xml-converter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -99,8 +40,82 @@
             <artifactId>jackson-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.auto.service</groupId>
-            <artifactId>auto-service</artifactId>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.sirocco</groupId>
+            <artifactId>sirocco-text-table-formatter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.supercsv</groupId>
+            <artifactId>super-csv</artifactId>
+        </dependency>
+
+        <!-- internal/project dependencies -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>iidm-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>iidm-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>computation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>computation-local</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>contingency-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>case-repository</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>entsoe-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>loadflow-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>network-merge</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>security-analysis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>simulation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>iidm-xml-converter</artifactId>
+        </dependency>
+
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>com.google.jimfs</groupId>
+            <artifactId>jimfs</artifactId>
+            <version>${jimfs.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -108,28 +123,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.shrinkwrap</groupId>
-            <artifactId>shrinkwrap-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.shrinkwrap</groupId>
-            <artifactId>shrinkwrap-api-nio2</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.shrinkwrap</groupId>
-            <artifactId>shrinkwrap-impl-base</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.shrinkwrap</groupId>
-            <artifactId>shrinkwrap-impl-nio2</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
+            <artifactId>log4j-over-slf4j</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -147,11 +147,7 @@
             <artifactId>iidm-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>log4j-over-slf4j</artifactId>
-            <scope>test</scope>
-        </dependency>
+
     </dependencies>
 
 </project>

@@ -23,6 +23,7 @@
     <name>Eurostag step-up transformer</name>
 
     <dependencies>
+        <!-- external dependencies -->
         <dependency>
             <groupId>com.google.auto.service</groupId>
             <artifactId>auto-service</artifactId>
@@ -32,19 +33,18 @@
             <artifactId>commons-math3</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jboss.shrinkwrap</groupId>
-            <artifactId>shrinkwrap-api-nio2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.shrinkwrap</groupId>
-            <artifactId>shrinkwrap-api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
+            <groupId>net.java.truevfs</groupId>
+            <artifactId>truevfs-profile-full</artifactId>
+            <version>${truevfs.version}</version>
+        </dependency>
+
+        <!-- internal/project dependencies -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>commons</artifactId>
         </dependency>
         <dependency>
@@ -63,14 +63,30 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
         </dependency>
+
+        <!-- Test dependencies -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.google.jimfs</groupId>
+            <artifactId>jimfs</artifactId>
+            <version>${jimfs.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>iidm-impl</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>eu.itesla_project</groupId>
+            <artifactId>iidm-test</artifactId>
+            <version>${ipstcore.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 </project>
