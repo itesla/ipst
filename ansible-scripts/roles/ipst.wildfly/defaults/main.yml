@@ -1,0 +1,21 @@
+---
+# defaults file for ipst.wildfly
+
+
+
+
+# wildfly archive url define by user_wildfly_url (see group_vars_ipst_host file), set default value otherwise
+wildfly_url: "{{ user_wildfly_url |default('http://download.jboss.org/wildfly/8.1.0.Final/wildfly-8.1.0.Final.zip') }}"
+
+
+# archive name
+wildfly_archivename: "{{ wildfly_url.split('/')[-1] }}"
+
+
+# wildfly install path define by user_dest_path  (see group_vars_ipst_host file), set default value otherwise
+wildfly_dest_path: "{{ user_wildfly_dest_path |default( ansible_env.HOME ) }}"
+
+
+# wildfly install path define by user_dest_path  (see group_vars_ipst_host file), set default value otherwise
+wildfly_prefix: "{{ wildfly_dest_path +'/'+wildfly_archivename.split('.')[0:-1] |join('.') }}"
+

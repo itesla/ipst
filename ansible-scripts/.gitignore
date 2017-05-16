@@ -1,0 +1,6 @@
+/misc/
+/group_vars/
+*.retry
+*.log
+*.cfg
+ipst-hosts

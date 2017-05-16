@@ -1,0 +1,46 @@
+---
+#
+# Copyright (c) 2017, RTE (http://www.rte-france.com)
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+
+# download Nordic44 data and create an ENTSO-E like repository
+
+  - debug:
+     msg: "Nordic44 data; download path: {{ nordic44_downloads }};  repository path {{ nordic44_caserepo }}"
+
+  - name: Create download directory
+    file:
+     dest: "{{ nordic44_downloads }}"
+     state: directory
+     mode: 0755
+
+  - name:
+    stat: path="{{ nordic44_downloads }}"
+    register: downloadDir
+
+  - name: Copy download scripts
+    copy:
+     src: "{{ item }}"
+     dest: "{{ nordic44_downloads }}"
+     mode: "u+rwx,g-wx,o-rwx"
+    with_items:
+      - downloadData.sh
+      - buildCaseRepository.sh
+      - toEntsoeFormat.py
+    register: copyScripts
+    when: downloadDir.stat.exists == true
+
+  - name: Download Nordic44 data
+    command: "./downloadData.sh -d {{ nordic44_downloads }} -s {{ nordic44_startweek }} -n {{ nordic44_noweeks }}"
+    args:
+     chdir: "{{ nordic44_downloads }}"
+    register: downloadData
+
+  - name: Create repository
+    command: "./buildCaseRepository.sh  -c {{ nordic44_downloads }} -d {{ nordic44_caserepo }} -s {{ nordic44_startweek }} -n {{ nordic44_noweeks }}"
+    args:
+     chdir: "{{ nordic44_downloads }}"
+    register: createrepo1

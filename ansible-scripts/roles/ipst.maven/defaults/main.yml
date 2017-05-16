@@ -1,0 +1,22 @@
+---
+# defaults file for ipst.maven
+
+# maven prefix install path, default is /opt when user_maven_dest_path is undefined
+maven_dest_path: "{{ user_maven_dest_path |default('/opt') }}"
+
+# maven install version, default is 3.0.5 when user_maven_version is undefined
+maven_version: "{{ user_maven_version |default('3.0.5') }}"
+
+#maven_mirror: "https://www.apache.org/dist/maven/maven-3/3.3.9/binaries"
+# maven install mirror, default is http://archive.apache.org/dist/maven/binaries when user_maven_mirror is undefined
+maven_mirror: "{{ user_maven_mirror |default('http://archive.apache.org/dist/maven/binaries') }}"
+
+# maven full install path
+maven_home: "{{ maven_dest_path +'/apache-maven-'+ maven_version }}"
+
+# maven archive name
+maven_bin_filename: "apache-maven-{{ maven_version }}-bin.tar.gz"
+
+# maven full archive mirror
+maven_url: "{{ maven_mirror }}/{{ maven_bin_filename  }}"
+

@@ -1,0 +1,5 @@
+---
+# defaults file for ipst.jdk8
+
+# archive name
+jdk8_archivename: "{{ jdk8_url.split('/')[-1] }}"

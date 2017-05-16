@@ -1,0 +1,11 @@
+[ipst_hosts]
+####
+####  ref. http://docs.ansible.com/ansible/intro_inventory.html  (List of Behavioral Inventory Parameters)
+####
+
+##  Examples:
+##target server 1
+#192.168.144.10 ansible_user=user1 ansible_ssh_pass=user1_pwd ansible_become_user=admin ansible_become_pass=admin_pwd ansible_become_method=su
+
+##target server 2
+#192.168.144.11 ansible_user=user2 ansible_ssh_pass=user2_pwd ansible_become_method=sudo

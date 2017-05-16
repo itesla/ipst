@@ -1,0 +1,83 @@
+---
+
+#
+  - debug:
+      msg: " log file: {{ ipst_log_file }}"
+
+# clone/update ipst project from github
+# Note: update does not work when there are local modifications (e.g. when some of the project's file are edited on-site)
+  - name: ipst retrieve sources from github
+    git: repo="{{ ipst_github_uri }}"
+      dest="{{ipst_sources_path}}"
+      version="{{ ipst_github_branchname }}"
+    register: gitop
+    when: ipst_github_enabled == True
+
+  #
+  - name: ipst check if sources directory exists ...
+    stat: path="{{ ipst_sources_path }}"
+    register: sourcesPathStat
+
+  #
+  - name: ipst .... stop if sources directory does not exist
+    fail: msg="sources path {{ ipst_sources_path }} does not exist; either provide required sources on target node or set ipst_github_enable variable, to retrieve the project from GitHub."
+    when: sourcesPathStat.stat.exists == False
+
+  # remove a previously generated install config file (to not interfere with the ansible configurations)
+  - name: ipst remove current install configuration
+    file: path={{ ipst_sources_path }}/install.cfg state=absent
+    when: (gitop.changed or forceBuild)
+
+  # install ipst
+  - name: ipst build and install ipst
+    # Using shell because 'command' does not handle well redirections, pipes, etc.  Using -l to inherit the environment variables, correctly
+    shell: /bin/bash -lc "{{ ipst_install_cmd }}"
+    args:
+      chdir: "{{ipst_sources_path}}"
+    when: (gitop.changed or forceBuild)
+    register: installScript
+    #in case, ignore errors (to proceed to next steps and possibly log the errors)
+    ignore_errors: True
+
+  # log to file some variables
+  - name: remove previous log file
+    local_action: file state=absent path="{{ ipst_log_file }}"
+    when: installScript is defined
+      and installScript.skipped is not defined
+  - name: log file
+    local_action: lineinfile
+      dest="{{ ipst_log_file }}"
+      line="{{ {'_name':item._name|default('n/a') ,'cmd':item.cmd|default('n/a') ,'delta':item.delta|default('n/a') ,'end':item.end|default('n/a') ,'rc':item.rc|default('n/a') ,'state':item.state|default('n/a') ,'start':item.start|default('n/a') ,'stdout_lines':item.stdout_lines|default('n/a')} | to_nice_json }}"
+      state=present
+      insertafter=EOF
+      create=True
+    when: item is defined
+      and installScript is defined
+      and installScript.skipped is not defined
+    no_log: True
+    with_items:
+      - "{{ installScript |combine({'_name':'installScript'}) }}"
+
+
+  #
+  - name: ipst stop execution in case of failure
+    fail: msg="The execution has failed because of errors."
+    when: installScript is defined and installScript.rc > 1000
+
+  #
+  - name: ipst check for additional thirdparty files
+    local_action: stat path={{ misc_thirdparties_path}}
+    register: statThirdpartyFolder
+
+  #
+  - name: ipst make sure that the target directory exists
+    file: dest="{{ ipst_install_path }}" state=directory mode=0755
+    when:  statThirdpartyFolder.stat.isdir is defined and statThirdpartyFolder.stat.isdir
+
+  #
+  - name: ipst complete the remote installation with additional thirdparty files (if available)
+    unarchive: src={{ item }} dest={{ ipst_install_path  }}
+    when:  statThirdpartyFolder.stat.isdir is defined and statThirdpartyFolder.stat.isdir
+    register: installAdditionalFiles
+    with_fileglob:
+      - "{{ misc_thirdparties_path}}/*"

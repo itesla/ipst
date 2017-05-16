@@ -1,0 +1,12 @@
+---
+# defaults file
+
+# 2015 Nordic44 data will be downloaded to this path (53 zip files, one per week)
+nordic44_downloads: "{{ ipst_install_path | default( ansible_env.HOME) }}/samples/Nordic44/downloads"
+# ENTSO-E like repository location
+nordic44_caserepo: "{{ ipst_install_path | default( ansible_env.HOME) }}/samples/Nordic44/caserepo"
+# these parameters set how many weeks to download
+nordic44_startweek: 1
+nordic44_noweeks: 2
+
+

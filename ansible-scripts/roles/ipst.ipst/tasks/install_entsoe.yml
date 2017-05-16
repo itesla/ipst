@@ -1,0 +1,79 @@
+---
+
+#
+  - debug:
+      msg: " log file: {{ entsoe_log_file }}"
+
+# clone/update ipst-core project from github
+# Note: update does not work when there are local modifications (e.g. when some of the project's file are edited on-site)
+  - name: entsoe retrieve ipst-entsoe sources from github
+    git: repo="{{ entsoe_github_uri }}"
+      dest="{{ entsoe_sources_path }}"
+      version="{{ entsoe_github_branchname }}"
+    register: gitop
+    when: ipst_github_enabled == True
+
+  #
+  - name: entsoe check if sources directory exists ...
+    stat: path="{{ entsoe_sources_path }}"
+    register: sourcesPathStat
+
+  #
+  - name: entsoe .... stop if sources directory does not exist
+    fail: msg="sources path {{ entsoe_sources_path }} does not exist; either provide required sources on target node or set ipst_github_enable variable, to retrieve the project from GitHub."
+    when: sourcesPathStat.stat.exists == False
+
+  # remove a previously generated install config file (to not interfere with the ansible configurations)
+  - name: entsoe remove current install configuration
+    file: path={{ entsoe_sources_path }}/install.cfg state=absent
+    when: (gitop.changed or forceBuild)
+
+  # install entsoe
+  - name: entsoe build and install ipst
+    # Using shell because 'command' does not handle well redirections, pipes, etc.  Using -l to inherit the environment variables, correctly
+    shell: /bin/bash -lc "{{ entsoe_install_cmd }}"
+    args:
+      chdir: "{{entsoe_sources_path}}"
+    when: (gitop.changed or forceBuild)
+    register: installEntsoeScript
+    #in case, ignore errors (to proceed to next steps and possibly log the errors)
+    ignore_errors: True
+
+  # log to file some variables
+  - name: remove previous log file
+    local_action: file state=absent path="{{ entsoe_log_file }}"
+    when: installEntsoeScript is defined
+      and installEntsoeScript.skipped is not defined
+  - name: log file
+    local_action: lineinfile
+      dest="{{ entsoe_log_file }}"
+      line="{{ {'_name':item._name|default('n/a') ,'cmd':item.cmd|default('n/a') ,'delta':item.delta|default('n/a') ,'end':item.end|default('n/a') ,'rc':item.rc|default('n/a') ,'state':item.state|default('n/a') ,'start':item.start|default('n/a') ,'stdout_lines':item.stdout_lines|default('n/a')} | to_nice_json }}"
+      state=present
+      insertafter=EOF
+      create=True
+    when: item is defined
+      and installEntsoeScript is defined
+      and installEntsoeScript.skipped is not defined
+    no_log: True
+    with_items:
+      - "{{ installEntsoeScript |combine({'_name':'installEntsoeScript'}) }}"
+
+
+  - name: entsoe stop execution in case of failure
+    fail: msg="The execution has failed because of errors."
+    when: installEntsoeScript is defined and installEntsoeScript.rc > 1000
+
+  - name: entsoe check for additional thirdparty files
+    local_action: stat path={{ misc_thirdparties_path}}
+    register: statThirdpartyFolder
+
+  - name: entsoe make sure that the target directory exists
+    file: dest="{{ ipst_install_path }}" state=directory mode=0755
+    when:  statThirdpartyFolder.stat.isdir is defined and statThirdpartyFolder.stat.isdir
+
+  - name: entsoe complete the remote installation with additional thirdparty files (if available)
+    unarchive: src={{ item }} dest={{ ipst_install_path  }}
+    when:  statThirdpartyFolder.stat.isdir is defined and statThirdpartyFolder.stat.isdir
+    register: installAdditionalFiles
+    with_fileglob:
+      - "{{ misc_thirdparties_path}}/*"

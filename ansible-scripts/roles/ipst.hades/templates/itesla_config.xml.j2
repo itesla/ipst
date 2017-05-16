@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <componentDefaultConfig>
+    <ContingenciesProviderFactory>eu.itesla_project.contingency.mock.ContingenciesProviderFactoryMock</ContingenciesProviderFactory>
+    <SecurityAnalysisFactory>com.rte_france.itesla.hades2.Hades2SecurityAnalysisFactory</SecurityAnalysisFactory>
+  </componentDefaultConfig>
+  <import-export-parameters-default-value>
+    <XIIDM_throwExceptionIfExtensionNotFound>false</XIIDM_throwExceptionIfExtensionNotFound>
+  </import-export-parameters-default-value>
+  <hades2>
+    <homeDir>{{ hades_create }}</homeDir>
+    <debug>true</debug>
+  </hades2>
+</config>

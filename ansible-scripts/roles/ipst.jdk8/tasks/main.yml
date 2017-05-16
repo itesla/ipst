@@ -1,0 +1,37 @@
+---
+#
+# Copyright (c) 2016, RTE (http://www.rte-france.com)
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+
+
+# main tasks file for ipst.jdk8
+
+- debug: var="jdk8_log"
+- debug: var="user_jdk8_log"
+
+# check
+- name: check if already installed
+  stat: path={{ jdk8_home }}
+  register: jdk8_dir
+  changed_when: jdk8_dir.stat.exists == False
+
+# log some variables
+- debug:
+    var="{{ item }}"
+  when: "{{ jdk8_log == '1' }}"
+  with_items:
+      - user_jdk8_url
+      - user_jdk8_home
+      - user_jdk8_log
+      - jdk8_url
+      - jdk8_archivename
+      - jdk8_home
+      - jdk8_log
+      - jdk8_dir
+
+
+- include: install.yml
+  when: jdk8_dir.stat.exists == False
