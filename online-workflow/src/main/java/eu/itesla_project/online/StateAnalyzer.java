@@ -147,17 +147,8 @@ public class StateAnalyzer implements Callable<Void> {
                 // stores violations only if loadflow converges
                 logger.info("{}: storing violations after {} in online db", stateId, OnlineStep.LOAD_FLOW);
                 List<LimitViolation> violations = Security.checkLimits(context.getNetwork(),
-                        CurrentLimitType.PATL,
                         parameters.getLimitReduction());
-                List<LimitViolation> temp_violations = Security.checkLimits(context.getNetwork(),
-                        CurrentLimitType.TATL,
-                        parameters.getLimitReduction());
-                if(violations == null)
-                    violations = temp_violations;
-                else
-                    if (temp_violations != null)
-                        violations.addAll(temp_violations);
-                
+
                 if (violations != null && !violations.isEmpty()) {
                     onlineDb.storeViolations(context.getWorkflowId(), stateId, OnlineStep.LOAD_FLOW, violations);
                     if (parameters.isHandleViolationsInN()) {
@@ -391,13 +382,7 @@ public class StateAnalyzer implements Callable<Void> {
                             boolean loadflowConverge = computePostContingencyState(network, stateId, contingency, postContingencyStateId);
                             if (loadflowConverge) {
                                 logger.info("{}: computing post contingency violations for contingency {}", stateId, contingency.getId());
-                                violations = Security.checkLimits(network, CurrentLimitType.PATL, parameters.getLimitReduction());
-                                List<LimitViolation> temp_violations = Security.checkLimits(network, CurrentLimitType.TATL, parameters.getLimitReduction());
-                                if(violations == null)
-                                    violations = temp_violations;
-                                else
-                                    if (temp_violations != null)
-                                        violations.addAll(temp_violations);
+                                violations = Security.checkLimits(network, parameters.getLimitReduction());
                                 
                                 if (violations == null || violations.isEmpty()) {
                                     logger.info("{}: no post contingency violations for contingency {}", stateId, contingency.getId());
