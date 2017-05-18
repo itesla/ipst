@@ -387,11 +387,17 @@ public class EurostagEchExport {
             float qgen = g.getTargetQ();
             float pgmin = g.getMinP();
             float pgmax = g.getMaxP();
-            float qgmin = config.isNoGeneratorMinMaxQ() ? -9999 : g.getReactiveLimits().getMinQ(pgen);
-            float qgmax = config.isNoGeneratorMinMaxQ() ? 9999 : g.getReactiveLimits().getMaxQ(pgen);
-            EsgRegulatingMode mode = g.isVoltageRegulatorOn() && g.getTargetV() >= 0.1
-                    ? EsgRegulatingMode.REGULATING : EsgRegulatingMode.NOT_REGULATING;
-            float vregge = g.isVoltageRegulatorOn() ? g.getTargetV() : Float.NaN;
+            boolean isQminQmaxInverted = g.getReactiveLimits().getMinQ(pgen) > g.getReactiveLimits().getMaxQ(pgen);
+            if (isQminQmaxInverted) {
+                LOGGER.warn("inverted qmin {} and qmax {} values for generator {}", g.getReactiveLimits().getMinQ(pgen), g.getReactiveLimits().getMaxQ(pgen), g.getId());
+            }
+            // in case qmin and qmax are inverted, take out the unit from the voltage regulation if it has a target Q
+            // and open widely the Q interval
+            float qgmin = (config.isNoGeneratorMinMaxQ() || isQminQmaxInverted) ? -9999 : g.getReactiveLimits().getMinQ(pgen);
+            float qgmax = (config.isNoGeneratorMinMaxQ() || isQminQmaxInverted) ? 9999 : g.getReactiveLimits().getMaxQ(pgen);
+            EsgRegulatingMode mode = (isQminQmaxInverted && !Float.isNaN(qgen)) ? EsgRegulatingMode.NOT_REGULATING :
+                    (g.isVoltageRegulatorOn() && g.getTargetV() >= 0.1 ? EsgRegulatingMode.REGULATING : EsgRegulatingMode.NOT_REGULATING);
+            float vregge = (isQminQmaxInverted && !Float.isNaN(qgen)) ? Float.NaN : (g.isVoltageRegulatorOn() ? g.getTargetV() : Float.NaN);
             float qgensh = 1.f;
 
             //fails, when noSwitch is true !!
