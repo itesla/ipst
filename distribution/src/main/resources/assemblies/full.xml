@@ -29,7 +29,18 @@
             <includes>
                 <include>*</include>
             </includes>
+            <excludes>
+                <exclude>groovy</exclude>
+            </excludes>
             <fileMode>0755</fileMode>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/../scripts/groovy</directory>
+            <outputDirectory>share/groovy</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+            <fileMode>0644</fileMode>
         </fileSet>
         <fileSet>
             <directory>${project.basedir}/../config</directory>
