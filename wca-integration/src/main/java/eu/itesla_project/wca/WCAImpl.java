@@ -136,6 +136,9 @@ public class WCAImpl implements WCA, WCAConstants {
     
     private static final String WCA_FLOWS_FILE = "wca_flows.txt";
     private static final String WCA_UNCERTAINTIES_FILE = "wca_uncertainties.txt";
+    private static final String WCA_UNDEFINED_PST_FILE = "wca_undefined_pst.txt";
+    private static final String WCA_SENSIBILITIES_FILE = "wca_sensibilities.txt";
+    private static final String WCA_INFLUENCE_PST_FILE = "wca_influence_pst.txt";
 
     private final Network network;
 
@@ -303,7 +306,10 @@ public class WCAImpl implements WCA, WCAConstants {
                                         Integer.toString(config.isDebug() ? DETAILS_LEVEL_DEBUG : DETAILS_LEVEL_NORMAL),
                                         Integer.toString(WCARestrictingThresholdLevel.getLevel(config.getRestrictingThresholdLevels())),
                                         WCA_FLOWS_FILE,
-                                        WCA_UNCERTAINTIES_FILE)
+                                        WCA_UNCERTAINTIES_FILE,
+                                        WCA_UNDEFINED_PST_FILE,
+                                        WCA_SENSIBILITIES_FILE,
+                                        WCA_INFLUENCE_PST_FILE)
                                 .build();
                         return Arrays.asList(new CommandExecution(cmd, 1));
                     }
@@ -394,7 +400,10 @@ public class WCAImpl implements WCA, WCAConstants {
                                         Integer.toString(config.isDebug() ? DETAILS_LEVEL_DEBUG : DETAILS_LEVEL_NORMAL),
                                         Integer.toString(WCARestrictingThresholdLevel.getLevel(config.getRestrictingThresholdLevels())),
                                         WCA_FLOWS_FILE,
-                                        WCA_UNCERTAINTIES_FILE)
+                                        WCA_UNCERTAINTIES_FILE,
+                                        WCA_UNDEFINED_PST_FILE,
+                                        WCA_SENSIBILITIES_FILE,
+                                        WCA_INFLUENCE_PST_FILE)
                                 .build();
                         return Arrays.asList(new CommandExecution(cmd, 1));
                     }
