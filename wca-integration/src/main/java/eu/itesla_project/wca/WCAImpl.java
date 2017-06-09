@@ -256,6 +256,8 @@ public class WCAImpl implements WCA, WCAConstants {
                         DataSource dataSource = new FileDataSource(workingDir, FILE_PREFIX + dataSetNum);
 
                         // write base state
+                        AmplUtil.resetNetworkMapping(mapper);
+                        AmplUtil.fillMapper(mapper, network);
                         new AmplNetworkWriter(network, dataSource, 0, 0, false, mapper, CLUSTERS_AMPL_EXPORT_CONFIG).write();
                         if (config.isExportStates()) {
                             WCAUtils.exportState(network, workingDir, 0, 0);
@@ -263,6 +265,7 @@ public class WCAImpl implements WCA, WCAConstants {
 
                         // write post contingency state
                         network.getStateManager().setWorkingState(contingencyStateId);
+                        AmplUtil.resetNetworkMapping(mapper);
                         AmplUtil.fillMapper(mapper, network); // because action can create a new bus
                         new AmplNetworkWriter(network, dataSource, contingencyNum, 0, true, mapper, CLUSTERS_AMPL_EXPORT_CONFIG).write();
                         if (config.isExportStates()) {
@@ -282,6 +285,7 @@ public class WCAImpl implements WCA, WCAConstants {
 
                             String curativeStateId = curativeStateIds.get(i);
                             network.getStateManager().setWorkingState(curativeStateId);
+                            AmplUtil.resetNetworkMapping(mapper);
                             AmplUtil.fillMapper(mapper, network); // because action can create a new bus
                             new AmplNetworkWriter(network, dataSource, contingencyNum, curativeActionNum, true, mapper, CLUSTERS_AMPL_EXPORT_CONFIG).write();
                             if (config.isExportStates()) {
@@ -357,6 +361,8 @@ public class WCAImpl implements WCA, WCAConstants {
                         DataSource dataSource = new FileDataSource(workingDir, FILE_PREFIX + dataSetNum);
 
                         // write base state
+                        AmplUtil.resetNetworkMapping(mapper);
+                        AmplUtil.fillMapper(mapper, network);
                         new AmplNetworkWriter(network, dataSource, 0, 0, false, mapper, DOMAINS_AMPL_EXPORT_CONFIG).write();
                         if (config.isExportStates()) {
                             WCAUtils.exportState(network, workingDir, 0, 0);
@@ -372,6 +378,7 @@ public class WCAImpl implements WCA, WCAConstants {
 
                             String preventiveStateId = preventiveStateIds.get(i);
                             network.getStateManager().setWorkingState(preventiveStateId);
+                            AmplUtil.resetNetworkMapping(mapper);
                             AmplUtil.fillMapper(mapper, network); // because action can create a new bus
                             new AmplNetworkWriter(network, dataSource, 0, preventiveActionNum, true, mapper, DOMAINS_AMPL_EXPORT_CONFIG).write();
                             if (config.isExportStates()) {
