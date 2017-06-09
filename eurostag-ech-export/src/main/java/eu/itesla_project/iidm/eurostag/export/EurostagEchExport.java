@@ -7,7 +7,10 @@
  */
 package eu.itesla_project.iidm.eurostag.export;
 
+import com.google.common.base.Strings;
 import eu.itesla_project.commons.ITeslaException;
+import eu.itesla_project.commons.config.ModuleConfig;
+import eu.itesla_project.commons.config.PlatformConfig;
 import eu.itesla_project.eurostag.network.*;
 import eu.itesla_project.eurostag.network.io.EsgWriter;
 import eu.itesla_project.iidm.network.*;
@@ -20,10 +23,7 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
@@ -231,7 +231,44 @@ public class EurostagEchExport {
         return new EsgDetailedTwoWindingTransformer.Tap(iplo, dephas, uno1, uno2, ucc);
     }
 
+
+    private void createAdditionalBank(EsgNetwork esgNetwork, TwoWindingsTransformer twt, Terminal terminal, String nodeName, Set<String> additionalBanksIds, boolean specificCompatibility) {
+        float rcapba = 0.0f;
+        if (-twt.getB() < 0) {
+            rcapba = twt.getB() * (float) Math.pow(terminal.getVoltageLevel().getNominalV(), 2) / ((specificCompatibility == true) ? 2 : 1);
+        }
+        float plosba = 0.0f;
+        if (twt.getG() < 0) {
+            plosba = twt.getG() * (float) Math.pow(terminal.getVoltageLevel().getNominalV(), 2) / ((specificCompatibility == true) ? 2 : 1);
+        }
+        if ((Math.abs(plosba) > G_EPSILON) || (rcapba > B_EPSILON)) {
+            //simple new bank naming: 5 first letters of the node name, 7th letter of the node name, 'C', order code
+            String nnodeName = Strings.padEnd(nodeName, 8, ' ');
+            String newBankNamePrefix = nnodeName.substring(0, 5) + nnodeName.charAt(6) + 'C';
+            String newBankName = newBankNamePrefix + '0';
+            int counter = 1;
+            while (additionalBanksIds.contains(newBankName)) {
+                String newCounter = Integer.toString(counter++);
+                if (newCounter.length() > 1) {
+                    throw new RuntimeException("Renaming error " + nodeName + " -> " + newBankName);
+                }
+                newBankName = newBankNamePrefix + newCounter;
+            }
+            additionalBanksIds.add(newBankName);
+            LOGGER.info("create additional bank: {}, node: {}", newBankName, nodeName);
+            esgNetwork.addCapacitorsOrReactorBanks(new EsgCapacitorOrReactorBank(new Esg8charName(newBankName), new Esg8charName(nodeName), 1, plosba, rcapba, 1, EsgCapacitorOrReactorBank.RegulatingMode.NOT_REGULATING));
+        }
+
+    }
+
     private void createTransformers(EsgNetwork esgNetwork, EsgGeneralParameters parameters) {
+        Set<String> additionalBanksIds = new HashSet<>();
+
+        PlatformConfig platformConfig = PlatformConfig.defaultConfig();
+        ModuleConfig loadFlowModuleConfig = platformConfig.getModuleConfigIfExists("load-flow-default-parameters");
+        boolean specificCompatibility = (loadFlowModuleConfig != null) ? loadFlowModuleConfig.getBooleanProperty("specificCompatibility", false) : false;
+        LOGGER.info("load-flow-default-parameters/specificCompatibility: {}", specificCompatibility);
+
         for (TwoWindingsTransformer twt : Identifiables.sort(network.getTwoWindingsTransformers())) {
             ConnectionBus bus1 = ConnectionBus.fromTerminal(twt.getTerminal1(), config, fakeNodes);
             ConnectionBus bus2 = ConnectionBus.fromTerminal(twt.getTerminal2(), config, fakeNodes);
@@ -254,7 +291,7 @@ public class EurostagEchExport {
 
             //...changing base snref -> base rate to compute losses
             float pcu = Rpu2 * rate * 100f / parameters.getSnref();                  //...base rate (100F -> %)
-            float pfer = 10000f * (Gpu2 / rate) * (parameters.getSnref() / 100f);  //...base rate
+            float pfer = 10000f * ((float) Math.sqrt(Gpu2) / rate) * (parameters.getSnref() / 100f);  //...base rate
             float modgb = (float) Math.sqrt(Math.pow(Gpu2, 2.f) + Math.pow(Bpu2, 2.f));
             float cmagn = 10000 * (modgb / rate) * (parameters.getSnref() / 100f);  //...magnetizing current [% base rate]
             float esat = 1.f;
@@ -323,10 +360,36 @@ public class EurostagEchExport {
                 float tap_adjusted_r = twt.getR() * (1 + dr / 100.0f);
                 float rpu2_adjusted = (tap_adjusted_r * parameters.getSnref()) / nomiU2 / nomiU2;
                 pcu = rpu2_adjusted * rate * 100f / parameters.getSnref();
+
+                float dg = (rtc != null) ? rtc.getStep(rtc.getTapPosition()).getG() : ptc.getStep(ptc.getTapPosition()).getG();
+                float tap_adjusted_g = twt.getG() * (1 + dg / 100.0f);
+                float gpu2_adjusted = (tap_adjusted_g / parameters.getSnref()) * nomiU2 * nomiU2;
+                pfer = 10000f * ((float) Math.sqrt(gpu2_adjusted) / rate) * (parameters.getSnref() / 100f);
+
+                float db = (rtc != null) ? rtc.getStep(rtc.getTapPosition()).getB() : ptc.getStep(ptc.getTapPosition()).getB();
+                float tap_adjusted_b = twt.getB() * (1 + db / 100.0f);
+                float bpu2_adjusted = (tap_adjusted_b / parameters.getSnref()) * nomiU2 * nomiU2;
+                modgb = (float) Math.sqrt(Math.pow(gpu2_adjusted, 2.f) + Math.pow(bpu2_adjusted, 2.f));
+                cmagn = 10000 * (modgb / rate) * (parameters.getSnref() / 100f);
             }
 
             float pregmin = Float.NaN; //...?
             float pregmax = Float.NaN; //...?
+
+            //handling of the cases where cmagn should be negative and where pfer should be negative
+            if ((-twt.getB() < 0) || (twt.getG() < 0) || (specificCompatibility == true)) {
+                createAdditionalBank(esgNetwork, twt, twt.getTerminal1(), dictionary.getEsgId(bus1.getId()), additionalBanksIds, specificCompatibility);
+                if (specificCompatibility == true) {
+                    createAdditionalBank(esgNetwork, twt, twt.getTerminal2(), dictionary.getEsgId(bus2.getId()), additionalBanksIds, specificCompatibility);
+                }
+                if (twt.getG() < 0) {
+                    pfer = 0.0f;
+                }
+                if (-twt.getB() < 0) {
+                    cmagn = pfer;
+                }
+            }
+
 
             EsgDetailedTwoWindingTransformer esgTransfo = new EsgDetailedTwoWindingTransformer(
                     new EsgBranchName(new Esg8charName(dictionary.getEsgId(bus1.getId())),
