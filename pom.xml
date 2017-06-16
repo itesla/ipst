@@ -49,6 +49,7 @@
         <module>pclfsim-integration</module>
         <module>sampling-integration</module>
         <module>wca-integration</module>
+        <module>case-projector</module>
     </modules>
 
     <properties>

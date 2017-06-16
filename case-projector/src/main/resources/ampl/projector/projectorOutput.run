@@ -1,0 +1,183 @@
+###############################################################################
+#
+# Copyright (c) 2016, RTE (http://www.rte-france.com)
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# author: Jean Maeght
+#
+# Projecteur
+# Ecriture des reultats
+# 
+###############################################################################
+print "Debut du fichier projectorOutput.run";
+printf "Ecriture des resultats\n";
+
+# Il faut desactiver le presolve d'ampl pour forcer le recalcul des variables non utilisees
+option presolve 0;
+
+
+#
+# Indicateur relatif au statut final
+#
+if (solve_result_num >= 0 and solve_result_num < 100) or (solve_result_num >= 400 and solve_result_num < 410) then
+  let final_status := "projector_OK";
+else
+  let final_status := "projector_NOK";
+
+
+
+###########################################################################
+# 
+# Ecriture des groupes
+#
+###########################################################################
+
+param unit_P_out{UNIT} default 0;
+param unit_Q_out{UNIT} default 0;
+
+let {(g,n) in UNITCC: n in NOEUDCC} unit_P_out[g,n] := unit_P[g,n];
+let {(g,n) in UNITCC: n in NOEUDCC} unit_Q_out[g,n] := unit_Q[g,n]; 
+
+if final_status = "projector_OK" then {
+# Pas d'espace entre '#' et 'num', pas d'espace en debut de colonne
+printf
+  "#%s %s %s %s\n",
+  "num", "V(pu)", "P(MW)", "Q(MVAR)"
+  > projector_results_generators.txt;
+printf {(g,n) in UNIT: n in NOEUDCC}
+  "%i %f %f %f\n",
+  g,
+  V[n],
+  unit_P_out[g,n],
+  unit_Q_out[g,n]
+  > projector_results_generators.txt;
+}
+
+
+###########################################################################
+# 
+# Ecriture des indicateurs
+#
+###########################################################################
+
+
+#
+# Indicateur relatif au statut final
+#
+printf "%s %s\n","final_status", final_status > projector_results_indic.txt;
+printf "%s %s\n","solve_result_num",solve_result_num > projector_results_indic.txt;
+# Fermeture du fichier pour autoriser l'ecriture directement par le shell
+close;
+
+#
+# Nom de la situation et du repertoire courant
+#
+shell 'echo situation $(head -1 ampl_network_substations.txt|cut -d\( -f2 |cut -d\/ -f1) >> projector_results_indic.txt';
+shell 'echo repertoire $(basename $PWD) >> projector_results_indic.txt';
+
+# Reouverture du fichier dans ampl pour la suite de indicateurs
+printf "" >> projector_results_indic.txt;
+
+# Temps de resolution
+printf "%s %s\n","_total_solve_time",_total_solve_time > projector_results_indic.txt;
+
+# Nombre de groupe ayant un domaine dynamique
+printf "%s %i\n","nbGroupesDomaine",card(DOMAIN_ID) > projector_results_indic.txt;
+
+# Nombre de coupes pour les domaines dynamiques
+printf "%s %i\n","nbCoupesDomaines",card(UNIT_DOMAIN_CTR) > projector_results_indic.txt;
+
+# Nombre de groupes hors Pmin et Pmax
+printf "%s %i\n","nbGroupesHorsPmin",card(UNITHORSPMIN) > projector_results_indic.txt;
+printf "%s %i\n","nbGroupesHorsPmax",card(UNITHORSPMAX) > projector_results_indic.txt;
+
+# Indicateurs sur les bornes des groupes
+printf "%s %i\n","nbGroupesPminInvalide",card({(g,n) in UNITCC: unit_Pmin[g,n] < -9000}) > projector_results_indic.txt;
+printf "%s %i\n","nbGroupesPmaxInvalide",card({(g,n) in UNITCC: unit_Pmax[g,n] < -9000}) > projector_results_indic.txt;
+printf "%s %i\n","nbGroupesVminInvalide",card({(g,n) in UNITCC: substation_Vmin[unit_substation[g,n]] <= 0})
+  > projector_results_indic.txt;
+printf "%s %i\n","nbGroupesVmaxInvalide",card({(g,n) in UNITCC: substation_Vmax[unit_substation[g,n]] <= 0})
+  > projector_results_indic.txt;
+
+
+# Somme des P,Q avant apres
+printf "%s %.1f\n", "sommePavant", sum {(g,n) in UNITCC} unit_Pc[g,n] > projector_results_indic.txt;
+printf "%s %.1f\n", "sommePapres", sum {(g,n) in UNITCC} unit_P[g,n]  > projector_results_indic.txt;
+printf "%s %.1f\n", "sommeQavant", sum {(g,n) in UNITCC} unit_Qc[g,n] > projector_results_indic.txt;
+printf "%s %.1f\n", "sommeQapres", sum {(g,n) in UNITCC} unit_Q[g,n]  > projector_results_indic.txt;
+
+# Variations totales et moyennes P,Q
+let tempo := 1.0 / card(UNITCC);
+printf "%s %.1f\n", "variationTotaleP", sum {(g,n) in UNITCC} abs(unit_P[g,n] - unit_Pc[g,n]) > projector_results_indic.txt;
+printf "%s %.1f\n", "variationTotaleQ", sum {(g,n) in UNITCC} abs(unit_Q[g,n] - unit_Qc[g,n]) > projector_results_indic.txt;
+printf "%s %.2f\n", "variationMoyenneP", tempo * sum {(g,n) in UNITCC} abs(unit_P[g,n] - unit_Pc[g,n]) > projector_results_indic.txt;
+printf "%s %.2f\n", "variationMoyenneQ", tempo * sum {(g,n) in UNITCC} abs(unit_Q[g,n] - unit_Qc[g,n]) > projector_results_indic.txt;
+
+# Moyennes Tensions
+let tempo := card({(g,n) in UNITCC: unit_PV[g,n]=="true"});
+if tempo > 0 then {
+  let tempo := 1.0 / tempo;
+  printf "%s %.4f\n", "moyenneVnoeudsPVavant", tempo * sum {(g,n) in UNITCC: unit_PV[g,n]=="true"} unit_Vc[g,n] > projector_results_indic.txt;
+  printf "%s %.4f\n", "moyenneVnoeudsPVapres", tempo * sum {(g,n) in UNITCC: unit_PV[g,n]=="true"} V[n] > projector_results_indic.txt;
+}
+
+# Nombre de groupes modifies P
+printf "%s %i\n", "nbGroupesPmodifie01MW",  card({(g,n) in UNITCC : abs(unit_P[g,n] - unit_Pc[g,n]) >= 0.1 } ) > projector_results_indic.txt;
+printf "%s %i\n", "nbGroupesPmodifie1MW",   card({(g,n) in UNITCC : abs(unit_P[g,n] - unit_Pc[g,n]) >= 1   } ) > projector_results_indic.txt;
+printf "%s %i\n", "nbGroupesPmodifie10MW",  card({(g,n) in UNITCC : abs(unit_P[g,n] - unit_Pc[g,n]) >= 10  } ) > projector_results_indic.txt;
+printf "%s %i\n", "nbGroupesPmodifie100MW", card({(g,n) in UNITCC : abs(unit_P[g,n] - unit_Pc[g,n]) >= 100 } ) > projector_results_indic.txt;
+
+# Nombre de groupes modifies Q
+printf "%s %i\n", "nbGroupesQmodifie01Mvar",  card({(g,n) in UNITCC : abs(unit_Q[g,n] - unit_Qc[g,n]) >= 0.1 } ) > projector_results_indic.txt;
+printf "%s %i\n", "nbGroupesQmodifie1Mvar",   card({(g,n) in UNITCC : abs(unit_Q[g,n] - unit_Qc[g,n]) >= 1   } ) > projector_results_indic.txt;
+printf "%s %i\n", "nbGroupesQmodifie10Mvar",  card({(g,n) in UNITCC : abs(unit_Q[g,n] - unit_Qc[g,n]) >= 10  } ) > projector_results_indic.txt;
+printf "%s %i\n", "nbGroupesQmodifie100Mvar", card({(g,n) in UNITCC : abs(unit_Q[g,n] - unit_Qc[g,n]) >= 100 } ) > projector_results_indic.txt;
+
+# Nombre de groupes modifies V
+printf "%s %i\n", "nbGroupesVmodifie01kV",
+  card( {(g,n) in UNITCC: unit_PV[g,n]=="true" and abs(V[n]-unit_Vc[g,n])*substation_Vnomi[unit_substation[g,n]] >= 0.1 })
+  > projector_results_indic.txt;
+printf "%s %i\n", "nbGroupesVmodifie1kV",
+  card( {(g,n) in UNITCC: unit_PV[g,n]=="true" and abs(V[n]-unit_Vc[g,n])*substation_Vnomi[unit_substation[g,n]] >= 1 })
+  > projector_results_indic.txt;
+printf "%s %i\n", "nbGroupesVmodifie2kV",
+  card( {(g,n) in UNITCC: unit_PV[g,n]=="true" and abs(V[n]-unit_Vc[g,n])*substation_Vnomi[unit_substation[g,n]] >= 2 })
+  > projector_results_indic.txt;
+printf "%s %i\n", "nbGroupesVmodifie5kV",
+  card( {(g,n) in UNITCC: unit_PV[g,n]=="true" and abs(V[n]-unit_Vc[g,n])*substation_Vnomi[unit_substation[g,n]] >= 5 })
+  > projector_results_indic.txt;
+
+
+# Groupe ayant le plus varie en P
+let tempo := max {(g,n) in UNITCC} abs(unit_P[g,n] - unit_Pc[g,n]);
+printf "%s %.1f\n", "variationMaximaleP", tempo > projector_results_indic.txt;
+for {(g,n) in UNITCC : abs(unit_P[g,n] - unit_Pc[g,n]) >= tempo } {
+  printf "%s %s\n", "groupeVariationMaximaleP", unit_id[g,n] > projector_results_indic.txt;
+  }
+
+# Groupe ayant le plus varie en Q
+let tempo := max {(g,n) in UNITCC} abs(unit_Q[g,n] - unit_Qc[g,n]);
+printf "%s %.1f\n", "variationMaximaleQ", tempo > projector_results_indic.txt;
+for {(g,n) in UNITCC : abs(unit_Q[g,n] - unit_Qc[g,n]) >= tempo } {
+  printf "%s %s\n", "groupeVariationMaximaleQ", unit_id[g,n] > projector_results_indic.txt;
+  }
+
+# Groupe ayant le plus varie en V
+let tempo := max {(g,n) in UNITCC : unit_PV[g,n]=="true"} abs(V[n]-unit_Vc[g,n]);
+printf "%s %.4f\n", "variationMaximaleVpu", tempo > projector_results_indic.txt;
+for {(g,n) in UNITCC : unit_PV[g,n]=="true" and abs(V[n]-unit_Vc[g,n]) >= tempo } {
+  printf "%s %s\n", "groupeVariationMaximaleVpu", unit_id[g,n] > projector_results_indic.txt;
+  }
+let tempo := max {(g,n) in UNITCC : unit_PV[g,n]=="true"} abs(V[n]-unit_Vc[g,n])*substation_Vnomi[unit_substation[g,n]];
+printf "%s %.4f\n", "variationMaximaleVkV", tempo > projector_results_indic.txt;
+for {(g,n) in UNITCC : unit_PV[g,n]=="true" and abs(V[n]-unit_Vc[g,n])*substation_Vnomi[unit_substation[g,n]] >= tempo } {
+  printf "%s %s\n", "groupeVariationMaximaleVkV", unit_id[g,n] > projector_results_indic.txt;
+  }
+
+
+###############################################################################
+# Fin du fichier
+###############################################################################
+print "Fin du fichier projectorOutput.run";
