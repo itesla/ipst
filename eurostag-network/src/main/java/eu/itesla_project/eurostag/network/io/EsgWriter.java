@@ -26,7 +26,7 @@ public class EsgWriter {
     public EsgWriter(EsgNetwork network, EsgGeneralParameters parameters, EsgSpecialParameters specialParameters) {
         this.network = Objects.requireNonNull(network);
         this.parameters = Objects.requireNonNull(parameters);
-        this.specialParameters = Objects.requireNonNull(specialParameters);
+        this.specialParameters = specialParameters;
     }
 
     private void writeHeader(RecordWriter recordWriter) throws IOException {
@@ -42,9 +42,12 @@ public class EsgWriter {
 
     private static char toChar(EsgGeneralParameters.StartMode mode) {
         switch (mode) {
-            case FLAT_START: return ' ';
-            case WARM_START: return '1';
-            default: throw new AssertionError();
+            case FLAT_START:
+                return ' ';
+            case WARM_START:
+                return '1';
+            default:
+                throw new AssertionError();
         }
     }
 
@@ -150,11 +153,16 @@ public class EsgWriter {
 
     private static char toChar(EsgBranchConnectionStatus status) {
         switch (status) {
-            case CLOSED_AT_BOTH_SIDE: return ' ';
-            case OPEN_AT_BOTH_SIDES: return '-';
-            case OPEN_AT_RECEIVING_SIDE: return '<';
-            case OPEN_AT_SENDING_SIDE: return '>';
-            default: throw new InternalError();
+            case CLOSED_AT_BOTH_SIDE:
+                return ' ';
+            case OPEN_AT_BOTH_SIDES:
+                return '-';
+            case OPEN_AT_RECEIVING_SIDE:
+                return '<';
+            case OPEN_AT_SENDING_SIDE:
+                return '>';
+            default:
+                throw new InternalError();
         }
     }
 
@@ -176,9 +184,12 @@ public class EsgWriter {
 
     private static char toChar(EsgCouplingDevice.ConnectionStatus code) {
         switch (code) {
-            case OPEN: return '-';
-            case CLOSED: return ' ';
-            default: throw new InternalError();
+            case OPEN:
+                return '-';
+            case CLOSED:
+                return ' ';
+            default:
+                throw new InternalError();
         }
     }
 
@@ -217,11 +228,16 @@ public class EsgWriter {
 
     private static char toChar(EsgDetailedTwoWindingTransformer.RegulatingMode mode) {
         switch (mode) {
-            case ACTIVE_FLUX_SIDE_1: return '1';
-            case ACTIVE_FLUX_SIDE_2: return '2';
-            case NOT_REGULATING: return 'N';
-            case VOLTAGE: return 'V';
-            default: throw new InternalError();
+            case ACTIVE_FLUX_SIDE_1:
+                return '1';
+            case ACTIVE_FLUX_SIDE_2:
+                return '2';
+            case NOT_REGULATING:
+                return 'N';
+            case VOLTAGE:
+                return 'V';
+            default:
+                throw new InternalError();
         }
     }
 
@@ -242,17 +258,17 @@ public class EsgWriter {
 
         // second line record
         recordWriter.addValue("48", 1, 2);
-        recordWriter.addValue(transformer.getKtpnom(), 22,25);
-        recordWriter.addValue(transformer.getKtap8(), 27,30);
+        recordWriter.addValue(transformer.getKtpnom(), 22, 25);
+        recordWriter.addValue(transformer.getKtap8(), 27, 30);
         recordWriter.addValue(transformer.getZbusr() != null ? transformer.getZbusr().toString() : "", 32, 39);
-        recordWriter.addValue(transformer.getVoltr(), 41,48);
+        recordWriter.addValue(transformer.getVoltr(), 41, 48);
         recordWriter.addValue(transformer.getPregmin(), 50, 57);
         recordWriter.addValue(transformer.getPregmax(), 59, 66);
         recordWriter.addValue(toChar(transformer.getXregtr()), 68);
         recordWriter.newLine();
 
         // tap records
-        for(EsgDetailedTwoWindingTransformer.Tap tap : transformer.getTaps()) {
+        for (EsgDetailedTwoWindingTransformer.Tap tap : transformer.getTaps()) {
             recordWriter.addValue("48", 1, 2);
             recordWriter.addValue(tap.getIplo(), 22, 25);
             recordWriter.addValue(tap.getUno1(), 27, 34);
@@ -265,9 +281,12 @@ public class EsgWriter {
 
     private static char toChar(EsgConnectionStatus status) {
         switch (status) {
-            case CONNECTED: return 'Y';
-            case NOT_CONNECTED: return 'N';
-            default: throw new InternalError();
+            case CONNECTED:
+                return 'Y';
+            case NOT_CONNECTED:
+                return 'N';
+            default:
+                throw new InternalError();
         }
     }
 
@@ -277,7 +296,7 @@ public class EsgWriter {
         recordWriter.addValue(toChar(load.getIloadst()), 13);
         recordWriter.addValue(load.getZnodlo().toString(), 15, 22);
         recordWriter.addValue(load.getPldstz(), 24, 31);
-        recordWriter.addValue(load.getPldsti() , 33, 40);
+        recordWriter.addValue(load.getPldsti(), 33, 40);
         recordWriter.addValue(load.getPldstp(), 42, 49);
         recordWriter.addValue(load.getQldsti(), 51, 58);
         recordWriter.addValue(load.getQldstz(), 60, 67);
@@ -289,9 +308,12 @@ public class EsgWriter {
 
     private static char toChar(EsgRegulatingMode mode) {
         switch (mode) {
-            case REGULATING: return 'V';
-            case NOT_REGULATING: return 'N';
-            default: throw new InternalError();
+            case REGULATING:
+                return 'V';
+            case NOT_REGULATING:
+                return 'N';
+            default:
+                throw new InternalError();
         }
     }
 
@@ -301,7 +323,7 @@ public class EsgWriter {
         recordWriter.addValue(toChar(generator.getXgenest()), 13);
         recordWriter.addValue(generator.getZnodge().toString(), 15, 22);
         recordWriter.addValue(generator.getPgmin(), 24, 31);
-        recordWriter.addValue(generator.getPgen() , 33, 40);
+        recordWriter.addValue(generator.getPgen(), 33, 40);
         recordWriter.addValue(generator.getPgmax(), 42, 49);
         recordWriter.addValue(generator.getQgmin(), 51, 58);
         recordWriter.addValue(generator.getQgen(), 60, 67);
@@ -317,8 +339,10 @@ public class EsgWriter {
 
     private static char toChar(EsgCapacitorOrReactorBank.RegulatingMode mode) {
         switch (mode) {
-            case NOT_REGULATING: return 'N';
-            default: throw new InternalError();
+            case NOT_REGULATING:
+                return 'N';
+            default:
+                throw new InternalError();
         }
     }
 
@@ -370,7 +394,9 @@ public class EsgWriter {
 
         writeHeader(recordWriter);
         writeGeneralParameters(recordWriter);
-        writeSpecialParameters(recordWriter);
+        if (specialParameters != null) {
+            writeSpecialParameters(recordWriter);
+        }
         writeGeneralComment(recordWriter, comment);
 
         if (network.getAreas().size() > 0) {

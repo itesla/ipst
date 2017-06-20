@@ -77,9 +77,16 @@ public class EurostagExportTool implements Tool, EurostagConstants {
             parameters.setTransformerVoltageControl(false);
             parameters.setSvcVoltageControl(false);
             parameters.setMaxNumIteration(eurostagConfig.getLfMaxNumIteration());
-            parameters.setStartMode(eurostagConfig.isLfWarmStart() ? EsgGeneralParameters.StartMode.WARM_START : EsgGeneralParameters.StartMode.FLAT_START);
-            EsgSpecialParameters specialParameters = new EsgSpecialParameters();
-            specialParameters.setZmin(eurostagConfig.isLfWarmStart() ? EsgSpecialParameters.ZMIN_LOW : EsgSpecialParameters.ZMIN_HIGH);
+            EsgSpecialParameters specialParameters = null;
+            if (exportConfig.isSpecificCompatibility()) {
+                System.out.println("specificCompatibility=true: forces start mode to WARM and write the special parameters section in ech file");
+                parameters.setStartMode(EsgGeneralParameters.StartMode.WARM_START);
+                specialParameters = new EsgSpecialParameters();
+                //WARM START: ZMIN_LOW
+                specialParameters.setZmin(EsgSpecialParameters.ZMIN_LOW);
+            } else {
+                parameters.setStartMode(eurostagConfig.isLfWarmStart() ? EsgGeneralParameters.StartMode.WARM_START : EsgGeneralParameters.StartMode.FLAT_START);
+            }
             EsgNetwork networkEch = new EurostagEchExport(network, exportConfig, parallelIndexes, dictionary, fakeNodes).createNetwork(parameters);
             new EurostagNetworkModifier().hvLoadModelling(networkEch);
             new EsgWriter(networkEch, parameters, specialParameters).write(writer, network.getId() + "/" + network.getStateManager().getWorkingStateId());

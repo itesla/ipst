@@ -27,11 +27,10 @@ import static org.junit.Assert.assertEquals;
  */
 public class EurostagEchExportTest {
 
-    private void test(Network network, String reference, LocalDate editDate) throws IOException {
+    private void test(Network network, String reference, LocalDate editDate, EsgSpecialParameters specialParameters) throws IOException {
         StringWriter writer = new StringWriter();
         EsgGeneralParameters parameters = new EsgGeneralParameters();
         parameters.setEditDate(editDate);
-        EsgSpecialParameters specialParameters = new EsgSpecialParameters();
         new EurostagEchExport(network).write(writer, parameters, specialParameters);
         writer.close();
         assertEquals(CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream(reference), StandardCharsets.UTF_8)), writer.toString());
@@ -40,12 +39,20 @@ public class EurostagEchExportTest {
     @Test
     public void test() throws IOException {
         Network network = EurostagTutorialExample1Factory.create();
-        test(network, "/eurostag-tutorial-example1.ech", LocalDate.parse("2016-03-01"));
+        EsgSpecialParameters specialParameters = new EsgSpecialParameters();
+        test(network, "/eurostag-tutorial-example1.ech", LocalDate.parse("2016-03-01"), specialParameters);
+    }
+
+    @Test
+    public void testNoSpecialParameters() throws IOException {
+        Network network = EurostagTutorialExample1Factory.create();
+        test(network, "/eurostag-tutorial-example1_no_special.ech", LocalDate.parse("2016-03-01"), null);
     }
 
     @Test
     public void testSVC() throws IOException {
         Network network = SvcTestCaseFactory.create();
-        test(network, "/eurostag-svc-test.ech", LocalDate.parse("2016-01-01"));
+        EsgSpecialParameters specialParameters = new EsgSpecialParameters();
+        test(network, "/eurostag-svc-test.ech", LocalDate.parse("2016-01-01"), specialParameters);
     }
 }

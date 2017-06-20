@@ -9,8 +9,6 @@ package eu.itesla_project.iidm.eurostag.export;
 
 import com.google.common.base.Strings;
 import eu.itesla_project.commons.ITeslaException;
-import eu.itesla_project.commons.config.ModuleConfig;
-import eu.itesla_project.commons.config.PlatformConfig;
 import eu.itesla_project.eurostag.network.*;
 import eu.itesla_project.eurostag.network.io.EsgWriter;
 import eu.itesla_project.iidm.network.*;
@@ -232,14 +230,14 @@ public class EurostagEchExport {
     }
 
 
-    private void createAdditionalBank(EsgNetwork esgNetwork, TwoWindingsTransformer twt, Terminal terminal, String nodeName, Set<String> additionalBanksIds, boolean specificCompatibility) {
+    private void createAdditionalBank(EsgNetwork esgNetwork, TwoWindingsTransformer twt, Terminal terminal, String nodeName, Set<String> additionalBanksIds) {
         float rcapba = 0.0f;
         if (-twt.getB() < 0) {
-            rcapba = twt.getB() * (float) Math.pow(terminal.getVoltageLevel().getNominalV(), 2) / ((specificCompatibility == true) ? 2 : 1);
+            rcapba = twt.getB() * (float) Math.pow(terminal.getVoltageLevel().getNominalV(), 2) / (config.isSpecificCompatibility() ? 2 : 1);
         }
         float plosba = 0.0f;
         if (twt.getG() < 0) {
-            plosba = twt.getG() * (float) Math.pow(terminal.getVoltageLevel().getNominalV(), 2) / ((specificCompatibility == true) ? 2 : 1);
+            plosba = twt.getG() * (float) Math.pow(terminal.getVoltageLevel().getNominalV(), 2) / (config.isSpecificCompatibility() ? 2 : 1);
         }
         if ((Math.abs(plosba) > G_EPSILON) || (rcapba > B_EPSILON)) {
             //simple new bank naming: 5 first letters of the node name, 7th letter of the node name, 'C', order code
@@ -263,11 +261,6 @@ public class EurostagEchExport {
 
     private void createTransformers(EsgNetwork esgNetwork, EsgGeneralParameters parameters) {
         Set<String> additionalBanksIds = new HashSet<>();
-
-        PlatformConfig platformConfig = PlatformConfig.defaultConfig();
-        ModuleConfig loadFlowModuleConfig = platformConfig.getModuleConfigIfExists("load-flow-default-parameters");
-        boolean specificCompatibility = (loadFlowModuleConfig != null) ? loadFlowModuleConfig.getBooleanProperty("specificCompatibility", false) : false;
-        LOGGER.info("load-flow-default-parameters/specificCompatibility: {}", specificCompatibility);
 
         for (TwoWindingsTransformer twt : Identifiables.sort(network.getTwoWindingsTransformers())) {
             ConnectionBus bus1 = ConnectionBus.fromTerminal(twt.getTerminal1(), config, fakeNodes);
@@ -377,10 +370,10 @@ public class EurostagEchExport {
             float pregmax = Float.NaN; //...?
 
             //handling of the cases where cmagn should be negative and where pfer should be negative
-            if ((-twt.getB() < 0) || (twt.getG() < 0) || (specificCompatibility == true)) {
-                createAdditionalBank(esgNetwork, twt, twt.getTerminal1(), dictionary.getEsgId(bus1.getId()), additionalBanksIds, specificCompatibility);
-                if (specificCompatibility == true) {
-                    createAdditionalBank(esgNetwork, twt, twt.getTerminal2(), dictionary.getEsgId(bus2.getId()), additionalBanksIds, specificCompatibility);
+            if ((-twt.getB() < 0) || (twt.getG() < 0) || (config.isSpecificCompatibility())) {
+                createAdditionalBank(esgNetwork, twt, twt.getTerminal1(), dictionary.getEsgId(bus1.getId()), additionalBanksIds);
+                if (config.isSpecificCompatibility()) {
+                    createAdditionalBank(esgNetwork, twt, twt.getTerminal2(), dictionary.getEsgId(bus2.getId()), additionalBanksIds);
                 }
                 if (twt.getG() < 0) {
                     pfer = 0.0f;
@@ -549,13 +542,17 @@ public class EurostagEchExport {
         return esgNetwork;
     }
 
+    private EsgSpecialParameters createEsgSpecialParameters(EurostagEchExportConfig config) {
+        return config.isSpecificCompatibility() ? null : new EsgSpecialParameters();
+    }
+
     public void write(Writer writer, EsgGeneralParameters parameters, EsgSpecialParameters specialParameters) throws IOException {
         EsgNetwork esgNetwork = createNetwork(parameters);
         new EsgWriter(esgNetwork, parameters, specialParameters).write(writer, network.getId() + "/" + network.getStateManager().getWorkingStateId());
     }
 
     public void write(Writer writer) throws IOException {
-        write(writer, new EsgGeneralParameters(), new EsgSpecialParameters());
+        write(writer, new EsgGeneralParameters(), createEsgSpecialParameters(config));
     }
 
     public void write(Path file, EsgGeneralParameters parameters, EsgSpecialParameters specialParameters) throws IOException {
@@ -565,7 +562,7 @@ public class EurostagEchExport {
     }
 
     public void write(Path file) throws IOException {
-        write(file, new EsgGeneralParameters(), new EsgSpecialParameters());
+        write(file, new EsgGeneralParameters(), createEsgSpecialParameters(config));
     }
 
 }

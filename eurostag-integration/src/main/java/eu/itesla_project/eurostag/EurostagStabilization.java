@@ -52,7 +52,6 @@ import static eu.itesla_project.computation.FilePreProcessor.ARCHIVE_UNZIP;
 import static eu.itesla_project.computation.FilePreProcessor.FILE_GUNZIP;
 
 /**
- *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
 public class EurostagStabilization implements Stabilization, EurostagConstants {
@@ -127,18 +126,18 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
                         new InputFile(PRE_FAULT_SEQ_FILE_NAME),
                         new InputFile(DDB_ZIP_FILE_NAME, ARCHIVE_UNZIP))
                 .subCommand()
-                    .program(EUSTAG_CPT)
-                    .args("-lf", ECH_FILE_NAME)
-                    .timeout(config.getLfTimeout())
+                .program(EUSTAG_CPT)
+                .args("-lf", ECH_FILE_NAME)
+                .timeout(config.getLfTimeout())
                 .add()
                 .subCommand()
-                    .program(EUSTAG_CPT)
-                    .args("-s", PRE_FAULT_SEQ_FILE_NAME, DTA_FILE_NAME, SAV_FILE_NAME)
-                    .timeout(config.getSimTimeout())
+                .program(EUSTAG_CPT)
+                .args("-s", PRE_FAULT_SEQ_FILE_NAME, DTA_FILE_NAME, SAV_FILE_NAME)
+                .timeout(config.getSimTimeout())
                 .add()
                 .subCommand()
-                    .program(TSEXTRACT)
-                    .args(PRE_FAULT_RES_FILE_NAME, "unused", "INTEGRATION_STEP", INTEGRATION_STEP_FILE_NAME)
+                .program(TSEXTRACT)
+                .args(PRE_FAULT_RES_FILE_NAME, "unused", "INTEGRATION_STEP", INTEGRATION_STEP_FILE_NAME)
                 .add()
                 .outputFiles(new OutputFile(LF_FILE_NAME, FILE_GZIP),
                         new OutputFile(PRE_FAULT_SAC_FILE_NAME, FILE_GZIP),
@@ -155,9 +154,9 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
     @Override
     public String getVersion() {
         return ImmutableMap.builder().put("eurostagVersion", EurostagUtil.VERSION)
-                                     .putAll(Version.VERSION.toMap())
-                                     .build()
-                                     .toString();
+                .putAll(Version.VERSION.toMap())
+                .build()
+                .toString();
     }
 
     private void writeDtaAndControls(Domain domain, OutputStream ddbOs, OutputStream dictGensOs) throws IOException {
@@ -185,9 +184,16 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
             parameters.setTransformerVoltageControl(false);
             parameters.setSvcVoltageControl(false);
             parameters.setMaxNumIteration(config.getLfMaxNumIteration());
-            parameters.setStartMode(config.isLfWarmStart() ? EsgGeneralParameters.StartMode.WARM_START : EsgGeneralParameters.StartMode.FLAT_START);
-            EsgSpecialParameters specialParameters = new EsgSpecialParameters();
-            specialParameters.setZmin(config.isLfWarmStart() ? EsgSpecialParameters.ZMIN_LOW : EsgSpecialParameters.DEFAULT_ZMIN);
+            EsgSpecialParameters specialParameters = null;
+            if (exportConfig.isSpecificCompatibility()) {
+                LOGGER.info("specificCompatibility=true: forces start mode to WARM and write the special parameters section in ech file");
+                parameters.setStartMode(EsgGeneralParameters.StartMode.WARM_START);
+                specialParameters = new EsgSpecialParameters();
+                //WARM START: ZMIN_LOW
+                specialParameters.setZmin(EsgSpecialParameters.ZMIN_LOW);
+            } else {
+                parameters.setStartMode(config.isLfWarmStart() ? EsgGeneralParameters.StartMode.WARM_START : EsgGeneralParameters.StartMode.FLAT_START);
+            }
             EsgNetwork networkEch = new EurostagEchExport(network, exportConfig, parallelIndexes, dictionary, fakeNodes).createNetwork(parameters);
             networkModifier.hvLoadModelling(networkEch);
             new EsgWriter(networkEch, parameters, specialParameters).write(writer, network.getId() + "/" + network.getStateManager().getWorkingStateId());
@@ -324,8 +330,8 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
             status = EurostagUtil.isSteadyStateReached(workingDir.resolve(INTEGRATION_STEP_FILE_NAME), config.getMinStepAtEndOfStabilization())
                     ? StabilizationStatus.COMPLETED : StabilizationStatus.COMPLETED_BUT_NOT_TO_STEADY_STATE;
             state = new EurostagState(network.getStateManager().getWorkingStateId(),
-                                      Files.readAllBytes(workingDir.resolve(PRE_FAULT_SAC_GZ_FILE_NAME)),
-                                      context.dictGensCsv);
+                    Files.readAllBytes(workingDir.resolve(PRE_FAULT_SAC_GZ_FILE_NAME)),
+                    context.dictGensCsv);
         } else {
             status = StabilizationStatus.FAILED;
         }
