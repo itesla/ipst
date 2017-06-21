@@ -60,11 +60,16 @@ public class EurostagEchExportConfig {
         this.forbiddenCharactersReplacement = Objects.requireNonNull(forbiddenCharactersReplacement, "forbiddenCharactersReplacement (single char) string must not be null");
         this.noGeneratorMinMaxQ = noGeneratorMinMaxQ;
         this.noSwitch = noSwitch;
-        this.svcAsFixedInjectionInLF = svcAsFixedInjectionInLF;
+        this.specificCompatibility = specificCompatibility;
+        if (specificCompatibility) {
+            this.svcAsFixedInjectionInLF = true;
+            LOGGER.info("force svcAsFixedInjectionInLF to true (specificCompatibility is true)");
+        } else {
+            this.svcAsFixedInjectionInLF = svcAsFixedInjectionInLF;
+        }
         if (forbiddenCharacters.contains(forbiddenCharactersReplacement.toString())) {
             throw new IllegalArgumentException("forbiddenCharactersReplacement " + forbiddenCharactersReplacement + " must not appear also in the forbiddenCharacters string: " + forbiddenCharacters);
         }
-        this.specificCompatibility = specificCompatibility;
     }
 
     public boolean isNoGeneratorMinMaxQ() {
@@ -99,18 +104,13 @@ public class EurostagEchExportConfig {
 
         // specificCompatibility parameter = true forces  svcAsFixedInjectionInLF to true
         ModuleConfig loadFlowModuleConfig = platformConfig.getModuleConfigIfExists("load-flow-default-parameters");
-        boolean specificCompatibility = (loadFlowModuleConfig != null) ? loadFlowModuleConfig.getBooleanProperty("specificCompatibility", false) : false;
-        LOGGER.info("load-flow-default-parameters/specificCompatibility: {}", specificCompatibility);
+        boolean specificCompatibility = (loadFlowModuleConfig != null) ? loadFlowModuleConfig.getBooleanProperty("specificCompatibility", DEFAULT_SPECIFIC_COMPATIBILITY) : DEFAULT_SPECIFIC_COMPATIBILITY;
 
         if (platformConfig.moduleExists(EUROSTAG_ECH_EXPORT_CONFIG)) {
             ModuleConfig config = platformConfig.getModuleConfig(EUROSTAG_ECH_EXPORT_CONFIG);
             boolean noGeneratorMinMaxQ = config.getBooleanProperty("noGeneratorMinMaxQ", DEFAULT_NOGENERATORMINMAXQ);
             boolean noSwitch = config.getBooleanProperty("noSwitch", DEFAULT_NOSWITCH);
             boolean svcAsFixedInjectionInLF = config.getBooleanProperty("svcAsFixedInjectionInLF", DEFAULT_SVC_AS_FIXED_INJECTION_IN_LF);
-            if (specificCompatibility) {
-                svcAsFixedInjectionInLF = true;
-                LOGGER.info("force svcAsFixedInjectionInLF to true (specificCompatibility is true)");
-            }
             String forbiddenCharacters = config.getStringProperty("forbiddenCharacters", DEFAULT_FORBIDDEN_CHARACTERS);
             String replacementCharString = config.getStringProperty("forbiddenCharactersReplacement", DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT.toString());
             if (replacementCharString.length() != 1) {
@@ -120,7 +120,7 @@ public class EurostagEchExportConfig {
             return new EurostagEchExportConfig(noGeneratorMinMaxQ, noSwitch, forbiddenCharacters, forbiddenCharactersReplacement, svcAsFixedInjectionInLF, specificCompatibility);
         } else {
             LOGGER.warn("no eurostag-ech-export config found: Using defaults.");
-            return new EurostagEchExportConfig(DEFAULT_NOGENERATORMINMAXQ, DEFAULT_NOSWITCH, DEFAULT_FORBIDDEN_CHARACTERS, DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT, DEFAULT_SVC_AS_FIXED_INJECTION_IN_LF, DEFAULT_SPECIFIC_COMPATIBILITY);
+            return new EurostagEchExportConfig(DEFAULT_NOGENERATORMINMAXQ, DEFAULT_NOSWITCH, DEFAULT_FORBIDDEN_CHARACTERS, DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT, DEFAULT_SVC_AS_FIXED_INJECTION_IN_LF, specificCompatibility);
         }
     }
 
@@ -131,7 +131,7 @@ public class EurostagEchExportConfig {
                 ", forbiddenCharacters=" + forbiddenCharacters +
                 ", forbiddenCharactersReplacement=" + forbiddenCharactersReplacement +
                 ", svcAsFixedInjectionInLF=" + svcAsFixedInjectionInLF +
-                ", load-flow-default-parameters/specificCompatibility=" + specificCompatibility +
+                ", specificCompatibility=" + specificCompatibility +
                 "]";
     }
 
