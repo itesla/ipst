@@ -9,6 +9,7 @@ package eu.itesla_project.modules.topo;
 import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.iidm.network.util.ShortIdDictionary;
 import eu.itesla_project.modules.histo.*;
 import eu.itesla_project.modules.offline.OfflineConfig;
@@ -105,7 +106,7 @@ public class PrintSubstationTopoHistoryTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         String substationId = line.getOptionValue("substation-id");
         Interval interval = Interval.parse(line.getOptionValue("interval"));
         Path dictFile = null;
@@ -145,6 +146,6 @@ public class PrintSubstationTopoHistoryTool implements Tool {
         } else {
             topos2 = topos;
         }
-        topos2.entrySet().stream().forEach(e -> System.out.println(e.getKey() + " " + e.getValue()));
+        topos2.entrySet().stream().forEach(e -> context.getOutputStream().println(e.getKey() + " " + e.getValue()));
     }
 }

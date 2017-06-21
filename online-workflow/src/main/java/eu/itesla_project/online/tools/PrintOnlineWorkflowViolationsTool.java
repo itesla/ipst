@@ -13,6 +13,7 @@ import eu.itesla_project.commons.io.table.TableFormatter;
 import eu.itesla_project.commons.io.table.TableFormatterConfig;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.online.OnlineDb;
 import eu.itesla_project.modules.online.OnlineStep;
@@ -106,7 +107,7 @@ public class PrintOnlineWorkflowViolationsTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         OnlineConfig config = OnlineConfig.load();
         String workflowId = line.getOptionValue("workflow");
         final LimitViolationFilter violationsFilter = (line.hasOption("type")) ?
@@ -138,7 +139,7 @@ public class PrintOnlineWorkflowViolationsTool implements Tool {
                         printStateStepViolations(formatter, stateId, step, violationsByStateAndStep, violationsFilter);
                     }
                 } else {
-                    System.err.println("\nNo violations for workflow " + workflowId + ", step " + step.name() + " and state " + stateId);
+                    context.getErrorStream().println("\nNo violations for workflow " + workflowId + ", step " + step.name() + " and state " + stateId);
                 }
             } else if (line.hasOption("state")) {
                 Integer stateId = Integer.parseInt(line.getOptionValue("state"));
@@ -149,7 +150,7 @@ public class PrintOnlineWorkflowViolationsTool implements Tool {
                                 printStateStepViolations(formatter, stateId, onlineStep, violations, violationsFilter));
                     }
                 } else {
-                    System.err.println("\nNo violations for workflow " + workflowId + " and state " + stateId);
+                    context.getErrorStream().println("\nNo violations for workflow " + workflowId + " and state " + stateId);
                 }
             } else if (line.hasOption("step")) {
                 OnlineStep step = OnlineStep.valueOf(line.getOptionValue("step"));
@@ -160,7 +161,7 @@ public class PrintOnlineWorkflowViolationsTool implements Tool {
                                 printStateStepViolations(formatter, stateId, step, violations, violationsFilter));
                     }
                 } else {
-                    System.err.println("\nNo violations for workflow " + workflowId + " and step " + step);
+                    context.getErrorStream().println("\nNo violations for workflow " + workflowId + " and step " + step);
                 }
             } else {
                 Map<Integer, Map<OnlineStep, List<LimitViolation>>> workflowViolations = onlinedb.getViolations(workflowId);
@@ -174,7 +175,7 @@ public class PrintOnlineWorkflowViolationsTool implements Tool {
                         });
                     }
                 } else {
-                    System.err.println("\nNo violations for workflow " + workflowId);
+                    context.getErrorStream().println("\nNo violations for workflow " + workflowId);
                 }
             }
         }

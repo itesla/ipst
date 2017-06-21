@@ -6,14 +6,16 @@
  */
 package eu.itesla_project.modules.rules;
 
-import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.commons.tools.Command;
 import com.google.auto.service.AutoService;
+import eu.itesla_project.commons.tools.Command;
+import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.modules.offline.OfflineConfig;
-import java.util.List;
 import org.apache.commons.cli.CommandLine;
 import org.nocrala.tools.texttablefmt.BorderStyle;
 import org.nocrala.tools.texttablefmt.Table;
+
+import java.util.List;
 
 /**
  *
@@ -28,7 +30,7 @@ public class ListRulesDbWorkflowsTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         OfflineConfig config = OfflineConfig.load();
         String rulesDbName = line.hasOption("rules-db-name") ? line.getOptionValue("rules-db-name") : OfflineConfig.DEFAULT_RULES_DB_NAME;
         RulesDbClient rulesDb = config.getRulesDbClientFactoryClass().newInstance().create(rulesDbName);
@@ -38,7 +40,7 @@ public class ListRulesDbWorkflowsTool implements Tool {
         for (String workflowId : workflowIds) {
             table.addCell(workflowId);
         }
-        System.out.println(table.render());
+        context.getOutputStream().println(table.render());
     }
 
 }

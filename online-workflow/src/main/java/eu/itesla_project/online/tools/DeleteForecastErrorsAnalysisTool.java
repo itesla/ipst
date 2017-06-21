@@ -6,6 +6,7 @@
  */
 package eu.itesla_project.online.tools;
 
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -73,20 +74,20 @@ public class DeleteForecastErrorsAnalysisTool implements Tool {
 	}
 
 	@Override
-	public void run(CommandLine line) throws Exception {
+	public void run(CommandLine line, ToolRunningContext context) throws Exception {
 		ForecastErrorsAnalysisConfig config = ForecastErrorsAnalysisConfig.load();
 		ForecastErrorsDataStorage feDataStorage = config.getForecastErrorsDataStorageFactoryClass().newInstance().create(); 
 		String analysisId = line.getOptionValue("analysis");
 		TimeHorizon timeHorizon = TimeHorizon.fromName(line.getOptionValue("time-horizon"));
-		System.out.println("Deleting analysis " + analysisId + " with time horizon " + timeHorizon);
+		context.getOutputStream().println("Deleting analysis " + analysisId + " with time horizon " + timeHorizon);
 		if ( feDataStorage.isForecastErrorsDataAvailable(analysisId, timeHorizon)
 			 || feDataStorage.areStatisticsAvailable(analysisId, timeHorizon) ) {
 			if ( feDataStorage.deleteAnalysis(analysisId, timeHorizon) )
-				System.out.println("Analysis " + analysisId + " with time horizon " + timeHorizon + " deleted");
+				context.getOutputStream().println("Analysis " + analysisId + " with time horizon " + timeHorizon + " deleted");
 			else
-				System.out.println("Cannot delete analysis " + analysisId + " with time horizon " + timeHorizon);
+				context.getOutputStream().println("Cannot delete analysis " + analysisId + " with time horizon " + timeHorizon);
 		} else
-			System.out.println("No analysis " + analysisId + " with time horizon " + timeHorizon);
+			context.getOutputStream().println("No analysis " + analysisId + " with time horizon " + timeHorizon);
 	}
 
 }

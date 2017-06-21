@@ -9,6 +9,7 @@ package eu.itesla_project.modules.rules;
 import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.iidm.import_.Importers;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.modules.offline.OfflineConfig;
@@ -22,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -45,7 +47,8 @@ public class CheckSecurityTool implements Tool {
         return CheckSecurityCommand.INSTANCE;
     }
 
-    private static void prettyPrint(Map<String, Map<SecurityIndexType, SecurityRuleCheckStatus>> checkStatusPerContingency, Set<SecurityIndexType> securityIndexTypes) {
+    private static void prettyPrint(Map<String, Map<SecurityIndexType, SecurityRuleCheckStatus>> checkStatusPerContingency,
+                                    Set<SecurityIndexType> securityIndexTypes, PrintStream out) {
         Table table = new Table(1 + securityIndexTypes.size(), BorderStyle.CLASSIC_WIDE);
         table.addCell("Contingency");
         for (SecurityIndexType securityIndexType : securityIndexTypes) {
@@ -63,7 +66,7 @@ public class CheckSecurityTool implements Tool {
             }
         }
 
-        System.out.println(table.render());
+        out.println(table.render());
     }
 
     private static void writeCsv(Map<String, Map<SecurityIndexType, SecurityRuleCheckStatus>> checkStatusPerContingency, Set<SecurityIndexType> securityIndexTypes, Path outputCsvFile) throws IOException {
@@ -126,7 +129,7 @@ public class CheckSecurityTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         OfflineConfig config = OfflineConfig.load();
         Path caseFile = Paths.get(line.getOptionValue("case-file"));
         Objects.requireNonNull(caseFile);
@@ -147,7 +150,7 @@ public class CheckSecurityTool implements Tool {
         try (RulesDbClient rulesDb = rulesDbClientFactory.create(rulesDbName)) {
 
             if (Files.isRegularFile(caseFile)) {
-                System.out.println("loading case " + caseFile + "...");
+                context.getOutputStream().println("loading case " + caseFile + "...");
                 // load the network
                 Network network = Importers.loadNetwork(caseFile);
                 if (network == null) {
@@ -155,13 +158,13 @@ public class CheckSecurityTool implements Tool {
                 }
                 network.getStateManager().allowStateMultiThreadAccess(true);
 
-                System.out.println("checking rules...");
+                context.getOutputStream().println("checking rules...");
 
                 Map<String, Map<SecurityIndexType, SecurityRuleCheckStatus>> checkStatusPerContingency
                         = SecurityRuleUtil.checkRules(network, rulesDb, workflowId, attributeSet, securityIndexTypes, contingencies, purityThreshold);
 
                 if (outputCsvFile == null) {
-                    prettyPrint(checkStatusPerContingency, securityIndexTypes);
+                    prettyPrint(checkStatusPerContingency, securityIndexTypes, context.getOutputStream());
                 } else {
                     writeCsv(checkStatusPerContingency, securityIndexTypes, outputCsvFile);
                 }
@@ -189,7 +192,7 @@ public class CheckSecurityTool implements Tool {
                     } catch (Exception e) {
                         LOGGER.error(e.toString(), e);
                     }
-                }, dataSource -> System.out.println("loading case " + dataSource.getBaseName() + "..."));
+                }, dataSource -> context.getOutputStream().println("loading case " + dataSource.getBaseName() + "..."));
 
                 writeCsv2(checkStatusPerBaseCase, outputCsvFile);
             }

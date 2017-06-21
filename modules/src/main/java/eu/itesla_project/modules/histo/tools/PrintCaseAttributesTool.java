@@ -10,8 +10,7 @@ import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.ITeslaException;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.computation.local.LocalComputationManager;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.iidm.import_.Importer;
 import eu.itesla_project.iidm.import_.Importers;
 import eu.itesla_project.modules.histo.HistoDbAttributeId;
@@ -99,7 +98,7 @@ public class PrintCaseAttributesTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         String caseFormat = line.getOptionValue("case-format");
         Path caseDir = Paths.get(line.getOptionValue("case-dir"));
         Set<HistoDbAttributeId> attributeIds = new LinkedHashSet<>();
@@ -108,36 +107,34 @@ public class PrintCaseAttributesTool implements Tool {
         }
         Path outputCsvFile = Paths.get(line.getOptionValue("output-csv-file"));
 
-        try (ComputationManager computationManager = new LocalComputationManager()) {
-            Importer importer = Importers.getImporter(caseFormat, computationManager);
-            if (importer == null) {
-                throw new ITeslaException("Format " + caseFormat + " not supported");
+        Importer importer = Importers.getImporter(caseFormat, context.getComputationManager());
+        if (importer == null) {
+            throw new ITeslaException("Format " + caseFormat + " not supported");
+        }
+        try (BufferedWriter writer = Files.newBufferedWriter(outputCsvFile, StandardCharsets.UTF_8)) {
+            writer.write("Case name");
+            for (HistoDbAttributeId attributeId : attributeIds) {
+                writer.write(CSV_SEPARATOR);
+                writer.write(attributeId.toString());
             }
-            try (BufferedWriter writer = Files.newBufferedWriter(outputCsvFile, StandardCharsets.UTF_8)) {
-                writer.write("Case name");
-                for (HistoDbAttributeId attributeId : attributeIds) {
-                    writer.write(CSV_SEPARATOR);
-                    writer.write(attributeId.toString());
-                }
-                writer.newLine();
-                Importers.importAll(caseDir, importer, false, network -> {
-                    try {
-                        writer.write(network.getId());
-                        Map<HistoDbAttributeId, Object> values = IIDM2DB.extractCimValues(network, new IIDM2DB.Config(null, false)).getSingleValueMap();
-                        for (HistoDbAttributeId attributeId : attributeIds) {
-                            writer.write(CSV_SEPARATOR);
-                            Object value = values.get(attributeId);
-                            if (value != null) {
-                                writer.write(value.toString());
-                            }
-
+            writer.newLine();
+            Importers.importAll(caseDir, importer, false, network -> {
+                try {
+                    writer.write(network.getId());
+                    Map<HistoDbAttributeId, Object> values = IIDM2DB.extractCimValues(network, new IIDM2DB.Config(null, false)).getSingleValueMap();
+                    for (HistoDbAttributeId attributeId : attributeIds) {
+                        writer.write(CSV_SEPARATOR);
+                        Object value = values.get(attributeId);
+                        if (value != null) {
+                            writer.write(value.toString());
                         }
-                        writer.newLine();
-                    } catch (Exception e) {
-                        LOGGER.error(e.toString(), e);
+
                     }
-                });
-            }
+                    writer.newLine();
+                } catch (Exception e) {
+                    LOGGER.error(e.toString(), e);
+                }
+            });
         }
     }
 

@@ -12,6 +12,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.modules.histo.HistoDbAttributeId;
 import eu.itesla_project.modules.histo.IIDM2DB;
@@ -100,10 +101,10 @@ public class RunSecurityRulesOnStateTool implements Tool {
 	}
 
 	@Override
-	public void run(CommandLine line) throws Exception {
+	public void run(CommandLine line, ToolRunningContext context) throws Exception {
 		String workflowId = line.getOptionValue("workflow");
 		Integer stateId = Integer.valueOf(line.getOptionValue("state"));
-		System.out.println("loading state " + stateId + " of workflow " + workflowId + " from the online db ...");
+		context.getOutputStream().println("loading state " + stateId + " of workflow " + workflowId + " from the online db ...");
         OnlineConfig config = OnlineConfig.load();
 		OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
         // load the network
@@ -113,7 +114,7 @@ public class RunSecurityRulesOnStateTool implements Tool {
         	String offlineWorkflowId = parameters.getOfflineWorkflowId();
         	if (line.hasOption("offline-workflow"))
         		offlineWorkflowId = line.getOptionValue("offline-workflow");
-        	System.out.println("checking state " + stateId + " of workflow " + workflowId + " against rules of offline workflow " + offlineWorkflowId + " ...");
+        	context.getOutputStream().println("checking state " + stateId + " of workflow " + workflowId + " against rules of offline workflow " + offlineWorkflowId + " ...");
         	RulesDbClient rulesDb = config.getRulesDbClientFactoryClass().newInstance().create("rulesdb");
         	RuleAttributeSet attributeSet = RuleAttributeSet.MONTE_CARLO;
         	if ( line.hasOption("wca"))
@@ -159,9 +160,9 @@ public class RunSecurityRulesOnStateTool implements Tool {
                     table.addCell(checkStatus.get(securityIndexType).name());
                 }
             }
-            System.out.println(table.render());
+            context.getOutputStream().println(table.render());
         } else {
-        	System.out.println("no state " + stateId + " of workflow " + workflowId + " stored in the online db");
+        	context.getOutputStream().println("no state " + stateId + " of workflow " + workflowId + " stored in the online db");
         }
 		onlinedb.close();
 	}

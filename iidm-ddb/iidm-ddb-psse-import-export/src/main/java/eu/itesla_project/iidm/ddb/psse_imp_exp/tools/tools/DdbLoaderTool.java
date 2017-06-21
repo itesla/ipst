@@ -9,6 +9,7 @@ package eu.itesla_project.iidm.ddb.psse_imp_exp.tools.tools;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.iidm.ddb.psse_imp_exp.DdbDyrLoader;
 import org.apache.commons.cli.CommandLine;
 
@@ -31,7 +32,7 @@ public class DdbLoaderTool implements Tool {
 	}
 
 	@Override
-	public void run(CommandLine line) throws Exception {
+	public void run(CommandLine line, ToolRunningContext context) throws Exception {
 		String dyrPathS  = line.getOptionValue(DdbLoaderCommand.PSSE_DYRFILEPATH);
 		String mappingPathS  = line.getOptionValue(DdbLoaderCommand.PSSE_MAPPINGFILEPATH);
 		String jbossHost = line.getOptionValue(DdbLoaderCommand.HOST);
