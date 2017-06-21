@@ -8,11 +8,9 @@
 package eu.itesla_project.online.tools;
 
 import com.google.auto.service.AutoService;
-
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.computation.local.LocalComputationManager;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.loadflow.api.LoadFlowFactory;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
@@ -21,9 +19,8 @@ import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.online.OnlineDb;
 import eu.itesla_project.modules.online.OnlineWorkflowParameters;
 import eu.itesla_project.modules.rules.RulesDbClient;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
 import eu.itesla_project.modules.wca.*;
-
+import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -112,10 +109,10 @@ public class RunWcaOnStateTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         String workflowId = line.getOptionValue("workflow");
         Integer stateId = Integer.valueOf(line.getOptionValue("state"));
-        System.out.println("loading state " + stateId + " of workflow " + workflowId + " from the online db ...");
+        context.getOutputStream().println("loading state " + stateId + " of workflow " + workflowId + " from the online db ...");
         OnlineConfig config = OnlineConfig.load();
         OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
         // load the network
@@ -137,7 +134,6 @@ public class RunWcaOnStateTool implements Tool {
                         .map(SecurityIndexType::valueOf)
                         .collect(Collectors.toSet());
             }
-            ComputationManager computationManager = new LocalComputationManager();
             network.getStateManager().allowStateMultiThreadAccess(true);
             WCAParameters wcaParameters = new WCAParameters(histoInterval, offlineWorkflowId, securityIndexTypes, purityThreshold);
             ContingenciesAndActionsDatabaseClient contingenciesDb = config.getContingencyDbClientFactoryClass().newInstance().create();
@@ -145,7 +141,7 @@ public class RunWcaOnStateTool implements Tool {
             try (HistoDbClient histoDbClient = config.getHistoDbClientFactoryClass().newInstance().create();
                  RulesDbClient rulesDbClient = config.getRulesDbClientFactoryClass().newInstance().create("rulesdb")) {
                 UncertaintiesAnalyserFactory uncertaintiesAnalyserFactory = config.getUncertaintiesAnalyserFactoryClass().newInstance();
-                WCA wca = config.getWcaFactoryClass().newInstance().create(network, computationManager, histoDbClient, rulesDbClient, uncertaintiesAnalyserFactory, contingenciesDb, loadFlowFactory);
+                WCA wca = config.getWcaFactoryClass().newInstance().create(network, context.getComputationManager(), histoDbClient, rulesDbClient, uncertaintiesAnalyserFactory, contingenciesDb, loadFlowFactory);
                 WCAResult result = wca.run(wcaParameters);
                 Table table = new Table(7, BorderStyle.CLASSIC_WIDE);
                 table.addCell("Contingency", new CellStyle(CellStyle.HorizontalAlign.center));
@@ -167,7 +163,7 @@ public class RunWcaOnStateTool implements Tool {
                     }
                     table.addCell(Objects.toString(cluster.getCauses(), ""), new CellStyle(CellStyle.HorizontalAlign.center));
                 }
-                System.out.println(table.render());
+                context.getOutputStream().println(table.render());
             }
         }
     }

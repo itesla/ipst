@@ -9,6 +9,7 @@ package eu.itesla_project.offline.tools;
 import eu.itesla_project.commons.tools.Tool;
 import eu.itesla_project.commons.tools.Command;
 import com.google.auto.service.AutoService;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.offline.OfflineApplication;
 import eu.itesla_project.offline.OfflineWorkflowStatus;
 import eu.itesla_project.offline.RemoteOfflineApplicationImpl;
@@ -33,7 +34,7 @@ public class ListOfflineWorkflowsTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         try (OfflineApplication app = new RemoteOfflineApplicationImpl()) {
             Map<String, OfflineWorkflowStatus> statuses = app.listWorkflows();
             Table table = new Table(4, BorderStyle.CLASSIC_WIDE);
@@ -54,7 +55,7 @@ public class ListOfflineWorkflowsTool implements Tool {
                 table.addCell(status.getStep() != null ? status.getStep().toString() : "");
                 table.addCell(remaining != null ? PeriodFormat.getDefault().print(remaining.toPeriod()) : "");
             }
-            System.out.println(table.render());
+            context.getOutputStream().println(table.render());
         }
     }
 

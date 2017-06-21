@@ -7,18 +7,17 @@
 package eu.itesla_project.fpf_integration;
 
 import com.google.auto.service.AutoService;
+import eu.itesla_project.cases.CaseRepository;
+import eu.itesla_project.cases.CaseType;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.computation.local.LocalComputationManager;
+import eu.itesla_project.commons.tools.ToolRunningContext;
+import eu.itesla_project.contingency.Contingency;
 import eu.itesla_project.fpf_integration.executor.FPFAnalysis;
 import eu.itesla_project.iidm.network.Country;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.mcla.ForecastErrorsDataStorageImpl;
-import eu.itesla_project.cases.CaseRepository;
-import eu.itesla_project.cases.CaseType;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
-import eu.itesla_project.contingency.Contingency;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.online.OnlineWorkflowParameters;
 import eu.itesla_project.modules.online.TimeHorizon;
@@ -96,7 +95,7 @@ public class RunFPFTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
 
         OnlineWorkflowParameters parameters=OnlineWorkflowParameters.loadDefault();
         OnlineConfig onlineConfig=OnlineConfig.load();
@@ -113,23 +112,22 @@ public class RunFPFTool implements Tool {
 
         String outputDir = line.getOptionValue("output-dir");
 
-        ComputationManager computationManager = new LocalComputationManager();
         ForecastErrorsDataStorageImpl feDataStorage = new ForecastErrorsDataStorageImpl();
-        CaseRepository caseRepository = onlineConfig.getCaseRepositoryFactoryClass().newInstance().create(computationManager);
+        CaseRepository caseRepository = onlineConfig.getCaseRepositoryFactoryClass().newInstance().create(context.getComputationManager());
 
         List<Network> networks = caseRepository.load(baseCaseDate, CaseType.FO, Country.FR);
         if (networks.isEmpty()) {
             throw new RuntimeException("Base case not found");
         }
         Network network = networks.get(0);
-        System.out.println("- Network id: " + network.getId());
-        System.out.println("- Network name: " + network.getName());
+        context.getOutputStream().println("- Network id: " + network.getId());
+        context.getOutputStream().println("- Network name: " + network.getName());
 
         ContingenciesAndActionsDatabaseClient contingenciesDb = onlineConfig.getContingencyDbClientFactoryClass().newInstance().create();
         List<Contingency> contingencyList=contingenciesDb.getContingencies(network);
 
         FPFAnalysis fpfce=new FPFAnalysis();
-        fpfce.init(network,computationManager,feDataStorage);
+        fpfce.init(network,context.getComputationManager(),feDataStorage);
         fpfce.run(analysisId, timeHorizon, contingencyList, Paths.get(outputDir));
     }
 }

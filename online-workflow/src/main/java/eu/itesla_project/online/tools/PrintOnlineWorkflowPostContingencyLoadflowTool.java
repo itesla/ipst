@@ -13,6 +13,7 @@ import eu.itesla_project.commons.io.table.TableFormatter;
 import eu.itesla_project.commons.io.table.TableFormatterConfig;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.online.OnlineDb;
 import org.apache.commons.cli.CommandLine;
@@ -93,7 +94,7 @@ public class PrintOnlineWorkflowPostContingencyLoadflowTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         OnlineConfig config = OnlineConfig.load();
         Column[] tableColumns = {
                 new Column("State"),
@@ -114,7 +115,7 @@ public class PrintOnlineWorkflowPostContingencyLoadflowTool implements Tool {
                                 printValues(formatter, stateId, contingencyId, loadflowConverge));
                     }
                 } else {
-                    System.err.println("\nNo post contingency loadflow data for workflow " + workflowId + " and state " + stateId);
+                    context.getErrorStream().println("\nNo post contingency loadflow data for workflow " + workflowId + " and state " + stateId);
                 }
             } else if (line.hasOption("contingency")) {
                 String contingencyId = line.getOptionValue("contingency");
@@ -125,7 +126,7 @@ public class PrintOnlineWorkflowPostContingencyLoadflowTool implements Tool {
                                 printValues(formatter, stateId, contingencyId, loadflowConverge));
                     }
                 } else {
-                    System.err.println("\nNo post contingency loadflow data for workflow " + workflowId + " and contingency " + contingencyId);
+                    context.getErrorStream().println("\nNo post contingency loadflow data for workflow " + workflowId + " and contingency " + contingencyId);
                 }
             } else {
                 Map<Integer, Map<String, Boolean>> loadflowConvergence = onlinedb.getPostContingencyLoadflowConvergence(workflowId);
@@ -139,7 +140,7 @@ public class PrintOnlineWorkflowPostContingencyLoadflowTool implements Tool {
                         });
                     }
                 } else {
-                    System.err.println("\nNo post contingency loadflow data for workflow " + workflowId);
+                    context.getErrorStream().println("\nNo post contingency loadflow data for workflow " + workflowId);
                 }
             }
         }
