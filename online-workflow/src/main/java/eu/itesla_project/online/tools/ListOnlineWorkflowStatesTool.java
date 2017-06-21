@@ -10,6 +10,7 @@ package eu.itesla_project.online.tools;
 import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.online.OnlineDb;
 import org.apache.commons.cli.CommandLine;
@@ -68,22 +69,22 @@ public class ListOnlineWorkflowStatesTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         OnlineConfig config = OnlineConfig.load();
         OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
         String workflowId = line.getOptionValue("workflow");
         List<Integer> storedStates = onlinedb.listStoredStates(workflowId);
         if (!storedStates.isEmpty()) {
-            System.out.println("Stored States = " + storedStates.toString());
+            context.getOutputStream().println("Stored States = " + storedStates.toString());
         } else {
-            System.out.println("No stored states for this workflow");
+            context.getOutputStream().println("No stored states for this workflow");
         }
 
         Map<Integer, Set<String>> storedPostContingenciesStates = onlinedb.listStoredPostContingencyStates(workflowId);
         if (!storedPostContingenciesStates.isEmpty()) {
-            System.out.println("Stored post-contingencies states ( state id, contingencies ids ) = " + storedPostContingenciesStates.toString());
+            context.getOutputStream().println("Stored post-contingencies states ( state id, contingencies ids ) = " + storedPostContingenciesStates.toString());
         } else {
-            System.out.println("No stored post-contingencies states for this workflow");
+            context.getOutputStream().println("No stored post-contingencies states for this workflow");
         }
         onlinedb.close();
     }

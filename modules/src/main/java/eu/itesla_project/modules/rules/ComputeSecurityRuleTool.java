@@ -6,16 +6,15 @@
  */
 package eu.itesla_project.modules.rules;
 
-import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.commons.tools.Command;
 import com.google.auto.service.AutoService;
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.computation.local.LocalComputationManager;
+import eu.itesla_project.commons.tools.Command;
+import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.modules.offline.MetricsDb;
+import eu.itesla_project.modules.offline.OfflineConfig;
 import eu.itesla_project.modules.offline.OfflineDb;
 import eu.itesla_project.simulation.securityindexes.SecurityIndexId;
 import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
-import eu.itesla_project.modules.offline.OfflineConfig;
 import org.apache.commons.cli.CommandLine;
 
 /**
@@ -31,7 +30,7 @@ public class ComputeSecurityRuleTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         String simulationDbName = line.hasOption("simulation-db-name") ? line.getOptionValue("simulation-db-name") : OfflineConfig.DEFAULT_SIMULATION_DB_NAME;
         String workflowId = line.getOptionValue("workflow");
         String rulesDbName = line.hasOption("rules-db-name") ? line.getOptionValue("rules-db-name") : OfflineConfig.DEFAULT_RULES_DB_NAME;
@@ -43,8 +42,7 @@ public class ComputeSecurityRuleTool implements Tool {
         RulesDbClient rulesDb = config.getRulesDbClientFactoryClass().newInstance().create(rulesDbName);
         OfflineDb offlineDb = config.getOfflineDbFactoryClass().newInstance().create(simulationDbName);
         MetricsDb metricsDb = config.getMetricsDbFactoryClass().newInstance().create(metricsDbName);
-        ComputationManager computationManager = new LocalComputationManager();
-        RulesBuilder rulesBuilder = config.getRulesBuilderFactoryClass().newInstance().create(computationManager, offlineDb, metricsDb, rulesDb);
+        RulesBuilder rulesBuilder = config.getRulesBuilderFactoryClass().newInstance().create(context.getComputationManager(), offlineDb, metricsDb, rulesDb);
         rulesBuilder.build(workflowId, attributeSet, new SecurityIndexId(contingency, indexType));
     }
 

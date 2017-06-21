@@ -8,11 +8,9 @@
 package eu.itesla_project.modules.wca;
 
 import com.google.auto.service.AutoService;
-
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.computation.local.LocalComputationManager;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.iidm.import_.Importers;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.iidm.network.StateManager;
@@ -23,7 +21,6 @@ import eu.itesla_project.modules.offline.OfflineConfig;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.rules.RulesDbClient;
 import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -207,7 +204,7 @@ public class WCATool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         Path caseFile = Paths.get(line.getOptionValue("case-file"));
         String offlineWorkflowId = line.getOptionValue("offline-workflow-id"); // can be null meaning use no offline security rules
         Interval histoInterval = Interval.parse(line.getOptionValue("history-interval"));
@@ -227,127 +224,125 @@ public class WCATool implements Tool {
             outputCsvFile = Paths.get(line.getOptionValue("output-csv-file"));
         }
 
-        try (ComputationManager computationManager = new LocalComputationManager()) {
-            WCAParameters parameters = new WCAParameters(histoInterval, offlineWorkflowId, securityIndexTypes, purityThreshold);
-            OnlineConfig config = OnlineConfig.load();
-            ContingenciesAndActionsDatabaseClient contingenciesDb = config.getContingencyDbClientFactoryClass().newInstance().create();
-            LoadFlowFactory loadFlowFactory = config.getLoadFlowFactoryClass().newInstance();
-            WCAFactory wcaFactory = config.getWcaFactoryClass().newInstance();
-            try (HistoDbClient histoDbClient = new SynchronizedHistoDbClient(config.getHistoDbClientFactoryClass().newInstance().create());
-                 RulesDbClient rulesDbClient = config.getRulesDbClientFactoryClass().newInstance().create(rulesDbName)) {
+        WCAParameters parameters = new WCAParameters(histoInterval, offlineWorkflowId, securityIndexTypes, purityThreshold);
+        OnlineConfig config = OnlineConfig.load();
+        ContingenciesAndActionsDatabaseClient contingenciesDb = config.getContingencyDbClientFactoryClass().newInstance().create();
+        LoadFlowFactory loadFlowFactory = config.getLoadFlowFactoryClass().newInstance();
+        WCAFactory wcaFactory = config.getWcaFactoryClass().newInstance();
+        try (HistoDbClient histoDbClient = new SynchronizedHistoDbClient(config.getHistoDbClientFactoryClass().newInstance().create());
+             RulesDbClient rulesDbClient = config.getRulesDbClientFactoryClass().newInstance().create(rulesDbName)) {
 
-                UncertaintiesAnalyserFactory uncertaintiesAnalyserFactory = config.getUncertaintiesAnalyserFactoryClass().newInstance();
+            UncertaintiesAnalyserFactory uncertaintiesAnalyserFactory = config.getUncertaintiesAnalyserFactoryClass().newInstance();
 
-                if (Files.isRegularFile(caseFile)) {
-                    if (outputCsvFile != null) {
-                        throw new RuntimeException("In case of single wca, only standard output pretty print is supported");
-                    }
-                    System.out.println("loading case...");
-                    // load the network
-                    Network network = Importers.loadNetwork(caseFile);
-                    if (network == null) {
-                        throw new RuntimeException("Case '" + caseFile + "' not found");
-                    }
-                    network.getStateManager().allowStateMultiThreadAccess(true);
-
-                    WCA wca = wcaFactory.create(network, computationManager, histoDbClient, rulesDbClient, uncertaintiesAnalyserFactory, contingenciesDb, loadFlowFactory);
-                    WCAAsyncResult result = wca.runAsync(StateManager.INITIAL_STATE_ID, parameters).join();
-
-                    Table table = new Table(3, BorderStyle.CLASSIC_WIDE);
-                    table.addCell("Contingency");
-                    table.addCell("Cluster");
-                    table.addCell("Causes");
-
-                    List<CompletableFuture<WCACluster>> futureClusters = new LinkedList<>(result.getClusters());
-                    while (futureClusters.size() > 0) {
-                        CompletableFuture.anyOf(futureClusters.toArray(new CompletableFuture[futureClusters.size()])).join();
-                        for (Iterator<CompletableFuture<WCACluster>> it = futureClusters.iterator(); it.hasNext(); ) {
-                            CompletableFuture<WCACluster> futureCluster = it.next();
-                            if (futureCluster.isDone()) {
-                                it.remove();
-                                WCACluster cluster = futureCluster.get();
-
-                                if (cluster != null) {
-                                    System.out.println("contingency " + cluster.getContingency().getId() + " done: "
-                                            + cluster.getNum() + " " + cluster.getOrigin());
-
-                                    table.addCell(cluster.getContingency().getId());
-                                    table.addCell(cluster.getNum() + " " + cluster.getOrigin());
-                                    List<String> sortedCauses = cluster.getCauses().stream().sorted().collect(Collectors.toList());
-                                    if (sortedCauses != null && sortedCauses.size() > 0) {
-                                        table.addCell(sortedCauses.get(0));
-                                        for (int i = 1; i < sortedCauses.size(); i++) {
-                                            table.addCell("");
-                                            table.addCell("");
-                                            table.addCell(sortedCauses.get(i));
-                                        }
-                                    } else {
-                                        table.addCell("");
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if ( line.hasOption("reports-folder") ) {
-                        Path reportsFolder = Paths.get(line.getOptionValue("reports-folder"));
-                        if ( !wca.getReport().exportCsv(reportsFolder) ) {
-                            System.out.println("Could not store reports for network " + network.getId() + " in folder " + reportsFolder);
-                        }
-                    }
-                    System.out.println(table.render());
-                } else if (Files.isDirectory(caseFile)){
-                    if (outputCsvFile == null) {
-                        throw new RuntimeException("In case of multiple wca, you have to specify and ouput to csv file");
-                    }
-
-                    Map<String, Map<String, WCACluster>> clusterPerContingencyPerBaseCase = Collections.synchronizedMap(new TreeMap<>());
-                    Set<String> contingencyIds = Collections.synchronizedSet(new TreeSet<>());
-
-                    Importers.loadNetworks(caseFile, true, network -> {
-                        try {
-                            network.getStateManager().allowStateMultiThreadAccess(true);
-                            String baseStateId = network.getId();
-                            network.getStateManager().cloneState(StateManager.INITIAL_STATE_ID, baseStateId);
-                            network.getStateManager().setWorkingState(baseStateId);
-
-                            WCA wca = wcaFactory.create(network, computationManager, histoDbClient, rulesDbClient, uncertaintiesAnalyserFactory, contingenciesDb, loadFlowFactory);
-                            WCAAsyncResult result = wca.runAsync(baseStateId, parameters).join();
-
-                            Map<String, WCACluster> clusterPerContingency = new HashMap<>();
-
-                            List<CompletableFuture<WCACluster>> futureClusters = new LinkedList<>(result.getClusters());
-                            while (futureClusters.size() > 0) {
-                                CompletableFuture.anyOf(futureClusters.toArray(new CompletableFuture[futureClusters.size()])).join();
-                                for (Iterator<CompletableFuture<WCACluster>> it = futureClusters.iterator(); it.hasNext(); ) {
-                                    CompletableFuture<WCACluster> futureCluster = it.next();
-                                    if (futureCluster.isDone()) {
-                                        it.remove();
-                                        WCACluster cluster = futureCluster.get();
-                                        if (cluster != null) {
-                                            System.out.println("case " + network.getId() + ", contingency " + cluster.getContingency().getId() + " done: "
-                                                    + cluster.getNum() + " (" + cluster.getOrigin() + ")");
-
-                                            clusterPerContingency.put(cluster.getContingency().getId(), cluster);
-                                            contingencyIds.add(cluster.getContingency().getId());
-                                        }
-                                    }
-                                }
-                            }
-
-                            clusterPerContingencyPerBaseCase.put(network.getId(), clusterPerContingency);
-                            if ( line.hasOption("reports-folder") ) {
-                                Path reportsFolder = Paths.get(line.getOptionValue("reports-folder") + File.separator + network.getId());
-                                if ( !wca.getReport().exportCsv(reportsFolder) ) {
-                                    System.out.println("Could not store reports for network " + network.getId() + " in folder " + reportsFolder);
-                                }
-                            }
-                        } catch (Exception e) {
-                            LOGGER.error(e.toString(), e);
-                        }
-                    }, dataSource -> System.out.println("loading case " + dataSource.getBaseName() + "..."));
-
-                    writeClustersCsv(clusterPerContingencyPerBaseCase, contingencyIds, outputCsvFile);
+            if (Files.isRegularFile(caseFile)) {
+                if (outputCsvFile != null) {
+                    throw new RuntimeException("In case of single wca, only standard output pretty print is supported");
                 }
+                context.getOutputStream().println("loading case...");
+                // load the network
+                Network network = Importers.loadNetwork(caseFile);
+                if (network == null) {
+                    throw new RuntimeException("Case '" + caseFile + "' not found");
+                }
+                network.getStateManager().allowStateMultiThreadAccess(true);
+
+                WCA wca = wcaFactory.create(network, context.getComputationManager(), histoDbClient, rulesDbClient, uncertaintiesAnalyserFactory, contingenciesDb, loadFlowFactory);
+                WCAAsyncResult result = wca.runAsync(StateManager.INITIAL_STATE_ID, parameters).join();
+
+                Table table = new Table(3, BorderStyle.CLASSIC_WIDE);
+                table.addCell("Contingency");
+                table.addCell("Cluster");
+                table.addCell("Causes");
+
+                List<CompletableFuture<WCACluster>> futureClusters = new LinkedList<>(result.getClusters());
+                while (futureClusters.size() > 0) {
+                    CompletableFuture.anyOf(futureClusters.toArray(new CompletableFuture[futureClusters.size()])).join();
+                    for (Iterator<CompletableFuture<WCACluster>> it = futureClusters.iterator(); it.hasNext(); ) {
+                        CompletableFuture<WCACluster> futureCluster = it.next();
+                        if (futureCluster.isDone()) {
+                            it.remove();
+                            WCACluster cluster = futureCluster.get();
+
+                            if (cluster != null) {
+                                context.getOutputStream().println("contingency " + cluster.getContingency().getId() + " done: "
+                                        + cluster.getNum() + " " + cluster.getOrigin());
+
+                                table.addCell(cluster.getContingency().getId());
+                                table.addCell(cluster.getNum() + " " + cluster.getOrigin());
+                                List<String> sortedCauses = cluster.getCauses().stream().sorted().collect(Collectors.toList());
+                                if (sortedCauses != null && sortedCauses.size() > 0) {
+                                    table.addCell(sortedCauses.get(0));
+                                    for (int i = 1; i < sortedCauses.size(); i++) {
+                                        table.addCell("");
+                                        table.addCell("");
+                                        table.addCell(sortedCauses.get(i));
+                                    }
+                                } else {
+                                    table.addCell("");
+                                }
+                            }
+                        }
+                    }
+                }
+                if ( line.hasOption("reports-folder") ) {
+                    Path reportsFolder = Paths.get(line.getOptionValue("reports-folder"));
+                    if ( !wca.getReport().exportCsv(reportsFolder) ) {
+                        context.getOutputStream().println("Could not store reports for network " + network.getId() + " in folder " + reportsFolder);
+                    }
+                }
+                context.getOutputStream().println(table.render());
+            } else if (Files.isDirectory(caseFile)){
+                if (outputCsvFile == null) {
+                    throw new RuntimeException("In case of multiple wca, you have to specify and ouput to csv file");
+                }
+
+                Map<String, Map<String, WCACluster>> clusterPerContingencyPerBaseCase = Collections.synchronizedMap(new TreeMap<>());
+                Set<String> contingencyIds = Collections.synchronizedSet(new TreeSet<>());
+
+                Importers.loadNetworks(caseFile, true, network -> {
+                    try {
+                        network.getStateManager().allowStateMultiThreadAccess(true);
+                        String baseStateId = network.getId();
+                        network.getStateManager().cloneState(StateManager.INITIAL_STATE_ID, baseStateId);
+                        network.getStateManager().setWorkingState(baseStateId);
+
+                        WCA wca = wcaFactory.create(network, context.getComputationManager(), histoDbClient, rulesDbClient, uncertaintiesAnalyserFactory, contingenciesDb, loadFlowFactory);
+                        WCAAsyncResult result = wca.runAsync(baseStateId, parameters).join();
+
+                        Map<String, WCACluster> clusterPerContingency = new HashMap<>();
+
+                        List<CompletableFuture<WCACluster>> futureClusters = new LinkedList<>(result.getClusters());
+                        while (futureClusters.size() > 0) {
+                            CompletableFuture.anyOf(futureClusters.toArray(new CompletableFuture[futureClusters.size()])).join();
+                            for (Iterator<CompletableFuture<WCACluster>> it = futureClusters.iterator(); it.hasNext(); ) {
+                                CompletableFuture<WCACluster> futureCluster = it.next();
+                                if (futureCluster.isDone()) {
+                                    it.remove();
+                                    WCACluster cluster = futureCluster.get();
+                                    if (cluster != null) {
+                                        context.getOutputStream().println("case " + network.getId() + ", contingency " + cluster.getContingency().getId() + " done: "
+                                                + cluster.getNum() + " (" + cluster.getOrigin() + ")");
+
+                                        clusterPerContingency.put(cluster.getContingency().getId(), cluster);
+                                        contingencyIds.add(cluster.getContingency().getId());
+                                    }
+                                }
+                            }
+                        }
+
+                        clusterPerContingencyPerBaseCase.put(network.getId(), clusterPerContingency);
+                        if ( line.hasOption("reports-folder") ) {
+                            Path reportsFolder = Paths.get(line.getOptionValue("reports-folder") + File.separator + network.getId());
+                            if ( !wca.getReport().exportCsv(reportsFolder) ) {
+                                context.getOutputStream().println("Could not store reports for network " + network.getId() + " in folder " + reportsFolder);
+                            }
+                        }
+                    } catch (Exception e) {
+                        LOGGER.error(e.toString(), e);
+                    }
+                }, dataSource -> context.getOutputStream().println("loading case " + dataSource.getBaseName() + "..."));
+
+                writeClustersCsv(clusterPerContingencyPerBaseCase, contingencyIds, outputCsvFile);
             }
         }
     }

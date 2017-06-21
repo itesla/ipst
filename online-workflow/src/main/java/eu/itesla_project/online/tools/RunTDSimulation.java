@@ -10,8 +10,7 @@ import com.csvreader.CsvWriter;
 import com.google.common.collect.Sets;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.computation.local.LocalComputationManager;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.iidm.import_.Importers;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
@@ -19,7 +18,7 @@ import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.online.Utils;
 import eu.itesla_project.security.LimitViolation;
 import eu.itesla_project.security.Security;
-import eu.itesla_project.simulation.*;
+import eu.itesla_project.simulation.SimulatorFactory;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -162,7 +161,7 @@ public class RunTDSimulation implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         Path caseFile = Paths.get(line.getOptionValue("case-file"));
         Set<String> contingencyIds = line.hasOption("contingencies") ? Sets.newHashSet(line.getOptionValue("contingencies").split(",")) : null;
         boolean emptyContingency = line.hasOption("empty-contingency");
@@ -171,8 +170,7 @@ public class RunTDSimulation implements Tool {
         Map<String, List<LimitViolation>> networksViolations = new HashMap<>();
         Map<String, Map<String, Boolean>> tdSimulationsResults = new HashMap<>();
         Path metricsFile = getFile(outputFolder, "metrics.log");
-        try (ComputationManager computationManager = new LocalComputationManager();
-             FileWriter metricsContent = new FileWriter(metricsFile.toFile())) {
+        try (FileWriter metricsContent = new FileWriter(metricsFile.toFile())) {
 
             OnlineConfig config = OnlineConfig.load();
             ContingenciesAndActionsDatabaseClient contingencyDb = config.getContingencyDbClientFactoryClass().newInstance().create();
@@ -190,7 +188,7 @@ public class RunTDSimulation implements Tool {
                 Map<String, Boolean> tdSimulationResults = Utils.runTDSimulation(network,
                         contingencyIds,
                         emptyContingency,
-                        computationManager,
+                        context.getComputationManager(),
                         simulatorFactory,
                         contingencyDb,
                         metricsContent);
@@ -203,7 +201,7 @@ public class RunTDSimulation implements Tool {
                         Map<String, Boolean> tdSimulationResults = Utils.runTDSimulation(network,
                                 contingencyIds,
                                 emptyContingency,
-                                computationManager,
+                                context.getComputationManager(),
                                 simulatorFactory,
                                 contingencyDb,
                                 metricsContent);
@@ -211,18 +209,18 @@ public class RunTDSimulation implements Tool {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }, dataSource -> System.out.println("loading case " + dataSource.getBaseName()));
+                }, dataSource -> context.getOutputStream().println("loading case " + dataSource.getBaseName()));
             }
         }
         try {
             writeCsvViolations(outputFolder, networksViolations);
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(context.getErrorStream());
         }
         try {
             writeCsvTDResults(outputFolder, tdSimulationsResults);
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(context.getErrorStream());
         }
     }
 

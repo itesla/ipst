@@ -8,6 +8,7 @@ package eu.itesla_project.online.tools;
 
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.online.OnlineDb;
 import eu.itesla_project.modules.online.OnlineWorkflowResults;
@@ -71,14 +72,14 @@ public class PrintOnlineWorkflowResultsTool implements Tool {
 	}
 
 	@Override
-	public void run(CommandLine line) throws Exception {
+	public void run(CommandLine line, ToolRunningContext context) throws Exception {
 		OnlineConfig config = OnlineConfig.load();
 		OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
 		String workflowId = line.getOptionValue("workflow");
 		OnlineWorkflowResults wfResults = onlinedb.getResults(workflowId);
 		if ( wfResults != null ) {
 			if ( !wfResults.getContingenciesWithActions().isEmpty() ) {
-				System.out.println("** Contingencies requiring corrective actions **");
+				context.getOutputStream().println("** Contingencies requiring corrective actions **");
 				Table table = new Table(3, BorderStyle.CLASSIC_WIDE);
 		        table.addCell("Contingency", new CellStyle(CellStyle.HorizontalAlign.center));
 		        table.addCell("State", new CellStyle(CellStyle.HorizontalAlign.center));
@@ -96,12 +97,12 @@ public class PrintOnlineWorkflowResultsTool implements Tool {
 						table.addCell(actionList);
 					}
 				}
-				System.out.println(table.render());
+				context.getOutputStream().println(table.render());
 			} else
-				System.out.println("\nNo contingencies requiring corrective actions");
+				context.getOutputStream().println("\nNo contingencies requiring corrective actions");
 			
 			if ( !wfResults.getUnsafeContingencies().isEmpty() ) {
-//				System.out.println("\n** Contingencies requiring T-D simulation **");
+//				context.getOutputStream().println("\n** Contingencies requiring T-D simulation **");
 //				Table table = new Table(4, BorderStyle.CLASSIC_WIDE);
 //		        table.addCell("Contingency", new CellStyle(CellStyle.HorizontalAlign.center));
 //		        table.addCell("State", new CellStyle(CellStyle.HorizontalAlign.center));
@@ -117,9 +118,9 @@ public class PrintOnlineWorkflowResultsTool implements Tool {
 //						}
 //					}
 //				}
-//				System.out.println(table.render());
+//				context.getOutputStream().println(table.render());
 			
-				System.out.println("\n** Contingencies requiring T-D simulation **");
+				context.getOutputStream().println("\n** Contingencies requiring T-D simulation **");
 				Table table = new Table(SecurityIndexType.values().length+2, BorderStyle.CLASSIC_WIDE);
 		        table.addCell("Contingency", new CellStyle(CellStyle.HorizontalAlign.center));
 		        table.addCell("State", new CellStyle(CellStyle.HorizontalAlign.center));
@@ -136,11 +137,11 @@ public class PrintOnlineWorkflowResultsTool implements Tool {
 						}
 					}
 				}
-				System.out.println(table.render());
+				context.getOutputStream().println(table.render());
 			} else
-				System.out.println("\nNo contingencies requiring T-D simulation");
+				context.getOutputStream().println("\nNo contingencies requiring T-D simulation");
 		} else
-			System.out.println("No results for this workflow");
+			context.getOutputStream().println("No results for this workflow");
 		onlinedb.close();
 	}
 	

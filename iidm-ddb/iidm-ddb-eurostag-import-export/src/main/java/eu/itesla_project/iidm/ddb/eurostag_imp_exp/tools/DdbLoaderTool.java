@@ -9,6 +9,7 @@ package eu.itesla_project.iidm.ddb.eurostag_imp_exp.tools;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import org.apache.commons.cli.CommandLine;
 
 import com.google.auto.service.AutoService;
@@ -31,7 +32,7 @@ public class DdbLoaderTool implements Tool {
 	}
 
 	@Override
-	public void run(CommandLine line) throws Exception {
+	public void run(CommandLine line, ToolRunningContext context) throws Exception {
 		String dataDir = line.getOptionValue(DdbLoaderCommand.DATA_DIR);
 		String jbossHost = line.getOptionValue(DdbLoaderCommand.HOST);
         String jbossPort = line.getOptionValue(DdbLoaderCommand.PORT);

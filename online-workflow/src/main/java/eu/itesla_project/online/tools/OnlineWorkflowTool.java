@@ -12,7 +12,7 @@ import eu.itesla_project.cases.CaseRepository;
 import eu.itesla_project.cases.CaseType;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.computation.local.LocalComputationManager;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.iidm.network.Country;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.online.OnlineWorkflowParameters;
@@ -31,6 +31,7 @@ import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
+import java.io.PrintStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,9 +46,9 @@ public class OnlineWorkflowTool implements Tool {
         return OnlineWorkflowCommand.INSTANCE;
     }
 
-    private void showHelp(String message) {
-        System.err.println(message);
-        System.err.println();
+    private void showHelp(String message, PrintStream err) {
+        err.println(message);
+        err.println();
         HelpFormatter formatter = new HelpFormatter();
         // it would be nice to have access to the private method
         // eu.itesla_project.commons.tools.Main.printCommandUsage
@@ -56,7 +57,7 @@ public class OnlineWorkflowTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
 
         OnlineWorkflowStartParameters startconfig = OnlineWorkflowStartParameters.loadDefault();
 
@@ -84,7 +85,8 @@ public class OnlineWorkflowTool implements Tool {
             if (atLeastOneBaseCaseLineParam) {
                 showHelp("parameter " + OnlineWorkflowCommand.CASE_FILE + " cannot be used together with parameters: "
                         + OnlineWorkflowCommand.CASE_TYPE + ", " + OnlineWorkflowCommand.COUNTRIES + ", "
-                        + OnlineWorkflowCommand.BASE_CASE + ", " + OnlineWorkflowCommand.BASECASES_INTERVAL);
+                        + OnlineWorkflowCommand.BASE_CASE + ", " + OnlineWorkflowCommand.BASECASES_INTERVAL,
+                        context.getErrorStream());
                 return;
             }
             params.setCaseFile(line.getOptionValue(OnlineWorkflowCommand.CASE_FILE));
@@ -95,7 +97,8 @@ public class OnlineWorkflowTool implements Tool {
                         showHelp("to override default parameter " + OnlineWorkflowCommand.CASE_FILE
                                 + ", all these parameters must be specified: " + OnlineWorkflowCommand.CASE_TYPE + ", "
                                 + OnlineWorkflowCommand.COUNTRIES + ", " + OnlineWorkflowCommand.BASE_CASE + " or "
-                                + OnlineWorkflowCommand.BASECASES_INTERVAL);
+                                + OnlineWorkflowCommand.BASECASES_INTERVAL,
+                                context.getErrorStream());
                         return;
                     }
                     params.setCaseFile(null);
@@ -112,11 +115,11 @@ public class OnlineWorkflowTool implements Tool {
                         .parse(line.getOptionValue(OnlineWorkflowCommand.BASECASES_INTERVAL));
                 OnlineConfig oConfig = OnlineConfig.load();
                 CaseRepository caseRepo = oConfig.getCaseRepositoryFactoryClass().newInstance()
-                        .create(new LocalComputationManager());
+                        .create(context.getComputationManager());
                 baseCasesSet = caseRepo.dataAvailable(params.getCaseType(), params.getCountries(), basecasesInterval);
-                System.out.println("Base cases available for interval " + basecasesInterval.toString());
+                context.getOutputStream().println("Base cases available for interval " + basecasesInterval.toString());
                 baseCasesSet.forEach(x -> {
-                    System.out.println(" " + x);
+                    context.getOutputStream().println(" " + x);
                 });
             }
             if (baseCasesSet == null) {
@@ -207,22 +210,22 @@ public class OnlineWorkflowTool implements Tool {
 
         if (line.hasOption(OnlineWorkflowCommand.START_CMD)) {
             if (params.getCaseFile() != null) {
-                System.out.println("starting Online Workflow, caseFile " + params.getCaseFile());
+                context.getOutputStream().println("starting Online Workflow, caseFile " + params.getCaseFile());
                 String workflowId = application.startWorkflow(startconfig, params);
-                System.out.println("workflowId=" + workflowId);
+                context.getOutputStream().println("workflowId=" + workflowId);
 
             } else {
                 for (DateTime basecase : baseCasesSet) {
                     params.setBaseCaseDate(basecase);
-                    System.out.println("starting Online Workflow, basecase " + basecase.toString());
+                    context.getOutputStream().println("starting Online Workflow, basecase " + basecase.toString());
                     String workflowId = application.startWorkflow(startconfig, params);
-                    System.out.println("workflowId=" + workflowId);
+                    context.getOutputStream().println("workflowId=" + workflowId);
                 }
             }
         } else if (line.hasOption(OnlineWorkflowCommand.SHUTDOWN_CMD)) {
             application.shutdown();
         } else {
-            showHelp("");
+            showHelp("", context.getErrorStream());
         }
 
     }

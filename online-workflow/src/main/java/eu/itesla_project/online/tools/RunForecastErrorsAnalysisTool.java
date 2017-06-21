@@ -6,28 +6,25 @@
  */
 package eu.itesla_project.online.tools;
 
-import java.util.Arrays;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.google.auto.service.AutoService;
+import eu.itesla_project.cases.CaseType;
+import eu.itesla_project.commons.tools.Command;
+import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
+import eu.itesla_project.iidm.network.Country;
+import eu.itesla_project.modules.online.TimeHorizon;
+import eu.itesla_project.offline.forecast_errors.ForecastErrorsAnalysis;
+import eu.itesla_project.offline.forecast_errors.ForecastErrorsAnalysisConfig;
+import eu.itesla_project.offline.forecast_errors.ForecastErrorsAnalysisParameters;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
-import com.google.auto.service.AutoService;
-
-import eu.itesla_project.commons.tools.Command;
-import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.computation.local.LocalComputationManager;
-import eu.itesla_project.iidm.network.Country;
-import eu.itesla_project.cases.CaseType;
-import eu.itesla_project.modules.online.TimeHorizon;
-import eu.itesla_project.offline.forecast_errors.ForecastErrorsAnalysisConfig;
-import eu.itesla_project.offline.forecast_errors.ForecastErrorsAnalysisParameters;
-import eu.itesla_project.offline.forecast_errors.ForecastErrorsAnalysis;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -151,8 +148,7 @@ public class RunForecastErrorsAnalysisTool implements Tool {
 	}
 
 	@Override
-	public void run(CommandLine line) throws Exception {
-		ComputationManager computationManager = new LocalComputationManager();
+	public void run(CommandLine line, ToolRunningContext context) throws Exception {
 		String analysisId = line.getOptionValue("analysis");
 		DateTime baseCaseDate = line.hasOption("base-case-date") 
                 ? DateTime.parse(line.getOptionValue("base-case-date")) 
@@ -197,14 +193,14 @@ public class RunForecastErrorsAnalysisTool implements Tool {
 		ForecastErrorsAnalysisParameters parameters = new ForecastErrorsAnalysisParameters(baseCaseDate, histoInterval, analysisId, ir, flagPQ, method, nClusters, 
 																						   percentileHistorical, modalityGaussian, outliers, conditionalSampling, 
 																						   nSamples, countries, caseType);
-		ForecastErrorsAnalysis feAnalysis = new ForecastErrorsAnalysis(computationManager, ForecastErrorsAnalysisConfig.load(), parameters);
-		System.out.println("Starting Forecast Errors Analysis");
+		ForecastErrorsAnalysis feAnalysis = new ForecastErrorsAnalysis(context.getComputationManager(), ForecastErrorsAnalysisConfig.load(), parameters);
+		context.getOutputStream().println("Starting Forecast Errors Analysis");
 		if ( line.hasOption("time-horizon") ) {
 			TimeHorizon timeHorizon = TimeHorizon.fromName(line.getOptionValue("time-horizon"));
 			feAnalysis.start(timeHorizon);
 		} else
 			feAnalysis.start();
-		System.out.println("Forecast Errors Analysis Terminated");
+		context.getOutputStream().println("Forecast Errors Analysis Terminated");
 	}
 	
 	private ForecastErrorsAnalysisParameters getDefaultParameters() {
