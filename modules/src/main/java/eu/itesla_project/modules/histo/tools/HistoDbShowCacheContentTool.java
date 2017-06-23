@@ -9,6 +9,7 @@ package eu.itesla_project.modules.histo.tools;
 import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.modules.histo.HistoDbClient;
 import eu.itesla_project.modules.histo.cache.HistoDbCache;
 import eu.itesla_project.modules.offline.OfflineConfig;
@@ -55,12 +56,12 @@ public class HistoDbShowCacheContentTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         OfflineConfig config = OfflineConfig.load();
         try (HistoDbClient histoDbClient = config.getHistoDbClientFactoryClass().newInstance().create()) {
             HistoDbCache cache = histoDbClient.getCache();
             if (cache != null) {
-                cache.listUrls().forEach(System.out::println);
+                cache.listUrls().forEach(context.getOutputStream()::println);
             }
         }
     }

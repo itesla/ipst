@@ -13,6 +13,7 @@ import eu.itesla_project.commons.io.table.TableFormatter;
 import eu.itesla_project.commons.io.table.TableFormatterConfig;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.modules.online.*;
 import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
 import org.apache.commons.cli.CommandLine;
@@ -101,7 +102,7 @@ public class PrintOnlineWorkflowPerformances implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         OnlineConfig config = OnlineConfig.load();
         try (OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create()) {
             List<String> workflowsIds = new ArrayList<>();
@@ -158,16 +159,16 @@ public class PrintOnlineWorkflowPerformances implements Tool {
                         .forEach(workflowId -> {
                             OnlineWorkflowParameters parameters = onlinedb.getWorkflowParameters(workflowId);
                             if ((parameters == null) || (!parameters.validation())) {
-                                System.err.println("No data for validation: skipping wf " + workflowId);
+                                context.getErrorStream().println("No data for validation: skipping wf " + workflowId);
                                 return;
                             }
                             OnlineWorkflowResults wfResults = onlinedb.getResults(workflowId);
                             if (wfResults == null) {
-                                System.err.println("No results: skipping wf " + workflowId);
+                                context.getErrorStream().println("No results: skipping wf " + workflowId);
                                 return;
                             }
                             if (wfResults.getUnsafeContingencies().isEmpty()) {
-                                System.err.println("No data for benchmark: skipping wf " + workflowId);
+                                context.getErrorStream().println("No data for benchmark: skipping wf " + workflowId);
                                 return;
                             }
 

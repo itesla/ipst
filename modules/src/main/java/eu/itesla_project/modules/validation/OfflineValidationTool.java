@@ -8,31 +8,30 @@ package eu.itesla_project.modules.validation;
 
 import com.google.auto.service.AutoService;
 import com.google.common.collect.Queues;
+import eu.itesla_project.cases.CaseRepository;
+import eu.itesla_project.cases.CaseRepositoryFactory;
+import eu.itesla_project.cases.CaseType;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.computation.local.LocalComputationManager;
+import eu.itesla_project.commons.tools.ToolRunningContext;
+import eu.itesla_project.contingency.Contingency;
 import eu.itesla_project.iidm.network.Country;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.iidm.network.StateManager;
 import eu.itesla_project.loadflow.api.LoadFlow;
 import eu.itesla_project.loadflow.api.LoadFlowFactory;
 import eu.itesla_project.loadflow.api.LoadFlowResult;
-import eu.itesla_project.cases.CaseRepository;
-import eu.itesla_project.cases.CaseRepositoryFactory;
-import eu.itesla_project.cases.CaseType;
 import eu.itesla_project.merge.MergeOptimizerFactory;
 import eu.itesla_project.merge.MergeUtil;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
-import eu.itesla_project.contingency.Contingency;
 import eu.itesla_project.modules.histo.HistoDbAttributeId;
 import eu.itesla_project.modules.histo.IIDM2DB;
 import eu.itesla_project.modules.offline.CsvMetricsDb;
 import eu.itesla_project.modules.offline.OfflineConfig;
 import eu.itesla_project.modules.rules.*;
 import eu.itesla_project.modules.rules.expr.ExpressionAttributeList;
-import eu.itesla_project.simulation.securityindexes.SecurityIndex;
 import eu.itesla_project.simulation.*;
+import eu.itesla_project.simulation.securityindexes.SecurityIndex;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -43,6 +42,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -192,11 +192,12 @@ public class OfflineValidationTool implements Tool {
         return s1 + "_" + s2;
     }
 
-    private static void writeComparisonFiles(Set<RuleId> rulesIds, Map<String, Map<RuleId, ValidationStatus>> statusPerRulePerCase, Path outputDir) throws IOException {
+    private static void writeComparisonFiles(Set<RuleId> rulesIds, Map<String, Map<RuleId, ValidationStatus>> statusPerRulePerCase, Path outputDir,
+                                             PrintStream out) throws IOException {
         for (RuleId ruleId : rulesIds) {
             Path comparisonFile = outputDir.resolve("comparison_" + ruleId.toString() + ".csv");
 
-            System.out.println("writing " + comparisonFile + "...");
+            out.println("writing " + comparisonFile + "...");
 
             try (BufferedWriter writer = Files.newBufferedWriter(comparisonFile, StandardCharsets.UTF_8)) {
                 writer.write("base case");
@@ -224,11 +225,12 @@ public class OfflineValidationTool implements Tool {
         }
     }
 
-    private static void writeAttributesFiles(Set<RuleId> rulesIds, Map<String, Map<RuleId, Map<HistoDbAttributeId, Object>>> valuesPerRulePerCase, Path outputDir) throws IOException {
+    private static void writeAttributesFiles(Set<RuleId> rulesIds, Map<String, Map<RuleId, Map<HistoDbAttributeId, Object>>> valuesPerRulePerCase, Path outputDir,
+                                             PrintStream out) throws IOException {
         for (RuleId ruleId : rulesIds) {
             Path attributesFile = outputDir.resolve("attributes_" + ruleId.toString() + ".csv");
 
-            System.out.println("writing " + attributesFile + "...");
+            out.println("writing " + attributesFile + "...");
 
             try (BufferedWriter writer = Files.newBufferedWriter(attributesFile, StandardCharsets.UTF_8)) {
                 writer.write("base case");
@@ -268,8 +270,8 @@ public class OfflineValidationTool implements Tool {
     }
 
     private static void writeSynthesisFile(Map<RuleId, Map<String, AtomicInteger>> synthesisPerRule,
-                                           List<String> categories, Path synthesisFile) throws IOException {
-        System.out.println("writing " + synthesisFile + "...");
+                                           List<String> categories, Path synthesisFile, PrintStream out) throws IOException {
+        out.println("writing " + synthesisFile + "...");
 
         try (BufferedWriter writer = Files.newBufferedWriter(synthesisFile, StandardCharsets.UTF_8)) {
             writer.write("rule");
@@ -293,12 +295,12 @@ public class OfflineValidationTool implements Tool {
 
     private static void writeCsv(Map<String, Map<RuleId, ValidationStatus>> statusPerRulePerCase,
                                  Map<String, Map<RuleId, Map<HistoDbAttributeId, Object>>> valuesPerRulePerCase,
-                                 Path outputDir) throws IOException {
+                                 Path outputDir, PrintStream out) throws IOException {
         Set<RuleId> rulesIds = new TreeSet<>();
         statusPerRulePerCase.values().stream().forEach(e -> rulesIds.addAll(e.keySet()));
 
-        writeComparisonFiles(rulesIds, statusPerRulePerCase, outputDir);
-        writeAttributesFiles(rulesIds, valuesPerRulePerCase, outputDir);
+        writeComparisonFiles(rulesIds, statusPerRulePerCase, outputDir, out);
+        writeAttributesFiles(rulesIds, valuesPerRulePerCase, outputDir, out);
 
         List<String> categories = Arrays.asList(
                 toCategory(OK_S, OK_R),
@@ -325,11 +327,11 @@ public class OfflineValidationTool implements Tool {
             }
         }
 
-        writeSynthesisFile(synthesisPerRule, categories, outputDir.resolve("synthesis.csv"));
+        writeSynthesisFile(synthesisPerRule, categories, outputDir.resolve("synthesis.csv"), out);
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         OfflineConfig config = OfflineConfig.load();
         String rulesDbName = line.hasOption("rules-db-name") ? line.getOptionValue("rules-db-name") : OfflineConfig.DEFAULT_RULES_DB_NAME;
         String workflowId = line.getOptionValue("workflow");
@@ -349,11 +351,10 @@ public class OfflineValidationTool implements Tool {
 
         SimulationParameters simulationParameters = SimulationParameters.load();
 
-        try (ComputationManager computationManager = new LocalComputationManager();
-             RulesDbClient rulesDb = rulesDbClientFactory.create(rulesDbName);
+        try (RulesDbClient rulesDb = rulesDbClientFactory.create(rulesDbName);
              CsvMetricsDb metricsDb = new CsvMetricsDb(outputDir, true, "metrics")) {
 
-            CaseRepository caseRepository = caseRepositoryFactory.create(computationManager);
+            CaseRepository caseRepository = caseRepositoryFactory.create(context.getComputationManager());
 
             Queue<DateTime> dates = Queues.synchronizedDeque(new ArrayDeque<>(caseRepository.dataAvailable(caseType, countries, histoInterval)));
 
@@ -370,11 +371,11 @@ public class OfflineValidationTool implements Tool {
                             DateTime date = dates.poll();
 
                             try {
-                                Network network = MergeUtil.merge(caseRepository, date, caseType, countries, loadFlowFactory, 0, mergeOptimizerFactory, computationManager, mergeOptimized);
+                                Network network = MergeUtil.merge(caseRepository, date, caseType, countries, loadFlowFactory, 0, mergeOptimizerFactory, context.getComputationManager(), mergeOptimized);
 
-                                System.out.println("case " + network.getId() + " loaded");
+                                context.getOutputStream().println("case " + network.getId() + " loaded");
 
-                                System.out.println("running simulation on " + network.getId() + "...");
+                                context.getOutputStream().println("running simulation on " + network.getId() + "...");
 
                                 network.getStateManager().allowStateMultiThreadAccess(true);
                                 String baseStateId = network.getId();
@@ -384,31 +385,31 @@ public class OfflineValidationTool implements Tool {
                                 Map<RuleId, ValidationStatus> statusPerRule = new HashMap<>();
                                 Map<RuleId, Map<HistoDbAttributeId, Object>> valuesPerRule = new HashMap<>();
 
-                                LoadFlow loadFlow = loadFlowFactory.create(network, computationManager, 0);
+                                LoadFlow loadFlow = loadFlowFactory.create(network, context.getComputationManager(), 0);
                                 LoadFlowResult loadFlowResult = loadFlow.run();
 
-                                System.err.println("load flow terminated (" + loadFlowResult.isOk() + ") on " + network.getId());
+                                context.getErrorStream().println("load flow terminated (" + loadFlowResult.isOk() + ") on " + network.getId());
 
                                 if (loadFlowResult.isOk()) {
-                                    Stabilization stabilization = simulatorFactory.createStabilization(network, computationManager, 0);
-                                    ImpactAnalysis impactAnalysis = simulatorFactory.createImpactAnalysis(network, computationManager, 0, contingencyDb);
-                                    Map<String, Object> context = new HashMap<>();
-                                    stabilization.init(simulationParameters, context);
-                                    impactAnalysis.init(simulationParameters, context);
+                                    Stabilization stabilization = simulatorFactory.createStabilization(network, context.getComputationManager(), 0);
+                                    ImpactAnalysis impactAnalysis = simulatorFactory.createImpactAnalysis(network, context.getComputationManager(), 0, contingencyDb);
+                                    Map<String, Object> initContext = new HashMap<>();
+                                    stabilization.init(simulationParameters, initContext);
+                                    impactAnalysis.init(simulationParameters, initContext);
                                     StabilizationResult stabilizationResult = stabilization.run();
 
-                                    System.err.println("stabilization terminated ("  + stabilizationResult.getStatus() + ") on " + network.getId());
+                                    context.getErrorStream().println("stabilization terminated ("  + stabilizationResult.getStatus() + ") on " + network.getId());
 
                                     metricsDb.store(workflowId, network.getId(), "STABILIZATION", stabilizationResult.getMetrics());
 
                                     if (stabilizationResult.getStatus() == StabilizationStatus.COMPLETED) {
                                         ImpactAnalysisResult impactAnalysisResult = impactAnalysis.run(stabilizationResult.getState());
 
-                                        System.err.println("impact analysis terminated on " + network.getId());
+                                        context.getErrorStream().println("impact analysis terminated on " + network.getId());
 
                                         metricsDb.store(workflowId, network.getId(), "IMPACT_ANALYSIS", impactAnalysisResult.getMetrics());
 
-                                        System.out.println("checking rules on " + network.getId() + "...");
+                                        context.getOutputStream().println("checking rules on " + network.getId() + "...");
 
                                         for (SecurityIndex securityIndex : impactAnalysisResult.getSecurityIndexes()) {
                                             for (RuleAttributeSet attributeSet : RuleAttributeSet.values()) {
@@ -463,7 +464,7 @@ public class OfflineValidationTool implements Tool {
                 executorService.awaitTermination(1, TimeUnit.MINUTES);
             }
 
-            writeCsv(statusPerRulePerCase, valuesPerRulePerCase, outputDir);
+            writeCsv(statusPerRulePerCase, valuesPerRulePerCase, outputDir, context.getOutputStream());
         }
     }
 }

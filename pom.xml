@@ -482,6 +482,11 @@
                 <artifactId>simulation-api</artifactId>
                 <version>${ipstcore.version}</version>
             </dependency>
+            <dependency>
+                <groupId>eu.itesla_project</groupId>
+                <artifactId>tools</artifactId>
+                <version>${ipstcore.version}</version>
+            </dependency>
 
             <!-- ipst-entsoe dependencies -->
             <dependency>

@@ -6,11 +6,12 @@
  */
 package eu.itesla_project.offline.tools;
 
-import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.commons.tools.Command;
 import com.google.auto.service.AutoService;
-import eu.itesla_project.offline.OfflineApplication;
+import eu.itesla_project.commons.tools.Command;
+import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.modules.offline.OfflineWorkflowCreationParameters;
+import eu.itesla_project.offline.OfflineApplication;
 import eu.itesla_project.offline.RemoteOfflineApplicationImpl;
 import org.apache.commons.cli.CommandLine;
 
@@ -27,12 +28,12 @@ public class PrintOfflineWorkflowParametersTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         String workflowId = line.getOptionValue("workflow");
         try (OfflineApplication app = new RemoteOfflineApplicationImpl()) {
             OfflineWorkflowCreationParameters parameters = app.getWorkflowParameters(workflowId);
             if (parameters != null) {
-                parameters.print(System.out);
+                parameters.print(context.getOutputStream());
             }
         }
     }

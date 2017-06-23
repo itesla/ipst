@@ -9,6 +9,7 @@ package eu.itesla_project.online.tools;
 import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.iidm.import_.Importers;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.mcla.NetworkUtils;
@@ -79,7 +80,7 @@ public class CreateMclaMat implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         Path caseFile = Paths.get(line.getOptionValue("case-file"));
         Path outputFolder = Paths.get(line.getOptionValue("output-folder"));
 

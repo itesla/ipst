@@ -9,6 +9,7 @@ package eu.itesla_project.modules.offline;
 import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import org.apache.commons.cli.CommandLine;
 
 import java.io.Writer;
@@ -30,7 +31,7 @@ public class ExportMetricsTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         String metricsDbName = line.hasOption("metrics-db-name") ? line.getOptionValue("metrics-db-name") : OfflineConfig.DEFAULT_METRICS_DB_NAME;
         OfflineConfig config = OfflineConfig.load();
         MetricsDb metricsDb = config.getMetricsDbFactoryClass().newInstance().create(metricsDbName);

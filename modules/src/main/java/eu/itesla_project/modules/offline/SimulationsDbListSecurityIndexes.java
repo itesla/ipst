@@ -9,6 +9,7 @@ package eu.itesla_project.modules.offline;
 import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -64,12 +65,12 @@ public class SimulationsDbListSecurityIndexes implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         String simulationDbName = line.hasOption("simulation-db-name") ? line.getOptionValue("simulation-db-name") : OfflineConfig.DEFAULT_SIMULATION_DB_NAME;
         String workflowId = line.getOptionValue("workflow");
         OfflineConfig config = OfflineConfig.load();
         OfflineDb offlineDb = config.getOfflineDbFactoryClass().newInstance().create(simulationDbName);
-        offlineDb.getSecurityIndexIds(workflowId).forEach(securityIndexId -> System.out.println(securityIndexId));
+        offlineDb.getSecurityIndexIds(workflowId).forEach(securityIndexId -> context.getOutputStream().println(securityIndexId));
     }
 
 }

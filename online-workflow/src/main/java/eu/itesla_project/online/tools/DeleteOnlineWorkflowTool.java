@@ -8,6 +8,7 @@ package eu.itesla_project.online.tools;
 
 import java.util.List;
 
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -68,16 +69,16 @@ public class DeleteOnlineWorkflowTool implements Tool {
 	}
 
 	@Override
-	public void run(CommandLine line) throws Exception {
+	public void run(CommandLine line, ToolRunningContext context) throws Exception {
 		OnlineConfig config = OnlineConfig.load();
 		OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
 		String workflowId = line.getOptionValue("workflow");
-		System.out.println("Deleting workflow " + workflowId);
+		context.getOutputStream().println("Deleting workflow " + workflowId);
 		boolean deleted = onlinedb.deleteWorkflow(workflowId);
 		if ( deleted )
-			System.out.println("Workflow " + workflowId + " deleted");
+			context.getOutputStream().println("Workflow " + workflowId + " deleted");
 		else
-			System.out.println("Cannot delete workflow " + workflowId);
+			context.getOutputStream().println("Cannot delete workflow " + workflowId);
 		onlinedb.close();
 	}
 	

@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.iidm.datasource.DataSource;
 import eu.itesla_project.iidm.datasource.FileDataSource;
 import eu.itesla_project.iidm.export.Exporters;
@@ -21,6 +22,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
+import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -89,7 +91,7 @@ public class AmplExportOnlineWorkflowStatesTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         OnlineConfig config = OnlineConfig.load();
         OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
         String workflowId = line.getOptionValue("workflow");
@@ -110,37 +112,38 @@ public class AmplExportOnlineWorkflowStatesTool implements Tool {
                 .sum();
 
         Path folder = Paths.get(line.getOptionValue("folder"));
-        System.out.println("Exporting in AMPL format network data of workflow " + workflowId + ", " + states.size() + " state(s), " + postcontingenciesStatesSize + " post-contingencies states, to folder " + folder);
+        context.getOutputStream().println("Exporting in AMPL format network data of workflow " + workflowId + ", " + states.size() + " state(s), " + postcontingenciesStatesSize + " post-contingencies states, to folder " + folder);
         states.forEach(state -> {
             //exports pre-contingency state
-            exportState(onlinedb, workflowId, state, null, folder);
+            exportState(onlinedb, workflowId, state, null, folder, context.getOutputStream());
             //exports post-contingencies states
             Set<String> contingenciesIds = postContingenciesStates.get(state);
             if (contingenciesIds != null) {
                 contingenciesIds.forEach(contingencyId -> {
-                    exportState(onlinedb, workflowId, state, contingencyId, folder);
+                    exportState(onlinedb, workflowId, state, contingencyId, folder, context.getOutputStream());
                 });
             }
         });
         onlinedb.close();
     }
 
-    private void exportState(OnlineDb onlinedb, String workflowId, Integer stateId, String contingencyId, Path folder) {
+    private void exportState(OnlineDb onlinedb, String workflowId, Integer stateId, String contingencyId, Path folder,
+                             PrintStream out) {
         String wfInfo = "workflow " + workflowId + ", state " + stateId + ((contingencyId != null) ? ", contingency " + contingencyId : "");
         Network network = onlinedb.getState(workflowId, stateId, contingencyId);
         if (network == null) {
-            System.out.println("Cannot export network data: no stored state for " + wfInfo);
+            out.println("Cannot export network data: no stored state for " + wfInfo);
             return;
         }
         String baseName = "wf_" + workflowId + "_state_" + stateId + ((contingencyId != null) ? "_cont_" + contingencyId : "");
         Path stateFolder = Paths.get(folder.toString(), baseName);
-        System.out.println("Exporting network data of " + wfInfo + " to folder " + stateFolder);
+        out.println("Exporting network data of " + wfInfo + " to folder " + stateFolder);
         if (stateFolder.toFile().exists()) {
-            System.out.println("Cannot export network data of " + wfInfo + ": folder " + stateFolder + " already exists");
+            out.println("Cannot export network data of " + wfInfo + ": folder " + stateFolder + " already exists");
             return;
         }
         if (!stateFolder.toFile().mkdirs()) {
-            System.out.println("Cannot export network data of " + wfInfo + ": unable to create " + stateFolder + " folder");
+            out.println("Cannot export network data of " + wfInfo + ": unable to create " + stateFolder + " folder");
             return;
         }
         DataSource dataSource = new FileDataSource(stateFolder, baseName);

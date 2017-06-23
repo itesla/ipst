@@ -9,6 +9,7 @@ package eu.itesla_project.modules.rules;
 import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.modules.offline.OfflineConfig;
 import eu.itesla_project.modules.rules.expr.ExpressionFlatPrinter;
 import eu.itesla_project.modules.rules.expr.ExpressionGraphvizPrinter;
@@ -32,7 +33,7 @@ public class PrintSecurityRuleTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         OfflineConfig config = OfflineConfig.load();
         String rulesDbName = line.hasOption("rules-db-name") ? line.getOptionValue("rules-db-name") : OfflineConfig.DEFAULT_RULES_DB_NAME;
         RulesDbClient rulesDb = config.getRulesDbClientFactoryClass().newInstance().create(rulesDbName);
@@ -56,7 +57,7 @@ public class PrintSecurityRuleTool implements Tool {
         SecurityRuleExpression securityRuleExpression = rule.toExpression(purityThreshold);
         if (securityRuleExpression.getStatus() == SecurityRuleStatus.ALWAYS_SECURE
                 || securityRuleExpression.getStatus() == SecurityRuleStatus.ALWAYS_UNSECURE) {
-            System.out.println(securityRuleExpression.getStatus());
+            context.getOutputStream().println(securityRuleExpression.getStatus());
         }
         ExpressionNode condition = securityRuleExpression.getCondition();
         String str;
@@ -73,7 +74,7 @@ public class PrintSecurityRuleTool implements Tool {
             default:
                 throw new AssertionError();
         }
-        System.out.println(str);
+        context.getOutputStream().println(str);
     }
 
 }

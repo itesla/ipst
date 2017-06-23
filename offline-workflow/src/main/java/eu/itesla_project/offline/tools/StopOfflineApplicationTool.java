@@ -9,6 +9,7 @@ package eu.itesla_project.offline.tools;
 import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.offline.OfflineApplication;
 import eu.itesla_project.offline.RemoteOfflineApplicationImpl;
 import org.apache.commons.cli.CommandLine;
@@ -58,7 +59,7 @@ public class StopOfflineApplicationTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         try (OfflineApplication app = new RemoteOfflineApplicationImpl()) {
             app.stopApplication();
         }
