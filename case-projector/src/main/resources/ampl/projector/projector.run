@@ -71,6 +71,18 @@ suffix knitro_niter OUT;
 ###############################################################################
 model "projector.mod";
 data  "projector.dat";
+
+#Data correction
+param tmp{UNIT};
+let {(g,n) in UNIT } tmp[g,n]    := if unit_Qp[g,n] < unit_qp[g,n] then unit_qp[g,n] else unit_Qp[g,n];
+let {(g,n) in UNIT } unit_qp[g,n]:= if unit_Qp[g,n] < unit_qp[g,n] then unit_Qp[g,n] else unit_qp[g,n];
+let {(g,n) in UNIT} unit_Qp[g,n]:=tmp[g,n];
+
+let {(g,n) in UNIT } tmp[g,n]    := if unit_QP[g,n] < unit_qP[g,n] then unit_qP[g,n] else unit_QP[g,n];
+let {(g,n) in UNIT } unit_qP[g,n]:= if unit_QP[g,n] < unit_qP[g,n] then unit_QP[g,n] else unit_qP[g,n];
+let {(g,n) in UNIT} unit_QP[g,n]:=tmp[g,n];
+
+
 check;
 
 
@@ -97,15 +109,19 @@ if ( tempo == 0 ) then
 ###############################################################################
 # Verification coherence des tensions nominales
 ###############################################################################
+
 for {(g,n,gid) in UNIT_DOMAIN} {
   let tempo := max{(numero,g,n,gid) in UNIT_DOMAIN_CTR} domain_Vnomi[numero,gid];
   if abs(tempo-substation_Vnomi[unit_substation[g,n]]) > 0.1
-  then printf "Probleme avec le groupe [%i,%s] : Vnomi=%.2f dans le poste %s de tension %.2f\n",
-    g,
-    gid,
-    tempo,
-    substation_id[unit_substation[g,n]],
-    substation_Vnomi[unit_substation[g,n]];
+  then {
+	printf "Probleme avec le groupe [%i,%s] : Vnomi=%.2f dans le poste %s de tension %.2f\n",
+	    g,
+	    gid,
+	    tempo,
+	    substation_id[unit_substation[g,n]],
+	    substation_Vnomi[unit_substation[g,n]];
+	let  gen_vnom_mismatch[g,n,gid] := 1;
+  	}
   }
 
 ###############################################################################

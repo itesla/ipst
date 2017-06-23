@@ -9,7 +9,7 @@
 #
 # Projecteur
 # Fichier .dat : peuplement des donnees / description des fichiers d'entree
-# 
+#
 ###############################################################################
 data;
 
@@ -18,8 +18,8 @@ data;
 param: SUBSTATIONS: substation_horizon substation_fodist substation_Vnomi substation_Vmin substation_Vmax substation_fault substation_curative substation_pays substation_id substation_description := include ampl_network_substations.txt;
 
 # ampl_network_buses.txt
-#"num" "substation" "cc" "v (pu)" "theta (rad)" "p (MW)" "q (MVar)" "fault" "curative" 
-param: NOEUD: noeud_poste noeud_CC noeud_V0 noeud_angl0 noeud_injA  noeud_injR noeud_fault noeud_curative := include ampl_network_buses.txt;
+#"num" "substation" "cc" "v (pu)" "theta (rad)" "p (MW)" "q (MVar)" "fault" "curative" "id"
+param: NOEUD: noeud_poste noeud_CC noeud_V0 noeud_angl0 noeud_injA  noeud_injR noeud_fault noeud_curative noeud_id := include ampl_network_buses.txt;
 
 # ampl_network_generators.txt
 #"num" "bus" "con. bus" "substation" "minP (MW)" "maxP (MW)" "minQmaxP (MVar)" "minQminP (MVar)" "maxQmaxP (MVar)" "maxQminP (MVar)" "v regul." "targetV (pu)" "targetP (MW)" "targetQ (MVar)" "fault" "curative" "id" "description" 

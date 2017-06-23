@@ -9,7 +9,7 @@
 #
 # Projecteur
 # Fichier .mod : modeles des donnees, des variables et des contraintes
-# 
+#
 ###############################################################################
 
 
@@ -51,6 +51,7 @@ param noeud_injA     {NOEUD};
 param noeud_injR     {NOEUD};
 param noeud_fault    {NOEUD};
 param noeud_curative {NOEUD};
+param noeud_id       {NOEUD} symbolic;
 
 #
 # Consistance
@@ -98,8 +99,9 @@ check {(g,n) in UNIT}:
   unit_Pmax[g,n] >= unit_Pmin[g,n];
 check {(g,n) in UNIT}: 
   unit_Qp[g,n] >= unit_qp[g,n] &&
-  unit_QP[g,n] >= unit_qP[g,n] &&
-  unit_Qp[g,n] >= unit_qP[g,n]; # Pour prendre un rectangle inclu dans le trapeze, on doit verifier qP<=Qp (c'est necessaire mais pas suffisant)
+  unit_QP[g,n] >= unit_qP[g,n]
+#  && unit_Qp[g,n] >= unit_qP[g,n] # Pour prendre un rectangle inclu dans le trapeze, on doit verifier qP<=Qp (c'est necessaire mais pas suffisant)
+  ;
 
 #
 # Donnees creees
@@ -314,16 +316,20 @@ set UNIT_PV  := setof {(g,n) in UNITCC: unit_PV[g,n]=="true" and unit_Vc[g,n]>0 
 set DOMAIN_IDENTIFIANTS := setof{(numero,id) in DOMAIN} id;
 # Groupes connectes et demarres ayant un domaine dynamique (en 3 indices)
 set UNIT_DOMAIN         := setof{(g,n) in UNITCC: unit_id[g,n] in DOMAIN_IDENTIFIANTS} (g,n,unit_id[g,n]);
+
+#Nicolas Omont : Ruse pour éliminer les groupes pour lesquels il y a un mismatch de tension entre l'état de réseau et les domaines
+param gen_vnom_mismatch{UNIT_DOMAIN} default 0;
+
 # Groupes connectes et demarres ayant un domaine dynamique (en 1 seul indice)
-set DOMAIN_ID           := setof{(g,n,gid) in UNIT_DOMAIN} gid;
+set DOMAIN_ID           := setof{(g,n,gid) in UNIT_DOMAIN : gen_vnom_mismatch[g,n,unit_id[g,n]]==0} gid;
 # Ensemble des contraintes des groupes connectes et demarres ayant un domaine dynamique (en 4 indices)
-set UNIT_DOMAIN_CTR     := setof{(g,n,gid) in UNIT_DOMAIN,(numero,gid) in DOMAIN} (numero,g,n,gid);
+set UNIT_DOMAIN_CTR     := setof{(g,n,gid) in UNIT_DOMAIN,(numero,gid) in DOMAIN : gen_vnom_mismatch[g,n,unit_id[g,n]]==0} (numero,g,n,gid);
 
 
 # Ensemble des groupes pour lesquels on faire varier P Q V :
 # Jean Maeght + Nicolas Omont le 29 aout 2016 :
 # Si aucun domaine dynamique n'a été fourni, alors on ne modifie pas le groupe
-set UNIT_PQV := setof {(g,n) in UNITCC: unit_id[g,n] in DOMAIN_IDENTIFIANTS} (g,n);
+set UNIT_PQV := setof {(g,n) in UNITCC: unit_id[g,n] in DOMAIN_IDENTIFIANTS and gen_vnom_mismatch[g,n,unit_id[g,n]]==0} (g,n);
 
 
 ###############################################################################
@@ -462,7 +468,7 @@ subject to ctr_trapeze_qmin{(g,n) in UNIT_PQV} :
   <= ctr_trapeze_qmin_rhs[g,n];
 
 # Definitions des domaines en (P,Q,V) pour la stabilite des modeles dynamiques
-subject to ctr_domain{(numero,g,n,gid) in UNIT_DOMAIN_CTR} :
+subject to ctr_domain{(numero,g,n,gid) in UNIT_DOMAIN_CTR : gen_vnom_mismatch[g,n,gid]==0 } :
     domain_coeffP[numero,gid] * unit_P[g,n]
   + domain_coeffQ[numero,gid] * unit_Q[g,n]
   + domain_coeffV[numero,gid] * substation_Vnomi[unit_substation[g,n]] * V[n]
