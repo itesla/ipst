@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -10,12 +11,11 @@ import eu.itesla_project.iidm.network.Bus;
 import eu.itesla_project.iidm.network.Terminal;
 
 /**
- *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
 public class ConnectionBus {
 
-    public static ConnectionBus fromTerminal(Terminal t, EurostagEchExportConfig config, String fakeNode) {
+    public static ConnectionBus fromTerminal(Terminal t, EurostagEchExportConfig config, EurostagFakeNodes fakeNodes) {
         if (config.isNoSwitch()) {
             Bus bus = t.getBusView().getBus();
             boolean connected;
@@ -24,6 +24,7 @@ public class ConnectionBus {
             } else {
                 connected = false;
                 // fake node...
+                String fakeNode = (fakeNodes != null) ? fakeNodes.getEsgIdAndIncCounter(t) : null;
                 return new ConnectionBus(false, fakeNode);
             }
             return new ConnectionBus(connected, bus.getId());
@@ -37,6 +38,7 @@ public class ConnectionBus {
                 bus = t.getBusBreakerView().getConnectableBus();
                 if (bus == null) {
                     // fake node...
+                    String fakeNode = (fakeNodes != null) ? fakeNodes.getEsgIdAndIncCounter(t) : null;
                     return new ConnectionBus(false, fakeNode);
                 }
             }
