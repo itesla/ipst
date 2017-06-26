@@ -27,14 +27,7 @@ find_path(Eurostag_INCLUDE_DIR NAME api_eurostag.h HINTS ${EUROSTAG_SDK_HOME}/in
 mark_as_advanced(Eurostag_INCLUDE_DIR)
 
 set(components
-    eustag_esg eustag_cpt
-    eustag_a light_lib_a_t
-    eustag_i
-    eustag_s light_lib_s
-    eustag_lf
-    light_lib_t_s light_lib_t
-    eustag_bld
-    util klu amd
+    eustag_esg
 )
 
 include(FindPackageHandleStandardArgs)
@@ -42,7 +35,7 @@ foreach(component ${components})
     string(TOUPPER ${component} COMPONENT)
     set(Eurostag_${component}_FIND_QUIETLY true)
 
-    find_library(Eurostag_${component}_LIBRARY lib${component}.a HINTS ${EUROSTAG_SDK_HOME}/lib NO_DEFAULT_PATH)
+    find_library(Eurostag_${component}_LIBRARY lib${component}.so HINTS ${EUROSTAG_SDK_HOME}/lib NO_DEFAULT_PATH)
     mark_as_advanced(Eurostag_${component}_LIBRARY)
     find_package_handle_standard_args(Eurostag_${component} DEFAULT_MSG Eurostag_${component}_LIBRARY)
 
