@@ -9,6 +9,7 @@ package eu.itesla_project.online.tools;
 import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.online.OnlineDb;
 import org.apache.commons.cli.CommandLine;
@@ -74,17 +75,17 @@ public class ExportOnlineWorkflowStatesTool implements Tool {
 	}
 
 	@Override
-	public void run(CommandLine line) throws Exception {
+	public void run(CommandLine line, ToolRunningContext context) throws Exception {
 		OnlineConfig config = OnlineConfig.load();
 		OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
 		String workflowId = line.getOptionValue("workflow");
 		Path file =  Paths.get(line.getOptionValue("file"));
 		List<Integer> storedStates = onlinedb.listStoredStates(workflowId);
 		if ( !storedStates.isEmpty() ) {
-			System.out.println("Exporting stored states of workflow " + workflowId + " to file " + file);
+			context.getOutputStream().println("Exporting stored states of workflow " + workflowId + " to file " + file);
 			onlinedb.exportStates(workflowId, file);
 		} else
-			System.out.println("No states stored for workflow " + workflowId);
+			context.getOutputStream().println("No states stored for workflow " + workflowId);
 		onlinedb.close();
 	}
 	

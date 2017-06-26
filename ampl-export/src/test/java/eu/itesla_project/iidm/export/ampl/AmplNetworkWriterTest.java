@@ -26,8 +26,8 @@ import static org.junit.Assert.*;
 public class AmplNetworkWriterTest {
 
     private void assertEqualsToRef(MemDataSource dataSource, String suffix, String refFileName) throws IOException {
-        assertEquals(new String(dataSource.getData(suffix, "txt"), StandardCharsets.UTF_8),
-                CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream("/" + refFileName), StandardCharsets.UTF_8)));
+        assertEquals(CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream("/" + refFileName), StandardCharsets.UTF_8)),
+                     new String(dataSource.getData(suffix, "txt"), StandardCharsets.UTF_8));
     }
 
     @Test

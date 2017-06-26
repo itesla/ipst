@@ -11,6 +11,7 @@ import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.config.ComponentDefaultConfig;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.contingency.ContingenciesProvider;
 import eu.itesla_project.contingency.ContingenciesProviderFactory;
 import eu.itesla_project.eurostag.network.EsgGeneralParameters;
@@ -50,7 +51,7 @@ public class EurostagExportTool implements Tool, EurostagConstants {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         ComponentDefaultConfig defaultConfig = ComponentDefaultConfig.load();
         EurostagConfig eurostagConfig = EurostagConfig.load();
         Path caseFile = Paths.get(line.getOptionValue("case-file"));
@@ -60,7 +61,7 @@ public class EurostagExportTool implements Tool, EurostagConstants {
         }
         DynamicDatabaseClient ddbClient = defaultConfig.newFactoryImpl(DynamicDatabaseClientFactory.class).create(eurostagConfig.isDdbCaching());
 
-        System.out.println("loading case...");
+        context.getOutputStream().println("loading case...");
         // load network
         Network network = Importers.loadNetwork(caseFile);
         if (network == null) {
@@ -68,7 +69,7 @@ public class EurostagExportTool implements Tool, EurostagConstants {
         }
         network.getStateManager().allowStateMultiThreadAccess(true);
 
-        System.out.println("exporting ech...");
+        context.getOutputStream().println("exporting ech...");
         // export .ech and dictionary
         EurostagEchExportConfig exportConfig = new EurostagEchExportConfig();
         BranchParallelIndexes parallelIndexes = BranchParallelIndexes.build(network, exportConfig);
@@ -84,12 +85,12 @@ public class EurostagExportTool implements Tool, EurostagConstants {
             new EsgWriter(networkEch, parameters).write(writer, network.getId() + "/" + network.getStateManager().getWorkingStateId());
         }
         dictionary.dump(outputDir.resolve("dict.csv"));
-        System.out.println("exporting dta...");
+        context.getOutputStream().println("exporting dta...");
 
         // export .dta
         ddbClient.dumpDtaFile(outputDir, "sim.dta", network, parallelIndexes.toMap(), EurostagUtil.VERSION, dictionary.toMap());
 
-        System.out.println("exporting seq...");
+        context.getOutputStream().println("exporting seq...");
 
             // export .seq
             EurostagScenario scenario = new EurostagScenario(SimulationParameters.load(), eurostagConfig);

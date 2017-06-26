@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -209,6 +210,22 @@ public class AmplUtil {
                 createLimitsIds(mapper, dl.getCurrentLimits(), dl.getId(), "");
             }
         }
+    }
+
+    public static void resetNetworkMapping(StringToIntMapper<AmplSubset> mapper) {
+        mapper.reset(AmplSubset.BUS);
+        mapper.reset(AmplSubset.VOLTAGE_LEVEL);
+        mapper.reset(AmplSubset.BRANCH);
+        mapper.reset(AmplSubset.RATIO_TAP_CHANGER);
+        mapper.reset(AmplSubset.PHASE_TAP_CHANGER);
+        mapper.reset(AmplSubset.TAP_CHANGER_TABLE);
+        mapper.reset(AmplSubset.LOAD);
+        mapper.reset(AmplSubset.SHUNT);
+        mapper.reset(AmplSubset.GENERATOR);
+        mapper.reset(AmplSubset.TEMPORARY_CURRENT_LIMIT);
+        mapper.reset(AmplSubset.THREE_WINDINGS_TRANSFO);
+        mapper.reset(AmplSubset.STATIC_VAR_COMPENSATOR);
+        mapper.reset(AmplSubset.HVDC_LINE);
     }
 
 }

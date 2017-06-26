@@ -1,91 +1,63 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 package eu.itesla_project.mcla.forecast_errors;
 
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Objects;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
-import org.joda.time.DateTime;
 import org.joda.time.Interval;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import eu.itesla_project.modules.online.TimeHorizon;
+import eu.itesla_project.modules.histo.HistoDbAttr;
+import eu.itesla_project.modules.histo.HistoDbAttributeId;
+import eu.itesla_project.modules.histo.HistoDbClient;
+import eu.itesla_project.modules.histo.HistoDbHorizon;
+import eu.itesla_project.modules.histo.HistoDbMetaAttributeId;
+import eu.itesla_project.modules.histo.HistoDbMetaAttributeType;
+import eu.itesla_project.modules.histo.HistoDbNetworkAttributeId;
+import eu.itesla_project.modules.histo.HistoQueryType;
 
 /**
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class FEAHistoDBFacade {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(FEAHistoDBFacade.class);
-	
-	private final int MAXRECORDSNUM = 100000;
-	
-	DataMiningFacadeRestConfig config;
-	TimeHorizon timeHorizon;
-	Interval histoInterval;
-    ArrayList<String> generatorsIds;
-    ArrayList<String> loadsIds;
+public final class FEAHistoDBFacade {
 
-	public FEAHistoDBFacade(DataMiningFacadeRestConfig config, TimeHorizon timeHorizon, Interval histoInterval,
-						    ArrayList<String> generatorsIds, ArrayList<String> loadsIds) {
-		Objects.requireNonNull(config, "config is null");
-		Objects.requireNonNull(timeHorizon, "time horizon is null");
-		Objects.requireNonNull(histoInterval, "histo interval is null");
-		Objects.requireNonNull(generatorsIds, "generatorsIds is null");
-		Objects.requireNonNull(loadsIds, "loadsIds is null");
-		
-		this.config = config;
-		this.timeHorizon = timeHorizon;
-		this.histoInterval = histoInterval;
-		this.generatorsIds = generatorsIds;
-		this.loadsIds = loadsIds;
-	}
+    private FEAHistoDBFacade() {
+    }
 
-	public void historicalDataToCsvFile(Path historicalDataCsvFile) throws Exception {
-		String query = historicalDataQuery();
-		LOGGER.info("Downloading data from HistoDB to file " + historicalDataCsvFile);
-		LOGGER.debug("HistoDB query = " + query);
-		HttpsClientHelper.remoteDataToFilePOST(
-				config.getRestServiceUrl(), 
-				query, 
-				config.getServiceUser(), 
-				config.getServicePassword(), 
-				historicalDataCsvFile.toString());
-	}
-	
-	protected String historicalDataQuery() {
-		String query = "headers=true";
-		query += "&count=" + MAXRECORDSNUM;
-		DateTimeFormatter dateFormatter = ISODateTimeFormat.date();
-		DateTime intervalStart = histoInterval.getStart();
-	    DateTime intervalEnd = histoInterval.getEnd();
-		query += "&time=[" + intervalStart.toString(dateFormatter) + "," + intervalEnd.toString(dateFormatter) + "]";
-		switch (timeHorizon) {
-			case DACF:
-				query += "&horizon=" + timeHorizon.getName();
-				break;
-			default:
-				throw new AssertionError();
-		}
-		if ( timeHorizon.getForecastTime() >= 0 )
-			query += "&forecast=" + timeHorizon.getForecastTime();
-		query += "&cols=datetime,horizon,forecastTime";
-		for ( String generatorId : generatorsIds ) {
-			query += "," + generatorId + "_P" + "," + generatorId + "_Q";
-		}
-		for ( String loadId : loadsIds ) {
-			query += "," + loadId + "_P" + "," + loadId + "_Q";
-		}
-		return query;
-	}
+    public static void historicalDataToCsvFile(HistoDbClient histoDbClient, List<String> generatorsIds, List<String> loadsIds, 
+                                               Interval histoInterval, Path historicalDataCsvFile) throws Exception {
+        Set<HistoDbAttributeId> attributeIds = new LinkedHashSet<>();
+        attributeIds.add(new HistoDbMetaAttributeId(HistoDbMetaAttributeType.datetime));
+        attributeIds.add(new HistoDbMetaAttributeId(HistoDbMetaAttributeType.horizon));
+        attributeIds.add(new HistoDbMetaAttributeId(HistoDbMetaAttributeType.forecastTime));
+        generatorsIds.forEach( generatorId -> 
+        {
+            attributeIds.add(new HistoDbNetworkAttributeId(generatorId, HistoDbAttr.P));
+            attributeIds.add(new HistoDbNetworkAttributeId(generatorId, HistoDbAttr.Q));
+        });
+        loadsIds.forEach( loadId -> 
+        {
+            attributeIds.add(new HistoDbNetworkAttributeId(loadId, HistoDbAttr.P));
+            attributeIds.add(new HistoDbNetworkAttributeId(loadId, HistoDbAttr.Q));
+        });
+        try (InputStream is = histoDbClient.queryCsv(HistoQueryType.forecastDiff,
+                                                     attributeIds,
+                                                     histoInterval,
+                                                     HistoDbHorizon.DACF,
+                                                     false, 
+                                                     false)) {
+            Files.copy(is, historicalDataCsvFile);
+        }
+    }
 
 }

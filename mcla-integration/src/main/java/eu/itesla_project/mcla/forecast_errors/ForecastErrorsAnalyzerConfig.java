@@ -26,9 +26,6 @@ public class ForecastErrorsAnalyzerConfig {
 
 	private Path binariesDir;
 	private Path runtimeHomeDir;
-	private String histoDBUser;
-	private String histoDBPassword;
-	private String histoDBServiceUrl;
 	private final boolean debug;
     private final Integer rngSeed;
     private final Integer checkModule0;
@@ -53,9 +50,6 @@ public class ForecastErrorsAnalyzerConfig {
     public ForecastErrorsAnalyzerConfig(
 			Path binariesDir,
 			Path runtimeHomeDir,
-			String histoDBServiceUrl,
-			String histoDBUser,
-			String histoDBPassword,
             Integer checkModule0,
             double percpuGaussLoad,
             double percpuGaussRes,
@@ -79,15 +73,9 @@ public class ForecastErrorsAnalyzerConfig {
 			) {
 		Objects.requireNonNull(binariesDir,"sampler compiled binaries directory is null");
 		Objects.requireNonNull(runtimeHomeDir,"matlab runtime directory is null");
-		Objects.requireNonNull(histoDBServiceUrl, "histodb service url is null");
-		Objects.requireNonNull(histoDBUser, "histodb user is null");
-		Objects.requireNonNull(histoDBPassword, "histodb password is null");
 
 		this.binariesDir=binariesDir;
 		this.runtimeHomeDir = runtimeHomeDir;
-		this.histoDBServiceUrl = histoDBServiceUrl;
-		this.histoDBUser = histoDBUser;
-		this.histoDBPassword = histoDBPassword;
         this.rngSeed = rngSeed;
         this.checkModule0=checkModule0;
         this.percpuGaussLoad=percpuGaussLoad;
@@ -115,9 +103,6 @@ public class ForecastErrorsAnalyzerConfig {
 
         Path binariesDir = config.getPathProperty("binariesDir");
         Path runtimeHomeDir = config.getPathProperty("runtimeHomeDir");
-        String histoDBServiceUrl = config.getStringProperty("histoDBServiceUrl");
-        String histoDBUser = config.getStringProperty("histoDBUser");
-        String histoDBPassword = config.getStringProperty("histoDBPassword");
         boolean debug = config.getBooleanProperty("debug", false);
         Integer checkModule0 = config.getOptionalIntProperty("checkModule0");
         double percpuGaussLoad = config.getDoubleProperty("percpuGaussLoad");
@@ -139,7 +124,7 @@ public class ForecastErrorsAnalyzerConfig {
         double thresGUI = config.getDoubleProperty("thresGUI");
         String nats = config.getStringProperty("nats","All");
 
-        return new ForecastErrorsAnalyzerConfig(binariesDir, runtimeHomeDir, histoDBServiceUrl, histoDBUser, histoDBPassword, checkModule0, percpuGaussLoad, percpuGaussRes, correlationGauss, tolVar, nMinObsFract, nMinObsInterv, imputationMeth, nGaussians, kOutlier, tolerance, iterations, epsilo, conditionalSampling, tFlags, histo_estremeQ, thresGUI, nats, rngSeed, debug);
+        return new ForecastErrorsAnalyzerConfig(binariesDir, runtimeHomeDir, checkModule0, percpuGaussLoad, percpuGaussRes, correlationGauss, tolVar, nMinObsFract, nMinObsInterv, imputationMeth, nGaussians, kOutlier, tolerance, iterations, epsilo, conditionalSampling, tFlags, histo_estremeQ, thresGUI, nats, rngSeed, debug);
 	}
 
 	public Path getBinariesDir() {
@@ -148,18 +133,6 @@ public class ForecastErrorsAnalyzerConfig {
 
 	public Path getRuntimeHomeDir() {
 		return runtimeHomeDir;
-	}
-
-	public String getHistoDBUser() {
-		return histoDBUser;
-	}
-
-	public String getHistoDBPassword() {
-		return histoDBPassword;
-	}
-
-	public String getHistoDBServiceUrl() {
-		return histoDBServiceUrl;
 	}
 
     public Integer getCheckModule0() {
@@ -231,7 +204,6 @@ public class ForecastErrorsAnalyzerConfig {
 	@Override
 	public String toString() {
 		return "ForecastErrorsAnalyzerConfig [binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir
-				+ ", histoDBUser=" + histoDBUser + ", histoDBPassword=*" + ", histoDBServiceUrl=" + histoDBServiceUrl
                 + ", check module0=" + checkModule0
                 + ", per cpu gauss load=" + percpuGaussLoad
                 + ", per cpu gauss res=" + percpuGaussRes

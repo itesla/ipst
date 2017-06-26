@@ -90,7 +90,7 @@
         <ipstcore.version>0.1-SNAPSHOT</ipstcore.version>
         <ipstentsoe.version>0.1-SNAPSHOT</ipstentsoe.version>
         <javaee-api-version>7.0</javaee-api-version>
-        <jackson.version>2.7.3</jackson.version>
+        <jackson.version>2.8.7</jackson.version>
         <jackson-datatype-joda.version>2.4.1</jackson-datatype-joda.version>
         <javacsv.version>2.0</javacsv.version>
         <jgrapht.version>1.0.1</jgrapht.version>
@@ -103,7 +103,6 @@
         <logback.version>1.1.8</logback.version>
         <mockito.version>1.10.19</mockito.version>
         <poi.version>3.15</poi.version>
-        <powermock.version>1.6.5</powermock.version>
         <resteasy.version>3.0.11.Final</resteasy.version>
         <servlet-api-version>3.0.1</servlet-api-version>
         <shrinkwrap.version>1.2.6</shrinkwrap.version>
@@ -111,7 +110,6 @@
         <slf4j.version>1.7.22</slf4j.version>
         <supercsv.version>2.4.0</supercsv.version>
         <trove4j.version>3.0.3</trove4j.version>
-        <undertow.version>1.3.4.Final</undertow.version>
         <xmlunit.version>2.3.0</xmlunit.version>
     </properties>
 
@@ -483,6 +481,11 @@
                 <artifactId>simulation-api</artifactId>
                 <version>${ipstcore.version}</version>
             </dependency>
+            <dependency>
+                <groupId>eu.itesla_project</groupId>
+                <artifactId>tools</artifactId>
+                <version>${ipstcore.version}</version>
+            </dependency>
 
             <!-- ipst-entsoe dependencies -->
             <dependency>
@@ -517,51 +520,15 @@
             
             <!-- Test dependencies -->
             <dependency>
-                <groupId>io.undertow</groupId>
-                <artifactId>undertow-core</artifactId>
-                <version>${undertow.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.undertow</groupId>
-                <artifactId>undertow-servlet</artifactId>
-                <version>${undertow.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.jboss.resteasy</groupId>
-                <artifactId>resteasy-undertow</artifactId>
-                <version>${resteasy.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.resteasy</groupId>
-                <artifactId>tjws</artifactId>
-                <version>${resteasy.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
                 <version>${mockito.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.powermock</groupId>
-                <artifactId>powermock-api-mockito</artifactId>
-                <version>${powermock.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.powermock</groupId>
-                <artifactId>powermock-module-junit4</artifactId>
-                <version>${powermock.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

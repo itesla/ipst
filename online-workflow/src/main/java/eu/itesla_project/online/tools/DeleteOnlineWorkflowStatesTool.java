@@ -9,6 +9,7 @@ package eu.itesla_project.online.tools;
 import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.online.OnlineDb;
 import org.apache.commons.cli.CommandLine;
@@ -64,16 +65,16 @@ public class DeleteOnlineWorkflowStatesTool implements Tool {
 	}
 
 	@Override
-	public void run(CommandLine line) throws Exception {
+	public void run(CommandLine line, ToolRunningContext context) throws Exception {
 		OnlineConfig config = OnlineConfig.load();
 		OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
 		String workflowId = line.getOptionValue("workflow");
-		System.out.println("Deleting stored states of workflow " + workflowId);
+		context.getOutputStream().println("Deleting stored states of workflow " + workflowId);
 		boolean deleted = onlinedb.deleteStates(workflowId);
 		if ( deleted )
-			System.out.println("Stored states of workflow " + workflowId + " deleted");
+			context.getOutputStream().println("Stored states of workflow " + workflowId + " deleted");
 		else
-			System.out.println("Cannot delete stored states of workflow " + workflowId);
+			context.getOutputStream().println("Cannot delete stored states of workflow " + workflowId);
 		onlinedb.close();
 	}
 	

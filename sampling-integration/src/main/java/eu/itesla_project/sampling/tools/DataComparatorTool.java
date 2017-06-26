@@ -6,21 +6,22 @@
  */
 package eu.itesla_project.sampling.tools;
 
+import com.google.auto.service.AutoService;
+import eu.itesla_project.commons.tools.Command;
+import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
+import eu.itesla_project.computation.*;
+import eu.itesla_project.sampling.SamplerWp41Config;
+import org.apache.commons.cli.CommandLine;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
-
-import eu.itesla_project.computation.*;
-import eu.itesla_project.computation.local.LocalComputationManager;
-import eu.itesla_project.sampling.SamplerWp41Config;
-import org.apache.commons.cli.CommandLine;
-
-import com.google.auto.service.AutoService;
-
-import eu.itesla_project.commons.tools.Command;
-import eu.itesla_project.commons.tools.Tool;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -111,36 +112,34 @@ public class DataComparatorTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
-        try (ComputationManager computationManager = new LocalComputationManager()) {
-            SamplerWp41Config config = SamplerWp41Config.load();
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
+        SamplerWp41Config config = SamplerWp41Config.load();
 
-            //String dataDir = line.getOptionValue(DataComparatorCommand.DATA_DIR);
-            String dataDir = config.getValidationDir().toFile().getAbsolutePath();
-            if (!Files.exists(config.getValidationDir())) {
-                throw new RuntimeException("validation data directory not found:  " + config.getValidationDir());
-            }
+        //String dataDir = line.getOptionValue(DataComparatorCommand.DATA_DIR);
+        String dataDir = config.getValidationDir().toFile().getAbsolutePath();
+        if (!Files.exists(config.getValidationDir())) {
+            throw new RuntimeException("validation data directory not found:  " + config.getValidationDir());
+        }
 
-            String oFilePrefix = line.getOptionValue("ofile");
-            String set1 = line.hasOption("set1") ? line.getOptionValue("set1") : "";
-            String set2 = line.hasOption("set2") ? line.getOptionValue("set2") : "";
+        String oFilePrefix = line.getOptionValue("ofile");
+        String set1 = line.hasOption("set1") ? line.getOptionValue("set1") : "";
+        String set2 = line.hasOption("set2") ? line.getOptionValue("set2") : "";
 
-            if ((!"".equals(set1 + set2)) && (("".equals(set1)) || ("".equals(set2)))) {
-                throw new RuntimeException("either specify both set1 and set2 parameters, or none of them");
-            }
+        if ((!"".equals(set1 + set2)) && (("".equals(set1)) || ("".equals(set2)))) {
+            throw new RuntimeException("either specify both set1 and set2 parameters, or none of them");
+        }
 
-            try (CommandExecutor executor = computationManager.newCommandExecutor(createEnv(config), WORKING_DIR_PREFIX, config.isDebug())) {
-                Path workingDir = executor.getWorkingDir();
-                eu.itesla_project.computation.Command cmd = createConcatMatFilesCmd(config.getValidationDir(), MOD3FILES_PATTERN, config.getValidationDir().resolve(CONCATSAMPLESFILENAME), config);
-                int priority = 1;
-                ExecutionReport report = executor.start(new CommandExecution(cmd, 1, priority));
+        try (CommandExecutor executor = context.getComputationManager().newCommandExecutor(createEnv(config), WORKING_DIR_PREFIX, config.isDebug())) {
+            Path workingDir = executor.getWorkingDir();
+            eu.itesla_project.computation.Command cmd = createConcatMatFilesCmd(config.getValidationDir(), MOD3FILES_PATTERN, config.getValidationDir().resolve(CONCATSAMPLESFILENAME), config);
+            int priority = 1;
+            ExecutionReport report = executor.start(new CommandExecution(cmd, 1, priority));
+            report.log();
+            if (report.getErrors().isEmpty()) {
+                report = executor.start(new CommandExecution(createDataComparatorCmd(config.getValidationDir().resolve(M1INPUTFILENAME).toFile().getAbsolutePath(), config.getValidationDir().resolve(CONCATSAMPLESFILENAME).toFile().getAbsolutePath(), set1, set2, config), 1, priority));
                 report.log();
-                if (report.getErrors().isEmpty()) {
-                    report = executor.start(new CommandExecution(createDataComparatorCmd(config.getValidationDir().resolve(M1INPUTFILENAME).toFile().getAbsolutePath(), config.getValidationDir().resolve(CONCATSAMPLESFILENAME).toFile().getAbsolutePath(), set1, set2, config), 1, priority));
-                    report.log();
-                    Files.copy(workingDir.resolve(DATA_COMPARATOR_OUT_FIG), Paths.get(oFilePrefix + ".fig"), REPLACE_EXISTING);
-                    Files.copy(workingDir.resolve(DATA_COMPARATOR_OUT_PNG), Paths.get(oFilePrefix + ".png"), REPLACE_EXISTING);
-                }
+                Files.copy(workingDir.resolve(DATA_COMPARATOR_OUT_FIG), Paths.get(oFilePrefix + ".fig"), REPLACE_EXISTING);
+                Files.copy(workingDir.resolve(DATA_COMPARATOR_OUT_PNG), Paths.get(oFilePrefix + ".png"), REPLACE_EXISTING);
             }
         }
     }

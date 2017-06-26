@@ -21,6 +21,7 @@ import com.google.auto.service.AutoService;
 
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.modules.mcla.ForecastErrorsAnalysisDetails;
 import eu.itesla_project.modules.mcla.ForecastErrorsAnalyzerParameters;
 import eu.itesla_project.modules.mcla.ForecastErrorsDataStorage;
@@ -71,7 +72,7 @@ public class ListForecastErrorsAnalysisTool implements Tool {
 	}
 
 	@Override
-	public void run(CommandLine line) throws Exception {
+	public void run(CommandLine line, ToolRunningContext context) throws Exception {
 		ForecastErrorsAnalysisConfig config = ForecastErrorsAnalysisConfig.load();
 		ForecastErrorsDataStorage feDataStorage = config.getForecastErrorsDataStorageFactoryClass().newInstance().create(); 
 		List<ForecastErrorsAnalysisDetails> analysisList = feDataStorage.listAnalysis();
@@ -114,7 +115,7 @@ public class ListForecastErrorsAnalysisTool implements Tool {
         			table.addCell("-");
 			}            
         }
-        System.out.println(table.render());
+        context.getOutputStream().println(table.render());
 	}
 
 }

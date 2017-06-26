@@ -13,6 +13,7 @@ import eu.itesla_project.commons.io.table.TableFormatter;
 import eu.itesla_project.commons.io.table.TableFormatterConfig;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.online.OnlineDb;
 import eu.itesla_project.modules.online.OnlineStep;
@@ -101,7 +102,7 @@ public class PrintOnlineWorkflowMetricsTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         OnlineConfig config = OnlineConfig.load();
         try (OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create()) {
             String workflowId = line.getOptionValue("workflow");
@@ -116,7 +117,7 @@ public class PrintOnlineWorkflowMetricsTool implements Tool {
                 Integer stateId = Integer.parseInt(line.getOptionValue("state"));
                 Map<String, String> metrics = onlinedb.getMetrics(workflowId, stateId, step);
                 if ((metrics == null) || (metrics.keySet().isEmpty())) {
-                    System.err.println("\nNo metrics for workflow " + workflowId + ", step " + step.name() + " and state " + stateId);
+                    context.getErrorStream().println("\nNo metrics for workflow " + workflowId + ", step " + step.name() + " and state " + stateId);
                 } else {
                     String[] headers = new String[metrics.keySet().size() + 1];
                     headers[0] = "state";
@@ -143,7 +144,7 @@ public class PrintOnlineWorkflowMetricsTool implements Tool {
             } else {
                 List<String[]> metricsTableList = onlinedb.getAllMetrics(workflowId, step);
                 if (metricsTableList.isEmpty()) {
-                    System.err.println("\nNo metrics for workflow " + workflowId + " and step " + step.name());
+                    context.getErrorStream().println("\nNo metrics for workflow " + workflowId + " and step " + step.name());
                 } else {
                     //first row is metrics' header
                     List<Column> columns = Arrays.stream(metricsTableList.get(0))
