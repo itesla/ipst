@@ -80,7 +80,7 @@ public class EurostagExportTool implements Tool, EurostagConstants {
             parameters.setMaxNumIteration(eurostagConfig.getLfMaxNumIteration());
             EsgSpecialParameters specialParameters = null;
             if (exportConfig.isSpecificCompatibility()) {
-                System.out.println("specificCompatibility=true: forces start mode to WARM and write the special parameters section in ech file");
+                context.getOutputStream().println("specificCompatibility=true: forces start mode to WARM and write the special parameters section in ech file");
                 parameters.setStartMode(EsgGeneralParameters.StartMode.WARM_START);
                 specialParameters = new EsgSpecialParameters();
                 //WARM START: ZMIN_LOW

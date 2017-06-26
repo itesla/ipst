@@ -47,7 +47,7 @@ public class EsgWriter {
             case WARM_START:
                 return '1';
             default:
-                throw new AssertionError();
+                throw new IllegalArgumentException("Illegal start mode:" + mode);
         }
     }
 
@@ -125,7 +125,7 @@ public class EsgWriter {
                 typecard = "DA";
                 break;
             default:
-                throw new InternalError();
+                throw new IllegalArgumentException("Invalid area type: " + area.getType());
         }
         recordWriter.addValue(typecard, 1, 2);
         recordWriter.addValue(area.getName().toString(), 4, 5);
@@ -162,7 +162,7 @@ public class EsgWriter {
             case OPEN_AT_SENDING_SIDE:
                 return '>';
             default:
-                throw new InternalError();
+                throw new IllegalArgumentException("Invalid status: " + status);
         }
     }
 
@@ -189,7 +189,7 @@ public class EsgWriter {
             case CLOSED:
                 return ' ';
             default:
-                throw new InternalError();
+                throw new IllegalArgumentException("Invalid connection status: " + code);
         }
     }
 
@@ -237,7 +237,7 @@ public class EsgWriter {
             case VOLTAGE:
                 return 'V';
             default:
-                throw new InternalError();
+                throw new IllegalArgumentException("Invalid regulating mode: " + mode);
         }
     }
 
@@ -286,7 +286,7 @@ public class EsgWriter {
             case NOT_CONNECTED:
                 return 'N';
             default:
-                throw new InternalError();
+                throw new IllegalArgumentException("Invalid connection status: " + status);
         }
     }
 
@@ -313,7 +313,7 @@ public class EsgWriter {
             case NOT_REGULATING:
                 return 'N';
             default:
-                throw new InternalError();
+                throw new IllegalArgumentException("Invalid mode: " + mode);
         }
     }
 
@@ -342,7 +342,7 @@ public class EsgWriter {
             case NOT_REGULATING:
                 return 'N';
             default:
-                throw new InternalError();
+                throw new IllegalArgumentException("Invalid mode: " + mode);
         }
     }
 
