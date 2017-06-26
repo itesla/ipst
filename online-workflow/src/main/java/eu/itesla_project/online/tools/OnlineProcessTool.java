@@ -12,11 +12,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.auto.service.AutoService;
-import eu.itesla_project.commons.tools.Command;
-import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.computation.local.LocalComputationManager;
 import eu.itesla_project.cases.CaseRepository;
 import eu.itesla_project.cases.CaseType;
+import eu.itesla_project.commons.tools.Command;
+import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.online.OnlineDb;
 import eu.itesla_project.modules.online.OnlineProcess;
@@ -25,11 +25,11 @@ import eu.itesla_project.online.LocalOnlineApplicationMBean;
 import eu.itesla_project.online.OnlineWorkflowStartParameters;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
+
 import javax.management.MBeanServerConnection;
 import javax.management.MBeanServerInvocationHandler;
 import javax.management.ObjectName;
@@ -39,6 +39,7 @@ import javax.management.remote.JMXServiceURL;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -100,12 +101,12 @@ public class OnlineProcessTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         OnlineWorkflowStartParameters startconfig = OnlineWorkflowStartParameters.loadDefault();
         OnlineWorkflowParameters params = OnlineWorkflowParameters.loadDefault();
         OnlineProcessParameters proc_params = null;
         if (line.hasOption("config-file")) {
-            proc_params = readParamsFile(line.getOptionValue("config-file"));
+            proc_params = readParamsFile(line.getOptionValue("config-file"), context.getOutputStream());
 
         } else
             proc_params = new OnlineProcessParameters();
@@ -116,12 +117,12 @@ public class OnlineProcessTool implements Tool {
             proc_params.setDate(new DateTime());
         if (proc_params.getCreationDate() == null)
             proc_params.setCreationDate(new DateTime());
-        System.out.println("OnlineProcess config: " + proc_params);
+        context.getOutputStream().println("OnlineProcess config: " + proc_params);
         if (proc_params.getCaseType() != null)
             params.setCaseType(CaseType.valueOf(proc_params.getCaseType()));
 
         if (params.getCaseType() == null) {
-            System.out.println("Error: Missing required param 'case-type'");
+            context.getOutputStream().println("Error: Missing required param 'case-type'");
             return;
         }
         if (proc_params.getStates() != null)
@@ -129,20 +130,20 @@ public class OnlineProcessTool implements Tool {
 
         OnlineConfig oConfig = OnlineConfig.load();
         CaseRepository caseRepo = oConfig.getCaseRepositoryFactoryClass().newInstance()
-                .create(new LocalComputationManager());
+                .create(context.getComputationManager());
         DateTime[] basecases = null;
         Set<DateTime> baseCasesSet = null;
         if (proc_params.getBasecasesInterval() != null) {
             Interval basecasesInterval = Interval.parse(proc_params.getBasecasesInterval());
             baseCasesSet = caseRepo.dataAvailable(params.getCaseType(), params.getCountries(), basecasesInterval);
             if (baseCasesSet.isEmpty()) {
-                System.out.println("No Base cases available for case-type " + params.getCaseType() + " and interval "
+                context.getOutputStream().println("No Base cases available for case-type " + params.getCaseType() + " and interval "
                         + proc_params.getBasecasesInterval());
                 return;
             }
-            System.out.println("Base cases available for interval " + basecasesInterval.toString());
+            context.getOutputStream().println("Base cases available for interval " + basecasesInterval.toString());
             baseCasesSet.forEach(x -> {
-                System.out.println(" " + x);
+                context.getOutputStream().println(" " + x);
             });
             basecases = new DateTime[baseCasesSet.size()];
             basecases = baseCasesSet.toArray(basecases);
@@ -157,13 +158,13 @@ public class OnlineProcessTool implements Tool {
                 basecases = new DateTime[baseCasesSet.size()];
                 basecases = baseCasesSet.toArray(basecases);
                 if (baseCasesSet.isEmpty()) {
-                    System.out.println("No Base cases available for  case-type " + params.getCaseType()
+                    context.getOutputStream().println("No Base cases available for  case-type " + params.getCaseType()
                             + " and interval " + basecasesInterval);
                     return;
                 }
-                System.out.println("Base cases available for interval " + basecasesInterval.toString());
+                context.getOutputStream().println("Base cases available for interval " + basecasesInterval.toString());
                 baseCasesSet.forEach(x -> {
-                    System.out.println(" " + x);
+                    context.getOutputStream().println(" " + x);
                 });
             } else if (params.getCaseType().equals(CaseType.SN)) {
                 DateTime startOfDay = new DateTime(proc_params.getCreationDate().getYear(),
@@ -172,14 +173,14 @@ public class OnlineProcessTool implements Tool {
                 Interval basecasesInterval = new Interval(startOfDay, proc_params.getCreationDate());
                 baseCasesSet = caseRepo.dataAvailable(params.getCaseType(), params.getCountries(), basecasesInterval);
                 if (baseCasesSet.isEmpty()) {
-                    System.out.println("No Base cases available for case-type " + params.getCaseType()
+                    context.getOutputStream().println("No Base cases available for case-type " + params.getCaseType()
                             + " and interval " + basecasesInterval);
                     return;
                 }
                 DateTime max = Collections.max(baseCasesSet);
                 basecases = new DateTime[1];
                 basecases[0] = max;
-                System.out.println("SN - Latest Day Base case is " + max + " for interval " + basecasesInterval);
+                context.getOutputStream().println("SN - Latest Day Base case is " + max + " for interval " + basecasesInterval);
                 // CHeck if already processed
                 boolean processed = false;
                 OnlineConfig config = OnlineConfig.load();
@@ -200,7 +201,7 @@ public class OnlineProcessTool implements Tool {
                     }
                 }
                 if (processed) {
-                    System.out.println("SN - Base case already processed: " + max + " - Exiting");
+                    context.getOutputStream().println("SN - Base case already processed: " + max + " - Exiting");
                     return;
                 }
             }
@@ -217,7 +218,7 @@ public class OnlineProcessTool implements Tool {
                 LocalOnlineApplicationMBean.class, false);
         String processId = application.startProcess(proc_params.getName(), proc_params.getOwner(),
                 proc_params.getDate(), proc_params.getCreationDate(), startconfig, params, basecases);
-        System.out.println("processId=" + processId);
+        context.getOutputStream().println("processId=" + processId);
     }
 
     private void readParams(CommandLine line, OnlineProcessParameters pp) {
@@ -237,7 +238,7 @@ public class OnlineProcessTool implements Tool {
             pp.setCreationDate(DateTime.parse(line.getOptionValue("creation-date")));
     }
 
-    private OnlineProcessParameters readParamsFile(String filename)
+    private OnlineProcessParameters readParamsFile(String filename, PrintStream out)
             throws JsonParseException, JsonMappingException, IOException {
         Path procFile = Paths.get(filename);
         if (Files.exists(procFile)) {
@@ -249,7 +250,7 @@ public class OnlineProcessTool implements Tool {
                     false);
             return objectMapper.readValue(json, OnlineProcessParameters.class);
         } else
-            System.out.println("File not found: " + filename);
+            out.println("File not found: " + filename);
         return null;
     }
 

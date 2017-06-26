@@ -247,11 +247,12 @@ public class AmplNetworkWriter implements AmplConstants {
                 new Column("p (MW)"),
                 new Column("q (MVar)"),
                 new Column("fault"),
-                new Column(config.getActionType().getLabel()))) {
+                new Column(config.getActionType().getLabel()),
+                new Column("id"))) {
             for (Bus b : AmplUtil.getBuses(network)) {
                 int ccNum = ConnectedComponents.getCcNum(b);
                 // skip buses not in the main connected component
-                if (isOnlyMainCc() && ccNum != ConnectedComponent.MAIN_CC_NUM) {
+                if (isOnlyMainCc() && ccNum != Component.MAIN_NUM) {
                     continue;
                 }
                 String id = b.getId();
@@ -270,7 +271,8 @@ public class AmplNetworkWriter implements AmplConstants {
                          .writeCell(b.getP())
                          .writeCell(b.getQ())
                          .writeCell(faultNum)
-                         .writeCell(actionNum);
+                         .writeCell(actionNum)
+                         .writeCell(id);
             }
             // 3 windings transformers middle bus
             for (ThreeWindingsTransformer twt : network.getThreeWindingsTransformers()) {
@@ -291,7 +293,7 @@ public class AmplNetworkWriter implements AmplConstants {
                     middleCcNum = context.otherCcNum--;
                 }
                 // skip buses not in the main connected component
-                if (isOnlyMainCc() && middleCcNum != ConnectedComponent.MAIN_CC_NUM) {
+                if (isOnlyMainCc() && middleCcNum != Component.MAIN_NUM) {
                     continue;
                 }
                 String middleBusId = getThreeWindingsTransformerMiddleBusId(twt);
@@ -307,7 +309,8 @@ public class AmplNetworkWriter implements AmplConstants {
                          .writeCell(0f)
                          .writeCell(0f)
                          .writeCell(faultNum)
-                         .writeCell(actionNum);
+                         .writeCell(actionNum)
+                         .writeCell(middleBusId);
             }
             // dangling line middle bus
             for (DanglingLine dl : network.getDanglingLines()) {
@@ -322,7 +325,7 @@ public class AmplNetworkWriter implements AmplConstants {
                     middleCcNum = context.otherCcNum--;
                 }
                 // skip buses not in the main connected component
-                if (isOnlyMainCc() && middleCcNum != ConnectedComponent.MAIN_CC_NUM) {
+                if (isOnlyMainCc() && middleCcNum != Component.MAIN_NUM) {
                     continue;
                 }
                 String middleBusId = getDanglingLineMiddleBusId(dl);
@@ -342,7 +345,8 @@ public class AmplNetworkWriter implements AmplConstants {
                          .writeCell(0f) // 0 MW injected at dangling line internal bus
                          .writeCell(0f) // 0 MVar injected at dangling line internal bus
                          .writeCell(faultNum)
-                         .writeCell(actionNum);
+                         .writeCell(actionNum)
+                         .writeCell(middleBusId);
             }
             if (config.isExportXNodes()) {
                 for (Line l : network.getLines()) {
@@ -363,7 +367,7 @@ public class AmplNetworkWriter implements AmplConstants {
                         xNodeCcNum = context.otherCcNum--;
                     }
                     // skip buses not in the main connected component
-                    if (isOnlyMainCc() && xNodeCcNum != ConnectedComponent.MAIN_CC_NUM) {
+                    if (isOnlyMainCc() && xNodeCcNum != Component.MAIN_NUM) {
                         continue;
                     }
                     String xNodeBusId = AmplUtil.getXnodeBusId(tieLine);
@@ -377,7 +381,8 @@ public class AmplNetworkWriter implements AmplConstants {
                             .writeCell(0f)
                             .writeCell(0f)
                             .writeCell(faultNum)
-                            .writeCell(actionNum);
+                            .writeCell(actionNum)
+                            .writeCell(xNodeBusId);
                 }
             }
         }

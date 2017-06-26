@@ -14,6 +14,7 @@ import eu.itesla_project.commons.io.table.TableFormatter;
 import eu.itesla_project.commons.io.table.TableFormatterConfig;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.online.OnlineDb;
 import eu.itesla_project.modules.online.StateProcessingStatus;
@@ -91,7 +92,7 @@ public class PrintOnlineWorkflowProcessingStatusTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         OnlineConfig config = OnlineConfig.load();
         try (OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create()) {
             String workflowId = line.getOptionValue("workflow");
@@ -130,7 +131,7 @@ public class PrintOnlineWorkflowProcessingStatusTool implements Tool {
 
                 }
             } else {
-                System.err.println("No status of the processing steps for this workflow: " + workflowId);
+                context.getErrorStream().println("No status of the processing steps for this workflow: " + workflowId);
             }
         }
     }

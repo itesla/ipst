@@ -9,6 +9,7 @@ package eu.itesla_project.modules.histo.tools;
 import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.modules.histo.*;
 import eu.itesla_project.modules.offline.OfflineConfig;
 import org.apache.commons.cli.CommandLine;
@@ -69,7 +70,7 @@ public class HistoDbCountAttributesTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         Interval interval = Interval.parse(line.getOptionValue("interval"));
         HistoDbHorizon horizon = HistoDbHorizon.SN;
         if (line.hasOption("horizon")) {
@@ -80,7 +81,7 @@ public class HistoDbCountAttributesTool implements Tool {
             Set<HistoDbAttributeId> attributeIds = new LinkedHashSet<>(histoDbClient.listAttributes());
             HistoDbStats stats = histoDbClient.queryStats(attributeIds, interval, horizon, true);
             for (HistoDbAttributeId attributeId : attributeIds) {
-                System.out.println(attributeId + ";" + (int) stats.getValue(HistoDbStatsType.COUNT, attributeId, -1));
+                context.getOutputStream().println(attributeId + ";" + (int) stats.getValue(HistoDbStatsType.COUNT, attributeId, -1));
             }
         }
     }

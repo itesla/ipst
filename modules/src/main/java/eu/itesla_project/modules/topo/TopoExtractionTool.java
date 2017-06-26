@@ -10,6 +10,7 @@ import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.ITeslaException;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.iidm.import_.Importer;
 import eu.itesla_project.iidm.import_.Importers;
 import eu.itesla_project.iidm.network.VoltageLevel;
@@ -84,7 +85,7 @@ public class TopoExtractionTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         String caseFormat = line.getOptionValue("case-format");
         Path caseDir = Paths.get(line.getOptionValue("case-dir"));
         String[] voltageLevelIds = line.getOptionValue("voltage-level-ids").split(",");
@@ -92,27 +93,27 @@ public class TopoExtractionTool implements Tool {
         if (importer == null) {
             throw new ITeslaException("Format " + caseFormat + " not supported");
         }
-        System.out.print("Case name");
+        context.getOutputStream().print("Case name");
         for (String voltageLevelId : voltageLevelIds) {
-            System.out.print(CSV_SEPARATOR + voltageLevelId);
+            context.getOutputStream().print(CSV_SEPARATOR + voltageLevelId);
         }
-        System.out.println();
+        context.getOutputStream().println();
         Importers.importAll(caseDir, importer, false, network -> {
             try {
                 for (String voltageLevelId : voltageLevelIds) {
-                    System.out.print(CSV_SEPARATOR);
+                    context.getOutputStream().print(CSV_SEPARATOR);
                     VoltageLevel vl = network.getVoltageLevel(voltageLevelId);
                     if (vl != null) {
                         JSONArray toposArray = IIDM2DB.toTopoSet(vl);
-                        System.out.print(toposArray.toString());
+                        context.getOutputStream().print(toposArray.toString());
                     }
 
                 }
-                System.out.println();
+                context.getOutputStream().println();
             } catch (Exception e) {
                 LOGGER.error(e.toString(), e);
             }
-        }, dataSource -> System.out.print(dataSource.getBaseName()));
+        }, dataSource -> context.getOutputStream().print(dataSource.getBaseName()));
     }
 
 }

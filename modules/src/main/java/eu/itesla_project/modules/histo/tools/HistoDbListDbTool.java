@@ -9,6 +9,7 @@ package eu.itesla_project.modules.histo.tools;
 import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.modules.histo.HistoDbClient;
 import eu.itesla_project.modules.offline.OfflineConfig;
 import org.apache.commons.cli.CommandLine;
@@ -52,10 +53,10 @@ public class HistoDbListDbTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         OfflineConfig config = OfflineConfig.load();
         try (HistoDbClient histoDbClient = config.getHistoDbClientFactoryClass().newInstance().create(false)) {
-            histoDbClient.listDbs().forEach(System.out::println);
+            histoDbClient.listDbs().forEach(context.getOutputStream()::println);
         }
     }
 

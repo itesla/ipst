@@ -9,6 +9,7 @@ package eu.itesla_project.iidm.ddb.eurostag_imp_exp.tools;
 import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DdbConfig;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DdbDtaImpExp;
 import org.apache.commons.cli.CommandLine;
@@ -121,7 +122,7 @@ public class DdbUpdateEurostagDataTool implements Tool {
 	}
 
 	@Override
-	public void run(CommandLine line) throws Exception {
+	public void run(CommandLine line, ToolRunningContext context) throws Exception {
 		String dataDir = line.getOptionValue(DATA_DIR);
 		String ddFile = line.getOptionValue(DD_FILE);
 		String jbossHost = line.getOptionValue(HOST);

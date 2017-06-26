@@ -27,8 +27,8 @@ MYSQL iidm-ddb schema creation
 ----------------------------------------
 execute the following 3-lines DDL script:
 
-
-CREATE DATABASE itesladdb CHARACTER SET utf8 COLLATE utf8_general_ci;
+DROP DATABASE IF EXISTS itesladdb;
+CREATE DATABASE IF NOT EXISTS itesladdb CHARACTER SET utf8 COLLATE utf8_general_ci;
 GRANT ALL ON itesladdb.* TO 'itesla'@'localhost' IDENTIFIED BY 'itesla';
 GRANT ALL ON itesladdb.* TO 'itesla'@'%' IDENTIFIED BY 'itesla';
 

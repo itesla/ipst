@@ -9,8 +9,7 @@ package eu.itesla_project.modules;
 import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.computation.local.LocalComputationManager;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.iidm.import_.Importers;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.loadflow.api.LoadFlow;
@@ -18,9 +17,9 @@ import eu.itesla_project.loadflow.api.LoadFlowResult;
 import eu.itesla_project.modules.histo.HistoDbClient;
 import eu.itesla_project.modules.offline.OfflineConfig;
 import eu.itesla_project.modules.sampling.SampleCharacteritics;
-import eu.itesla_project.security.Security;
 import eu.itesla_project.modules.topo.TopologyContext;
 import eu.itesla_project.modules.topo.TopologyMiner;
+import eu.itesla_project.security.Security;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -105,7 +104,7 @@ public class OptimizerTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         Path caseFile = Paths.get(line.getOptionValue("case-file"));
         Interval histoInterval = Interval.parse(line.getOptionValue("history-interval"));
         boolean checkConstraints = line.hasOption("check-constraints");
@@ -114,48 +113,46 @@ public class OptimizerTool implements Tool {
         boolean generationSampled = line.hasOption("generation-sampled");
         boolean boundariesSampled = line.hasOption("boundaries-sampled");
 
-        try (ComputationManager computationManager = new LocalComputationManager()) {
-            System.out.println("loading case...");
-            // load the network
-            Network network = Importers.loadNetwork(caseFile);
-            if (network == null) {
-                throw new RuntimeException("Case '" + caseFile + "' not found");
-            }
-            network.getStateManager().allowStateMultiThreadAccess(true);
+        context.getOutputStream().println("loading case...");
+        // load the network
+        Network network = Importers.loadNetwork(caseFile);
+        if (network == null) {
+            throw new RuntimeException("Case '" + caseFile + "' not found");
+        }
+        network.getStateManager().allowStateMultiThreadAccess(true);
 
-            System.out.println("sample characteristics: " + SampleCharacteritics.fromNetwork(network, generationSampled, boundariesSampled));
+        context.getOutputStream().println("sample characteristics: " + SampleCharacteritics.fromNetwork(network, generationSampled, boundariesSampled));
 
-            OfflineConfig config = OfflineConfig.load();
-            try (HistoDbClient histoDbClient = config.getHistoDbClientFactoryClass().newInstance().create();
-                 TopologyMiner topologyMiner = config.getTopologyMinerFactoryClass().newInstance().create()) {
+        OfflineConfig config = OfflineConfig.load();
+        try (HistoDbClient histoDbClient = config.getHistoDbClientFactoryClass().newInstance().create();
+             TopologyMiner topologyMiner = config.getTopologyMinerFactoryClass().newInstance().create()) {
 
-                Optimizer optimizer = config.getOptimizerFactoryClass().newInstance().create(network, computationManager, 0, histoDbClient, topologyMiner);
-                LoadFlow loadFlow = config.getLoadFlowFactoryClass().newInstance().create(network, computationManager, 0);
+            Optimizer optimizer = config.getOptimizerFactoryClass().newInstance().create(network, context.getComputationManager(), 0, histoDbClient, topologyMiner);
+            LoadFlow loadFlow = config.getLoadFlowFactoryClass().newInstance().create(network, context.getComputationManager(), 0);
 
-                System.out.println("initializing optimizer...");
+            context.getOutputStream().println("initializing optimizer...");
 
-                TopologyContext topologyContext = TopologyContext.create(network, topologyMiner, histoDbClient, computationManager, histoInterval, correlationThreshold, probabilityThreshold);
+            TopologyContext topologyContext = TopologyContext.create(network, topologyMiner, histoDbClient, context.getComputationManager(), histoInterval, correlationThreshold, probabilityThreshold);
 
-                optimizer.init(new OptimizerParameters(histoInterval), topologyContext);
+            optimizer.init(new OptimizerParameters(histoInterval), topologyContext);
 
-                System.out.println("running optimizer...");
+            context.getOutputStream().println("running optimizer...");
 
-                OptimizerResult result = optimizer.run();
+            OptimizerResult result = optimizer.run();
 
-                System.out.println("optimizer status is " + (result.isFeasible() ? "feasible" : "unfeasible") + " (" + result.getMetrics() + ")");
+            context.getOutputStream().println("optimizer status is " + (result.isFeasible() ? "feasible" : "unfeasible") + " (" + result.getMetrics() + ")");
 
-                if (result.isFeasible()) {
-                    System.out.println("running loadflow...");
+            if (result.isFeasible()) {
+                context.getOutputStream().println("running loadflow...");
 
-                    LoadFlowResult result2 = loadFlow.run();
+                LoadFlowResult result2 = loadFlow.run();
 
-                    System.out.println("loadflow status is " + (result2.isOk() ? "ok" : "nok") + " (" + result2.getMetrics() + ")");
+                context.getOutputStream().println("loadflow status is " + (result2.isOk() ? "ok" : "nok") + " (" + result2.getMetrics() + ")");
 
-                    if (result2.isOk() && checkConstraints) {
-                        String report = Security.printLimitsViolations(network);
-                        if (report != null) {
-                            System.out.println(report);
-                        }
+                if (result2.isOk() && checkConstraints) {
+                    String report = Security.printLimitsViolations(network);
+                    if (report != null) {
+                        context.getOutputStream().println(report);
                     }
                 }
             }

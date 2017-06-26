@@ -6,9 +6,10 @@
  */
 package eu.itesla_project.modules.offline;
 
-import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.commons.tools.Command;
 import com.google.auto.service.AutoService;
+import eu.itesla_project.commons.tools.Command;
+import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
 import org.apache.commons.cli.CommandLine;
 import org.nocrala.tools.texttablefmt.BorderStyle;
@@ -27,7 +28,7 @@ public class PrintSecurityIndexesSynthesisTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         String simulationDbName = line.hasOption("simulation-db-name") ? line.getOptionValue("simulation-db-name") : OfflineConfig.DEFAULT_SIMULATION_DB_NAME;
         OfflineConfig config = OfflineConfig.load();
         OfflineDb offlineDb = config.getOfflineDbFactoryClass().newInstance().create(simulationDbName);
@@ -45,7 +46,7 @@ public class PrintSecurityIndexesSynthesisTool implements Tool {
                 table.addCell(balance.getStableCount() + "/" + balance.getUnstableCount());
             }
         }
-        System.out.println(table.render());
+        context.getOutputStream().println(table.render());
     }
 
 }

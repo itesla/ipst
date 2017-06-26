@@ -9,6 +9,7 @@ package eu.itesla_project.modules.histo.tools;
 import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.modules.histo.HistoDbAttr;
 import eu.itesla_project.modules.histo.HistoDbAttributeId;
 import eu.itesla_project.modules.histo.HistoDbClient;
@@ -67,7 +68,7 @@ public class HistoDbListAttributesTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         OfflineConfig config = OfflineConfig.load();
         Set<HistoDbAttr> types = null;
         if (line.hasOption("attribute-types")) {
@@ -81,7 +82,7 @@ public class HistoDbListAttributesTool implements Tool {
                 if (types == null
                         || (attributeId instanceof HistoDbNetworkAttributeId
                         && types.contains(((HistoDbNetworkAttributeId) attributeId).getAttributeType()))) {
-                    System.out.println(attributeId);
+                    context.getOutputStream().println(attributeId);
                 }
             }
         }

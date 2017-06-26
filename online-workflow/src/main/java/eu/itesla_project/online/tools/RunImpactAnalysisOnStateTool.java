@@ -13,15 +13,14 @@ import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.computation.local.LocalComputationManager;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.online.OnlineDb;
+import eu.itesla_project.simulation.*;
 import eu.itesla_project.simulation.securityindexes.SecurityIndex;
 import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
-import eu.itesla_project.simulation.*;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -90,33 +89,32 @@ public class RunImpactAnalysisOnStateTool implements Tool {
 	}
 
 	@Override
-	public void run(CommandLine line) throws Exception {
+	public void run(CommandLine line, ToolRunningContext context) throws Exception {
 		String workflowId = line.getOptionValue("workflow");
 		Integer stateId = Integer.valueOf(line.getOptionValue("state"));
 		Set<String> contingencyIds = null;
         if (line.hasOption("contingencies")) {
             contingencyIds = Sets.newHashSet(line.getOptionValue("contingencies").split(","));
         }
-        System.out.println("loading state " + stateId + " of workflow " + workflowId + " from the online db ...");
+        context.getOutputStream().println("loading state " + stateId + " of workflow " + workflowId + " from the online db ...");
         OnlineConfig config = OnlineConfig.load();
 		OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
         // load the network
         Network network = onlinedb.getState(workflowId, stateId);
         if ( network != null ) {
-	        ComputationManager computationManager = new LocalComputationManager();
 	        ContingenciesAndActionsDatabaseClient contingencyDb = config.getContingencyDbClientFactoryClass().newInstance().create();
 	        SimulatorFactory simulatorFactory = config.getSimulatorFactoryClass().newInstance();
-	        Stabilization stabilization = simulatorFactory.createStabilization(network, computationManager, 0);
-			ImpactAnalysis impactAnalysis = simulatorFactory.createImpactAnalysis(network, computationManager, 0, contingencyDb);
+	        Stabilization stabilization = simulatorFactory.createStabilization(network, context.getComputationManager(), 0);
+			ImpactAnalysis impactAnalysis = simulatorFactory.createImpactAnalysis(network, context.getComputationManager(), 0, contingencyDb);
 			Map<String, Object> initContext = new HashMap<>();
 			SimulationParameters simulationParameters = SimulationParameters.load();
 			stabilization.init(simulationParameters, initContext);
 			impactAnalysis.init(simulationParameters, initContext);
-			System.out.println("running stabilization simulation...");
+			context.getOutputStream().println("running stabilization simulation...");
 			StabilizationResult sr = stabilization.run();
-			System.out.println("stabilization status: " + sr.getStatus());
+			context.getOutputStream().println("stabilization status: " + sr.getStatus());
 			if (sr.getStatus() == StabilizationStatus.COMPLETED) {
-				System.out.println("running impact analysis...");
+				context.getOutputStream().println("running impact analysis...");
 				ImpactAnalysisResult iar = impactAnalysis.run(sr.getState(), contingencyIds);
 
 				Table table = new Table(1 + SecurityIndexType.values().length, BorderStyle.CLASSIC_WIDE);
@@ -152,12 +150,12 @@ public class RunImpactAnalysisOnStateTool implements Tool {
 						table.addCell(str);
 					}
 				}
-				System.out.println(table.render());
+				context.getOutputStream().println(table.render());
 			} else {
-	            	System.out.println("Error running stabilization -  metrics = " + sr.getMetrics());
+	            	context.getOutputStream().println("Error running stabilization -  metrics = " + sr.getMetrics());
 			}
         } else {
-        	System.out.println("no state " + stateId + " of workflow " + workflowId + " stored in the online db");
+        	context.getOutputStream().println("no state " + stateId + " of workflow " + workflowId + " stored in the online db");
         }
 		onlinedb.close();
 	}

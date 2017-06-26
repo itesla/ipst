@@ -9,6 +9,7 @@ package eu.itesla_project.offline.tools;
 import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.iidm.network.Country;
 import eu.itesla_project.modules.offline.OfflineWorkflowCreationParameters;
 import eu.itesla_project.offline.OfflineApplication;
@@ -43,7 +44,7 @@ public class CreateOfflineWorkflowTool implements Tool {
     }
     
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         String workflowId = line.getOptionValue("workflow");
         Set<Country> countries = line.hasOption("base-case-countries")
                 ? Arrays.stream(line.getOptionValue("base-case-countries").split(",")).map(Country::valueOf).collect(Collectors.toSet())
@@ -84,10 +85,10 @@ public class CreateOfflineWorkflowTool implements Tool {
                                                                                              mergeOptimized,
                                                                                              attributesCountryFilter,
                                                                                              attributesMinBaseVoltageFilter);
-        parameters.print(System.out);
+        parameters.print(context.getOutputStream());
         try (OfflineApplication app = new RemoteOfflineApplicationImpl()) {
             String workflowId2 = app.createWorkflow(workflowId, parameters);
-            System.out.println("offline workflow '" + workflowId2 + "' created");
+            context.getOutputStream().println("offline workflow '" + workflowId2 + "' created");
         }
     }
 
