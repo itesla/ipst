@@ -48,7 +48,10 @@ class DynamicDatabaseMock implements DynamicDatabaseClient {
 
         Bus bus = generator.getTerminal().getBusBreakerView().getConnectableBus();
         if ((bus == null) || (!iidm2eurostagId.containsKey(bus.getId()))) {
-            throw new RuntimeException("suitable node not found");
+            bus = generator.getTerminal().getBusView().getConnectableBus();
+            if ((bus == null) || (!iidm2eurostagId.containsKey(bus.getId()))) {
+                throw new RuntimeException("suitable node not found");
+            }
         }
 
         DynamicDatabaseMockUtils mockUtils = new DynamicDatabaseMockUtils();
@@ -56,7 +59,7 @@ class DynamicDatabaseMock implements DynamicDatabaseClient {
         String mappedNodeName = mockUtils.formatString8(iidm2eurostagId.get(bus.getId()));
 
         LOGGER.info("generator:  iidm {}, eurostag {}", generator.getId(), mappedGenName);
-        LOGGER.info("node:  iidm {}, eurostag {}", generator.getTerminal().getBusBreakerView().getConnectableBus().getId(), mappedNodeName);
+        LOGGER.info("node:  iidm {}, eurostag {}", bus.getId(), mappedNodeName);
 
         mockUtils.copyDynamicDataFiles(MINIMAL_DTA_TEMPLATE, workingDir, fileName,
                 ImmutableMap.of("NODENAME", mappedNodeName, "MINIMALI", mappedGenName),

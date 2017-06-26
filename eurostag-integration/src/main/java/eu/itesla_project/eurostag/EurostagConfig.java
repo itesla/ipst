@@ -22,7 +22,7 @@ public class EurostagConfig {
     private static final int IDX_DEFAULT_TIMEOUT = 2 * 60;
     private static final int DEFAULT_LF_MAX_NUM_ITERATION = 20;
     private static final double DEFAULT_MINIMUM_STEP = 0.000001;
-    private static final boolean DEFAULT_LF_WARM_START = false;
+    private static final boolean DEFAULT_LF_WARM_START = true;
     private static final boolean DEFAULT_USE_BROADCAST = true;
     private static final boolean DEFAULT_DDB_CACHING = true;
     private static final double DEFAULT_MIN_STEP_AT_END_OF_STABILIZATION = 1;
