@@ -10,6 +10,7 @@ package eu.itesla_project.online.tools;
 import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.online.OnlineDb;
 import eu.itesla_project.modules.online.OnlineWorkflowDetails;
@@ -99,7 +100,7 @@ public class ListOnlineWorkflowsTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         OnlineConfig config = OnlineConfig.load();
         OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
         List<OnlineWorkflowDetails> workflows = null;
@@ -211,7 +212,7 @@ public class ListOnlineWorkflowsTool implements Tool {
                     }
                 } catch (RuntimeException e) {
                     String errMsg = "cannot retrieve configuration parameters";
-                    System.err.println("workflow " + workflow.getWorkflowId() + ": " + errMsg + "; " + e.getMessage());
+                    context.getErrorStream().println("workflow " + workflow.getWorkflowId() + ": " + errMsg + "; " + e.getMessage());
                     table.addCell(errMsg);
                     wfJsonData.put("error", errMsg);
                 }
@@ -225,7 +226,7 @@ public class ListOnlineWorkflowsTool implements Tool {
                 jsonFileWriter.write(JSONSerializer.toJSON(jsonData).toString(3));
             }
         } else
-            System.out.println(table.render());
+            context.getOutputStream().println(table.render());
 
         onlinedb.close();
     }

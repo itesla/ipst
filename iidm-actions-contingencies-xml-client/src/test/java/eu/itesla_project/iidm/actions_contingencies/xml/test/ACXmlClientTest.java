@@ -12,7 +12,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,7 +26,7 @@ import org.xml.sax.SAXException;
 import eu.itesla_project.contingency.Contingency;
 import eu.itesla_project.contingency.ContingencyElement;
 import eu.itesla_project.contingency.ContingencyElementType;
-import eu.itesla_project.iidm.actions_contingencies.xml.XmlFileContingenciesAndActionsDatabaseClient;
+import eu.itesla_project.iidm.actions_contingencies.xml.XmlFileContingenciesAndActionsDatabaseClientFactory;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.modules.contingencies.Action;
 import eu.itesla_project.modules.contingencies.ActionElement;
@@ -43,10 +45,10 @@ import eu.itesla_project.modules.contingencies.Zone;
 public class ACXmlClientTest {
 
     @Test
-    public void test() throws JAXBException, SAXException, IOException  {
+    public void test() throws JAXBException, SAXException, IOException, URISyntaxException  {
 
         URL testActionsUrl = getClass().getResource("/test-ac.xml");
-        ContingenciesAndActionsDatabaseClient cadbClient = new XmlFileContingenciesAndActionsDatabaseClient(testActionsUrl);
+        ContingenciesAndActionsDatabaseClient cadbClient = new XmlFileContingenciesAndActionsDatabaseClientFactory().create(Paths.get(testActionsUrl.toURI()));
         Network network = ACXmlClientTestUtils.getNetwork();
 
         // Collection<Zone> getZones();

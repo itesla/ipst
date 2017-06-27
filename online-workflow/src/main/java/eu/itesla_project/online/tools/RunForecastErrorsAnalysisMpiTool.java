@@ -10,6 +10,7 @@ import com.google.auto.service.AutoService;
 
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.iidm.network.Country;
 import eu.itesla_project.cases.CaseType;
 import eu.itesla_project.offline.forecast_errors.ForecastErrorsAnalysisParameters;
@@ -165,7 +166,7 @@ public class RunForecastErrorsAnalysisMpiTool implements Tool {
 	}
 
 	@Override
-	public void run(CommandLine line) throws Exception {
+	public void run(CommandLine line, ToolRunningContext context) throws Exception {
 		
 		OnlineWorkflowStartParameters startconfig=OnlineWorkflowStartParameters.loadDefault();
 		

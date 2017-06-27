@@ -9,6 +9,7 @@ package eu.itesla_project.offline.tools;
 import eu.itesla_project.commons.tools.Tool;
 import eu.itesla_project.commons.tools.Command;
 import com.google.auto.service.AutoService;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.offline.OfflineWorkflowStartParameters;
 import eu.itesla_project.offline.OfflineApplication;
 import eu.itesla_project.offline.RemoteOfflineApplicationImpl;
@@ -36,7 +37,7 @@ public class StartOfflineWorkflowTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         String workflowId = line.getOptionValue("workflow");
         int duration = line.hasOption("duration")
                 ? Integer.parseInt(line.getOptionValue("duration"))

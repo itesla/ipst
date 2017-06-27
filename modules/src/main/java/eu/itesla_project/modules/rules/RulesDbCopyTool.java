@@ -9,6 +9,7 @@ package eu.itesla_project.modules.rules;
 import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.modules.offline.OfflineConfig;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -84,7 +85,7 @@ public class RulesDbCopyTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         OfflineConfig config = OfflineConfig.load();
         String sourceRulesDbName = line.hasOption("source-rules-db-name") ? line.getOptionValue("source-rules-db-name") : OfflineConfig.DEFAULT_RULES_DB_NAME;
         String targetRulesDbName = line.hasOption("target-rules-db-name") ? line.getOptionValue("target-rules-db-name") : OfflineConfig.DEFAULT_RULES_DB_NAME;
@@ -99,7 +100,7 @@ public class RulesDbCopyTool implements Tool {
                                                           ruleId.getAttributeSet(),
                                                           ruleId.getSecurityIndexId().getContingencyId(),
                                                           ruleId.getSecurityIndexId().getSecurityIndexType()).get(0);
-            System.out.println("copying rule " + (i + 1) + "/" + ruleIds.size() + ": " + ruleId);
+            context.getOutputStream().println("copying rule " + (i + 1) + "/" + ruleIds.size() + ": " + ruleId);
             targetRulesDb.updateRule(rule);
         }
     }

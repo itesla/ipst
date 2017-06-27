@@ -10,6 +10,7 @@ import com.google.auto.service.AutoService;
 import com.google.common.io.CharStreams;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.modules.histo.*;
 import eu.itesla_project.modules.offline.OfflineConfig;
 import org.apache.commons.cli.CommandLine;
@@ -23,10 +24,7 @@ import org.supercsv.io.CsvListReader;
 import org.supercsv.io.ICsvListReader;
 import org.supercsv.prefs.CsvPreference;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -106,7 +104,7 @@ public class HistoDbPrintAttributesTool implements Tool {
                       : new InputStreamReader(is, StandardCharsets.UTF_8);
     }
 
-    private static void format(InputStream is, boolean zipped) throws IOException {
+    private static void format(InputStream is, boolean zipped, PrintStream out) throws IOException {
         Table table;
         CsvPreference prefs = new CsvPreference.Builder('"', ',', "\r\n").build();
         try (ICsvListReader reader = new CsvListReader(createReader(is, zipped), prefs)) {
@@ -128,11 +126,11 @@ public class HistoDbPrintAttributesTool implements Tool {
                 }
             }
         }
-        System.out.println(table.render());
+        out.println(table.render());
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         OfflineConfig config = OfflineConfig.load();
         try (HistoDbClient histoDbClient = config.getHistoDbClientFactoryClass().newInstance().create()) {
             boolean statistics = line.hasOption("statistics");
@@ -153,10 +151,10 @@ public class HistoDbPrintAttributesTool implements Tool {
             boolean zipped = false;
             InputStream is = histoDbClient.queryCsv(statistics ? HistoQueryType.stats : HistoQueryType.data, attrs, interval, horizon, zipped, async);
             if (format) {
-                format(is, zipped);
+                format(is, zipped, context.getOutputStream());
             } else {
                 try (Reader reader = createReader(is, zipped)) {
-                    CharStreams.copy(reader, System.out);
+                    CharStreams.copy(reader, context.getOutputStream());
                 }
             }
         }

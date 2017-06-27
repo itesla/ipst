@@ -10,6 +10,7 @@ import com.google.auto.service.AutoService;
 import com.google.common.collect.Range;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.iidm.import_.Importers;
 import eu.itesla_project.iidm.network.Generator;
 import eu.itesla_project.iidm.network.Network;
@@ -93,7 +94,7 @@ public class HistoDbPrintVoltageRangeTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         Interval interval = Interval.parse(line.getOptionValue("interval"));
         Path caseFile = Paths.get(line.getOptionValue("case-file"));
         Map<String, VoltageStats> ranges = new HashMap<>();
@@ -152,7 +153,7 @@ public class HistoDbPrintVoltageRangeTool implements Tool {
             table.addCell(Integer.toString(stats.count));
             table.addCell(Float.toString(stats.pmax));
         });
-        System.out.println(table.render());
+        context.getOutputStream().println(table.render());
     }
 
 }

@@ -9,8 +9,7 @@ package eu.itesla_project.modules.validation;
 import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.computation.local.LocalComputationManager;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.contingency.Contingency;
 import eu.itesla_project.iidm.import_.Importer;
 import eu.itesla_project.iidm.import_.Importers;
@@ -18,7 +17,10 @@ import eu.itesla_project.loadflow.api.LoadFlowFactory;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
 import eu.itesla_project.modules.offline.OfflineConfig;
 import eu.itesla_project.modules.rules.*;
-import eu.itesla_project.security.*;
+import eu.itesla_project.security.PostContingencyResult;
+import eu.itesla_project.security.SecurityAnalysis;
+import eu.itesla_project.security.SecurityAnalysisImpl;
+import eu.itesla_project.security.SecurityAnalysisResult;
 import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -202,7 +204,7 @@ public class OverloadValidationTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         OfflineConfig config = OfflineConfig.load();
         String rulesDbName = line.hasOption("rules-db-name") ? line.getOptionValue("rules-db-name") : OfflineConfig.DEFAULT_RULES_DB_NAME;
         RulesDbClientFactory rulesDbClientFactory = config.getRulesDbClientFactoryClass().newInstance();
@@ -215,10 +217,9 @@ public class OverloadValidationTool implements Tool {
         ContingenciesAndActionsDatabaseClient contingencyDb = config.getContingencyDbClientFactoryClass().newInstance().create();
         LoadFlowFactory loadFlowFactory = config.getLoadFlowFactoryClass().newInstance();
 
-        try (ComputationManager computationManager = new LocalComputationManager();
-             RulesDbClient rulesDb = rulesDbClientFactory.create(rulesDbName)) {
+        try (RulesDbClient rulesDb = rulesDbClientFactory.create(rulesDbName)) {
 
-            Importer importer = Importers.getImporter(caseFormat, computationManager);
+            Importer importer = Importers.getImporter(caseFormat, context.getComputationManager());
             if (importer == null) {
                 throw new RuntimeException("Format " + caseFormat + " not supported");
             }
@@ -232,12 +233,12 @@ public class OverloadValidationTool implements Tool {
                     List<Contingency> contingencies = contingencyDb.getContingencies(network);
                     contingencyIds.addAll(contingencies.stream().map(Contingency::getId).collect(Collectors.toList()));
 
-                    System.out.println("running security analysis...");
+                    context.getOutputStream().println("running security analysis...");
 
-                    SecurityAnalysis securityAnalysis = new SecurityAnalysisImpl(network, computationManager, loadFlowFactory);
+                    SecurityAnalysis securityAnalysis = new SecurityAnalysisImpl(network, context.getComputationManager(), loadFlowFactory);
                     SecurityAnalysisResult securityAnalysisResult = securityAnalysis.runAsync(network1 -> contingencies).join();
 
-                    System.out.println("checking rules...");
+                    context.getOutputStream().println("checking rules...");
 
                     Map<String, Map<SecurityIndexType, SecurityRuleCheckStatus>> offlineRuleCheckPerContingency
                             = SecurityRuleUtil.checkRules(network, rulesDb, workflowId, RuleAttributeSet.MONTE_CARLO,
@@ -258,7 +259,7 @@ public class OverloadValidationTool implements Tool {
                 } catch (Exception e) {
                     LOGGER.error(e.toString(), e);
                 }
-            }, dataSource -> System.out.println("loading case " + dataSource.getBaseName() + " ..."));
+            }, dataSource -> context.getOutputStream().println("loading case " + dataSource.getBaseName() + " ..."));
 
             writeCsv(contingencyIds, statusPerContingencyPerCase, outputDir);
         }

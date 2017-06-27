@@ -4,14 +4,6 @@ B
 
 9 1 0 0 1 1 20    0.005                                 4             100. 1 1
 
-SP INPVPQ            2
-SP THMAX     0.100000 
-SP EMAXF     0.100000 
-SP ZMIN      0.000200 
-SP RAMIN     0.800000 
-SP RAMAX     1.200000 
-SP TOLPLO    0.001000 
-
 GC sim1/InitialState                                                            
 
 AA FA               

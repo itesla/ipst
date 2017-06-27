@@ -8,6 +8,7 @@
 package eu.itesla_project.histodb.server;
 
 import be.pepite.dataserver.api.ColumnDescriptor;
+import eu.itesla_project.iidm.datasource.DataSourceUtil;
 import eu.itesla_project.iidm.datasource.GenericReadOnlyDataSource;
 import eu.itesla_project.iidm.import_.Importer;
 import eu.itesla_project.iidm.import_.Importers;
@@ -95,7 +96,7 @@ public class CimHistoImporter {
             throw new RuntimeException("Not a regular file");
         }
         Path dir = file.getParent();
-        String baseName = Importers.getBaseName(file);
+        String baseName = DataSourceUtil.getBaseName(file);
         for (Importer importer: importers) {
             try {
               Network n=importer.import_(new GenericReadOnlyDataSource(dir, baseName), null);

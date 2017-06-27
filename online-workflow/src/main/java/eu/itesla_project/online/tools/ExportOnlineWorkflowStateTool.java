@@ -9,6 +9,7 @@ package eu.itesla_project.online.tools;
 import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.online.OnlineDb;
 import org.apache.commons.cli.CommandLine;
@@ -79,7 +80,7 @@ public class ExportOnlineWorkflowStateTool implements Tool {
 	}
 
 	@Override
-	public void run(CommandLine line) throws Exception {
+	public void run(CommandLine line, ToolRunningContext context) throws Exception {
 		OnlineConfig config = OnlineConfig.load();
 		OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
 		String workflowId = line.getOptionValue("workflow");
@@ -88,12 +89,12 @@ public class ExportOnlineWorkflowStateTool implements Tool {
 		List<Integer> storedStates = onlinedb.listStoredStates(workflowId);
 		if ( storedStates.contains(stateId) ) {
 			if ( folder != null )
-				System.out.println("Exporting stored state " + stateId + " of workflow " + workflowId + " to folder " + folder);
+				context.getOutputStream().println("Exporting stored state " + stateId + " of workflow " + workflowId + " to folder " + folder);
 			else
-				System.out.println("Exporting stored state " + stateId + " of workflow " + workflowId + " to current folder");
+				context.getOutputStream().println("Exporting stored state " + stateId + " of workflow " + workflowId + " to current folder");
 			onlinedb.exportState(workflowId, stateId, folder);
 		} else
-			System.out.println("No state " + stateId + " stored for workflow " + workflowId);
+			context.getOutputStream().println("No state " + stateId + " stored for workflow " + workflowId);
 		onlinedb.close();
 	}
 	

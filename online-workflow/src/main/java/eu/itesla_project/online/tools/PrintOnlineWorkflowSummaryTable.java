@@ -13,6 +13,7 @@ import eu.itesla_project.commons.io.table.TableFormatter;
 import eu.itesla_project.commons.io.table.TableFormatterConfig;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.modules.online.*;
 import eu.itesla_project.online.OnlineTaskStatus;
@@ -103,7 +104,7 @@ public class PrintOnlineWorkflowSummaryTable implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         OnlineConfig config = OnlineConfig.load();
         try (OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create()) {
             List<String> workflowsIds = new ArrayList<String>();
@@ -118,7 +119,7 @@ public class PrintOnlineWorkflowSummaryTable implements Tool {
                 Interval basecasesInterval = Interval.parse(line.getOptionValue("basecases-interval"));
                 workflowsIds = onlinedb.listWorkflows(basecasesInterval).stream().map(OnlineWorkflowDetails::getWorkflowId).collect(Collectors.toList());
             } else {
-                System.err.println("You must specify workflow(s) or basecase(s)");
+                context.getErrorStream().println("You must specify workflow(s) or basecase(s)");
                 return;
             }
             TableFormatterConfig tableFormatterConfig = TableFormatterConfig.load();
