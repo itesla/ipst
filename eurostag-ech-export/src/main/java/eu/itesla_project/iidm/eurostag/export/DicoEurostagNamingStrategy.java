@@ -76,8 +76,8 @@ public class DicoEurostagNamingStrategy implements EurostagNamingStrategy {
                 String iidmId = row.get(0).trim();
                 String esgId = row.get(1).trim();
                 if (esgId.length() > NameType.GENERATOR.getLength()) {
-                    String errMsg = "esgId: " + esgId + " 's length > " + NameType.GENERATOR.getLength() + ".  Line " + count + " in " + dicoFile.toString();
-                    throw new RuntimeException(errMsg);
+                    LOGGER.warn("Skipping mapping iidmId: " + iidmId + ", esgId: " + esgId + ". esgId's length > " + NameType.GENERATOR.getLength() + ".  Line " + count + " in " + dicoFile.toString());
+                    continue;
                 }
                 if ("".equals(iidmId) || "".equals(esgId)) {
                     String errMsg = "either iidmId or esgId or both are empty strings. Line " + count + " in " + dicoFile.toString();

@@ -16,14 +16,12 @@ import eu.itesla_project.contingency.ContingenciesProvider;
 import eu.itesla_project.contingency.ContingenciesProviderFactory;
 import eu.itesla_project.eurostag.network.EsgGeneralParameters;
 import eu.itesla_project.eurostag.network.EsgNetwork;
+import eu.itesla_project.eurostag.network.EsgSpecialParameters;
 import eu.itesla_project.eurostag.network.io.EsgWriter;
 import eu.itesla_project.eurostag.tools.EurostagNetworkModifier;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClient;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClientFactory;
-import eu.itesla_project.iidm.eurostag.export.BranchParallelIndexes;
-import eu.itesla_project.iidm.eurostag.export.EurostagDictionary;
-import eu.itesla_project.iidm.eurostag.export.EurostagEchExport;
-import eu.itesla_project.iidm.eurostag.export.EurostagEchExportConfig;
+import eu.itesla_project.iidm.eurostag.export.*;
 import eu.itesla_project.iidm.import_.Importers;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.simulation.SimulationParameters;
@@ -39,7 +37,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
 @AutoService(Tool.class)
@@ -71,18 +68,29 @@ public class EurostagExportTool implements Tool, EurostagConstants {
 
         context.getOutputStream().println("exporting ech...");
         // export .ech and dictionary
-        EurostagEchExportConfig exportConfig = new EurostagEchExportConfig();
-        BranchParallelIndexes parallelIndexes = BranchParallelIndexes.build(network, exportConfig);
-        EurostagDictionary dictionary = EurostagDictionary.create(network, parallelIndexes, exportConfig);
-        new EurostagEchExport(network, exportConfig, parallelIndexes, dictionary).write(outputDir.resolve("sim.ech"));
+        EurostagEchExportConfig exportConfig = EurostagEchExportConfig.load();
+        EurostagFakeNodes fakeNodes = EurostagFakeNodes.build(network, exportConfig);
+        BranchParallelIndexes parallelIndexes = BranchParallelIndexes.build(network, exportConfig, fakeNodes);
+        EurostagDictionary dictionary = EurostagDictionary.create(network, parallelIndexes, exportConfig, fakeNodes);
 
         try (Writer writer = Files.newBufferedWriter(outputDir.resolve("sim.ech"), StandardCharsets.UTF_8)) {
             EsgGeneralParameters parameters = new EsgGeneralParameters();
             parameters.setTransformerVoltageControl(false);
             parameters.setSvcVoltageControl(false);
-            EsgNetwork networkEch = new EurostagEchExport(network, exportConfig, parallelIndexes, dictionary).createNetwork(parameters);
+            parameters.setMaxNumIteration(eurostagConfig.getLfMaxNumIteration());
+            EsgSpecialParameters specialParameters = null;
+            if (exportConfig.isSpecificCompatibility()) {
+                context.getOutputStream().println("specificCompatibility=true: forces start mode to WARM and write the special parameters section in ech file");
+                parameters.setStartMode(EsgGeneralParameters.StartMode.WARM_START);
+                specialParameters = new EsgSpecialParameters();
+                //WARM START: ZMIN_LOW
+                specialParameters.setZmin(EsgSpecialParameters.ZMIN_LOW);
+            } else {
+                parameters.setStartMode(eurostagConfig.isLfWarmStart() ? EsgGeneralParameters.StartMode.WARM_START : EsgGeneralParameters.StartMode.FLAT_START);
+            }
+            EsgNetwork networkEch = new EurostagEchExport(network, exportConfig, parallelIndexes, dictionary, fakeNodes).createNetwork(parameters);
             new EurostagNetworkModifier().hvLoadModelling(networkEch);
-            new EsgWriter(networkEch, parameters).write(writer, network.getId() + "/" + network.getStateManager().getWorkingStateId());
+            new EsgWriter(networkEch, parameters, specialParameters).write(writer, network.getId() + "/" + network.getStateManager().getWorkingStateId());
         }
         dictionary.dump(outputDir.resolve("dict.csv"));
         context.getOutputStream().println("exporting dta...");
@@ -92,14 +100,14 @@ public class EurostagExportTool implements Tool, EurostagConstants {
 
         context.getOutputStream().println("exporting seq...");
 
-            // export .seq
-            EurostagScenario scenario = new EurostagScenario(SimulationParameters.load(), eurostagConfig);
-            try (BufferedWriter writer = Files.newBufferedWriter(outputDir.resolve(PRE_FAULT_SEQ_FILE_NAME), StandardCharsets.UTF_8)) {
-                scenario.writePreFaultSeq(writer, PRE_FAULT_SAC_FILE_NAME);
-            }
-            ContingenciesProvider contingenciesProvider = defaultConfig.newFactoryImpl(ContingenciesProviderFactory.class).create();
-            scenario.writeFaultSeqArchive(contingenciesProvider.getContingencies(network), network, dictionary, faultNum -> FAULT_SEQ_FILE_NAME.replace(eu.itesla_project.computation.Command.EXECUTION_NUMBER_PATTERN, Integer.toString(faultNum)))
-                    .as(ZipExporter.class).exportTo(outputDir.resolve(ALL_SCENARIOS_ZIP_FILE_NAME).toFile());
+        // export .seq
+        EurostagScenario scenario = new EurostagScenario(SimulationParameters.load(), eurostagConfig);
+        try (BufferedWriter writer = Files.newBufferedWriter(outputDir.resolve(PRE_FAULT_SEQ_FILE_NAME), StandardCharsets.UTF_8)) {
+            scenario.writePreFaultSeq(writer, PRE_FAULT_SAC_FILE_NAME);
+        }
+        ContingenciesProvider contingenciesProvider = defaultConfig.newFactoryImpl(ContingenciesProviderFactory.class).create();
+        scenario.writeFaultSeqArchive(contingenciesProvider.getContingencies(network), network, dictionary, faultNum -> FAULT_SEQ_FILE_NAME.replace(eu.itesla_project.computation.Command.EXECUTION_NUMBER_PATTERN, Integer.toString(faultNum)))
+                .as(ZipExporter.class).exportTo(outputDir.resolve(ALL_SCENARIOS_ZIP_FILE_NAME).toFile());
 
         // export limits
         try (OutputStream os = Files.newOutputStream(outputDir.resolve(LIMITS_ZIP_FILE_NAME))) {

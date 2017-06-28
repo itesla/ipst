@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -20,11 +21,11 @@ public class BranchParallelIndexes {
 
     private final Map<String, Character> parallelIndexes;
 
-    public static BranchParallelIndexes build(Network network, EurostagEchExportConfig config) {
+    public static BranchParallelIndexes build(Network network, EurostagEchExportConfig config, EurostagFakeNodes fakeNodes) {
         Multimap<String, Identifiable> map = HashMultimap.create();
-        for (TwoTerminalsConnectable ttc:  Iterables.concat(network.getLines(), network.getTwoWindingsTransformers())) {
-            ConnectionBus bus1 = ConnectionBus.fromTerminal(ttc.getTerminal1(), config, EchUtil.FAKE_NODE_NAME1);
-            ConnectionBus bus2 = ConnectionBus.fromTerminal(ttc.getTerminal2(), config, EchUtil.FAKE_NODE_NAME2);
+        for (TwoTerminalsConnectable ttc : Iterables.concat(network.getLines(), network.getTwoWindingsTransformers())) {
+            ConnectionBus bus1 = ConnectionBus.fromTerminal(ttc.getTerminal1(), config, fakeNodes);
+            ConnectionBus bus2 = ConnectionBus.fromTerminal(ttc.getTerminal2(), config, fakeNodes);
             if (bus1.getId().compareTo(bus2.getId()) < 0) {
                 map.put(bus1.getId() + bus2.getId(), ttc);
             } else {
