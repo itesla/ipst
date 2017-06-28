@@ -17,7 +17,7 @@
 # Prerequis : la situation doit etre complete, y compris les tensions et 
 # phases en tous noeuds
 # Prerequis pas certain : les tensions sont dans leurs bornes
-# 
+#
 ###############################################################################
 print "Debut du fichier projector.run";
 
@@ -72,22 +72,48 @@ suffix knitro_niter OUT;
 model "projector.mod";
 data  "projector.dat";
 
-#Data correction
+###############################################################################
+# Correction des donnees reactives des groupes : si Qmin>Qmax on echange Qmin et Qmax
+###############################################################################
+# Version Jean Maeght Juin 2017
+for {(g,n) in UNIT} {
+  # Correction Qmin Qmax a Pmin
+  if unit_Qp[g,n] < unit_qp[g,n] then {
+    printf "Attention groupe %s (noeud %i, poste %s) : unit_Qp=%.2f < unit_qp[g,n]=%.2f -> on les corrige en les inversant\n",
+    unit_id[g,n],n,substation_id[unit_substation[g,n]],unit_Qp[g,n],unit_qp[g,n];
+    let tempo        := unit_Qp[g,n];
+    let unit_Qp[g,n] := unit_qp[g,n];
+    let unit_qp[g,n] := tempo;
+  }
+  # Correction Qmin Qmax a Pmax
+  if unit_QP[g,n] < unit_qP[g,n] then {
+    printf "Attention groupe %s (noeud %i, poste %s) : unit_QP=%.2f < unit_qP[g,n]=%.2f -> on les corrige en les inversant\n",
+    unit_id[g,n],n,substation_id[unit_substation[g,n]],unit_QP[g,n],unit_qP[g,n];
+    let tempo        := unit_QP[g,n];
+    let unit_QP[g,n] := unit_qP[g,n];
+    let unit_qP[g,n] := tempo;
+  }
+}
+
+/* # Version Nicolas Omont Juin 2017
 param tmp{UNIT};
 let {(g,n) in UNIT } tmp[g,n]    := if unit_Qp[g,n] < unit_qp[g,n] then unit_qp[g,n] else unit_Qp[g,n];
 let {(g,n) in UNIT } unit_qp[g,n]:= if unit_Qp[g,n] < unit_qp[g,n] then unit_Qp[g,n] else unit_qp[g,n];
 let {(g,n) in UNIT} unit_Qp[g,n]:=tmp[g,n];
-
 let {(g,n) in UNIT } tmp[g,n]    := if unit_QP[g,n] < unit_qP[g,n] then unit_qP[g,n] else unit_QP[g,n];
 let {(g,n) in UNIT } unit_qP[g,n]:= if unit_QP[g,n] < unit_qP[g,n] then unit_QP[g,n] else unit_qP[g,n];
 let {(g,n) in UNIT} unit_QP[g,n]:=tmp[g,n];
+*/
 
 
+###############################################################################
+# C'est la commande "check" ci-dessous qui realise veritablement les checks du fichier .mod
+###############################################################################
 check;
 
 
 ################################################################################
-# Calcul du noeud qui aura la phase nulle
+# Calcul du noeud qui aura la phase fixee
 ################################################################################
 let noeud_phase_nulle := min{n in NOEUDCC} n;
 let tempo := 0;
@@ -102,14 +128,13 @@ if ( tempo > 0 ) then
   substation_description[noeud_poste[noeud_phase_nulle]],
   tempo;
 if ( tempo == 0 ) then
-  printf "Noeud 400kV le plus maille : non trouve. On prend le premier noeud (=%i) pour fixer la phase a zero\n",
+  printf "Noeud 400kV le plus maille : non trouve. On prend le premier noeud (=%i) pour fixer la phase\n",
   noeud_phase_nulle;
 
 
 ###############################################################################
 # Verification coherence des tensions nominales
 ###############################################################################
-
 for {(g,n,gid) in UNIT_DOMAIN} {
   let tempo := max{(numero,g,n,gid) in UNIT_DOMAIN_CTR} domain_Vnomi[numero,gid];
   if abs(tempo-substation_Vnomi[unit_substation[g,n]]) > 0.1
@@ -120,14 +145,14 @@ for {(g,n,gid) in UNIT_DOMAIN} {
 	    tempo,
 	    substation_id[unit_substation[g,n]],
 	    substation_Vnomi[unit_substation[g,n]];
-	let  gen_vnom_mismatch[g,n,gid] := 1;
+	    let  gen_vnom_mismatch[g,n,gid] := 1;
   	}
   }
+  
 
 ###############################################################################
 # Point initial
 ###############################################################################
-
 let {n in NOEUDCC} Ph[n] := noeud_angl0[n];
 fix Ph[noeud_phase_nulle]; # On ne le fixe pas a zero mais a sa valeur initiale
 let {n in NOEUDCC} V[n]  := noeud_V0[n];
@@ -213,17 +238,20 @@ display bilan_P_noeud,
 ###############################################################################
 option knitro_options 
  " presolve=0 bar_directinterval=10 maxcgit=100 bar_initpt=2 honorbnds=0 scale=2 opttol=1 opttolabs=1e-1 feastol=1 feastolabs=1e-3 debug=0 algorithm=1 maxit=500 maxtime_real=60";  
-# outlev=3 bar_initmu=1e-10 
-solve;
 
-if ( solve_result_num >= 100 and solve_result_num < 400 ) or solve_result_num >= 410
-then solve;
-if ( solve_result_num >= 100 and solve_result_num < 400 ) or solve_result_num >= 410
-then solve;
-if ( solve_result_num >= 100 and solve_result_num < 400 ) or solve_result_num >= 410
-then solve;
-if ( solve_result_num >= 100 and solve_result_num < 400 ) or solve_result_num >= 410
-then solve;
+# En cas d'echec de l'optimisation, relances et comptages
+param nb_solve_max = 6;
+param nb_solve;
+let nb_solve := 0; 
+display solve_result_num;
+
+repeat {
+  solve;
+  let nb_solve := nb_solve + 1;
+  printf "*** Iteration de solve numero %i, solve_result_num=%i\n\n",nb_solve,solve_result_num;
+  }
+while ( ( solve_result_num >= 100 and solve_result_num < 400 ) or solve_result_num >= 410 ) and nb_solve<nb_solve_max;
+
 
 
 ###############################################################################

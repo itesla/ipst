@@ -317,7 +317,8 @@ set DOMAIN_IDENTIFIANTS := setof{(numero,id) in DOMAIN} id;
 # Groupes connectes et demarres ayant un domaine dynamique (en 3 indices)
 set UNIT_DOMAIN         := setof{(g,n) in UNITCC: unit_id[g,n] in DOMAIN_IDENTIFIANTS} (g,n,unit_id[g,n]);
 
-#Nicolas Omont : Ruse pour éliminer les groupes pour lesquels il y a un mismatch de tension entre l'état de réseau et les domaines
+# Nicolas Omont Juin 2017
+# Eliminaton des groupes pour lesquels il y a un mismatch de tension entre l'etat de réseau et les domaines
 param gen_vnom_mismatch{UNIT_DOMAIN} default 0;
 
 # Groupes connectes et demarres ayant un domaine dynamique (en 1 seul indice)
@@ -369,7 +370,7 @@ param quad_dephex {(qq,m,n) in QUADCC} = 0;
 # Bornes en tension
 ###############################################################################
 
-param epsilon_tension_min = 0.5;
+param epsilon_tension_min = 0.5; # On considere qu'une Vmin ou Vmax < 0.5 ne vaut rien (exemple -99999)
 param Vmin_defaut_horsgroupe := 0.80;
 param Vmax_defaut_horsgroupe := 1.15;
 param Vmin_defaut_groupe := 0.95;
@@ -387,6 +388,7 @@ param Vmax_defaut{n in NOEUDCC} :=
 set NOEUDCC_V0 := {n in NOEUDCC : noeud_V0[n] > epsilon_tension_min};
 check card(NOEUDCC_V0) == card(NOEUDCC);
 
+/* # Jusqu'a Juin 2017
 param max_noeud_V{n in NOEUDCC} := 
   if ( substation_Vmax[noeud_poste[n]] > epsilon_tension_min )
   then max( noeud_V0[n], substation_Vmax[noeud_poste[n]])
@@ -395,6 +397,18 @@ param min_noeud_V{n in NOEUDCC} :=
   if ( substation_Vmin[noeud_poste[n]] > epsilon_tension_min )
   then min( noeud_V0[n], substation_Vmin[noeud_poste[n]])
   else min( noeud_V0[n], Vmin_defaut[n]);
+*/
+
+# Juin 2017
+param epsilon_V0 = 0.01;
+param max_noeud_V{n in NOEUDCC} := 
+  if ( substation_Vmax[noeud_poste[n]] > epsilon_tension_min )
+  then max( noeud_V0[n]+epsilon_V0, substation_Vmax[noeud_poste[n]])
+  else max( noeud_V0[n]+epsilon_V0, Vmax_defaut_horsgroupe);
+param min_noeud_V{n in NOEUDCC} :=
+  if ( substation_Vmin[noeud_poste[n]] > epsilon_tension_min )
+  then min( noeud_V0[n]-epsilon_V0, substation_Vmin[noeud_poste[n]])
+  else min( noeud_V0[n]-epsilon_V0, Vmin_defaut_horsgroupe);
 
 
 # Ca peut paraitre bete de tester ceci, mais si on modifie le code ci-desssus,
@@ -412,7 +426,6 @@ param Ph_max =  1 + max{n in NOEUDCC} noeud_angl0[n];
 
 var Ph{n in NOEUDCC} >= Ph_min, <= Ph_max;
 var V {n in NOEUDCC} <= max_noeud_V[n], >= min_noeud_V[n];
-
 
 
 ###############################################################################
@@ -473,6 +486,7 @@ subject to ctr_domain{(numero,g,n,gid) in UNIT_DOMAIN_CTR : gen_vnom_mismatch[g,
   + domain_coeffQ[numero,gid] * unit_Q[g,n]
   + domain_coeffV[numero,gid] * substation_Vnomi[unit_substation[g,n]] * V[n]
   <= domain_RHS[numero,gid];
+
 
 ###############################################################################
 # Transits 
@@ -553,6 +567,7 @@ var term_bilan_Q_noeud_nul {k in NOEUDCC} =
 	- sum{(g,k) in UNITCC} unit_Q[g,k]
 	+ sum{(c,k) in CONSOCC} conso_QFix[c,k];
 
+
 ###############################################################################
 # Fonction objectif
 ###############################################################################
@@ -561,5 +576,3 @@ minimize somme_ecarts_quadratiques :
     sum {(g,n) in UNIT_PQV} ( unit_P[g,n] - unit_Pc[g,n] )^2
   + sum {(g,n) in UNIT_PQV} ( unit_Q[g,n] - unit_Qc[g,n] )^2
   + 10 * sum {(g,n) in UNIT_PV inter UNIT_PQV } ( unit_Pmax[g,n] * (V[n] - unit_Vc[g,n]) )^2;
-
-#minimize somme_ecarts_quadratiques : sum {(g,n) in UNITCC} unit_P[g,n] ;
