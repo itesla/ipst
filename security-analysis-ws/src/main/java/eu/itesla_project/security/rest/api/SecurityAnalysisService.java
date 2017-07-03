@@ -15,7 +15,7 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
  * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
  */
 public interface SecurityAnalysisService {
-    
+
     public Response analyze(MultipartFormDataInput dataInput);
 
 }

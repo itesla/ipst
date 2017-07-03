@@ -56,7 +56,7 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
     private enum Format {
         CSV, JSON
     }
-    
+
     private final SecurityAnalyzer analyzer;
 
     public SecurityAnalysisServiceImpl(SecurityAnalyzer securityAnalyzer) {
@@ -79,8 +79,6 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
                     String out_format = getParameter(formatParts);
                     if(out_format != null)
                         format = Format.valueOf(out_format);
-                    
-                    LOGGER.debug("format=" + format);
                 } catch (java.lang.IllegalArgumentException ie) {
                     return Response.status(Status.BAD_REQUEST).entity("Wrong format parameter").build();
                 }
@@ -92,7 +90,6 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
             List<InputPart> limitParts = formParts.get("limit-types");
             if (limitParts != null) {
                 limitTypes = getParameter(limitParts);
-                LOGGER.debug("limit-types=" + limitTypes);
             }
 
             Set<LimitViolationType> limitViolationTypes = null;
@@ -157,9 +154,8 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
                 }
             }
         };
-
     }
-    
+
     private String getParameter(List<InputPart> parts){
         Objects.requireNonNull(parts);
         try {

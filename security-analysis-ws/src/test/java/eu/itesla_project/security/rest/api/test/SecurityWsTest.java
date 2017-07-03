@@ -30,27 +30,25 @@ import eu.itesla_project.security.SecurityAnalyzer;
 import eu.itesla_project.security.rest.api.impl.SecurityAnalysisServiceImpl;
 
 public class SecurityWsTest {
-    
+
     private SecurityAnalysisServiceImpl service;
-    
+
     @Before
     public void setUp(){
         SecurityAnalysisResult result = new SecurityAnalysisResult(
-                new LimitViolationsResult(true, Collections.emptyList()), Collections.emptyList());
-        
+                new LimitViolationsResult(true, Collections.emptyList()), Collections.emptyList());  
         SecurityAnalyzer analyzer = Mockito.mock(SecurityAnalyzer.class);
         when(analyzer.analyze(any(Path.class), any(Path.class))).thenReturn(result);
-        
         service = new SecurityAnalysisServiceImpl(analyzer);
     }
-    
+
     @Test
     public void testSecurityAnalysisJson() {
         MultipartFormDataInput dataInput = mock(MultipartFormDataInput.class);
         Map<String, List<InputPart>> formValues = new HashMap();
         formValues.put("format", Arrays.asList(new InputPartImpl("JSON", MediaType.TEXT_PLAIN_TYPE)));
         formValues.put("limit-types", Arrays.asList(new InputPartImpl("CURRENT", MediaType.TEXT_PLAIN_TYPE)));
-        
+
         MultivaluedMap<String, String> headers = new MultivaluedMapImpl();
         headers.putSingle("Content-Disposition", "filename=" + "case-file.xiidm.gz");
 
@@ -71,7 +69,7 @@ public class SecurityWsTest {
         Assert.assertEquals(200, res.getStatus());
 
     }
-  
+
     @Test
     public void testSecurityAnalysisCsv() {
         MultipartFormDataInput dataInput = mock(MultipartFormDataInput.class);
@@ -97,7 +95,7 @@ public class SecurityWsTest {
         Response res = service.analyze(dataInput);
         Assert.assertEquals(200, res.getStatus());
     }
-    
+
     @Test
     public void testWrongFormat() {
         MultipartFormDataInput dataInput = mock(MultipartFormDataInput.class);
@@ -156,7 +154,6 @@ public class SecurityWsTest {
         MultipartFormDataInput dataInput = mock(MultipartFormDataInput.class);
         Map<String, List<InputPart>> formValues = new HashMap();
         formValues.put("format", Arrays.asList(new InputPartImpl("JSON", MediaType.TEXT_PLAIN_TYPE)));
-
         formValues.put("limit-types", Arrays.asList(new InputPartImpl("CURRENT", MediaType.TEXT_PLAIN_TYPE)));
 
         MultivaluedMap<String, String> headers2 = new MultivaluedMapImpl();
@@ -177,7 +174,6 @@ public class SecurityWsTest {
         MultipartFormDataInput dataInput = mock(MultipartFormDataInput.class);
         Map<String, List<InputPart>> formValues = new HashMap();
         formValues.put("format", Arrays.asList(new InputPartImpl("JSON", MediaType.TEXT_PLAIN_TYPE)));
-
         formValues.put("limit-types", Arrays.asList(new InputPartImpl("ERRR", MediaType.TEXT_PLAIN_TYPE)));
 
         MultivaluedMap<String, String> headers = new MultivaluedMapImpl();
@@ -187,7 +183,7 @@ public class SecurityWsTest {
                 Arrays.asList(new InputPartImpl(
                         new ByteArrayInputStream("Network".getBytes()),
                         MediaType.APPLICATION_OCTET_STREAM_TYPE, headers)));
-        
+
         MultivaluedMap<String, String> headers2 = new MultivaluedMapImpl();
         headers2.putSingle("Content-Disposition", "filename=" + "contingencies-file.csv");
         formValues.put("contingencies-file",

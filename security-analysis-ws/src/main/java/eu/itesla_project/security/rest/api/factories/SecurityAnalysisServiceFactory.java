@@ -11,7 +11,6 @@ import eu.itesla_project.security.SecurityAnalyzer;
 import eu.itesla_project.security.rest.api.SecurityAnalysisService;
 import eu.itesla_project.security.rest.api.impl.SecurityAnalysisServiceImpl;
 
-
 /**
  *
  * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>

@@ -26,13 +26,12 @@ import eu.itesla_project.security.rest.api.factories.SecurityAnalysisServiceFact
 @Path("/")
 public class SecurityAnalysisApi {
     private final SecurityAnalysisService delegate = SecurityAnalysisServiceFactory.getSecurityServiceApi();
-    
+
     @POST
     @Path("/security-analysis")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response process(MultipartFormDataInput form, @PathParam("format") String format, @Context SecurityContext securityContext) {      
         return delegate.analyze(form);
     }
-    
-    
+
 }
