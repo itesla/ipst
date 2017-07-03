@@ -9,6 +9,7 @@ package eu.itesla_project.modules.offline;
 import com.google.auto.service.AutoService;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.simulation.securityindexes.SecurityIndexId;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -71,15 +72,15 @@ public class SimulationsDbPrintSecurityIndexesDetails implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         String simulationDbName = line.hasOption("simulation-db-name") ? line.getOptionValue("simulation-db-name") : OfflineConfig.DEFAULT_SIMULATION_DB_NAME;
         String workflowId = line.getOptionValue("workflow");
         SecurityIndexId securityIndexId = SecurityIndexId.fromString(line.getOptionValue("security-index"));
         OfflineConfig config = OfflineConfig.load();
         OfflineDb offlineDb = config.getOfflineDbFactoryClass().newInstance().create(simulationDbName);
-        System.out.println("sample;secure;details");
+        context.getOutputStream().println("sample;secure;details");
         offlineDb.getSecurityIndexes(workflowId, securityIndexId).entrySet()
-                .forEach(e -> System.out.println(e.getKey() + ";" + e.getValue().isOk() + ";" + e.getValue().toMap()));
+                .forEach(e -> context.getOutputStream().println(e.getKey() + ";" + e.getValue().isOk() + ";" + e.getValue().toMap()));
     }
 
 }

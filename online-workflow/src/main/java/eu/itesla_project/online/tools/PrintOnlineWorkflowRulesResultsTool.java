@@ -7,11 +7,16 @@
  */
 package eu.itesla_project.online.tools;
 
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.csvreader.CsvWriter;
+import com.google.auto.service.AutoService;
+import eu.itesla_project.commons.tools.Command;
+import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
+import eu.itesla_project.modules.online.OnlineConfig;
+import eu.itesla_project.modules.online.OnlineDb;
+import eu.itesla_project.modules.online.OnlineWorkflowParameters;
+import eu.itesla_project.modules.online.OnlineWorkflowRulesResults;
+import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -19,16 +24,10 @@ import org.nocrala.tools.texttablefmt.BorderStyle;
 import org.nocrala.tools.texttablefmt.CellStyle;
 import org.nocrala.tools.texttablefmt.Table;
 
-import com.csvreader.CsvWriter;
-import com.google.auto.service.AutoService;
-
-import eu.itesla_project.commons.tools.Command;
-import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.modules.online.OnlineConfig;
-import eu.itesla_project.modules.online.OnlineDb;
-import eu.itesla_project.modules.online.OnlineWorkflowParameters;
-import eu.itesla_project.modules.online.OnlineWorkflowRulesResults;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -88,7 +87,7 @@ public class PrintOnlineWorkflowRulesResultsTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         OnlineConfig config = OnlineConfig.load();
         OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
         String workflowId = line.getOptionValue("workflow");
@@ -142,14 +141,14 @@ public class PrintOnlineWorkflowRulesResultsTool implements Tool {
                 }
                 cvsWriter.flush();
                 if ( line.hasOption("csv"))
-                    System.out.println(content.toString());
+                    context.getOutputStream().println(content.toString());
                 else
-                    System.out.println(table.render());
+                    context.getOutputStream().println(table.render());
                 cvsWriter.close();
             } else
-                System.out.println("\nNo results of security rules applications for this workflow");
+                context.getOutputStream().println("\nNo results of security rules applications for this workflow");
         } else
-            System.out.println("No results for this workflow");
+            context.getOutputStream().println("No results for this workflow");
         onlinedb.close();
     }
 

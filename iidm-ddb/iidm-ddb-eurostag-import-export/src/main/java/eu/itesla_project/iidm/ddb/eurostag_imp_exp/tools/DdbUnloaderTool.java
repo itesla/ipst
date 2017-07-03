@@ -6,6 +6,7 @@
  */
 package eu.itesla_project.iidm.ddb.eurostag_imp_exp.tools;
 
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import org.apache.commons.cli.CommandLine;
 
 import com.google.auto.service.AutoService;
@@ -28,7 +29,7 @@ public class DdbUnloaderTool implements Tool {
 	}
 
 	@Override
-	public void run(CommandLine line) throws Exception {
+	public void run(CommandLine line, ToolRunningContext context) throws Exception {
 		String jbossHost = line.getOptionValue(DdbLoaderCommand.HOST);
         String jbossPort = line.getOptionValue(DdbLoaderCommand.PORT);
         String jbossUser = line.getOptionValue(DdbLoaderCommand.USER);

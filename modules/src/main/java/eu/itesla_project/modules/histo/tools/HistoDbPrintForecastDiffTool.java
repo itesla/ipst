@@ -10,6 +10,7 @@ import com.google.auto.service.AutoService;
 import com.google.common.io.CharStreams;
 import eu.itesla_project.commons.tools.Command;
 import eu.itesla_project.commons.tools.Tool;
+import eu.itesla_project.commons.tools.ToolRunningContext;
 import eu.itesla_project.iidm.network.Country;
 import eu.itesla_project.modules.histo.*;
 import eu.itesla_project.modules.offline.OfflineConfig;
@@ -72,7 +73,7 @@ public class HistoDbPrintForecastDiffTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         OfflineConfig config = OfflineConfig.load();
         try (HistoDbClient histoDbClient = config.getHistoDbClientFactoryClass().newInstance().create()) {
             Interval interval = Interval.parse(line.getOptionValue("interval"));
@@ -85,7 +86,7 @@ public class HistoDbPrintForecastDiffTool implements Tool {
                     HistoDbHorizon.DACF,
                     false,
                     false))) {
-                CharStreams.copy(reader, System.out);
+                CharStreams.copy(reader, context.getOutputStream());
             }
         }
     }

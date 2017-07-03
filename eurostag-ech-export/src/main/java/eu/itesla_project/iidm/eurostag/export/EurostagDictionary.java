@@ -34,11 +34,12 @@ public class EurostagDictionary {
 
     private final EurostagEchExportConfig config;
 
-    public static EurostagDictionary create(Network network, BranchParallelIndexes parallelIndexes, EurostagEchExportConfig config) {
+    public static EurostagDictionary create(Network network, BranchParallelIndexes parallelIndexes, EurostagEchExportConfig config, EurostagFakeNodes fakeNodes) {
         EurostagDictionary dictionary = new EurostagDictionary(config);
 
-        dictionary.addIfNotExist(EchUtil.FAKE_NODE_NAME1, EchUtil.FAKE_NODE_NAME1);
-        dictionary.addIfNotExist(EchUtil.FAKE_NODE_NAME2, EchUtil.FAKE_NODE_NAME2);
+        fakeNodes.esgIdsAsStream().forEach(esgId -> {
+            dictionary.addIfNotExist(esgId, esgId);
+        });
 
         Set<String> busIds = Identifiables.sort(EchUtil.getBuses(network, config)).stream().map(Bus::getId).collect(Collectors.toSet());
         Set<String> loadIds = new LinkedHashSet<>();
@@ -58,7 +59,7 @@ public class EurostagDictionary {
         NAMING_STRATEGY.fillDictionary(dictionary, EurostagNamingStrategy.NameType.SVC, svcIds);
 
         for (DanglingLine dl : Identifiables.sort(network.getDanglingLines())) {
-            ConnectionBus bus1 = ConnectionBus.fromTerminal(dl.getTerminal(), config, EchUtil.FAKE_NODE_NAME1);
+            ConnectionBus bus1 = ConnectionBus.fromTerminal(dl.getTerminal(), config, fakeNodes);
             ConnectionBus bus2 = new ConnectionBus(true, EchUtil.getBusId(dl));
             dictionary.addIfNotExist(dl.getId(), new EsgBranchName(new Esg8charName(dictionary.getEsgId(bus1.getId())),
                     new Esg8charName(dictionary.getEsgId(bus2.getId())),
@@ -77,16 +78,17 @@ public class EurostagDictionary {
         }
 
         for (Line l : Identifiables.sort(network.getLines())) {
-            ConnectionBus bus1 = ConnectionBus.fromTerminal(l.getTerminal1(), config, EchUtil.FAKE_NODE_NAME1);
-            ConnectionBus bus2 = ConnectionBus.fromTerminal(l.getTerminal2(), config, EchUtil.FAKE_NODE_NAME2);
-            dictionary.addIfNotExist(l.getId(), new EsgBranchName(new Esg8charName(dictionary.getEsgId(bus1.getId())),
+            ConnectionBus bus1 = ConnectionBus.fromTerminal(l.getTerminal1(), config, fakeNodes);
+            ConnectionBus bus2 = ConnectionBus.fromTerminal(l.getTerminal2(), config, fakeNodes);
+            EsgBranchName ebname = new EsgBranchName(new Esg8charName(dictionary.getEsgId(bus1.getId())),
                     new Esg8charName(dictionary.getEsgId(bus2.getId())),
-                    parallelIndexes.getParallelIndex(l.getId())).toString());
+                    parallelIndexes.getParallelIndex(l.getId()));
+            dictionary.addIfNotExist(l.getId(), ebname.toString());
         }
 
         for (TwoWindingsTransformer twt : Identifiables.sort(network.getTwoWindingsTransformers())) {
-            ConnectionBus bus1 = ConnectionBus.fromTerminal(twt.getTerminal1(), config, EchUtil.FAKE_NODE_NAME1);
-            ConnectionBus bus2 = ConnectionBus.fromTerminal(twt.getTerminal2(), config, EchUtil.FAKE_NODE_NAME2);
+            ConnectionBus bus1 = ConnectionBus.fromTerminal(twt.getTerminal1(), config, fakeNodes);
+            ConnectionBus bus2 = ConnectionBus.fromTerminal(twt.getTerminal2(), config, fakeNodes);
             dictionary.addIfNotExist(twt.getId(), new EsgBranchName(new Esg8charName(dictionary.getEsgId(bus1.getId())),
                     new Esg8charName(dictionary.getEsgId(bus2.getId())),
                     parallelIndexes.getParallelIndex(twt.getId())).toString());

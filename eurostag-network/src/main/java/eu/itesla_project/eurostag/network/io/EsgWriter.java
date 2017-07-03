@@ -21,9 +21,12 @@ public class EsgWriter {
 
     private final EsgGeneralParameters parameters;
 
-    public EsgWriter(EsgNetwork network, EsgGeneralParameters parameters) {
+    private final EsgSpecialParameters specialParameters;
+
+    public EsgWriter(EsgNetwork network, EsgGeneralParameters parameters, EsgSpecialParameters specialParameters) {
         this.network = Objects.requireNonNull(network);
         this.parameters = Objects.requireNonNull(parameters);
+        this.specialParameters = specialParameters;
     }
 
     private void writeHeader(RecordWriter recordWriter) throws IOException {
@@ -39,9 +42,12 @@ public class EsgWriter {
 
     private static char toChar(EsgGeneralParameters.StartMode mode) {
         switch (mode) {
-            case FLAT_START: return ' ';
-            case WARM_START: return '1';
-            default: throw new AssertionError();
+            case FLAT_START:
+                return ' ';
+            case WARM_START:
+                return '1';
+            default:
+                throw new IllegalArgumentException("Illegal start mode:" + mode);
         }
     }
 
@@ -70,6 +76,38 @@ public class EsgWriter {
         recordWriter.newLine();
     }
 
+    private void writeSpecialParameters(RecordWriter recordWriter) throws IOException {
+        recordWriter.addValue("SP", 1, 2);
+        recordWriter.addValue("INPVPQ", 4, 11);
+        recordWriter.addValue(specialParameters.getInpvpq(), 13, 22);
+        recordWriter.newLine();
+        recordWriter.addValue("SP", 1, 2);
+        recordWriter.addValue("THMAX", 4, 11);
+        recordWriter.addValue(specialParameters.getThmax(), 13, 22);
+        recordWriter.newLine();
+        recordWriter.addValue("SP", 1, 2);
+        recordWriter.addValue("EMAXF", 4, 11);
+        recordWriter.addValue(specialParameters.getEmaxf(), 13, 22);
+        recordWriter.newLine();
+        recordWriter.addValue("SP", 1, 2);
+        recordWriter.addValue("ZMIN", 4, 11);
+        recordWriter.addValue(specialParameters.getZmin(), 13, 22);
+        recordWriter.newLine();
+        recordWriter.addValue("SP", 1, 2);
+        recordWriter.addValue("RAMIN", 4, 11);
+        recordWriter.addValue(specialParameters.getRamin(), 13, 22);
+        recordWriter.newLine();
+        recordWriter.addValue("SP", 1, 2);
+        recordWriter.addValue("RAMAX", 4, 11);
+        recordWriter.addValue(specialParameters.getRamax(), 13, 22);
+        recordWriter.newLine();
+        recordWriter.addValue("SP", 1, 2);
+        recordWriter.addValue("TOLPLO", 4, 11);
+        recordWriter.addValue(specialParameters.getTolplo(), 13, 22);
+        recordWriter.newLine();
+        recordWriter.newLine();
+    }
+
     private static void writeGeneralComment(RecordWriter recordWriter, String comment) throws IOException {
         recordWriter.addValue("GC", 1, 2);
         recordWriter.addValue(comment != null ? comment : "", 4, 80);
@@ -87,7 +125,7 @@ public class EsgWriter {
                 typecard = "DA";
                 break;
             default:
-                throw new InternalError();
+                throw new IllegalArgumentException("Invalid area type: " + area.getType());
         }
         recordWriter.addValue(typecard, 1, 2);
         recordWriter.addValue(area.getName().toString(), 4, 5);
@@ -108,18 +146,23 @@ public class EsgWriter {
         if (node.isSlackBus()) {
             recordWriter.addValue("5", 1);
             recordWriter.addValue(node.getName().toString(), 4, 11);
-            recordWriter.addValue("0.", 40, 47, RecordWriter.Justification.Right);
+            recordWriter.addValue(node.getVangl(), 40, 47);
             recordWriter.newLine();
         }
     }
 
     private static char toChar(EsgBranchConnectionStatus status) {
         switch (status) {
-            case CLOSED_AT_BOTH_SIDE: return ' ';
-            case OPEN_AT_BOTH_SIDES: return '-';
-            case OPEN_AT_RECEIVING_SIDE: return '<';
-            case OPEN_AT_SENDING_SIDE: return '>';
-            default: throw new InternalError();
+            case CLOSED_AT_BOTH_SIDE:
+                return ' ';
+            case OPEN_AT_BOTH_SIDES:
+                return '-';
+            case OPEN_AT_RECEIVING_SIDE:
+                return '<';
+            case OPEN_AT_SENDING_SIDE:
+                return '>';
+            default:
+                throw new IllegalArgumentException("Invalid status: " + status);
         }
     }
 
@@ -141,9 +184,12 @@ public class EsgWriter {
 
     private static char toChar(EsgCouplingDevice.ConnectionStatus code) {
         switch (code) {
-            case OPEN: return '-';
-            case CLOSED: return ' ';
-            default: throw new InternalError();
+            case OPEN:
+                return '-';
+            case CLOSED:
+                return ' ';
+            default:
+                throw new IllegalArgumentException("Invalid connection status: " + code);
         }
     }
 
@@ -182,11 +228,16 @@ public class EsgWriter {
 
     private static char toChar(EsgDetailedTwoWindingTransformer.RegulatingMode mode) {
         switch (mode) {
-            case ACTIVE_FLUX_SIDE_1: return '1';
-            case ACTIVE_FLUX_SIDE_2: return '2';
-            case NOT_REGULATING: return 'N';
-            case VOLTAGE: return 'V';
-            default: throw new InternalError();
+            case ACTIVE_FLUX_SIDE_1:
+                return '1';
+            case ACTIVE_FLUX_SIDE_2:
+                return '2';
+            case NOT_REGULATING:
+                return 'N';
+            case VOLTAGE:
+                return 'V';
+            default:
+                throw new IllegalArgumentException("Invalid regulating mode: " + mode);
         }
     }
 
@@ -207,17 +258,17 @@ public class EsgWriter {
 
         // second line record
         recordWriter.addValue("48", 1, 2);
-        recordWriter.addValue(transformer.getKtpnom(), 22,25);
-        recordWriter.addValue(transformer.getKtap8(), 27,30);
+        recordWriter.addValue(transformer.getKtpnom(), 22, 25);
+        recordWriter.addValue(transformer.getKtap8(), 27, 30);
         recordWriter.addValue(transformer.getZbusr() != null ? transformer.getZbusr().toString() : "", 32, 39);
-        recordWriter.addValue(transformer.getVoltr(), 41,48);
+        recordWriter.addValue(transformer.getVoltr(), 41, 48);
         recordWriter.addValue(transformer.getPregmin(), 50, 57);
         recordWriter.addValue(transformer.getPregmax(), 59, 66);
         recordWriter.addValue(toChar(transformer.getXregtr()), 68);
         recordWriter.newLine();
 
         // tap records
-        for(EsgDetailedTwoWindingTransformer.Tap tap : transformer.getTaps()) {
+        for (EsgDetailedTwoWindingTransformer.Tap tap : transformer.getTaps()) {
             recordWriter.addValue("48", 1, 2);
             recordWriter.addValue(tap.getIplo(), 22, 25);
             recordWriter.addValue(tap.getUno1(), 27, 34);
@@ -230,9 +281,12 @@ public class EsgWriter {
 
     private static char toChar(EsgConnectionStatus status) {
         switch (status) {
-            case CONNECTED: return 'Y';
-            case NOT_CONNECTED: return 'N';
-            default: throw new InternalError();
+            case CONNECTED:
+                return 'Y';
+            case NOT_CONNECTED:
+                return 'N';
+            default:
+                throw new IllegalArgumentException("Invalid connection status: " + status);
         }
     }
 
@@ -242,7 +296,7 @@ public class EsgWriter {
         recordWriter.addValue(toChar(load.getIloadst()), 13);
         recordWriter.addValue(load.getZnodlo().toString(), 15, 22);
         recordWriter.addValue(load.getPldstz(), 24, 31);
-        recordWriter.addValue(load.getPldsti() , 33, 40);
+        recordWriter.addValue(load.getPldsti(), 33, 40);
         recordWriter.addValue(load.getPldstp(), 42, 49);
         recordWriter.addValue(load.getQldsti(), 51, 58);
         recordWriter.addValue(load.getQldstz(), 60, 67);
@@ -254,9 +308,12 @@ public class EsgWriter {
 
     private static char toChar(EsgRegulatingMode mode) {
         switch (mode) {
-            case REGULATING: return 'V';
-            case NOT_REGULATING: return 'N';
-            default: throw new InternalError();
+            case REGULATING:
+                return 'V';
+            case NOT_REGULATING:
+                return 'N';
+            default:
+                throw new IllegalArgumentException("Invalid mode: " + mode);
         }
     }
 
@@ -266,7 +323,7 @@ public class EsgWriter {
         recordWriter.addValue(toChar(generator.getXgenest()), 13);
         recordWriter.addValue(generator.getZnodge().toString(), 15, 22);
         recordWriter.addValue(generator.getPgmin(), 24, 31);
-        recordWriter.addValue(generator.getPgen() , 33, 40);
+        recordWriter.addValue(generator.getPgen(), 33, 40);
         recordWriter.addValue(generator.getPgmax(), 42, 49);
         recordWriter.addValue(generator.getQgmin(), 51, 58);
         recordWriter.addValue(generator.getQgen(), 60, 67);
@@ -282,8 +339,10 @@ public class EsgWriter {
 
     private static char toChar(EsgCapacitorOrReactorBank.RegulatingMode mode) {
         switch (mode) {
-            case NOT_REGULATING: return 'N';
-            default: throw new InternalError();
+            case NOT_REGULATING:
+                return 'N';
+            default:
+                throw new IllegalArgumentException("Invalid mode: " + mode);
         }
     }
 
@@ -335,6 +394,9 @@ public class EsgWriter {
 
         writeHeader(recordWriter);
         writeGeneralParameters(recordWriter);
+        if (specialParameters != null) {
+            writeSpecialParameters(recordWriter);
+        }
         writeGeneralComment(recordWriter, comment);
 
         if (network.getAreas().size() > 0) {
