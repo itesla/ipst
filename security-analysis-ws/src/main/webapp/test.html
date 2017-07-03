@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+    <h2>Security Analysis test page</h2>
+    <form action="api/security-analysis" method="POST"
+        enctype="multipart/form-data">
+        <table>
+            <tr>
+                <td><label>Limit Types </label></td>
+                <td><input type="text" name="limit-types"></td>
+            </tr>
+            <tr>
+                <td><label>Case File </label></td>
+                <td><input type="file" name="case-file"></td>
+            </tr>
+            <tr>
+                <td><label>Contingencies File </label></td>
+                <td><input type="file" name="contingencies-file"></td>
+            </tr>
+            <tr>
+                <td><label>Output format </label></td>
+                <td><select name="format">
+                        <option value="JSON">JSON</option>
+                        <option value="CSV">CSV</option>
+                        <option value="ERROR">ERROR</option>
+                </select></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><button type="submit">Analyse</button></td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>
