@@ -37,6 +37,8 @@ set(SZIP_HOME ${thirdparty_prefix}/szip)
 set(HDF5_HOME ${thirdparty_prefix}/hdf5)
 set(MATIO_HOME ${thirdparty_prefix}/matio)
 
+file(MAKE_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
+
 if(BUILD_EUROSTAG)
     message(STATUS "Eurostag based components (eurostag-indexes and wp43adapter) will be compiled.")
     add_subdirectory(eurostag-indexes)
