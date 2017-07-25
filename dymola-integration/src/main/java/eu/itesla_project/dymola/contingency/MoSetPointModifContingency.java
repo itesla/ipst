@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.dymola.contingency;
 
-import eu.itesla_project.contingency.tasks.ModificationTask;
+import eu.itesla_project.contingency.tasks.TrippingTask;
 
 import java.util.Map;
 
@@ -27,7 +27,7 @@ public class MoSetPointModifContingency extends MoContingency {
 
     //TODO
     @Override
-    public ModificationTask toTask() {
+    public TrippingTask toTask() {
         return null;
     }
 
