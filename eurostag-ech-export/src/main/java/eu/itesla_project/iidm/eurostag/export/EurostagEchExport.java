@@ -1,11 +1,13 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 package eu.itesla_project.iidm.eurostag.export;
 
+import com.google.common.base.Strings;
 import eu.itesla_project.commons.ITeslaException;
 import eu.itesla_project.eurostag.network.*;
 import eu.itesla_project.eurostag.network.io.EsgWriter;
@@ -19,10 +21,7 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
@@ -48,19 +47,22 @@ public class EurostagEchExport {
     private final EurostagEchExportConfig config;
     private final BranchParallelIndexes parallelIndexes;
     private final EurostagDictionary dictionary;
+    private final EurostagFakeNodes fakeNodes;
 
-    public EurostagEchExport(Network network, EurostagEchExportConfig config, BranchParallelIndexes parallelIndexes, EurostagDictionary dictionary) {
+    public EurostagEchExport(Network network, EurostagEchExportConfig config, BranchParallelIndexes parallelIndexes, EurostagDictionary dictionary, EurostagFakeNodes fakeNodes) {
         this.network = Objects.requireNonNull(network);
         this.config = Objects.requireNonNull(config);
         this.parallelIndexes = Objects.requireNonNull(parallelIndexes);
         this.dictionary = Objects.requireNonNull(dictionary);
+        this.fakeNodes = Objects.requireNonNull(fakeNodes);
     }
 
     public EurostagEchExport(Network network, EurostagEchExportConfig config) {
         this.network = Objects.requireNonNull(network);
         this.config = config;
-        this.parallelIndexes = BranchParallelIndexes.build(network, config);
-        this.dictionary = EurostagDictionary.create(network, parallelIndexes, config);
+        this.fakeNodes = EurostagFakeNodes.build(network, config);
+        this.parallelIndexes = BranchParallelIndexes.build(network, config, fakeNodes);
+        this.dictionary = EurostagDictionary.create(network, parallelIndexes, config, fakeNodes);
     }
 
     public EurostagEchExport(Network network) {
@@ -88,11 +90,15 @@ public class EurostagEchExport {
     }
 
     private void createNodes(EsgNetwork esgNetwork) {
-        esgNetwork.addNode(createNode(EchUtil.FAKE_NODE_NAME1, EchUtil.FAKE_AREA, 380f, 380f, 0f, false));
-        esgNetwork.addNode(createNode(EchUtil.FAKE_NODE_NAME2, EchUtil.FAKE_AREA, 380f, 380f, 0f, false));
+        fakeNodes.referencedEsgIdsAsStream().forEach(esgId -> {
+            VoltageLevel vlevel = fakeNodes.getVoltageLevelByEsgId(esgId);
+            float nominalV = ((vlevel != null) ? vlevel.getNominalV() : 380f);
+            esgNetwork.addNode(createNode(esgId, EchUtil.FAKE_AREA, nominalV, nominalV, 0f, false));
+        });
+
         Bus sb = EchUtil.selectSlackbus(network, config);
         if (sb == null) {
-            throw new RuntimeException("Stack bus not found");
+            throw new RuntimeException("Slack bus not found");
         }
         LOGGER.debug("Slack bus: {} ({})", sb, sb.getVoltageLevel().getId());
         for (Bus b : Identifiables.sort(EchUtil.getBuses(network, config))) {
@@ -162,26 +168,35 @@ public class EurostagEchExport {
         return new EsgDissymmetricalBranch(new EsgBranchName(new Esg8charName(dictionary.getEsgId(bus1.getId())),
                 new Esg8charName(dictionary.getEsgId(bus2.getId())),
                 parallelIndexes.getParallelIndex(id)),
-                status, rb / 2, rxb / 2, gs1, bs1, rate, rb / 2, rxb / 2, gs2, bs2);
+                status, rb, rxb, gs1, bs1, rate, rb, rxb, gs2, bs2);
     }
 
     private void createLines(EsgNetwork esgNetwork, EsgGeneralParameters parameters) {
         for (Line l : Identifiables.sort(network.getLines())) {
-            ConnectionBus bus1 = ConnectionBus.fromTerminal(l.getTerminal1(), config, EchUtil.FAKE_NODE_NAME1);
-            ConnectionBus bus2 = ConnectionBus.fromTerminal(l.getTerminal2(), config, EchUtil.FAKE_NODE_NAME2);
+            ConnectionBus bus1 = ConnectionBus.fromTerminal(l.getTerminal1(), config, fakeNodes);
+            ConnectionBus bus2 = ConnectionBus.fromTerminal(l.getTerminal2(), config, fakeNodes);
             // if the admittance are the same in the both side of PI line model
             if (Math.abs(l.getG1() - l.getG2()) < G_EPSILON && Math.abs(l.getB1() - l.getB2()) < B_EPSILON) {
                 //...create a simple line
                 esgNetwork.addLine(createLine(l.getId(), bus1, bus2, l.getTerminal1().getVoltageLevel().getNominalV(),
                         l.getR(), l.getX(), l.getG1(), l.getB1(), parameters));
             } else {
-                // create a dissymmetrical branch
-                esgNetwork.addDissymmetricalBranch(createDissymmetricalBranch(l.getId(), bus1, bus2, l.getTerminal1().getVoltageLevel().getNominalV(),
-                        l.getR(), l.getX(), l.getG1(), l.getB1(), l.getG2(), l.getB2(), parameters));
+                EsgBranchConnectionStatus status = getStatus(bus1, bus2);
+                if (status.equals(EsgBranchConnectionStatus.CLOSED_AT_BOTH_SIDE)) {
+                    // create a dissymmetrical branch
+                    esgNetwork.addDissymmetricalBranch(createDissymmetricalBranch(l.getId(), bus1, bus2, l.getTerminal1().getVoltageLevel().getNominalV(),
+                            l.getR(), l.getX(), l.getG1(), l.getB1(), l.getG2(), l.getB2(), parameters));
+                } else {
+                    // half connected dissymmetrical branches are not allowed: remove the dissymmetry (by averaging B1 and B2, G1 and G2) and create a simple line
+                    // This is an approximation: the best electrotechnical solution would require an additional fake node and a coupling on each disconnected end of the DyssimmetricalBranch.
+                    LOGGER.warn("line {}: half connected dissymmetrical branches are not allowed; removes the dissymmetry by averaging line's B1 {} and B2 {} , G1 {} and  G2 {}", l, l.getB1(), l.getB2(), l.getG1(), l.getG2());
+                    esgNetwork.addLine(createLine(l.getId(), bus1, bus2, l.getTerminal1().getVoltageLevel().getNominalV(),
+                            l.getR(), l.getX(), (l.getG1() + l.getG2()) / 2, (l.getB1() + l.getB2()) / 2, parameters));
+                }
             }
         }
         for (DanglingLine dl : Identifiables.sort(network.getDanglingLines())) {
-            ConnectionBus bus1 = ConnectionBus.fromTerminal(dl.getTerminal(), config, EchUtil.FAKE_NODE_NAME1);
+            ConnectionBus bus1 = ConnectionBus.fromTerminal(dl.getTerminal(), config, fakeNodes);
             ConnectionBus bus2 = new ConnectionBus(true, EchUtil.getBusId(dl));
             esgNetwork.addLine(createLine(dl.getId(), bus1, bus2, dl.getTerminal().getVoltageLevel().getNominalV(),
                     dl.getR(), dl.getX(), dl.getG() / 2, dl.getB() / 2, parameters));
@@ -214,10 +229,43 @@ public class EurostagEchExport {
         return new EsgDetailedTwoWindingTransformer.Tap(iplo, dephas, uno1, uno2, ucc);
     }
 
+
+    private void createAdditionalBank(EsgNetwork esgNetwork, TwoWindingsTransformer twt, Terminal terminal, String nodeName, Set<String> additionalBanksIds) {
+        float rcapba = 0.0f;
+        if (-twt.getB() < 0) {
+            rcapba = twt.getB() * (float) Math.pow(terminal.getVoltageLevel().getNominalV(), 2) / (config.isSpecificCompatibility() ? 2 : 1);
+        }
+        float plosba = 0.0f;
+        if (twt.getG() < 0) {
+            plosba = twt.getG() * (float) Math.pow(terminal.getVoltageLevel().getNominalV(), 2) / (config.isSpecificCompatibility() ? 2 : 1);
+        }
+        if ((Math.abs(plosba) > G_EPSILON) || (rcapba > B_EPSILON)) {
+            //simple new bank naming: 5 first letters of the node name, 7th letter of the node name, 'C', order code
+            String nnodeName = Strings.padEnd(nodeName, 8, ' ');
+            String newBankNamePrefix = nnodeName.substring(0, 5) + nnodeName.charAt(6) + 'C';
+            String newBankName = newBankNamePrefix + '0';
+            int counter = 1;
+            while (additionalBanksIds.contains(newBankName)) {
+                String newCounter = Integer.toString(counter++);
+                if (newCounter.length() > 1) {
+                    throw new RuntimeException("Renaming error " + nodeName + " -> " + newBankName);
+                }
+                newBankName = newBankNamePrefix + newCounter;
+            }
+            additionalBanksIds.add(newBankName);
+            LOGGER.info("create additional bank: {}, node: {}", newBankName, nodeName);
+            esgNetwork.addCapacitorsOrReactorBanks(new EsgCapacitorOrReactorBank(new Esg8charName(newBankName), new Esg8charName(nodeName), 1, plosba, rcapba, 1, EsgCapacitorOrReactorBank.RegulatingMode.NOT_REGULATING));
+        }
+
+    }
+
     private void createTransformers(EsgNetwork esgNetwork, EsgGeneralParameters parameters) {
+        Set<String> additionalBanksIds = new HashSet<>();
+
         for (TwoWindingsTransformer twt : Identifiables.sort(network.getTwoWindingsTransformers())) {
-            ConnectionBus bus1 = ConnectionBus.fromTerminal(twt.getTerminal1(), config, EchUtil.FAKE_NODE_NAME1);
-            ConnectionBus bus2 = ConnectionBus.fromTerminal(twt.getTerminal2(), config, EchUtil.FAKE_NODE_NAME2);
+            ConnectionBus bus1 = ConnectionBus.fromTerminal(twt.getTerminal1(), config, fakeNodes);
+            ConnectionBus bus2 = ConnectionBus.fromTerminal(twt.getTerminal2(), config, fakeNodes);
+
             EsgBranchConnectionStatus status = getStatus(bus1, bus2);
 
             //...IIDM gives no rate value. we take rate = 100 MVA But we have to find the corresponding pcu, pfer ...
@@ -236,7 +284,7 @@ public class EurostagEchExport {
 
             //...changing base snref -> base rate to compute losses
             float pcu = Rpu2 * rate * 100f / parameters.getSnref();                  //...base rate (100F -> %)
-            float pfer = 10000f * (Gpu2 / rate) * (parameters.getSnref() / 100f);  //...base rate
+            float pfer = 10000f * ((float) Math.sqrt(Gpu2) / rate) * (parameters.getSnref() / 100f);  //...base rate
             float modgb = (float) Math.sqrt(Math.pow(Gpu2, 2.f) + Math.pow(Bpu2, 2.f));
             float cmagn = 10000 * (modgb / rate) * (parameters.getSnref() / 100f);  //...magnetizing current [% base rate]
             float esat = 1.f;
@@ -297,8 +345,44 @@ public class EurostagEchExport {
                 throw new RuntimeException("Transformer " + twt.getId() + "  with voltage and phase tap changer not yet supported");
             }
 
+            // trick to handle the fact that Eurostag model allows only the impedance to change and not the resistance.
+            // As an approximation, the resistance is fixed to the value it has for the initial step,
+            // but discrepancies will occur if the step is changed.
+            if ((ptc != null) || (rtc != null)) {
+                float dr = (rtc != null) ? rtc.getStep(rtc.getTapPosition()).getR() : ptc.getStep(ptc.getTapPosition()).getR();
+                float tap_adjusted_r = twt.getR() * (1 + dr / 100.0f);
+                float rpu2_adjusted = (tap_adjusted_r * parameters.getSnref()) / nomiU2 / nomiU2;
+                pcu = rpu2_adjusted * rate * 100f / parameters.getSnref();
+
+                float dg = (rtc != null) ? rtc.getStep(rtc.getTapPosition()).getG() : ptc.getStep(ptc.getTapPosition()).getG();
+                float tap_adjusted_g = twt.getG() * (1 + dg / 100.0f);
+                float gpu2_adjusted = (tap_adjusted_g / parameters.getSnref()) * nomiU2 * nomiU2;
+                pfer = 10000f * ((float) Math.sqrt(gpu2_adjusted) / rate) * (parameters.getSnref() / 100f);
+
+                float db = (rtc != null) ? rtc.getStep(rtc.getTapPosition()).getB() : ptc.getStep(ptc.getTapPosition()).getB();
+                float tap_adjusted_b = twt.getB() * (1 + db / 100.0f);
+                float bpu2_adjusted = (tap_adjusted_b / parameters.getSnref()) * nomiU2 * nomiU2;
+                modgb = (float) Math.sqrt(Math.pow(gpu2_adjusted, 2.f) + Math.pow(bpu2_adjusted, 2.f));
+                cmagn = 10000 * (modgb / rate) * (parameters.getSnref() / 100f);
+            }
+
             float pregmin = Float.NaN; //...?
             float pregmax = Float.NaN; //...?
+
+            //handling of the cases where cmagn should be negative and where pfer should be negative
+            if ((-twt.getB() < 0) || (twt.getG() < 0) || (config.isSpecificCompatibility())) {
+                createAdditionalBank(esgNetwork, twt, twt.getTerminal1(), dictionary.getEsgId(bus1.getId()), additionalBanksIds);
+                if (config.isSpecificCompatibility()) {
+                    createAdditionalBank(esgNetwork, twt, twt.getTerminal2(), dictionary.getEsgId(bus2.getId()), additionalBanksIds);
+                }
+                if (twt.getG() < 0) {
+                    pfer = 0.0f;
+                }
+                if (-twt.getB() < 0) {
+                    cmagn = pfer;
+                }
+            }
+
 
             EsgDetailedTwoWindingTransformer esgTransfo = new EsgDetailedTwoWindingTransformer(
                     new EsgBranchName(new Esg8charName(dictionary.getEsgId(bus1.getId())),
@@ -341,7 +425,7 @@ public class EurostagEchExport {
 
     private void createLoads(EsgNetwork esgNetwork) {
         for (Load l : Identifiables.sort(network.getLoads())) {
-            ConnectionBus bus = ConnectionBus.fromTerminal(l.getTerminal(), config, EchUtil.FAKE_NODE_NAME1);
+            ConnectionBus bus = ConnectionBus.fromTerminal(l.getTerminal(), config, fakeNodes);
             esgNetwork.addLoad(createLoad(bus, l.getId(), l.getP0(), l.getQ0()));
         }
         for (DanglingLine dl : Identifiables.sort(network.getDanglingLines())) {
@@ -352,32 +436,46 @@ public class EurostagEchExport {
 
     private void createGenerators(EsgNetwork esgNetwork) {
         for (Generator g : Identifiables.sort(network.getGenerators())) {
-            ConnectionBus bus = ConnectionBus.fromTerminal(g.getTerminal(), config, EchUtil.FAKE_NODE_NAME1);
+            ConnectionBus bus = ConnectionBus.fromTerminal(g.getTerminal(), config, fakeNodes);
+
             EsgConnectionStatus status = bus.isConnected() ? EsgConnectionStatus.CONNECTED : EsgConnectionStatus.NOT_CONNECTED;
             float pgen = g.getTargetP();
             float qgen = g.getTargetQ();
             float pgmin = g.getMinP();
             float pgmax = g.getMaxP();
-            float qgmin = config.isNoGeneratorMinMaxQ() ? -9999 : g.getReactiveLimits().getMinQ(pgen);
-            float qgmax = config.isNoGeneratorMinMaxQ() ? 9999 : g.getReactiveLimits().getMaxQ(pgen);
-            EsgRegulatingMode mode = g.isVoltageRegulatorOn() && g.getTargetV() >= 0.1
-                    ? EsgRegulatingMode.REGULATING : EsgRegulatingMode.NOT_REGULATING;
-            float vregge = g.isVoltageRegulatorOn() ? g.getTargetV() : Float.NaN;
+            boolean isQminQmaxInverted = g.getReactiveLimits().getMinQ(pgen) > g.getReactiveLimits().getMaxQ(pgen);
+            if (isQminQmaxInverted) {
+                LOGGER.warn("inverted qmin {} and qmax {} values for generator {}", g.getReactiveLimits().getMinQ(pgen), g.getReactiveLimits().getMaxQ(pgen), g.getId());
+            }
+            // in case qmin and qmax are inverted, take out the unit from the voltage regulation if it has a target Q
+            // and open widely the Q interval
+            float qgmin = (config.isNoGeneratorMinMaxQ() || isQminQmaxInverted) ? -9999 : g.getReactiveLimits().getMinQ(pgen);
+            float qgmax = (config.isNoGeneratorMinMaxQ() || isQminQmaxInverted) ? 9999 : g.getReactiveLimits().getMaxQ(pgen);
+            EsgRegulatingMode mode = (isQminQmaxInverted && !Float.isNaN(qgen)) ? EsgRegulatingMode.NOT_REGULATING :
+                    (g.isVoltageRegulatorOn() && g.getTargetV() >= 0.1 ? EsgRegulatingMode.REGULATING : EsgRegulatingMode.NOT_REGULATING);
+            float vregge = (isQminQmaxInverted && !Float.isNaN(qgen)) ? Float.NaN : (g.isVoltageRegulatorOn() ? g.getTargetV() : Float.NaN);
             float qgensh = 1.f;
 
-            Bus regulatingBus = g.getRegulatingTerminal().getBusBreakerView().getConnectableBus();
+            //fails, when noSwitch is true !!
+            //Bus regulatingBus = g.getRegulatingTerminal().getBusBreakerView().getConnectableBus();
+            ConnectionBus regulatingBus = ConnectionBus.fromTerminal(g.getRegulatingTerminal(), config, fakeNodes);
 
-            esgNetwork.addGenerator(new EsgGenerator(new Esg8charName(dictionary.getEsgId(g.getId())),
-                    new Esg8charName(dictionary.getEsgId(bus.getId())),
-                    pgmin, pgen, pgmax, qgmin, qgen, qgmax, mode, vregge,
-                    new Esg8charName(dictionary.getEsgId(regulatingBus.getId())),
-                    qgensh, status));
+            try {
+                esgNetwork.addGenerator(new EsgGenerator(new Esg8charName(dictionary.getEsgId(g.getId())),
+                        new Esg8charName(dictionary.getEsgId(bus.getId())),
+                        pgmin, pgen, pgmax, qgmin, qgen, qgmax, mode, vregge,
+                        new Esg8charName(dictionary.getEsgId(regulatingBus.getId())),
+                        qgensh, status));
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
         }
     }
 
     private void createBanks(EsgNetwork esgNetwork) {
         for (ShuntCompensator sc : Identifiables.sort(network.getShunts())) {
-            ConnectionBus bus = ConnectionBus.fromTerminal(sc.getTerminal(), config, EchUtil.FAKE_NODE_NAME1);
+            ConnectionBus bus = ConnectionBus.fromTerminal(sc.getTerminal(), config, fakeNodes);
+
             //...number of steps in service
             int ieleba = bus.isConnected() ? sc.getCurrentSectionCount() : 0; // not really correct, because it can be connected with zero section, EUROSTAG should be modified...
             float plosba = 0.f; // no active lost in the iidm shunt compensator
@@ -393,15 +491,16 @@ public class EurostagEchExport {
 
     private void createStaticVarCompensators(EsgNetwork esgNetwork) {
         for (StaticVarCompensator svc : Identifiables.sort(network.getStaticVarCompensators())) {
-            ConnectionBus bus = ConnectionBus.fromTerminal(svc.getTerminal(), config, EchUtil.FAKE_NODE_NAME1);
+            ConnectionBus bus = ConnectionBus.fromTerminal(svc.getTerminal(), config, fakeNodes);
+
             Esg8charName znamsvc = new Esg8charName(dictionary.getEsgId(svc.getId()));
             EsgConnectionStatus xsvcst = bus.isConnected() ? EsgConnectionStatus.CONNECTED : EsgConnectionStatus.NOT_CONNECTED;
             Esg8charName znodsvc = new Esg8charName(dictionary.getEsgId(bus.getId()));
-            float factor = (float) Math.pow(svc.getTerminal().getVoltageLevel().getNominalV() / 100.0, 2);
-            float bmin = svc.getBmin() * factor;
-            float binit = svc.getReactivePowerSetPoint();
-            float bmax = svc.getBmax() * factor;
-            EsgRegulatingMode xregsvc = (svc.getRegulationMode() == StaticVarCompensator.RegulationMode.VOLTAGE) ? EsgRegulatingMode.REGULATING : EsgRegulatingMode.NOT_REGULATING;
+            float factor = (float) Math.pow(svc.getTerminal().getVoltageLevel().getNominalV(), 2);
+            float bmin = (config.isSvcAsFixedInjectionInLF() == false) ? svc.getBmin() * factor : -9999999; // [Mvar]
+            float binit = (config.isSvcAsFixedInjectionInLF() == false) ? svc.getReactivePowerSetPoint() : -svc.getTerminal().getQ() * (float) Math.pow(svc.getTerminal().getVoltageLevel().getNominalV() / EchUtil.getBus(svc.getTerminal(), config).getV(), 2); // [Mvar]
+            float bmax = (config.isSvcAsFixedInjectionInLF() == false) ? svc.getBmax() * factor : 9999999; // [Mvar]
+            EsgRegulatingMode xregsvc = ((svc.getRegulationMode() == StaticVarCompensator.RegulationMode.VOLTAGE) && (!config.isSvcAsFixedInjectionInLF())) ? EsgRegulatingMode.REGULATING : EsgRegulatingMode.NOT_REGULATING;
             float vregsvc = svc.getVoltageSetPoint();
             float qsvsch = 1.0f;
             esgNetwork.addStaticVarCompensator(
@@ -415,9 +514,6 @@ public class EurostagEchExport {
 
         // areas
         createAreas(esgNetwork);
-
-        // nodes
-        createNodes(esgNetwork);
 
         // coupling devices
         createCouplingDevices(esgNetwork);
@@ -440,26 +536,33 @@ public class EurostagEchExport {
         // static VAR compensators
         createStaticVarCompensators(esgNetwork);
 
+        // nodes
+        createNodes(esgNetwork);
+
         return esgNetwork;
     }
 
-    public void write(Writer writer, EsgGeneralParameters parameters) throws IOException {
+    private EsgSpecialParameters createEsgSpecialParameters(EurostagEchExportConfig config) {
+        return config.isSpecificCompatibility() ? null : new EsgSpecialParameters();
+    }
+
+    public void write(Writer writer, EsgGeneralParameters parameters, EsgSpecialParameters specialParameters) throws IOException {
         EsgNetwork esgNetwork = createNetwork(parameters);
-        new EsgWriter(esgNetwork, parameters).write(writer, network.getId() + "/" + network.getStateManager().getWorkingStateId());
+        new EsgWriter(esgNetwork, parameters, specialParameters).write(writer, network.getId() + "/" + network.getStateManager().getWorkingStateId());
     }
 
     public void write(Writer writer) throws IOException {
-        write(writer, new EsgGeneralParameters());
+        write(writer, new EsgGeneralParameters(), createEsgSpecialParameters(config));
     }
 
-    public void write(Path file, EsgGeneralParameters parameters) throws IOException {
+    public void write(Path file, EsgGeneralParameters parameters, EsgSpecialParameters specialParameters) throws IOException {
         try (Writer writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
-            write(writer, parameters);
+            write(writer, parameters, specialParameters);
         }
     }
 
     public void write(Path file) throws IOException {
-        write(file, new EsgGeneralParameters());
+        write(file, new EsgGeneralParameters(), createEsgSpecialParameters(config));
     }
 
 }

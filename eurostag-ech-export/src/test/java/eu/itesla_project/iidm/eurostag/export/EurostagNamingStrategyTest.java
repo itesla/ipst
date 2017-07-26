@@ -109,14 +109,15 @@ public class EurostagNamingStrategyTest {
     @Test
     public void testForbiddenChars() throws IOException {
         EurostagEchExportConfig config = getConfig(";^", "_");
-        EurostagDictionary ed = EurostagDictionary.create(network, null, config);
+        EurostagDictionary ed = EurostagDictionary.create(network, null, config, EurostagFakeNodes.build(network, config));
         ed.toMap().forEach((iidmId, esgId) -> assertTrue(isValid(config, esgId)));
     }
 
     @Test
     public void testForbiddenCharsInvalidConfig() throws IOException {
         try {
-            EurostagDictionary ed = EurostagDictionary.create(network, null, getConfig(";^", ";"));
+            EurostagEchExportConfig config = getConfig(";^", ";");
+            EurostagDictionary ed = EurostagDictionary.create(network, null, config, EurostagFakeNodes.build(network, config));
             throw new RuntimeException("should not be this statement");
         } catch (IllegalArgumentException err) {
         }
@@ -128,14 +129,14 @@ public class EurostagNamingStrategyTest {
         // assumption:  empty forbidden characters string means NO replacement
         EurostagEchExportConfig config = getConfig("", "_");
         EurostagDictionary ed = EurostagDictionary.create(network, null,
-                config);
+                config, EurostagFakeNodes.build(network, config));
         ed.toMap().keySet().stream().forEach(iidmId -> assertEquals(isValid(config, iidmId), isValid(config, ed.getEsgId(iidmId))));
     }
 
     @Test
     public void testDefaultCharsConfig() throws IOException {
         EurostagEchExportConfig config = getConfig(null, null);
-        EurostagDictionary ed = EurostagDictionary.create(network, null, config);
+        EurostagDictionary ed = EurostagDictionary.create(network, null, config, EurostagFakeNodes.build(network, config));
         ed.toMap().forEach((iidmId, esgId) -> {
             assertTrue(isValid(config, esgId));
         });
