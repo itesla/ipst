@@ -14,7 +14,7 @@ import org.joda.time.Interval;
 import org.junit.Test;
 
 import eu.itesla_project.commons.util.StringToIntMapper;
-import eu.itesla_project.iidm.datasource.MemDataSource;
+import eu.itesla_project.commons.datasource.MemDataSource;
 import eu.itesla_project.iidm.export.ampl.AmplSubset;
 import eu.itesla_project.iidm.export.ampl.AmplUtil;
 import eu.itesla_project.iidm.network.Network;

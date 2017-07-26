@@ -10,7 +10,7 @@ import com.google.common.collect.Range;
 import eu.itesla_project.commons.io.table.Column;
 import eu.itesla_project.commons.io.table.TableFormatter;
 import eu.itesla_project.commons.util.StringToIntMapper;
-import eu.itesla_project.iidm.datasource.DataSource;
+import eu.itesla_project.commons.datasource.DataSource;
 import eu.itesla_project.iidm.export.ampl.AmplConstants;
 import eu.itesla_project.iidm.export.ampl.AmplSubset;
 import eu.itesla_project.iidm.export.ampl.util.AmplDatTableFormatter;
