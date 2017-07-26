@@ -129,6 +129,14 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- case projector -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>case-projector</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>
