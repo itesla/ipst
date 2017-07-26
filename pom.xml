@@ -21,6 +21,7 @@
 
     <modules>
         <module>ampl-export</module>
+        <module>case-projector</module>
         <module>distribution</module>
         <module>dymola-integration</module>
         <module>EU2Mod_MB</module>
@@ -49,7 +50,6 @@
         <module>pclfsim-integration</module>
         <module>sampling-integration</module>
         <module>wca-integration</module>
-        <module>case-projector</module>
     </modules>
 
     <properties>
