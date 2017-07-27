@@ -292,6 +292,9 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 			case "M2DS":
 				dbId = populateDDB_M1M2(zone, dicoMap, ddbmanager, eurostagSim);
 				break;
+			case "M21":
+				dbId = populateDDB_M21(zone, dicoMap, ddbmanager, eurostagSim);
+				break;
 			case "R":
 				dbId = populateDDB_R(zone, dicoMap, ddbmanager, eurostagSim, regsMapping);
 				break;
@@ -312,6 +315,100 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
 		if (!(("M1".equals(zone.getTypeName())) || ("M2".equals(zone.getTypeName())))) {
 			throw new RuntimeException("not expected type (not M1 nor M2): " + zone);
+		}
+
+		log.debug("-Creating DDB component {} ", zone.getTypeName());
+		String mName = (String) zone.getData().get("machine.name");
+		String cimId = amap.get(mName);
+		if ((cimId == null) || ("".equals(cimId))) {
+			throw new RuntimeException(mName + ": cimId not found in mapping.");
+		}
+
+		if (!equipmentsTypeMap.contains(cimId)){
+			equipmentsTypeMap.put(cimId, zone.getTypeName());
+		}
+
+		Equipment eq1 = ddbmanager.findEquipment(cimId);
+		if ((eq1!=null) && (updateFlag==true)) {
+			Set<String> connectedInternals=getConnectedInternals(cimId,ddbmanager);
+
+			//remove this equipment graph
+			log.info("- removing existing equipment {}", cimId);
+			removeEquipment(cimId,ddbmanager);
+			eq1=null;
+
+			for (String internalId: connectedInternals) {
+				log.info("- removing existing connected internal {}", internalId);
+				removeInternal(internalId,ddbmanager);
+			}
+
+		}
+
+		String mtc_ddbid = MTC_PREFIX_NAME + zone.getKeyName();
+		ModelTemplateContainer mtc1 = ddbmanager
+				.findModelTemplateContainer(mtc_ddbid);
+		if (mtc1 == null) {
+			throw new RuntimeException(" template container " + mtc_ddbid
+					+ " not defined! ");
+		}
+
+		ParametersContainer pc1 = ddbmanager.findParametersContainer(mName);
+		if (pc1 == null) {
+			log.debug("-- creating Parameters Container " + mName +" plus parameters.");
+			pc1 = new ParametersContainer(mName);
+			Parameters pars = new Parameters(eurostagSim);
+			for (String varName : zone.getData().keySet()) {
+				String varFType = DtaParser.getVarFType(zone.typeName, varName);
+				Object varValue = zone.getData().get(varName);
+				if (log.isDebugEnabled()) {
+					log.trace("----" + varName + " = " + varValue + ", " + varFType);
+				}
+				if (varFType.startsWith("F")) {
+					if (varValue != null) {
+						pars.addParameter(new ParameterFloat(varName,
+								new Float((Double) varValue)));
+					} else {
+						pars.addParameter(new ParameterFloat(varName, null));
+					}
+				} else if (varFType.startsWith("A")) {
+					pars.addParameter(new ParameterString(varName,
+							(String) varValue));
+				} else {
+					log.error(varFType + " not handled");
+				}
+			}
+			pc1.getParameters().add(pars);
+			pc1 = ddbmanager.save(pc1);
+		} else {
+			log.debug("-- Parameters Container container " + mName
+					+ " already defined, id: " + pc1.getId());
+			// ddbmanager.delete(pc1);
+		}
+
+		if (eq1 == null) {
+			log.info("-- creating Equipment " + cimId + "; eurostag name is: "
+					+ mName);
+			eq1 = new Equipment(cimId);
+			eq1.setModelContainer(mtc1);
+			eq1.setParametersContainer(pc1);
+			eq1 = ddbmanager.save(eq1);
+		} else {
+			log.warn("-- Equipment  " + cimId + " already defined, id: "
+					+ eq1.getId());
+		}
+
+		return cimId;
+	}
+	public String populateDDB_M21(EurostagRecord zone, Map<String, String> amap,
+								   DDBManager ddbmanager, SimulatorInst eurostagSim) {
+		// here we assume that the simulator with the required version already
+		// exists
+		if (eurostagSim == null) {
+			throw new RuntimeException("Eurostag simulator could not be null");
+		}
+
+		if (!"M21".equals(zone.getTypeName())) {
+			throw new RuntimeException("not expected type M21: " + zone);
 		}
 
 		log.debug("-Creating DDB component {} ", zone.getTypeName());
@@ -491,6 +588,12 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 			pars.setDefParamSetNum(paramSetNum);
 			for (String varName : zone.getData().keySet()) {
 				String varFType = DtaParser.getVarFType(zone.typeName, varName);
+				if (varFType == null) {
+					//this is not a variable belonging to R; it's a modificated parameter
+					//by default insert it into the db as an int (ref. eurostag doc. 09_Dynamyc_Data_File.pdf, Macroblocks section)
+					log.debug("---- varName "+ varName + " is not in the list associated component " +zone.typeName +"; handle it as an additional modification parameter, with a float type");
+					varFType = "F8";
+				}
 				Object varValue = zone.getData().get(varName);
 				if (log.isDebugEnabled()) {
 					log.trace("----" + varName + " = " + varValue + ", " + varFType);
@@ -797,6 +900,9 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 				}
 			}
 
+			//adding svc to the equipment list
+			network.getStaticVarCompensators().forEach(svc -> cimIds.add(svc.getId()));
+
 			// writing a .dta
 			DtaParser.dumpHeader(new Date(), eurostagVersion, dtaOutStream);
 
@@ -1070,6 +1176,8 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 		case "M2DU":
 		case "M2S":
 		case "M2DS":  zoneTypeName="M2";
+		break;
+		case "M21": zoneTypeName="M21";
 		break;
 		case "R":  zoneTypeName="R";
 		break;
