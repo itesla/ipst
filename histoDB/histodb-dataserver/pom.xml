@@ -155,7 +155,7 @@
 
         <dependency>
             <groupId>eu.itesla_project</groupId>
-            <artifactId>ucte-import</artifactId>
+            <artifactId>ucte-converter</artifactId>
             <version>${ipstentsoe.version}</version>
             <scope>runtime</scope>
         </dependency>
