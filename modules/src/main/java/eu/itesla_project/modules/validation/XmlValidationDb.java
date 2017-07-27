@@ -6,8 +6,8 @@
  */
 package eu.itesla_project.modules.validation;
 
-import eu.itesla_project.iidm.datasource.DataSource;
-import eu.itesla_project.iidm.datasource.GzFileDataSource;
+import eu.itesla_project.commons.datasource.DataSource;
+import eu.itesla_project.commons.datasource.GzFileDataSource;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.iidm.xml.NetworkXml;
 import eu.itesla_project.iidm.xml.XMLExportOptions;

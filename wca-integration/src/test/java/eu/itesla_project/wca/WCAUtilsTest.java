@@ -38,7 +38,7 @@ import eu.itesla_project.contingency.BranchContingency;
 import eu.itesla_project.contingency.Contingency;
 import eu.itesla_project.contingency.ContingencyElement;
 import eu.itesla_project.contingency.ContingencyImpl;
-import eu.itesla_project.iidm.datasource.MemDataSource;
+import eu.itesla_project.commons.datasource.MemDataSource;
 import eu.itesla_project.iidm.export.ampl.AmplSubset;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.iidm.network.StateManager;
