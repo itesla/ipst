@@ -491,7 +491,7 @@
             <!-- ipst-entsoe dependencies -->
             <dependency>
                 <groupId>eu.itesla_project</groupId>
-                <artifactId>cim1-import</artifactId>
+                <artifactId>cim1-converter</artifactId>
                 <version>${ipstentsoe.version}</version>
             </dependency>
             <dependency>
