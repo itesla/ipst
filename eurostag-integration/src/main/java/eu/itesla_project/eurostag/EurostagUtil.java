@@ -28,7 +28,6 @@ import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 
 /**
- *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
 public class EurostagUtil {
@@ -44,11 +43,11 @@ public class EurostagUtil {
 
     private static final List<String> HEADER_STEADY_STATE
             = Arrays.asList("",
-                            "     MACHINE  MACROBLOC         NOM VAR.        SORT. BLOC    VALEUR EQU.      (P.U.)");
+            "     MACHINE  MACROBLOC         NOM VAR.        SORT. BLOC    VALEUR EQU.      (P.U.)");
 
     private static final List<String> HEADER_INITIAL_VALUE
             = Arrays.asList("",
-                            "    MACHINE            MACROBLOC   VARIABLE    BLOC DE SOR.  INITIA      LIMITE INF.       VALEUR      LIMITE SUP.");
+            "    MACHINE            MACROBLOC   VARIABLE    BLOC DE SOR.  INITIA      LIMITE INF.       VALEUR      LIMITE SUP.");
 
     private final static Supplier<JsonFactory> JSON_FACTORY_SUPPLIER = Suppliers.memoize(() -> new JsonFactory());
 
@@ -59,11 +58,14 @@ public class EurostagUtil {
         Map<String, String> env = new HashMap<>();
         if (config.getEurostagHomeDir() != null) {
             String eurostagHome = config.getEurostagHomeDir().toString();
+            // v5.2 keeps the binaries in the x64 subdir
             String eurostagX64 = config.getEurostagHomeDir().toString() + File.separator + "x64";
             env.put("EUROSTAG", eurostagHome);
             env.put("PATH", eurostagHome + File.pathSeparator + eurostagX64);
             env.put("LD_LIBRARY_PATH", eurostagHome + File.pathSeparator + eurostagX64);
+            // needed by v5.2
             env.put("EUROSTAG_EXE", eurostagX64);
+            // needed by v5.2
             env.put("DMA_LICENSE_FILE", eurostagHome + File.separator + "licenses");
         }
         if (config.getIndexesBinDir() != null) {
