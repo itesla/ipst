@@ -8,8 +8,8 @@
     <logger name="org.xnio" level="WARN" />
     <logger name="org.jboss" level="ERROR" />
     <logger name="org.jboss.naming.remote.protocol.v1.RemoteNamingStoreV1" level="FATAL" />
+    <logger name="eu.itesla_project.cim1.converter.ModelConverter" level="INFO" />
     <!-- logger name="eu.itesla_project.iidm.ddb" level="WARN" /-->
-    <logger name="eu.itesla_project.iidm.import_.cim1.ModelConverter" level="INFO" />
     <logger name="eu.itesla_project.iidm.ddb" level="INFO" />
     <logger name="cim1" level="WARN" />
     <root level="DEBUG">

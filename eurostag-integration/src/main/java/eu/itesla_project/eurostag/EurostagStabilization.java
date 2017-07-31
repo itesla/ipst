@@ -17,7 +17,7 @@ import eu.itesla_project.eurostag.network.EsgNetwork;
 import eu.itesla_project.eurostag.network.EsgSpecialParameters;
 import eu.itesla_project.eurostag.network.io.EsgWriter;
 import eu.itesla_project.eurostag.tools.EurostagNetworkModifier;
-import eu.itesla_project.iidm.datasource.FileDataSource;
+import eu.itesla_project.commons.datasource.FileDataSource;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClient;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClientFactory;
 import eu.itesla_project.iidm.eurostag.export.*;

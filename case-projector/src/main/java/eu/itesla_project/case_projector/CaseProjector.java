@@ -8,9 +8,9 @@ package eu.itesla_project.case_projector;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import eu.itesla_project.commons.datasource.FileDataSource;
 import eu.itesla_project.commons.util.StringToIntMapper;
 import eu.itesla_project.computation.*;
-import eu.itesla_project.iidm.datasource.FileDataSource;
 import eu.itesla_project.iidm.export.ampl.*;
 import eu.itesla_project.iidm.network.Bus;
 import eu.itesla_project.iidm.network.Generator;
