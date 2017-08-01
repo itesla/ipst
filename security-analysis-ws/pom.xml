@@ -16,7 +16,7 @@
     <name>security-analysis-ws</name>
     <dependencies>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>security-analysis</artifactId>
         </dependency> 
         <dependency>
