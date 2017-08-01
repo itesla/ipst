@@ -110,6 +110,10 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
             load(stream);
         }
     }
+    
+    public XmlFileContingenciesAndActionsDatabaseClient(InputStream data) throws JAXBException, SAXException, IOException {
+        load(data);
+    }
 
     public XmlFileContingenciesAndActionsDatabaseClient(URL url) throws JAXBException, SAXException, IOException {
         try (InputStream stream = url.openStream()) {

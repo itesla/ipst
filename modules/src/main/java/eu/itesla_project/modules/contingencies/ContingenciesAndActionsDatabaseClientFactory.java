@@ -7,6 +7,7 @@
  */
 package eu.itesla_project.modules.contingencies;
 
+import java.io.InputStream;
 import java.nio.file.Path;
 
 import eu.itesla_project.contingency.ContingenciesProviderFactory;
@@ -25,4 +26,8 @@ public interface ContingenciesAndActionsDatabaseClientFactory extends Contingenc
         return create();
     }
 
+    @Override
+    default ContingenciesAndActionsDatabaseClient create(InputStream data) {
+        return create();
+    }
 }

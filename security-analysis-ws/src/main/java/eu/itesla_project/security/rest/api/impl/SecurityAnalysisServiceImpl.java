@@ -6,16 +6,15 @@
  */
 package eu.itesla_project.security.rest.api.impl;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
@@ -36,12 +35,14 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.itesla_project.commons.io.WorkingDirectory;
 import eu.itesla_project.commons.io.table.CsvTableFormatterFactory;
 import eu.itesla_project.security.LimitViolationFilter;
 import eu.itesla_project.security.LimitViolationType;
 import eu.itesla_project.security.Security;
 import eu.itesla_project.security.SecurityAnalysisResult;
 import eu.itesla_project.security.SecurityAnalyzer;
+import eu.itesla_project.security.SecurityAnalyzer.Format;
 import eu.itesla_project.security.json.SecurityAnalysisResultSerializer;
 import eu.itesla_project.security.rest.api.SecurityAnalysisService;
 
@@ -53,10 +54,6 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityAnalysisServiceImpl.class);
 
-    private enum Format {
-        CSV, JSON
-    }
-
     private final SecurityAnalyzer analyzer;
 
     public SecurityAnalysisServiceImpl(SecurityAnalyzer securityAnalyzer) {
@@ -66,10 +63,8 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
     @Override
     public Response analyze(MultipartFormDataInput form) {
         Objects.requireNonNull(form);
-        Path caseFilePath = null;
-        Path contingenciesFilePath = null;
 
-        try {
+        try (WorkingDirectory workdir = new WorkingDirectory(Paths.get(System.getProperty("java.io.tmpdir")), "secws", false)) {
             Map<String, List<InputPart>> formParts = form.getFormDataMap();
 
             Format format = null;
@@ -77,15 +72,17 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
             if (formatParts != null) {
                 try {
                     String out_format = getParameter(formatParts);
-                    if(out_format != null)
+                    if(out_format != null){
                         format = Format.valueOf(out_format);
+                    }
                 } catch (java.lang.IllegalArgumentException ie) {
                     return Response.status(Status.BAD_REQUEST).entity("Wrong format parameter").build();
                 }
             }
             if(format == null)
+            {
                 return Response.status(Status.BAD_REQUEST).entity("Missing required format parameter").build();
-
+            }
             String limitTypes = null;
             List<InputPart> limitParts = formParts.get("limit-types");
             if (limitParts != null) {
@@ -103,41 +100,27 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
 
             LimitViolationFilter limitViolationFilter = new LimitViolationFilter(limitViolationTypes);
 
-            caseFilePath = formParts.get("case-file") != null ? getFile(formParts.get("case-file")) : null;
+            FilePart caseFile = formParts.get("case-file") != null ? getFilePart(formParts.get("case-file")) : null;
 
-            if (caseFilePath == null)
+            if (caseFile == null){
                 return Response.status(Status.BAD_REQUEST).entity("Missing required case-file parameter").build();
+            }
 
-            contingenciesFilePath = formParts.get("contingencies-file") != null
-                    ? getFile(formParts.get("contingencies-file")) : null;
+            FilePart contingencies = formParts.get("contingencies-file") != null
+                    ? getFilePart( formParts.get("contingencies-file")) : null;
 
-            SecurityAnalysisResult result = analyzer.analyze(caseFilePath, contingenciesFilePath);
-
+            SecurityAnalysisResult result = analyzer.analyze(new ByteArrayInputStream(caseFile.getContent()), caseFile.getFilename(), contingencies != null ? new ByteArrayInputStream(contingencies.getContent()) : null);
             return Response.ok(toStream(result, limitViolationFilter, format))
                     .header("Content-Type", format.equals(Format.JSON) ? MediaType.APPLICATION_JSON : "text/csv")
                     .build();
         } catch (IOException e) {
             LOGGER.error("Error", e);
             return Response.serverError().build();
-        } finally {
-            if (caseFilePath != null)
-                try {
-                    Files.delete(caseFilePath);
-                } catch (IOException e) {
-                    LOGGER.warn("Error deleting " + caseFilePath, e);
-                }
-            if (contingenciesFilePath != null)
-                try {
-                    Files.delete(contingenciesFilePath);
-                } catch (IOException e) {
-                    LOGGER.warn("Error deleting " + contingenciesFilePath, e);
-                }
         }
     }
 
     private StreamingOutput toStream(SecurityAnalysisResult result, LimitViolationFilter limitViolationFilter,
             Format format) {
-        Objects.requireNonNull(format);
         return new StreamingOutput() {
             
             @Override
@@ -157,16 +140,16 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
     }
 
     private String getParameter(List<InputPart> parts){
-        Objects.requireNonNull(parts);
         try {
-            return parts.stream().findFirst().get().getBodyAsString();
+            return parts.stream().filter(Objects::nonNull).findFirst().get().getBodyAsString();
         } catch (IOException e) {
             LOGGER.error("Error reading parameter",e);
         }
         return null;
     }
-
-    private Path getFile(List<InputPart> parts) throws IOException {
+    
+    
+    private FilePart getFilePart(List<InputPart> parts) throws IOException{
         Objects.requireNonNull(parts);
 
         for (InputPart inputPart : parts) {
@@ -179,27 +162,38 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
                     String filename = filename_tokens[1].trim().replaceAll("\"", "");
                     if (!filename.equals("")) {
                         InputStream istream = inputPart.getBody(InputStream.class, null);
-                        return saveFile(istream, filename);
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
+                        int reads = istream.read(); 
+                        while(reads != -1){
+                            baos.write(reads);
+                            reads = istream.read();
+                        }
+                        return new FilePart(filename, baos.toByteArray());
+
                     }
                 }
             }
         }
         return null;
     }
+    
+    private class FilePart{
+        
+        private final String filename;
+        private final byte[] content;
 
-    private Path saveFile(InputStream uploadedInputStream, String filename) throws IOException {
-        Objects.requireNonNull(uploadedInputStream);
-        Objects.requireNonNull(filename);
-        File f = new File(System.getProperty("java.io.tmpdir"), filename);
-        OutputStream outpuStream = new FileOutputStream(f);
-        int read = 0;
-        byte[] bytes = new byte[1024];
-        while ((read = uploadedInputStream.read(bytes)) != -1) {
-            outpuStream.write(bytes, 0, read);
+        FilePart(String filename, byte[] content){
+            this.filename = filename;
+            this.content = content;
         }
-        outpuStream.flush();
-        outpuStream.close();
-        return f.toPath();
+
+        public String getFilename() {
+            return filename;
+        }
+
+        public byte[] getContent() {
+            return content;
+        }
     }
 
 }

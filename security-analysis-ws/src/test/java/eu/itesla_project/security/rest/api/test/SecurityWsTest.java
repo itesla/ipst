@@ -4,8 +4,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.InputStream;
 import java.io.ByteArrayInputStream;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,7 +38,7 @@ public class SecurityWsTest {
         SecurityAnalysisResult result = new SecurityAnalysisResult(
                 new LimitViolationsResult(true, Collections.emptyList()), Collections.emptyList());  
         SecurityAnalyzer analyzer = Mockito.mock(SecurityAnalyzer.class);
-        when(analyzer.analyze(any(Path.class), any(Path.class))).thenReturn(result);
+        when(analyzer.analyze(any(InputStream.class),any(String.class), any(InputStream.class))).thenReturn(result);
         service = new SecurityAnalysisServiceImpl(analyzer);
     }
 

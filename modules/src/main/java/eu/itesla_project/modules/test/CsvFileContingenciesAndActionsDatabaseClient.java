@@ -6,6 +6,29 @@
  */
 package eu.itesla_project.modules.test;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import eu.itesla_project.contingency.Contingency;
+import eu.itesla_project.contingency.ContingencyElement;
+import eu.itesla_project.contingency.ContingencyImpl;
+import eu.itesla_project.contingency.GeneratorContingency;
+import eu.itesla_project.contingency.LineContingency;
 import eu.itesla_project.iidm.network.Line;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.iidm.network.TieLine;
@@ -14,23 +37,8 @@ import eu.itesla_project.modules.contingencies.ActionPlan;
 import eu.itesla_project.modules.contingencies.ActionsContingenciesAssociation;
 import eu.itesla_project.modules.contingencies.ConstraintType;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
-import eu.itesla_project.contingency.Contingency;
-import eu.itesla_project.contingency.ContingencyElement;
-import eu.itesla_project.contingency.GeneratorContingency;
-import eu.itesla_project.contingency.LineContingency;
-import eu.itesla_project.contingency.ContingencyImpl;
 import eu.itesla_project.modules.contingencies.Scenario;
 import eu.itesla_project.modules.contingencies.Zone;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Contingencies and actions database based on CSV file. Can only contain NmK
@@ -47,10 +55,14 @@ public class CsvFileContingenciesAndActionsDatabaseClient implements Contingenci
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CsvFileContingenciesAndActionsDatabaseClient.class);
 
-    private final Path file;
+    private final InputStream input;
 
-    public CsvFileContingenciesAndActionsDatabaseClient(Path file) {
-        this.file = file;
+    public CsvFileContingenciesAndActionsDatabaseClient(Path file) throws IOException {
+        input = new FileInputStream(file.toFile());
+    }
+
+    public CsvFileContingenciesAndActionsDatabaseClient(InputStream data) {
+        this.input = data;
     }
 
     @Override
@@ -67,7 +79,9 @@ public class CsvFileContingenciesAndActionsDatabaseClient implements Contingenci
 
         List<Contingency> contingencies = new ArrayList<>();
         try {
-            try (BufferedReader r = Files.newBufferedReader(file, Charset.defaultCharset())) {
+            Reader ir = new InputStreamReader(input,Charset.defaultCharset());
+            try (BufferedReader r = new BufferedReader(ir)) {
+
                 String txt;
                 while ((txt = r.readLine()) != null) {
                     if (txt.startsWith("#")) { // comment
