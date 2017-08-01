@@ -11,13 +11,13 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
 import eu.itesla_project.commons.Version;
 import eu.itesla_project.commons.config.ComponentDefaultConfig;
+import eu.itesla_project.commons.datasource.FileDataSource;
 import eu.itesla_project.computation.*;
 import eu.itesla_project.eurostag.network.EsgGeneralParameters;
 import eu.itesla_project.eurostag.network.EsgNetwork;
 import eu.itesla_project.eurostag.network.EsgSpecialParameters;
 import eu.itesla_project.eurostag.network.io.EsgWriter;
 import eu.itesla_project.eurostag.tools.EurostagNetworkModifier;
-import eu.itesla_project.commons.datasource.FileDataSource;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClient;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClientFactory;
 import eu.itesla_project.iidm.eurostag.export.*;
@@ -246,7 +246,7 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
             // dump state info for debugging
             Networks.dumpStateId(workingDir, network);
 
-            Exporter exporter = Exporters.getExporter("XML");
+            Exporter exporter = Exporters.getExporter("XIIDM");
             if (exporter != null) {
                 Properties parameters = new Properties();
                 parameters.setProperty("iidm.export.xml.indent", "true");
