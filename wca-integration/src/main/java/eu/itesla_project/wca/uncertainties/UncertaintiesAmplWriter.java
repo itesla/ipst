@@ -9,7 +9,7 @@ package eu.itesla_project.wca.uncertainties;
 import eu.itesla_project.commons.io.table.Column;
 import eu.itesla_project.commons.io.table.TableFormatter;
 import eu.itesla_project.commons.util.StringToIntMapper;
-import eu.itesla_project.iidm.datasource.DataSource;
+import eu.itesla_project.commons.datasource.DataSource;
 import static eu.itesla_project.iidm.export.ampl.AmplConstants.INVALID_FLOAT_VALUE;
 import static eu.itesla_project.iidm.export.ampl.AmplConstants.LOCALE;
 import eu.itesla_project.iidm.export.ampl.AmplSubset;

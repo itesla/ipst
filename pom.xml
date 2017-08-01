@@ -21,6 +21,7 @@
 
     <modules>
         <module>ampl-export</module>
+        <module>case-projector</module>
         <module>distribution</module>
         <module>dymola-integration</module>
         <module>EU2Mod_MB</module>
@@ -491,7 +492,7 @@
             <!-- ipst-entsoe dependencies -->
             <dependency>
                 <groupId>eu.itesla_project</groupId>
-                <artifactId>cim1-import</artifactId>
+                <artifactId>cim1-converter</artifactId>
                 <version>${ipstentsoe.version}</version>
             </dependency>
             <dependency>

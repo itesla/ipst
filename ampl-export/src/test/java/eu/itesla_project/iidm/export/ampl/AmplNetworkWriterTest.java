@@ -7,7 +7,7 @@
 package eu.itesla_project.iidm.export.ampl;
 
 import com.google.common.io.CharStreams;
-import eu.itesla_project.iidm.datasource.MemDataSource;
+import eu.itesla_project.commons.datasource.MemDataSource;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.iidm.network.test.EurostagTutorialExample1Factory;
 import eu.itesla_project.iidm.network.test.HvdcTestNetwork;

@@ -1,0 +1,266 @@
+###############################################################################
+#
+# Copyright (c) 2017, RTE (http://www.rte-france.com)
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# author: Jean Maeght
+#
+# Projecteur
+# Objectif: modifier le moins possible les parametres des groupes d'une 
+# situation realisee ou previsionnelle, mais de facon a ce que l'on puisse
+# demarrer une simulation dynamique.
+# Il s'agit de "projeter" les points de fonctionnement des groupes dans le 
+# domaine sur lequel les simulations dynamiques fonctionnent
+#
+# Prerequis : la situation doit etre complete, y compris les tensions et 
+# phases en tous noeuds
+# Prerequis pas certain : les tensions sont dans leurs bornes
+#
+###############################################################################
+print "Debut du fichier projector.run";
+
+# Effacement des parametres, variable, contraintes et modeles anterieurs
+reset;
+# Fermeture de tous les fichiers precedemment ouverts
+close;
+
+
+###############################################################################
+# Indicateur de crash :
+# Si l'execution se termine avant l'ecriture des resultats, le 
+# satut CRASH apparaitra.
+###############################################################################
+param final_status symbolic;
+let final_status := "CRASH";
+printf "%s %s\n","final_status", final_status > projector_results_indic.txt;
+close projector_results_indic.txt;
+
+
+###############################################################################
+# Options generales
+###############################################################################
+option dual_initial_guesses 0;
+option presolve 10;
+option show_boundtol 0;
+option solver knitroampl;
+
+
+###############################################################################
+# Declaration des suffixes
+###############################################################################
+suffix cfeastol IN;
+suffix xfeastol IN;
+
+suffix cscalefactor IN;
+suffix xscalefactor IN;
+suffix objscalefactor IN;
+
+suffix usercomp IN;
+suffix intvarstrategy IN;
+
+suffix knitro_feaserror OUT;
+suffix knitro_opterror OUT;
+suffix knitro_neval OUT;
+suffix knitro_niter OUT;
+
+
+###############################################################################
+# Inclusions fichier .mod et fichier .dat
+###############################################################################
+model "projector.mod";
+data  "projector.dat";
+
+###############################################################################
+# Correction des donnees reactives des groupes : si Qmin>Qmax on echange Qmin et Qmax
+###############################################################################
+# Version Jean Maeght Juin 2017
+for {(g,n) in UNIT} {
+  # Correction Qmin Qmax a Pmin
+  if unit_Qp[g,n] < unit_qp[g,n] then {
+    printf "Attention groupe %s (noeud %i, poste %s) : unit_Qp=%.2f < unit_qp[g,n]=%.2f -> on les corrige en les inversant\n",
+    unit_id[g,n],n,substation_id[unit_substation[g,n]],unit_Qp[g,n],unit_qp[g,n];
+    let tempo        := unit_Qp[g,n];
+    let unit_Qp[g,n] := unit_qp[g,n];
+    let unit_qp[g,n] := tempo;
+  }
+  # Correction Qmin Qmax a Pmax
+  if unit_QP[g,n] < unit_qP[g,n] then {
+    printf "Attention groupe %s (noeud %i, poste %s) : unit_QP=%.2f < unit_qP[g,n]=%.2f -> on les corrige en les inversant\n",
+    unit_id[g,n],n,substation_id[unit_substation[g,n]],unit_QP[g,n],unit_qP[g,n];
+    let tempo        := unit_QP[g,n];
+    let unit_QP[g,n] := unit_qP[g,n];
+    let unit_qP[g,n] := tempo;
+  }
+}
+
+/* # Version Nicolas Omont Juin 2017
+param tmp{UNIT};
+let {(g,n) in UNIT } tmp[g,n]    := if unit_Qp[g,n] < unit_qp[g,n] then unit_qp[g,n] else unit_Qp[g,n];
+let {(g,n) in UNIT } unit_qp[g,n]:= if unit_Qp[g,n] < unit_qp[g,n] then unit_Qp[g,n] else unit_qp[g,n];
+let {(g,n) in UNIT} unit_Qp[g,n]:=tmp[g,n];
+let {(g,n) in UNIT } tmp[g,n]    := if unit_QP[g,n] < unit_qP[g,n] then unit_qP[g,n] else unit_QP[g,n];
+let {(g,n) in UNIT } unit_qP[g,n]:= if unit_QP[g,n] < unit_qP[g,n] then unit_QP[g,n] else unit_qP[g,n];
+let {(g,n) in UNIT} unit_QP[g,n]:=tmp[g,n];
+*/
+
+
+###############################################################################
+# C'est la commande "check" ci-dessous qui realise veritablement les checks du fichier .mod
+###############################################################################
+check;
+
+
+################################################################################
+# Calcul du noeud qui aura la phase fixee
+################################################################################
+let noeud_phase_nulle := min{n in NOEUDCC} n;
+let tempo := 0;
+for {n in NOEUDCC : substation_Vnomi[noeud_poste[n]] >= 300}
+  let tempo := max (tempo, card({(qq,mm,nn) in QUADCC: mm==n || nn==n}));
+for {n in NOEUDCC : substation_Vnomi[noeud_poste[n]] >= 300 && card({(qq,mm,nn) in QUADCC: mm==n || nn==n}) == tempo}
+  let noeud_phase_nulle := n;
+if ( tempo > 0 ) then
+  printf "Noeud 400kV le plus maille : %i dans le poste %s/%s avec %i quadripoles\n",
+  noeud_phase_nulle,
+  substation_id[noeud_poste[noeud_phase_nulle]],
+  substation_description[noeud_poste[noeud_phase_nulle]],
+  tempo;
+if ( tempo == 0 ) then
+  printf "Noeud 400kV le plus maille : non trouve. On prend le premier noeud (=%i) pour fixer la phase\n",
+  noeud_phase_nulle;
+
+
+###############################################################################
+# Verification coherence des tensions nominales
+###############################################################################
+for {(g,n,gid) in UNIT_DOMAIN} {
+  let tempo := max{(numero,g,n,gid) in UNIT_DOMAIN_CTR} domain_Vnomi[numero,gid];
+  if abs(tempo-substation_Vnomi[unit_substation[g,n]]) > 0.1
+  then {
+	printf "Probleme avec le groupe [%i,%s] : Vnomi=%.2f dans le poste %s de tension %.2f\n",
+	    g,
+	    gid,
+	    tempo,
+	    substation_id[unit_substation[g,n]],
+	    substation_Vnomi[unit_substation[g,n]];
+	    let  gen_vnom_mismatch[g,n,gid] := 1;
+  	}
+  }
+  
+
+###############################################################################
+# Point initial
+###############################################################################
+let {n in NOEUDCC} Ph[n] := noeud_angl0[n];
+fix Ph[noeud_phase_nulle]; # On ne le fixe pas a zero mais a sa valeur initiale
+let {n in NOEUDCC} V[n]  := noeud_V0[n];
+let {(g,n) in UNITCC} unit_P[g,n] := unit_Pc[g,n];
+let {(g,n) in UNITCC} unit_Q[g,n] := unit_Qc[g,n];
+
+# Jean Maeght + Nicolas Omont le 29 aout 2016 :
+# Si aucun domaine dynamique n'a été fourni, alors on ne modifie pas le groupe
+fix {(g,n) in UNITCC diff UNIT_PQV} unit_P[g,n];
+fix {(g,n) in UNITCC diff UNIT_PQV} unit_Q[g,n];
+# On ne peut pas en plus fixer la tension, sinon risque de non realisabilite pour question numerique (si on veut fixer P Q V en meme temps, il y a risque d'erreur numerique)
+
+
+###############################################################################
+# Descriptifs
+###############################################################################
+display card(NOEUDCC),card(NOEUDCC_V0),
+  Ph_min, Ph_max, Ph[noeud_phase_nulle],
+  card(UNIT),
+  card({(g,n) in UNITCC: unit_PV[g,n]!="true"}),
+  card({(g,n) in UNITCC: unit_PV[g,n]=="true"}),
+  card(UNIT_PV),
+  card(UNIT_PQV),
+  card(UNITCC  diff UNIT_PQV),
+  card(UNIT_PV diff UNIT_PQV),
+  card(UNITHORSPMIN),card(UNITHORSPMAX),
+  card({(g,n) in UNIT_PQV : unit_id[g,n] in UNITHORSPMIN}),
+  card({(g,n) in UNIT_PQV : unit_id[g,n] in UNITHORSPMAX}),
+  UNITHORSPMIN,UNITHORSPMAX,
+  card(UNIT_DOMAIN_CTR),
+  UNIT_DOMAIN,
+  DOMAIN_ID
+  ;
+
+
+
+###############################################################################
+# Scaling
+###############################################################################
+let {n in NOEUDCC} V[n].xscalefactor := V[n].ub2-V[n].lb2;
+let {n in NOEUDCC} Ph[n].xscalefactor := 1e-2;
+let {(g,n) in UNITCC} unit_P[g,n].xscalefactor := max(1,abs(unit_P[g,n].ub2-unit_P[g,n].lb2));
+let {(g,n) in UNITCC} unit_Q[g,n].xscalefactor := max(1,abs(unit_Q[g,n].ub2-unit_Q[g,n].lb2));
+let {n in NOEUDCC} bilan_P_noeud[n].cscalefactor := 1/max(1e-0,abs(sum{(c,n) in CONSOCC} conso_PFix[c,n]));
+let {n in NOEUDCC} bilan_Q_noeud[n].cscalefactor := 1/max(1e-0,abs(sum{(c,n) in CONSOCC} conso_QFix[c,n]));
+let {(g,n) in UNIT_PQV} ctr_trapeze_qmax[g,n].cscalefactor := 1/max(1.0,abs(ctr_trapeze_qmax_rhs[g,n]));
+let {(g,n) in UNIT_PQV} ctr_trapeze_qmin[g,n].cscalefactor := 1/max(1.0,abs(ctr_trapeze_qmin_rhs[g,n]));
+let {(numero,g,n,gid) in UNIT_DOMAIN_CTR} ctr_domain[numero,g,n,gid].cscalefactor := 
+  1/max(1.0,abs(domain_RHS[numero,gid]));
+
+
+
+###############################################################################
+# Tolerances de realisabilite
+###############################################################################
+let {n in NOEUDCC} V[n].xfeastol := (0.1/substation_Vnomi[noeud_poste[n]]);
+let {n in NOEUDCC} Ph[n].xfeastol := 1.0; # Peu importe les bornes de Ph
+let {(g,n) in UNITCC} unit_P[g,n].xfeastol := 0.1;
+let {(g,n) in UNITCC} unit_Q[g,n].xfeastol := 0.1;
+let {n in NOEUDCC} bilan_P_noeud[n].cfeastol := 0.01;
+let {n in NOEUDCC} bilan_Q_noeud[n].cfeastol := 0.01;
+let {(g,n) in UNIT_PQV} ctr_trapeze_qmax[g,n].cfeastol := 0.01;
+let {(g,n) in UNIT_PQV} ctr_trapeze_qmin[g,n].cfeastol := 0.01;
+let {(numero,g,n,gid) in UNIT_DOMAIN_CTR} ctr_domain[numero,g,n,gid].cfeastol := 0.01;
+
+
+###############################################################################
+# Display debug
+###############################################################################
+/*
+display bilan_P_noeud,
+  term_bilan_P_noeud,
+  term_bilan_P_noeud_nul,
+  bilan_Q_noeud,
+  term_bilan_Q_noeud,
+  term_bilan_Q_noeud_nul
+  > bilan_P_noeud.txt;
+*/
+
+
+###############################################################################
+# Resolution
+###############################################################################
+option knitro_options 
+ " presolve=0 bar_directinterval=10 maxcgit=100 bar_initpt=2 honorbnds=0 scale=2 opttol=1 opttolabs=1e-1 feastol=1 feastolabs=1e-3 debug=0 algorithm=1 maxit=500 maxtime_real=60";  
+
+# En cas d'echec de l'optimisation, relances et comptages
+param nb_solve_max = 6;
+param nb_solve;
+let nb_solve := 0; 
+display solve_result_num;
+
+repeat {
+  solve;
+  let nb_solve := nb_solve + 1;
+  printf "*** Iteration de solve numero %i, solve_result_num=%i\n\n",nb_solve,solve_result_num;
+  }
+while ( ( solve_result_num >= 100 and solve_result_num < 400 ) or solve_result_num >= 410 ) and nb_solve<nb_solve_max;
+
+
+
+###############################################################################
+# Ecriture des resultats
+###############################################################################
+include projectorOutput.run;
+
+###############################################################################
+# Fin du fichier
+###############################################################################
+print "Fin du fichier projector.run";
+
