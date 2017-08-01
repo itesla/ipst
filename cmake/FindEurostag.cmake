@@ -28,8 +28,8 @@ if (NOT EUROSTAG_VERSION AND NOT $ENV{EUROSTAG_VERSION} STREQUAL "")
 endif()
 
 if (NOT EUROSTAG_VERSION)
-    message(WARNING "Eurostag SDK version not specified. Assuming a 5.2 default")
-    set(EUROSTAG_VERSION "5.2")
+    message(WARNING "Eurostag SDK version not specified. Assuming a 5.1 default")
+    set(EUROSTAG_VERSION "5.1")
 endif()
 
 
