@@ -19,7 +19,6 @@ dymola_build=false
 dymola_home=
 eurostag_build=false
 eurostag_home=
-eurostag_version=
 matlab_build=false
 matlab_home=
 
@@ -121,7 +120,6 @@ writeSettings() {
     writeComment " -- iPST C++ modules options --"
     writeSetting "eurostag_build" ${eurostag_build}
     writeSetting "eurostag_home" "${eurostag_home}"
-    writeSetting "eurostag_version" "${eurostag_version}"
     writeSetting "dymola_build" ${dymola_build}
     writeSetting "dymola_home" "${dymola_home}"
     writeSetting "matlab_build" ${matlab_build}
@@ -182,7 +180,7 @@ ipst_cpp()
 
         if [[ $ipst_compile = true || $ipst_docs = true ]]; then
             # TODO: rename variable
-            cmake -DCMAKE_INSTALL_PREFIX="$ipst_prefix" -Dthirdparty_prefix="$thirdparty_prefix" -DBUILD_EUROSTAG=$eurostag_build -DEUROSTAG_SDK_HOME="${eurostag_home}" -DEUROSTAG_VERSION="${eurostag_version}" -DBUILD_MATLAB=$matlab_build -DMATLAB_HOME="${matlab_home}" -DBUILD_DYMOLA=$dymola_build -DDYMOLA_HOME="${dymola_home}" -G "Unix Makefiles" -H"$sourceDir" -B"$ipst_builddir" || exit $?
+            cmake -DCMAKE_INSTALL_PREFIX="$ipst_prefix" -Dthirdparty_prefix="$thirdparty_prefix" -DBUILD_EUROSTAG=$eurostag_build -DEUROSTAG_SDK_HOME="${eurostag_home}" -DBUILD_MATLAB=$matlab_build -DMATLAB_HOME="${matlab_home}" -DBUILD_DYMOLA=$dymola_build -DDYMOLA_HOME="${dymola_home}" -G "Unix Makefiles" -H"$sourceDir" -B"$ipst_builddir" || exit $?
 
             if [ $ipst_compile = true ]; then
                 echo "**** Compiling C++ modules"
