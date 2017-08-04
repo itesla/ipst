@@ -109,7 +109,7 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
             FilePart contingencies = formParts.get("contingencies-file") != null
                     ? getFilePart( formParts.get("contingencies-file")) : null;
 
-            SecurityAnalysisResult result = analyzer.analyze(new ByteArrayInputStream(caseFile.getContent()), caseFile.getFilename(), contingencies != null ? new ByteArrayInputStream(contingencies.getContent()) : null);
+            SecurityAnalysisResult result = analyzer.analyze(caseFile.getFilename(), new ByteArrayInputStream(caseFile.getContent()), contingencies != null ? new ByteArrayInputStream(contingencies.getContent()) : null);
             return Response.ok(toStream(result, limitViolationFilter, format))
                     .header("Content-Type", format.equals(Format.JSON) ? MediaType.APPLICATION_JSON : "text/csv")
                     .build();

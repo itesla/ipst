@@ -38,7 +38,7 @@ public class SecurityWsTest {
         SecurityAnalysisResult result = new SecurityAnalysisResult(
                 new LimitViolationsResult(true, Collections.emptyList()), Collections.emptyList());  
         SecurityAnalyzer analyzer = Mockito.mock(SecurityAnalyzer.class);
-        when(analyzer.analyze(any(InputStream.class),any(String.class), any(InputStream.class))).thenReturn(result);
+        when(analyzer.analyze(any(String.class), any(InputStream.class), any(InputStream.class))).thenReturn(result);
         service = new SecurityAnalysisServiceImpl(analyzer);
     }
 
