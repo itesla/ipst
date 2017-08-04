@@ -14,11 +14,38 @@
     <artifactId>security-analysis-ws</artifactId>
     <packaging>war</packaging>
     <name>security-analysis-ws</name>
+    
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>security-analysis</artifactId>
-        </dependency> 
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>cim1-converter</artifactId>
+            <scope>runtime</scope>
+        </dependency>   
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>entsoe-util</artifactId>
+            <scope>runtime</scope>
+        </dependency>      
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>iidm-impl</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>iidm-xml-converter</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>modules</artifactId>
+            <version>${project.version}</version>
+            <scope>modules</scope>
+        </dependency>      
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
