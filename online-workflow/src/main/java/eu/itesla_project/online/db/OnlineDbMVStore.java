@@ -187,10 +187,18 @@ public class OnlineDbMVStore implements OnlineDb {
             wfMVStore = storedWFMetrics.get(workflowId);
         else {
             LOGGER.debug("Opening file for workflow {}", workflowId);
-            wfMVStore = MVStore.open(config.getOnlineDbDir().toString() + File.separator + STORED_WORKFLOW_PREFIX + workflowId);
+            wfMVStore = openStore(workflowId);
             storedWFMetrics.put(workflowId, wfMVStore);
         }
         return wfMVStore;
+    }
+
+    private MVStore openStore(String workflowId) {
+        return MVStore.open(config.getOnlineDbDir().toString() + File.separator + STORED_WORKFLOW_PREFIX + workflowId);
+    }
+
+    private boolean storeOpen(String workflowId) {
+        return storedWFMetrics.containsKey(workflowId);
     }
 
     @Override
@@ -847,7 +855,7 @@ public class OnlineDbMVStore implements OnlineDb {
         if (isWorkflowStored(workflowId)) {
             MVStore wfMVStore = null;
             try {
-                wfMVStore = MVStore.open(config.getOnlineDbDir().toString() + File.separator + STORED_WORKFLOW_PREFIX + workflowId);
+                wfMVStore = storeOpen(workflowId) ? getStore(workflowId) : openStore(workflowId);
                 if (wfMVStore.hasMap(STORED_PARAMETERS_MAP_NAME)) {
                     MVMap<String, String> storedParametersMap = wfMVStore.openMap(STORED_PARAMETERS_MAP_NAME, mapBuilder);
                     DateTime baseCaseDate = DateTime.parse(storedParametersMap.get(STORED_PARAMETERS_BASECASE_KEY));
@@ -903,7 +911,7 @@ public class OnlineDbMVStore implements OnlineDb {
                     return null;
                 }
             } finally {
-                if (wfMVStore != null) {
+                if (wfMVStore != null && !storeOpen(workflowId)) {
                     wfMVStore.close();
                 }
             }
