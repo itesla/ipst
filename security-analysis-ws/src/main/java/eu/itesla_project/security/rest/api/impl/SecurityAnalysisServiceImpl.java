@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016, RTE (http://www.rte-france.com)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -48,7 +48,7 @@ import eu.itesla_project.security.rest.api.SecurityAnalysisService;
 
 /**
  *
- * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
+ * @author Giovanni Ferrari <giovanni.ferrari at techrain.it>
  */
 public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
 
@@ -109,7 +109,7 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
             FilePart contingencies = formParts.get("contingencies-file") != null
                     ? getFilePart( formParts.get("contingencies-file")) : null;
 
-            SecurityAnalysisResult result = analyzer.analyze(caseFile.getFilename(), new ByteArrayInputStream(caseFile.getContent()), contingencies != null ? new ByteArrayInputStream(contingencies.getContent()) : null);
+            SecurityAnalysisResult result = analyzer.analyze(caseFile.getFilename(), caseFile.getInputStream(), contingencies != null ? contingencies.getInputStream() : null);
             return Response.ok(toStream(result, limitViolationFilter, format))
                     .header("Content-Type", format.equals(Format.JSON) ? MediaType.APPLICATION_JSON : "text/csv")
                     .build();
@@ -153,23 +153,18 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
         Objects.requireNonNull(parts);
 
         for (InputPart inputPart : parts) {
-            Optional<String> filename_header = Arrays
-                    .asList(inputPart.getHeaders().getFirst("Content-Disposition").split(";")).stream()
-                    .filter(n -> n.trim().startsWith("filename")).findFirst();
-            if (filename_header.isPresent()) {
-                String[] filename_tokens = filename_header.get().split("=");
-                if (filename_tokens.length > 1) {
-                    String filename = filename_tokens[1].trim().replaceAll("\"", "");
-                    if (!filename.equals("")) {
-                        InputStream istream = inputPart.getBody(InputStream.class, null);
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
-                        int reads = istream.read(); 
-                        while(reads != -1){
-                            baos.write(reads);
-                            reads = istream.read();
+            String disposition = inputPart.getHeaders().getFirst("Content-Disposition");
+            if(disposition != null)
+            {
+                Optional<String> filename_header = Arrays.asList(disposition.split(";")).stream()
+                        .filter(n -> n.trim().startsWith("filename")).findFirst();
+                if (filename_header.isPresent()) {
+                    String[] filename_tokens = filename_header.get().split("=");
+                    if (filename_tokens.length > 1) {
+                        String filename = filename_tokens[1].trim().replaceAll("\"", "");
+                        if (!filename.equals("")) {
+                            return new FilePart(filename, inputPart.getBody(InputStream.class, null));    
                         }
-                        return new FilePart(filename, baos.toByteArray());
-
                     }
                 }
             }
@@ -180,19 +175,19 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
     private class FilePart{
         
         private final String filename;
-        private final byte[] content;
-
-        FilePart(String filename, byte[] content){
+        private final InputStream inputStream;
+        
+        FilePart(String filename, InputStream content){
             this.filename = filename;
-            this.content = content;
+            this.inputStream = content;
         }
 
         public String getFilename() {
             return filename;
         }
-
-        public byte[] getContent() {
-            return content;
+        
+        public InputStream getInputStream(){
+            return inputStream;
         }
     }
 
