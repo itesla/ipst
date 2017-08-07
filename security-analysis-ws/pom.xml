@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright (c) 2016, RTE (http://www.rte-france.com) This Source Code 
+<!-- Copyright (c) 2017, RTE (http://www.rte-france.com) This Source Code 
     Form is subject to the terms of the Mozilla Public License, v. 2.0. If a 
     copy of the MPL was not distributed with this file, You can obtain one at 
     http://mozilla.org/MPL/2.0/. -->
@@ -19,6 +19,18 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>security-analysis</artifactId>
+        </dependency>      
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${servlet-api-version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-multipart-provider</artifactId>
+            <version>${resteasy.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -44,19 +56,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>modules</artifactId>
             <version>${project.version}</version>
-            <scope>modules</scope>
-        </dependency>      
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>${servlet-api-version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-multipart-provider</artifactId>
-            <version>${resteasy.version}</version>
-            <scope>provided</scope>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
