@@ -112,10 +112,7 @@ public class ConstraintsModifier {
     }
 
     private void setNewCurrentLimit(String stateId, LimitViolation violation, float margin, boolean applyToBaseCase) {
-        TwoTerminalsConnectable branch = network.getLine(violation.getSubjectId());
-        if ( branch == null ) {
-            branch = network.getTwoWindingsTransformer(violation.getSubjectId());
-        }
+        TwoTerminalsConnectable branch = network.getBranch(violation.getSubjectId());
         if ( branch != null ) {
             float newLimit = getNewUpperLimit(violation, margin);
             if ( branch.getTerminal1().getI() == violation.getValue() ) {
@@ -127,11 +124,8 @@ public class ConstraintsModifier {
                 branch.newCurrentLimits1().setPermanentLimit(newLimit).add();
                 if ( applyToBaseCase && !StateManager.INITIAL_STATE_ID.equals(stateId) ) { // change the limit also to basecase
                     network.getStateManager().setWorkingState(StateManager.INITIAL_STATE_ID);
-                    branch = network.getLine(violation.getSubjectId());
-                    if ( branch == null ) {
-                        branch = network.getTwoWindingsTransformer(violation.getSubjectId());
-                    }
-                    LOGGER.debug("State {}: changing current limit 1 of branch {}: {} -> {}", 
+                    branch = network.getBranch(violation.getSubjectId());
+                    LOGGER.debug("State {}: changing current limit 1 of branch {}: {} -> {}",
                                 StateManager.INITIAL_STATE_ID, 
                                 branch.getId(), 
                                 violation.getLimit(), 
@@ -148,11 +142,8 @@ public class ConstraintsModifier {
                 branch.newCurrentLimits2().setPermanentLimit(newLimit).add();
                 if ( applyToBaseCase && !StateManager.INITIAL_STATE_ID.equals(stateId) ) { // change the limit also to basecase
                     network.getStateManager().setWorkingState(StateManager.INITIAL_STATE_ID);
-                    branch = network.getLine(violation.getSubjectId());
-                    if ( branch == null ) {
-                        branch = network.getTwoWindingsTransformer(violation.getSubjectId());
-                    }
-                    LOGGER.debug("State {}: changing current limit 2 of branch {}: {} -> {}", 
+                    branch = network.getBranch(violation.getSubjectId());
+                    LOGGER.debug("State {}: changing current limit 2 of branch {}: {} -> {}",
                                 StateManager.INITIAL_STATE_ID, 
                                 branch.getId(), 
                                 violation.getLimit(), 

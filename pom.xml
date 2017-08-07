@@ -93,7 +93,6 @@
         <ipstentsoe.version>0.1-SNAPSHOT</ipstentsoe.version>
         <javaee-api-version>7.0</javaee-api-version>
         <jackson.version>2.8.7</jackson.version>
-        <jackson-datatype-joda.version>2.4.1</jackson-datatype-joda.version>
         <javacsv.version>2.0</javacsv.version>
         <jgrapht.version>1.0.1</jgrapht.version>
         <jimfs.version>1.1</jimfs.version>
@@ -261,18 +260,13 @@
             <!-- Compile dependencies -->
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>
                 <artifactId>jackson-datatype-joda</artifactId>
-                <version>${jackson-datatype-joda.version}</version>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.auto.service</groupId>
