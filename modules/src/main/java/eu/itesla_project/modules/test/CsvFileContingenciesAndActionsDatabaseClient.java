@@ -116,7 +116,7 @@ public class CsvFileContingenciesAndActionsDatabaseClient implements Contingenci
         List<Contingency> contingencies = new ArrayList<>();
         condingency_data.forEach(cd -> {
             List<ContingencyElement> elements = cd.getElementsIds().stream()
-                    .map(id -> getElement(network, tieLines, cd.getId()))
+                    .map(id -> getElement(network, tieLines, id))
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
             if (elements.size() > 0) {
