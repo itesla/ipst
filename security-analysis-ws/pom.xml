@@ -17,7 +17,7 @@
     
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>eu.itesla_project</groupId>
             <artifactId>security-analysis</artifactId>
         </dependency>      
         <dependency>
@@ -33,27 +33,27 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>eu.itesla_project</groupId>
             <artifactId>cim1-converter</artifactId>
             <scope>runtime</scope>
         </dependency>   
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>eu.itesla_project</groupId>
             <artifactId>entsoe-util</artifactId>
             <scope>runtime</scope>
         </dependency>      
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>eu.itesla_project</groupId>
             <artifactId>iidm-impl</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>eu.itesla_project</groupId>
             <artifactId>iidm-xml-converter</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>eu.itesla_project</groupId>
             <artifactId>modules</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
