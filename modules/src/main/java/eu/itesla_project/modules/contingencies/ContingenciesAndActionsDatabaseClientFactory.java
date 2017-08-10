@@ -22,12 +22,8 @@ public interface ContingenciesAndActionsDatabaseClientFactory extends Contingenc
     ContingenciesAndActionsDatabaseClient create();
 
     @Override
-    default ContingenciesAndActionsDatabaseClient create(Path contingenciesAndActionsFile) {
-        return create();
-    }
+    ContingenciesAndActionsDatabaseClient create(Path contingenciesAndActionsFile);
 
     @Override
-    default ContingenciesAndActionsDatabaseClient create(InputStream data) {
-        return create();
-    }
+    ContingenciesAndActionsDatabaseClient create(InputStream data);
 }
