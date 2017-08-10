@@ -12,7 +12,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
@@ -33,7 +32,6 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.itesla_project.commons.io.WorkingDirectory;
 import eu.itesla_project.commons.io.table.CsvTableFormatterFactory;
 import eu.itesla_project.security.LimitViolationFilter;
 import eu.itesla_project.security.LimitViolationType;
@@ -62,7 +60,7 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
     public Response analyze(MultipartFormDataInput form) {
         Objects.requireNonNull(form);
 
-        try (WorkingDirectory workdir = new WorkingDirectory(Paths.get(System.getProperty("java.io.tmpdir")), "secws", false)) {
+        try {
             Map<String, List<InputPart>> formParts = form.getFormDataMap();
 
             Format format = null;
@@ -70,14 +68,14 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
             if (formatParts != null) {
                 try {
                     String out_format = getParameter(formatParts);
-                    if(out_format != null){
+                    if (out_format != null) {
                         format = Format.valueOf(out_format);
                     }
-                } catch (java.lang.IllegalArgumentException ie) {
+                } catch (IllegalArgumentException ie) {
                     return Response.status(Status.BAD_REQUEST).entity("Wrong format parameter").build();
                 }
             }
-            if(format == null)
+            if (format == null)
             {
                 return Response.status(Status.BAD_REQUEST).entity("Missing required format parameter").build();
             }
@@ -92,7 +90,7 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
                 limitViolationTypes = (limitTypes != null && !limitTypes.equals("")) ? Arrays
                         .stream(limitTypes.split(",")).map(LimitViolationType::valueOf).collect(Collectors.toSet())
                         : EnumSet.allOf(LimitViolationType.class);
-            } catch (java.lang.IllegalArgumentException ie) {
+            } catch (IllegalArgumentException ie) {
                 return Response.status(Status.BAD_REQUEST).entity("Wrong limit-types parameter").build();
             }
 
@@ -100,12 +98,12 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
 
             FilePart caseFile = formParts.get("case-file") != null ? getFilePart(formParts.get("case-file")) : null;
 
-            if (caseFile == null){
+            if (caseFile == null) {
                 return Response.status(Status.BAD_REQUEST).entity("Missing required case-file parameter").build();
             }
 
             FilePart contingencies = formParts.get("contingencies-file") != null
-                    ? getFilePart( formParts.get("contingencies-file")) : null;
+                    ? getFilePart(formParts.get("contingencies-file")) : null;
 
             SecurityAnalysisResult result = analyzer.analyze(caseFile.getFilename(), caseFile.getInputStream(), contingencies != null ? contingencies.getInputStream() : null);
             return Response.ok(toStream(result, limitViolationFilter, format))
@@ -127,7 +125,7 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
                 if (format.equals(Format.JSON)) {
                     SecurityAnalysisResultSerializer.write(result, limitViolationFilter, out);
                 } else {
-                    try( Writer wr = new OutputStreamWriter(out, StandardCharsets.UTF_8)){
+                    try(Writer wr = new OutputStreamWriter(out, StandardCharsets.UTF_8)) {
                         CsvTableFormatterFactory csvTableFormatterFactory = new CsvTableFormatterFactory();
                         Security.printPreContingencyViolations(result, wr, csvTableFormatterFactory, limitViolationFilter);
                         Security.printPostContingencyViolations(result, wr, csvTableFormatterFactory, limitViolationFilter);
@@ -139,28 +137,31 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
 
     private String getParameter(List<InputPart> parts){
         try {
-            return parts.stream().filter(Objects::nonNull).findFirst().get().getBodyAsString();
+            return parts.stream()
+                    .filter(Objects::nonNull)
+                    .findFirst()
+                    .get()
+                    .getBodyAsString();
         } catch (IOException e) {
-            LOGGER.error("Error reading parameter",e);
+            LOGGER.error("Error reading parameter", e);
         }
         return null;
     }
     
     
-    private FilePart getFilePart(List<InputPart> parts) throws IOException{
+    private FilePart getFilePart(List<InputPart> parts) throws IOException {
         Objects.requireNonNull(parts);
 
         for (InputPart inputPart : parts) {
             String disposition = inputPart.getHeaders().getFirst("Content-Disposition");
-            if(disposition != null)
-            {
+            if (disposition != null) {
                 Optional<String> filename_header = Arrays.asList(disposition.split(";")).stream()
                         .filter(n -> n.trim().startsWith("filename")).findFirst();
                 if (filename_header.isPresent()) {
                     String[] filename_tokens = filename_header.get().split("=");
                     if (filename_tokens.length > 1) {
                         String filename = filename_tokens[1].trim().replaceAll("\"", "");
-                        if (!filename.equals("")) {
+                        if (!filename.isEmpty()) {
                             return new FilePart(filename, inputPart.getBody(InputStream.class, null));    
                         }
                     }
@@ -170,7 +171,7 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
         return null;
     }
     
-    private class FilePart{
+    private class FilePart {
         
         private final String filename;
         private final InputStream inputStream;
@@ -184,7 +185,7 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
             return filename;
         }
         
-        public InputStream getInputStream(){
+        public InputStream getInputStream() {
             return inputStream;
         }
     }

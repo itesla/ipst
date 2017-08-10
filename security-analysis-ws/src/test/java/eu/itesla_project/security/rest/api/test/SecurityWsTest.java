@@ -44,7 +44,7 @@ public class SecurityWsTest {
     private SecurityAnalysisServiceImpl service;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         SecurityAnalysisResult result = new SecurityAnalysisResult(
                 new LimitViolationsResult(true, Collections.emptyList()), Collections.emptyList());  
         SecurityAnalyzer analyzer = Mockito.mock(SecurityAnalyzer.class);
@@ -56,21 +56,21 @@ public class SecurityWsTest {
     public void testSecurityAnalysisJson() {
         MultipartFormDataInput dataInput = mock(MultipartFormDataInput.class);
         Map<String, List<InputPart>> formValues = new HashMap();
-        formValues.put("format", Arrays.asList(new InputPartImpl("JSON", MediaType.TEXT_PLAIN_TYPE)));
-        formValues.put("limit-types", Arrays.asList(new InputPartImpl("CURRENT", MediaType.TEXT_PLAIN_TYPE)));
+        formValues.put("format", Collections.singletonList(new InputPartImpl("JSON", MediaType.TEXT_PLAIN_TYPE)));
+        formValues.put("limit-types", Collections.singletonList(new InputPartImpl("CURRENT", MediaType.TEXT_PLAIN_TYPE)));
 
         MultivaluedMap<String, String> headers = new MultivaluedMapImpl();
         headers.putSingle("Content-Disposition", "filename=" + "case-file.xiidm.gz");
 
         formValues.put("case-file",
-                Arrays.asList(new InputPartImpl(
+                Collections.singletonList(new InputPartImpl(
                         new ByteArrayInputStream("Network".getBytes()),
                         MediaType.APPLICATION_OCTET_STREAM_TYPE, headers)));
 
         MultivaluedMap<String, String> headers2 = new MultivaluedMapImpl();
         headers2.putSingle("Content-Disposition", "filename=" + "contingencies-file.csv");
         formValues.put("contingencies-file",
-                Arrays.asList(new InputPartImpl(
+                Collections.singletonList(new InputPartImpl(
                         new ByteArrayInputStream("contingencies".getBytes()),
                         MediaType.APPLICATION_OCTET_STREAM_TYPE, headers2)));
 
@@ -84,20 +84,20 @@ public class SecurityWsTest {
     public void testSecurityAnalysisCsv() {
         MultipartFormDataInput dataInput = mock(MultipartFormDataInput.class);
         Map<String, List<InputPart>> formValues = new HashMap();
-        formValues.put("format", Arrays.asList(new InputPartImpl("CSV", MediaType.TEXT_PLAIN_TYPE)));
-        formValues.put("limit-types", Arrays.asList(new InputPartImpl("CURRENT", MediaType.TEXT_PLAIN_TYPE)));
+        formValues.put("format", Collections.singletonList(new InputPartImpl("CSV", MediaType.TEXT_PLAIN_TYPE)));
+        formValues.put("limit-types", Collections.singletonList(new InputPartImpl("CURRENT", MediaType.TEXT_PLAIN_TYPE)));
         MultivaluedMap<String, String> headers = new MultivaluedMapImpl();
         headers.putSingle("Content-Disposition", "filename=" + "case-file.xiidm.gz");
 
         formValues.put("case-file",
-                Arrays.asList(new InputPartImpl(
+                Collections.singletonList(new InputPartImpl(
                         new ByteArrayInputStream("Network".getBytes()),
                         MediaType.APPLICATION_OCTET_STREAM_TYPE, headers)));
 
         MultivaluedMap<String, String> headers2 = new MultivaluedMapImpl();
         headers2.putSingle("Content-Disposition", "filename=" + "contingencies-file.csv");
         formValues.put("contingencies-file",
-                Arrays.asList(new InputPartImpl(
+                Collections.singletonList(new InputPartImpl(
                         new ByteArrayInputStream("contingencies".getBytes()),
                         MediaType.APPLICATION_OCTET_STREAM_TYPE, headers2)));
 
@@ -110,20 +110,20 @@ public class SecurityWsTest {
     public void testWrongFormat() {
         MultipartFormDataInput dataInput = mock(MultipartFormDataInput.class);
         Map<String, List<InputPart>> formValues = new HashMap();
-        formValues.put("format", Arrays.asList(new InputPartImpl("ERR", MediaType.TEXT_PLAIN_TYPE)));
-        formValues.put("limit-types", Arrays.asList(new InputPartImpl("CURRENT", MediaType.TEXT_PLAIN_TYPE)));
+        formValues.put("format", Collections.singletonList(new InputPartImpl("ERR", MediaType.TEXT_PLAIN_TYPE)));
+        formValues.put("limit-types", Collections.singletonList(new InputPartImpl("CURRENT", MediaType.TEXT_PLAIN_TYPE)));
         MultivaluedMap<String, String> headers = new MultivaluedMapImpl();
         headers.putSingle("Content-Disposition", "filename=" + "case-file.xiidm.gz");
 
         formValues.put("case-file",
-                Arrays.asList(new InputPartImpl(
+                Collections.singletonList(new InputPartImpl(
                         new ByteArrayInputStream("Network".getBytes()),
                         MediaType.APPLICATION_OCTET_STREAM_TYPE, headers)));
 
         MultivaluedMap<String, String> headers2 = new MultivaluedMapImpl();
         headers2.putSingle("Content-Disposition", "filename=" + "contingencies-file.csv");
         formValues.put("contingencies-file",
-                Arrays.asList(new InputPartImpl(
+                Collections.singletonList(new InputPartImpl(
                         new ByteArrayInputStream("contingencies".getBytes()),
                         MediaType.APPLICATION_OCTET_STREAM_TYPE, headers2)));
 
@@ -137,19 +137,19 @@ public class SecurityWsTest {
     public void testMissingFormat() {
         MultipartFormDataInput dataInput = mock(MultipartFormDataInput.class);
         Map<String, List<InputPart>> formValues = new HashMap();
-        formValues.put("limit-types", Arrays.asList(new InputPartImpl("HIGH_VOLTAGE,CURRENT", MediaType.TEXT_PLAIN_TYPE)));
+        formValues.put("limit-types", Collections.singletonList(new InputPartImpl("HIGH_VOLTAGE,CURRENT", MediaType.TEXT_PLAIN_TYPE)));
         MultivaluedMap<String, String> headers = new MultivaluedMapImpl();
         headers.putSingle("Content-Disposition", "filename=" + "case-file.xiidm.gz");
 
         formValues.put("case-file",
-                Arrays.asList(new InputPartImpl(
+                Collections.singletonList(new InputPartImpl(
                         new ByteArrayInputStream("Network".getBytes()),
                         MediaType.APPLICATION_OCTET_STREAM_TYPE, headers)));
 
         MultivaluedMap<String, String> headers2 = new MultivaluedMapImpl();
         headers2.putSingle("Content-Disposition", "filename=" + "contingencies-file.csv");
         formValues.put("contingencies-file",
-                Arrays.asList(new InputPartImpl(
+                Collections.singletonList(new InputPartImpl(
                         new ByteArrayInputStream("contingencies".getBytes()),
                         MediaType.APPLICATION_OCTET_STREAM_TYPE, headers2)));
 
@@ -163,13 +163,13 @@ public class SecurityWsTest {
     public void testMissingCaseFile() {
         MultipartFormDataInput dataInput = mock(MultipartFormDataInput.class);
         Map<String, List<InputPart>> formValues = new HashMap();
-        formValues.put("format", Arrays.asList(new InputPartImpl("JSON", MediaType.TEXT_PLAIN_TYPE)));
-        formValues.put("limit-types", Arrays.asList(new InputPartImpl("CURRENT", MediaType.TEXT_PLAIN_TYPE)));
+        formValues.put("format", Collections.singletonList(new InputPartImpl("JSON", MediaType.TEXT_PLAIN_TYPE)));
+        formValues.put("limit-types", Collections.singletonList(new InputPartImpl("CURRENT", MediaType.TEXT_PLAIN_TYPE)));
 
         MultivaluedMap<String, String> headers2 = new MultivaluedMapImpl();
         headers2.putSingle("Content-Disposition", "filename=" + "contingencies-file.csv");
         formValues.put("contingencies-file",
-                Arrays.asList(new InputPartImpl(
+                Collections.singletonList(new InputPartImpl(
                         new ByteArrayInputStream("contingencies".getBytes()),
                         MediaType.APPLICATION_OCTET_STREAM_TYPE, headers2)));
 
@@ -183,21 +183,21 @@ public class SecurityWsTest {
     public void testWrongLimits() {
         MultipartFormDataInput dataInput = mock(MultipartFormDataInput.class);
         Map<String, List<InputPart>> formValues = new HashMap();
-        formValues.put("format", Arrays.asList(new InputPartImpl("JSON", MediaType.TEXT_PLAIN_TYPE)));
-        formValues.put("limit-types", Arrays.asList(new InputPartImpl("ERRR", MediaType.TEXT_PLAIN_TYPE)));
+        formValues.put("format", Collections.singletonList(new InputPartImpl("JSON", MediaType.TEXT_PLAIN_TYPE)));
+        formValues.put("limit-types", Collections.singletonList(new InputPartImpl("ERRR", MediaType.TEXT_PLAIN_TYPE)));
 
         MultivaluedMap<String, String> headers = new MultivaluedMapImpl();
         headers.putSingle("Content-Disposition", "filename=" + "case-file.xiidm.gz");
 
         formValues.put("case-file",
-                Arrays.asList(new InputPartImpl(
+                Collections.singletonList(new InputPartImpl(
                         new ByteArrayInputStream("Network".getBytes()),
                         MediaType.APPLICATION_OCTET_STREAM_TYPE, headers)));
 
         MultivaluedMap<String, String> headers2 = new MultivaluedMapImpl();
         headers2.putSingle("Content-Disposition", "filename=" + "contingencies-file.csv");
         formValues.put("contingencies-file",
-                Arrays.asList(new InputPartImpl(
+                Collections.singletonList(new InputPartImpl(
                         new ByteArrayInputStream("contingencies".getBytes()),
                         MediaType.APPLICATION_OCTET_STREAM_TYPE, headers2)));
 
