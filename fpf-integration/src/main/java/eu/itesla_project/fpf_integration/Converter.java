@@ -976,7 +976,7 @@ public class Converter {
 		inputFilePath = args[ 1 ];
 
 		// Imports network in CIM format
-		Network n = Importers.import_( args[ 0 ], args[ 1 ], args[ 2 ], null );
+		Network n = Importers.importData( args[ 0 ], args[ 1 ], args[ 2 ], null );
 		ContingenciesAndActionsDatabaseClient cadbClient = new AutomaticContingenciesAndActionsDatabaseClient( 5 ); // 5 contingencies
 		List< Contingency > contingencies = cadbClient.getContingencies(n);
 		Converter.convert(n, contingencies, null, Paths.get(".").resolve(powerSystem.getCaseId() + "_FPF" + ".txt"),Paths.get(".").resolve(powerSystem.getCaseId() + "_FPF_MAPPING" + ".txt"));
