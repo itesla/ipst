@@ -63,7 +63,7 @@ public class InputPartImpl implements InputPart {
     }
 
     @Override
-    public void setMediaType(MediaType arg0) {
+    public void setMediaType(MediaType mediaType) {
         this.mediaType = Objects.requireNonNull(mediaType);
     }
 }

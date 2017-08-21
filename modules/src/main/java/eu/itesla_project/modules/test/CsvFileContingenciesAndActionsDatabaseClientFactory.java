@@ -7,7 +7,6 @@
  */
 package eu.itesla_project.modules.test;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -27,21 +26,16 @@ public class CsvFileContingenciesAndActionsDatabaseClientFactory implements Cont
     public ContingenciesAndActionsDatabaseClient create() {
         ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("csvcontingencydb");
         Path csvFile = config.getPathProperty("csvFile");
-        try {
-            return new CsvFileContingenciesAndActionsDatabaseClient(csvFile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+
+        return new CsvFileContingenciesAndActionsDatabaseClient(csvFile);
     }
 
     @Override
     public ContingenciesAndActionsDatabaseClient create(Path csvFile) {
         Objects.requireNonNull(csvFile);
-        try {
-            return new CsvFileContingenciesAndActionsDatabaseClient(csvFile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+
+
+        return new CsvFileContingenciesAndActionsDatabaseClient(csvFile);
     }
     
     @Override

@@ -11,15 +11,30 @@
         <artifactId>itesla-parent</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
+
     <artifactId>security-analysis-ws</artifactId>
     <packaging>war</packaging>
     <name>security-analysis-ws</name>
-    
+
+    <build>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>${maven.war.version}</version>
+            </plugin>
+        </plugins>
+    </build>
+
     <dependencies>
+        <!-- Compilation dependencies -->
         <dependency>
             <groupId>eu.itesla_project</groupId>
             <artifactId>security-analysis</artifactId>
-        </dependency>      
+        </dependency>
+
+        <!-- Runtime dependencies -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -36,12 +51,12 @@
             <groupId>eu.itesla_project</groupId>
             <artifactId>cim1-converter</artifactId>
             <scope>runtime</scope>
-        </dependency>   
+        </dependency>
         <dependency>
             <groupId>eu.itesla_project</groupId>
             <artifactId>entsoe-util</artifactId>
             <scope>runtime</scope>
-        </dependency>      
+        </dependency>
         <dependency>
             <groupId>eu.itesla_project</groupId>
             <artifactId>iidm-impl</artifactId>
@@ -53,11 +68,13 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>modules</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
+
+        <!-- Test dependencies -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -74,14 +91,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <build>
-        <sourceDirectory>src/main/java</sourceDirectory>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>${maven.war.version}</version>
-            </plugin>
-        </plugins>
-    </build>
 </project>

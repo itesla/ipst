@@ -85,7 +85,7 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
                 limitTypes = getParameter(limitParts);
             }
 
-            Set<LimitViolationType> limitViolationTypes = null;
+            Set<LimitViolationType> limitViolationTypes;
             try {
                 limitViolationTypes = (limitTypes != null && !limitTypes.equals("")) ? Arrays
                         .stream(limitTypes.split(",")).map(LimitViolationType::valueOf).collect(Collectors.toSet())
@@ -155,7 +155,7 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
         for (InputPart inputPart : parts) {
             String disposition = inputPart.getHeaders().getFirst("Content-Disposition");
             if (disposition != null) {
-                Optional<String> filename_header = Arrays.asList(disposition.split(";")).stream()
+                Optional<String> filename_header = Arrays.stream(disposition.split(";"))
                         .filter(n -> n.trim().startsWith("filename")).findFirst();
                 if (filename_header.isPresent()) {
                     String[] filename_tokens = filename_header.get().split("=");
@@ -171,21 +171,21 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
         return null;
     }
     
-    private class FilePart {
+    private static class FilePart {
         
         private final String filename;
         private final InputStream inputStream;
         
-        FilePart(String filename, InputStream content){
-            this.filename = filename;
-            this.inputStream = content;
+        FilePart(String filename, InputStream content) {
+            this.filename = Objects.requireNonNull(filename);
+            this.inputStream = Objects.requireNonNull(content);
         }
 
-        public String getFilename() {
+        String getFilename() {
             return filename;
         }
         
-        public InputStream getInputStream() {
+        InputStream getInputStream() {
             return inputStream;
         }
     }

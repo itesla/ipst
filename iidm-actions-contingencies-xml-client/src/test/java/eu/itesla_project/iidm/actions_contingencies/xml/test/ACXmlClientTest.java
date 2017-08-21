@@ -45,11 +45,26 @@ import eu.itesla_project.modules.contingencies.Zone;
 public class ACXmlClientTest {
 
     @Test
-    public void test() throws JAXBException, SAXException, IOException, URISyntaxException  {
+    public void testPath() throws URISyntaxException {
 
         URL testActionsUrl = getClass().getResource("/test-ac.xml");
         ContingenciesAndActionsDatabaseClient cadbClient = new XmlFileContingenciesAndActionsDatabaseClientFactory().create(Paths.get(testActionsUrl.toURI()));
+
+        test(cadbClient);
+    }
+
+    @Test
+    public void testStream() {
+        ContingenciesAndActionsDatabaseClient cadbClient = new XmlFileContingenciesAndActionsDatabaseClientFactory()
+            .create(getClass().getResourceAsStream("/test-ac.xml"));
+
+        test(cadbClient);
+    }
+
+    protected void test(ContingenciesAndActionsDatabaseClient cadbClient) {
         Network network = ACXmlClientTestUtils.getNetwork();
+
+        assertNotNull(cadbClient);
 
         // Collection<Zone> getZones();
         Collection<Zone> zones = cadbClient.getZones();

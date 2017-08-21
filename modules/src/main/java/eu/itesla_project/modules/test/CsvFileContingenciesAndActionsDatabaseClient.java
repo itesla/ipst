@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -60,15 +61,26 @@ public class CsvFileContingenciesAndActionsDatabaseClient implements Contingenci
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CsvFileContingenciesAndActionsDatabaseClient.class);
 
-    private final List<ContingencyData> condingency_data = new ArrayList();
+    private final List<ContingencyData> contingency_data = new ArrayList<>();
 
-    public CsvFileContingenciesAndActionsDatabaseClient(Path file) throws IOException {
-        this(new FileInputStream(file.toFile()));
+    public CsvFileContingenciesAndActionsDatabaseClient(Path file) {
+        Objects.requireNonNull(file);
+        try (InputStream stream = Files.newInputStream(file)) {
+            load(stream);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+
     }
 
-    public CsvFileContingenciesAndActionsDatabaseClient(InputStream input) {
+    public CsvFileContingenciesAndActionsDatabaseClient(InputStream stream) {
+        load(stream);
+    }
+
+    private void load(InputStream stream) {
+        Objects.requireNonNull(stream);
         try {
-            Reader ir = new InputStreamReader(input, Charset.defaultCharset());
+            Reader ir = new InputStreamReader(stream, Charset.defaultCharset());
             try (BufferedReader r = new BufferedReader(ir)) {
 
                 String txt;
@@ -93,7 +105,7 @@ public class CsvFileContingenciesAndActionsDatabaseClient implements Contingenci
                         String id = tokens[i];
                         cd.addElementId(id);
                     }
-                    condingency_data.add(cd);
+                    contingency_data.add(cd);
                 }
             }
         } catch (IOException e) {
@@ -114,7 +126,7 @@ public class CsvFileContingenciesAndActionsDatabaseClient implements Contingenci
         }
 
         List<Contingency> contingencies = new ArrayList<>();
-        condingency_data.forEach(cd -> {
+        contingency_data.forEach(cd -> {
             List<ContingencyElement> elements = cd.getElementsIds().stream()
                     .map(id -> getElement(network, tieLines, id))
                     .filter(Objects::nonNull)
@@ -219,20 +231,21 @@ public class CsvFileContingenciesAndActionsDatabaseClient implements Contingenci
         throw new UnsupportedOperationException();
     }
 
-    private class ContingencyData {
+    private static class ContingencyData {
         private final String id;
         private final List<String> elementIds;
 
         ContingencyData(String id) {
-            this.id = id;
-            elementIds = new ArrayList();
+            this.id = Objects.requireNonNull(id);
+            elementIds = new ArrayList<>();
         }
 
         String getId() {
-            return this.id;
+            return id;
         }
 
         void addElementId(String id) {
+            Objects.requireNonNull(id);
             elementIds.add(id);
         }
 

@@ -43,26 +43,22 @@ public class XmlFileContingenciesAndActionsDatabaseClientFactory implements
     @Override
     public ContingenciesAndActionsDatabaseClient create(Path xmlFile) {
         Objects.requireNonNull(xmlFile);
-        XmlFileContingenciesAndActionsDatabaseClient client = null;
         try {
-            client = new XmlFileContingenciesAndActionsDatabaseClient(xmlFile);
+            return new XmlFileContingenciesAndActionsDatabaseClient(xmlFile);
         } catch (JAXBException | SAXException | IOException e) {
             LOGGER.error("Error loading input file " + xmlFile, e);
             throw new ConfigurationException(e);
         }
-        return client;
     }
     
     @Override
     public ContingenciesAndActionsDatabaseClient create(InputStream data) {
         Objects.requireNonNull(data);
-        XmlFileContingenciesAndActionsDatabaseClient client = null;
         try {
-            client = new XmlFileContingenciesAndActionsDatabaseClient(data);
+            return new XmlFileContingenciesAndActionsDatabaseClient(data);
         } catch (JAXBException | SAXException | IOException e) {
             LOGGER.error("Error loading input data ", e);
             throw new ConfigurationException(e);
         }
-        return client;
     }
 }
