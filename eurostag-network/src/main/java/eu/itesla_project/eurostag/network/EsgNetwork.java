@@ -35,6 +35,9 @@ public class EsgNetwork {
     private final Map<String, EsgLoad> loads = new LinkedHashMap<>();
     private final Map<String, EsgCapacitorOrReactorBank> capacitorsOrReactorBanks = new LinkedHashMap<>();
     private final Map<String, EsgStaticVarCompensator> staticVarCompensators = new LinkedHashMap<>();
+    private final Map<String, EsgDCNode> dcNodes = new LinkedHashMap<>();
+    private final Map<String, EsgDCLink> dcLinks = new LinkedHashMap<>();
+    private final Map<String, EsgACDCVscConverter> vscConverters = new LinkedHashMap<>();
 
     private void checkBranchName(EsgBranchName name) {
         if (getNode(name.getNode1Name().toString()) == null) {
@@ -398,4 +401,71 @@ public class EsgNetwork {
         }
         staticVarCompensators.put(svc.getZnamsvc().toString(), svc);
     }
+
+    public Collection<EsgDCNode> getDCNodes() {
+        return dcNodes.values();
+    }
+
+    public EsgDCNode getDCNode(String name) {
+        return dcNodes.get(name);
+    }
+
+    public void addDCNode(EsgDCNode node) {
+        if (dcNodes.containsKey(node.getName().toString())) {
+            throw new IllegalArgumentException("DC node '" + node.getName() + "' already exists");
+        }
+        dcNodes.put(node.getName().toString(), node);
+    }
+
+    public void removeDCNode(String node) {
+        if (!dcNodes.containsKey(node)) {
+            throw new IllegalArgumentException("DC node '" + node + "' doesn't exists");
+        }
+        dcNodes.remove(node);
+    }
+
+    public Collection<EsgDCLink> getDCLinks() {
+        return dcLinks.values();
+    }
+
+    public EsgDCLink getDCLink(String dcLinkStr) {
+        return dcLinks.get(dcLinkStr);
+    }
+
+    public void addDCLink(EsgDCLink dclink) {
+        if (dcLinks.containsKey(dclink.toString())) {
+            throw new IllegalArgumentException("DC Link '" + dcLinks.toString() + "' already exists");
+        }
+        dcLinks.put(dclink.toString(), dclink);
+    }
+
+    public void removeDCLink(String dcLinkStr) {
+        if (!lines.containsKey(dcLinkStr)) {
+            throw new IllegalArgumentException("DC Link '" + dcLinkStr + "' doesn't exists");
+        }
+        dcLinks.remove(dcLinkStr);
+    }
+
+    public Collection<EsgACDCVscConverter> getACDCVscConverters() {
+        return vscConverters.values();
+    }
+
+    public EsgACDCVscConverter getACDCVscConverter(String name) {
+        return vscConverters.get(name);
+    }
+
+    public void addACDCVscConverter(EsgACDCVscConverter vscConverter) {
+        if (vscConverters.containsKey(vscConverter.getZnconv().toString())) {
+            throw new IllegalArgumentException("ACDCVscConverter '" + vscConverter.getZnconv() + "' already exists");
+        }
+        vscConverters.put(vscConverter.getZnconv().toString(), vscConverter);
+    }
+
+    public void removeACDCVscConverter(String name) {
+        if (!vscConverters.containsKey(name)) {
+            throw new IllegalArgumentException("ACDCVscConverter '" + name + "' doesn't exists");
+        }
+        vscConverters.remove(name);
+    }
+
 }

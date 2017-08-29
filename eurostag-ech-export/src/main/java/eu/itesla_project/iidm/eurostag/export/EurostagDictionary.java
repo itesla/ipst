@@ -51,12 +51,14 @@ public class EurostagDictionary {
         Set<String> generatorIds = Identifiables.sort(network.getGenerators()).stream().map(Generator::getId).collect(Collectors.toSet());
         Set<String> shuntIds = Identifiables.sort(network.getShunts()).stream().map(ShuntCompensator::getId).collect(Collectors.toSet());
         Set<String> svcIds = Identifiables.sort(network.getStaticVarCompensators()).stream().map(StaticVarCompensator::getId).collect(Collectors.toSet());
+        Set<String> converterStationsIds = Identifiables.sort(network.getVscConverterStations()).stream().map(VscConverterStation::getId).collect(Collectors.toSet());
 
         NAMING_STRATEGY.fillDictionary(dictionary, EurostagNamingStrategy.NameType.NODE, busIds);
         NAMING_STRATEGY.fillDictionary(dictionary, EurostagNamingStrategy.NameType.GENERATOR, generatorIds);
         NAMING_STRATEGY.fillDictionary(dictionary, EurostagNamingStrategy.NameType.LOAD, loadIds);
         NAMING_STRATEGY.fillDictionary(dictionary, EurostagNamingStrategy.NameType.BANK, shuntIds);
         NAMING_STRATEGY.fillDictionary(dictionary, EurostagNamingStrategy.NameType.SVC, svcIds);
+        NAMING_STRATEGY.fillDictionary(dictionary, EurostagNamingStrategy.NameType.VSC, converterStationsIds);
 
         for (DanglingLine dl : Identifiables.sort(network.getDanglingLines())) {
             ConnectionBus bus1 = ConnectionBus.fromTerminal(dl.getTerminal(), config, fakeNodes);

@@ -382,6 +382,101 @@ public class EsgWriter {
         recordWriter.newLine();
     }
 
+    private static void writeDCNode(EsgDCNode dcNode, RecordWriter recordWriter) throws IOException {
+        recordWriter.addValue("DC N", 1, 4);
+        recordWriter.addValue(dcNode.getName().toString(), 6, 13);
+        recordWriter.addValue(dcNode.getArea().toString(), 15, 16);
+        recordWriter.addValue(dcNode.getVbase(), 18, 25);
+        recordWriter.addValue(dcNode.getVinit(), 27, 34);
+        recordWriter.newLine();
+    }
+
+    private static char toChar(EsgDCLink.LinkStatus linkStatus) {
+        switch (linkStatus) {
+            case ON: return ' ';
+            case OFF: return 'S';
+            default: throw new InternalError();
+        }
+    }
+
+    private static void writeDCLink(EsgDCLink link, RecordWriter recordWriter) throws IOException {
+        recordWriter.addValue("DC L", 1, 4);
+        recordWriter.addValue(link.getNode1Name().toString(), 6, 13);
+        recordWriter.addValue(link.getNode2Name().toString(), 15, 22);
+        recordWriter.addValue(link.getXpp(), 24);
+        recordWriter.addValue(link.getRldc(), 26, 33);
+        recordWriter.addValue(toChar(link.getLinkStatus()), 35, 35);
+        recordWriter.newLine();
+    }
+
+    private static char toChar(EsgACDCVscConverter.ConverterState state) {
+        switch (state) {
+            case OFF: return 'S';
+            case ON: return ' ';
+            default: throw new InternalError();
+        }
+    }
+
+    private static char toChar(EsgACDCVscConverter.DCControlMode dcMode) {
+        switch (dcMode) {
+            case AC_ACTIVE_POWER: return 'P';
+            case DC_VOLTAGE: return 'V';
+            default: throw new InternalError();
+        }
+    }
+
+    private static char toChar(EsgACDCVscConverter.ACControlMode acMode) {
+        switch (acMode) {
+            case AC_VOLTAGE: return 'V';
+            case AC_REACTIVE_POWER: return 'Q';
+            case AC_POWER_FACTOR: return 'A';
+            default: throw new InternalError();
+        }
+    }
+
+    private static void writeACDCVscConverter(EsgACDCVscConverter vscConverter, RecordWriter recordWriter) throws IOException {
+        recordWriter.addValue("DC V", 1, 4);
+        recordWriter.addValue(vscConverter.getZnconv().toString(), 6, 13);
+        recordWriter.addValue(vscConverter.getDcNode1().toString(), 15, 22);
+        recordWriter.addValue(vscConverter.getDcNode2().toString(), 24, 31);
+        recordWriter.addValue(vscConverter.getAcNode().toString(), 33, 40);
+        recordWriter.addValue(toChar(vscConverter.getXstate()), 42, 42);
+        recordWriter.addValue(toChar(vscConverter.getXregl()), 44, 44);
+        recordWriter.addValue(toChar(vscConverter.getXoper()), 46, 46);
+        recordWriter.addValue(vscConverter.getRrdc(), 48, 55);
+        recordWriter.addValue(vscConverter.getRxdc(), 57, 64);
+        if (!Float.isNaN(vscConverter.getPac())) {
+            recordWriter.addValue(vscConverter.getPac(), 66, 73);
+        }
+        if (!Float.isNaN(vscConverter.getPvd())) {
+            recordWriter.addValue(vscConverter.getPvd(), 75, 82);
+        }
+        if (!Float.isNaN(vscConverter.getPva())) {
+            recordWriter.addValue(vscConverter.getPva(), 84, 91);
+        }
+        if (!Float.isNaN(vscConverter.getPre())) {
+            recordWriter.addValue(vscConverter.getPre(), 93, 100);
+        }
+        if (!Float.isNaN(vscConverter.getPco())) {
+            recordWriter.addValue(vscConverter.getPco(), 102, 109);
+        }
+        if (!Float.isNaN(vscConverter.getQvscsh())) {
+            recordWriter.addValue(vscConverter.getQvscsh(), 111, 118);
+        }
+        recordWriter.newLine();
+        recordWriter.addValue("DC V", 1, 4);
+        recordWriter.addValue(vscConverter.getPvscmin(), 6, 13);
+        recordWriter.addValue(vscConverter.getPvscmax(), 15, 22);
+        recordWriter.addValue(vscConverter.getQvscmin(), 24, 31);
+        recordWriter.addValue(vscConverter.getQvscmax(), 33, 40);
+        recordWriter.addValue(vscConverter.getVsb0(), 42, 49);
+        recordWriter.addValue(vscConverter.getVsb1(), 51, 58);
+        recordWriter.addValue(vscConverter.getVsb2(), 60, 67);
+        recordWriter.addValue(vscConverter.getMvm(), 69, 76);
+        recordWriter.addValue(vscConverter.getMva(), 78, 85);
+        recordWriter.newLine();
+    }
+
     public void write(Writer writer) throws IOException {
         write(writer, null);
     }
@@ -465,6 +560,29 @@ public class EsgWriter {
         if (network.getStaticVarCompensators().size() > 0) {
             for (EsgStaticVarCompensator svc : network.getStaticVarCompensators()) {
                 writeStaticVarCompensator(svc, recordWriter);
+            }
+            recordWriter.newLine();
+        }
+
+        if (network.getDCNodes().size() > 0) {
+            for (EsgDCNode dcNode : network.getDCNodes()) {
+                writeDCNode(dcNode, recordWriter);
+            }
+            recordWriter.newLine();
+        }
+
+
+        if (network.getDCLinks().size() > 0) {
+            for (EsgDCLink dcLink : network.getDCLinks()) {
+                writeDCLink(dcLink, recordWriter);
+            }
+            recordWriter.newLine();
+        }
+
+
+        if (network.getACDCVscConverters().size() > 0) {
+            for (EsgACDCVscConverter vscConv : network.getACDCVscConverters()) {
+                writeACDCVscConverter(vscConv, recordWriter);
             }
             recordWriter.newLine();
         }

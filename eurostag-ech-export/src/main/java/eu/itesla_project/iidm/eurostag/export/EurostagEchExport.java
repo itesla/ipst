@@ -8,6 +8,8 @@
 package eu.itesla_project.iidm.eurostag.export;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import eu.itesla_project.commons.ITeslaException;
 import eu.itesla_project.eurostag.network.*;
 import eu.itesla_project.eurostag.network.io.EsgWriter;
@@ -73,6 +75,10 @@ public class EurostagEchExport {
         esgNetwork.addArea(new EsgArea(new Esg2charName(EchUtil.FAKE_AREA), EsgArea.Type.AC));
         for (Country c : network.getCountries()) {
             esgNetwork.addArea(new EsgArea(new Esg2charName(c.toString()), EsgArea.Type.AC));
+        }
+
+        if (network.getHvdcLineCount() >0) {
+            esgNetwork.addArea(new EsgArea(new Esg2charName("DC"), EsgArea.Type.DC));
         }
     }
 
@@ -508,6 +514,142 @@ public class EurostagEchExport {
         }
     }
 
+    //simple cut-name mapping for DC node names
+    //prefixes esg id with DC_
+    private String getDCNodeName(String iidmId, int idlen, BiMap<String, String> dcNodesEsgNames) {
+        if (dcNodesEsgNames.containsKey(iidmId)) {
+            return dcNodesEsgNames.get(iidmId);
+        } else {
+            String esgId = "DC_" + (iidmId.length() > idlen ? iidmId.substring(0, idlen)
+                    : Strings.padEnd(iidmId, idlen, ' '));
+            //deal with forbidden characters
+//            if (regex != null) {
+//                esgId = esgId.replaceAll(regex, repl);
+//            }
+            int counter = 0;
+            while (dcNodesEsgNames.inverse().containsKey(esgId)) {
+                String counterStr = Integer.toString(counter++);
+                if (counterStr.length() > idlen) {
+                    throw new RuntimeException("Renaming fatal error " + iidmId + " -> " + esgId);
+                }
+                esgId = esgId.substring(0, idlen - counterStr.length()) + counterStr;
+            }
+            dcNodesEsgNames.put(iidmId, esgId);
+            return esgId;
+        }
+    }
+
+    private void createDCNodes(EsgNetwork esgNetwork, BiMap<String, String> dcNodesEsgNames) {
+        //creates 2 DC nodes, for each hvdc line (one node per converter station)
+        for (HvdcLine hvdcLine : Identifiables.sort(network.getHvdcLines())) {
+            Esg8charName hvdcNodeName1 = new Esg8charName(getDCNodeName(hvdcLine.getConverterStation1().getId(), 5, dcNodesEsgNames));
+            Esg8charName hvdcNodeName2 = new Esg8charName(getDCNodeName(hvdcLine.getConverterStation2().getId(), 5, dcNodesEsgNames));
+            esgNetwork.addDCNode(new EsgDCNode(new Esg2charName("DC"), hvdcNodeName1, hvdcLine.getNominalV(), 1));
+            esgNetwork.addDCNode(new EsgDCNode(new Esg2charName("DC"), hvdcNodeName2, hvdcLine.getNominalV(), 1));
+
+            //create a dc link, representing the hvdc line
+            esgNetwork.addDCLink(new EsgDCLink(hvdcNodeName1, hvdcNodeName2, '1', hvdcLine.getR(), EsgDCLink.LinkStatus.ON));
+        }
+    }
+
+    private boolean isPMode(HvdcConverterStation vscConv, HvdcLine hvdcLine) {
+        Objects.requireNonNull(vscConv);
+        Objects.requireNonNull(hvdcLine);
+        HvdcConverterStation side1Conv = hvdcLine.getConverterStation1();
+        HvdcConverterStation side2Conv = hvdcLine.getConverterStation2();
+        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER))
+                && (vscConv.getId().equals(side1Conv.getId()))) {
+            return true;
+        }
+        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER))
+                && (vscConv.getId().equals(side2Conv.getId()))) {
+            return true;
+        }
+        return false;
+    }
+
+    private float zeroIfNanOrValue(float value) {
+        return Float.isNaN(value) ? 0 : value;
+    }
+
+    private void createACDCVscConverters(EsgNetwork esgNetwork, BiMap<String, String> dcNodesEsgNames) {
+        for (VscConverterStation vscConv : Identifiables.sort(network.getVscConverterStations())) {
+            //hvdc line connected to this converter station
+            HvdcLine hline = network.getHvdcLineStream().filter(l -> ((vscConv.getId().equals(l.getConverterStation1().getId())) || (vscConv.getId().equals(l.getConverterStation2().getId())))).findFirst().orElse(null);
+            Objects.requireNonNull(hline, "no hvdc line connected to VscConverterStation " + vscConv.getId());
+            boolean isPmode = isPMode(vscConv, hline);
+
+            Esg8charName znamsvc = new Esg8charName(dictionary.getEsgId(vscConv.getId())); // converter station ID
+            Esg8charName dcNode1 = new Esg8charName(getDCNodeName(vscConv.getId(), 5, dcNodesEsgNames)); // sending DC node name
+            Esg8charName dcNode2 = new Esg8charName("GROUND"); // receiving DC node name; is it always GROUND?
+            Esg8charName acNode = new Esg8charName(dictionary.getEsgId(ConnectionBus.fromTerminal(vscConv.getTerminal(), config, fakeNodes).getId())); // AC node name
+            EsgACDCVscConverter.ConverterState xstate = EsgACDCVscConverter.ConverterState.ON; // converter state ' ' ON; 'S' OFF
+            EsgACDCVscConverter.DCControlMode xregl = isPmode ? EsgACDCVscConverter.DCControlMode.AC_ACTIVE_POWER : EsgACDCVscConverter.DCControlMode.DC_VOLTAGE; // DC control mode 'P' AC_ACTIVE_POWER; 'V' DC_VOLTAGE
+            EsgACDCVscConverter.ACControlMode xoper = EsgACDCVscConverter.ACControlMode.AC_REACTIVE_POWER; // AC control mode 'V' AC_VOLTAGE; 'Q' AC_REACTIVE_POWER; 'A' AC_POWER_FACTOR
+            float rrdc = 0; // resistance [Ohms]
+            float rxdc = 16; // reactance [Ohms]
+            float pac = isPmode ? zeroIfNanOrValue(hline.getActivePowerSetpoint()) : 0; // AC active power setpoint [MW]. Only if DC control mode is 'P'
+            float pvd = isPmode ? 0 : hline.getNominalV(); // DC voltage setpoint [MW]. Only if DC control mode is 'V'
+            float pva = 330; // AC voltage setpoint [kV]. Only if AC control mode is 'V'
+            //assume AC control mode always Q (how do I know if AC control mode is Q?)
+            float pre = vscConv.getReactivePowerSetpoint(); // AC reactive power setpoint [Mvar]. Only if AC control mode is 'Q'
+            if ((Float.isNaN(vscConv.getReactivePowerSetpoint())) || (vscConv.isVoltageRegulatorOn())) {
+                float terminalQ = vscConv.getTerminal().getQ();
+                if (Float.isNaN(terminalQ)) {
+                    pre = zeroIfNanOrValue(vscConv.getReactivePowerSetpoint());
+                } else {
+                    pre = terminalQ;
+                }
+            }
+            float pco = Float.NaN; // AC power factor setpoint. Only if AC control mode is 'A'
+            float qvscsh = 1; // Reactive sharing cofficient [%]. Only if AC control mode is 'V'
+            float pvscmin = -hline.getMaxP(); // Minimum AC active power [MW]
+            float pvscmax = hline.getMaxP(); // Maximum AC active power [MW]
+            float qvscmin = vscConv.getReactiveLimits().getMinQ(0); // Minimum reactive power injected on AC node [kV]
+            float qvscmax = vscConv.getReactiveLimits().getMaxQ(0); // Maximum reactive power injected on AC node [kV]
+            float vsb0 = vscConv.getLossFactor(); // Losses coefficient Beta0 [MW]
+            float vsb1 = 0; // Losses coefficient Beta1 [kW]
+            float vsb2 = 0; // Losses coefficient Beta2 [Ohms]
+
+            Bus connectedBus = vscConv.getTerminal().getBusBreakerView().getConnectableBus();
+            if (connectedBus == null) {
+                connectedBus = vscConv.getTerminal().getBusView().getConnectableBus();
+                if (connectedBus == null) {
+                    throw new RuntimeException("VSCConverter " + vscConv.getId() + " : connected bus not found!");
+                }
+            }
+            float mvm = connectedBus.getV(); // Initial AC modulated voltage magnitude [p.u.]
+            float mva = connectedBus.getAngle(); // Initial AC modulated voltage angle [deg]
+
+            esgNetwork.addACDCVscConverter(
+                    new EsgACDCVscConverter(
+                            znamsvc,
+                            dcNode1,
+                            dcNode2,
+                            acNode,
+                            xstate,
+                            xregl,
+                            xoper,
+                            rrdc,
+                            rxdc,
+                            pac,
+                            pvd,
+                            pva,
+                            pre,
+                            pco,
+                            qvscsh,
+                            pvscmin,
+                            pvscmax,
+                            qvscmin,
+                            qvscmax,
+                            vsb0,
+                            vsb1,
+                            vsb2,
+                            mvm,
+                            mva));
+        }
+    }
+
     public EsgNetwork createNetwork(EsgGeneralParameters parameters) {
 
         EsgNetwork esgNetwork = new EsgNetwork();
@@ -535,6 +677,15 @@ public class EurostagEchExport {
 
         // static VAR compensators
         createStaticVarCompensators(esgNetwork);
+
+        //DC nodes mapping
+        BiMap<String, String> dcNodesEsgNames = HashBiMap.create();
+
+        // DC Nodes and links
+        createDCNodes(esgNetwork, dcNodesEsgNames);
+
+        // ACDC VSC Converters
+        createACDCVscConverters(esgNetwork, dcNodesEsgNames);
 
         // nodes
         createNodes(esgNetwork);

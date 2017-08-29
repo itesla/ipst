@@ -20,7 +20,8 @@ public interface EurostagNamingStrategy {
         GENERATOR(8),
         LOAD(8),
         BANK(8),
-        SVC(8);
+        SVC(8),
+        VSC(8);
 
         int length;
 
