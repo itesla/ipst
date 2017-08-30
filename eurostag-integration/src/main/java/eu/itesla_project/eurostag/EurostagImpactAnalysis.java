@@ -227,7 +227,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
         }
     }
 
-    private static void dumpLimits(EurostagDictionary dictionary, BufferedWriter writer, TwoTerminalsConnectable branch) throws IOException {
+    private static void dumpLimits(EurostagDictionary dictionary, BufferedWriter writer, Branch branch) throws IOException {
         dumpLimits(dictionary, writer, branch.getId(),
                 branch.getCurrentLimits1(),
                 branch.getCurrentLimits2(),

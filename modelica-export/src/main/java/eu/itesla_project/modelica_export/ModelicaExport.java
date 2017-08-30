@@ -276,7 +276,7 @@ public class ModelicaExport {
 			if (OMEGAREF_Var.getValue() != null)
 			{
 				// Export Connect between Generators and OmegaRef
-				exportConnectGlobalVar(writerMo, modContext, new ArrayList<SingleTerminalConnectable>(generators), OMEGAREF_Var, modelicaSim);
+				exportConnectGlobalVar(writerMo, modContext, new ArrayList<Injection>(generators), OMEGAREF_Var, modelicaSim);
 			}
 		}
 
@@ -1079,16 +1079,16 @@ public class ModelicaExport {
 	/**
 	 * Export IIDM Generators to Modelica Generators-OmegaRef connect
 	 */
-	private void exportConnectGlobalVar(Writer writerMo, ModExportContext modContext, List<SingleTerminalConnectable> identList, GlobalVariable globalVar, SimulatorInst modelicaSim) throws IOException {
+	private void exportConnectGlobalVar(Writer writerMo, ModExportContext modContext, List<Injection> identList, GlobalVariable globalVar, SimulatorInst modelicaSim) throws IOException {
 		if ((identList.size() != 0) && (!identList.isEmpty()))
 		{
 			this.addRecord(writerMo, null);
-			for (SingleTerminalConnectable singleTerCon : identList)
+			for (Injection injection : identList)
 			{
-				ConnectBusInfo busInfo = findBus(singleTerCon.getTerminal(), singleTerCon.getId());
+				ConnectBusInfo busInfo = findBus(injection.getTerminal(), injection.getId());
 				if (!Float.isNaN(busInfo.getBus().getV()) && busInfo.isConnected())
 				{
-					ConnectGlobalVarRecord record = ModelConverter.getModelicaRecord(singleTerCon, globalVar, modContext, _ddbManager, modelicaSim);
+					ConnectGlobalVarRecord record = ModelConverter.getModelicaRecord(injection, globalVar, modContext, _ddbManager, modelicaSim);
 					if (record != null)
 					{
 						this.addRecord(record, writerMo, modContext, _ddbManager, modelicaSim);
