@@ -39,7 +39,7 @@ import org.xml.sax.SAXException;
 import eu.itesla_project.contingency.ContingencyElement;
 import eu.itesla_project.contingency.ContingencyImpl;
 import eu.itesla_project.contingency.GeneratorContingency;
-import eu.itesla_project.contingency.LineContingency;
+import eu.itesla_project.contingency.BranchContingency;
 import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Action;
 import eu.itesla_project.iidm.actions_contingencies.xml.mapping.ActionCtgAssociations;
 import eu.itesla_project.iidm.actions_contingencies.xml.mapping.ActionPlan;
@@ -244,14 +244,14 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
                 for (Equipment eq : cont.getEquipments().getEquipment()) {					
                     String id = eq.getId();
                     if (network.getLine(id) != null) {
-						LOGGER.info("contingency: {} - element LineContingency, id: {}", contingency, id);
-                        elements.add(new LineContingency(id));
+						LOGGER.info("contingency: {} - element BranchContingency, id: {}", contingency, id);
+                        elements.add(new BranchContingency(id));
                     } else if (network.getGenerator(id) != null) {
 						LOGGER.info("contingency: {} - element GeneratorContingency, id: {}", contingency, id);
                         elements.add(new GeneratorContingency(id));
                     } else if (tieLines.containsKey(id)) {
-						LOGGER.info("contingency: {} - element LineContingency, tieLines id: {}", contingency, tieLines.get(id));
-                        elements.add(new LineContingency(tieLines.get(id)));
+						LOGGER.info("contingency: {} - element BranchContingency, tieLines id: {}", contingency, tieLines.get(id));
+                        elements.add(new BranchContingency(tieLines.get(id)));
                     } else {
                         LOGGER.warn("Contingency element '{}' of contingency {} not found in network {}, skipping it", id, contingency, network.getId());
                     }

@@ -361,7 +361,7 @@ public class ModelicaMainExporter {
 		_log.info("#                         ------------------------------- ------------------------------- ");
 		_log.info("#                    Name            From              To            From              To ");
 		_log.info("#------------------------ --------------- --------------- --------------- --------------- ");
-		for(TwoTerminalsConnectable trafo : network.getTwoWindingsTransformers())
+		for(Branch trafo : network.getTwoWindingsTransformers())
 		{
 			_log.info(String.format("%s %15.8f %15.8f %15.8f %15.8f", trafo.getId(), trafo.getTerminal1().getQ(), trafo.getTerminal2().getQ(), trafo.getTerminal1().getP(), trafo.getTerminal2().getP()));
 		}

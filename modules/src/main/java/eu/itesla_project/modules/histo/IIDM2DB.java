@@ -230,11 +230,11 @@ public class IIDM2DB {
 
                 vl.visitEquipments(new DefaultTopologyVisitor() {
 
-                    private void visitInjection(SingleTerminalConnectable inj) {
+                    private void visitInjection(Injection inj) {
                         visitInjection(inj, new TerminalContext());
                     }
 
-                    private void visitInjection(SingleTerminalConnectable inj, TerminalContext context) {
+                    private void visitInjection(Injection inj, TerminalContext context) {
                         Terminal t = inj.getTerminal();
                         context.update(t);
 
@@ -262,8 +262,8 @@ public class IIDM2DB {
                         valueMap.put(new HistoDbNetworkAttributeId(inj.getId(), HistoDbAttr.I), context.i);
                     }
 
-                    private void visitBranch(TwoTerminalsConnectable branch, TwoTerminalsConnectable.Side side, float r, float x, float g1, float b1, float g2, float b2, float ratio) {
-                        Terminal t = side == TwoTerminalsConnectable.Side.ONE ? branch.getTerminal1() : branch.getTerminal2();
+                    private void visitBranch(Branch branch, Branch.Side side, float r, float x, float g1, float b1, float g2, float b2, float ratio) {
+                        Terminal t = side == Branch.Side.ONE ? branch.getTerminal1() : branch.getTerminal2();
 
                         TerminalContext context = TerminalContext.create(t);
 
