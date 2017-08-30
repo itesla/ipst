@@ -325,7 +325,7 @@ public class TopologyHistory {
             String branchId = entry.getKey();
             if (entry.getValue().size() == 1) {
                 String substationId = entry.getValue().iterator().next();
-                TwoTerminalsConnectable branch = network.getBranch(branchId);
+                Branch branch = network.getBranch(branchId);
                 if (branch == null) {
                     throw new RuntimeException();
                 }
