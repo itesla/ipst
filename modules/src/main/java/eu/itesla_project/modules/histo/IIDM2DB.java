@@ -228,7 +228,7 @@ public class IIDM2DB {
                     if (!valueMap.containsKey(HistoDbMetaAttributeId.horizon)) valueMap.put(HistoDbMetaAttributeId.horizon, horizon);
                 }
 
-                vl.visitEquipments(new AbstractTopologyVisitor() {
+                vl.visitEquipments(new DefaultTopologyVisitor() {
 
                     private void visitInjection(SingleTerminalConnectable inj) {
                         visitInjection(inj, new TerminalContext());
