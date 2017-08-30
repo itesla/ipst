@@ -15,9 +15,9 @@ import eu.itesla_project.modules.contingencies.ActionPlan;
 import eu.itesla_project.modules.contingencies.ActionsContingenciesAssociation;
 import eu.itesla_project.modules.contingencies.ConstraintType;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
+import eu.itesla_project.contingency.BranchContingency;
 import eu.itesla_project.contingency.Contingency;
 import eu.itesla_project.contingency.ContingencyElement;
-import eu.itesla_project.contingency.LineContingency;
 import eu.itesla_project.contingency.ContingencyImpl;
 import eu.itesla_project.modules.contingencies.Scenario;
 import eu.itesla_project.modules.contingencies.Zone;
@@ -46,7 +46,7 @@ public class AutomaticContingenciesAndActionsDatabaseClient implements Contingen
     public List<Contingency> getContingencies(Network network) {
         List<Contingency> contingencies = new ArrayList<>(lineContigencyCount);
         for (Line l : Iterables.limit(network.getLines(), lineContigencyCount)) {
-            contingencies.add(new ContingencyImpl(l.getId(), Arrays.<ContingencyElement>asList(new LineContingency(l.getId()))));
+            contingencies.add(new ContingencyImpl(l.getId(), Arrays.<ContingencyElement>asList(new BranchContingency(l.getId()))));
         }
         return contingencies;
     }
