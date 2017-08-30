@@ -80,7 +80,7 @@ public class WCASecurityRulesWriter implements AmplConstants, WCAConstants {
         int entityNum;
         int sideNum = 0;
         float nomV;
-        TwoTerminalsConnectable branch = network.getBranch(attrId.getEquipmentId());
+        Branch branch = network.getBranch(attrId.getEquipmentId());
         if (branch != null) {
             entityType = 1;
             entityNum = mapper.getInt(AmplSubset.BRANCH, attrId.getEquipmentId());

@@ -11,9 +11,9 @@ import eu.itesla_project.iidm.ddb.model.ModelTemplateContainer;
 import eu.itesla_project.iidm.ddb.model.Parameter;
 import eu.itesla_project.iidm.ddb.model.SimulatorInst;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
+import eu.itesla_project.iidm.network.Branch;
 import eu.itesla_project.iidm.network.Bus;
 import eu.itesla_project.iidm.network.Equipments;
-import eu.itesla_project.iidm.network.TwoTerminalsConnectable;
 import eu.itesla_project.modelica_export.ModExportContext;
 import eu.itesla_project.modelica_export.ModelicaRecord;
 import eu.itesla_project.modelica_export.util.IIDMParameter;
@@ -31,29 +31,29 @@ import java.util.List;
  */
 public abstract class BranchRecord extends ModelicaRecord {
 
-	BranchRecord(TwoTerminalsConnectable twoTerminalsConnectable) {
-        this.twoTerminalsConnectable = twoTerminalsConnectable;
+	BranchRecord(Branch branch) {
+        this.branch = branch;
     }
 
     @Override
     public void createModelicaName(ModExportContext modContext, DDBManager ddbManager, SimulatorInst modelicaSim) {
-        Equipments.ConnectionInfo terminal1Info = Equipments.getConnectionInfoInBusBreakerView(twoTerminalsConnectable.getTerminal1());
-        Equipments.ConnectionInfo terminal2Info = Equipments.getConnectionInfoInBusBreakerView(twoTerminalsConnectable.getTerminal2());
+        Equipments.ConnectionInfo terminal1Info = Equipments.getConnectionInfoInBusBreakerView(branch.getTerminal1());
+        Equipments.ConnectionInfo terminal2Info = Equipments.getConnectionInfoInBusBreakerView(branch.getTerminal2());
 
         bus1 = terminal1Info.getConnectionBus();
         bus2 = terminal2Info.getConnectionBus();
         
-        //System.out.println("Trafo: " + this.twoTerminalsConnectable.getId() + ". Terminal 1: " + bus1.getId() + ". Terminal 2: " + bus2.getId());
+        //System.out.println("Trafo: " + this.branch.getId() + ". Terminal 1: " + bus1.getId() + ". Terminal 2: " + bus2.getId());
 
         nodeName1 = parseName(bus1.getId());
         nodeName2 = parseName(bus2.getId());
         
-		String branchName = parseName(twoTerminalsConnectable.getId()); //CIM ID
+		String branchName = parseName(branch.getId()); //CIM ID
         String modelicaName = DEFAULT_BRANCH_PREFIX + branchName; //CIM ID
         modelicaName = WordUtils.uncapitalize(modelicaName.substring(0,1)) + modelicaName.substring(1);
         
 //        modelicaName = parseName(modelicaName); //Añadido de cara al conversor de PSSE
-        modContext.dictionary.add(twoTerminalsConnectable, modelicaName);
+        modContext.dictionary.add(branch, modelicaName);
         super.setModelicaName(modelicaName);
         
 		ModelTemplate model = null;
@@ -123,7 +123,7 @@ public abstract class BranchRecord extends ModelicaRecord {
 	
 //	abstract void addParameter(String name, Object value);
 	
-    private   TwoTerminalsConnectable	twoTerminalsConnectable;
+    private   Branch 					branch;
     protected String					nodeName1;
     protected String					nodeName2;
     protected Bus						bus1						= null;

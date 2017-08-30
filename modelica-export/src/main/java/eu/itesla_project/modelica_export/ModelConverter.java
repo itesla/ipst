@@ -139,7 +139,7 @@ public final class ModelConverter {
 	 * @param modContext
 	 * @return
 	 */
-	public static ConnectGlobalVarRecord getModelicaRecord(SingleTerminalConnectable ident, GlobalVariable globalVar, ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
+	public static ConnectGlobalVarRecord getModelicaRecord(Injection ident, GlobalVariable globalVar, ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
 		ConnectGlobalVarRecord connectGlobalVarRecord = new ConnectGlobalVarRecord(ident, globalVar);
 		connectGlobalVarRecord.createModelicaName(modContext, ddbManager, simulator);
 		return connectGlobalVarRecord;
@@ -398,7 +398,7 @@ public final class ModelConverter {
 	}
 	
 	
-	public static float getNominalVoltage(TwoTerminalsConnectable twoTermCon, TwoTerminalsConnectable.Side side) {
+	public static float getNominalVoltage(Branch branch, Branch.Side side) {
 
 		return 0; 
     }

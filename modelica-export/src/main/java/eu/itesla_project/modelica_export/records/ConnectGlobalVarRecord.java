@@ -8,7 +8,7 @@ package eu.itesla_project.modelica_export.records;
 
 import eu.itesla_project.iidm.ddb.model.SimulatorInst;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
-import eu.itesla_project.iidm.network.SingleTerminalConnectable;
+import eu.itesla_project.iidm.network.Injection;
 import eu.itesla_project.modelica_export.ModExportContext;
 import eu.itesla_project.modelica_export.ModelicaRecord;
 import eu.itesla_project.modelica_export.util.eurostag.EurostagFixedData;
@@ -19,8 +19,8 @@ import eu.itesla_project.modelica_export.util.eurostag.EurostagFixedData;
  */
 public class ConnectGlobalVarRecord extends ModelicaRecord {
 	
-	public ConnectGlobalVarRecord(SingleTerminalConnectable singleTerCon, GlobalVariable globalVar) {
-		this.node1 = singleTerCon;
+	public ConnectGlobalVarRecord(Injection injection, GlobalVariable globalVar) {
+		this.node1 = injection;
 		this.globalVar = globalVar;
 	}
 	
@@ -49,6 +49,6 @@ public class ConnectGlobalVarRecord extends ModelicaRecord {
 		return this;
 	}
 	
-	private SingleTerminalConnectable	node1;
+	private Injection                   node1;
 	private GlobalVariable				globalVar;
 }

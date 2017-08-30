@@ -12,9 +12,9 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.itesla_project.iidm.network.Branch;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.iidm.network.StateManager;
-import eu.itesla_project.iidm.network.TwoTerminalsConnectable;
 import eu.itesla_project.iidm.network.VoltageLevel;
 import eu.itesla_project.security.LimitViolation;
 import eu.itesla_project.security.LimitViolationFilter;
@@ -112,7 +112,7 @@ public class ConstraintsModifier {
     }
 
     private void setNewCurrentLimit(String stateId, LimitViolation violation, float margin, boolean applyToBaseCase) {
-        TwoTerminalsConnectable branch = network.getBranch(violation.getSubjectId());
+        Branch branch = network.getBranch(violation.getSubjectId());
         if ( branch != null ) {
             float newLimit = getNewUpperLimit(violation, margin);
             if ( branch.getTerminal1().getI() == violation.getValue() ) {
