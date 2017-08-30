@@ -14,10 +14,10 @@ import eu.itesla_project.modules.contingencies.ActionPlan;
 import eu.itesla_project.modules.contingencies.ActionsContingenciesAssociation;
 import eu.itesla_project.modules.contingencies.ConstraintType;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
+import eu.itesla_project.contingency.BranchContingency;
 import eu.itesla_project.contingency.Contingency;
 import eu.itesla_project.contingency.ContingencyElement;
 import eu.itesla_project.contingency.GeneratorContingency;
-import eu.itesla_project.contingency.LineContingency;
 import eu.itesla_project.contingency.ContingencyImpl;
 import eu.itesla_project.modules.contingencies.Scenario;
 import eu.itesla_project.modules.contingencies.Zone;
@@ -89,11 +89,11 @@ public class CsvFileContingenciesAndActionsDatabaseClient implements Contingenci
                     for (int i = 2; i < lineCount + 2; i++) {
                         String id = tokens[i];
                         if (network.getLine(id) != null) {
-                            elements.add(new LineContingency(id));
+                            elements.add(new BranchContingency(id));
                         } else if (network.getGenerator(id) != null) {
                             elements.add(new GeneratorContingency(id));
                         } else if (tieLines.containsKey(id)) {
-                            elements.add(new LineContingency(tieLines.get(id)));
+                            elements.add(new BranchContingency(tieLines.get(id)));
                         } else {
                             LOGGER.warn("Contingency element '{}' not found", id);
                         }
