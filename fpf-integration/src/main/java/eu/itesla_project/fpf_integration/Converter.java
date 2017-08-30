@@ -799,7 +799,7 @@ public class Converter {
 			// System.out.println( "contigency id = " + contingency.getId() );
 			ArrayList< Integer > idBranch = new ArrayList< Integer >();
 			for( ContingencyElement contingencyElement : contingency.getElements() ) {
-				if( contingencyElement.getType() == ContingencyElementType.LINE ) {
+				if( contingencyElement.getType() == ContingencyElementType.BRANCH ) {
 					// System.out.println( "equipment id = " + contingencyElement.getId() + " - type = " + contingencyElement.getType() );
 					String tmpIdL = idL + contingencyElement.getId();
 					String tmpIdT2W = idT2W + contingencyElement.getId();
