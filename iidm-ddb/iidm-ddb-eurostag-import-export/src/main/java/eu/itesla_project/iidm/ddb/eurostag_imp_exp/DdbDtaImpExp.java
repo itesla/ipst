@@ -1841,7 +1841,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 						if(station.getName().equals(pilotPoint)) {
 							// Looking for a connected bus
 							for(Bus bus : station.getBusBreakerView().getBuses()) {
-								if(bus.getConnectedComponent().getNum() == ConnectedComponent.MAIN_CC_NUM || substpilotPoint == null) {  
+								if(bus.getConnectedComponent().getNum() == Component.MAIN_NUM || substpilotPoint == null) {
 									substpilotPoint = iidm2eurostagId.get(bus.getId());
 								}
 							}
