@@ -99,7 +99,7 @@ public class EchUtil {
 
     private static DecoratedBus decorate(Bus b) {
         final DecoratedBus decoratedBus = new DecoratedBus(b);
-        b.visitConnectedEquipments(new AbstractTopologyVisitor() {
+        b.visitConnectedEquipments(new DefaultTopologyVisitor() {
             @Override
             public void visitLine(Line line, Line.Side side) {
                 decoratedBus.branch++;
