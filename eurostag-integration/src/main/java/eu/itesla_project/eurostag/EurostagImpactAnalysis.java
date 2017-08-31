@@ -537,7 +537,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
         checkState(state);
 
         return computationManager.execute(new ExecutionEnvironment(EurostagUtil.createEnv(config), WORKING_DIR_PREFIX, config.isDebug()),
-                new DefaultExecutionHandler<ImpactAnalysisResult>() {
+                new AbstractExecutionHandler<ImpactAnalysisResult>() {
 
                     private final List<Contingency> contingencies = new ArrayList<>();
 
