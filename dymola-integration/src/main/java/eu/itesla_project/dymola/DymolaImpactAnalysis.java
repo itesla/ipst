@@ -458,7 +458,7 @@ public class DymolaImpactAnalysis implements ImpactAnalysis {
         //prepare param inputs for indexes from indexes properties file
         LOGGER.info("writing input indexes parameters in  .mat format - start ");
         try {
-            Path baseWp43ConfigFile = PlatformConfig.CONFIG_DIR.resolve(WP43_CONFIG_FILE_NAME);
+            Path baseWp43ConfigFile = PlatformConfig.defaultConfig().getConfigDir().resolve(WP43_CONFIG_FILE_NAME);
             HierarchicalINIConfiguration configuration = new HierarchicalINIConfiguration(baseWp43ConfigFile.toFile());
 
             //fix params for smallsignal index (cfr EurostagImpactAnalysis sources)
