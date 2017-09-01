@@ -318,6 +318,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
         switch (element.getType()) {
             case GENERATOR:
                 return parameters.getGeneratorFaultShortCircuitDuration(contingency.getId(), element.getId());
+            case BRANCH:
             case LINE:
                 return parameters.getBranchFaultShortCircuitDuration(contingency.getId(), element.getId());
             default:
