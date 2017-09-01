@@ -66,7 +66,7 @@ public class StatsCondCalculatorConfig {
         Path binariesDir = config.getPathProperty("binariesDir");
         Path runtimeHomeDir = config.getPathProperty("runtimeHomeDir");
         Path tmpDir = config.getPathProperty("tmpDir");
-        Integer rngSeed = config.getOptionalIntProperty("rngSeed");
+        Integer rngSeed = config.getOptionalIntegerProperty("rngSeed").orElse(null);
         boolean debug = config.getBooleanProperty("debug", false);
 
         return new StatsCondCalculatorConfig(binariesDir, runtimeHomeDir, tmpDir, rngSeed, debug);
