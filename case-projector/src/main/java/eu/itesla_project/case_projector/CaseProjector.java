@@ -86,7 +86,7 @@ public class CaseProjector {
 
     private CompletableFuture<Boolean> createAmplTask(String workingStateId) {
         return computationManager.execute(new ExecutionEnvironment(ImmutableMap.of("PATH", config.getAmplHomeDir().toString()), WORKING_DIR_PREFIX, config.isDebug()),
-                new DefaultExecutionHandler<Boolean>() {
+                new AbstractExecutionHandler<Boolean>() {
 
                     private StringToIntMapper<AmplSubset> mapper;
 
