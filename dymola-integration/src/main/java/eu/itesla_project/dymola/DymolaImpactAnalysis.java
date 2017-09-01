@@ -280,7 +280,7 @@ public class DymolaImpactAnalysis implements ImpactAnalysis {
         checkState(state);
 
         return computationManager.execute(new ExecutionEnvironment(DymolaUtil.createEnv(config), WORKING_DIR_PREFIX, config.isDebug()),
-                new DefaultExecutionHandler<ImpactAnalysisResult>() {
+                new AbstractExecutionHandler<ImpactAnalysisResult>() {
 
                     private final List<Contingency> contingencies = new ArrayList<>();
 
