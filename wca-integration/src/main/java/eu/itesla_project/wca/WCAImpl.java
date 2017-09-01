@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import eu.itesla_project.computation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,14 +33,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gdata.util.common.base.Pair;
 
 import eu.itesla_project.commons.util.StringToIntMapper;
-import eu.itesla_project.computation.Command;
-import eu.itesla_project.computation.CommandExecution;
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.computation.DefaultExecutionHandler;
-import eu.itesla_project.computation.ExecutionEnvironment;
-import eu.itesla_project.computation.ExecutionReport;
-import eu.itesla_project.computation.InputFile;
-import eu.itesla_project.computation.SimpleCommandBuilder;
 import eu.itesla_project.contingency.Contingency;
 import eu.itesla_project.commons.datasource.DataSource;
 import eu.itesla_project.commons.datasource.FileDataSource;
@@ -233,7 +226,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                                                     StringToIntMapper<AmplSubset> mapper,
                                                                     boolean activateFiltering) {
         return computationManager.execute(new ExecutionEnvironment(env, CLUSTERS_WORKING_DIR_PREFIX, config.isDebug()),
-                new DefaultExecutionHandler<WCAClustersResult>() {
+                new AbstractExecutionHandler<WCAClustersResult>() {
 
                     @Override
                     public List<CommandExecution> before(Path workingDir) throws IOException {
@@ -338,7 +331,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                                                   List<String> preventiveActionIds,
                                                                   boolean activateFiltering) {
         return computationManager.execute(new ExecutionEnvironment(env, DOMAINS_WORKING_DIR_PREFIX, config.isDebug()),
-                new DefaultExecutionHandler<WCADomainsResult>() {
+                new AbstractExecutionHandler<WCADomainsResult>() {
 
                     @Override
                     public List<CommandExecution> before(Path workingDir) throws IOException {

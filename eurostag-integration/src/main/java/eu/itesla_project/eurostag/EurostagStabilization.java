@@ -361,7 +361,7 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
     @Override
     public CompletableFuture<StabilizationResult> runAsync(String workingStateId) {
         return computationManager.execute(new ExecutionEnvironment(EurostagUtil.createEnv(config), WORKING_DIR_PREFIX, config.isDebug()),
-                new DefaultExecutionHandler<StabilizationResult>() {
+                new AbstractExecutionHandler<StabilizationResult>() {
 
                     private EurostagContext context;
 
