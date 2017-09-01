@@ -326,7 +326,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
     }
 
     private void writeWp43Configs(List<Contingency> contingencies, Path workingDir) throws IOException, ConfigurationException {
-        Path baseWp43ConfigFile = PlatformConfig.CONFIG_DIR.resolve(WP43_CONFIGS_FILE_NAME);
+        Path baseWp43ConfigFile = PlatformConfig.defaultConfig().getConfigDir().resolve(WP43_CONFIGS_FILE_NAME);
 
         // generate one variant of the base config for all the contingency
         // this allow to add extra variables for some indexes
