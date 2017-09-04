@@ -16,39 +16,39 @@ import java.util.List;
  * @author Quinary <itesla@quinary.com>
  */
 public class Wp41HistoData {
-	
-	//these are the ids for which actually exist both P and Q values in the histo db
-	private final List<String> historicalGensIds;
-	private final List<String> historicalLoadsIds;
-	private final List<String> historicalDanglingLinesIds;
 
-	//joined table of historical data (renewables data , loads, ..)
+    //these are the ids for which actually exist both P and Q values in the histo db
+    private final List<String> historicalGensIds;
+    private final List<String> historicalLoadsIds;
+    private final List<String> historicalDanglingLinesIds;
+
+    //joined table of historical data (renewables data , loads, ..)
     private final ArrayTable<Integer,String,Float> hdTable;
 
-	public List<String> getHistoricalGensIds() {
-		return historicalGensIds;
-	}
+    public List<String> getHistoricalGensIds() {
+        return historicalGensIds;
+    }
 
-	public List<String> getHistoricalLoadsIds() {
-		return historicalLoadsIds;
-	}
+    public List<String> getHistoricalLoadsIds() {
+        return historicalLoadsIds;
+    }
 
-	public List<String> getHistoricalDanglingLinesIds() {
-		return historicalDanglingLinesIds;
-	}
+    public List<String> getHistoricalDanglingLinesIds() {
+        return historicalDanglingLinesIds;
+    }
 
-	public ArrayTable<Integer, String, Float> getHdTable() {
-		return hdTable;
-	}
+    public ArrayTable<Integer, String, Float> getHdTable() {
+        return hdTable;
+    }
 
-	public Wp41HistoData(List<String> historicalGensIds,
-			             List<String> historicalLoadsIds,
-			             List<String> historicalDanglingLinesIds,
-						 ArrayTable<Integer, String, Float> hdTable) {
-		this.historicalGensIds = historicalGensIds;
-		this.historicalLoadsIds = historicalLoadsIds;
-		this.historicalDanglingLinesIds = historicalDanglingLinesIds;
-		this.hdTable = hdTable;
-	}
+    public Wp41HistoData(List<String> historicalGensIds,
+                         List<String> historicalLoadsIds,
+                         List<String> historicalDanglingLinesIds,
+                         ArrayTable<Integer, String, Float> hdTable) {
+        this.historicalGensIds = historicalGensIds;
+        this.historicalLoadsIds = historicalLoadsIds;
+        this.historicalDanglingLinesIds = historicalDanglingLinesIds;
+        this.hdTable = hdTable;
+    }
 
 }

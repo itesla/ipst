@@ -42,9 +42,9 @@ public class DataComparatorTool implements Tool {
     private static final String DATA_COMPARATOR_OUT_FIG = "dataComparatorOut.fig";
 
     @Override
-	public Command getCommand() {
-		return DataComparatorCommand.INSTANCE;
-	}
+    public Command getCommand() {
+        return DataComparatorCommand.INSTANCE;
+    }
 
     private Map<String, String> createEnv(SamplerWp41Config config) {
         Map<String, String> env = new HashMap<>();
