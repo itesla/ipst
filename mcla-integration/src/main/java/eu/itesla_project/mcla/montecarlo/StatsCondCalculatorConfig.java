@@ -34,33 +34,33 @@ debug=true
  * @author Quinary <itesla@quinary.com>
  */
 public class StatsCondCalculatorConfig {
-	private static final Logger LOGGER = LoggerFactory.getLogger(StatsCondCalculatorConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StatsCondCalculatorConfig.class);
 
-	private Path binariesDir;
-	private Path runtimeHomeDir;
-	private Path tmpDir;
+    private Path binariesDir;
+    private Path runtimeHomeDir;
+    private Path tmpDir;
     private final Integer rngSeed;
-	private final boolean debug;
+    private final boolean debug;
 
-	public StatsCondCalculatorConfig(
-			Path binariesDir,
-			Path runtimeHomeDir,
-			Path tmpDir,
-			Integer rngSeed,
-			boolean debug
-	) {
-		Objects.requireNonNull(binariesDir,"sampler compiled binaries directory is null");
-		Objects.requireNonNull(runtimeHomeDir,"matlab runtime directory is null");
-		Objects.requireNonNull(tmpDir,"tmp directory is null");
+    public StatsCondCalculatorConfig(
+            Path binariesDir,
+            Path runtimeHomeDir,
+            Path tmpDir,
+            Integer rngSeed,
+            boolean debug
+    ) {
+        Objects.requireNonNull(binariesDir,"sampler compiled binaries directory is null");
+        Objects.requireNonNull(runtimeHomeDir,"matlab runtime directory is null");
+        Objects.requireNonNull(tmpDir,"tmp directory is null");
 
-		this.binariesDir = binariesDir;
-		this.runtimeHomeDir = runtimeHomeDir;
-		this.tmpDir = tmpDir;
+        this.binariesDir = binariesDir;
+        this.runtimeHomeDir = runtimeHomeDir;
+        this.tmpDir = tmpDir;
         this.rngSeed = rngSeed;
-		this.debug = debug;
-	}
-	
-	public static StatsCondCalculatorConfig load() {
+        this.debug = debug;
+    }
+
+    public static StatsCondCalculatorConfig load() {
         ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("statsCondCalculator");
         
         Path binariesDir = config.getPathProperty("binariesDir");
@@ -70,37 +70,37 @@ public class StatsCondCalculatorConfig {
         boolean debug = config.getBooleanProperty("debug", false);
 
         return new StatsCondCalculatorConfig(binariesDir, runtimeHomeDir, tmpDir, rngSeed, debug);
-	}
-	
-	public Path getBinariesDir() {
-		return binariesDir;
-	}
+    }
 
-	public Path getRuntimeHomeDir() {
-		return runtimeHomeDir;
-	}
-	
-	public Path getTmpDir() {
-		return tmpDir;
-	}
+    public Path getBinariesDir() {
+        return binariesDir;
+    }
+
+    public Path getRuntimeHomeDir() {
+        return runtimeHomeDir;
+    }
+
+    public Path getTmpDir() {
+        return tmpDir;
+    }
 
 
     public Integer getRngSeed() { 
-    	return rngSeed; 
+        return rngSeed;
     }
 
-	public boolean isDebug() {
+    public boolean isDebug() {
         return debug;
-	}
-	
-	public static Logger getLogger() {
-		return LOGGER;
-	}
-	
-	@Override
-	public String toString() {
-		return "StatsCondCalculatorConfig ["+ ", binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir + ", tmpDir=" + tmpDir
+    }
+
+    public static Logger getLogger() {
+        return LOGGER;
+    }
+
+    @Override
+    public String toString() {
+        return "StatsCondCalculatorConfig ["+ ", binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir + ", tmpDir=" + tmpDir
                 + ", rngSeed=" + rngSeed +", debug=" + debug + "]";
-	}
-	
+    }
+
 }

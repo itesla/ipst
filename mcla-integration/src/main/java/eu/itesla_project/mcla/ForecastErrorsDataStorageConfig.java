@@ -16,40 +16,40 @@ import java.util.Objects;
  * @author Quinary <itesla@quinary.com>
  */
 public class ForecastErrorsDataStorageConfig {
-	
-	/*
-	 * example of forecastErrorsStorage.properties file.
-	 *
-	#path to the directory containing the forecast errors data
-	forecastErrorsDir=/shared/allrw/ForecastErrors
 
-	*/
-	
-	private final Path forecastErrorsDir;
-	
-	public ForecastErrorsDataStorageConfig(Path forecastErrorsDir) {
-		Objects.requireNonNull(forecastErrorsDir,"forecast errors data directory is null");
-		
-		this.forecastErrorsDir = forecastErrorsDir;
-	}
-	
-	public static ForecastErrorsDataStorageConfig load() {
+    /*
+     * example of forecastErrorsStorage.properties file.
+     *
+    #path to the directory containing the forecast errors data
+    forecastErrorsDir=/shared/allrw/ForecastErrors
+
+    */
+
+    private final Path forecastErrorsDir;
+
+    public ForecastErrorsDataStorageConfig(Path forecastErrorsDir) {
+        Objects.requireNonNull(forecastErrorsDir,"forecast errors data directory is null");
+
+        this.forecastErrorsDir = forecastErrorsDir;
+    }
+
+    public static ForecastErrorsDataStorageConfig load() {
         ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("forecastErrorsStorage");
         
         Path forecastErrorsDir = config.getPathProperty("forecastErrorsDir");
 
         return new ForecastErrorsDataStorageConfig(forecastErrorsDir);
-	}
-	
+    }
 
-	public Path getForecastErrorsDir() {
-		return forecastErrorsDir;
-	}
-	
-	@Override
-	public String toString() {
-		return "ForecastErrorsDataStorageConfig ["+ "forecastErrorsDir=" + forecastErrorsDir + "]";
-	}
+
+    public Path getForecastErrorsDir() {
+        return forecastErrorsDir;
+    }
+
+    @Override
+    public String toString() {
+        return "ForecastErrorsDataStorageConfig ["+ "forecastErrorsDir=" + forecastErrorsDir + "]";
+    }
 
 
 }

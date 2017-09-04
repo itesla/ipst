@@ -16,37 +16,37 @@ import eu.itesla_project.iidm.network.Country;
  */
 public class StochasticVariable {
 
-	public static final String TYPE_SOLAR_GENERATOR = "solar";
-	public static final String TYPE_WIND_GENERATOR = "wind";
-	public static final String TYPE_LOAD = "load";
-	
-	final String id;
-	final String type;
-	final Country country;
-	
-	public StochasticVariable(String id, String type, Country country) {
-		Objects.requireNonNull(id, "id is null");
-		Objects.requireNonNull(type, "type is null");
-		this.id = id;
-		this.type = type;
-		this.country = country;
-	}
-	
-	public String getId() {
-		return id;
-	}
-	public String getType() {
-		return type;
-	}
-	
-	public Country getCountry() {
-		return country;
-	}
-	
-	@Override
-	public String toString() {
-		if ( getId() == null || getType() == null )
-			return null;
-		return "[" + getId() + "," + getType() + "]";
-	}
+    public static final String TYPE_SOLAR_GENERATOR = "solar";
+    public static final String TYPE_WIND_GENERATOR = "wind";
+    public static final String TYPE_LOAD = "load";
+
+    final String id;
+    final String type;
+    final Country country;
+
+    public StochasticVariable(String id, String type, Country country) {
+        Objects.requireNonNull(id, "id is null");
+        Objects.requireNonNull(type, "type is null");
+        this.id = id;
+        this.type = type;
+        this.country = country;
+    }
+
+    public String getId() {
+        return id;
+    }
+    public String getType() {
+        return type;
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    @Override
+    public String toString() {
+        if ( getId() == null || getType() == null )
+            return null;
+        return "[" + getId() + "," + getType() + "]";
+    }
 }

@@ -26,58 +26,58 @@ import eu.itesla_project.modules.mcla.ForecastErrorsStatistics;
  */
 public class Utils {
 
-	private static float[] getFloats(String[] strings) {
-		float[] floats = new float[strings.length];
-		for (int i = 0; i < strings.length; i++) {
-			floats[i] = Float.parseFloat(strings[i]);
-		}
-		return floats;
-	}
+    private static float[] getFloats(String[] strings) {
+        float[] floats = new float[strings.length];
+        for (int i = 0; i < strings.length; i++) {
+            floats[i] = Float.parseFloat(strings[i]);
+        }
+        return floats;
+    }
 
-	public static ForecastErrorsStatistics readStatisticsFromFile(Path statsFilePath) throws IOException {
-		Objects.requireNonNull(statsFilePath);
+    public static ForecastErrorsStatistics readStatisticsFromFile(Path statsFilePath) throws IOException {
+        Objects.requireNonNull(statsFilePath);
 
-		CsvReader csvReader = null;
-		try {
-			csvReader = new CsvReader(statsFilePath.toFile().toString());
-			csvReader.readHeaders();
-			String[] injectionsIds = csvReader.getHeaders();
-			csvReader.readRecord();
-			float[] means = getFloats(csvReader.getValues());
-			csvReader.readRecord();
-			float[] standardDeviations = getFloats(csvReader.getValues());
-			return new ForecastErrorsStatistics(injectionsIds, means, standardDeviations);
-		} catch (IOException e) {
-			throw e;
-		} finally {
-			if ( csvReader != null )
-				csvReader.close();
-		}
+        CsvReader csvReader = null;
+        try {
+            csvReader = new CsvReader(statsFilePath.toFile().toString());
+            csvReader.readHeaders();
+            String[] injectionsIds = csvReader.getHeaders();
+            csvReader.readRecord();
+            float[] means = getFloats(csvReader.getValues());
+            csvReader.readRecord();
+            float[] standardDeviations = getFloats(csvReader.getValues());
+            return new ForecastErrorsStatistics(injectionsIds, means, standardDeviations);
+        } catch (IOException e) {
+            throw e;
+        } finally {
+            if ( csvReader != null )
+                csvReader.close();
+        }
 
-	}
+    }
 
-	public static String[] readStringsArrayFromMat(Path matFile, String stringsArrayName) throws IOException {
-		Objects.requireNonNull(matFile, "mat file is null");
-		Objects.requireNonNull(stringsArrayName, "strings array name is null");
-		MatFileReader matFileReader = new MatFileReader();
-		Map<String, MLArray> matFileContent = matFileReader.read(matFile.toFile());
-		MLCell stringsArray = (MLCell) matFileContent.get(stringsArrayName);
-		String[] strings = new String[stringsArray.getN()];
-		for (int i = 0; i < stringsArray.getN(); i++) {
-			strings[i] = ((MLChar) stringsArray.get(0, i)).getString(0);
-		}
-		return strings;
-	}
-	
-	public static double[][] readDoublesMatrixFromMat(Path matFile, String doublesMatrixName) throws IOException {
-		Objects.requireNonNull(matFile, "mat file is null");
-		MatFileReader matFileReader = new MatFileReader();
-		Map<String, MLArray> matFileContent = matFileReader.read(matFile.toFile());
-		MLDouble doublesMatrix = (MLDouble) matFileContent.get(doublesMatrixName);
-		double[][] doubles = null;
-		if ( doublesMatrix != null )
-			doubles = doublesMatrix.getArray();
-		return doubles;
-	}
+    public static String[] readStringsArrayFromMat(Path matFile, String stringsArrayName) throws IOException {
+        Objects.requireNonNull(matFile, "mat file is null");
+        Objects.requireNonNull(stringsArrayName, "strings array name is null");
+        MatFileReader matFileReader = new MatFileReader();
+        Map<String, MLArray> matFileContent = matFileReader.read(matFile.toFile());
+        MLCell stringsArray = (MLCell) matFileContent.get(stringsArrayName);
+        String[] strings = new String[stringsArray.getN()];
+        for (int i = 0; i < stringsArray.getN(); i++) {
+            strings[i] = ((MLChar) stringsArray.get(0, i)).getString(0);
+        }
+        return strings;
+    }
+
+    public static double[][] readDoublesMatrixFromMat(Path matFile, String doublesMatrixName) throws IOException {
+        Objects.requireNonNull(matFile, "mat file is null");
+        MatFileReader matFileReader = new MatFileReader();
+        Map<String, MLArray> matFileContent = matFileReader.read(matFile.toFile());
+        MLDouble doublesMatrix = (MLDouble) matFileContent.get(doublesMatrixName);
+        double[][] doubles = null;
+        if ( doublesMatrix != null )
+            doubles = doublesMatrix.getArray();
+        return doubles;
+    }
 
 }

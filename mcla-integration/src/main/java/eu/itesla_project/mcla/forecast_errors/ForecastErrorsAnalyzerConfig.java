@@ -22,11 +22,11 @@ import java.util.Objects;
  */
 public class ForecastErrorsAnalyzerConfig {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ForecastErrorsAnalyzerConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ForecastErrorsAnalyzerConfig.class);
 
-	private Path binariesDir;
-	private Path runtimeHomeDir;
-	private final boolean debug;
+    private Path binariesDir;
+    private Path runtimeHomeDir;
+    private final boolean debug;
     private final Integer rngSeed;
     private final Integer checkModule0;
     private final double percpuGaussLoad;
@@ -48,8 +48,8 @@ public class ForecastErrorsAnalyzerConfig {
     private final String nats;
 
     public ForecastErrorsAnalyzerConfig(
-			Path binariesDir,
-			Path runtimeHomeDir,
+            Path binariesDir,
+            Path runtimeHomeDir,
             Integer checkModule0,
             double percpuGaussLoad,
             double percpuGaussRes,
@@ -68,14 +68,14 @@ public class ForecastErrorsAnalyzerConfig {
             double histo_estremeQ,
             double thresGUI,
             String nats,
-			Integer rngSeed,
-			boolean debug
-			) {
-		Objects.requireNonNull(binariesDir,"sampler compiled binaries directory is null");
-		Objects.requireNonNull(runtimeHomeDir,"matlab runtime directory is null");
+            Integer rngSeed,
+            boolean debug
+            ) {
+        Objects.requireNonNull(binariesDir,"sampler compiled binaries directory is null");
+        Objects.requireNonNull(runtimeHomeDir,"matlab runtime directory is null");
 
-		this.binariesDir=binariesDir;
-		this.runtimeHomeDir = runtimeHomeDir;
+        this.binariesDir=binariesDir;
+        this.runtimeHomeDir = runtimeHomeDir;
         this.rngSeed = rngSeed;
         this.checkModule0=checkModule0;
         this.percpuGaussLoad=percpuGaussLoad;
@@ -95,10 +95,10 @@ public class ForecastErrorsAnalyzerConfig {
         this.histo_estremeQ = histo_estremeQ;
         this.thresGUI = thresGUI;
         this.nats = nats;
-		this.debug=debug;
-	}
+        this.debug=debug;
+    }
 
-	public static ForecastErrorsAnalyzerConfig load() {
+    public static ForecastErrorsAnalyzerConfig load() {
         ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("forecastErrorsAnalyzer");
 
         Path binariesDir = config.getPathProperty("binariesDir");
@@ -125,18 +125,18 @@ public class ForecastErrorsAnalyzerConfig {
         String nats = config.getStringProperty("nats","All");
 
         return new ForecastErrorsAnalyzerConfig(binariesDir, runtimeHomeDir, checkModule0, percpuGaussLoad, percpuGaussRes, correlationGauss, tolVar, nMinObsFract, nMinObsInterv, imputationMeth, nGaussians, kOutlier, tolerance, iterations, epsilo, conditionalSampling, tFlags, histo_estremeQ, thresGUI, nats, rngSeed, debug);
-	}
+    }
 
-	public Path getBinariesDir() {
-		return binariesDir;
-	}
+    public Path getBinariesDir() {
+        return binariesDir;
+    }
 
-	public Path getRuntimeHomeDir() {
-		return runtimeHomeDir;
-	}
+    public Path getRuntimeHomeDir() {
+        return runtimeHomeDir;
+    }
 
     public Integer getCheckModule0() {
-    	return checkModule0; 
+        return checkModule0;
     }
 
     public double getPercpuGaussLoad() {
@@ -190,20 +190,20 @@ public class ForecastErrorsAnalyzerConfig {
     public String getNats() { return nats; }
 
     public Integer getRngSeed() {
-		return rngSeed;
-	}
+        return rngSeed;
+    }
 
-	public static Logger getLogger() {
-		return LOGGER;
-	}
+    public static Logger getLogger() {
+        return LOGGER;
+    }
 
-	public boolean isDebug() {
-	        return debug;
-	}
+    public boolean isDebug() {
+            return debug;
+    }
 
-	@Override
-	public String toString() {
-		return "ForecastErrorsAnalyzerConfig [binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir
+    @Override
+    public String toString() {
+        return "ForecastErrorsAnalyzerConfig [binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir
                 + ", check module0=" + checkModule0
                 + ", per cpu gauss load=" + percpuGaussLoad
                 + ", per cpu gauss res=" + percpuGaussRes
@@ -222,7 +222,7 @@ public class ForecastErrorsAnalyzerConfig {
                 + ", histo_estremeQ=" + histo_estremeQ
                 + ", thresGUI=" + thresGUI
                 + ", nats=" + nats
-				+ ", debug=" + debug + "]";
-	}
+                + ", debug=" + debug + "]";
+    }
 
 }
