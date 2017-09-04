@@ -12,314 +12,314 @@ package eu.itesla_project.fpf_integration;
  * @author Leonel Carvalho - INESC TEC
  */
 public class CFPFBus {
-	
-	private int number; // BUS NUMBER
-	private String name = null; // NAME
-	private int loadFlowAreaNumber; // LOAD FLOW AREA NUMBER
-	private int type; // BUS TYPE
-	// 0 - UNREGULATED (PQ)
+
+    private int number; // BUS NUMBER
+    private String name = null; // NAME
+    private int loadFlowAreaNumber; // LOAD FLOW AREA NUMBER
+    private int type; // BUS TYPE
+    // 0 - UNREGULATED (PQ)
     // 1 - GENERATION BUS (PV)
-	// 2 - REFERENCE BUS (REF)
-	private double desiredVoltage; // FINAL VOLTAGE (p.u.)
-	private double desiredAngle; // FINAL ANGLE (degrees)
-	private double loadMW; // LOAD MW
-	private double loadMVAR; // LOAD MVAR
-	private double generationMW; // GENERATION MW
-	private double generationMVAR; // GENERATION MVAR
-	private double minimumGenerationMW; // MINIMUM MW
-	private double maximumGenerationMW; // MAXIMUM MW
-	private double minimumGenerationMVAR; // MINIMUM MVAR
-	private double maximumGenerationMVAR; // MAXIMUM MVAR
-	private double baseKV; // BASE KV
-	private double minimumVoltage; // MINIMUM VOLTAGE (p.u.)
-	private double maximumVoltage; // MAXIMUM VOLTAGE (p.u.)
-	private double shuntConductanceG; // SHUNT CONDUCTANCE G (p.u.)
-	private double shuntSusceptanceB; // SHUNT SUSCEPTANCE B (p.u.)
-	private CFPFFuzzyNumber fuzzyLoadMW = null; // FUZZY LOAD MW
-	private CFPFFuzzyNumber fuzzyLoadMVAR = null; // FUZZY LOAD MVAR
-	private CFPFFuzzyNumber fuzzyGenerationMW = null; // FUZZY GENERATION MW
-	private CFPFFuzzyNumber fuzzyGenerationMVAR = null; // FUZZY GENERATION MVAR
-		
-	public CFPFBus() {
-	}
-	
-	public CFPFBus( int number, String name, int loadFlowAreaNumber, int type, double desiredVoltage, double desiredAngle, 
-			double loadMW, double loadMVAR, 
-			double generationMW, double generationMVAR, 
-			double minimumGenerationMW, double maximumGenerationMW,
-			double minimumGenerationMVAR, double maximumGenerationMVAR,
-			double baseKV, double minimumVoltage, double maximumVoltage, 
-			double shuntConductanceG, double shuntSusceptanceB, 
-			double minimumFuzzyLoadMW, double maximumFuzzyLoadMW, double minimumFuzzyLoadMVAR, double maximumFuzzyLoadMVAR,
-			double minimumFuzzyGenerationMW, double maximumFuzzyGenerationMW, double minimumFuzzyGenerationMVAR, double maximumFuzzyGenerationMVAR ) {
-		
-		setNumber( number );
-		setName( name );
-		setLoadFlowAreaNumber( loadFlowAreaNumber );
-		setType( type );
-		setDesiredVoltage( desiredVoltage );
-		setDesiredAngle( desiredAngle );
-		setLoadMW( loadMW );
-		setLoadMVAR( loadMVAR );
-		setGenerationMW( generationMW );
-		setGenerationMVAR( generationMVAR );
-		setMinimumGenerationMW( minimumGenerationMW );
-		setMaximumGenerationMW( maximumGenerationMW );
-		setMinimumGenerationMVAR( minimumGenerationMVAR );
-		setMaximumGenerationMVAR( maximumGenerationMVAR );
-		setBaseKV( baseKV );
-		setMinimumVoltage( minimumVoltage );
-		setMaximumVoltage( maximumVoltage );
-		setShuntConductanceG( shuntConductanceG );
-		setShuntSusceptanceB( shuntSusceptanceB );
-		
-		int numVerticesFuzzyNumber = 3; 
-		double[] fuzzyNumberGenerationMW = new double[ numVerticesFuzzyNumber ]; 
-		double[] fuzzyNumberGenerationMVAR = new double[ numVerticesFuzzyNumber ]; 
-		double[] fuzzyNumberLoadMW = new double[ numVerticesFuzzyNumber ]; 
-		double[] fuzzyNumberLoadMVAR = new double[ numVerticesFuzzyNumber ]; 
+    // 2 - REFERENCE BUS (REF)
+    private double desiredVoltage; // FINAL VOLTAGE (p.u.)
+    private double desiredAngle; // FINAL ANGLE (degrees)
+    private double loadMW; // LOAD MW
+    private double loadMVAR; // LOAD MVAR
+    private double generationMW; // GENERATION MW
+    private double generationMVAR; // GENERATION MVAR
+    private double minimumGenerationMW; // MINIMUM MW
+    private double maximumGenerationMW; // MAXIMUM MW
+    private double minimumGenerationMVAR; // MINIMUM MVAR
+    private double maximumGenerationMVAR; // MAXIMUM MVAR
+    private double baseKV; // BASE KV
+    private double minimumVoltage; // MINIMUM VOLTAGE (p.u.)
+    private double maximumVoltage; // MAXIMUM VOLTAGE (p.u.)
+    private double shuntConductanceG; // SHUNT CONDUCTANCE G (p.u.)
+    private double shuntSusceptanceB; // SHUNT SUSCEPTANCE B (p.u.)
+    private CFPFFuzzyNumber fuzzyLoadMW = null; // FUZZY LOAD MW
+    private CFPFFuzzyNumber fuzzyLoadMVAR = null; // FUZZY LOAD MVAR
+    private CFPFFuzzyNumber fuzzyGenerationMW = null; // FUZZY GENERATION MW
+    private CFPFFuzzyNumber fuzzyGenerationMVAR = null; // FUZZY GENERATION MVAR
 
-		if( getType() == 0 ) {
-			fuzzyNumberLoadMW[ 0 ] = minimumFuzzyLoadMW;
-			fuzzyNumberLoadMW[ 1 ] = loadMW;
-			fuzzyNumberLoadMW[ 2 ] = maximumFuzzyLoadMW;
-			fuzzyNumberLoadMVAR[ 0 ] = minimumFuzzyLoadMVAR;
-			fuzzyNumberLoadMVAR[ 1 ] = loadMVAR;
-			fuzzyNumberLoadMVAR[ 2 ] = maximumFuzzyLoadMVAR;
-			fuzzyNumberGenerationMW[ 0 ] = minimumFuzzyGenerationMW;
-			fuzzyNumberGenerationMW[ 1 ] = generationMW;
-			fuzzyNumberGenerationMW[ 2 ] = maximumFuzzyGenerationMW;
-			fuzzyNumberGenerationMVAR[ 0 ] = minimumFuzzyGenerationMVAR;
-			fuzzyNumberGenerationMVAR[ 1 ] = generationMVAR;
-			fuzzyNumberGenerationMVAR[ 2 ] = maximumFuzzyGenerationMVAR;
-		} else {
-			fuzzyNumberLoadMW[ 0 ] = minimumFuzzyLoadMW;
-			fuzzyNumberLoadMW[ 1 ] = loadMW;
-			fuzzyNumberLoadMW[ 2 ] = maximumFuzzyLoadMW;
-			fuzzyNumberLoadMVAR[ 0 ] = minimumFuzzyLoadMVAR;
-			fuzzyNumberLoadMVAR[ 1 ] = loadMVAR;
-			fuzzyNumberLoadMVAR[ 2 ] = maximumFuzzyLoadMVAR;	
-		}
-		
-		this.fuzzyLoadMW = new CFPFFuzzyNumber( fuzzyNumberLoadMW );
-		this.fuzzyLoadMVAR = new CFPFFuzzyNumber( fuzzyNumberLoadMVAR );
-		this.fuzzyGenerationMW = new CFPFFuzzyNumber( fuzzyNumberGenerationMW );
-		this.fuzzyGenerationMVAR = new CFPFFuzzyNumber( fuzzyNumberGenerationMVAR );
-	}
-	
-	public String printCFPFBus() {
-		String ch  = ",";
-		String out = String.format( "%d", getNumber() ) + ch + 
-				String.format( "%s", getName() ) + ch +  
-				String.format( "%d", getLoadFlowAreaNumber() ) + ch + 
-				String.format( "%d", getType() ) + ch + 
-				String.format( "%.3f", getDesiredVoltage() + 0.0f ) + ch + 
-				String.format( "%.3f", getDesiredAngle() + 0.0f ) + ch + 
-				String.format( "%.3f", getLoadMW() + 0.0f ) + ch + 
-				String.format( "%.3f", getLoadMVAR() + 0.0f ) + ch + 
-				String.format( "%.3f", getGenerationMW() + 0.0f ) + ch + 
-				String.format( "%.3f", getGenerationMVAR() + 0.0f ) + ch + 
-				String.format( "%.3f", getMinimumGenerationMW() + 0.0f ) + ch + 
-				String.format( "%.3f", getMaximumGenerationMW() + 0.0f ) + ch + 
-				String.format( "%.3f", getMinimumGenerationMVAR() + 0.0f ) + ch + 
-				String.format( "%.3f", getMaximumGenerationMVAR() + 0.0f ) + ch + 
-				String.format( "%.2f", getBaseKV() + 0.0f ) + ch + 
-				String.format( "%.2f", getMinimumVoltage() + 0.0f ) + ch + 
-				String.format( "%.2f", getMaximumVoltage() + 0.0f ) + ch + 
-				String.format( "%.2f", getShuntConductanceG() + 0.0f ) + ch + 
-				String.format( "%.2f", getShuntSusceptanceB() + 0.0f ) + ch + 
-				String.format( "%.3f", getFuzzyLoadMW().getMinimumValue() + 0.0f ) + ch + 
-				String.format( "%.3f", getFuzzyLoadMW().getMaximumValue() + 0.0f ) + ch + 
-				String.format( "%.3f", getFuzzyLoadMVAR().getMinimumValue() + 0.0f ) + ch + 
-				String.format( "%.3f", getFuzzyLoadMVAR().getMaximumValue() + 0.0f ) + ch + 
-				String.format( "%.3f", getFuzzyGenerationMW().getMinimumValue() + 0.0f ) + ch + 
-				String.format( "%.3f", getFuzzyGenerationMW().getMaximumValue() + 0.0f ) + ch + 
-				String.format( "%.3f", getFuzzyGenerationMVAR().getMinimumValue() + 0.0f ) + ch + 
-				String.format( "%.3f", getFuzzyGenerationMVAR().getMaximumValue() + 0.0f );
-		return out;
-	}
-	
-	public int getNumber() {
-		return number;
-	}
+    public CFPFBus() {
+    }
 
-	public void setNumber(int number) {
-		this.number = number;
-	}
+    public CFPFBus( int number, String name, int loadFlowAreaNumber, int type, double desiredVoltage, double desiredAngle,
+            double loadMW, double loadMVAR,
+            double generationMW, double generationMVAR,
+            double minimumGenerationMW, double maximumGenerationMW,
+            double minimumGenerationMVAR, double maximumGenerationMVAR,
+            double baseKV, double minimumVoltage, double maximumVoltage,
+            double shuntConductanceG, double shuntSusceptanceB,
+            double minimumFuzzyLoadMW, double maximumFuzzyLoadMW, double minimumFuzzyLoadMVAR, double maximumFuzzyLoadMVAR,
+            double minimumFuzzyGenerationMW, double maximumFuzzyGenerationMW, double minimumFuzzyGenerationMVAR, double maximumFuzzyGenerationMVAR ) {
 
-	public String getName() {
-		return name;
-	}
+        setNumber( number );
+        setName( name );
+        setLoadFlowAreaNumber( loadFlowAreaNumber );
+        setType( type );
+        setDesiredVoltage( desiredVoltage );
+        setDesiredAngle( desiredAngle );
+        setLoadMW( loadMW );
+        setLoadMVAR( loadMVAR );
+        setGenerationMW( generationMW );
+        setGenerationMVAR( generationMVAR );
+        setMinimumGenerationMW( minimumGenerationMW );
+        setMaximumGenerationMW( maximumGenerationMW );
+        setMinimumGenerationMVAR( minimumGenerationMVAR );
+        setMaximumGenerationMVAR( maximumGenerationMVAR );
+        setBaseKV( baseKV );
+        setMinimumVoltage( minimumVoltage );
+        setMaximumVoltage( maximumVoltage );
+        setShuntConductanceG( shuntConductanceG );
+        setShuntSusceptanceB( shuntSusceptanceB );
 
-	public void setName(String name) {
-		this.name = name;
-	}
+        int numVerticesFuzzyNumber = 3;
+        double[] fuzzyNumberGenerationMW = new double[ numVerticesFuzzyNumber ];
+        double[] fuzzyNumberGenerationMVAR = new double[ numVerticesFuzzyNumber ];
+        double[] fuzzyNumberLoadMW = new double[ numVerticesFuzzyNumber ];
+        double[] fuzzyNumberLoadMVAR = new double[ numVerticesFuzzyNumber ];
 
-	public int getLoadFlowAreaNumber() {
-		return loadFlowAreaNumber;
-	}
+        if( getType() == 0 ) {
+            fuzzyNumberLoadMW[ 0 ] = minimumFuzzyLoadMW;
+            fuzzyNumberLoadMW[ 1 ] = loadMW;
+            fuzzyNumberLoadMW[ 2 ] = maximumFuzzyLoadMW;
+            fuzzyNumberLoadMVAR[ 0 ] = minimumFuzzyLoadMVAR;
+            fuzzyNumberLoadMVAR[ 1 ] = loadMVAR;
+            fuzzyNumberLoadMVAR[ 2 ] = maximumFuzzyLoadMVAR;
+            fuzzyNumberGenerationMW[ 0 ] = minimumFuzzyGenerationMW;
+            fuzzyNumberGenerationMW[ 1 ] = generationMW;
+            fuzzyNumberGenerationMW[ 2 ] = maximumFuzzyGenerationMW;
+            fuzzyNumberGenerationMVAR[ 0 ] = minimumFuzzyGenerationMVAR;
+            fuzzyNumberGenerationMVAR[ 1 ] = generationMVAR;
+            fuzzyNumberGenerationMVAR[ 2 ] = maximumFuzzyGenerationMVAR;
+        } else {
+            fuzzyNumberLoadMW[ 0 ] = minimumFuzzyLoadMW;
+            fuzzyNumberLoadMW[ 1 ] = loadMW;
+            fuzzyNumberLoadMW[ 2 ] = maximumFuzzyLoadMW;
+            fuzzyNumberLoadMVAR[ 0 ] = minimumFuzzyLoadMVAR;
+            fuzzyNumberLoadMVAR[ 1 ] = loadMVAR;
+            fuzzyNumberLoadMVAR[ 2 ] = maximumFuzzyLoadMVAR;
+        }
 
-	public void setLoadFlowAreaNumber(int loadFlowAreaNumber) {
-		this.loadFlowAreaNumber = loadFlowAreaNumber;
-	}
+        this.fuzzyLoadMW = new CFPFFuzzyNumber( fuzzyNumberLoadMW );
+        this.fuzzyLoadMVAR = new CFPFFuzzyNumber( fuzzyNumberLoadMVAR );
+        this.fuzzyGenerationMW = new CFPFFuzzyNumber( fuzzyNumberGenerationMW );
+        this.fuzzyGenerationMVAR = new CFPFFuzzyNumber( fuzzyNumberGenerationMVAR );
+    }
 
-	public int getType() {
-		return type;
-	}
+    public String printCFPFBus() {
+        String ch  = ",";
+        String out = String.format( "%d", getNumber() ) + ch +
+                String.format( "%s", getName() ) + ch +
+                String.format( "%d", getLoadFlowAreaNumber() ) + ch +
+                String.format( "%d", getType() ) + ch +
+                String.format( "%.3f", getDesiredVoltage() + 0.0f ) + ch +
+                String.format( "%.3f", getDesiredAngle() + 0.0f ) + ch +
+                String.format( "%.3f", getLoadMW() + 0.0f ) + ch +
+                String.format( "%.3f", getLoadMVAR() + 0.0f ) + ch +
+                String.format( "%.3f", getGenerationMW() + 0.0f ) + ch +
+                String.format( "%.3f", getGenerationMVAR() + 0.0f ) + ch +
+                String.format( "%.3f", getMinimumGenerationMW() + 0.0f ) + ch +
+                String.format( "%.3f", getMaximumGenerationMW() + 0.0f ) + ch +
+                String.format( "%.3f", getMinimumGenerationMVAR() + 0.0f ) + ch +
+                String.format( "%.3f", getMaximumGenerationMVAR() + 0.0f ) + ch +
+                String.format( "%.2f", getBaseKV() + 0.0f ) + ch +
+                String.format( "%.2f", getMinimumVoltage() + 0.0f ) + ch +
+                String.format( "%.2f", getMaximumVoltage() + 0.0f ) + ch +
+                String.format( "%.2f", getShuntConductanceG() + 0.0f ) + ch +
+                String.format( "%.2f", getShuntSusceptanceB() + 0.0f ) + ch +
+                String.format( "%.3f", getFuzzyLoadMW().getMinimumValue() + 0.0f ) + ch +
+                String.format( "%.3f", getFuzzyLoadMW().getMaximumValue() + 0.0f ) + ch +
+                String.format( "%.3f", getFuzzyLoadMVAR().getMinimumValue() + 0.0f ) + ch +
+                String.format( "%.3f", getFuzzyLoadMVAR().getMaximumValue() + 0.0f ) + ch +
+                String.format( "%.3f", getFuzzyGenerationMW().getMinimumValue() + 0.0f ) + ch +
+                String.format( "%.3f", getFuzzyGenerationMW().getMaximumValue() + 0.0f ) + ch +
+                String.format( "%.3f", getFuzzyGenerationMVAR().getMinimumValue() + 0.0f ) + ch +
+                String.format( "%.3f", getFuzzyGenerationMVAR().getMaximumValue() + 0.0f );
+        return out;
+    }
 
-	public void setType(int type) {
-		this.type = type;
-	}
+    public int getNumber() {
+        return number;
+    }
 
-	public double getDesiredVoltage() {
-		return desiredVoltage;
-	}
+    public void setNumber(int number) {
+        this.number = number;
+    }
 
-	public void setDesiredVoltage(double desiredVoltage) {
-		this.desiredVoltage = desiredVoltage;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public double getDesiredAngle() {
-		return desiredAngle;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setDesiredAngle(double desiredAngle) {
-		this.desiredAngle = desiredAngle;
-	}
+    public int getLoadFlowAreaNumber() {
+        return loadFlowAreaNumber;
+    }
 
-	public double getLoadMW() {
-		return loadMW;
-	}
+    public void setLoadFlowAreaNumber(int loadFlowAreaNumber) {
+        this.loadFlowAreaNumber = loadFlowAreaNumber;
+    }
 
-	public void setLoadMW(double loadMW) {
-		this.loadMW = loadMW;
-	}
+    public int getType() {
+        return type;
+    }
 
-	public double getLoadMVAR() {
-		return loadMVAR;
-	}
+    public void setType(int type) {
+        this.type = type;
+    }
 
-	public void setLoadMVAR(double loadMVAR) {
-		this.loadMVAR = loadMVAR;
-	}
+    public double getDesiredVoltage() {
+        return desiredVoltage;
+    }
 
-	public double getGenerationMW() {
-		return generationMW;
-	}
+    public void setDesiredVoltage(double desiredVoltage) {
+        this.desiredVoltage = desiredVoltage;
+    }
 
-	public void setGenerationMW(double generationMW) {
-		this.generationMW = generationMW;
-	}
+    public double getDesiredAngle() {
+        return desiredAngle;
+    }
 
-	public double getGenerationMVAR() {
-		return generationMVAR;
-	}
+    public void setDesiredAngle(double desiredAngle) {
+        this.desiredAngle = desiredAngle;
+    }
 
-	public void setGenerationMVAR(double generationMVAR) {
-		this.generationMVAR = generationMVAR;
-	}
-	
-	public double getMinimumGenerationMW() {
-		return minimumGenerationMW;
-	}
+    public double getLoadMW() {
+        return loadMW;
+    }
 
-	public void setMinimumGenerationMW(double minimumGenerationMW) {
-		this.minimumGenerationMW = minimumGenerationMW;
-	}
+    public void setLoadMW(double loadMW) {
+        this.loadMW = loadMW;
+    }
 
-	public double getMaximumGenerationMW() {
-		return maximumGenerationMW;
-	}
+    public double getLoadMVAR() {
+        return loadMVAR;
+    }
 
-	public void setMaximumGenerationMW(double maximumGenerationMW) {
-		this.maximumGenerationMW = maximumGenerationMW;
-	}
+    public void setLoadMVAR(double loadMVAR) {
+        this.loadMVAR = loadMVAR;
+    }
 
-	public double getMinimumGenerationMVAR() {
-		return minimumGenerationMVAR;
-	}
+    public double getGenerationMW() {
+        return generationMW;
+    }
 
-	public void setMinimumGenerationMVAR(double minimumGenerationMVAR) {
-		this.minimumGenerationMVAR = minimumGenerationMVAR;
-	}
+    public void setGenerationMW(double generationMW) {
+        this.generationMW = generationMW;
+    }
 
-	public double getMaximumGenerationMVAR() {
-		return maximumGenerationMVAR;
-	}
+    public double getGenerationMVAR() {
+        return generationMVAR;
+    }
 
-	public void setMaximumGenerationMVAR(double maximumGenerationMVAR) {
-		this.maximumGenerationMVAR = maximumGenerationMVAR;
-	}
+    public void setGenerationMVAR(double generationMVAR) {
+        this.generationMVAR = generationMVAR;
+    }
 
-	public double getBaseKV() {
-		return baseKV;
-	}
+    public double getMinimumGenerationMW() {
+        return minimumGenerationMW;
+    }
 
-	public void setBaseKV(double baseKV) {
-		this.baseKV = baseKV;
-	}
+    public void setMinimumGenerationMW(double minimumGenerationMW) {
+        this.minimumGenerationMW = minimumGenerationMW;
+    }
 
-	public double getMinimumVoltage() {
-		return minimumVoltage;
-	}
+    public double getMaximumGenerationMW() {
+        return maximumGenerationMW;
+    }
 
-	public void setMinimumVoltage(double minimumVoltage) {
-		this.minimumVoltage = minimumVoltage;
-	}
+    public void setMaximumGenerationMW(double maximumGenerationMW) {
+        this.maximumGenerationMW = maximumGenerationMW;
+    }
 
-	public double getMaximumVoltage() {
-		return maximumVoltage;
-	}
+    public double getMinimumGenerationMVAR() {
+        return minimumGenerationMVAR;
+    }
 
-	public void setMaximumVoltage(double maximumVoltage) {
-		this.maximumVoltage = maximumVoltage;
-	}
-	
-	public double getShuntConductanceG() {
-		return shuntConductanceG;
-	}
+    public void setMinimumGenerationMVAR(double minimumGenerationMVAR) {
+        this.minimumGenerationMVAR = minimumGenerationMVAR;
+    }
 
-	public void setShuntConductanceG(double shuntConductanceG) {
-		this.shuntConductanceG = shuntConductanceG;
-	}
+    public double getMaximumGenerationMVAR() {
+        return maximumGenerationMVAR;
+    }
 
-	public double getShuntSusceptanceB() {
-		return shuntSusceptanceB;
-	}
+    public void setMaximumGenerationMVAR(double maximumGenerationMVAR) {
+        this.maximumGenerationMVAR = maximumGenerationMVAR;
+    }
 
-	public void setShuntSusceptanceB(double shuntSusceptanceB) {
-		this.shuntSusceptanceB = shuntSusceptanceB;
-	}
+    public double getBaseKV() {
+        return baseKV;
+    }
 
-	public CFPFFuzzyNumber getFuzzyGenerationMW() {
-		return fuzzyGenerationMW;
-	}
+    public void setBaseKV(double baseKV) {
+        this.baseKV = baseKV;
+    }
 
-	public void setFuzzyGenerationMW(CFPFFuzzyNumber fuzzyGenerationMW) {
-		this.fuzzyGenerationMW = fuzzyGenerationMW;
-	}
+    public double getMinimumVoltage() {
+        return minimumVoltage;
+    }
 
-	public CFPFFuzzyNumber getFuzzyGenerationMVAR() {
-		return fuzzyGenerationMVAR;
-	}
+    public void setMinimumVoltage(double minimumVoltage) {
+        this.minimumVoltage = minimumVoltage;
+    }
 
-	public void setFuzzyGenerationMVAR(CFPFFuzzyNumber fuzzyGenerationMVAR) {
-		this.fuzzyGenerationMVAR = fuzzyGenerationMVAR;
-	}
+    public double getMaximumVoltage() {
+        return maximumVoltage;
+    }
 
-	public CFPFFuzzyNumber getFuzzyLoadMW() {
-		return fuzzyLoadMW;
-	}
+    public void setMaximumVoltage(double maximumVoltage) {
+        this.maximumVoltage = maximumVoltage;
+    }
 
-	public void setFuzzyLoadMW(CFPFFuzzyNumber fuzzyLoadMW) {
-		this.fuzzyLoadMW = fuzzyLoadMW;
-	}
+    public double getShuntConductanceG() {
+        return shuntConductanceG;
+    }
 
-	public CFPFFuzzyNumber getFuzzyLoadMVAR() {
-		return fuzzyLoadMVAR;
-	}
+    public void setShuntConductanceG(double shuntConductanceG) {
+        this.shuntConductanceG = shuntConductanceG;
+    }
 
-	public void setFuzzyLoadMVAR(CFPFFuzzyNumber fuzzyLoadMVAR) {
-		this.fuzzyLoadMVAR = fuzzyLoadMVAR;
-	}
+    public double getShuntSusceptanceB() {
+        return shuntSusceptanceB;
+    }
+
+    public void setShuntSusceptanceB(double shuntSusceptanceB) {
+        this.shuntSusceptanceB = shuntSusceptanceB;
+    }
+
+    public CFPFFuzzyNumber getFuzzyGenerationMW() {
+        return fuzzyGenerationMW;
+    }
+
+    public void setFuzzyGenerationMW(CFPFFuzzyNumber fuzzyGenerationMW) {
+        this.fuzzyGenerationMW = fuzzyGenerationMW;
+    }
+
+    public CFPFFuzzyNumber getFuzzyGenerationMVAR() {
+        return fuzzyGenerationMVAR;
+    }
+
+    public void setFuzzyGenerationMVAR(CFPFFuzzyNumber fuzzyGenerationMVAR) {
+        this.fuzzyGenerationMVAR = fuzzyGenerationMVAR;
+    }
+
+    public CFPFFuzzyNumber getFuzzyLoadMW() {
+        return fuzzyLoadMW;
+    }
+
+    public void setFuzzyLoadMW(CFPFFuzzyNumber fuzzyLoadMW) {
+        this.fuzzyLoadMW = fuzzyLoadMW;
+    }
+
+    public CFPFFuzzyNumber getFuzzyLoadMVAR() {
+        return fuzzyLoadMVAR;
+    }
+
+    public void setFuzzyLoadMVAR(CFPFFuzzyNumber fuzzyLoadMVAR) {
+        this.fuzzyLoadMVAR = fuzzyLoadMVAR;
+    }
 }
