@@ -47,7 +47,7 @@ public class TapChangeActionTest {
 
         TapChangeAction action = new TapChangeAction("PS1", 2);
         ModificationTask task = action.toTask();
-        task.modify(network);
+        task.modify(network, null);
         assertEquals(2, tapChanger.getTapPosition());
 
         try {

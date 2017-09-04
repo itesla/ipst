@@ -7,6 +7,7 @@
 package eu.itesla_project.modules.contingencies.tasks;
 
 import eu.itesla_project.commons.ITeslaException;
+import eu.itesla_project.computation.ComputationManager;
 import eu.itesla_project.contingency.tasks.ModificationTask;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.iidm.network.Switch;
@@ -28,7 +29,7 @@ public class BreakerOpening implements ModificationTask {
     }
 
     @Override
-    public void modify(Network network) {
+    public void modify(Network network, ComputationManager computationManager) {
         VoltageLevel vl = network.getVoltageLevel(voltageLevelId);
         if (vl == null) {
             throw new ITeslaException("Voltage level '" + voltageLevelId + "' not found");

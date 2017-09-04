@@ -430,7 +430,7 @@ public class StateAnalyzer implements Callable<Void> {
             network.getStateManager().setWorkingState(postContingencyStateId);
             // apply contingency to post contingency state
             logger.info("{}: applying contingency {} to post contingency state {}", stateId, contingency.getId(), postContingencyStateId);
-            contingency.toTask().modify(network);
+            contingency.toTask().modify(network, null);
             try {
                 // run load flow on post contingency state
                 logger.info("{}: running load flow on post contingency state {}", stateId, postContingencyStateId);
