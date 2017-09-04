@@ -51,12 +51,12 @@ public class RulesFacadeResults {
         return indexesResults;
     }
 
-	public List<SecurityIndexType> getInvalidRules() {
-		return invalidRules;
-	}
-	
-	public boolean areRulesAvailable() {
-		return rulesAvailable;
-	}
+    public List<SecurityIndexType> getInvalidRules() {
+        return invalidRules;
+    }
+
+    public boolean areRulesAvailable() {
+        return rulesAvailable;
+    }
 
 }

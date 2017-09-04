@@ -11,16 +11,16 @@ package eu.itesla_project.modules.contingencies;
  * @author Quinary <itesla@quinary.com>
  */
 public class ActionParameterStringValue implements ActionParameterValue {
-	
-	String value;
-	
-	public ActionParameterStringValue(String value) {
-		this.value = value;
-	}
-	
-	@Override
-	public String getValue() {
-		return value;
-	}
+
+    String value;
+
+    public ActionParameterStringValue(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public String getValue() {
+        return value;
+    }
 
 }

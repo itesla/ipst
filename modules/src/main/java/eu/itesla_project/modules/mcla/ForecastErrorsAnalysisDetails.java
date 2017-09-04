@@ -18,51 +18,51 @@ import eu.itesla_project.modules.online.TimeHorizon;
  * @author Quinary <itesla@quinary.com>
  */
 public class ForecastErrorsAnalysisDetails {
-	
-	final String analysisId;
-	DateTime analysisDate;
-	List<TimeHorizon> forecastErrorsDataList = new ArrayList<TimeHorizon>();
-	List<TimeHorizon> forecastErrorsStatisticsList = new ArrayList<TimeHorizon>();
-	List<TimeHorizon> forecastErrorsGuiUncertaintiesList = new ArrayList<TimeHorizon>();
-	
-	public ForecastErrorsAnalysisDetails(String analysisId) {
-		this.analysisId = analysisId;
-	}
-	
-	public String getAnalysisId() {
-		return analysisId;
-	}
 
-	public List<TimeHorizon> getForecastErrorsDataList() {
-		return forecastErrorsDataList;
-	}
+    final String analysisId;
+    DateTime analysisDate;
+    List<TimeHorizon> forecastErrorsDataList = new ArrayList<TimeHorizon>();
+    List<TimeHorizon> forecastErrorsStatisticsList = new ArrayList<TimeHorizon>();
+    List<TimeHorizon> forecastErrorsGuiUncertaintiesList = new ArrayList<TimeHorizon>();
 
-	public List<TimeHorizon> getForecastErrorsStatisticsList() {
-		return forecastErrorsStatisticsList;
-	}
-	
-	public List<TimeHorizon> getForecastErrorsGuiUncertaintiesList() {
-		return forecastErrorsGuiUncertaintiesList;
-	}
-	
-	public void addFEDataTimeHorizon(TimeHorizon timeHorizon) {
-		forecastErrorsDataList.add(timeHorizon);
-	}
-	
-	public void addFEStatisticsTimeHorizon(TimeHorizon timeHorizon) {
-		forecastErrorsStatisticsList.add(timeHorizon);
-	}
-	
-	public void addFEGuiUncertaintiesTimeHorizon(TimeHorizon timeHorizon) {
-		forecastErrorsGuiUncertaintiesList.add(timeHorizon);
-	}
-	
-	public DateTime getAnalysisDate() {
-		return analysisDate;
-	}
+    public ForecastErrorsAnalysisDetails(String analysisId) {
+        this.analysisId = analysisId;
+    }
 
-	public void setAnalysisDate(DateTime analysisDate) {
-		this.analysisDate = analysisDate;
-	}
+    public String getAnalysisId() {
+        return analysisId;
+    }
+
+    public List<TimeHorizon> getForecastErrorsDataList() {
+        return forecastErrorsDataList;
+    }
+
+    public List<TimeHorizon> getForecastErrorsStatisticsList() {
+        return forecastErrorsStatisticsList;
+    }
+
+    public List<TimeHorizon> getForecastErrorsGuiUncertaintiesList() {
+        return forecastErrorsGuiUncertaintiesList;
+    }
+
+    public void addFEDataTimeHorizon(TimeHorizon timeHorizon) {
+        forecastErrorsDataList.add(timeHorizon);
+    }
+
+    public void addFEStatisticsTimeHorizon(TimeHorizon timeHorizon) {
+        forecastErrorsStatisticsList.add(timeHorizon);
+    }
+
+    public void addFEGuiUncertaintiesTimeHorizon(TimeHorizon timeHorizon) {
+        forecastErrorsGuiUncertaintiesList.add(timeHorizon);
+    }
+
+    public DateTime getAnalysisDate() {
+        return analysisDate;
+    }
+
+    public void setAnalysisDate(DateTime analysisDate) {
+        this.analysisDate = analysisDate;
+    }
 
 }

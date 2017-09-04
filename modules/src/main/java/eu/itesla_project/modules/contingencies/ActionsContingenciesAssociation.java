@@ -14,11 +14,11 @@ import java.util.Collection;
  */
 public interface ActionsContingenciesAssociation
 {
-	
-	Collection<String> getContingenciesId();
-	
-	Collection<Constraint> getConstraints();
-	
+
+    Collection<String> getContingenciesId();
+
+    Collection<Constraint> getConstraints();
+
     Collection<String> getActionsId();
 
 }

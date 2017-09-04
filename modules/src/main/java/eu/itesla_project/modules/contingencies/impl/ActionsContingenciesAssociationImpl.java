@@ -21,34 +21,34 @@ import eu.itesla_project.modules.contingencies.Constraint;
  */
 public class ActionsContingenciesAssociationImpl implements ActionsContingenciesAssociation {
 
-	Collection<String> contingencies	= new ArrayList<String>();
-	Collection<Constraint> constraints 	= new ArrayList<Constraint>();
-	Collection<String> actions 			= new ArrayList<String>(); // could be ActionPlan or ElementaryAction 
-	
-	
-	public ActionsContingenciesAssociationImpl(List<String>  _contingencies , List<Constraint>  _constraints, List<String> _actions) 
-	{
-		this.contingencies		=		_contingencies;
-		this.constraints 		= 		_constraints;
-		this.actions 			=		_actions;
-		
-	}
-	
-	@Override
-	public Collection<String> getContingenciesId() {
-		return contingencies;
-		
-	}
+    Collection<String> contingencies    = new ArrayList<String>();
+    Collection<Constraint> constraints     = new ArrayList<Constraint>();
+    Collection<String> actions             = new ArrayList<String>(); // could be ActionPlan or ElementaryAction
 
-	@Override
-	public Collection<Constraint> getConstraints() {
-		return constraints;
-	}
 
-	@Override
-	public Collection<String> getActionsId() {
-		return actions;
-		
-	}
+    public ActionsContingenciesAssociationImpl(List<String>  _contingencies , List<Constraint>  _constraints, List<String> _actions)
+    {
+        this.contingencies        =        _contingencies;
+        this.constraints         =         _constraints;
+        this.actions             =        _actions;
+
+    }
+
+    @Override
+    public Collection<String> getContingenciesId() {
+        return contingencies;
+
+    }
+
+    @Override
+    public Collection<Constraint> getConstraints() {
+        return constraints;
+    }
+
+    @Override
+    public Collection<String> getActionsId() {
+        return actions;
+
+    }
 
 }

@@ -11,5 +11,5 @@ package eu.itesla_project.modules.contingencies;
  * @author Quinary <itesla@quinary.com>
  */
 public enum OperatorType {
-	AND,OR,THEN
+    AND,OR,THEN
 }

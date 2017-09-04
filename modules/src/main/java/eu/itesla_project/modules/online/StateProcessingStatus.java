@@ -13,8 +13,8 @@ import java.util.Map;
  * @author Quinary <itesla@quinary.com>
  */
 public interface StateProcessingStatus {
-	
-	public Map<String,String> getStatus();
-	public String getDetail();
+
+    public Map<String,String> getStatus();
+    public String getDetail();
 
 }

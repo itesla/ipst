@@ -25,55 +25,55 @@ import eu.itesla_project.modules.contingencies.Zone;
  */
 public class ZoneImpl implements Zone {
 
-	private String name;
-	
-	private String description;
-	
-	private BigInteger number;
-	
-	private List<VoltageLevel> voltageLevels;
-	
-	
-	public ZoneImpl(String _name, BigInteger _number, List<VoltageLevel> _voltageLevels ) 
-	{
-		this.name =_name;
-		this.number = _number;
-		this.voltageLevels = _voltageLevels;
-		
-	}
-	
-	public ZoneImpl(String _name, BigInteger _number, List<VoltageLevel> _voltageLevels, String _description) 
-	{
-		this.name =_name;
-		this.number = _number;
-		this.voltageLevels = _voltageLevels;
-		this.description = _description;
-		
-	}
+    private String name;
 
-	@Override
-	public String getName() 
-	{
-			return this.name;
-	}
-	
-	
-	@Override
-	public BigInteger getNumber() 
-	{	
-		return this.number;
-	}
+    private String description;
 
-	@Override
-	public List<VoltageLevel> getVoltageLevels() 	
-	{
-		return voltageLevels;
-	}
+    private BigInteger number;
 
-	@Override
-	public String getDescription() {
-		
-		return this.description;
-	}
+    private List<VoltageLevel> voltageLevels;
+
+
+    public ZoneImpl(String _name, BigInteger _number, List<VoltageLevel> _voltageLevels )
+    {
+        this.name =_name;
+        this.number = _number;
+        this.voltageLevels = _voltageLevels;
+
+    }
+
+    public ZoneImpl(String _name, BigInteger _number, List<VoltageLevel> _voltageLevels, String _description)
+    {
+        this.name =_name;
+        this.number = _number;
+        this.voltageLevels = _voltageLevels;
+        this.description = _description;
+
+    }
+
+    @Override
+    public String getName()
+    {
+            return this.name;
+    }
+
+
+    @Override
+    public BigInteger getNumber()
+    {
+        return this.number;
+    }
+
+    @Override
+    public List<VoltageLevel> getVoltageLevels()
+    {
+        return voltageLevels;
+    }
+
+    @Override
+    public String getDescription() {
+
+        return this.description;
+    }
 
 }

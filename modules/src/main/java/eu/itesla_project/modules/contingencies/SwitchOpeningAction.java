@@ -15,59 +15,59 @@ import eu.itesla_project.contingency.tasks.ModificationTask;
  */
 public class SwitchOpeningAction implements ActionElement {
 
-	private String voltageLevelId;
-	
-	private String equipmentId;
-	
-	private Number implementationTime;
-	
-	private Number achievmentIndex;
+    private String voltageLevelId;
 
-	public SwitchOpeningAction(String vlId, String switchId) {
-		this.voltageLevelId=vlId;
-		this.equipmentId=switchId;
-	}
-	
-	public SwitchOpeningAction(String vlId, String switchId, Number implementationTime, Number achievmentIndex ) {
-		this.voltageLevelId=vlId;
-		this.equipmentId=switchId;
-		this.implementationTime=implementationTime;
-		this.achievmentIndex=achievmentIndex;
-	}
+    private String equipmentId;
 
-	@Override
-	public ActionElementType getType() {
-		 return ActionElementType.SWITCH_OPEN;	
-	}
-	
-	public String getVoltageLevelId() {
-		return voltageLevelId;
-	}
+    private Number implementationTime;
 
-	@Override
-	public String getEquipmentId() {
-		return equipmentId;
-	}
+    private Number achievmentIndex;
 
-	@Override
-	public ModificationTask toTask() {
-		
-		return new BreakerOpening(voltageLevelId, equipmentId);
-	}
+    public SwitchOpeningAction(String vlId, String switchId) {
+        this.voltageLevelId=vlId;
+        this.equipmentId=switchId;
+    }
 
-	@Override
-	public Number getImplementationTime() {
-		return implementationTime;
-	}
+    public SwitchOpeningAction(String vlId, String switchId, Number implementationTime, Number achievmentIndex ) {
+        this.voltageLevelId=vlId;
+        this.equipmentId=switchId;
+        this.implementationTime=implementationTime;
+        this.achievmentIndex=achievmentIndex;
+    }
 
-	@Override
-	public Number getAchievmentIndex() {
-		return 	 achievmentIndex;	
-	}
-	
-	@Override
-	public ModificationTask toTask(ActionParameters parameters) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public ActionElementType getType() {
+         return ActionElementType.SWITCH_OPEN;
+    }
+
+    public String getVoltageLevelId() {
+        return voltageLevelId;
+    }
+
+    @Override
+    public String getEquipmentId() {
+        return equipmentId;
+    }
+
+    @Override
+    public ModificationTask toTask() {
+
+        return new BreakerOpening(voltageLevelId, equipmentId);
+    }
+
+    @Override
+    public Number getImplementationTime() {
+        return implementationTime;
+    }
+
+    @Override
+    public Number getAchievmentIndex() {
+        return      achievmentIndex;
+    }
+
+    @Override
+    public ModificationTask toTask(ActionParameters parameters) {
+        throw new UnsupportedOperationException();
+    }
 
 }

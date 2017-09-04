@@ -11,21 +11,21 @@ package eu.itesla_project.modules.contingencies;
  * @author Quinary <itesla@quinary.com>
  */
 public class UnaryOperator implements Operator {
-	
-	
-	private String actionId;
-	
-	public UnaryOperator(String actionId){
-		this.actionId=actionId;
-	}
 
-	public String getActionId(){
-		return actionId;
-	}
 
-	public String toString(){
-		StringBuffer sb=new StringBuffer();
-		sb.append(getActionId());
-		return sb.toString();
-	}
+    private String actionId;
+
+    public UnaryOperator(String actionId){
+        this.actionId=actionId;
+    }
+
+    public String getActionId(){
+        return actionId;
+    }
+
+    public String toString(){
+        StringBuffer sb=new StringBuffer();
+        sb.append(getActionId());
+        return sb.toString();
+    }
 }

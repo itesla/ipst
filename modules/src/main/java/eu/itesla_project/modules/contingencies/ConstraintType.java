@@ -11,6 +11,6 @@ package eu.itesla_project.modules.contingencies;
  * @author Quinary <itesla@quinary.com>
  */
 public enum ConstraintType {
-	BRANCH_OVERLOAD
+    BRANCH_OVERLOAD
 
 }

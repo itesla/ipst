@@ -15,21 +15,21 @@ import eu.itesla_project.modules.contingencies.Operator;
  * @author Quinary <itesla@quinary.com>
  */
 public class LogicalExpressionImpl implements LogicalExpression {
-	
 
-	private Operator operator;
-	
-	public LogicalExpressionImpl (){
-		
-	}
 
-	@Override
-	public Operator getOperator() {
-		return operator;
-	}
-	public void setOperator(Operator operator) {
-		this.operator=operator;
-		
-	}
+    private Operator operator;
+
+    public LogicalExpressionImpl (){
+
+    }
+
+    @Override
+    public Operator getOperator() {
+        return operator;
+    }
+    public void setOperator(Operator operator) {
+        this.operator=operator;
+
+    }
 
 }

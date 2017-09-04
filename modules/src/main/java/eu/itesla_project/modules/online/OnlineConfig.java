@@ -54,7 +54,7 @@ public class OnlineConfig {
     montecarloSamplerFactoryClass=eu.itesla_project.matlab.mcla.montecarlo.MontecarloSamplerFactoryImpl
     mergeOptimizerFactoryClass=com.rte_france.itesla.merge.MergeOptimizerFactoryImpl
     rulesFacadeFactoryClass=eu.itesla_project.online.security_rules.SecurityRulesFacadeFactory
-	*/
+    */
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OnlineConfig.class);
 
@@ -72,7 +72,7 @@ public class OnlineConfig {
     private final Class<? extends MergeOptimizerFactory>  mergeOptimizerFactory;
     private final Class<? extends RulesFacadeFactory>  rulesFacadeFactory;
 
-	public static OnlineConfig create(Class<? extends ContingenciesAndActionsDatabaseClientFactory> contingencyDbClientFactoryClass,
+    public static OnlineConfig create(Class<? extends ContingenciesAndActionsDatabaseClientFactory> contingencyDbClientFactoryClass,
                                        Class<? extends HistoDbClientFactory> histoDbClientFactoryClass,
                                        Class<? extends RulesDbClientFactory> rulesDbClientFactoryClass,
                                        Class<? extends WCAFactory> wcaFactoryClass,
@@ -176,15 +176,15 @@ public class OnlineConfig {
     }
 
     public Class<? extends WCAFactory> getWcaFactoryClass() { 
-    	return wcaFactoryClass; 
+        return wcaFactoryClass;
     }
 
     public Class<? extends LoadFlowFactory> getLoadFlowFactoryClass() { 
-    	return loadFlowFactoryClass; 
+        return loadFlowFactoryClass;
     }
     
     public Class<? extends OnlineDbFactory> getOnlineDbFactoryClass() { 
-    	return onlineDbFactoryClass; 
+        return onlineDbFactoryClass;
     }
 
     public Class<? extends UncertaintiesAnalyserFactory> getUncertaintiesAnalyserFactoryClass() {
@@ -210,6 +210,6 @@ public class OnlineConfig {
     }
     
     public Class<? extends RulesFacadeFactory> getRulesFacadeFactory() {
-		return rulesFacadeFactory;
-	}
+        return rulesFacadeFactory;
+    }
 }

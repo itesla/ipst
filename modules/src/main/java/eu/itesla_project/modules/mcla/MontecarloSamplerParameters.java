@@ -13,24 +13,24 @@ import eu.itesla_project.modules.online.TimeHorizon;
  * @author Quinary <itesla@quinary.com>
  */
 public class MontecarloSamplerParameters {
-	
-	private final TimeHorizon timeHorizon;
-	private final String feAnalysisId;
-	private final int nSamples;
 
-	public MontecarloSamplerParameters(TimeHorizon timeHorizon, String feAnalysisId, int nSamples) {
-		this.timeHorizon = timeHorizon;
-		this.feAnalysisId = feAnalysisId;
-		this.nSamples = nSamples;
-	}
-	
-	public TimeHorizon getTimeHorizon() {
-		return timeHorizon;
-	}
-	
-	public String getFeAnalysisId() {
-		return feAnalysisId;
-	}
+    private final TimeHorizon timeHorizon;
+    private final String feAnalysisId;
+    private final int nSamples;
 
-	public int getnSamples() { return nSamples; }
+    public MontecarloSamplerParameters(TimeHorizon timeHorizon, String feAnalysisId, int nSamples) {
+        this.timeHorizon = timeHorizon;
+        this.feAnalysisId = feAnalysisId;
+        this.nSamples = nSamples;
+    }
+
+    public TimeHorizon getTimeHorizon() {
+        return timeHorizon;
+    }
+
+    public String getFeAnalysisId() {
+        return feAnalysisId;
+    }
+
+    public int getnSamples() { return nSamples; }
 }
