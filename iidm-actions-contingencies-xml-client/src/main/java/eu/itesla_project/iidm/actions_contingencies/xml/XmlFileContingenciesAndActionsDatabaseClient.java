@@ -239,23 +239,23 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
             }
             for (Contingency cont : actionContingencies.getContingencies().getContingency()) {
                 String contingency = cont.getName();
-				LOGGER.info("contingency: {}", contingency);
+                LOGGER.info("contingency: {}", contingency);
                 List<ContingencyElement> elements = new ArrayList<>();
-                for (Equipment eq : cont.getEquipments().getEquipment()) {					
+                for (Equipment eq : cont.getEquipments().getEquipment()) {
                     String id = eq.getId();
                     if (network.getLine(id) != null) {
-						LOGGER.info("contingency: {} - element BranchContingency, id: {}", contingency, id);
+                        LOGGER.info("contingency: {} - element BranchContingency, id: {}", contingency, id);
                         elements.add(new BranchContingency(id));
                     } else if (network.getGenerator(id) != null) {
-						LOGGER.info("contingency: {} - element GeneratorContingency, id: {}", contingency, id);
+                        LOGGER.info("contingency: {} - element GeneratorContingency, id: {}", contingency, id);
                         elements.add(new GeneratorContingency(id));
                     } else if (tieLines.containsKey(id)) {
-						LOGGER.info("contingency: {} - element BranchContingency, tieLines id: {}", contingency, tieLines.get(id));
+                        LOGGER.info("contingency: {} - element BranchContingency, tieLines id: {}", contingency, tieLines.get(id));
                         elements.add(new BranchContingency(tieLines.get(id)));
                     } else {
                         LOGGER.warn("Contingency element '{}' of contingency {} not found in network {}, skipping it", id, contingency, network.getId());
                     }
-                }					
+                }
                 List<String> zones = new ArrayList<String>();
                 Zones contZones = cont.getZones();
                 if ( contZones != null ) {
@@ -295,7 +295,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
     public Set<eu.itesla_project.modules.contingencies.Zone> getZones() {
         LOGGER.info("Getting zones");
         Set<eu.itesla_project.modules.contingencies.Zone> res = new HashSet<eu.itesla_project.modules.contingencies.Zone>();
-        Zones zones	=  actionContingencies.getZones();
+        Zones zones    =  actionContingencies.getZones();
         if ( zones != null ) {
             for ( Zone z: zones.getZone() )
             {
@@ -342,7 +342,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
         Objects.requireNonNull(network, "network is null");
         LOGGER.info("Getting zones for network {}", network.getId());
         Set<eu.itesla_project.modules.contingencies.Zone> res = new HashSet<eu.itesla_project.modules.contingencies.Zone>();
-        Zones zones	= actionContingencies.getZones();
+        Zones zones    = actionContingencies.getZones();
         if ( zones != null ) {
             for (Zone z: zones.getZone() )
             {
@@ -367,7 +367,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
     public Set<eu.itesla_project.modules.contingencies.ActionPlan> getActionPlans( Network network) {
         Objects.requireNonNull(network, "network is null");
         LOGGER.info("Getting action plans for network {}", network.getId());
-        Set<eu.itesla_project.modules.contingencies.ActionPlan> netActionPlans = new HashSet<eu.itesla_project.modules.contingencies.ActionPlan>();		
+        Set<eu.itesla_project.modules.contingencies.ActionPlan> netActionPlans = new HashSet<eu.itesla_project.modules.contingencies.ActionPlan>();
         List<eu.itesla_project.modules.contingencies.ActionPlan>  actionPlans = this.getActionPlans();
 
         if (actionPlans == null) 
@@ -418,14 +418,14 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
 
             for (ActionPlan plan : actPlans) 
             { 
-                if (plan.getName().equals(id))	
+                if (plan.getName().equals(id))
                 {
 
                     Map<BigInteger, ActionPlanOption> priorityOptions = new TreeMap<BigInteger, ActionPlanOption>();
 
                     for (eu.itesla_project.iidm.actions_contingencies.xml.mapping.Option op : plan.getOption())
                     {
-                        Map<BigInteger, String> actionMap =  new TreeMap<BigInteger,String>();		
+                        Map<BigInteger, String> actionMap =  new TreeMap<BigInteger,String>();
                         for (eu.itesla_project.iidm.actions_contingencies.xml.mapping.Action ac: op.getAction()) 
                             actionMap.put(ac.getNum(),  ac.getId());
 
@@ -442,11 +442,11 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
                     }
                     LOGGER.info("{} action plan found", id);
                     return new ActionPlanImpl(plan.getName(), plan.getDescription().getInfo(), zonesName , priorityOptions);
-                }					
+                }
             }
         }
         return null;
-    }	
+    }
 
     /*
      * 
@@ -472,7 +472,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
 
                 for (eu.itesla_project.iidm.actions_contingencies.xml.mapping.Option op : plan.getOption())
                 {
-                    Map<BigInteger, String> sequenceActions =  new TreeMap<BigInteger,String>();						
+                    Map<BigInteger, String> sequenceActions =  new TreeMap<BigInteger,String>();
                     for (eu.itesla_project.iidm.actions_contingencies.xml.mapping.Action ac: op.getAction()) 
                         sequenceActions.put(ac.getNum(),  ac.getId());
 
@@ -514,7 +514,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
             if(exp.getOr().getOperand().size()==2)
                 le.setOperator( new BinaryOperator(OperatorType.OR,toOperator(exp.getOr().getOperand().get(0), sequenceActions),toOperator(exp.getOr().getOperand().get(1), sequenceActions)) );
             else
-                throw new RuntimeException("Operand mismatch");	
+                throw new RuntimeException("Operand mismatch");
         }
         else if(exp.getThen() != null)
         {
@@ -525,26 +525,26 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
         }
         else if(exp.getOperand() != null)
         {
-            le.setOperator(toOperator(exp.getOperand(), sequenceActions));	
+            le.setOperator(toOperator(exp.getOperand(), sequenceActions));
         }
 
         return le;
     }
 
-    private List<Object> getFilteredContent(Operand op)		
+    private List<Object> getFilteredContent(Operand op)
     {
 
-        if(op.getContent().size() >1 )	
-        {	
+        if(op.getContent().size() >1 )
+        {
             ArrayList<Object> filtered = new ArrayList<Object>();
             for(Object o : op.getContent())
-            {	
-                if(o instanceof String)	
+            {
+                if(o instanceof String)
                     continue;
-                filtered.add(o);	
+                filtered.add(o);
             }
-            return filtered;   	
-        }    	
+            return filtered;
+        }
         else
             return op.getContent();
     }
@@ -560,9 +560,9 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
         List<Object> content=getFilteredContent(op);
 
         if( isConstant(op))
-        {		
+        {
             String v=sequenceActions.get(new BigInteger((String)content.get(0)));
-            return new UnaryOperator(v);			
+            return new UnaryOperator(v);
         }
 
         for(Object o : content)
@@ -619,9 +619,9 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
 
             for (Association association : xmlAssociations) 
             {
-                List<Contingency> 	xmlContingencies	=association.getContingency();
-                List<Constraint> 	xmlConstraints		=association.getConstraint();
-                List<Action> 		xmlActions 			=association.getAction();
+                List<Contingency>     xmlContingencies    =association.getContingency();
+                List<Constraint>     xmlConstraints        =association.getConstraint();
+                List<Action>         xmlActions             =association.getAction();
 
                 List<String> ctgIds = new ArrayList<String>();
                 for (Contingency c: xmlContingencies) 
@@ -645,7 +645,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
 
                 associationList.add(new ActionsContingenciesAssociationImpl(ctgIds , constraints, actionIds) );
 
-            }		
+            }
 
         }
         LOGGER.info("Found {} actions/contigencies associations", associationList.size());
@@ -668,13 +668,13 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
         {
             for (Association association : xmlAssociations) 
             {
-                List<Contingency> 	xmlContingencies	=association.getContingency();
+                List<Contingency>     xmlContingencies    =association.getContingency();
                 List<String> contingenciesIds = xmlContingencies.stream().map(Contingency::getId).collect(Collectors.toList());
 
                 if (contingenciesIds.contains(contingencyId))
                 { 
-                    List<Constraint> 	xmlConstraints		=association.getConstraint();
-                    List<Action> 		xmlActions 			=association.getAction();
+                    List<Constraint>     xmlConstraints        =association.getConstraint();
+                    List<Action>         xmlActions             =association.getAction();
 
                     List<String> ctgIds = new ArrayList<String>();
                     for (Contingency c: xmlContingencies) 
@@ -698,7 +698,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
 
                     associationList.add(new ActionsContingenciesAssociationImpl(ctgIds , constraints, actionIds) );
                 }
-            }		
+            }
         }
         LOGGER.info("Found {} actions/contingencies associations for contingency {}", associationList.size(), contingencyId);
         return associationList;
@@ -712,7 +712,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
     public List<String> getActionsByContingency(String contingencyId) {
         Objects.requireNonNull(contingencyId, "contingency id is null");
         LOGGER.info("Getting actions for contingency {}", contingencyId);
-        List<String> actions = new ArrayList<String>();		
+        List<String> actions = new ArrayList<String>();
 
         ActionCtgAssociations actCont = actionContingencies.getActionCtgAssociations();
 
@@ -767,9 +767,9 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
             }
             for (Association association : xmlAssociations) 
             {
-                List<Contingency> 	xmlContingencies	=association.getContingency();
-                List<Constraint> 	xmlConstraints		=association.getConstraint();
-                List<Action> 		xmlActions 			=association.getAction();
+                List<Contingency>     xmlContingencies    =association.getContingency();
+                List<Constraint>     xmlConstraints        =association.getConstraint();
+                List<Action>         xmlActions             =association.getAction();
 
                 List<String> ctgIds = new ArrayList<String>();
                 for (Contingency c: xmlContingencies) 
@@ -785,7 +785,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
                                 {
                                     if (network.getIdentifiable(eq.getId())!= null){
                                         ctgIds.add(c.getId());
-                                        break;	
+                                        break;
                                     } else if (tieLines.containsKey(eq.getId())) {
                                         ctgIds.add(c.getId());
                                         break;
@@ -804,7 +804,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
                 List<eu.itesla_project.modules.contingencies.Constraint> constraints = new ArrayList<eu.itesla_project.modules.contingencies.Constraint>();
                 for (Constraint con: xmlConstraints) 
                 {
-                    if (network.getIdentifiable(con.getEquipment())!= null)	
+                    if (network.getIdentifiable(con.getEquipment())!= null)
                         constraints.add(new ConstraintImpl(con.getEquipment(), con.getValue(), XmlActionsContingenciesUtils.getConstraintType(con.getType())));
                     else if (tieLines.containsKey(con.getEquipment()))
                         constraints.add(new ConstraintImpl(tieLines.get(con.getEquipment()), con.getValue(), XmlActionsContingenciesUtils.getConstraintType(con.getType())));
@@ -836,14 +836,14 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
 
                 associationList.add(new ActionsContingenciesAssociationImpl(ctgIds , constraints, actionIds) );
 
-            }		
+            }
 
         }
         LOGGER.info("Found {} actions/contingencies associations for network {}", associationList.size(), network.getId());
         return associationList;
     }
 
-    private List<ActionElement> getActionElements(ElementaryAction ele,	 Network network) {
+    private List<ActionElement> getActionElements(ElementaryAction ele,     Network network) {
         if ( zonesMapping.isEmpty() )
             getZones();
 
