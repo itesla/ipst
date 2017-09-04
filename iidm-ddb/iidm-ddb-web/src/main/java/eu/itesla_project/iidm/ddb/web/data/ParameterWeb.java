@@ -20,7 +20,7 @@ import eu.itesla_project.iidm.ddb.model.Parameter;
 public class ParameterWeb {
 
     @Inject
-	private Logger log;
+    private Logger log;
 
     private String type;
     private String name;
@@ -28,60 +28,60 @@ public class ParameterWeb {
     
     
     public ParameterWeb() {
-    	this.type = "";
-		this.name = "";
-		this.value = "";
-		
-	}
+        this.type = "";
+        this.name = "";
+        this.value = "";
+
+    }
     
     public ParameterWeb(String type, String name, Object value) {
-		super();
-		this.type = type;
-		this.name = name;
-		this.value = value;
-	}
+        super();
+        this.type = type;
+        this.name = name;
+        this.value = value;
+    }
 
     public ParameterWeb( String name, Object value) {
-		super();
-		this.type = null;
-		this.name = name;
-		this.value = value;
-	}
+        super();
+        this.type = null;
+        this.name = name;
+        this.value = value;
+    }
 
 
-	public String getType() {
-		return type;
-	}
+    public String getType() {
+        return type;
+    }
 
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
 
-	public Object getValue() {
-		return value;
-	}
+    public Object getValue() {
+        return value;
+    }
 
 
-	public void setValue(Object value) {
-		this.value = value;
-	}
+    public void setValue(Object value) {
+        this.value = value;
+    }
 
     
     public String toString(){
-    	return "Parameter [ Type: " +this.type+ " Name: "+ this.name+" Value: "+this.value + "]";
-    	
+        return "Parameter [ Type: " +this.type+ " Name: "+ this.name+" Value: "+this.value + "]";
+
     }
     
   

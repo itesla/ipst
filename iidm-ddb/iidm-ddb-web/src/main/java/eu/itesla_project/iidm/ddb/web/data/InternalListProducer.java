@@ -29,10 +29,10 @@ import eu.itesla_project.iidm.ddb.service.DDBManager;
 public class InternalListProducer {
 
     @Inject
-	private Logger log;
+    private Logger log;
     
-	@EJB
-	private DDBManager pmanager;
+    @EJB
+    private DDBManager pmanager;
 
     private List<Internal> internals;
     
@@ -47,8 +47,8 @@ public class InternalListProducer {
 
     @PostConstruct
     public void retrieveAllInternals() {
-    	log.log(Level.INFO," produces internals list ");
-    	this.internals= pmanager.findInternalsAll();
-    	log.log(Level.INFO," produced internals list size "+internals.size());
+        log.log(Level.INFO," produces internals list ");
+        this.internals= pmanager.findInternalsAll();
+        log.log(Level.INFO," produced internals list size "+internals.size());
     }
 }

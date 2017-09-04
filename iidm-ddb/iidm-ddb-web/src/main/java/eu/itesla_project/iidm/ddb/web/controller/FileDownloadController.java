@@ -31,13 +31,13 @@ public class FileDownloadController {
     private StreamedContent file;  
       
     public FileDownloadController() {          
-    	System.out.println("fileDowloadController");
+        System.out.println("fileDowloadController");
         InputStream stream = ((ServletContext)FacesContext.getCurrentInstance().getExternalContext().getContext()).getResourceAsStream("/modelTemplateContainer/test.jpg");  
         file = new DefaultStreamedContent(stream, "image/jpg", "test.jpg");  
     }
   
     public StreamedContent getFile() {  
-    	System.out.println("return file "+file.getName());
+        System.out.println("return file "+file.getName());
         return file;  
     }
     
@@ -46,20 +46,20 @@ public class FileDownloadController {
     }  
     
     public void downLoadFile(ModelTemplate mt, String mapKey){
-    	if (mt!= null) {
-    		System.out.println("mt id  "+mt.getId() + " mt comment "+mt.getComment() + "mapkey "+mapKey );
-    		byte[]  fileMap=mt.getData(mapKey);
-    		;
-    		ByteArrayInputStream bis = new ByteArrayInputStream(fileMap);
-    		file = new  DefaultStreamedContent(bis, "text/plain", mapKey+".txt");
-    		
-    		}
-    	else {
-    		System.out.println("mt is null ");
-    		
-    	}
-    	
-    	
+        if (mt!= null) {
+            System.out.println("mt id  "+mt.getId() + " mt comment "+mt.getComment() + "mapkey "+mapKey );
+            byte[]  fileMap=mt.getData(mapKey);
+            ;
+            ByteArrayInputStream bis = new ByteArrayInputStream(fileMap);
+            file = new  DefaultStreamedContent(bis, "text/plain", mapKey+".txt");
+
+            }
+        else {
+            System.out.println("mt is null ");
+
+        }
+
+
     }
     
 }  

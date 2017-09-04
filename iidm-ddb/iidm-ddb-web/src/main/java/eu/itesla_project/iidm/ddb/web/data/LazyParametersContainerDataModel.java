@@ -22,52 +22,52 @@ import eu.itesla_project.iidm.ddb.service.DDBManager;
  */
 public class LazyParametersContainerDataModel extends LazyDataModel<ParametersContainer> {
 
-	
-	private static final long serialVersionUID = 1L;
-		
-	private DDBManager pmanager;
+
+    private static final long serialVersionUID = 1L;
+
+    private DDBManager pmanager;
    
 
    
-	
+
    public LazyParametersContainerDataModel( DDBManager pmanager)
    {
-	   this.pmanager=pmanager;
-	   setPageSize(10);
-	   setRowCount(pmanager.findParametersContainerAllCount());
+       this.pmanager=pmanager;
+       setPageSize(10);
+       setRowCount(pmanager.findParametersContainerAllCount());
    }
-	
-	@Override
-	public int getRowCount() {
-		return pmanager.findParametersContainerAllCount();
-	}
 
-	@Override
-	public ParametersContainer getRowData(String id) {
-		return pmanager.findParametersContainer(id);
-	}
+    @Override
+    public int getRowCount() {
+        return pmanager.findParametersContainerAllCount();
+    }
 
-	@Override
-	public Object getRowKey(ParametersContainer object) {
-		return object.getDdbId();
-	}
-	
-	
-	
+    @Override
+    public ParametersContainer getRowData(String id) {
+        return pmanager.findParametersContainer(id);
+    }
 
-	@Override
-	public List<ParametersContainer> load(int first, int pageSize,
-			List<SortMeta> multiSortMeta, Map<String, String> filters) {
-		return pmanager.findParametersContainerAllMaxResults(first, pageSize);
-	}
+    @Override
+    public Object getRowKey(ParametersContainer object) {
+        return object.getDdbId();
+    }
 
-	@Override
-	public List<ParametersContainer> load(int first, int pageSize, String sortField,
-			SortOrder sortOrder, Map<String, String> filters) {
-		List<ParametersContainer> res = pmanager.findParametersContainerAllMaxResults(first, pageSize);
-		return res;
-	}
 
-	
-	
+
+
+    @Override
+    public List<ParametersContainer> load(int first, int pageSize,
+            List<SortMeta> multiSortMeta, Map<String, String> filters) {
+        return pmanager.findParametersContainerAllMaxResults(first, pageSize);
+    }
+
+    @Override
+    public List<ParametersContainer> load(int first, int pageSize, String sortField,
+            SortOrder sortOrder, Map<String, String> filters) {
+        List<ParametersContainer> res = pmanager.findParametersContainerAllMaxResults(first, pageSize);
+        return res;
+    }
+
+
+
 }

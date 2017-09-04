@@ -25,18 +25,18 @@ public class FloatValidator implements Validator {
     @Override
     public void validate(FacesContext context, UIComponent component, Object objValue) throws ValidatorException {
         String objString = objValue.toString();
-    	ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
+        ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
         boolean valid = true;
         try {
-        	Float valueFloat=Float.valueOf(objString);
+            Float valueFloat=Float.valueOf(objString);
         }catch(NumberFormatException nEx){
-        	valid=false;
-        	
+            valid=false;
+
         }
         if (!valid) {
             FacesMessage message = new FacesMessage( FacesMessage.SEVERITY_ERROR, bundle.getString("invalid.float.summary.msg"),
-            		bundle.getString("invalid.float.detail.msg"));
-            		
+                    bundle.getString("invalid.float.detail.msg"));
+
             throw new ValidatorException(message);
         }
     }
