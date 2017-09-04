@@ -14,49 +14,49 @@ import java.io.File;
  */
 public class ModelicaRegulatorModelExtractor extends ModelicaModelExtractor
 {
-	ModelicaRegulatorModelExtractor(String libPackageName, String regulatorsPackageName)
-	{
-		this.libPackageName = libPackageName;
-		this.regulatorsPackageName = regulatorsPackageName;
-	}
-	
-	@Override
-	public void onStartFile(File file)
-	{
-		String newLine = System.getProperty("line.separator");
-		super.onStartFile(file);
-		text.append(ModelicaGrammar.PACKAGE);
-		text.append(" ");
-		text.append(libPackageName);
-		text.append(newLine);
-		text.append(ModelicaGrammar.PACKAGE);
-		text.append(" ");
-		text.append(regulatorsPackageName);
-		text.append(newLine);
-	}
+    ModelicaRegulatorModelExtractor(String libPackageName, String regulatorsPackageName)
+    {
+        this.libPackageName = libPackageName;
+        this.regulatorsPackageName = regulatorsPackageName;
+    }
 
-	@Override
-	public void onEndFile(File file)
-	{
-		String newLine = System.getProperty("line.separator");
-		super.onEndFile(file);
-		text.append(ModelicaGrammar.END);
-		text.append(" ");
-		text.append(regulatorsPackageName);
-		text.append(";");
-		text.append(newLine);
-		text.append(ModelicaGrammar.END);
-		text.append(" ");
-		text.append(libPackageName);
-		text.append(";");
-	}
+    @Override
+    public void onStartFile(File file)
+    {
+        String newLine = System.getProperty("line.separator");
+        super.onStartFile(file);
+        text.append(ModelicaGrammar.PACKAGE);
+        text.append(" ");
+        text.append(libPackageName);
+        text.append(newLine);
+        text.append(ModelicaGrammar.PACKAGE);
+        text.append(" ");
+        text.append(regulatorsPackageName);
+        text.append(newLine);
+    }
 
-	@Override
-	public String getMainClassQualifiedName()
-	{
-		return libPackageName + "." + regulatorsPackageName + "." + mainClassQualifiedName;
-	}
+    @Override
+    public void onEndFile(File file)
+    {
+        String newLine = System.getProperty("line.separator");
+        super.onEndFile(file);
+        text.append(ModelicaGrammar.END);
+        text.append(" ");
+        text.append(regulatorsPackageName);
+        text.append(";");
+        text.append(newLine);
+        text.append(ModelicaGrammar.END);
+        text.append(" ");
+        text.append(libPackageName);
+        text.append(";");
+    }
 
-	private String libPackageName;
-	private String regulatorsPackageName;
+    @Override
+    public String getMainClassQualifiedName()
+    {
+        return libPackageName + "." + regulatorsPackageName + "." + mainClassQualifiedName;
+    }
+
+    private String libPackageName;
+    private String regulatorsPackageName;
 }

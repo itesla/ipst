@@ -12,13 +12,13 @@ package eu.itesla_project.iidm.ddb.modelica_imp_exp;
  */
 public interface CommentScannerEventHandler
 {
-	void onQuoted(String quoted, boolean open, boolean close);
+    void onQuoted(String quoted, boolean open, boolean close);
 
-	void onLineComment(String lineComment);
+    void onLineComment(String lineComment);
 
-	void onBlockComment(String blockComment, boolean open, boolean close);
+    void onBlockComment(String blockComment, boolean open, boolean close);
 
-	void onText(String text);
+    void onText(String text);
 
-	void onLineScanned(String line);
+    void onLineScanned(String line);
 }

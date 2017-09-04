@@ -14,15 +14,15 @@ import java.io.File;
  */
 public interface ModelicaParserEventHandler
 {
-	void onStartFile(File file);
+    void onStartFile(File file);
 
-	void onEndFile(File file);
+    void onEndFile(File file);
 
-	void onStartClass(String specifier, String ident, String comment, boolean isComposition, String line);
+    void onStartClass(String specifier, String ident, String comment, boolean isComposition, String line);
 
-	void onEndClass(String ident);
+    void onEndClass(String ident);
 
-	void onParameter(ModelicaParameter param);
+    void onParameter(ModelicaParameter param);
 
-	void onLine(String line);
+    void onLine(String line);
 }

@@ -12,7 +12,7 @@ package eu.itesla_project.iidm.ddb.modelica_imp_exp;
  */
 public class ModelicaParameter
 {
-	public String	type;
-	public String	name;
-	public String	value;
+    public String    type;
+    public String    name;
+    public String    value;
 }

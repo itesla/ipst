@@ -19,73 +19,73 @@ import java.util.List;
  */
 public class ModelicaMainClassExtractor extends ModelicaHierarchyExtractor
 {
-	@Override
-	public void onStartFile(File file)
-	{
-		super.onStartFile(file);
-		initFile(file);
-	}
+    @Override
+    public void onStartFile(File file)
+    {
+        super.onStartFile(file);
+        initFile(file);
+    }
 
-	@Override
-	public void onStartClass(String specifier, String ident, String comment, boolean isComposition, String line)
-	{
-		super.onStartClass(specifier, ident, comment, isComposition, line);
-		log.debug("Class [" + specifier + "], [" + ident + "]");
-		checkMainClass();
-	}
+    @Override
+    public void onStartClass(String specifier, String ident, String comment, boolean isComposition, String line)
+    {
+        super.onStartClass(specifier, ident, comment, isComposition, line);
+        log.debug("Class [" + specifier + "], [" + ident + "]");
+        checkMainClass();
+    }
 
-	@Override
-	public void onParameter(ModelicaParameter param)
-	{
-		ModelicaHierarchy.Item currentItem = getHierarchy().getStack().peek();
-		if (currentItem == mainClass)
-		{
-			parameters.add(param);
-		}
-	}
+    @Override
+    public void onParameter(ModelicaParameter param)
+    {
+        ModelicaHierarchy.Item currentItem = getHierarchy().getStack().peek();
+        if (currentItem == mainClass)
+        {
+            parameters.add(param);
+        }
+    }
 
-	public String getMainClassQualifiedName()
-	{
-		return mainClassQualifiedName;
-	}
-	
-	public String getMainClassComment()
-	{
-		return mainClass.comment;
-	}
-	
-	public List<ModelicaParameter> getParameters()
-	{
-		return parameters;
-	}
+    public String getMainClassQualifiedName()
+    {
+        return mainClassQualifiedName;
+    }
 
-	void initFile(File file)
-	{
-		mainClass = null;
-		mainClassQualifiedName = null;
-		parameters = null;
-	}
+    public String getMainClassComment()
+    {
+        return mainClass.comment;
+    }
 
-	void checkMainClass()
-	{
-		// This is not the main class if the main class has already been identified
-		if (mainClass != null) return;
+    public List<ModelicaParameter> getParameters()
+    {
+        return parameters;
+    }
 
-		// Consider if the current context of hierarchy is the main class
-		ModelicaHierarchy.Item current = getHierarchy().getStack().peek();
+    void initFile(File file)
+    {
+        mainClass = null;
+        mainClassQualifiedName = null;
+        parameters = null;
+    }
 
-		// Packages are not considered
-		if (current.isClassGroup) return;
+    void checkMainClass()
+    {
+        // This is not the main class if the main class has already been identified
+        if (mainClass != null) return;
 
-		// We have found the main class
-		mainClass = current;
-		mainClassQualifiedName = getHierarchy().getQualifiedName();
-		parameters = new ArrayList<ModelicaParameter>();
-	}
+        // Consider if the current context of hierarchy is the main class
+        ModelicaHierarchy.Item current = getHierarchy().getStack().peek();
 
-	ModelicaHierarchy.Item	mainClass;
-	String					mainClassQualifiedName;
-	List<ModelicaParameter>	parameters;
+        // Packages are not considered
+        if (current.isClassGroup) return;
 
-	static final Logger log	= LoggerFactory.getLogger(ModelicaMainClassExtractor.class);
+        // We have found the main class
+        mainClass = current;
+        mainClassQualifiedName = getHierarchy().getQualifiedName();
+        parameters = new ArrayList<ModelicaParameter>();
+    }
+
+    ModelicaHierarchy.Item    mainClass;
+    String                    mainClassQualifiedName;
+    List<ModelicaParameter>    parameters;
+
+    static final Logger log    = LoggerFactory.getLogger(ModelicaMainClassExtractor.class);
 }

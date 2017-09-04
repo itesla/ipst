@@ -14,24 +14,24 @@ import java.io.File;
  */
 public class ModelicaModelExtractor extends ModelicaMainClassExtractor
 {
-	@Override
-	public void onStartFile(File file)
-	{
-		super.onStartFile(file);
-		text = new StringBuilder(8192);
-	}
+    @Override
+    public void onStartFile(File file)
+    {
+        super.onStartFile(file);
+        text = new StringBuilder(8192);
+    }
 
-	@Override
-	public void onLine(String line)
-	{
-		text.append(line);
-		text.append(System.getProperty("line.separator"));
-	}
-	
-	public String getText()
-	{
-		return text.toString();
-	}
+    @Override
+    public void onLine(String line)
+    {
+        text.append(line);
+        text.append(System.getProperty("line.separator"));
+    }
 
-	StringBuilder text;
+    public String getText()
+    {
+        return text.toString();
+    }
+
+    StringBuilder text;
 }

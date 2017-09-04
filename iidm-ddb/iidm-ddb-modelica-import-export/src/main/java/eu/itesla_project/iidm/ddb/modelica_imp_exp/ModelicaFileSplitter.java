@@ -21,151 +21,151 @@ import java.util.Iterator;
  */
 public class ModelicaFileSplitter extends ModelicaHierarchyExtractor
 {
-	public ModelicaFileSplitter(File folder)
-	{
-		this.folder = folder;
-	}
+    public ModelicaFileSplitter(File folder)
+    {
+        this.folder = folder;
+    }
 
-	@Override
-	public void onStartClass(String specifier, String ident, String comment, boolean isComposition, String line)
-	{
-		super.onStartClass(specifier, ident, comment, isComposition, line);
+    @Override
+    public void onStartClass(String specifier, String ident, String comment, boolean isComposition, String line)
+    {
+        super.onStartClass(specifier, ident, comment, isComposition, line);
 
-		// Only start new files on class that are not groups (models, records, classes, but not packages)
-		// Functions do not start new files
-		if (isStartOfSplit()) startSplitFile();
-	}
+        // Only start new files on class that are not groups (models, records, classes, but not packages)
+        // Functions do not start new files
+        if (isStartOfSplit()) startSplitFile();
+    }
 
-	@Override
-	public void onEndClass(String ident)
-	{
-		if (isEndOfSplit()) endSplitFile();
-		super.onEndClass(ident);
-	}
+    @Override
+    public void onEndClass(String ident)
+    {
+        if (isEndOfSplit()) endSplitFile();
+        super.onEndClass(ident);
+    }
 
-	@Override
-	public void onLine(String line)
-	{
-		super.onLine(line);
-		if (writer == null) return;
-		
-		try
-		{
-			writer.write(line);
-			writer.newLine();
-		}
-		catch (IOException x)
-		{
-			log.error("onLine, writing line [" + line + "]");
-		}
-	}
+    @Override
+    public void onLine(String line)
+    {
+        super.onLine(line);
+        if (writer == null) return;
 
-	boolean isStartOfSplit()
-	{
-		ModelicaHierarchy.Item current = getHierarchy().getStack().peek();
-		// Consider if the current context of hierarchy must go on a separate file
+        try
+        {
+            writer.write(line);
+            writer.newLine();
+        }
+        catch (IOException x)
+        {
+            log.error("onLine, writing line [" + line + "]");
+        }
+    }
 
-		// Packages do not start split files
-		if (current.isClassGroup) return false;
+    boolean isStartOfSplit()
+    {
+        ModelicaHierarchy.Item current = getHierarchy().getStack().peek();
+        // Consider if the current context of hierarchy must go on a separate file
 
-		// If we have decided to split contents to a file, send all output to that file until
-		// we receive the end of the item that caused the split (the hierarchy item is ended)
-		if (writer != null) return false;
+        // Packages do not start split files
+        if (current.isClassGroup) return false;
 
-		return true;
-	}
+        // If we have decided to split contents to a file, send all output to that file until
+        // we receive the end of the item that caused the split (the hierarchy item is ended)
+        if (writer != null) return false;
 
-	boolean isEndOfSplit()
-	{
-		ModelicaHierarchy.Item currentItem = getHierarchy().getStack().peek();
-		return currentItem == splitItem;
-	}
+        return true;
+    }
 
-	void startSplitFile()
-	{
-		ModelicaHierarchy h = getHierarchy();
-		splitItem = h.getStack().peek();
+    boolean isEndOfSplit()
+    {
+        ModelicaHierarchy.Item currentItem = getHierarchy().getStack().peek();
+        return currentItem == splitItem;
+    }
 
-		try
-		{
-			// Close current writer
-			if (writer != null) writer.close();
+    void startSplitFile()
+    {
+        ModelicaHierarchy h = getHierarchy();
+        splitItem = h.getStack().peek();
 
-			// Create the new writer
-			String prefix = h.getQualifiedName() + ".";
-			String suffix = ".mo";
-			// We use createTempFile to avoid over-writing files if only difference in qualified name is case (Windows, Mac OS, ...)
-			writer = new BufferedWriter(new FileWriter(File.createTempFile(prefix, suffix, folder)));
+        try
+        {
+            // Close current writer
+            if (writer != null) writer.close();
 
-			// Write header for current element on top of hierarchy
-			for (Iterator<ModelicaHierarchy.Item> k = h.stack.descendingIterator(); k.hasNext();)
-			{
-				ModelicaHierarchy.Item item = k.next();
+            // Create the new writer
+            String prefix = h.getQualifiedName() + ".";
+            String suffix = ".mo";
+            // We use createTempFile to avoid over-writing files if only difference in qualified name is case (Windows, Mac OS, ...)
+            writer = new BufferedWriter(new FileWriter(File.createTempFile(prefix, suffix, folder)));
 
-				// Only write groups
-				if (!item.isClassGroup) continue;
+            // Write header for current element on top of hierarchy
+            for (Iterator<ModelicaHierarchy.Item> k = h.stack.descendingIterator(); k.hasNext();)
+            {
+                ModelicaHierarchy.Item item = k.next();
 
-				// We could write the original line (including description/comments)
-				// or a simplified version with only class specifier and identifier
-				if (OUTPUT_ORIGINAL_CLASS_SPECIFIER_LINES)
-				{
-					writer.write(item.line);
-				}
-				else
-				{
-					writer.write(item.getIndentation());
-					writer.write(item.specifier);
-					writer.write(" ");
-					writer.write(item.ident);
-				}
-				writer.newLine();
-			}
-		}
-		catch (IOException x)
-		{
-			log.error("startSplitFile for [" + h.getQualifiedName() + "]");
-		}
-	}
+                // Only write groups
+                if (!item.isClassGroup) continue;
 
-	void endSplitFile()
-	{
-		splitItem = null;
+                // We could write the original line (including description/comments)
+                // or a simplified version with only class specifier and identifier
+                if (OUTPUT_ORIGINAL_CLASS_SPECIFIER_LINES)
+                {
+                    writer.write(item.line);
+                }
+                else
+                {
+                    writer.write(item.getIndentation());
+                    writer.write(item.specifier);
+                    writer.write(" ");
+                    writer.write(item.ident);
+                }
+                writer.newLine();
+            }
+        }
+        catch (IOException x)
+        {
+            log.error("startSplitFile for [" + h.getQualifiedName() + "]");
+        }
+    }
 
-		if (writer == null)
-		{
-			log.error("endSplitFile, no current writer");
-			return;
-		}
-		try
-		{
-			// Write footer, close all elements of current point in hierarchy
-			for (Iterator<ModelicaHierarchy.Item> k = getHierarchy().getStack().iterator(); k.hasNext();)
-			{
-				ModelicaHierarchy.Item item = k.next();
+    void endSplitFile()
+    {
+        splitItem = null;
 
-				if (!item.isClassGroup) continue;
+        if (writer == null)
+        {
+            log.error("endSplitFile, no current writer");
+            return;
+        }
+        try
+        {
+            // Write footer, close all elements of current point in hierarchy
+            for (Iterator<ModelicaHierarchy.Item> k = getHierarchy().getStack().iterator(); k.hasNext();)
+            {
+                ModelicaHierarchy.Item item = k.next();
 
-				writer.write(item.getIndentation());
-				writer.write(ModelicaGrammar.END);
-				writer.write(" ");
-				writer.write(item.ident);
-				writer.write(";");
-				writer.newLine();
-			}
-			writer.close();
-			writer = null;
-		}
-		catch (IOException x)
-		{
-			log.error("endSplitFile for " + getHierarchy().getQualifiedName() + "]");
-		}
-	}
+                if (!item.isClassGroup) continue;
 
-	File						folder;
-	ModelicaHierarchy.Item		splitItem								= null;
-	BufferedWriter				writer									= null;
+                writer.write(item.getIndentation());
+                writer.write(ModelicaGrammar.END);
+                writer.write(" ");
+                writer.write(item.ident);
+                writer.write(";");
+                writer.newLine();
+            }
+            writer.close();
+            writer = null;
+        }
+        catch (IOException x)
+        {
+            log.error("endSplitFile for " + getHierarchy().getQualifiedName() + "]");
+        }
+    }
 
-	static final boolean		OUTPUT_ORIGINAL_CLASS_SPECIFIER_LINES	= true;
+    File                        folder;
+    ModelicaHierarchy.Item        splitItem                                = null;
+    BufferedWriter                writer                                    = null;
 
-	static final Logger log										= LoggerFactory.getLogger(ModelicaFileSplitter.class);
+    static final boolean        OUTPUT_ORIGINAL_CLASS_SPECIFIER_LINES    = true;
+
+    static final Logger log                                        = LoggerFactory.getLogger(ModelicaFileSplitter.class);
 }
