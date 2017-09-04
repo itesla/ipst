@@ -21,21 +21,21 @@ import java.util.List;
  * @author Raul Viruez <viruezr@aia.es>
  */
 public class Element {
-	public Integer idEu;
-	public String nameEu;
-	public String pathModelica;
-	public String nameModelica;
-	public List<String> param = new ArrayList<String>();
-	public double offset;
-	public double init_double;
-	public Integer nInputPins;
-			
-	public Element(int idEu, String nameEu, String nameModelica, List<String> param, Integer nInputPins) {
-		this.idEu = idEu;
-		this.nameEu = nameEu;
-		this.pathModelica = nameModelica;
-		this.nameModelica = nameModelica.split("\\.")[nameModelica.split("\\.").length-1];
-		this.param = param;		
-		this.nInputPins = nInputPins;
-	}
+    public Integer idEu;
+    public String nameEu;
+    public String pathModelica;
+    public String nameModelica;
+    public List<String> param = new ArrayList<String>();
+    public double offset;
+    public double init_double;
+    public Integer nInputPins;
+
+    public Element(int idEu, String nameEu, String nameModelica, List<String> param, Integer nInputPins) {
+        this.idEu = idEu;
+        this.nameEu = nameEu;
+        this.pathModelica = nameModelica;
+        this.nameModelica = nameModelica.split("\\.")[nameModelica.split("\\.").length-1];
+        this.param = param;
+        this.nInputPins = nInputPins;
+    }
 }
