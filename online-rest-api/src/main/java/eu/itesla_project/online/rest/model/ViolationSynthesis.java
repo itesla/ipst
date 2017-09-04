@@ -70,12 +70,12 @@ public class ViolationSynthesis {
         timeValues.add(val);
     }
 
-	public String getLimitName() {
-		return limitName;
-	}
+    public String getLimitName() {
+        return limitName;
+    }
 
-	public float getVoltageLevel() {
-		return voltageLevel;
-	}
+    public float getVoltageLevel() {
+        return voltageLevel;
+    }
     
 }
