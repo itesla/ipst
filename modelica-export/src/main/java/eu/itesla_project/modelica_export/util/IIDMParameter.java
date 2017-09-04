@@ -10,29 +10,29 @@ package eu.itesla_project.modelica_export.util;
  * @author Silvia Machado <machados@aia.es>
  */
 public class IIDMParameter {
-	
-	public IIDMParameter(String name, Object value) {
-		this.name = name;
-		this.value = value;
-	}
-    
-	public String getName() {
-		return name;
-	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public IIDMParameter(String name, Object value) {
+        this.name = name;
+        this.value = value;
+    }
+    
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
    
-	public Object getValue() {
-		return this.value;
-	}
-	
-	public void setValue(Object value) {
-		this.value = value;
-	}
-	
-	protected String name;
-	protected Object value;
-	
+    public Object getValue() {
+        return this.value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
+    }
+
+    protected String name;
+    protected Object value;
+
 }

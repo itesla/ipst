@@ -27,127 +27,127 @@ import eu.itesla_project.modelica_export.util.Utils;
  * @author Silvia Machado <machados@aia.es>
  */
 public class RegulatorInitData {
-	
-	public RegulatorInitData(Internal reg, String regulatorName, String regulatorModel, String regulatorModelData, RegulatorRecord regulatorRecord) {
-		this.regulator = reg;
-		this.regName = regulatorName;
-		this.regModel = regulatorModel;
-		this.regModelData = regulatorModelData;
-		this.regRecord = regulatorRecord;
-		
-		try {
-			fillDataList();
-		} catch (IOException e) {
-			_log.error(e.getMessage(), e);
-		}
-	}
-	
-	private void fillDataList() throws IOException {
-		if(this.regModelData != null) {
-			BufferedReader buffer = new BufferedReader(new StringReader(this.regModelData));
-			  
-			this.pinsList = Utils.parseModelPins(buffer); //paramsAndPins.get(1);
-			
-			//Cogemos las init variables
-			this.initVars = Utils.getOtherRegVars(buffer);
-			Map<String, String> params = this.regRecord.getRegParamsMap();
-			if((params != null) && (!params.isEmpty())) {
-				for(String par : params.keySet()) {
-					this.paramsMap.put(par, params.get(par));
-				}
-			}
-		}
-	}
-	
 
-	public void addRegRecordParameters(Map<String, String> regInitValues) {
-		IIDMParameter parameter;
-		BufferedReader buffer = new BufferedReader(new StringReader(this.regRecord.getModelData()));
-		try {
-			List<String> initList = Utils.parseRegInitVariables(buffer);
-			
-			if(regInitValues != null && !regInitValues.isEmpty()) {
-				for(String param : regInitValues.keySet()) {
-					String paramValue = regInitValues.get(param);
-//					param = param.trim().replace(StaticData.PIN, "pin_");
-					if(initList.contains(param)) {
-						parameter = new IIDMParameter(param, paramValue.trim());
-						this.regRecord.getIidmregParameters().add(parameter);
-					}
-				}
-			}
-		} catch (IOException e) {
-			_log.error(e.getMessage(), e);
-		}
-	}
+    public RegulatorInitData(Internal reg, String regulatorName, String regulatorModel, String regulatorModelData, RegulatorRecord regulatorRecord) {
+        this.regulator = reg;
+        this.regName = regulatorName;
+        this.regModel = regulatorModel;
+        this.regModelData = regulatorModelData;
+        this.regRecord = regulatorRecord;
 
-	public String getRegModel() {
-		return regModel;
-	}
+        try {
+            fillDataList();
+        } catch (IOException e) {
+            _log.error(e.getMessage(), e);
+        }
+    }
 
-	public void setRegModel(String regModel) {
-		this.regModel = regModel;
-	}
+    private void fillDataList() throws IOException {
+        if(this.regModelData != null) {
+            BufferedReader buffer = new BufferedReader(new StringReader(this.regModelData));
 
-	public Internal getRegulator() {
-		return regulator;
-	}
-	public void setRegulator(Internal regulator) {
-		this.regulator = regulator;
-	}
-	public String getRegName() {
-		return regName;
-	}
-	public void setRegName(String regName) {
-		this.regName = regName;
-	}
-	public List<String> getPinsList() {
-		return pinsList;
-	}
-	public void setPinsList(List<String> pinsList) {
-		this.pinsList = pinsList;
-	}
+            this.pinsList = Utils.parseModelPins(buffer); //paramsAndPins.get(1);
 
-	public String getRegModelData() {
-		return regModelData;
-	}
+            //Cogemos las init variables
+            this.initVars = Utils.getOtherRegVars(buffer);
+            Map<String, String> params = this.regRecord.getRegParamsMap();
+            if((params != null) && (!params.isEmpty())) {
+                for(String par : params.keySet()) {
+                    this.paramsMap.put(par, params.get(par));
+                }
+            }
+        }
+    }
 
-	public void setRegModelData(String regModelData) {
-		this.regModelData = regModelData;
-	}
 
-	public RegulatorRecord getRegRecord() {
-		return regRecord;
-	}
+    public void addRegRecordParameters(Map<String, String> regInitValues) {
+        IIDMParameter parameter;
+        BufferedReader buffer = new BufferedReader(new StringReader(this.regRecord.getModelData()));
+        try {
+            List<String> initList = Utils.parseRegInitVariables(buffer);
 
-	public void setRegRecord(RegulatorRecord regRecord) {
-		this.regRecord = regRecord;
-	}
+            if(regInitValues != null && !regInitValues.isEmpty()) {
+                for(String param : regInitValues.keySet()) {
+                    String paramValue = regInitValues.get(param);
+//                    param = param.trim().replace(StaticData.PIN, "pin_");
+                    if(initList.contains(param)) {
+                        parameter = new IIDMParameter(param, paramValue.trim());
+                        this.regRecord.getIidmregParameters().add(parameter);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            _log.error(e.getMessage(), e);
+        }
+    }
 
-	public Map<String, String> getParamsMap() {
-		return paramsMap;
-	}
+    public String getRegModel() {
+        return regModel;
+    }
 
-	public void setParamsMap(Map<String, String> paramsMap) {
-		this.paramsMap = paramsMap;
-	}
+    public void setRegModel(String regModel) {
+        this.regModel = regModel;
+    }
 
-	public List<String> getInitVars() {
-		return initVars;
-	}
+    public Internal getRegulator() {
+        return regulator;
+    }
+    public void setRegulator(Internal regulator) {
+        this.regulator = regulator;
+    }
+    public String getRegName() {
+        return regName;
+    }
+    public void setRegName(String regName) {
+        this.regName = regName;
+    }
+    public List<String> getPinsList() {
+        return pinsList;
+    }
+    public void setPinsList(List<String> pinsList) {
+        this.pinsList = pinsList;
+    }
 
-	public void setInitVars(List<String> initVars) {
-		this.initVars = initVars;
-	}
+    public String getRegModelData() {
+        return regModelData;
+    }
 
-	private Internal		regulator;
-	private String			regName;
-	private String			regModel;
-	private String			regModelData;
-	private RegulatorRecord	regRecord;
-	private List<String>	pinsList		= new ArrayList<String>();
-	private List<String>	initVars		= new ArrayList<String>();
-	private Map<String, String> paramsMap	= new HashMap<String, String>();
-	
-	private static final Logger _log	= LoggerFactory.getLogger(RegulatorInitData.class);
+    public void setRegModelData(String regModelData) {
+        this.regModelData = regModelData;
+    }
+
+    public RegulatorRecord getRegRecord() {
+        return regRecord;
+    }
+
+    public void setRegRecord(RegulatorRecord regRecord) {
+        this.regRecord = regRecord;
+    }
+
+    public Map<String, String> getParamsMap() {
+        return paramsMap;
+    }
+
+    public void setParamsMap(Map<String, String> paramsMap) {
+        this.paramsMap = paramsMap;
+    }
+
+    public List<String> getInitVars() {
+        return initVars;
+    }
+
+    public void setInitVars(List<String> initVars) {
+        this.initVars = initVars;
+    }
+
+    private Internal        regulator;
+    private String            regName;
+    private String            regModel;
+    private String            regModelData;
+    private RegulatorRecord    regRecord;
+    private List<String>    pinsList        = new ArrayList<String>();
+    private List<String>    initVars        = new ArrayList<String>();
+    private Map<String, String> paramsMap    = new HashMap<String, String>();
+
+    private static final Logger _log    = LoggerFactory.getLogger(RegulatorInitData.class);
 }

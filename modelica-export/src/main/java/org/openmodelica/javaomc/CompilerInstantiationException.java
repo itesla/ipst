@@ -48,56 +48,56 @@ package org.openmodelica.javaomc;
  */
 public class CompilerInstantiationException extends CompilerException
 {
-	private static final long serialVersionUID = -1432532276931215491L;
+    private static final long serialVersionUID = -1432532276931215491L;
 
-	public enum ProblemType 
-	{
-		NO_COMPILERS_FOUND,
-		MULTIPLE_COMPILERS_FOUND,
-		ERROR_CREATING_COMPILER
-	}
-	
-	private ProblemType type;
-	
-	public CompilerInstantiationException(ProblemType type)
-	{
-		super();
-		this.type = type;
-	}
+    public enum ProblemType
+    {
+        NO_COMPILERS_FOUND,
+        MULTIPLE_COMPILERS_FOUND,
+        ERROR_CREATING_COMPILER
+    }
 
-	public CompilerInstantiationException()
-	{
-		this(ProblemType.MULTIPLE_COMPILERS_FOUND);
-	}
+    private ProblemType type;
 
-	public CompilerInstantiationException(Exception e)
-	{
-		super(e);
-		type = ProblemType.ERROR_CREATING_COMPILER;
-	}
+    public CompilerInstantiationException(ProblemType type)
+    {
+        super();
+        this.type = type;
+    }
 
-	public ProblemType getProblemType()
-	{
-		return type;
-	}
-	
-	public String getMessage()
-	{
-		String message = "";
-		
-		switch (type)
-		{
-		case NO_COMPILERS_FOUND:
-			message = "No compilers found ";
-			break;
-		case MULTIPLE_COMPILERS_FOUND:
-			message = "Multiple compilers found ";
-			break;
-		case ERROR_CREATING_COMPILER:
-			message = "Error while connecting to the compiler " + getCause().getMessage();
-			break;
-		}
-		
-		return message;
-	}
+    public CompilerInstantiationException()
+    {
+        this(ProblemType.MULTIPLE_COMPILERS_FOUND);
+    }
+
+    public CompilerInstantiationException(Exception e)
+    {
+        super(e);
+        type = ProblemType.ERROR_CREATING_COMPILER;
+    }
+
+    public ProblemType getProblemType()
+    {
+        return type;
+    }
+
+    public String getMessage()
+    {
+        String message = "";
+
+        switch (type)
+        {
+        case NO_COMPILERS_FOUND:
+            message = "No compilers found ";
+            break;
+        case MULTIPLE_COMPILERS_FOUND:
+            message = "Multiple compilers found ";
+            break;
+        case ERROR_CREATING_COMPILER:
+            message = "Error while connecting to the compiler " + getCause().getMessage();
+            break;
+        }
+
+        return message;
+    }
 }

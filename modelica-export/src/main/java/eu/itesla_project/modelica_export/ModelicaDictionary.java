@@ -18,10 +18,10 @@ import eu.itesla_project.iidm.network.Identifiable;
  * @author Silvia Machado <machados@aia.es>
  */
 public final class ModelicaDictionary {
-	
-	public ModelicaDictionary(Map<String, String> dictionary) {
-		this.dictionary = dictionary;
-	}
+
+    public ModelicaDictionary(Map<String, String> dictionary) {
+        this.dictionary = dictionary;
+    }
 
     public boolean add(Identifiable identifiable, String modelicaName) {
 
@@ -49,20 +49,20 @@ public final class ModelicaDictionary {
     
     public void change(Identifiable identifiable, String modelicaName) {
         if (dictionary.containsKey(identifiable.getId())) {
-        	dictionary.put(dictionary.get(identifiable.getId()), modelicaName);
+            dictionary.put(dictionary.get(identifiable.getId()), modelicaName);
         }
     }
 
     public String getModelicaName(Identifiable identifiable) {
         if (dictionary.containsKey(identifiable.getId())) {
-        	return dictionary.get(identifiable.getId());
+            return dictionary.get(identifiable.getId());
         }
 
         if (!dictionary.containsKey(identifiable.getId())) {
-        	_log.info("IIDM name: " + identifiable.getId() + ". Modelica name: " + dictionary.get(identifiable.getId()));
+            _log.info("IIDM name: " + identifiable.getId() + ". Modelica name: " + dictionary.get(identifiable.getId()));
         }
         else {
-        	_log.info("IIDM name: " + identifiable.getName());
+            _log.info("IIDM name: " + identifiable.getName());
         }
         
         return identifiable.getId();
@@ -70,11 +70,11 @@ public final class ModelicaDictionary {
     
     public String getModelicaName(Internal internal) {
         if (dictionary.containsKey(internal.getNativeId())) {
-        	return dictionary.get(internal.getNativeId());
+            return dictionary.get(internal.getNativeId());
         }
 
         if (!dictionary.containsKey(internal.getNativeId())) {
-        	_log.info("IIDM name: " + internal.getNativeId());
+            _log.info("IIDM name: " + internal.getNativeId());
         }
         
         return internal.getNativeId();
@@ -82,11 +82,11 @@ public final class ModelicaDictionary {
     
     public String getModelicaName(String sourceId) {
         if (dictionary.containsKey(sourceId)) {
-        	return dictionary.get(sourceId);
+            return dictionary.get(sourceId);
         }
 
         if (!dictionary.containsKey(sourceId)) {
-        	_log.info("IIDM name: " + sourceId);
+            _log.info("IIDM name: " + sourceId);
         }
         
         return sourceId;
@@ -96,12 +96,12 @@ public final class ModelicaDictionary {
         return this.dictionary.containsValue(name);
     }
     
-	public Map<String, String> getDictionary() {
-		return dictionary;
-	}
-	
-	private final Map<String, String>	dictionary;
+    public Map<String, String> getDictionary() {
+        return dictionary;
+    }
 
-	private static final Logger			_log		= LoggerFactory.getLogger(ModelicaDictionary.class);
+    private final Map<String, String>    dictionary;
+
+    private static final Logger            _log        = LoggerFactory.getLogger(ModelicaDictionary.class);
 
 }

@@ -20,36 +20,36 @@ import eu.itesla_project.modelica_export.util.eurostag.EurostagFixedData;
  */
 public class ConnectLineRecord extends ConnectRecord {
 
-	public ConnectLineRecord(Identifiable node1, Identifiable node2) {
-		super(node1.getId(), node2.getId());
-		this.node1 = node1;
-		this.node2 = node2;
-	}
-	
-	public ConnectLineRecord(Identifiable node1, String node2Id) {
-		super(node1.getId(), node2Id);
-		this.node1 = node1;
-	}
-	
-	@Override
-	public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
-		
-		this.addValue(EurostagFixedData.CONNECT);
-		this.addValue(super.nodeName1);
-		
-		if(this.node1 instanceof Bus) this.addValue("." + StaticData.POSITIVE_PIN + ", ");
-		else this.addValue("." + StaticData.NEGATIVE_PIN + ", ");
-		
-		this.addValue(super.nodeName2);
-		this.addValue("." + StaticData.POSITIVE_PIN);
-		this.addValue(EurostagFixedData.ANNOT_CONNECT);
-	}
-	
-	@Override
-	public ConnectLineRecord getClassName() {
-		return this;
-	}
-	
-	private Identifiable node1	=	null;
-	private Identifiable node2	= 	null;
+    public ConnectLineRecord(Identifiable node1, Identifiable node2) {
+        super(node1.getId(), node2.getId());
+        this.node1 = node1;
+        this.node2 = node2;
+    }
+
+    public ConnectLineRecord(Identifiable node1, String node2Id) {
+        super(node1.getId(), node2Id);
+        this.node1 = node1;
+    }
+
+    @Override
+    public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
+
+        this.addValue(EurostagFixedData.CONNECT);
+        this.addValue(super.nodeName1);
+
+        if(this.node1 instanceof Bus) this.addValue("." + StaticData.POSITIVE_PIN + ", ");
+        else this.addValue("." + StaticData.NEGATIVE_PIN + ", ");
+
+        this.addValue(super.nodeName2);
+        this.addValue("." + StaticData.POSITIVE_PIN);
+        this.addValue(EurostagFixedData.ANNOT_CONNECT);
+    }
+
+    @Override
+    public ConnectLineRecord getClassName() {
+        return this;
+    }
+
+    private Identifiable node1    =    null;
+    private Identifiable node2    =     null;
 }

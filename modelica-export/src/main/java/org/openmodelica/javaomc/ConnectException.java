@@ -48,11 +48,11 @@ package org.openmodelica.javaomc;
  */
 public class ConnectException extends CompilerException
 {
-	private static final long serialVersionUID = 5391049301949772469L;
+    private static final long serialVersionUID = 5391049301949772469L;
 
-	public ConnectException(String error)
-	{
-		super(error);
-	}
+    public ConnectException(String error)
+    {
+        super(error);
+    }
 
 }

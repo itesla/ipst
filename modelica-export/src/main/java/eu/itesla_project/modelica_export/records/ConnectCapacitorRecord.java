@@ -20,39 +20,39 @@ import eu.itesla_project.modelica_export.util.eurostag.EurostagFixedData;
  * @author Silvia Machado <machados@aia.es>
  */
 public class ConnectCapacitorRecord extends ConnectRecord {
-	
-	public ConnectCapacitorRecord(ConnectBusInfo busInfo, ShuntCompensator shunt) {
-		super(busInfo.getBus().getId(), shunt.getId());
-		this.isConnected = busInfo.isConnected();
-//		this.busInfo = busInfo;
-		this.node1 = busInfo.getBus();
-		this.node2 = shunt;
-	}
-	
-	@Override
-	public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
-		if(!isConnected) this.addValue(StaticData.COMMENT);
-		this.addValue(EurostagFixedData.CONNECT);
-		this.addValue(super.nodeName1);
-		
-		if(this.node1 instanceof Bus) this.addValue("." + StaticData.POSITIVE_PIN + ", ");
-		else this.addValue("." + StaticData.POSITIVE_PIN + ", ");
-		
-		this.addValue(super.nodeName2);
-		
-		this.addValue("." + StaticData.POSITIVE_PIN);
-		
-		this.addValue(EurostagFixedData.ANNOT_CONNECT);
-	}
-	
-	@Override
-	public ConnectCapacitorRecord getClassName() {
-		return this;
-	}
-	
-//	private ConnectBusInfo		busInfo;
-	
-	private Identifiable	node1	=	null;
-	private Identifiable	node2	= 	null;
-	private boolean			isConnected = true;
+
+    public ConnectCapacitorRecord(ConnectBusInfo busInfo, ShuntCompensator shunt) {
+        super(busInfo.getBus().getId(), shunt.getId());
+        this.isConnected = busInfo.isConnected();
+//        this.busInfo = busInfo;
+        this.node1 = busInfo.getBus();
+        this.node2 = shunt;
+    }
+
+    @Override
+    public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
+        if(!isConnected) this.addValue(StaticData.COMMENT);
+        this.addValue(EurostagFixedData.CONNECT);
+        this.addValue(super.nodeName1);
+
+        if(this.node1 instanceof Bus) this.addValue("." + StaticData.POSITIVE_PIN + ", ");
+        else this.addValue("." + StaticData.POSITIVE_PIN + ", ");
+
+        this.addValue(super.nodeName2);
+
+        this.addValue("." + StaticData.POSITIVE_PIN);
+
+        this.addValue(EurostagFixedData.ANNOT_CONNECT);
+    }
+
+    @Override
+    public ConnectCapacitorRecord getClassName() {
+        return this;
+    }
+
+//    private ConnectBusInfo        busInfo;
+
+    private Identifiable    node1    =    null;
+    private Identifiable    node2    =     null;
+    private boolean            isConnected = true;
 }

@@ -17,42 +17,42 @@ import eu.itesla_project.modelica_export.util.eurostag.EurostagFixedData;
  * @author Silvia Machado <machados@aia.es>
  */
 public class FooterRecord extends ModelicaRecord {
-	
-	public FooterRecord(String networkName) {
-		this.networkName = networkName;
-	}
 
-	@Override
-	public void createModelicaName(ModExportContext modContext, DDBManager ddbManager, SimulatorInst modelicaSim) {
-		
-	
-	}
+    public FooterRecord(String networkName) {
+        this.networkName = networkName;
+    }
 
-	@Override
-	public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
-		this.deleteInicialWhiteSpaces(2);
+    @Override
+    public void createModelicaName(ModExportContext modContext, DDBManager ddbManager, SimulatorInst modelicaSim) {
+
+
+    }
+
+    @Override
+    public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
+        this.deleteInicialWhiteSpaces(2);
         this.addValue(StaticData.END_MODEL + parseName(this.networkName) + StaticData.SEMICOLON);
         this.newLine();
-	}
+    }
 
-	@Override
-	public String parseName(String name) {
-		String parsedName = name.trim();
-		if(parsedName.substring(0, 1).matches("[0-9]")) {
-			parsedName = "M_" + parsedName;
-		}
-		parsedName = parsedName.replaceAll("\\s", "_");
-       	parsedName = parsedName.replaceAll("\\.", "_");
-       	parsedName = parsedName.replaceAll("\\-", "_");
-       	parsedName = parsedName.replaceAll("/", "_");
-       	parsedName = parsedName.replaceAll("\\+", "_");
+    @Override
+    public String parseName(String name) {
+        String parsedName = name.trim();
+        if(parsedName.substring(0, 1).matches("[0-9]")) {
+            parsedName = "M_" + parsedName;
+        }
+        parsedName = parsedName.replaceAll("\\s", "_");
+           parsedName = parsedName.replaceAll("\\.", "_");
+           parsedName = parsedName.replaceAll("\\-", "_");
+           parsedName = parsedName.replaceAll("/", "_");
+           parsedName = parsedName.replaceAll("\\+", "_");
         return parsedName;
-	}
-	
-	@Override
-	public FooterRecord getClassName() {
-		return this;
-	}
-	
-	private String networkName;
+    }
+
+    @Override
+    public FooterRecord getClassName() {
+        return this;
+    }
+
+    private String networkName;
 }

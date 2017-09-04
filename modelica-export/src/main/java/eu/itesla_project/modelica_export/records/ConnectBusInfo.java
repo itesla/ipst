@@ -12,28 +12,28 @@ import eu.itesla_project.iidm.network.Bus;
  * @author Silvia Machado <machados@aia.es>
  */
 public class ConnectBusInfo {
-	private Bus bus;
-	private boolean connected;
-	
-	public ConnectBusInfo(Bus bus, boolean connected) {
-		this.bus = bus;
-		this.connected = connected;
-	}
+    private Bus bus;
+    private boolean connected;
 
-	public boolean isConnected() {
-		return connected;
-	}
+    public ConnectBusInfo(Bus bus, boolean connected) {
+        this.bus = bus;
+        this.connected = connected;
+    }
 
-	public void setConnected(boolean connected) {
-		this.connected = connected;
-	}
+    public boolean isConnected() {
+        return connected;
+    }
 
-	public Bus getBus() {
-		return bus;
-	}
+    public void setConnected(boolean connected) {
+        this.connected = connected;
+    }
 
-	public void setBus(Bus bus) {
-		this.bus = bus;
-	}
+    public Bus getBus() {
+        return bus;
+    }
+
+    public void setBus(Bus bus) {
+        this.bus = bus;
+    }
 
 }

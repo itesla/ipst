@@ -18,37 +18,37 @@ import eu.itesla_project.modelica_export.util.eurostag.EurostagFixedData;
  * @author Silvia Machado <machados@aia.es>
  */
 public class ConnectGlobalVarRecord extends ModelicaRecord {
-	
-	public ConnectGlobalVarRecord(Injection injection, GlobalVariable globalVar) {
-		this.node1 = injection;
-		this.globalVar = globalVar;
-	}
-	
-	@Override
-	public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
-		String modelicaName;
-		modelicaName = modContext.dictionary.getModelicaName(this.node1);
-		this.addValue(EurostagFixedData.CONNECT);
-		this.addValue(modelicaName);
-		this.addValue("." + EurostagFixedData.GEN_OMEGAREF_PIN + ", ");
-		this.addValue(globalVar.getName());
-		this.addValue(");");	
-	}
-	
-	@Override
-	public void createModelicaName(ModExportContext modContext, DDBManager ddbManager, SimulatorInst modelicaSim) { 
-	}
 
-	@Override
-	public String parseName(String name) {
-		return name;
-	}
-	
-	@Override
-	public ConnectGlobalVarRecord getClassName() {
-		return this;
-	}
-	
-	private Injection                   node1;
-	private GlobalVariable				globalVar;
+    public ConnectGlobalVarRecord(Injection injection, GlobalVariable globalVar) {
+        this.node1 = injection;
+        this.globalVar = globalVar;
+    }
+
+    @Override
+    public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
+        String modelicaName;
+        modelicaName = modContext.dictionary.getModelicaName(this.node1);
+        this.addValue(EurostagFixedData.CONNECT);
+        this.addValue(modelicaName);
+        this.addValue("." + EurostagFixedData.GEN_OMEGAREF_PIN + ", ");
+        this.addValue(globalVar.getName());
+        this.addValue(");");
+    }
+
+    @Override
+    public void createModelicaName(ModExportContext modContext, DDBManager ddbManager, SimulatorInst modelicaSim) {
+    }
+
+    @Override
+    public String parseName(String name) {
+        return name;
+    }
+
+    @Override
+    public ConnectGlobalVarRecord getClassName() {
+        return this;
+    }
+
+    private Injection                   node1;
+    private GlobalVariable                globalVar;
 }
