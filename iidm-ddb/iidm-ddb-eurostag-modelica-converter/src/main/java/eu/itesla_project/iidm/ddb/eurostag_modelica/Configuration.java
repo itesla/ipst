@@ -20,47 +20,47 @@ import org.slf4j.LoggerFactory;
  * @author Quinary <itesla@quinary.com>
  */
 public class Configuration {
-	
-	static Logger log = LoggerFactory.getLogger(Configuration.class.getName());
-	
-	String configurationFileName = "converter.properties";
-	String workingDirProperty = "workingDir";
-	String workingDir;
-	
-	public Configuration() {
-		this.workingDir = Utils.workingDirectory();
-		try {
-			readConfigurationFile();
-		} catch (ConversionException e) {
-		}
-	}
-	
-	public String getWorkingDir() {
-		return workingDir;
-	}
-	
-	protected void readConfigurationFile() throws ConversionException {
-		log.debug("Reading configuration file " + configurationFileName);
-		URL configurationFileUrl = this.getClass().getResource("/" + configurationFileName);
-		Properties properties = new Properties();
-		InputStream configurationFileStream = null;
-		try {
-			configurationFileStream = configurationFileUrl.openStream();
-			properties.load(configurationFileStream);
-			workingDir = properties.getProperty(workingDirProperty, Utils.workingDirectory());
-		} catch (FileNotFoundException e) {
-			Utils.throwConverterException("Cannot read configuration file  " + configurationFileName + ": " + e.getMessage(), log);
-		} catch (IOException e) {
-			Utils.throwConverterException("Cannot read configuration file  " + configurationFileName + ": " + e.getMessage(), log);
-		} finally {
-			if ( configurationFileStream != null )
-				try {
-					configurationFileStream.close();
-				} catch (IOException e) {
-					log.error("Error closing configuration file stream: " + e.getMessage());
-				}
-		}
-		
-	}
+
+    static Logger log = LoggerFactory.getLogger(Configuration.class.getName());
+
+    String configurationFileName = "converter.properties";
+    String workingDirProperty = "workingDir";
+    String workingDir;
+
+    public Configuration() {
+        this.workingDir = Utils.workingDirectory();
+        try {
+            readConfigurationFile();
+        } catch (ConversionException e) {
+        }
+    }
+
+    public String getWorkingDir() {
+        return workingDir;
+    }
+
+    protected void readConfigurationFile() throws ConversionException {
+        log.debug("Reading configuration file " + configurationFileName);
+        URL configurationFileUrl = this.getClass().getResource("/" + configurationFileName);
+        Properties properties = new Properties();
+        InputStream configurationFileStream = null;
+        try {
+            configurationFileStream = configurationFileUrl.openStream();
+            properties.load(configurationFileStream);
+            workingDir = properties.getProperty(workingDirProperty, Utils.workingDirectory());
+        } catch (FileNotFoundException e) {
+            Utils.throwConverterException("Cannot read configuration file  " + configurationFileName + ": " + e.getMessage(), log);
+        } catch (IOException e) {
+            Utils.throwConverterException("Cannot read configuration file  " + configurationFileName + ": " + e.getMessage(), log);
+        } finally {
+            if ( configurationFileStream != null )
+                try {
+                    configurationFileStream.close();
+                } catch (IOException e) {
+                    log.error("Error closing configuration file stream: " + e.getMessage());
+                }
+        }
+
+    }
 
 }
