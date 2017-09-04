@@ -12,64 +12,64 @@ package eu.itesla_project.modelica_events_adder.events.records;
  * @author Silvia Machado <machados@aia.es>
  */
 public class ConnectRecord {
-	
-	public ConnectRecord(String nodeF, String nodeT, String connectLine) {
+
+    public ConnectRecord(String nodeF, String nodeT, String connectLine) {
         this.nodeF = nodeF;
         this.nodeT = nodeT;
         this.connectLine = connectLine;
     }
 
-	public boolean containsElement(String elemModName) {
-		boolean contains = false;
-		
-		if(this.nodeF.equalsIgnoreCase(elemModName) || this.nodeT.equalsIgnoreCase(elemModName)) {
-			contains = true;
-		}
-		
-		return contains;
-	}
-	
-	public String getConnectedElement(String elemModName) {
-		String connectedElem = null;
-		
-		if(this.nodeF.equalsIgnoreCase(elemModName)) {
-			connectedElem = this.nodeT;
-		}
-		else if(this.nodeT.equalsIgnoreCase(elemModName)) {
-			connectedElem = this.nodeF;
-		}
-		
-		return connectedElem;
-	}
+    public boolean containsElement(String elemModName) {
+        boolean contains = false;
+
+        if(this.nodeF.equalsIgnoreCase(elemModName) || this.nodeT.equalsIgnoreCase(elemModName)) {
+            contains = true;
+        }
+
+        return contains;
+    }
+
+    public String getConnectedElement(String elemModName) {
+        String connectedElem = null;
+
+        if(this.nodeF.equalsIgnoreCase(elemModName)) {
+            connectedElem = this.nodeT;
+        }
+        else if(this.nodeT.equalsIgnoreCase(elemModName)) {
+            connectedElem = this.nodeF;
+        }
+
+        return connectedElem;
+    }
         
     public String getNodeF() {
-		return nodeF;
-	}
+        return nodeF;
+    }
 
 
-	public void setNodeF(String nodeF) {
-		this.nodeF = nodeF;
-	}
+    public void setNodeF(String nodeF) {
+        this.nodeF = nodeF;
+    }
 
 
-	public String getNodeT() {
-		return nodeT;
-	}
+    public String getNodeT() {
+        return nodeT;
+    }
 
 
-	public void setNodeT(String nodeT) {
-		this.nodeT = nodeT;
-	}
+    public void setNodeT(String nodeT) {
+        this.nodeT = nodeT;
+    }
 
-	public String getConnectLine() {
-		return connectLine;
-	}
+    public String getConnectLine() {
+        return connectLine;
+    }
 
 
-	public void setConnectLine(String connectLine) {
-		this.connectLine = connectLine;
-	}
-	protected String			nodeF			= null;
-	protected String			nodeT			= null;
-	protected String			connectLine		= null;
+    public void setConnectLine(String connectLine) {
+        this.connectLine = connectLine;
+    }
+    protected String            nodeF            = null;
+    protected String            nodeT            = null;
+    protected String            connectLine        = null;
 }

@@ -13,50 +13,50 @@ import java.util.List;
  */
 public abstract class EventRecord extends ModelicaRecord {
 
-	public EventRecord(String eventType, String device, List<String> params) {
-		this.type = eventType;
-		this.device = device;
-		this.parameters = params;
-	}
-	
+    public EventRecord(String eventType, String device, List<String> params) {
+        this.type = eventType;
+        this.device = device;
+        this.parameters = params;
+    }
+
     public String getType() {
-		return type;
-	}
+        return type;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public String getDevice() {
-		return device;
-	}
-	
-	public void setDevice(String device) {
-		this.device = device;
-	}
+    public String getDevice() {
+        return device;
+    }
 
-	public List<String> getParameters() {
-		return parameters;
-	}
+    public void setDevice(String device) {
+        this.device = device;
+    }
 
-	public void setParameters(List<String> parameters) {
-		this.parameters = parameters;
-	}
-	
-	public void  setModelicaType(String modelicaType) {
-		this.modelicaType = modelicaType;
-	}
+    public List<String> getParameters() {
+        return parameters;
+    }
 
-	public String getModelicaType()
-	{
-		return modelicaType;
-	}
-	
+    public void setParameters(List<String> parameters) {
+        this.parameters = parameters;
+    }
 
-	private String type;
-	private String device;
-	private List<String> parameters;
-	
-	private String				modelicaType	= null;
-	
+    public void  setModelicaType(String modelicaType) {
+        this.modelicaType = modelicaType;
+    }
+
+    public String getModelicaType()
+    {
+        return modelicaType;
+    }
+
+
+    private String type;
+    private String device;
+    private List<String> parameters;
+
+    private String                modelicaType    = null;
+
 }

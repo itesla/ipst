@@ -17,67 +17,67 @@ import eu.itesla_project.modelica_events_adder.events.utils.StaticData;
  * @author Silvia Machado <machados@aia.es>
  */
 public class BusFaultRecord extends EventRecord {
-	
 
-	public BusFaultRecord(Record busRecord, Event event) {
-		super(event.getType(), event.getCIMDevice(), event.getParams());
-		this.event = event;
-		this.busRecord = busRecord;
-		super.setModelicaType(EventsStaticData.BUS_MODEL);
-		
-		for(String par : event.getParams()) {
-			String name = par.split("=")[0];
-			String value = par.split("=")[1];
-			addParameter(name, value);
-		}
-	}
 
-	@Override
-	public void createModelicaName() {
-//		String modelicaName = this.event.getCIMDevice() + FAULT;
-		String modelicaName = this.busRecord.getModelicaName() + FAULT;
-		super.setModelicaName(modelicaName);
-	}
+    public BusFaultRecord(Record busRecord, Event event) {
+        super(event.getType(), event.getCIMDevice(), event.getParams());
+        this.event = event;
+        this.busRecord = busRecord;
+        super.setModelicaType(EventsStaticData.BUS_MODEL);
 
-	@Override
-	public void createRecord() {
-		this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE); 
-		this.addValue(super.getModelicaName());
-		this.addValue(" (");
-		this.addValue(StaticData.NEW_LINE);
-		
-		if(!iidmParameters.isEmpty()) {
-			for(int i=0; i<iidmParameters.size()-1; i++) {
-				this.addValue("\t " + iidmParameters.get(i).getName() + " = " + iidmParameters.get(i).getValue() + ",");
-				this.addValue(StaticData.NEW_LINE);
-			}
-			this.addValue("\t " + iidmParameters.get(iidmParameters.size()-1).getName() + " = " + iidmParameters.get(iidmParameters.size()-1).getValue());
-			this.addValue(StaticData.NEW_LINE);
-		}
+        for(String par : event.getParams()) {
+            String name = par.split("=")[0];
+            String value = par.split("=")[1];
+            addParameter(name, value);
+        }
+    }
 
-		this.addValue("\t " + StaticData.ANNOT);
-		
-		//Clear data
-		iidmParameters = null;		
-	}
+    @Override
+    public void createModelicaName() {
+//        String modelicaName = this.event.getCIMDevice() + FAULT;
+        String modelicaName = this.busRecord.getModelicaName() + FAULT;
+        super.setModelicaName(modelicaName);
+    }
 
-	@Override
-	public String parseName(String name) {
-		return null;
-	}
+    @Override
+    public void createRecord() {
+        this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);
+        this.addValue(super.getModelicaName());
+        this.addValue(" (");
+        this.addValue(StaticData.NEW_LINE);
 
-	@Override
-	public BusFaultRecord getClassName() {
-		return this;
-	}
-	
-	private void addParameter(String name, Object value) {
-		this.iidmParameters.add(new IIDMParameter(name, value));
-	}
-	
-	
-	private Record busRecord;
-	private Event event;
-	private List<IIDMParameter>	iidmParameters	= new ArrayList<IIDMParameter>();
-	private String FAULT = "_Fault";
+        if(!iidmParameters.isEmpty()) {
+            for(int i=0; i<iidmParameters.size()-1; i++) {
+                this.addValue("\t " + iidmParameters.get(i).getName() + " = " + iidmParameters.get(i).getValue() + ",");
+                this.addValue(StaticData.NEW_LINE);
+            }
+            this.addValue("\t " + iidmParameters.get(iidmParameters.size()-1).getName() + " = " + iidmParameters.get(iidmParameters.size()-1).getValue());
+            this.addValue(StaticData.NEW_LINE);
+        }
+
+        this.addValue("\t " + StaticData.ANNOT);
+
+        //Clear data
+        iidmParameters = null;
+    }
+
+    @Override
+    public String parseName(String name) {
+        return null;
+    }
+
+    @Override
+    public BusFaultRecord getClassName() {
+        return this;
+    }
+
+    private void addParameter(String name, Object value) {
+        this.iidmParameters.add(new IIDMParameter(name, value));
+    }
+
+
+    private Record busRecord;
+    private Event event;
+    private List<IIDMParameter>    iidmParameters    = new ArrayList<IIDMParameter>();
+    private String FAULT = "_Fault";
 }

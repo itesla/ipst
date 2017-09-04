@@ -15,53 +15,53 @@ import java.util.Map;
  */
 public final class EventCreator {
 
-	public static BusFaultRecord getBusEventRecord(Record busRecord, Event event) {
-		BusFaultRecord busFaultRecord = new BusFaultRecord(busRecord, event);
-		busFaultRecord.createModelicaName();
-		
-		return busFaultRecord;
-	}
-	
-	public static LineFaultRecord getLineEventRecord(Record lineRecord, Event event, Map<String, Record> recordsMap, List<ConnectRecord> conRecList) {
-		LineFaultRecord lineFaultRecord = new LineFaultRecord(lineRecord, event, recordsMap, conRecList);
-		lineFaultRecord.createModelicaName();
-		
-		return lineFaultRecord;
-	}	
-	
-	public static LineOpeningReceivingRecord getLineOpenRecEventRecord(Record lineRecord, Event event, Map<String, Record> recordsMap) {
-		LineOpeningReceivingRecord lineOpenRecRecord = new LineOpeningReceivingRecord(lineRecord, event, recordsMap);
-		lineOpenRecRecord.createModelicaName();
-		
-		return lineOpenRecRecord;
-	}
-	
-	public static BankModificationRecord getBankModificationRecord(Record bankRecord, Event event) {
-		BankModificationRecord bankModifRecord = new BankModificationRecord(bankRecord, event);
-		bankModifRecord.createModelicaName();
-		
-		return bankModifRecord;
-	}
-	
-	public static LoadVariationRecord getLoadVariationRecord(Record loadRecord, Event event, Map<String, Record> recordsMap) {
-		LoadVariationRecord loadVariationRecord = new LoadVariationRecord(loadRecord, event, recordsMap);
-		loadVariationRecord.createModelicaName();
-		
-		return loadVariationRecord;
-	}	
-	
-	public static Line2OpeningsRecord getLine2OpenEventRecord(Record lineRecord, Event event, Map<String, Record> recordsMap) {
-		Line2OpeningsRecord line2OpenRecord = new Line2OpeningsRecord(lineRecord, event, recordsMap);
-		line2OpenRecord.createModelicaName();
-		
-		return line2OpenRecord;
-	}
-	
-	public static BreakerRecord getBreakerEventRecord(Record busRecord, Event event) {
-		BreakerRecord breakerRecord = new BreakerRecord(busRecord, event);
-		breakerRecord.createModelicaName();
-		
-		return breakerRecord;
-	}
-	
+    public static BusFaultRecord getBusEventRecord(Record busRecord, Event event) {
+        BusFaultRecord busFaultRecord = new BusFaultRecord(busRecord, event);
+        busFaultRecord.createModelicaName();
+
+        return busFaultRecord;
+    }
+
+    public static LineFaultRecord getLineEventRecord(Record lineRecord, Event event, Map<String, Record> recordsMap, List<ConnectRecord> conRecList) {
+        LineFaultRecord lineFaultRecord = new LineFaultRecord(lineRecord, event, recordsMap, conRecList);
+        lineFaultRecord.createModelicaName();
+
+        return lineFaultRecord;
+    }
+
+    public static LineOpeningReceivingRecord getLineOpenRecEventRecord(Record lineRecord, Event event, Map<String, Record> recordsMap) {
+        LineOpeningReceivingRecord lineOpenRecRecord = new LineOpeningReceivingRecord(lineRecord, event, recordsMap);
+        lineOpenRecRecord.createModelicaName();
+
+        return lineOpenRecRecord;
+    }
+
+    public static BankModificationRecord getBankModificationRecord(Record bankRecord, Event event) {
+        BankModificationRecord bankModifRecord = new BankModificationRecord(bankRecord, event);
+        bankModifRecord.createModelicaName();
+
+        return bankModifRecord;
+    }
+
+    public static LoadVariationRecord getLoadVariationRecord(Record loadRecord, Event event, Map<String, Record> recordsMap) {
+        LoadVariationRecord loadVariationRecord = new LoadVariationRecord(loadRecord, event, recordsMap);
+        loadVariationRecord.createModelicaName();
+
+        return loadVariationRecord;
+    }
+
+    public static Line2OpeningsRecord getLine2OpenEventRecord(Record lineRecord, Event event, Map<String, Record> recordsMap) {
+        Line2OpeningsRecord line2OpenRecord = new Line2OpeningsRecord(lineRecord, event, recordsMap);
+        line2OpenRecord.createModelicaName();
+
+        return line2OpenRecord;
+    }
+
+    public static BreakerRecord getBreakerEventRecord(Record busRecord, Event event) {
+        BreakerRecord breakerRecord = new BreakerRecord(busRecord, event);
+        breakerRecord.createModelicaName();
+
+        return breakerRecord;
+    }
+
 }
