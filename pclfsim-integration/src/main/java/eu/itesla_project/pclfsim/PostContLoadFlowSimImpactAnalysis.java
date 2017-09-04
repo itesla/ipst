@@ -122,7 +122,7 @@ class PostContLoadFlowSimImpactAnalysis implements ImpactAnalysis, PostContLoadF
     private void createPostContingencyState(Contingency contingency, String baseStateId, String contingencyStateId) {
         network.getStateManager().cloneState(baseStateId, contingencyStateId);
         network.getStateManager().setWorkingState(contingencyStateId);
-        contingency.toTask().modify(network, null);
+        contingency.toTask().modify(network, computationManager);
     }
 
     private void removePostContingencyState(String contingencyStateId, Map<String, String> metrics) {
