@@ -16,92 +16,92 @@ import eu.itesla_project.commons.tools.Command;
  * @author Quinary <itesla@quinary.com>
  */
 public class DdbLoaderCommand implements Command{
-	
-	public final static  DdbLoaderCommand INSTANCE=new DdbLoaderCommand();
 
-	public final static String DATA_DIR="data-dir";
-	public final static String EUROSTAG_VERSION="eurostag-version";
-	public final static String HOST="host";
-	public final static String PORT="port";
-	public final static String USER="user";
-	public final static String PASSWORD="password";
-	
-	@Override
-	public String getName() {
-		return "ddb-load-eurostag";
-	}
+    public final static  DdbLoaderCommand INSTANCE=new DdbLoaderCommand();
 
-	@Override
-	public String getTheme() {
-		return "Dynamic Database";
-	}
+    public final static String DATA_DIR="data-dir";
+    public final static String EUROSTAG_VERSION="eurostag-version";
+    public final static String HOST="host";
+    public final static String PORT="port";
+    public final static String USER="user";
+    public final static String PASSWORD="password";
 
-	@Override
-	public String getDescription() {
-		return "load dynamic database data from Eurostag data";
-	}
+    @Override
+    public String getName() {
+        return "ddb-load-eurostag";
+    }
 
-	@Override
-	 @SuppressWarnings("static-access")
-	public Options getOptions() {		
-		Options opts = new Options();
-		
-		
-		opts.addOption(Option.builder().longOpt(DATA_DIR)
+    @Override
+    public String getTheme() {
+        return "Dynamic Database";
+    }
+
+    @Override
+    public String getDescription() {
+        return "load dynamic database data from Eurostag data";
+    }
+
+    @Override
+     @SuppressWarnings("static-access")
+    public Options getOptions() {
+        Options opts = new Options();
+
+
+        opts.addOption(Option.builder().longOpt(DATA_DIR)
                 .desc("data directory")
                 .hasArg()
                 .argName("DIR")
                 .required()
                 .build());
-		
-		opts.addOption(Option.builder().longOpt(EUROSTAG_VERSION)
+
+        opts.addOption(Option.builder().longOpt(EUROSTAG_VERSION)
                 .desc("eurostag Version ( i.e 5.1.1)")
                 .hasArg()
                 .argName("VERSION")
                 .required()
                 .build());
-		
-		opts.addOption(Option.builder().longOpt(HOST)
+
+        opts.addOption(Option.builder().longOpt(HOST)
                 .desc("jboss host")
                 .hasArg()
                 .argName("HOST")
                 .required()
                 .build());
-		
-		opts.addOption(Option.builder().longOpt(PORT)
+
+        opts.addOption(Option.builder().longOpt(PORT)
                 .desc("jboss port")
                 .hasArg()
                 .argName("PORT")
                 .required()
                 .build());
-		
-		
-		opts.addOption(Option.builder().longOpt(USER)
+
+
+        opts.addOption(Option.builder().longOpt(USER)
                 .desc("jboss username")
                 .hasArg()
                 .argName("USER")
                 .required()
                 .build());
-		
-		opts.addOption(Option.builder().longOpt(PASSWORD)
+
+        opts.addOption(Option.builder().longOpt(PASSWORD)
                 .desc("jboss password")
                 .hasArg()
                 .argName("PASSWORD")
                 .required()
                 .build());
-		
-		
-		
-		
-		
-		
-		return opts;
-	}
 
-	@Override
-	public String getUsageFooter() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
+
+
+
+
+        return opts;
+    }
+
+    @Override
+    public String getUsageFooter() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

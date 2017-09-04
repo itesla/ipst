@@ -26,15 +26,15 @@ import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynDataLoader;
 @AutoService(Tool.class)
 public class DdbLoaderTool implements Tool {
 
-	@Override
-	public Command getCommand() {
-		return DdbLoaderCommand.INSTANCE;
-	}
+    @Override
+    public Command getCommand() {
+        return DdbLoaderCommand.INSTANCE;
+    }
 
-	@Override
-	public void run(CommandLine line, ToolRunningContext context) throws Exception {
-		String dataDir = line.getOptionValue(DdbLoaderCommand.DATA_DIR);
-		String jbossHost = line.getOptionValue(DdbLoaderCommand.HOST);
+    @Override
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
+        String dataDir = line.getOptionValue(DdbLoaderCommand.DATA_DIR);
+        String jbossHost = line.getOptionValue(DdbLoaderCommand.HOST);
         String jbossPort = line.getOptionValue(DdbLoaderCommand.PORT);
         String jbossUser = line.getOptionValue(DdbLoaderCommand.USER);
         String jbossPassword = line.getOptionValue(DdbLoaderCommand.PASSWORD);
@@ -46,13 +46,13 @@ public class DdbLoaderTool implements Tool {
         Path genPath=ddData.resolve("reguls");
         Path dicoPath=ddData.resolve("dico.txt");
         DynDataLoader dn= new DynDataLoader(
-        		dicoPath,
-        		ddPath,
-        		genPath,
-        		eurostagVersion,//"5.1.1",
-				ddbConfig.getJbossHost(), ddbConfig.getJbossPort(), ddbConfig.getJbossUser(), ddbConfig.getJbossPassword()
-				);
-		dn.loadDynData();
-	}
+                dicoPath,
+                ddPath,
+                genPath,
+                eurostagVersion,//"5.1.1",
+                ddbConfig.getJbossHost(), ddbConfig.getJbossPort(), ddbConfig.getJbossUser(), ddbConfig.getJbossPassword()
+                );
+        dn.loadDynData();
+    }
 
 }

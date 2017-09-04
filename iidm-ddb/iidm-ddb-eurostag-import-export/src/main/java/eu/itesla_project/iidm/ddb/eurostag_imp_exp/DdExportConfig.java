@@ -17,17 +17,17 @@ public class DdExportConfig {
 
     private static final String MODULE_NAME = "ddImportExport";
 
-	private static final boolean DEFAULT_AUTOMATON_A11 = false;
-	private static final boolean DEFAULT_AUTOMATON_A12 = false;
-	private static final boolean DEFAULT_AUTOMATON_A14 = false;
-	private static final boolean DEFAULT_RST = false;
-	private static final boolean DEFAULT_ACMC = false;
-	private static final boolean DEFAULT_LV_LOAD_MODELING = false;
-	private static final String DEFAULT_RST_REGUL_INJECTOR = "RSTN_PCA";
-	private static final String DEFAULT_RST_REGUL_GENERATOR = "APRTH1";
-	private static final String DEFAULT_RST_REGUL_GENERATOR_DELETE = "CONSIG";
-	private static final String DEFAULT_ACMC_REGUL = "ACMC";
-	private static final String DEFAULT_RST_PILOT_GENERATORS = "";
+    private static final boolean DEFAULT_AUTOMATON_A11 = false;
+    private static final boolean DEFAULT_AUTOMATON_A12 = false;
+    private static final boolean DEFAULT_AUTOMATON_A14 = false;
+    private static final boolean DEFAULT_RST = false;
+    private static final boolean DEFAULT_ACMC = false;
+    private static final boolean DEFAULT_LV_LOAD_MODELING = false;
+    private static final String DEFAULT_RST_REGUL_INJECTOR = "RSTN_PCA";
+    private static final String DEFAULT_RST_REGUL_GENERATOR = "APRTH1";
+    private static final String DEFAULT_RST_REGUL_GENERATOR_DELETE = "CONSIG";
+    private static final String DEFAULT_ACMC_REGUL = "ACMC";
+    private static final String DEFAULT_RST_PILOT_GENERATORS = "";
     private static final float DEFAULT_LOAD_PATTERN_ALPHA = 1;
     private static final float DEFAULT_LOAD_PATTERN_BETA = 2;
     private static final boolean DEFAULT_GENPQFILTER = false;
@@ -175,47 +175,47 @@ public class DdExportConfig {
     public boolean getGensPQfilter() { return gensPQfilter; }
 
     public void setAutomatonA11(Boolean automatonA11) {
-    	this.automatonA11 = automatonA11;
+        this.automatonA11 = automatonA11;
     }
 
     public void setAutomatonA12(Boolean automatonA12) {
-    	this.automatonA12 = automatonA12;
+        this.automatonA12 = automatonA12;
     }
     
     public void setAutomatonA14(Boolean automatonA14) {
-    	this.automatonA14 = automatonA14;
+        this.automatonA14 = automatonA14;
     }
     
     public void setImportExportRST(Boolean importExportRST) {
-    	this.importExportRST = importExportRST;
+        this.importExportRST = importExportRST;
     }
     
     public void setLVLoadModeling(Boolean LVLoadModeling) {
-    	this.LVLoadModeling = LVLoadModeling;
+        this.LVLoadModeling = LVLoadModeling;
     }
     
     public void setImportExportACMC(Boolean importExportACMC) {
-    	this.importExportACMC = importExportACMC;
+        this.importExportACMC = importExportACMC;
     }
     
     public void setRSTRegulInjector(String RSTRegulInjector) {
-    	this.RSTRegulInjector = RSTRegulInjector;
+        this.RSTRegulInjector = RSTRegulInjector;
     }
     
     public void setRSTRegulGenerator(String RSTRegulGenerator) {
-    	this.RSTRegulGenerator = RSTRegulGenerator;
+        this.RSTRegulGenerator = RSTRegulGenerator;
     }
     
     public void setRSTRegulGeneratorDelete(String RSTRegulGeneratorDelete) {
-    	this.RSTRegulGeneratorDelete = RSTRegulGeneratorDelete;
+        this.RSTRegulGeneratorDelete = RSTRegulGeneratorDelete;
     }
     
     public void setACMCRegul(String ACMCRegul) {
-    	this.ACMCRegul = ACMCRegul;
+        this.ACMCRegul = ACMCRegul;
     }
     
     public void setRSTPilotGenerators(String RSTPilotGenerators) {
-    	this.RSTPilotGenerators = RSTPilotGenerators;
+        this.RSTPilotGenerators = RSTPilotGenerators;
     }
 
     public void setLoadPatternAlpha(float loadPatternAlpha) {
