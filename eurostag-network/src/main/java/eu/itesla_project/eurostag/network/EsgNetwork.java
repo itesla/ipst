@@ -207,7 +207,7 @@ public class EsgNetwork {
     
     public void removeArea(String area) {
         if (!areas.containsKey(area)) {
-        	throw new IllegalArgumentException("Area '" + area + "' doesn't exists");
+            throw new IllegalArgumentException("Area '" + area + "' doesn't exists");
         } 
         areas.remove(area);
     }
