@@ -18,73 +18,73 @@ import eu.itesla_project.modules.online.StateProcessingStatus;
  */
 public class WorkStatus implements StateProcessingStatus,Serializable {
 
-	private Integer stateId;
-	
-	private String timeHorizon;
-	
-	private HashMap<String,String> status;
-	
-	private String detail;
-	
-	
+    private Integer stateId;
 
-	public WorkStatus(Integer stateId, EnumMap<OnlineTaskType, OnlineTaskStatus> st, String time)
-	{
-		this.stateId=stateId;
-		this.timeHorizon=time;
-		this.status=new HashMap<String, String>();
-				for(OnlineTaskType k :st.keySet())
-					status.put(k.toString(), st.get(k).toString());
-	}
-	
-	public WorkStatus(Integer stateId, EnumMap<OnlineTaskType, OnlineTaskStatus> st, String time, String detail)
-	{
-		this.stateId=stateId;
-		this.timeHorizon=time;
-		this.status=new HashMap<String, String>();
-				for(OnlineTaskType k :st.keySet())
-					status.put(k.toString(), st.get(k).toString());
-		this.detail=detail;
-	}
-	
-	public Integer getStateId() {
-		return stateId;
-	}
-	
-	public void setStateId(Integer stateId) {
-		this.stateId = stateId;
-	}
-	
-	@Override
-	public HashMap getStatus() {
-		return status;
-	}
-	public void setStatus(HashMap<String, String> status) {
-		this.status = status;
-	}
-	
-	public String getTimeHorizon() {
-		return timeHorizon;
-	}
+    private String timeHorizon;
 
-	public void setTimeHorizon(String timeHorizon) {
-		this.timeHorizon = timeHorizon;
-	}
-	
-	@Override
-	public String getDetail() {
-		return detail;
-	}
+    private HashMap<String,String> status;
 
-	public void setDetail(String detail) {
-		this.detail = detail;
-	}
-	
-	//new
-	public void setStatus(EnumMap<OnlineTaskType, OnlineTaskStatus> st){
-		this.status=new HashMap<String, String>();
-		for(OnlineTaskType k :st.keySet())
-			status.put(k.toString(), st.get(k).toString());
-	}
-	
+    private String detail;
+
+
+
+    public WorkStatus(Integer stateId, EnumMap<OnlineTaskType, OnlineTaskStatus> st, String time)
+    {
+        this.stateId=stateId;
+        this.timeHorizon=time;
+        this.status=new HashMap<String, String>();
+                for(OnlineTaskType k :st.keySet())
+                    status.put(k.toString(), st.get(k).toString());
+    }
+
+    public WorkStatus(Integer stateId, EnumMap<OnlineTaskType, OnlineTaskStatus> st, String time, String detail)
+    {
+        this.stateId=stateId;
+        this.timeHorizon=time;
+        this.status=new HashMap<String, String>();
+                for(OnlineTaskType k :st.keySet())
+                    status.put(k.toString(), st.get(k).toString());
+        this.detail=detail;
+    }
+
+    public Integer getStateId() {
+        return stateId;
+    }
+
+    public void setStateId(Integer stateId) {
+        this.stateId = stateId;
+    }
+
+    @Override
+    public HashMap getStatus() {
+        return status;
+    }
+    public void setStatus(HashMap<String, String> status) {
+        this.status = status;
+    }
+
+    public String getTimeHorizon() {
+        return timeHorizon;
+    }
+
+    public void setTimeHorizon(String timeHorizon) {
+        this.timeHorizon = timeHorizon;
+    }
+
+    @Override
+    public String getDetail() {
+        return detail;
+    }
+
+    public void setDetail(String detail) {
+        this.detail = detail;
+    }
+
+    //new
+    public void setStatus(EnumMap<OnlineTaskType, OnlineTaskStatus> st){
+        this.status=new HashMap<String, String>();
+        for(OnlineTaskType k :st.keySet())
+            status.put(k.toString(), st.get(k).toString());
+    }
+
 }

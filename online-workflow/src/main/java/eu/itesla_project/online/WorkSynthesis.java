@@ -14,31 +14,31 @@ import java.util.HashMap;
  * @author Quinary <itesla@quinary.com>
  */
 public class WorkSynthesis implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
-	
-	private String workflowId;
-	private HashMap<Integer,WorkStatus> status;
-	
-	public WorkSynthesis(){};
-	
-	public WorkSynthesis(String workflowId, HashMap<Integer,WorkStatus> status)
-	{
-		this.workflowId=workflowId;
-		this.status=status;
-	}
-	
-	public String getWorkflowId() {
-		return workflowId;
-	}
-	public void setWorkflowId(String workflowId) {
-		this.workflowId = workflowId;
-	}
-	public HashMap<Integer, WorkStatus> getStatus() {
-		return status;
-	}
-	public void setStatus(HashMap<Integer, WorkStatus> status) {
-		this.status = status;
-	}
+
+    private static final long serialVersionUID = 1L;
+
+    private String workflowId;
+    private HashMap<Integer,WorkStatus> status;
+
+    public WorkSynthesis(){};
+
+    public WorkSynthesis(String workflowId, HashMap<Integer,WorkStatus> status)
+    {
+        this.workflowId=workflowId;
+        this.status=status;
+    }
+
+    public String getWorkflowId() {
+        return workflowId;
+    }
+    public void setWorkflowId(String workflowId) {
+        this.workflowId = workflowId;
+    }
+    public HashMap<Integer, WorkStatus> getStatus() {
+        return status;
+    }
+    public void setStatus(HashMap<Integer, WorkStatus> status) {
+        this.status = status;
+    }
 
 }

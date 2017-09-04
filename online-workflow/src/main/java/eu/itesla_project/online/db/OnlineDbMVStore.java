@@ -1513,7 +1513,7 @@ public class OnlineDbMVStore implements OnlineDb {
                     workflowId,
                     stateId
             );
-            //stateContingencyMap.putIfAbsent(contingencyId, "");				
+            //stateContingencyMap.putIfAbsent(contingencyId, "");
             stateContingencyMap.put(contingencyId, "");
 
             wfMVStore.commit();
@@ -1546,7 +1546,7 @@ public class OnlineDbMVStore implements OnlineDb {
                     workflowId,
                     stateId
             );
-            //stateContingencyMap.putIfAbsent(contingencyId, Boolean.toString(loadflowConverge));				
+            //stateContingencyMap.putIfAbsent(contingencyId, Boolean.toString(loadflowConverge));
             stateContingencyMap.put(contingencyId, Boolean.toString(loadflowConverge));
 
             wfMVStore.commit();

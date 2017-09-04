@@ -30,14 +30,14 @@ import eu.itesla_project.modules.wca.WCAFactory;
 */
 public interface OnlineWorkflowFactory {
 
-	OnlineWorkflow create(ComputationManager computationManager,
-			ContingenciesAndActionsDatabaseClient cadbClient,
-			HistoDbClient histoDbClient, RulesDbClient rulesDbClient, WCAFactory wcaFactory,
-			LoadFlowFactory loadFlowFactory, ForecastErrorsDataStorage feDataStorage, OnlineDb onlineDB,
-			UncertaintiesAnalyserFactory uncertaintiesAnalyserFactory,
-			CorrectiveControlOptimizerFactory optimizerFactory, SimulatorFactory simulatorFactory,
-			CaseRepository caseRepository, MontecarloSamplerFactory montecarloSamplerFactory,
-			MergeOptimizerFactory mergeOptimizerFactory, RulesFacadeFactory rulesFacadeFactory,
-			OnlineWorkflowParameters parameters, OnlineWorkflowStartParameters startParameters);
+    OnlineWorkflow create(ComputationManager computationManager,
+            ContingenciesAndActionsDatabaseClient cadbClient,
+            HistoDbClient histoDbClient, RulesDbClient rulesDbClient, WCAFactory wcaFactory,
+            LoadFlowFactory loadFlowFactory, ForecastErrorsDataStorage feDataStorage, OnlineDb onlineDB,
+            UncertaintiesAnalyserFactory uncertaintiesAnalyserFactory,
+            CorrectiveControlOptimizerFactory optimizerFactory, SimulatorFactory simulatorFactory,
+            CaseRepository caseRepository, MontecarloSamplerFactory montecarloSamplerFactory,
+            MergeOptimizerFactory mergeOptimizerFactory, RulesFacadeFactory rulesFacadeFactory,
+            OnlineWorkflowParameters parameters, OnlineWorkflowStartParameters startParameters);
 
 }

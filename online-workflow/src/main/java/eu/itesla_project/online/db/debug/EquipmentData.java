@@ -12,6 +12,6 @@ package eu.itesla_project.online.db.debug;
  */
 public interface EquipmentData {
 
-	public String getFieldValue(String fieldName);
-	
+    public String getFieldValue(String fieldName);
+
 }

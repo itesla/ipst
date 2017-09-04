@@ -13,26 +13,26 @@ import java.io.Serializable;
  * @author Quinary <itesla@quinary.com>
  */
 public class StatusSynthesis implements Serializable{
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private final String workflowId;
-	private final WorkflowStatusEnum status;
-	
-	public StatusSynthesis(String workflowId, WorkflowStatusEnum status)
-	{
-		this.workflowId=workflowId;
-		this.status=status;
-	}
-	
-	public String getWorkflowId() {
-		return workflowId;
-	}
-	
-	public WorkflowStatusEnum getStatus() {
-		return status;
-	}
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    private final String workflowId;
+    private final WorkflowStatusEnum status;
+
+    public StatusSynthesis(String workflowId, WorkflowStatusEnum status)
+    {
+        this.workflowId=workflowId;
+        this.status=status;
+    }
+
+    public String getWorkflowId() {
+        return workflowId;
+    }
+
+    public WorkflowStatusEnum getStatus() {
+        return status;
+    }
 
 }

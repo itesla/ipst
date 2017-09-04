@@ -13,41 +13,41 @@ import java.io.Serializable;
  * @author Quinary <itesla@quinary.com>
  */
 public class StableContingenciesSynthesis implements Serializable{
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private String workflowId;
-	private String[] contingencies;
-	
-	public StableContingenciesSynthesis()
-	{
-		
-	}
-	
-	public StableContingenciesSynthesis(String workflowId, String[] contingencies)
-	{
-		this.workflowId=workflowId;
-		this.contingencies=contingencies;
-	}
-	
-	public String getWorkflowId() {
-		return workflowId;
-	}
-	public void setWorkflowId(String workflowId) {
-		this.workflowId = workflowId;
-	}
 
-	public String[] getContingencies() {
-		return contingencies;
-	}
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    private String workflowId;
+    private String[] contingencies;
 
-	public void setContingencies(String[] contingencies) {
-		this.contingencies = contingencies;
-	}
-	
-	
-	
+    public StableContingenciesSynthesis()
+    {
+
+    }
+
+    public StableContingenciesSynthesis(String workflowId, String[] contingencies)
+    {
+        this.workflowId=workflowId;
+        this.contingencies=contingencies;
+    }
+
+    public String getWorkflowId() {
+        return workflowId;
+    }
+    public void setWorkflowId(String workflowId) {
+        this.workflowId = workflowId;
+    }
+
+    public String[] getContingencies() {
+        return contingencies;
+    }
+
+    public void setContingencies(String[] contingencies) {
+        this.contingencies = contingencies;
+    }
+
+
+
 
 }

@@ -22,29 +22,29 @@ import eu.itesla_project.modules.optimizer.PostContingencyState;
  */
 public class CorrectiveControlOptimizerMock implements CorrectiveControlOptimizer {
 
-	Logger logger = LoggerFactory.getLogger(CorrectiveControlOptimizerMock.class);
-	
-	@Override
-	public void close() throws Exception {
-	}
-	
-	@Override
-	public void init(CorrectiveControlOptimizerParameters parameters) {
-	}
+    Logger logger = LoggerFactory.getLogger(CorrectiveControlOptimizerMock.class);
 
-	@Override
-	public CorrectiveControlOptimizerResult run(PostContingencyState postContingencyState) throws Exception {
-		CorrectiveControlOptimizerResult result = null; 
-		if ( postContingencyState!= null ) {
-			logger.info("Working on contingency {} and state {}", postContingencyState.getContingency().getId(), postContingencyState.getStateId());
-			result = new CorrectiveControlOptimizerResult(postContingencyState.getContingency().getId(), false);
-			result.setFinalStatus(CCOFinalStatus.NO_CORRECTIVE_ACTION_FOUND);
-		}
-		return result;
-	}
+    @Override
+    public void close() throws Exception {
+    }
+
+    @Override
+    public void init(CorrectiveControlOptimizerParameters parameters) {
+    }
+
+    @Override
+    public CorrectiveControlOptimizerResult run(PostContingencyState postContingencyState) throws Exception {
+        CorrectiveControlOptimizerResult result = null;
+        if ( postContingencyState!= null ) {
+            logger.info("Working on contingency {} and state {}", postContingencyState.getContingency().getId(), postContingencyState.getStateId());
+            result = new CorrectiveControlOptimizerResult(postContingencyState.getContingency().getId(), false);
+            result.setFinalStatus(CCOFinalStatus.NO_CORRECTIVE_ACTION_FOUND);
+        }
+        return result;
+    }
 
 
 
-	
+
 
 }

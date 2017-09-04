@@ -35,9 +35,9 @@ import java.util.Map;
  */
 @AutoService(Tool.class)
 public class PrintOnlineWorkflowRulesResultsTool implements Tool {
-	
-	private static String NO_RULES_AVAILABLE = "NO_RULES_AVAILABLE";
-	private static String INVALID_RULE = "Invalid Rule";
+
+    private static String NO_RULES_AVAILABLE = "NO_RULES_AVAILABLE";
+    private static String INVALID_RULE = "Invalid Rule";
 
     private static Command COMMAND = new Command() {
 

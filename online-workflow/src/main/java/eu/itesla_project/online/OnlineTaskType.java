@@ -11,7 +11,7 @@ package eu.itesla_project.online;
  * @author Quinary <itesla@quinary.com>
  */
 public enum OnlineTaskType {
-	SAMPLING,
+    SAMPLING,
     LOAD_FLOW,
     SECURITY_RULES,
     OPTIMIZER,

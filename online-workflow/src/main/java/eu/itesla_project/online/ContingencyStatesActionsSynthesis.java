@@ -18,46 +18,46 @@ import java.util.Map;
  */
 public class ContingencyStatesActionsSynthesis implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final HashMap<String,Map> contingencyMap=new HashMap<String,Map>(); //contingencyid
+    private final HashMap<String,Map> contingencyMap=new HashMap<String,Map>(); //contingencyid
 
-	private String workflowId;
+    private String workflowId;
 
-	public ContingencyStatesActionsSynthesis() {
-		
-	}
-	
-	public ContingencyStatesActionsSynthesis(String workflowId) {
-		this.workflowId=workflowId;
-	}
-	
-	
-	public String getWorkflowId() {
-		return workflowId;
-	}
-	public void setWorkflowId(String workflowId) {
-		this.workflowId = workflowId;
-	}
-	
-	public void addStateActions(String contingencyId, Integer stateId,List<ActionInfo> actions){
-		Map<Integer,List<ActionInfo>> statesActions = contingencyMap.get(contingencyId);
-		if(statesActions==null)
-			statesActions = new HashMap<Integer,List<ActionInfo>>();
-		
-		
-		
-		statesActions.put(stateId, actions);
-		System.out.println(" statesActions -->stateId: "+stateId);
-		contingencyMap.put(contingencyId, statesActions);
-	}
+    public ContingencyStatesActionsSynthesis() {
 
-	public HashMap<String, Map> getContingencyMap() {
-		return contingencyMap;
-	}
+    }
 
-	
-	   
+    public ContingencyStatesActionsSynthesis(String workflowId) {
+        this.workflowId=workflowId;
+    }
 
-	}
+
+    public String getWorkflowId() {
+        return workflowId;
+    }
+    public void setWorkflowId(String workflowId) {
+        this.workflowId = workflowId;
+    }
+
+    public void addStateActions(String contingencyId, Integer stateId,List<ActionInfo> actions){
+        Map<Integer,List<ActionInfo>> statesActions = contingencyMap.get(contingencyId);
+        if(statesActions==null)
+            statesActions = new HashMap<Integer,List<ActionInfo>>();
+
+
+
+        statesActions.put(stateId, actions);
+        System.out.println(" statesActions -->stateId: "+stateId);
+        contingencyMap.put(contingencyId, statesActions);
+    }
+
+    public HashMap<String, Map> getContingencyMap() {
+        return contingencyMap;
+    }
+
+
+
+
+    }
 

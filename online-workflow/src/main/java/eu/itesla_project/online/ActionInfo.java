@@ -14,25 +14,25 @@ import java.io.Serializable;
  * @author Quinary <itesla@quinary.com>
  */
 public class ActionInfo implements Serializable{
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	private String id;
 
-	public ActionInfo(String id){
-		this.id=id;
-	}
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
-	
+    private String id;
 
-	public String getId() {
-		return id;
-	}
+    public ActionInfo(String id){
+        this.id=id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }

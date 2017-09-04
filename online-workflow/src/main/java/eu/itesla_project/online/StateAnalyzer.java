@@ -394,7 +394,7 @@ public class StateAnalyzer implements Callable<Void> {
                             logger.info("{}: storing post contingency violations/loadflow results for contingency {} in online db", stateId, contingency.getId());
                             onlineDb.storePostContingencyViolations(context.getWorkflowId(), Integer.valueOf(stateId), contingency.getId(), loadflowConverge, violations);
                             network.getStateManager().setWorkingState(stateId);
-                            //							network.getStateManager().removeState(postContingencyStateId);
+                            //                            network.getStateManager().removeState(postContingencyStateId);
                             return null;
                         }
                     }

@@ -21,62 +21,62 @@ import java.util.Set;
  */
 public class WCAResults implements OnlineWorkflowWcaResults {
 
-	// the id of the workflow where the WCA has been applied
-	private final String workflowId;
-	// the time horizon used for the workflow where the WCA has been applied
-	private final TimeHorizon timeHorizon;
-	// <contingency, cluster>
-	private Map<String, WCACluster> contingenciesWithClusters = new HashMap<String, WCACluster>();
-	
-	public WCAResults(String workflowId, TimeHorizon timeHorizon) {
-		this.workflowId = workflowId;
-		this.timeHorizon = timeHorizon;
-	}
-	
-	@Override
-	public String getWorkflowId() {
-		return workflowId;
-	}
-	
-	@Override
-	public TimeHorizon getTimeHorizon() {
-		return timeHorizon;
-	}
-	
-	public void addContingencyWithCluster(String contingencyId, WCACluster cluster) {
-		contingenciesWithClusters.put(contingencyId, cluster);
-	}
-	
-	@Override
-	public Set<String> getContingencies() {
-		return contingenciesWithClusters.keySet();
-	}
-	
-	public Map<String, WCACluster>  getContingenciesWithClusters() {
-		return contingenciesWithClusters;
-	}
-	
-	public WCACluster getCluster(String contingencyId) {
-		return contingenciesWithClusters.get(contingencyId);
-	}
-	
-	@Override
-	public int getClusterIndex(String contingencyId) {
-		return contingenciesWithClusters.get(contingencyId).getNum().toIntValue();
-	}
-	
-	@Override
-	public List<String> getCauses(String contingencyId) {
-		return contingenciesWithClusters.get(contingencyId).getCauses();
-	}
-	
-	public  String toString() {
-		String output = "time horizon: "+ timeHorizon.getName();
-		output += "\n" + "contingencies with cluster: " + getContingencies();
-		for(String contingencyId : getContingencies() )
-			output += "\n[contingecy id = " + contingencyId + ", cluster = " + getClusterIndex(contingencyId) + "]"; 
-		return output;
-		
-	}
-	
+    // the id of the workflow where the WCA has been applied
+    private final String workflowId;
+    // the time horizon used for the workflow where the WCA has been applied
+    private final TimeHorizon timeHorizon;
+    // <contingency, cluster>
+    private Map<String, WCACluster> contingenciesWithClusters = new HashMap<String, WCACluster>();
+
+    public WCAResults(String workflowId, TimeHorizon timeHorizon) {
+        this.workflowId = workflowId;
+        this.timeHorizon = timeHorizon;
+    }
+
+    @Override
+    public String getWorkflowId() {
+        return workflowId;
+    }
+
+    @Override
+    public TimeHorizon getTimeHorizon() {
+        return timeHorizon;
+    }
+
+    public void addContingencyWithCluster(String contingencyId, WCACluster cluster) {
+        contingenciesWithClusters.put(contingencyId, cluster);
+    }
+
+    @Override
+    public Set<String> getContingencies() {
+        return contingenciesWithClusters.keySet();
+    }
+
+    public Map<String, WCACluster>  getContingenciesWithClusters() {
+        return contingenciesWithClusters;
+    }
+
+    public WCACluster getCluster(String contingencyId) {
+        return contingenciesWithClusters.get(contingencyId);
+    }
+
+    @Override
+    public int getClusterIndex(String contingencyId) {
+        return contingenciesWithClusters.get(contingencyId).getNum().toIntValue();
+    }
+
+    @Override
+    public List<String> getCauses(String contingencyId) {
+        return contingenciesWithClusters.get(contingencyId).getCauses();
+    }
+
+    public  String toString() {
+        String output = "time horizon: "+ timeHorizon.getName();
+        output += "\n" + "contingencies with cluster: " + getContingencies();
+        for(String contingencyId : getContingencies() )
+            output += "\n[contingecy id = " + contingencyId + ", cluster = " + getClusterIndex(contingencyId) + "]";
+        return output;
+
+    }
+
 }

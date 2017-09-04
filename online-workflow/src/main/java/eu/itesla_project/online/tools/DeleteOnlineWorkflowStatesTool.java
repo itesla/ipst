@@ -23,59 +23,59 @@ import org.apache.commons.cli.Options;
 @AutoService(Tool.class)
 public class DeleteOnlineWorkflowStatesTool implements Tool {
 
-	private static Command COMMAND = new Command() {
-		
-		@Override
-		public String getName() {
-			return "delete-online-workflow-states";
-		}
+    private static Command COMMAND = new Command() {
 
-		@Override
-		public String getTheme() {
-			return Themes.ONLINE_WORKFLOW;
-		}
+        @Override
+        public String getName() {
+            return "delete-online-workflow-states";
+        }
 
-		@Override
-		public String getDescription() {
-			return "Delete stored stated of an online workflow from the online database";
-		}
+        @Override
+        public String getTheme() {
+            return Themes.ONLINE_WORKFLOW;
+        }
 
-		@Override
-		public Options getOptions() {
-			Options options = new Options();
-			options.addOption(Option.builder().longOpt("workflow")
-	                .desc("the workflow id")
-	                .hasArg()
-	                .required()
-	                .argName("ID")
-	                .build());
-			return options;
-		}
+        @Override
+        public String getDescription() {
+            return "Delete stored stated of an online workflow from the online database";
+        }
 
-		@Override
-		public String getUsageFooter() {
-			return null;
-		}
-		
-	};
-	
-	@Override
-	public Command getCommand() {
-		return COMMAND;
-	}
+        @Override
+        public Options getOptions() {
+            Options options = new Options();
+            options.addOption(Option.builder().longOpt("workflow")
+                    .desc("the workflow id")
+                    .hasArg()
+                    .required()
+                    .argName("ID")
+                    .build());
+            return options;
+        }
 
-	@Override
-	public void run(CommandLine line, ToolRunningContext context) throws Exception {
-		OnlineConfig config = OnlineConfig.load();
-		OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
-		String workflowId = line.getOptionValue("workflow");
-		context.getOutputStream().println("Deleting stored states of workflow " + workflowId);
-		boolean deleted = onlinedb.deleteStates(workflowId);
-		if ( deleted )
-			context.getOutputStream().println("Stored states of workflow " + workflowId + " deleted");
-		else
-			context.getOutputStream().println("Cannot delete stored states of workflow " + workflowId);
-		onlinedb.close();
-	}
-	
+        @Override
+        public String getUsageFooter() {
+            return null;
+        }
+
+    };
+
+    @Override
+    public Command getCommand() {
+        return COMMAND;
+    }
+
+    @Override
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
+        OnlineConfig config = OnlineConfig.load();
+        OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
+        String workflowId = line.getOptionValue("workflow");
+        context.getOutputStream().println("Deleting stored states of workflow " + workflowId);
+        boolean deleted = onlinedb.deleteStates(workflowId);
+        if ( deleted )
+            context.getOutputStream().println("Stored states of workflow " + workflowId + " deleted");
+        else
+            context.getOutputStream().println("Cannot delete stored states of workflow " + workflowId);
+        onlinedb.close();
+    }
+
 }

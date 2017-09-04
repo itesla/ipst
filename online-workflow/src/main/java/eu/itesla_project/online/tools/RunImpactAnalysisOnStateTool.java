@@ -36,128 +36,128 @@ import java.util.*;
 @AutoService(Tool.class)
 public class RunImpactAnalysisOnStateTool implements Tool {
 
-	private static Command COMMAND = new Command() {
-		
-		@Override
-		public String getName() {
-			return "run-impact-analysis-on-state";
-		}
+    private static Command COMMAND = new Command() {
 
-		@Override
-		public String getTheme() {
-			return Themes.ONLINE_WORKFLOW;
-		}
+        @Override
+        public String getName() {
+            return "run-impact-analysis-on-state";
+        }
 
-		@Override
-		public String getDescription() {
-			return "Run impact analysis on a stored state of an online workflow";
-		}
+        @Override
+        public String getTheme() {
+            return Themes.ONLINE_WORKFLOW;
+        }
 
-		@Override
-		public Options getOptions() {
-			Options options = new Options();
-			options.addOption(Option.builder().longOpt("workflow")
-	                .desc("the workflow id")
-	                .hasArg()
-	                .required()
-	                .argName("ID")
-	                .build());
-			options.addOption(Option.builder().longOpt("state")
-	                .desc("the state id")
-	                .hasArg()
-	                .required()
-	                .argName("STATE")
-	                .build());
-			options.addOption(Option.builder().longOpt("contingencies")
+        @Override
+        public String getDescription() {
+            return "Run impact analysis on a stored state of an online workflow";
+        }
+
+        @Override
+        public Options getOptions() {
+            Options options = new Options();
+            options.addOption(Option.builder().longOpt("workflow")
+                    .desc("the workflow id")
+                    .hasArg()
+                    .required()
+                    .argName("ID")
+                    .build());
+            options.addOption(Option.builder().longOpt("state")
+                    .desc("the state id")
+                    .hasArg()
+                    .required()
+                    .argName("STATE")
+                    .build());
+            options.addOption(Option.builder().longOpt("contingencies")
                     .desc("contingencies to test separated by , (all the db if not specified)")
                     .hasArg()
                     .argName("LIST")
                     .build());
-			return options;
-		}
+            return options;
+        }
 
-		@Override
-		public String getUsageFooter() {
-			return null;
-		}
-		
-	};
-	
-	@Override
-	public Command getCommand() {
-		return COMMAND;
-	}
+        @Override
+        public String getUsageFooter() {
+            return null;
+        }
 
-	@Override
-	public void run(CommandLine line, ToolRunningContext context) throws Exception {
-		String workflowId = line.getOptionValue("workflow");
-		Integer stateId = Integer.valueOf(line.getOptionValue("state"));
-		Set<String> contingencyIds = null;
+    };
+
+    @Override
+    public Command getCommand() {
+        return COMMAND;
+    }
+
+    @Override
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
+        String workflowId = line.getOptionValue("workflow");
+        Integer stateId = Integer.valueOf(line.getOptionValue("state"));
+        Set<String> contingencyIds = null;
         if (line.hasOption("contingencies")) {
             contingencyIds = Sets.newHashSet(line.getOptionValue("contingencies").split(","));
         }
         context.getOutputStream().println("loading state " + stateId + " of workflow " + workflowId + " from the online db ...");
         OnlineConfig config = OnlineConfig.load();
-		OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
+        OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
         // load the network
         Network network = onlinedb.getState(workflowId, stateId);
         if ( network != null ) {
-	        ContingenciesAndActionsDatabaseClient contingencyDb = config.getContingencyDbClientFactoryClass().newInstance().create();
-	        SimulatorFactory simulatorFactory = config.getSimulatorFactoryClass().newInstance();
-	        Stabilization stabilization = simulatorFactory.createStabilization(network, context.getComputationManager(), 0);
-			ImpactAnalysis impactAnalysis = simulatorFactory.createImpactAnalysis(network, context.getComputationManager(), 0, contingencyDb);
-			Map<String, Object> initContext = new HashMap<>();
-			SimulationParameters simulationParameters = SimulationParameters.load();
-			stabilization.init(simulationParameters, initContext);
-			impactAnalysis.init(simulationParameters, initContext);
-			context.getOutputStream().println("running stabilization simulation...");
-			StabilizationResult sr = stabilization.run();
-			context.getOutputStream().println("stabilization status: " + sr.getStatus());
-			if (sr.getStatus() == StabilizationStatus.COMPLETED) {
-				context.getOutputStream().println("running impact analysis...");
-				ImpactAnalysisResult iar = impactAnalysis.run(sr.getState(), contingencyIds);
+            ContingenciesAndActionsDatabaseClient contingencyDb = config.getContingencyDbClientFactoryClass().newInstance().create();
+            SimulatorFactory simulatorFactory = config.getSimulatorFactoryClass().newInstance();
+            Stabilization stabilization = simulatorFactory.createStabilization(network, context.getComputationManager(), 0);
+            ImpactAnalysis impactAnalysis = simulatorFactory.createImpactAnalysis(network, context.getComputationManager(), 0, contingencyDb);
+            Map<String, Object> initContext = new HashMap<>();
+            SimulationParameters simulationParameters = SimulationParameters.load();
+            stabilization.init(simulationParameters, initContext);
+            impactAnalysis.init(simulationParameters, initContext);
+            context.getOutputStream().println("running stabilization simulation...");
+            StabilizationResult sr = stabilization.run();
+            context.getOutputStream().println("stabilization status: " + sr.getStatus());
+            if (sr.getStatus() == StabilizationStatus.COMPLETED) {
+                context.getOutputStream().println("running impact analysis...");
+                ImpactAnalysisResult iar = impactAnalysis.run(sr.getState(), contingencyIds);
 
-				Table table = new Table(1 + SecurityIndexType.values().length, BorderStyle.CLASSIC_WIDE);
-				table.addCell("Contingency");
-				for (SecurityIndexType securityIndexType : SecurityIndexType.values()) {
-					table.addCell(securityIndexType.toString());
-				}
+                Table table = new Table(1 + SecurityIndexType.values().length, BorderStyle.CLASSIC_WIDE);
+                table.addCell("Contingency");
+                for (SecurityIndexType securityIndexType : SecurityIndexType.values()) {
+                    table.addCell(securityIndexType.toString());
+                }
 
-				Multimap<String, SecurityIndex> securityIndexesPerContingency = Multimaps.index(iar.getSecurityIndexes(), new Function<SecurityIndex, String>() {
-					@Override
-					public String apply(SecurityIndex securityIndex) {
-						return securityIndex.getId().getContingencyId();
-					}
-				});
-				for (Map.Entry<String, Collection<SecurityIndex>> entry : securityIndexesPerContingency.asMap().entrySet()) {
-					String contingencyId = entry.getKey();
+                Multimap<String, SecurityIndex> securityIndexesPerContingency = Multimaps.index(iar.getSecurityIndexes(), new Function<SecurityIndex, String>() {
+                    @Override
+                    public String apply(SecurityIndex securityIndex) {
+                        return securityIndex.getId().getContingencyId();
+                    }
+                });
+                for (Map.Entry<String, Collection<SecurityIndex>> entry : securityIndexesPerContingency.asMap().entrySet()) {
+                    String contingencyId = entry.getKey();
 
-					table.addCell(contingencyId);
+                    table.addCell(contingencyId);
 
-					Map<SecurityIndexType, Boolean> ok = new EnumMap<>(SecurityIndexType.class);
-					for (SecurityIndex securityIndex : entry.getValue()) {
-						ok.put(securityIndex.getId().getSecurityIndexType(), securityIndex.isOk());
-					}
+                    Map<SecurityIndexType, Boolean> ok = new EnumMap<>(SecurityIndexType.class);
+                    for (SecurityIndex securityIndex : entry.getValue()) {
+                        ok.put(securityIndex.getId().getSecurityIndexType(), securityIndex.isOk());
+                    }
 
-					for (SecurityIndexType securityIndexType : SecurityIndexType.values()) {
-						Boolean b = ok.get(securityIndexType);
-						String str;
-						if (b == null) {
-							str = "NA";
-						} else {
-							str = b ? "OK" : "NOK";
-						}
-						table.addCell(str);
-					}
-				}
-				context.getOutputStream().println(table.render());
-			} else {
-	            	context.getOutputStream().println("Error running stabilization -  metrics = " + sr.getMetrics());
-			}
+                    for (SecurityIndexType securityIndexType : SecurityIndexType.values()) {
+                        Boolean b = ok.get(securityIndexType);
+                        String str;
+                        if (b == null) {
+                            str = "NA";
+                        } else {
+                            str = b ? "OK" : "NOK";
+                        }
+                        table.addCell(str);
+                    }
+                }
+                context.getOutputStream().println(table.render());
+            } else {
+                    context.getOutputStream().println("Error running stabilization -  metrics = " + sr.getMetrics());
+            }
         } else {
-        	context.getOutputStream().println("no state " + stateId + " of workflow " + workflowId + " stored in the online db");
+            context.getOutputStream().println("no state " + stateId + " of workflow " + workflowId + " stored in the online db");
         }
-		onlinedb.close();
-	}
-	
+        onlinedb.close();
+    }
+
 }

@@ -38,89 +38,89 @@ import java.util.Map;
  */
 @AutoService(Tool.class)
 public class RunSecurityRulesOnStateTool implements Tool {
-	
-	enum CheckStatus {
+
+    enum CheckStatus {
         OK,
         NOK,
         NA // not available
     }
 
-	private static Command COMMAND = new Command() {
-		
-		@Override
-		public String getName() {
-			return "run-security-rules-on-state";
-		}
+    private static Command COMMAND = new Command() {
 
-		@Override
-		public String getTheme() {
-			return Themes.ONLINE_WORKFLOW;
-		}
+        @Override
+        public String getName() {
+            return "run-security-rules-on-state";
+        }
 
-		@Override
-		public String getDescription() {
-			return "Run security rules computed by an offline workflow on a stored state of an online workflow";
-		}
+        @Override
+        public String getTheme() {
+            return Themes.ONLINE_WORKFLOW;
+        }
 
-		@Override
-		public Options getOptions() {
-			Options options = new Options();
-			options.addOption(Option.builder().longOpt("workflow")
-	                .desc("the online workflow id")
-	                .hasArg()
-	                .required()
-	                .argName("ID")
-	                .build());
-			options.addOption(Option.builder().longOpt("state")
-	                .desc("the state id")
-	                .hasArg()
-	                .required()
-	                .argName("STATE")
-	                .build());
-			options.addOption(Option.builder().longOpt("offline-workflow")
-	                .desc("the offline workflow id")
-	                .hasArg()
-	                .argName("OFFID")
-	                .build());
-			options.addOption(Option.builder().longOpt("wca")
-	                .desc("get results of wca rules (monte_carlo if not specified)")
-	                .build());
-			return options;
-		}
+        @Override
+        public String getDescription() {
+            return "Run security rules computed by an offline workflow on a stored state of an online workflow";
+        }
 
-		@Override
-		public String getUsageFooter() {
-			return null;
-		}
-		
-	};
-	
-	@Override
-	public Command getCommand() {
-		return COMMAND;
-	}
+        @Override
+        public Options getOptions() {
+            Options options = new Options();
+            options.addOption(Option.builder().longOpt("workflow")
+                    .desc("the online workflow id")
+                    .hasArg()
+                    .required()
+                    .argName("ID")
+                    .build());
+            options.addOption(Option.builder().longOpt("state")
+                    .desc("the state id")
+                    .hasArg()
+                    .required()
+                    .argName("STATE")
+                    .build());
+            options.addOption(Option.builder().longOpt("offline-workflow")
+                    .desc("the offline workflow id")
+                    .hasArg()
+                    .argName("OFFID")
+                    .build());
+            options.addOption(Option.builder().longOpt("wca")
+                    .desc("get results of wca rules (monte_carlo if not specified)")
+                    .build());
+            return options;
+        }
 
-	@Override
-	public void run(CommandLine line, ToolRunningContext context) throws Exception {
-		String workflowId = line.getOptionValue("workflow");
-		Integer stateId = Integer.valueOf(line.getOptionValue("state"));
-		context.getOutputStream().println("loading state " + stateId + " of workflow " + workflowId + " from the online db ...");
+        @Override
+        public String getUsageFooter() {
+            return null;
+        }
+
+    };
+
+    @Override
+    public Command getCommand() {
+        return COMMAND;
+    }
+
+    @Override
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
+        String workflowId = line.getOptionValue("workflow");
+        Integer stateId = Integer.valueOf(line.getOptionValue("state"));
+        context.getOutputStream().println("loading state " + stateId + " of workflow " + workflowId + " from the online db ...");
         OnlineConfig config = OnlineConfig.load();
-		OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
+        OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
         // load the network
         Network network = onlinedb.getState(workflowId, stateId);
         if ( network != null ) {
-        	OnlineWorkflowParameters parameters = onlinedb.getWorkflowParameters(workflowId);
-        	String offlineWorkflowId = parameters.getOfflineWorkflowId();
-        	if (line.hasOption("offline-workflow"))
-        		offlineWorkflowId = line.getOptionValue("offline-workflow");
-        	context.getOutputStream().println("checking state " + stateId + " of workflow " + workflowId + " against rules of offline workflow " + offlineWorkflowId + " ...");
-        	RulesDbClient rulesDb = config.getRulesDbClientFactoryClass().newInstance().create("rulesdb");
-        	RuleAttributeSet attributeSet = RuleAttributeSet.MONTE_CARLO;
-        	if ( line.hasOption("wca"))
-        		attributeSet = RuleAttributeSet.WORST_CASE;
-        	double purityThreshold = parameters.getRulesPurityThreshold();
-        	// get rules from db
+            OnlineWorkflowParameters parameters = onlinedb.getWorkflowParameters(workflowId);
+            String offlineWorkflowId = parameters.getOfflineWorkflowId();
+            if (line.hasOption("offline-workflow"))
+                offlineWorkflowId = line.getOptionValue("offline-workflow");
+            context.getOutputStream().println("checking state " + stateId + " of workflow " + workflowId + " against rules of offline workflow " + offlineWorkflowId + " ...");
+            RulesDbClient rulesDb = config.getRulesDbClientFactoryClass().newInstance().create("rulesdb");
+            RuleAttributeSet attributeSet = RuleAttributeSet.MONTE_CARLO;
+            if ( line.hasOption("wca"))
+                attributeSet = RuleAttributeSet.WORST_CASE;
+            double purityThreshold = parameters.getRulesPurityThreshold();
+            // get rules from db
             Collection<RuleId> ruleIds = rulesDb.listRules(offlineWorkflowId, attributeSet);
             // TODO filter rules that does not apply to the network
             // ...
@@ -162,9 +162,9 @@ public class RunSecurityRulesOnStateTool implements Tool {
             }
             context.getOutputStream().println(table.render());
         } else {
-        	context.getOutputStream().println("no state " + stateId + " of workflow " + workflowId + " stored in the online db");
+            context.getOutputStream().println("no state " + stateId + " of workflow " + workflowId + " stored in the online db");
         }
-		onlinedb.close();
-	}
-	
+        onlinedb.close();
+    }
+
 }
