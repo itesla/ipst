@@ -13,5 +13,5 @@ import javax.persistence.metamodel.StaticMetamodel;
 @Generated(value="Dali", date="2012-12-12T15:51:01.930+0100")
 @StaticMetamodel(ParameterString.class)
 public class ParameterString_ extends Parameter_ {
-	public static volatile SingularAttribute<ParameterString, String> value;
+    public static volatile SingularAttribute<ParameterString, String> value;
 }

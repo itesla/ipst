@@ -24,9 +24,9 @@ import org.hibernate.validator.constraints.NotEmpty;
 @DiscriminatorColumn(name="PAR_TYPE", discriminatorType=DiscriminatorType.STRING)
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class Parameter implements Serializable {
-	private static final long serialVersionUID = 1L;
-	
-	//The synthetic id of the object.
+    private static final long serialVersionUID = 1L;
+
+    //The synthetic id of the object.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
@@ -40,20 +40,20 @@ public abstract class Parameter implements Serializable {
     @Column(nullable=false)
     @NotEmpty
     protected String name;
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	protected Parameter() {
-		super();
-	}
-	public Parameter(String name) {
-		super();
-		this.name=name;
-	}
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    protected Parameter() {
+        super();
+    }
+    public Parameter(String name) {
+        super();
+        this.name=name;
+    }
    
-	public abstract Object getValue();
+    public abstract Object getValue();
 }

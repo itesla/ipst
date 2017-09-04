@@ -16,25 +16,25 @@ import javax.persistence.*;
 @Table(name="PARAMETERSTRING")
 @DiscriminatorValue("string")
 public class ParameterString extends Parameter implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String value;
-	
-	protected ParameterString() {
-		super();
-	}
-	public ParameterString(String name, String value) {
-		super();
-		this.name=name;
-		this.value=value;
-	}
-	public String getValue() {
-		return value;
-	}
-	public void setValue(String value) {
-		this.value = value;
-	}
-	
-	
+    private String value;
+
+    protected ParameterString() {
+        super();
+    }
+    public ParameterString(String name, String value) {
+        super();
+        this.name=name;
+        this.value=value;
+    }
+    public String getValue() {
+        return value;
+    }
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+
    
 }

@@ -14,6 +14,6 @@ import javax.persistence.metamodel.StaticMetamodel;
 @Generated(value="Dali", date="2013-01-14T18:56:11.777+0100")
 @StaticMetamodel(TableRow.class)
 public class TableRow_ {
-	public static volatile SingularAttribute<TableRow, Long> id;
-	public static volatile ListAttribute<TableRow, Parameter> elements;
+    public static volatile SingularAttribute<TableRow, Long> id;
+    public static volatile ListAttribute<TableRow, Parameter> elements;
 }

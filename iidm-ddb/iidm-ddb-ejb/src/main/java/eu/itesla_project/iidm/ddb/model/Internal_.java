@@ -13,9 +13,9 @@ import javax.persistence.metamodel.StaticMetamodel;
 @Generated(value="Dali", date="2013-02-22T10:56:11.922+0100")
 @StaticMetamodel(Internal.class)
 public class Internal_ {
-	public static volatile SingularAttribute<Internal, Long> id;
-	public static volatile SingularAttribute<Internal, String> nativeId;
-	public static volatile SingularAttribute<Internal, SimulatorInst> simulator;
-	public static volatile SingularAttribute<Internal, ModelTemplateContainer> modelContainer;
-	public static volatile SingularAttribute<Internal, ParametersContainer> parametersContainer;
+    public static volatile SingularAttribute<Internal, Long> id;
+    public static volatile SingularAttribute<Internal, String> nativeId;
+    public static volatile SingularAttribute<Internal, SimulatorInst> simulator;
+    public static volatile SingularAttribute<Internal, ModelTemplateContainer> modelContainer;
+    public static volatile SingularAttribute<Internal, ParametersContainer> parametersContainer;
 }

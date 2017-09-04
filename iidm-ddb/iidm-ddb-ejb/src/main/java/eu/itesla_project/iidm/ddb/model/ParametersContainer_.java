@@ -14,7 +14,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 @Generated(value="Dali", date="2013-01-15T17:38:55.742+0100")
 @StaticMetamodel(ParametersContainer.class)
 public class ParametersContainer_ {
-	public static volatile SingularAttribute<ParametersContainer, Long> id;
-	public static volatile SingularAttribute<ParametersContainer, String> ddbId;
-	public static volatile ListAttribute<ParametersContainer, Parameters> parameters;
+    public static volatile SingularAttribute<ParametersContainer, Long> id;
+    public static volatile SingularAttribute<ParametersContainer, String> ddbId;
+    public static volatile ListAttribute<ParametersContainer, Parameters> parameters;
 }

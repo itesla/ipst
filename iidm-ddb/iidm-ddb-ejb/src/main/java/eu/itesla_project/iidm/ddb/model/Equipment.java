@@ -31,9 +31,9 @@ import org.hibernate.validator.constraints.NotEmpty;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public class Equipment implements Serializable{
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	//The synthetic id of the object.
+    //The synthetic id of the object.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -48,39 +48,39 @@ public class Equipment implements Serializable{
     @Column(nullable=false,unique=true)
     @NotEmpty
     private String cimId;
-	public String getCimId() {
-		return cimId;
-	}
-	public void setCimId(String cimId) {
-		this.cimId = cimId;
-	}
+    public String getCimId() {
+        return cimId;
+    }
+    public void setCimId(String cimId) {
+        this.cimId = cimId;
+    }
     
-	//@OneToOne(cascade = CascadeType.PERSIST, fetch=FetchType.EAGER)
-	//@OneToOne(fetch=FetchType.EAGER)
-	@ManyToOne(fetch=FetchType.EAGER)
-	ModelTemplateContainer modelContainer;  
+    //@OneToOne(cascade = CascadeType.PERSIST, fetch=FetchType.EAGER)
+    //@OneToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch=FetchType.EAGER)
+    ModelTemplateContainer modelContainer;
     
-	//@OneToOne(cascade = CascadeType.PERSIST, fetch=FetchType.EAGER)
-	@ManyToOne(fetch=FetchType.EAGER)
-	ParametersContainer parametersContainer;
-	public ModelTemplateContainer getModelContainer() {
-		return modelContainer;
-	}
-	public void setModelContainer(ModelTemplateContainer modelContainer) {
-		this.modelContainer = modelContainer;
-	}
-	public ParametersContainer getParametersContainer() {
-		return parametersContainer;
-	}
-	public void setParametersContainer(ParametersContainer parametersContainer) {
-		this.parametersContainer = parametersContainer;
-	}  
+    //@OneToOne(cascade = CascadeType.PERSIST, fetch=FetchType.EAGER)
+    @ManyToOne(fetch=FetchType.EAGER)
+    ParametersContainer parametersContainer;
+    public ModelTemplateContainer getModelContainer() {
+        return modelContainer;
+    }
+    public void setModelContainer(ModelTemplateContainer modelContainer) {
+        this.modelContainer = modelContainer;
+    }
+    public ParametersContainer getParametersContainer() {
+        return parametersContainer;
+    }
+    public void setParametersContainer(ParametersContainer parametersContainer) {
+        this.parametersContainer = parametersContainer;
+    }
     
-	protected Equipment() {
-	}
+    protected Equipment() {
+    }
 
-	public Equipment(String cimId) {
-		this.cimId=cimId;
-	}
-	
+    public Equipment(String cimId) {
+        this.cimId=cimId;
+    }
+
 }

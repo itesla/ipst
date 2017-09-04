@@ -34,9 +34,9 @@ import javax.persistence.Transient;
 @Table(name="TABLEROW")
 public class TableRow implements Serializable{
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	//The synthetic id of the object.
+    //The synthetic id of the object.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
@@ -56,26 +56,26 @@ public class TableRow implements Serializable{
     @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true, fetch=FetchType.EAGER)
     @JoinTable(name="TABLEROW_PARAMETER", joinColumns={@JoinColumn(name="T_ID", referencedColumnName="id")}, inverseJoinColumns={@JoinColumn(name="P_ID", referencedColumnName="id")})
     @OrderColumn(name="tbindx")
-	private List<Parameter> elements = new ArrayList<Parameter>();
-	public List<Parameter> getElements() {
-		return elements;
-	}
-	public void setElements(List<Parameter> parameters) {
-		this.elements = parameters;
-	}
+    private List<Parameter> elements = new ArrayList<Parameter>();
+    public List<Parameter> getElements() {
+        return elements;
+    }
+    public void setElements(List<Parameter> parameters) {
+        this.elements = parameters;
+    }
 
-	public void addParameter(Parameter parameter) {
-		this.getElements().add(parameter);
-	}
+    public void addParameter(Parameter parameter) {
+        this.getElements().add(parameter);
+    }
 
-	public TableRow() {
-		super();
-	}
-	
-	public TableRow(Parameter...parameters) {
-		super();
-		 for (Parameter parameter : parameters) {
-		      addParameter(parameter);
-		  }
-	}
+    public TableRow() {
+        super();
+    }
+
+    public TableRow(Parameter...parameters) {
+        super();
+         for (Parameter parameter : parameters) {
+              addParameter(parameter);
+          }
+    }
 }

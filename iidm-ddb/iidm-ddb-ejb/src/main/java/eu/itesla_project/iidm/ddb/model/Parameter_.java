@@ -13,6 +13,6 @@ import javax.persistence.metamodel.StaticMetamodel;
 @Generated(value="Dali", date="2012-12-12T15:45:43.817+0100")
 @StaticMetamodel(Parameter.class)
 public class Parameter_ {
-	public static volatile SingularAttribute<Parameter, Long> id;
-	public static volatile SingularAttribute<Parameter, String> name;
+    public static volatile SingularAttribute<Parameter, Long> id;
+    public static volatile SingularAttribute<Parameter, String> name;
 }
