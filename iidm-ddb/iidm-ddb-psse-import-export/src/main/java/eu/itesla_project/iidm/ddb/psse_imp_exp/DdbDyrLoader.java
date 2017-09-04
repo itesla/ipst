@@ -705,7 +705,7 @@ public class DdbDyrLoader {
                             log.info("- removing  mtc {} {}", mtcId, mtc.getId());
                             ddbmanager.delete(mtc);
                         }
-                    } catch (RuntimeException ex) {
+                    } catch (RuntimeException ignored) {
                     }
                 }
             }

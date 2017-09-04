@@ -99,7 +99,7 @@ public class Master {
                                 {
                                     try{
                                         application.wait();
-                                    }catch(InterruptedException ex){}
+                                    }catch(InterruptedException ignored){}
 
                                 }
                                 break;

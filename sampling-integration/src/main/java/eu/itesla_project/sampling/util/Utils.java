@@ -314,8 +314,7 @@ public class Utils {
                 perms.add(PosixFilePermission.OTHERS_WRITE);
                 perms.add(PosixFilePermission.OTHERS_EXECUTE);
                 Files.setPosixFilePermissions(targetDir.resolve(fileName), perms);
-            } catch (Throwable t) {
-
+            } catch (Throwable ignored) {
             }
 
         }

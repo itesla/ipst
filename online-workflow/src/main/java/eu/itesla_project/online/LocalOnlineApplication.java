@@ -260,20 +260,20 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
             if (workflow != null) {
                 try {
                 workflow.removeOnlineApplicationListener(this);
-                } catch (Exception ex) {
+                } catch (Exception ignored) {
                 }
                 
                 for (OnlineApplicationListener l : listeners) {
                     try {
                         workflow.removeOnlineApplicationListener(l);
-                    } catch (Exception ex) {
+                    } catch (Exception ignored) {
                     }
                 }
 
                 if (additionalListener != null) {
                     try {
                         workflow.removeOnlineApplicationListener(additionalListener);
-                    } catch (Exception ex) {
+                    } catch (Exception ignored) {
                     }
                 }
             }

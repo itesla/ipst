@@ -31,7 +31,7 @@ public class Configuration {
         this.workingDir = Utils.workingDirectory();
         try {
             readConfigurationFile();
-        } catch (ConversionException e) {
+        } catch (ConversionException ignored) {
         }
     }
 

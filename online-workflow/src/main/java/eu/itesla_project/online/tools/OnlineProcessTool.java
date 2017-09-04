@@ -197,7 +197,7 @@ public class OnlineProcessTool implements Tool {
                 } finally {
                     try {
                         onlinedb.close();
-                    } catch (Throwable t) {
+                    } catch (Throwable ignored) {
                     }
                 }
                 if (processed) {
