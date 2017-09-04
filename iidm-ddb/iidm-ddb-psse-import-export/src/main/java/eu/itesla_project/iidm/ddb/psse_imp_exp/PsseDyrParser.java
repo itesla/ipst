@@ -37,13 +37,13 @@ public class PsseDyrParser {
             while ((line = lineNumberReader.readLine()) != null)
             {
                 lastLineRead= lineNumberReader.getLineNumber();
-				
-				// Ignore lines beginning with "/"
-				// It is an official (although undocumented) way of putting comments in PSS/E files
-				// Found "/ PORTUGAL" line as a comment in a REN Case
-				// REN confirmed that it was provided as a solution by PSS/E to some of their requests
-				if (line.startsWith("/")) continue;
-				
+
+                // Ignore lines beginning with "/"
+                // It is an official (although undocumented) way of putting comments in PSS/E files
+                // Found "/ PORTUGAL" line as a comment in a REN Case
+                // REN confirmed that it was provided as a solution by PSS/E to some of their requests
+                if (line.startsWith("/")) continue;
+
                 Matcher m = Pattern.compile("([^\']\\S*|\'.+?\')\\s*").matcher(line);
                 while (m.find()) {
                     String entry=m.group(1);
@@ -58,11 +58,11 @@ public class PsseDyrParser {
                                     parameters.add(parValue);
                             }
                             // The PsseRegister will check model's params against dictionary
-							String busNum = aList.get(0);
-							// Remove single quotes from model name
-							String modelName = aList.get(1).replaceAll("'", "");
-							// Remove single quotes from equipment id
-							String id = aList.get(2).replaceAll("'","");
+                            String busNum = aList.get(0);
+                            // Remove single quotes from model name
+                            String modelName = aList.get(1).replaceAll("'", "");
+                            // Remove single quotes from equipment id
+                            String id = aList.get(2).replaceAll("'","");
                             PsseRegister psseReg=PsseRegisterFactory.createRegister(busNum, modelName, id, parameters);
                             if (psseReg!=null) {
                                 list.add(psseReg);

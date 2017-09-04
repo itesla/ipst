@@ -17,101 +17,101 @@ import eu.itesla_project.commons.tools.Command;
  * @author Quinary <itesla@quinary.com>
  */
 public class DdbLoaderCommand implements Command{
-	
-	public final static  DdbLoaderCommand INSTANCE=new DdbLoaderCommand();
-	public final static String PSSE_VERSION="psse-version";
-	public final static String HOST="host";
-	public final static String PORT="port";
-	public final static String USER="user";
-	public final static String PASSWORD="password";
-	public final static String PSSE_DYRFILEPATH = "dyr-file";
-	public final static String PSSE_MAPPINGFILEPATH = "mapping-file";
-	public final static String OPTION_REMOVE = "remove-data-flag";
 
-	@Override
-	public String getName() {
-		return "ddb-load-psse";
-	}
+    public final static  DdbLoaderCommand INSTANCE=new DdbLoaderCommand();
+    public final static String PSSE_VERSION="psse-version";
+    public final static String HOST="host";
+    public final static String PORT="port";
+    public final static String USER="user";
+    public final static String PASSWORD="password";
+    public final static String PSSE_DYRFILEPATH = "dyr-file";
+    public final static String PSSE_MAPPINGFILEPATH = "mapping-file";
+    public final static String OPTION_REMOVE = "remove-data-flag";
 
-	@Override
-	public String getTheme() {
-		return "Dynamic Database";
-	}
+    @Override
+    public String getName() {
+        return "ddb-load-psse";
+    }
 
-	@Override
-	public String getDescription() {
-		return "load dynamic database from PSSE data";
-	}
+    @Override
+    public String getTheme() {
+        return "Dynamic Database";
+    }
 
-	@Override
-	 @SuppressWarnings("static-access")
-	public Options getOptions() {		
-		Options opts = new Options();
+    @Override
+    public String getDescription() {
+        return "load dynamic database from PSSE data";
+    }
 
-		opts.addOption(Option.builder().longOpt(PSSE_DYRFILEPATH)
-				.desc(".dyr input file path")
-				.hasArg()
-				.argName("DYRFILEPATH")
-				.required()
-				.build());
+    @Override
+     @SuppressWarnings("static-access")
+    public Options getOptions() {
+        Options opts = new Options();
 
-		opts.addOption(Option.builder().longOpt(PSSE_MAPPINGFILEPATH)
-				.desc("mapping file path")
-				.hasArg()
-				.argName("MAPPINGFILEPATH")
-				.required()
-				.build());
+        opts.addOption(Option.builder().longOpt(PSSE_DYRFILEPATH)
+                .desc(".dyr input file path")
+                .hasArg()
+                .argName("DYRFILEPATH")
+                .required()
+                .build());
+
+        opts.addOption(Option.builder().longOpt(PSSE_MAPPINGFILEPATH)
+                .desc("mapping file path")
+                .hasArg()
+                .argName("MAPPINGFILEPATH")
+                .required()
+                .build());
 
 
-		opts.addOption(Option.builder().longOpt(PSSE_VERSION)
+        opts.addOption(Option.builder().longOpt(PSSE_VERSION)
                 .desc("PSSE  version ( i.e 32.1)")
                 .hasArg()
                 .argName("VERSION")
                 .required()
                 .build());
-		
-		opts.addOption(Option.builder().longOpt(HOST)
+
+        opts.addOption(Option.builder().longOpt(HOST)
                 .desc("jboss host")
                 .hasArg()
                 .argName("HOST")
                 .required()
                 .build());
-		
-		opts.addOption(Option.builder().longOpt(PORT)
+
+        opts.addOption(Option.builder().longOpt(PORT)
                 .desc("jboss port")
                 .hasArg()
                 .argName("PORT")
                 .required()
                 .build());
-		
-		
-		opts.addOption(Option.builder().longOpt(USER)
+
+
+        opts.addOption(Option.builder().longOpt(USER)
                 .desc("jboss username")
                 .hasArg()
                 .argName("USER")
                 .required()
                 .build());
-		
-		opts.addOption(Option.builder().longOpt(PASSWORD)
+
+        opts.addOption(Option.builder().longOpt(PASSWORD)
                 .desc("jboss password")
                 .hasArg()
                 .argName("PASSWORD")
                 .required()
                 .build());
 
-		opts.addOption(Option.builder().longOpt(OPTION_REMOVE)
-				.desc("remove data")
-				.hasArg()
-				.argName("OPTION_REMOVE")
-				.build());
+        opts.addOption(Option.builder().longOpt(OPTION_REMOVE)
+                .desc("remove data")
+                .hasArg()
+                .argName("OPTION_REMOVE")
+                .build());
 
-		return opts;
-	}
+        return opts;
+    }
 
-	@Override
-	public String getUsageFooter() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String getUsageFooter() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

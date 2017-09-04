@@ -153,9 +153,9 @@ public class DdbDyrLoader {
      * @throws IOException
      */
     public void load(Path dyrPath, Map<String, String> cimPsseIdsMap, String psseVersion, DdbConfig config, boolean deleteData) throws IOException {
-    	writer = new FileWriter(new File("DdbDyrLoader.log"));
-    	
-    	
+        writer = new FileWriter(new File("DdbDyrLoader.log"));
+
+
         log.info("Loading {}", dyrPath);
         List<PsseRegister> aList = null;
         aList = PsseDyrParser.parseFile(dyrPath.toFile());
@@ -298,19 +298,19 @@ public class DdbDyrLoader {
                 boolean hasTgov1 = false;
                 boolean hasIeesgo = false;
                 for (PsseRegister regulatorRegister : internalsRegs) {
-                  	if(regulatorRegister.getModel().endsWith("HYGOV")) {
-                		hasHygov = true;
-                	}
-                	if(regulatorRegister.getModel().endsWith("PSS2A")) {
-                		hasPss2a = true;
-                	}
-                	if(regulatorRegister.getModel().endsWith("TGOV1")) {
-                		hasTgov1 = true;
-                	}
-                	if(regulatorRegister.getModel().endsWith("IEESGO")) {
-                		hasIeesgo = true;
-                	}
-                	
+                      if(regulatorRegister.getModel().endsWith("HYGOV")) {
+                        hasHygov = true;
+                    }
+                    if(regulatorRegister.getModel().endsWith("PSS2A")) {
+                        hasPss2a = true;
+                    }
+                    if(regulatorRegister.getModel().endsWith("TGOV1")) {
+                        hasTgov1 = true;
+                    }
+                    if(regulatorRegister.getModel().endsWith("IEESGO")) {
+                        hasIeesgo = true;
+                    }
+
                     String internalId = iidmId + "_" + regulatorRegister.getModel();
                     String internalMtcId = MTC_PREFIX_NAME + regulatorRegister.getModel();
                     String internalPcId = PC_PREFIX_NAME + iidmId + "_" + regulatorRegister.getModel();
@@ -453,8 +453,8 @@ public class DdbDyrLoader {
                     //This is a rule from PSS/E about how to connect IEEEST.V_S
                     regPin = "V_S";
                     if(regulatorRegister.Model.equalsIgnoreCase("IEEEST")) {
-                    	if((regulatorRegister.parameters.get("IM") == 3) && regulatorRegister.parameters.get("IM1") == 0) {
-                    		eqPin = "PELEC";
+                        if((regulatorRegister.parameters.get("IM") == 3) && regulatorRegister.parameters.get("IM1") == 0) {
+                            eqPin = "PELEC";
                             log.info("--* connection eq-int {}-{}  on pins {},{}", equipmentReg.getModel(), regulatorRegister.getModel(), eqPin, regPin);
                             log.info("----*  {} {} {} {} {} {} {}", "inside", "equipment", equipmentId, eqPin, regPin, "internal", regulatorRegister.getId());
                             Connection newC = new Connection(equipmentId, Connection.EQUIPMENT_TYPE, regulatorRegister.getId(), Connection.INTERNAL_TYPE, eqPin, regPin, Connection.INSIDE_CONNECTION);
@@ -465,13 +465,13 @@ public class DdbDyrLoader {
                             } else {
                                 log.info("----- connection already exist: " + newC);
                             }
-                    	}
+                        }
                     }
                     
                     if(equipmentReg.Model.equals("GENSAL") && hasPss2a && hasHygov) {
-                    	if(regulatorRegister.getModel().equals("PSS2A")) {
-                    		eqPin = "PELEC";
-                    		regPin = "V_S2";
+                        if(regulatorRegister.getModel().equals("PSS2A")) {
+                            eqPin = "PELEC";
+                            regPin = "V_S2";
                             log.info("--* connection eq-int {}-{}  on pins {},{}", equipmentReg.getModel(), regulatorRegister.getModel(), eqPin, regPin);
                             log.info("----*  {} {} {} {} {} {} {}", "inside", "equipment", equipmentId, eqPin, regPin, "internal", regulatorRegister.getId());
                             Connection newC = new Connection(equipmentId, Connection.EQUIPMENT_TYPE, regulatorRegister.getId(), Connection.INTERNAL_TYPE, eqPin, regPin, Connection.INSIDE_CONNECTION);
@@ -482,12 +482,12 @@ public class DdbDyrLoader {
                             } else {
                                 log.info("----- connection already exist: " + newC);
                             }
-                    	}
+                        }
                     }
                     if(equipmentReg.Model.equals("GENROU") && hasPss2a && hasTgov1) {
-                    	if(regulatorRegister.getModel().equals("PSS2A")) {
-                    		eqPin = "PELEC";
-                    		regPin = "V_S2";
+                        if(regulatorRegister.getModel().equals("PSS2A")) {
+                            eqPin = "PELEC";
+                            regPin = "V_S2";
                             log.info("--* connection eq-int {}-{}  on pins {},{}", equipmentReg.getModel(), regulatorRegister.getModel(), eqPin, regPin);
                             log.info("----*  {} {} {} {} {} {} {}", "inside", "equipment", equipmentId, eqPin, regPin, "internal", regulatorRegister.getId());
                             Connection newC = new Connection(equipmentId, Connection.EQUIPMENT_TYPE, regulatorRegister.getId(), Connection.INTERNAL_TYPE, eqPin, regPin, Connection.INSIDE_CONNECTION);
@@ -498,15 +498,15 @@ public class DdbDyrLoader {
                             } else {
                                 log.info("----- connection already exist: " + newC);
                             }
-                    	}
+                        }
                     }
                 }
                 
                 // second create regulator-regulators connections
                 for (int i = 0; i < internalsRegs.size(); i++) {
                     for (int j = i+1; j < internalsRegs.size(); j++) {
-                    	log.info("-- for iteration {} regulator(i) {} regulator(j) {}", internalsRegs.get(i).getModel(), internalsRegs.get(j).getModel());
-                    	
+                        log.info("-- for iteration {} regulator(i) {} regulator(j) {}", internalsRegs.get(i).getModel(), internalsRegs.get(j).getModel());
+
                         LinkedHashSet<String> sharedPins=PsseRegisterFactory.intersectPinsSets(internalsRegs.get(i), internalsRegs.get(j));
                         if (sharedPins.size()>0) {
                             log.info("-- connection int-int {}-{}  on pins {}", internalsRegs.get(i).getModel(), internalsRegs.get(j).getModel(), sharedPins);
@@ -532,82 +532,82 @@ public class DdbDyrLoader {
                         writer.write("Internal 1: " + internalsRegs.get(i).getModel() + ". Internal 2: " +internalsRegs.get(j).getModel()  + "\n");
                         
                         if(equipmentReg.Model.equals("GENSAL") && hasPss2a && hasHygov) {
-                        	if(internalsRegs.get(i).Model.equals("PSS2A") && internalsRegs.get(j).Model.equals("HYGOV")) { 
-         	                    log.info("-- connection int-int {}-{}  on pins {},{}", internalsRegs.get(i).getModel(), internalsRegs.get(j).getModel(), regPin1, regPin2);
-         	                    log.info("----  {} {} {} {} {} {} {}", "inside","internal",internalsRegs.get(i).getId(),regPin1,regPin2, "internal", internalsRegs.get(j).getId());
-         	                    Connection newC = new Connection(internalsRegs.get(i).getId(), Connection.INTERNAL_TYPE, internalsRegs.get(j).getId(), Connection.INTERNAL_TYPE, regPin1,regPin2, Connection.INSIDE_CONNECTION);
-         	                    if (!(clist.contains(newC))) {
-         	                        log.info("---- creating connection: "+ newC);
-         	                        clist.add(newC);
-         	                    } else {
-         	                        log.info("---- connection already exists: "+ newC);
-         	                    }
-                        	}
-                        	else if (internalsRegs.get(i).Model.equals("HYGOV") && internalsRegs.get(j).Model.equals("PSS2A")){
-         	                    log.info("-- connection int-int {}-{}  on pins {},{}", internalsRegs.get(i).getModel(), internalsRegs.get(j).getModel(), regPin2, regPin1);
-         	                    log.info("----  {} {} {} {} {} {} {}", "inside","internal",internalsRegs.get(i).getId(),regPin2,regPin1, "internal", internalsRegs.get(j).getId());
-         	                    Connection newC = new Connection(internalsRegs.get(i).getId(), Connection.INTERNAL_TYPE, internalsRegs.get(j).getId(), Connection.INTERNAL_TYPE, regPin2,regPin1, Connection.INSIDE_CONNECTION);
-         	                    if (!(clist.contains(newC))) {
-         	                        log.info("---- creating connection: "+ newC);
-         	                        clist.add(newC);
-         	                    } else {
-         	                        log.info("---- connection already exists: "+ newC);
-         	                    }
-                        	}
+                            if(internalsRegs.get(i).Model.equals("PSS2A") && internalsRegs.get(j).Model.equals("HYGOV")) {
+                                 log.info("-- connection int-int {}-{}  on pins {},{}", internalsRegs.get(i).getModel(), internalsRegs.get(j).getModel(), regPin1, regPin2);
+                                 log.info("----  {} {} {} {} {} {} {}", "inside","internal",internalsRegs.get(i).getId(),regPin1,regPin2, "internal", internalsRegs.get(j).getId());
+                                 Connection newC = new Connection(internalsRegs.get(i).getId(), Connection.INTERNAL_TYPE, internalsRegs.get(j).getId(), Connection.INTERNAL_TYPE, regPin1,regPin2, Connection.INSIDE_CONNECTION);
+                                 if (!(clist.contains(newC))) {
+                                     log.info("---- creating connection: "+ newC);
+                                     clist.add(newC);
+                                 } else {
+                                     log.info("---- connection already exists: "+ newC);
+                                 }
+                            }
+                            else if (internalsRegs.get(i).Model.equals("HYGOV") && internalsRegs.get(j).Model.equals("PSS2A")){
+                                 log.info("-- connection int-int {}-{}  on pins {},{}", internalsRegs.get(i).getModel(), internalsRegs.get(j).getModel(), regPin2, regPin1);
+                                 log.info("----  {} {} {} {} {} {} {}", "inside","internal",internalsRegs.get(i).getId(),regPin2,regPin1, "internal", internalsRegs.get(j).getId());
+                                 Connection newC = new Connection(internalsRegs.get(i).getId(), Connection.INTERNAL_TYPE, internalsRegs.get(j).getId(), Connection.INTERNAL_TYPE, regPin2,regPin1, Connection.INSIDE_CONNECTION);
+                                 if (!(clist.contains(newC))) {
+                                     log.info("---- creating connection: "+ newC);
+                                     clist.add(newC);
+                                 } else {
+                                     log.info("---- connection already exists: "+ newC);
+                                 }
+                            }
                         } 
                         if(equipmentReg.Model.equals("GENROU") && hasPss2a && hasTgov1) {
-                        	if(internalsRegs.get(i).Model.equals("PSS2A") && internalsRegs.get(j).Model.equals("TGOV1")) { 
-                        		
-         	                    log.info("-- connection int-int {}-{}  on pins {},{}", internalsRegs.get(i).getModel(), internalsRegs.get(j).getModel(), regPin1, regPin2);
-         	                    log.info("----  {} {} {} {} {} {} {}", "inside","internal",internalsRegs.get(i).getId(),regPin1,regPin2, "internal", internalsRegs.get(j).getId());
-         	                    Connection newC = new Connection(internalsRegs.get(i).getId(), Connection.INTERNAL_TYPE, internalsRegs.get(j).getId(), Connection.INTERNAL_TYPE, regPin1,regPin2, Connection.INSIDE_CONNECTION);
-         	                    if (!(clist.contains(newC))) {
-         	                        log.info("---- creating connection: "+ newC);
-         	                        clist.add(newC);
-         	                    } else {
-         	                        log.info("---- connection already exists: "+ newC);
-         	                    }
-                        	}
-                        	else if(internalsRegs.get(i).Model.equals("TGOV1") && internalsRegs.get(j).Model.equals("PSS2A")) {
-         	                    log.info("-- connection int-int {}-{}  on pins {},{}", internalsRegs.get(i).getModel(), internalsRegs.get(j).getModel(), regPin2, regPin1);
-         	                    log.info("----  {} {} {} {} {} {} {}", "inside","internal",internalsRegs.get(i).getId(),regPin2,regPin1, "internal", internalsRegs.get(j).getId());
-         	                    Connection newC = new Connection(internalsRegs.get(i).getId(), Connection.INTERNAL_TYPE, internalsRegs.get(j).getId(), Connection.INTERNAL_TYPE, regPin2,regPin1, Connection.INSIDE_CONNECTION);
-         	                    if (!(clist.contains(newC))) {
-         	                        log.info("---- creating connection: "+ newC);
-         	                        clist.add(newC);
-         	                    } else {
-         	                        log.info("---- connection already exists: "+ newC);
-         	                    }
-                        	}
+                            if(internalsRegs.get(i).Model.equals("PSS2A") && internalsRegs.get(j).Model.equals("TGOV1")) {
+
+                                 log.info("-- connection int-int {}-{}  on pins {},{}", internalsRegs.get(i).getModel(), internalsRegs.get(j).getModel(), regPin1, regPin2);
+                                 log.info("----  {} {} {} {} {} {} {}", "inside","internal",internalsRegs.get(i).getId(),regPin1,regPin2, "internal", internalsRegs.get(j).getId());
+                                 Connection newC = new Connection(internalsRegs.get(i).getId(), Connection.INTERNAL_TYPE, internalsRegs.get(j).getId(), Connection.INTERNAL_TYPE, regPin1,regPin2, Connection.INSIDE_CONNECTION);
+                                 if (!(clist.contains(newC))) {
+                                     log.info("---- creating connection: "+ newC);
+                                     clist.add(newC);
+                                 } else {
+                                     log.info("---- connection already exists: "+ newC);
+                                 }
+                            }
+                            else if(internalsRegs.get(i).Model.equals("TGOV1") && internalsRegs.get(j).Model.equals("PSS2A")) {
+                                 log.info("-- connection int-int {}-{}  on pins {},{}", internalsRegs.get(i).getModel(), internalsRegs.get(j).getModel(), regPin2, regPin1);
+                                 log.info("----  {} {} {} {} {} {} {}", "inside","internal",internalsRegs.get(i).getId(),regPin2,regPin1, "internal", internalsRegs.get(j).getId());
+                                 Connection newC = new Connection(internalsRegs.get(i).getId(), Connection.INTERNAL_TYPE, internalsRegs.get(j).getId(), Connection.INTERNAL_TYPE, regPin2,regPin1, Connection.INSIDE_CONNECTION);
+                                 if (!(clist.contains(newC))) {
+                                     log.info("---- creating connection: "+ newC);
+                                     clist.add(newC);
+                                 } else {
+                                     log.info("---- connection already exists: "+ newC);
+                                 }
+                            }
                         }
                     }
                     
                     //TODO SMF Perhaps this will happen in several cases as if regpins.contains(VOTHSG VUEL and VOEL) ==> connect these pins
                     String regPin1;
-					String regPin2;
+                    String regPin2;
                     if (internalsRegs.get(i).Model.equals("IEEEX1")) {
-						regPin1 = "VOTHSG";
-						regPin2 = "VOEL";
-	                    log.info("-- connection int-int {}-{}  on pins {},{}", internalsRegs.get(i).getModel(), internalsRegs.get(i).getModel(), regPin1, regPin2);
-	                    log.info("----  {} {} {} {} {} {} {}", "inside","internal",internalsRegs.get(i).getId(),regPin1,regPin2, "internal", internalsRegs.get(i).getId());
-	                    Connection newC = new Connection(internalsRegs.get(i).getId(), Connection.INTERNAL_TYPE, internalsRegs.get(i).getId(), Connection.INTERNAL_TYPE, regPin1,regPin2, Connection.INSIDE_CONNECTION);
-	                    if (!(clist.contains(newC))) {
-	                        log.info("---- creating connection: "+ newC);
-	                        clist.add(newC);
-	                    } else {
-	                        log.info("---- connection already exists: "+ newC);
-	                    }
-	                    
-	                    regPin2 = "VUEL";
-	                    log.info("-- connection int-int {}-{}  on pins {},{}", internalsRegs.get(i).getModel(), internalsRegs.get(i).getModel(), regPin1, regPin2);
-	                    log.info("----  {} {} {} {} {} {} {}", "inside","internal",internalsRegs.get(i).getId(),regPin1,regPin2, "internal", internalsRegs.get(i).getId());
-	                    newC = new Connection(internalsRegs.get(i).getId(), Connection.INTERNAL_TYPE, internalsRegs.get(i).getId(), Connection.INTERNAL_TYPE, regPin1,regPin2, Connection.INSIDE_CONNECTION);
-	                    if (!(clist.contains(newC))) {
-	                        log.info("---- creating connection: "+ newC);
-	                        clist.add(newC);
-	                    } else {
-	                        log.info("---- connection already exists: "+ newC);
-	                    }
+                        regPin1 = "VOTHSG";
+                        regPin2 = "VOEL";
+                        log.info("-- connection int-int {}-{}  on pins {},{}", internalsRegs.get(i).getModel(), internalsRegs.get(i).getModel(), regPin1, regPin2);
+                        log.info("----  {} {} {} {} {} {} {}", "inside","internal",internalsRegs.get(i).getId(),regPin1,regPin2, "internal", internalsRegs.get(i).getId());
+                        Connection newC = new Connection(internalsRegs.get(i).getId(), Connection.INTERNAL_TYPE, internalsRegs.get(i).getId(), Connection.INTERNAL_TYPE, regPin1,regPin2, Connection.INSIDE_CONNECTION);
+                        if (!(clist.contains(newC))) {
+                            log.info("---- creating connection: "+ newC);
+                            clist.add(newC);
+                        } else {
+                            log.info("---- connection already exists: "+ newC);
+                        }
+
+                        regPin2 = "VUEL";
+                        log.info("-- connection int-int {}-{}  on pins {},{}", internalsRegs.get(i).getModel(), internalsRegs.get(i).getModel(), regPin1, regPin2);
+                        log.info("----  {} {} {} {} {} {} {}", "inside","internal",internalsRegs.get(i).getId(),regPin1,regPin2, "internal", internalsRegs.get(i).getId());
+                        newC = new Connection(internalsRegs.get(i).getId(), Connection.INTERNAL_TYPE, internalsRegs.get(i).getId(), Connection.INTERNAL_TYPE, regPin1,regPin2, Connection.INSIDE_CONNECTION);
+                        if (!(clist.contains(newC))) {
+                            log.info("---- creating connection: "+ newC);
+                            clist.add(newC);
+                        } else {
+                            log.info("---- connection already exists: "+ newC);
+                        }
                     }
                 }
                 
@@ -641,8 +641,8 @@ public class DdbDyrLoader {
                 }
                 
                 if (equipmentReg.Model.equals("WT4G1")) {
-                		eqPin1 = "I_qcmd";
-            			eqPin2 = "I_qcmd0";
+                        eqPin1 = "I_qcmd";
+                        eqPin2 = "I_qcmd0";
                         log.info("--* connection eq-eq {}-{}  on pins {},{}", equipmentReg.getModel(), equipmentReg.getModel(), eqPin1, eqPin2);
                         log.info("----*  {} {} {} {} {} {} {}", "inside", "equipment", equipmentId, eqPin1, eqPin2, "equipment", equipmentId);
                         Connection newC = new Connection(equipmentId, Connection.EQUIPMENT_TYPE, equipmentId, Connection.EQUIPMENT_TYPE, eqPin1, eqPin2, Connection.INSIDE_CONNECTION);
@@ -653,7 +653,7 @@ public class DdbDyrLoader {
                         } else {
                             log.info("----- connection already exist: " + newC);
                         }
-	                    
+
                         eqPin1 = "I_pcmd";
                         eqPin2 = "I_pcmd0";
                         log.info("--* connection eq-eq {}-{}  on pins {},{}", equipmentReg.getModel(), equipmentReg.getModel(), eqPin1, eqPin2);
