@@ -28,7 +28,7 @@ public class DymolaSimulationConfig {
     tolerance=0.0001
     fixedStepSize=0.0
 
-	*/
+    */
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DymolaSimulationConfig.class);
