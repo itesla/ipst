@@ -45,29 +45,31 @@ public class DetailedTransformerRecord extends BranchRecord {
         Equipments.ConnectionInfo info2 = Equipments.getConnectionInfoInBusBreakerView(this.transformer.getTerminal2());
         Bus b2 = info2.getConnectionBus();
 
-        if((!Float.isNaN(b1.getV()) && info1.isConnected()) || (!Float.isNaN(b2.getV()) && info2.isConnected())) {
+        if ((!Float.isNaN(b1.getV()) && info1.isConnected()) || (!Float.isNaN(b2.getV()) && info2.isConnected())) {
 
-            if(super.isCorrect()) {
-                if (super.getModelicaType() != null) this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);
-                else this.addValue(DEFAULT_DETAILED_TRAFO_TYPE + StaticData.WHITE_SPACE);
+            if (super.isCorrect()) {
+                if (super.getModelicaType() != null) {
+                    this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);
+                } else {
+                    this.addValue(DEFAULT_DETAILED_TRAFO_TYPE + StaticData.WHITE_SPACE);
+                }
                 this.addValue(super.getModelicaName());
                 this.addValue(" (");
                 this.addValue(StaticData.NEW_LINE);
 
-                if(!super.iidmbranchParameters.isEmpty()) {
-                    for(int i=0; i<super.iidmbranchParameters.size()-1; i++) {
+                if (!super.iidmbranchParameters.isEmpty()) {
+                    for (int i = 0; i < super.iidmbranchParameters.size() - 1; i++) {
                         this.addValue("\t " + super.iidmbranchParameters.get(i).getName() + " = " + super.iidmbranchParameters.get(i).getValue() + ",");
                         this.addValue(StaticData.NEW_LINE);
                     }
-                    this.addValue("\t " + super.iidmbranchParameters.get(super.iidmbranchParameters.size()-1).getName() + " = " + super.iidmbranchParameters.get(super.iidmbranchParameters.size()-1).getValue());
+                    this.addValue("\t " + super.iidmbranchParameters.get(super.iidmbranchParameters.size() - 1).getName() + " = " + super.iidmbranchParameters.get(super.iidmbranchParameters.size() - 1).getValue());
                     this.addValue(StaticData.NEW_LINE);
-                }
-                else if(!super.branchParameters.isEmpty()) {
-                    for(int i=0; i<super.branchParameters.size()-1; i++) {
+                } else if (!super.branchParameters.isEmpty()) {
+                    for (int i = 0; i < super.branchParameters.size() - 1; i++) {
                         this.addValue("\t " + super.branchParameters.get(i).getName() + " = " + super.branchParameters.get(i).getValue() + ",");
                         this.addValue(StaticData.NEW_LINE);
                     }
-                    this.addValue("\t " + super.branchParameters.get(super.branchParameters.size()-1).getName() + " = " + super.branchParameters.get(super.branchParameters.size()-1).getValue());
+                    this.addValue("\t " + super.branchParameters.get(super.branchParameters.size() - 1).getName() + " = " + super.branchParameters.get(super.branchParameters.size() - 1).getValue());
                     this.addValue(StaticData.NEW_LINE);
                 }
 
@@ -76,10 +78,10 @@ public class DetailedTransformerRecord extends BranchRecord {
                 //Clear data
                 iidmbranchParameters = null;
                 branchParameters = null;
+            } else {
+                _log.error(this.getModelicaName() + " not added to grid model.");
             }
-            else _log.error(this.getModelicaName() + " not added to grid model.");
-        }
-        else {
+        } else {
             _log.warn("Detailed transformer " + this.getModelicaName() + " disconnected.");
             this.addValue(StaticData.COMMENT + " Detailed transformer " + this.getModelicaName() + " disconnected.");
         }
@@ -123,8 +125,8 @@ public class DetailedTransformerRecord extends BranchRecord {
         }
         float theta = ptc != null ? ptcs.getAlpha() : 0;
 
-        double rpu2 = (this.transformer.getR()*(1 + dr/100)*SNREF) / Math.pow(U2nom, 2); // [p.u.]
-        double xpu2 = (this.transformer.getX()*(1 + dx/100)*SNREF) / Math.pow(U2nom, 2); // [p.u.]
+        double rpu2 = (this.transformer.getR() * (1 + dr / 100) * SNREF) / Math.pow(U2nom, 2); // [p.u.]
+        double xpu2 = (this.transformer.getX() * (1 + dx / 100) * SNREF) / Math.pow(U2nom, 2); // [p.u.]
         
         /*
          * El ratio esta calculado de acuerdo al valor obtenido por HELM FLow
@@ -134,7 +136,9 @@ public class DetailedTransformerRecord extends BranchRecord {
         float Vsource_pu = V2 / U2nom;
         float RATIO = Vsource_pu / Vend_pu; // ...transformation ratio [p.u.]
 
-        if(ModelicaMainExporter.RATIOS_TO_1) RATIO = 1;
+        if (ModelicaMainExporter.RATIOS_TO_1) {
+            RATIO = 1;
+        }
 
         super.addParameter(this.iidmbranchParameters, EurostagFixedData.r, RATIO); // p.u.
         super.addParameter(this.iidmbranchParameters, EurostagFixedData.B0, B);

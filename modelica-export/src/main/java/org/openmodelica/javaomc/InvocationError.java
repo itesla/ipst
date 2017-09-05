@@ -49,8 +49,7 @@ package org.openmodelica.javaomc;
  * 
  * @author Elmir Jagudin
  */
-public class InvocationError extends CompilerException
-{
+public class InvocationError extends CompilerException {
     private static final long serialVersionUID = 1437868457853593664L;
     private String action;
     private String expression;
@@ -61,8 +60,7 @@ public class InvocationError extends CompilerException
      * @see InvocationError#getAction()
      * @see InvocationError#getExpression()
      */
-    public InvocationError(String action, String expression)
-    {
+    public InvocationError(String action, String expression) {
         super("OMC replyed 'error' to '" + expression + "'");
         this.action = action;
         this.expression = expression;
@@ -74,13 +72,11 @@ public class InvocationError extends CompilerException
      *
      * The description should be phrased so that
      */
-    public String getAction()
-    {
+    public String getAction() {
         return action;
     }
 
-    public String getExpression()
-    {
+    public String getExpression() {
         return expression;
     }
 }

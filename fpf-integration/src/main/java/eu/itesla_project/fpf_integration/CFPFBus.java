@@ -79,15 +79,15 @@ public class CFPFBus {
         double[] fuzzyNumberLoadMW = new double[ numVerticesFuzzyNumber ];
         double[] fuzzyNumberLoadMVAR = new double[ numVerticesFuzzyNumber ];
 
-        if( getType() == 0 ) {
-            fuzzyNumberLoadMW[ 0 ] = minimumFuzzyLoadMW;
-            fuzzyNumberLoadMW[ 1 ] = loadMW;
-            fuzzyNumberLoadMW[ 2 ] = maximumFuzzyLoadMW;
-            fuzzyNumberLoadMVAR[ 0 ] = minimumFuzzyLoadMVAR;
-            fuzzyNumberLoadMVAR[ 1 ] = loadMVAR;
-            fuzzyNumberLoadMVAR[ 2 ] = maximumFuzzyLoadMVAR;
-            fuzzyNumberGenerationMW[ 0 ] = minimumFuzzyGenerationMW;
-            fuzzyNumberGenerationMW[ 1 ] = generationMW;
+        if (getType() == 0) {
+            fuzzyNumberLoadMW[0] = minimumFuzzyLoadMW;
+            fuzzyNumberLoadMW[1] = loadMW;
+            fuzzyNumberLoadMW[2] = maximumFuzzyLoadMW;
+            fuzzyNumberLoadMVAR[0] = minimumFuzzyLoadMVAR;
+            fuzzyNumberLoadMVAR[1] = loadMVAR;
+            fuzzyNumberLoadMVAR[2] = maximumFuzzyLoadMVAR;
+            fuzzyNumberGenerationMW[0] = minimumFuzzyGenerationMW;
+            fuzzyNumberGenerationMW[1] = generationMW;
             fuzzyNumberGenerationMW[ 2 ] = maximumFuzzyGenerationMW;
             fuzzyNumberGenerationMVAR[ 0 ] = minimumFuzzyGenerationMVAR;
             fuzzyNumberGenerationMVAR[ 1 ] = generationMVAR;

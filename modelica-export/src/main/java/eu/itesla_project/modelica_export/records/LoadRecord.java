@@ -47,23 +47,23 @@ public class LoadRecord extends ModelicaRecord {
         this.busAngle = Float.NaN;
         this.sourceEngine = sourceEngine;
 
-        if(this.busConnected) {
+        if (this.busConnected) {
             if (load.getTerminal().getBusView().getBus() != null) {
-                if(!Float.isNaN(load.getTerminal().getBusView().getBus().getV()))
+                if (!Float.isNaN(load.getTerminal().getBusView().getBus().getV())) {
                     busVoltage = load.getTerminal().getBusView().getBus().getV() / load.getTerminal().getVoltageLevel().getNominalV();
-
-                if(!Float.isNaN(load.getTerminal().getBusView().getBus().getAngle()))
+                }
+                if (!Float.isNaN(load.getTerminal().getBusView().getBus().getAngle())) {
                     busAngle = load.getTerminal().getBusView().getBus().getAngle();
+                }
             }
 
             addLfParameters();
-        }
-        else {
+        } else {
             _log.warn("Load " + this.getModelicaName() + " disconnected.");
             this.addValue(StaticData.COMMENT + " Load " + this.getModelicaName() + " disconnected.");
         }
 
-        if(this.busVoltage == 0) {
+        if (this.busVoltage == 0) {
             _log.info("Voltage 0");
         }
     }
@@ -74,7 +74,7 @@ public class LoadRecord extends ModelicaRecord {
         this.busAngle = busAngle;
         this.p0 = p0;
         this.q0 = q0;
-        this.busConnected= true;
+        this.busConnected = true;
         this.sourceEngine = sourceEngine;
 
         addLfParameters();
@@ -84,8 +84,11 @@ public class LoadRecord extends ModelicaRecord {
     public void createModelicaName(ModExportContext modContext, DDBManager ddbManager, SimulatorInst modelicaSim) {
         String modelicaName = this.load != null ? parseName(this.load.getId()) : parseName(this.loadId);
         modelicaName = StaticData.PREF_LOAD + modelicaName;
-        if(this.load != null) modContext.dictionary.add(this.load.getId(), modelicaName);
-        else modContext.dictionary.add(this.loadId, modelicaName);
+        if (this.load != null) {
+            modContext.dictionary.add(this.load.getId(), modelicaName);
+        } else {
+            modContext.dictionary.add(this.loadId, modelicaName);
+        }
         super.setModelicaName(modelicaName);
 
         ModelTemplate model = null;
@@ -93,23 +96,24 @@ public class LoadRecord extends ModelicaRecord {
 
         ModelTemplateContainer mtc = ddbManager.findModelTemplateContainer(ddbid);
 
-        if(mtc == null) {
+        if (mtc == null) {
             _log.info("EUROSTAG Model Template Container does not exist. Searching Default Modelica Model Template Container in DDB.");
             mtc = ddbManager.findModelTemplateContainer(StaticData.MTC_PREFIX_NAME + DEFAULT_LOAD_TYPE);
         }
 
-        if(mtc != null) {
-            for(ModelTemplate mt : mtc.getModelTemplates()) {
-                if(mt.getTypeName().equalsIgnoreCase(DEFAULT_LOAD_TYPE)) model = mt;
+        if (mtc != null) {
+            for (ModelTemplate mt : mtc.getModelTemplates()) {
+                if (mt.getTypeName().equalsIgnoreCase(DEFAULT_LOAD_TYPE)) {
+                    model = mt;
+                }
             }
 
-            if(model != null)
-            {
+            if (model != null) {
                 super.setModelicaType(model.getTypeName());
+            } else {
+                _log.warn("MODELICA Model Template does not exist in DDB");
             }
-            else _log.warn("MODELICA Model Template does not exist in DDB");
-        }
-        else  {
+        } else {
             super.setCorrect(false);
             _log.error("MODELICA Model Template Container does not exist in DDB.");
         }
@@ -117,33 +121,34 @@ public class LoadRecord extends ModelicaRecord {
 
     @Override
     public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
-        if(!Float.isNaN(this.busVoltage) && this.busConnected) {
-            if(super.isCorrect()) {
-                if (super.getModelicaType() != null) this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);
-                else this.addValue(DEFAULT_LOAD_TYPE + StaticData.WHITE_SPACE);
+        if (!Float.isNaN(this.busVoltage) && this.busConnected) {
+            if (super.isCorrect()) {
+                if (super.getModelicaType() != null) {
+                    this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);
+                } else {
+                    this.addValue(DEFAULT_LOAD_TYPE + StaticData.WHITE_SPACE);
+                }
                 this.addValue(super.getModelicaName());
                 this.addValue(" (");
                 this.addValue(StaticData.NEW_LINE);
 
-                if(!iidmloadParameters.isEmpty()) {
-                    for(int i=0; i<iidmloadParameters.size()-1; i++) {
-                        if(iidmloadParameters.get(i).getValue() != null) {
+                if (!iidmloadParameters.isEmpty()) {
+                    for (int i = 0; i < iidmloadParameters.size() - 1; i++) {
+                        if (iidmloadParameters.get(i).getValue() != null) {
                             this.addValue("\t " + iidmloadParameters.get(i).getName() + " = " + iidmloadParameters.get(i).getValue() + ",");
-                        }
-                        else {
+                        } else {
                             this.addValue("\t " + iidmloadParameters.get(i).getName() + ",");
                         }
                         this.addValue(StaticData.NEW_LINE);
                     }
-                    this.addValue("\t " + iidmloadParameters.get(iidmloadParameters.size()-1).getName() + " = " + iidmloadParameters.get(iidmloadParameters.size()-1).getValue());
+                    this.addValue("\t " + iidmloadParameters.get(iidmloadParameters.size() - 1).getName() + " = " + iidmloadParameters.get(iidmloadParameters.size() - 1).getValue());
                     this.addValue(StaticData.NEW_LINE);
-                }
-                else if(!loadParameters.isEmpty()) {
-                    for(int i=0; i<loadParameters.size()-1; i++) {
+                } else if (!loadParameters.isEmpty()) {
+                    for (int i = 0; i < loadParameters.size() - 1; i++) {
                         this.addValue("\t " + loadParameters.get(i).getName() + " = " + loadParameters.get(i).getValue() + ",");
                         this.addValue(StaticData.NEW_LINE);
                     }
-                    this.addValue("\t " + loadParameters.get(loadParameters.size()-1).getName() + " = " + loadParameters.get(loadParameters.size()-1).getValue());
+                    this.addValue("\t " + loadParameters.get(loadParameters.size() - 1).getName() + " = " + loadParameters.get(loadParameters.size() - 1).getValue());
                     this.addValue(StaticData.NEW_LINE);
                 }
                 this.addValue("\t " + EurostagFixedData.ANNOT);
@@ -151,10 +156,10 @@ public class LoadRecord extends ModelicaRecord {
                 //Clear data
                 iidmloadParameters = null;
                 loadParameters = null;
+            } else {
+                _log.error(this.getModelicaName() + " not added to grid model.");
             }
-            else _log.error(this.getModelicaName() + " not added to grid model.");
-        }
-        else {
+        } else {
             _log.warn("Load " + this.getModelicaName() + " disconnected.");
             this.addValue(StaticData.COMMENT + " Load " + this.getModelicaName() + " disconnected.");
         }
@@ -168,18 +173,21 @@ public class LoadRecord extends ModelicaRecord {
         this.iidmloadParameters.add(new IIDMParameter(PsseFixedData.P_0, this.p0));
         this.iidmloadParameters.add(new IIDMParameter(PsseFixedData.Q_0, this.q0));
 
-        if(this.sourceEngine instanceof EurostagEngine) {
+        if (this.sourceEngine instanceof EurostagEngine) {
             DEFAULT_LOAD_TYPE = EurostagModDefaultTypes.DEFAULT_LOAD_TYPE;
             //Harcoded values because we don't have it anywhere. Add these values only when PwLoadVoltageDependence is used
             this.iidmloadParameters.add(new IIDMParameter(EurostagFixedData.ALPHA, 1));
             this.iidmloadParameters.add(new IIDMParameter(EurostagFixedData.BETA, 2));
-        } else if(this.sourceEngine instanceof PsseEngine) {
+        } else if (this.sourceEngine instanceof PsseEngine) {
             DEFAULT_LOAD_TYPE = PsseModDefaultTypes.DEFAULT_LOAD_TYPE;
             this.iidmloadParameters.add(new IIDMParameter(PsseFixedData.PQBRAK, 0.7));
         }
 
-        if(DEFAULT_LOAD_TYPE.contains(".")) DEFAULT_LOAD_PREFIX = DEFAULT_LOAD_TYPE.substring(DEFAULT_LOAD_TYPE.lastIndexOf(".") + 1);
-        else DEFAULT_LOAD_PREFIX = DEFAULT_LOAD_TYPE;
+        if (DEFAULT_LOAD_TYPE.contains(".")) {
+            DEFAULT_LOAD_PREFIX = DEFAULT_LOAD_TYPE.substring(DEFAULT_LOAD_TYPE.lastIndexOf(".") + 1);
+        } else {
+            DEFAULT_LOAD_PREFIX = DEFAULT_LOAD_TYPE;
+        }
 
         this.iidmloadParameters.add(new IIDMParameter(PsseFixedData.ANGLE_0, angulo));
     }

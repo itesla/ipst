@@ -22,7 +22,7 @@ public class ConnectRecord {
     public boolean containsElement(String elemModName) {
         boolean contains = false;
 
-        if(this.nodeF.equalsIgnoreCase(elemModName) || this.nodeT.equalsIgnoreCase(elemModName)) {
+        if (this.nodeF.equalsIgnoreCase(elemModName) || this.nodeT.equalsIgnoreCase(elemModName)) {
             contains = true;
         }
 
@@ -32,10 +32,9 @@ public class ConnectRecord {
     public String getConnectedElement(String elemModName) {
         String connectedElem = null;
 
-        if(this.nodeF.equalsIgnoreCase(elemModName)) {
+        if (this.nodeF.equalsIgnoreCase(elemModName)) {
             connectedElem = this.nodeT;
-        }
-        else if(this.nodeT.equalsIgnoreCase(elemModName)) {
+        } else if (this.nodeT.equalsIgnoreCase(elemModName)) {
             connectedElem = this.nodeF;
         }
 

@@ -36,8 +36,8 @@ public class HeaderRecord extends ModelicaRecord {
         this.newLine();
         this.addValue(StaticData.MODEL + parseName(this.networkName));
         this.newLine();
-        
-        for(GlobalVariable var : globalVars) { 
+
+        for (GlobalVariable var : globalVars) {
             this.addValue(var.toString());
             this.newLine();
         }
@@ -46,7 +46,7 @@ public class HeaderRecord extends ModelicaRecord {
     @Override
     public String parseName(String name) {
         String parsedName = name.trim();
-        if(parsedName.substring(0, 1).matches("[0-9]")) {
+        if (parsedName.substring(0, 1).matches("[0-9]")) {
             parsedName = "M_" + parsedName;
         }
         parsedName = parsedName.replaceAll("\\s", "_");

@@ -107,7 +107,7 @@ public class EurostagEngine extends SourceEngine {
 
         map = new HashMap<String, String>();
         //M1S machines
-        for(int i=0; i<this.m1sParams.length; i++) {
+        for (int i = 0; i < this.m1sParams.length; i++) {
             modelicaPar = this.m1sParams[i][0];
             sourcePar = this.m1sParams[i][1];
 
@@ -117,7 +117,7 @@ public class EurostagEngine extends SourceEngine {
 
         //M2S machines
         map = new HashMap<String, String>();
-        for(int i=0; i<this.m2sParams.length; i++) {
+        for (int i = 0; i < this.m2sParams.length; i++) {
             modelicaPar = this.m2sParams[i][0];
             sourcePar = this.m2sParams[i][1];
 

@@ -50,27 +50,30 @@ public class DanglingLineRecord extends ModelicaRecord {
         Equipments.ConnectionInfo info1 = Equipments.getConnectionInfoInBusBreakerView(this.danglingLine.getTerminal());
         Bus b1 = info1.getConnectionBus();
 
-        if((!Float.isNaN(b1.getV()) && info1.isConnected())) {
-            if(super.isCorrect()) {
-                if (super.getModelicaType() != null) this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);
-                else this.addValue(this.DEFAULT_LINE_TYPE + StaticData.WHITE_SPACE);
+        if ((!Float.isNaN(b1.getV()) && info1.isConnected())) {
+            if (super.isCorrect()) {
+                if (super.getModelicaType() != null) {
+                    this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);
+                } else {
+                    this.addValue(this.DEFAULT_LINE_TYPE + StaticData.WHITE_SPACE);
+                }
                 this.addValue(super.getModelicaName());
                 this.addValue(" (");
                 this.addValue(StaticData.NEW_LINE);
 
-                if(!this.iidmbranchParameters.isEmpty()) {
-                    for(int i=0; i<this.iidmbranchParameters.size()-1; i++) {
+                if (!this.iidmbranchParameters.isEmpty()) {
+                    for (int i = 0; i < this.iidmbranchParameters.size() - 1; i++) {
                         this.addValue("\t " + this.iidmbranchParameters.get(i).getName() + " = " + this.iidmbranchParameters.get(i).getValue() + ",");
                         this.addValue(StaticData.NEW_LINE);
                     }
-                    this.addValue("\t " + this.iidmbranchParameters.get(this.iidmbranchParameters.size()-1).getName() + " = " + this.iidmbranchParameters.get(this.iidmbranchParameters.size()-1).getValue());
+                    this.addValue("\t " + this.iidmbranchParameters.get(this.iidmbranchParameters.size() - 1).getName() + " = " + this.iidmbranchParameters.get(this.iidmbranchParameters.size() - 1).getValue());
                     this.addValue(StaticData.NEW_LINE);
-                } else if(!this.branchParameters.isEmpty()) {
-                    for(int i=0; i<this.branchParameters.size()-1; i++) {
+                } else if (!this.branchParameters.isEmpty()) {
+                    for (int i = 0; i < this.branchParameters.size() - 1; i++) {
                         this.addValue("\t " + this.branchParameters.get(i).getName() + " = " + this.branchParameters.get(i).getValue() + ",");
                         this.addValue(StaticData.NEW_LINE);
                     }
-                    this.addValue("\t " + this.branchParameters.get(this.branchParameters.size()-1).getName() + " = " + this.branchParameters.get(this.branchParameters.size()-1).getValue());
+                    this.addValue("\t " + this.branchParameters.get(this.branchParameters.size() - 1).getName() + " = " + this.branchParameters.get(this.branchParameters.size() - 1).getValue());
                     this.addValue(StaticData.NEW_LINE);
                 }
 
@@ -79,10 +82,10 @@ public class DanglingLineRecord extends ModelicaRecord {
                 //Clear data
                 iidmbranchParameters = null;
                 branchParameters = null;
+            } else {
+                _log.error(this.getModelicaName() + " not added to grid model.");
             }
-            else _log.error(this.getModelicaName() + " not added to grid model.");
-        }
-        else {
+        } else {
             _log.warn("Line " + this.getModelicaName() + " disconnected.");
             this.addValue(StaticData.COMMENT + " Line " + this.getModelicaName() + " disconnected.");
         }
@@ -101,15 +104,21 @@ public class DanglingLineRecord extends ModelicaRecord {
            String parsedName = name.trim();
 
            //Lines contains "-"
-        if(parsedName.contains("-")) {
-            if(!parsedName.startsWith("_")) parsedName = "_" + parsedName;
+        if (parsedName.contains("-")) {
+            if (!parsedName.startsWith("_")) {
+                parsedName = "_" + parsedName;
+            }
             parsedName = parsedName.replaceAll("-", "_");
         }
-           parsedName = parsedName.replaceAll("\\s", "_");
+        parsedName = parsedName.replaceAll("\\s", "_");
 
-           if(parsedName.substring(0, 1).matches("[0-9]")) parsedName = "l_" + parsedName;
+        if (parsedName.substring(0, 1).matches("[0-9]")) {
+            parsedName = "l_" + parsedName;
+        }
 
-           while(parsedName.endsWith("_")) parsedName = parsedName.substring(0, parsedName.length()-1);
+        while (parsedName.endsWith("_")) {
+            parsedName = parsedName.substring(0, parsedName.length() - 1);
+        }
 
            parsedName = parsedName.replaceAll(StaticData.WHITE_SPACE, "_");
            parsedName = parsedName.replaceAll(StaticData.DOT, "_");
@@ -124,12 +133,12 @@ public class DanglingLineRecord extends ModelicaRecord {
         //this.iidmbranchParameters = new ArrayList<IIDMParameter>();
         float tNominalV = this.danglingLine.getTerminal().getVoltageLevel().getNominalV();
         float voltage = Float.isNaN(tNominalV) == false ? tNominalV : 0;
-        float Z = (voltage * voltage)/SNREF;
+        float Z = (voltage * voltage) / SNREF;
 
-        super.addParameter(this.iidmbranchParameters, StaticData.R, this.danglingLine.getR()/Z);
-        super.addParameter(this.iidmbranchParameters, StaticData.X, this.danglingLine.getX()/Z);
-        super.addParameter(this.iidmbranchParameters, StaticData.G, this.danglingLine.getG()*Z);
-        super.addParameter(this.iidmbranchParameters, StaticData.B, this.danglingLine.getB()*Z);
+        super.addParameter(this.iidmbranchParameters, StaticData.R, this.danglingLine.getR() / Z);
+        super.addParameter(this.iidmbranchParameters, StaticData.X, this.danglingLine.getX() / Z);
+        super.addParameter(this.iidmbranchParameters, StaticData.G, this.danglingLine.getG() * Z);
+        super.addParameter(this.iidmbranchParameters, StaticData.B, this.danglingLine.getB() * Z);
     }
 
     @Override

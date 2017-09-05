@@ -53,15 +53,18 @@ public class CapacitorRecord extends ModelicaRecord {
         // this.iidmcapacitorParameters.add(new IIDMParameter(FixedData.B0,
         // stepSize));
 
-        if(DEFAULT_CAPACITOR_TYPE.contains(".")) DEFAULT_CAPACITOR_PREFIX = DEFAULT_CAPACITOR_TYPE.substring(DEFAULT_CAPACITOR_TYPE.lastIndexOf(".") + 1);
-        else DEFAULT_CAPACITOR_PREFIX = DEFAULT_CAPACITOR_TYPE;
+        if (DEFAULT_CAPACITOR_TYPE.contains(".")) {
+            DEFAULT_CAPACITOR_PREFIX = DEFAULT_CAPACITOR_TYPE.substring(DEFAULT_CAPACITOR_TYPE.lastIndexOf(".") + 1);
+        } else {
+            DEFAULT_CAPACITOR_PREFIX = DEFAULT_CAPACITOR_TYPE;
+        }
     }
 
 
     @Override
     public void createModelicaName(ModExportContext modContext, DDBManager ddbManager, SimulatorInst modelicaSim) {
         String modelicaName = DEFAULT_CAPACITOR_PREFIX + "_" + parseName(this.capacitor.getId());
-        modelicaName = WordUtils.uncapitalize(modelicaName.substring(0,1)) + modelicaName.substring(1);
+        modelicaName = WordUtils.uncapitalize(modelicaName.substring(0, 1)) + modelicaName.substring(1);
         modelicaName = StaticData.PREF_CAP + modelicaName;
         modContext.dictionary.add(capacitor, modelicaName);
         super.setModelicaName(modelicaName);
@@ -70,35 +73,46 @@ public class CapacitorRecord extends ModelicaRecord {
     @Override
     public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
 //        if(this.busInfo.isConnected()) {
-        if(!Float.isNaN(this.busInfo.getBus().getV()) && this.busInfo.isConnected()) {
-            if(super.isCorrect()) {
-                if(!this.busInfo.isConnected()) this.addValue(StaticData.COMMENT);
+        if (!Float.isNaN(this.busInfo.getBus().getV()) && this.busInfo.isConnected()) {
+            if (super.isCorrect()) {
+                if (!this.busInfo.isConnected()) {
+                    this.addValue(StaticData.COMMENT);
+                }
 
-                if (super.getModelicaType() != null) this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);
-                else this.addValue(DEFAULT_CAPACITOR_TYPE + StaticData.WHITE_SPACE);
+                if (super.getModelicaType() != null) {
+                    this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);
+                } else {
+                    this.addValue(DEFAULT_CAPACITOR_TYPE + StaticData.WHITE_SPACE);
+                }
                 this.addValue(super.getModelicaName());
                 this.addValue(" (");
                 this.addValue(StaticData.NEW_LINE);
 
-                if(!iidmcapacitorParameters.isEmpty()) {
-                    for(int i=0; i<iidmcapacitorParameters.size()-1; i++) {
-                        if(!this.busInfo.isConnected()) this.addValue(StaticData.COMMENT);
+                if (!iidmcapacitorParameters.isEmpty()) {
+                    for (int i = 0; i < iidmcapacitorParameters.size() - 1; i++) {
+                        if (!this.busInfo.isConnected()) {
+                            this.addValue(StaticData.COMMENT);
+                        }
                         this.addValue("\t " + iidmcapacitorParameters.get(i).getName() + " = " + iidmcapacitorParameters.get(i).getValue() + ",");
                         this.addValue(StaticData.NEW_LINE);
                     }
-                    if(!this.busInfo.isConnected()) this.addValue(StaticData.COMMENT);
-                    this.addValue("\t " + iidmcapacitorParameters.get(iidmcapacitorParameters.size()-1).getName() + " = " + iidmcapacitorParameters.get(iidmcapacitorParameters.size()-1).getValue());
+                    if (!this.busInfo.isConnected()) {
+                        this.addValue(StaticData.COMMENT);
+                    }
+                    this.addValue("\t " + iidmcapacitorParameters.get(iidmcapacitorParameters.size() - 1).getName() + " = " + iidmcapacitorParameters.get(iidmcapacitorParameters.size() - 1).getValue());
                     this.addValue(StaticData.NEW_LINE);
                 }
-                if(!this.busInfo.isConnected()) this.addValue(StaticData.COMMENT);
+                if (!this.busInfo.isConnected()) {
+                    this.addValue(StaticData.COMMENT);
+                }
                 this.addValue("\t " + EurostagFixedData.ANNOT);
 
                 //Clear data
                 iidmcapacitorParameters = null;
+            } else {
+                _log.error(this.getModelicaName() + " not added to grid model.");
             }
-            else _log.error(this.getModelicaName() + " not added to grid model.");
-        }
-        else {
+        } else {
             _log.warn("Capacitor " + this.getModelicaName() + " disconnected.");
             this.addValue(StaticData.COMMENT + " Capacitor " + this.getModelicaName() + " disconnected.");
         }

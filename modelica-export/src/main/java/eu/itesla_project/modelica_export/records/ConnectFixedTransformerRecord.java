@@ -30,8 +30,11 @@ public class ConnectFixedTransformerRecord extends ConnectRecord {
         this.addValue(StaticData.CONNECT);
         this.addValue(super.nodeName1);
 
-        if(this.node1 instanceof Bus) this.addValue("." + StaticData.POSITIVE_PIN + ", ");
-        else this.addValue("." + StaticData.NEGATIVE_PIN + ", ");
+        if (this.node1 instanceof Bus) {
+            this.addValue("." + StaticData.POSITIVE_PIN + ", ");
+        } else {
+            this.addValue("." + StaticData.NEGATIVE_PIN + ", ");
+        }
         this.addValue(super.nodeName2);
         this.addValue("." + StaticData.POSITIVE_PIN);
         this.addValue(StaticData.ANNOT_CONNECT);

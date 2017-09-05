@@ -37,36 +37,26 @@ public class GeneratorRecord extends ModelicaRecord {
         this.busInfo = busInfo;
         this.sourceEngine = sourceEngine;
 
-        if (!isInyection)
-        {
-            if(this.sourceEngine instanceof EurostagEngine)
-            {
+        if (!isInyection) {
+            if (this.sourceEngine instanceof EurostagEngine) {
                 this.DEFAULT_GEN_TYPE = EurostagModDefaultTypes.DEFAULT_GEN_TYPE;
-            } else if(this.sourceEngine instanceof PsseEngine)
-            {
+            } else if (this.sourceEngine instanceof PsseEngine) {
                 this.DEFAULT_GEN_TYPE = PsseModDefaultTypes.DEFAULT_GENROU_TYPE;
             }
-            if (DEFAULT_GEN_TYPE.contains("."))
-            {
+            if (DEFAULT_GEN_TYPE.contains(".")) {
                 DEFAULT_GEN_PREFIX = DEFAULT_GEN_TYPE.substring(DEFAULT_GEN_TYPE.lastIndexOf(".") + 1);
-            } else
-            {
+            } else {
                 DEFAULT_GEN_PREFIX = DEFAULT_GEN_TYPE;
             }
-        } else
-        {
-            if(this.sourceEngine instanceof EurostagEngine)
-            {
+        } else {
+            if (this.sourceEngine instanceof EurostagEngine) {
                 this.DEFAULT_GEN_LOAD_TYPE = EurostagModDefaultTypes.DEFAULT_GEN_LOAD_TYPE;
-            } else if(this.sourceEngine instanceof PsseEngine)
-            {
+            } else if (this.sourceEngine instanceof PsseEngine) {
                 this.DEFAULT_GEN_LOAD_TYPE = PsseModDefaultTypes.DEFAULT_GEN_LOAD_TYPE;
             }
-            if (DEFAULT_GEN_LOAD_TYPE.contains("."))
-            {
+            if (DEFAULT_GEN_LOAD_TYPE.contains(".")) {
                 DEFAULT_GEN_LOAD_PREFIX = DEFAULT_GEN_LOAD_TYPE.substring(DEFAULT_GEN_LOAD_TYPE.lastIndexOf(".") + 1);
-            } else
-            {
+            } else {
                 DEFAULT_GEN_LOAD_PREFIX = DEFAULT_GEN_LOAD_TYPE;
             }
             DEFAULT_GEN_LOAD_PREFIX = DEFAULT_GEN_LOAD_PREFIX + "_GEN";
@@ -77,11 +67,9 @@ public class GeneratorRecord extends ModelicaRecord {
     @Override
     public void createModelicaName(ModExportContext modContext, DDBManager ddbManager, SimulatorInst modelicaSim) {
         String modelicaName;
-        if (!isInyection)
-        {
+        if (!isInyection) {
             modelicaName = DEFAULT_GEN_PREFIX + "_" + parseName(this.generator.getId());
-        } else
-        {
+        } else {
             modelicaName = DEFAULT_GEN_LOAD_PREFIX + "_" + parseName(this.generator.getId());
         }
         modelicaName = StaticData.PREF_GEN + WordUtils.uncapitalize(modelicaName.substring(0, 1)) + modelicaName.substring(1);
@@ -89,104 +77,80 @@ public class GeneratorRecord extends ModelicaRecord {
 
         Equipment eq = ddbManager.findEquipment(generator.getId());
         ModelTemplate model = null;
-        if (eq != null)
-        {
-            if(this.generator.getEnergySource().name().equals("WIND"))
-            {
+        if (eq != null) {
+            if (this.generator.getEnergySource().name().equals("WIND")) {
                 _log.info("Wind generator!");
             }
 
             model = ddbManager.findModelTemplate(eq, modelicaSim);
-            if (model != null)
-            {
+            if (model != null) {
                 String data = new String(model.getData(StaticData.MO));
                 super.setModelData(data);
                 super.setModelicaType(model.getTypeName());
 
-                if (super.getModelicaType().contains("."))
-                {
+                if (super.getModelicaType().contains(".")) {
                     DEFAULT_GEN_PREFIX = super.getModelicaType().substring(super.getModelicaType().lastIndexOf(".") + 1);
-                } else
-                {
+                } else {
                     DEFAULT_GEN_PREFIX = super.getModelicaType();
                 }
                 modelicaName = DEFAULT_GEN_PREFIX + "_" + parseName(this.generator.getId());
                 modelicaName = StaticData.PREF_GEN + WordUtils.uncapitalize(modelicaName.substring(0, 1)) + modelicaName.substring(1);
                 super.setModelicaName(modelicaName);
 
-                if(this.sourceEngine instanceof EurostagEngine)
-                {
+                if (this.sourceEngine instanceof EurostagEngine) {
                     genParameters = getGeneratorParameters(ddbManager, modelicaSim, eq, model);
-                } else if (this.sourceEngine instanceof PsseEngine)
-                {
+                } else if (this.sourceEngine instanceof PsseEngine) {
                     genParameters = getPsseGeneratorParameters(ddbManager, modelicaSim, eq, model);
                 }
-            } else
-            {
+            } else {
                 _log.warn("MODELICA Model Template does not exist in DDB");
             }
-        } else
-        {
-            if (!isInyection)
-            {
+        } else {
+            if (!isInyection) {
                 _log.info("Generator " + this.getModelicaName() + " does not exist in DDB (Equipment).");
             }
             String ddbid;
-            if (!isInyection)
-            {
+            if (!isInyection) {
                 ddbid = StaticData.MTC_PREFIX_NAME + super.mtcMapper.get(DEFAULT_GEN_PREFIX);
-            } else
-            {
+            } else {
                 ddbid = StaticData.MTC_PREFIX_NAME + super.mtcMapper.get(DEFAULT_GEN_LOAD_PREFIX);
             }
             ModelTemplateContainer mtc = ddbManager.findModelTemplateContainer(ddbid);
             String genType = null;
-            if (mtc == null)
-            {
+            if (mtc == null) {
                 _log.warn("Source (Eurostag/PSSE) Model Template Container does not exist. Searching Default Modelica Model Template Container in DDB.");
-                if (!isInyection)
-                {
+                if (!isInyection) {
                     genType = DEFAULT_GEN_TYPE;
                     mtc = ddbManager.findModelTemplateContainer(StaticData.MTC_PREFIX_NAME + DEFAULT_GEN_TYPE);
-                } else
-                {
+                } else {
                     genType = DEFAULT_GEN_LOAD_TYPE;
                     mtc = ddbManager.findModelTemplateContainer(StaticData.MTC_PREFIX_NAME + DEFAULT_GEN_LOAD_TYPE);
                 }
                 super.setModelicaType(genType);
             }
-            if (mtc != null)
-            {
-                for (ModelTemplate mt : mtc.getModelTemplates())
-                {
-                    if (mt.getTypeName().equalsIgnoreCase(genType))
-                    {
+            if (mtc != null) {
+                for (ModelTemplate mt : mtc.getModelTemplates()) {
+                    if (mt.getTypeName().equalsIgnoreCase(genType)) {
                         model = mt;
                     }
                 }
-                if (model != null)
-                {
+                if (model != null) {
                     String data = new String(model.getData("mo"));
                     super.setModelData(data);
                     List<DefaultParameters> defSetParams = model.getDefaultParameters();
                     List<Parameter> defParameters = defSetParams.get(0).getParameters();
-                    for (Parameter param : defParameters)
-                    {
-                        if (param.getValue() != null)
-                        {
+                    for (Parameter param : defParameters) {
+                        if (param.getValue() != null) {
                             genParameters.add(param);
-                        } else
-                        {
+                        } else {
                             _log.warn("Paramater " + param.getName() + " doesn't have value.");
                         }
                     }
-                } else
-                {
+                } else {
                     super.setCorrect(false);
                     _log.warn("MODELICA Model Template does not exist in DDB");
                 }
-            } else
-            {
+            } else {
                 super.setCorrect(false);
                 _log.error("MODELICA Model Template Container does not exist in DDB.");
             }
@@ -196,23 +160,17 @@ public class GeneratorRecord extends ModelicaRecord {
 
     @Override
     public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
-        if(!Float.isNaN(this.busInfo.getBus().getV()) && this.busInfo.isConnected())
-        {
-            if (super.isCorrect()){
-                if(!busInfo.isConnected())
-                {
+        if (!Float.isNaN(this.busInfo.getBus().getV()) && this.busInfo.isConnected()) {
+            if (super.isCorrect()) {
+                if (!busInfo.isConnected()) {
                     this.addValue(StaticData.COMMENT);
                 }
-                if (super.getModelicaType() != null)
-                {
+                if (super.getModelicaType() != null) {
                     this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);
-                } else
-                {
-                    if (!isInyection)
-                    {
+                } else {
+                    if (!isInyection) {
                         this.addValue(DEFAULT_GEN_TYPE + StaticData.WHITE_SPACE);
-                    } else
-                    {
+                    } else {
                         this.addValue(DEFAULT_GEN_LOAD_TYPE + StaticData.WHITE_SPACE);
                     }
                 }
@@ -220,76 +178,58 @@ public class GeneratorRecord extends ModelicaRecord {
                 this.addValue(" (");
                 this.addValue(StaticData.NEW_LINE);
                 //If it is a generator or injection it will have different parameters
-                if ((iidmgenParameters != null) && (!iidmgenParameters.isEmpty()))
-                {
-                    for (int i = 0; i < iidmgenParameters.size() - 1; i++)
-                    {
-                        if(!busInfo.isConnected())
-                        {
+                if ((iidmgenParameters != null) && (!iidmgenParameters.isEmpty())) {
+                    for (int i = 0; i < iidmgenParameters.size() - 1; i++) {
+                        if (!busInfo.isConnected()) {
                             this.addValue(StaticData.COMMENT);
                         }
-                        if(iidmgenParameters.get(i).getName().equals(PsseFixedData.Mbase) && this.changedMbse)
-                        {
+                        if (iidmgenParameters.get(i).getName().equals(PsseFixedData.Mbase) && this.changedMbse) {
                             this.addValue("\t " + iidmgenParameters.get(i).getName() + " = " + iidmgenParameters.get(i).getValue() + ", // Mbase has been changed: Mbase > SQRT(P^2 + Q^2)");
-                        } else
-                        {
+                        } else {
                             this.addValue("\t " + iidmgenParameters.get(i).getName() + " = " + iidmgenParameters.get(i).getValue() + ", ");
                         }
                         this.addValue(StaticData.NEW_LINE);
                     }
-                    if(!busInfo.isConnected())
-                    {
+                    if (!busInfo.isConnected()) {
                         this.addValue(StaticData.COMMENT);
                     }
-                    if (isInyection)
-                    {
+                    if (isInyection) {
                         this.addValue("\t " + iidmgenParameters.get(iidmgenParameters.size() - 1).getName() + " = " + iidmgenParameters.get(iidmgenParameters.size() - 1).getValue());
-                    } else if ((genParameters != null) && (!genParameters.isEmpty()))
-                    {
-                        if(iidmgenParameters.get(iidmgenParameters.size() - 1).getName().equals(PsseFixedData.Mbase) && this.changedMbse)
-                        {
+                    } else if ((genParameters != null) && (!genParameters.isEmpty())) {
+                        if (iidmgenParameters.get(iidmgenParameters.size() - 1).getName().equals(PsseFixedData.Mbase) && this.changedMbse) {
                             this.addValue("\t " + iidmgenParameters.get(iidmgenParameters.size() - 1).getName() + " = " + iidmgenParameters.get(iidmgenParameters.size() - 1).getValue() + ", // Mbase has been changed: Mbase > SQRT(P^2 + Q^2)");
-                        } else
-                        {
+                        } else {
                             this.addValue("\t " + iidmgenParameters.get(iidmgenParameters.size() - 1).getName() + " = " + iidmgenParameters.get(iidmgenParameters.size() - 1).getValue() + ",");
                         }
                     }
                     this.addValue(StaticData.NEW_LINE);
                 }
-                if (!isInyection)
-                {
-                    if ((genParameters != null) && (!genParameters.isEmpty()))
-                    {
-                        for (int i = 0; i < genParameters.size() - 1; i++)
-                        {
-                            if(!busInfo.isConnected())
-                            {
+                if (!isInyection) {
+                    if ((genParameters != null) && (!genParameters.isEmpty())) {
+                        for (int i = 0; i < genParameters.size() - 1; i++) {
+                            if (!busInfo.isConnected()) {
                                 this.addValue(StaticData.COMMENT);
                             }
                             this.addValue("\t " + genParameters.get(i).getName() + " = " + genParameters.get(i).getValue() + ",");
                             this.addValue(StaticData.NEW_LINE);
                         }
-                        if(!busInfo.isConnected())
-                        {
+                        if (!busInfo.isConnected()) {
                             this.addValue(StaticData.COMMENT);
                         }
                         this.addValue("\t " + genParameters.get(genParameters.size() - 1).getName() + " = " + genParameters.get(genParameters.size() - 1).getValue());
                         this.addValue(StaticData.NEW_LINE);
                     }
                 }
-                if(!this.busInfo.isConnected())
-                {
+                if (!this.busInfo.isConnected()) {
                     this.addValue(StaticData.COMMENT);
                 }
                 this.addValue("\t " + EurostagFixedData.ANNOT);
                 genParameters = null;
                 iidmgenParameters = null;
-            } else
-            {
+            } else {
                 _log.error(this.getModelicaName() + " not added to grid model.");
             }
-        } else
-        {
+        } else {
             _log.warn("Generator " + this.getModelicaName() + " disconnected.");
             this.addValue(StaticData.COMMENT + " Generator " + this.getModelicaName() + " disconnected.");
         }
@@ -308,38 +248,31 @@ public class GeneratorRecord extends ModelicaRecord {
 
     private List<Parameter> getPsseGeneratorParameters(DDBManager ddbManager, SimulatorInst modelicaSim, Equipment eq, ModelTemplate modelTemplate) {
         List<Parameter> parametersList = new ArrayList<Parameter>();
-        if (this.paramsDictionary.containsKey(modelTemplate.getTypeName()))
-        {
+        if (this.paramsDictionary.containsKey(modelTemplate.getTypeName())) {
             Parameters parameters = ddbManager.findParameters(eq, modelicaSim);
-            if (parameters != null) //The equipment has parameters in Modelica
-            {
+            if (parameters != null) {
+                //The equipment has parameters in Modelica
                 parametersList.addAll(parameters.getParameters());
-            } else
-            {
+            } else {
                 parameters = ddbManager.findParameters(eq, sourceSim);
-                if (parameters != null) // The equipment has parameters in the source engine
-                {
+                if (parameters != null) {
+                    // The equipment has parameters in the source engine
                     parametersList.addAll(parameters.getParameters());
-                } else
-                {
+                } else {
                     // Getting parameters by default in MODELICA.
                     List<DefaultParameters> defSetParams = modelTemplate.getDefaultParameters();
-                    if ((defSetParams != null) && (!defSetParams.isEmpty()))
-                    {
+                    if ((defSetParams != null) && (!defSetParams.isEmpty())) {
                         List<Parameter> defParameters = defSetParams.get(defSetParams.size()).getParameters();
                         genParameters.addAll(defParameters);
-                        for(Parameter param : defParameters)
-                        {
+                        for (Parameter param : defParameters) {
                             addParamInMap(param.getName(), param.getValue().toString());
                         }
-                    } else
-                    {
+                    } else {
                         _log.error("Modelica model " + modelTemplate.getTypeName() + " doesn't have default parameters.");
                     }
                 }
             }
-        } else
-        {
+        } else {
             _log.error("Parameters dictionary doesn't have parameters for model " + modelTemplate.getTypeName());
         }
         return parametersList;
@@ -349,23 +282,20 @@ public class GeneratorRecord extends ModelicaRecord {
         List<Parameter> parametersList = new ArrayList<Parameter>();
         Map<String, String> dictMap;
         IIDMParameter parameter;
-        if (this.paramsDictionary.containsKey(modelTemplate.getTypeName()))
-        {
+        if (this.paramsDictionary.containsKey(modelTemplate.getTypeName())) {
             dictMap = this.paramsDictionary.get(modelTemplate.getTypeName());
             Parameters parameters = ddbManager.findParameters(eq, modelicaSim);
-            if (parameters != null) // The equipment has parameters in Modelica.
-            {
+            if (parameters != null) {
+                // The equipment has parameters in Modelica.
                 parametersList.addAll(parameters.getParameters());
-            } else
-            {
+            } else {
                 parameters = ddbManager.findParameters(eq, sourceSim);
-                if (parameters != null) // The equipment has parameters in the source engine
-                {
+                if (parameters != null) {
+                    // The equipment has parameters in the source engine
                     List<Parameter> paramsList = parameters.getParameters();
                     Iterator<Entry<String, String>> it = dictMap.entrySet().iterator();
                     String isTrafoIncluded = ddbManager.getStringParameter(eq, sourceSim, "transformer.included");
-                    if (isTrafoIncluded.equals(EurostagFixedData.TRAFO_INCLUDED))
-                    {
+                    if (isTrafoIncluded.equals(EurostagFixedData.TRAFO_INCLUDED)) {
                         trafoIncluded = true;
                         parameter = new IIDMParameter(EurostagFixedData.TRAFOINCLUDED, "true");
                         this.iidmgenParameters.add(parameter);
@@ -374,107 +304,86 @@ public class GeneratorRecord extends ModelicaRecord {
                         parameter = new IIDMParameter(EurostagFixedData.V2, this.generator.getTerminal().getVoltageLevel().getNominalV());
                         this.iidmgenParameters.add(parameter);
                         addParamInMap(parameter.getName(), parameter.getValue().toString());
-                    } else
-                    {
+                    } else {
                         parameter = new IIDMParameter(EurostagFixedData.TRAFOINCLUDED, "false");
                         this.iidmgenParameters.add(parameter);
                         addParamInMap(parameter.getName(),  parameter.getValue().toString());
                     }
 
                     String isSaturated = ddbManager.getStringParameter(eq, sourceSim, "saturated");
-                    if(isSaturated.equals(EurostagFixedData.IS_SATURATED))
-                    {
+                    if (isSaturated.equals(EurostagFixedData.IS_SATURATED)) {
                         saturated = true;
                         parameter = new IIDMParameter(EurostagFixedData.SATURATED, "true");
                         this.iidmgenParameters.add(parameter);
                         addParamInMap(parameter.getName(), parameter.getValue().toString());
-                    } else
-                    {
+                    } else {
                         saturated = false;
                         parameter = new IIDMParameter(EurostagFixedData.SATURATED, "false");
                         this.iidmgenParameters.add(parameter);
                         addParamInMap(parameter.getName(), parameter.getValue().toString());
                     }
-                    while (it.hasNext())
-                    {
+                    while (it.hasNext()) {
                         String modParName = it.next().getKey();
                         String eurParName = dictMap.get(modParName);
                         Parameter modParam = null;
-                        if ((!trafoIncluded) && (EurostagFixedData.TRAFO_GEN_PARAMS.contains(modParName)))
-                        {
+                        if ((!trafoIncluded) && (EurostagFixedData.TRAFO_GEN_PARAMS.contains(modParName))) {
                             continue;
                         }
-                        if ((eurParName != null) && (eurParName.equals("transformer.included")))
-                        {
+                        if ((eurParName != null) && (eurParName.equals("transformer.included"))) {
                             continue;
                         }
-                        if ((eurParName != null) && (eurParName.equals("saturated")))
-                        {
+                        if ((eurParName != null) && (eurParName.equals("saturated"))) {
                             continue;
                         }
-                        for (Parameter par : paramsList)
-                        {
-                            if (par.getName().equals(eurParName))
-                            {
+                        for (Parameter par : paramsList) {
+                            if (par.getName().equals(eurParName)) {
                                 modParam = par;
                                 break;
                             }
                         }
-                        if (modParam != null)
-                        {
-                            if (modParam.getValue() != null)
-                            {
+                        if (modParam != null) {
+                            if (modParam.getValue() != null) {
                                 modParam.setName(modParName);
-                                if(!saturated && EurostagFixedData.SATURATED_MACHINE.contains(modParName))
-                                {
+                                if (!saturated && EurostagFixedData.SATURATED_MACHINE.contains(modParName)) {
                                     parameter = new IIDMParameter(modParam.getName(), 0);
                                     this.iidmgenParameters.add(parameter);
                                     addParamInMap(parameter.getName(), parameter.getValue().toString());
-                                } else
-                                {
+                                } else {
                                     parametersList.add(modParam);
                                     addParamInMap(modParam.getName(), modParam.getValue().toString());
                                 }
-                            } else
-                            {
+                            } else {
                                 //If value is null for now we put a 0
                                 parameter = new IIDMParameter(modParName, 0);
                                 this.iidmgenParameters.add(parameter);
                                 addParamInMap(modParName, parameter.getValue().toString());
                             }
-                        } else
-                        {
+                        } else {
 //                            _log.error("Modelica parameter " + modParName + " doesn't exists in DDB.");
                         }
                     }
-                } else
-                {
+                } else {
                     //Getting the parameters by default in Modelica.
                     List<DefaultParameters> defSetParams = modelTemplate.getDefaultParameters();
-                    if ((defSetParams != null) && (!defSetParams.isEmpty()))
-                    {
+                    if ((defSetParams != null) && (!defSetParams.isEmpty())) {
                         List<Parameter> defParameters = defSetParams.get(defSetParams.size()).getParameters();
                         genParameters.addAll(defParameters);
-                        for(Parameter param : defParameters)
-                        {
+                        for (Parameter param : defParameters) {
                             addParamInMap(param.getName(), param.getValue().toString());
                         }
-                    } else
-                    {
+                    } else {
                         _log.error("Modelica model " + modelTemplate.getTypeName() + " doesn't have default parameters.");
                     }
                 }
             }
-        } else
-        {
+        } else {
             _log.error("Parameters dictionary doesn't have parameters for model " + modelTemplate.getTypeName());
         }
         return parametersList;
     }
 
     private void addParamInMap(String name, String value) {
-        if(!this.genParamsMap.containsKey(name.toUpperCase()))
-        {
+        if (!this.genParamsMap.containsKey(name.toUpperCase())) {
             this.genParamsMap.put(name.toUpperCase(), value);
         }
     }
@@ -485,27 +394,22 @@ public class GeneratorRecord extends ModelicaRecord {
         float voltage = 0;
         float angle = 0;
 
-        if (generator.getTerminal().getBusView().getBus() != null)
-        {
-            if (!Float.isNaN(generator.getTerminal().getBusView().getBus().getV()))
-            {
+        if (generator.getTerminal().getBusView().getBus() != null) {
+            if (!Float.isNaN(generator.getTerminal().getBusView().getBus().getV())) {
                 voltage = generator.getTerminal().getBusView().getBus().getV();
             }
-            if (!Float.isNaN(generator.getTerminal().getBusView().getBus().getAngle()))
-            {
+            if (!Float.isNaN(generator.getTerminal().getBusView().getBus().getAngle())) {
                 angle = generator.getTerminal().getBusView().getBus().getAngle();
             }
         }
-        if(this.sourceEngine instanceof EurostagEngine)
-        {
-            if (!isInyection)
-            {
+        if (this.sourceEngine instanceof EurostagEngine) {
+            if (!isInyection) {
                 parameter = new IIDMParameter(StaticData.SNREF, StaticData.SNREF);
                 this.iidmgenParameters.add(parameter);
                 addParamInMap(parameter.getName(),  parameter.getValue().toString());
 
                 float modulo = voltage / generator.getTerminal().getVoltageLevel().getNominalV();
-                float angulo =  (float) (angle*Math.PI/180);
+                float angulo = (float) (angle * Math.PI / 180);
 
                 double ur0 = modulo * Math.cos(angulo);
                 double ui0 = modulo * Math.sin(angulo);
@@ -516,35 +420,32 @@ public class GeneratorRecord extends ModelicaRecord {
 
                 parameter = new IIDMParameter(EurostagFixedData.UI0, ui0);
                 this.iidmgenParameters.add(parameter);
-                addParamInMap(parameter.getName(),  parameter.getValue().toString());
-            } else
-            {
-                parameter = new IIDMParameter(EurostagFixedData.V_0, voltage/generator.getTerminal().getVoltageLevel().getNominalV());
+                addParamInMap(parameter.getName(), parameter.getValue().toString());
+            } else {
+                parameter = new IIDMParameter(EurostagFixedData.V_0, voltage / generator.getTerminal().getVoltageLevel().getNominalV());
                 this.iidmgenParameters.add(parameter);
-                addParamInMap(parameter.getName(),  parameter.getValue().toString());
+                addParamInMap(parameter.getName(), parameter.getValue().toString());
 
                 parameter = new IIDMParameter(EurostagFixedData.ANGLE_0, angle);
                 this.iidmgenParameters.add(parameter);
-                addParamInMap(parameter.getName(),  parameter.getValue().toString());
+                addParamInMap(parameter.getName(), parameter.getValue().toString());
 
                 //Before 2015-05-28 the sign of pelec and qelec was not changed but now we change the sign.
-                float pelec = -this.generator.getTerminal().getP()/SNREF;
+                float pelec = -this.generator.getTerminal().getP() / SNREF;
                 parameter = new IIDMParameter(EurostagFixedData.P, pelec);
                 this.iidmgenParameters.add(parameter);
-                addParamInMap(parameter.getName(),  parameter.getValue().toString());
+                addParamInMap(parameter.getName(), parameter.getValue().toString());
 
-                float qelec = -this.generator.getTerminal().getQ()/SNREF;
+                float qelec = -this.generator.getTerminal().getQ() / SNREF;
                 parameter = new IIDMParameter(EurostagFixedData.Q, qelec);
                 this.iidmgenParameters.add(parameter);
                 addParamInMap(parameter.getName(),  parameter.getValue().toString());
             }
-        } else if (this.sourceEngine instanceof PsseEngine)
-        {
-            if(!isInyection )
-            {
-                parameter = new IIDMParameter(PsseFixedData.V_0, voltage/generator.getTerminal().getVoltageLevel().getNominalV());
+        } else if (this.sourceEngine instanceof PsseEngine) {
+            if (!isInyection) {
+                parameter = new IIDMParameter(PsseFixedData.V_0, voltage / generator.getTerminal().getVoltageLevel().getNominalV());
                 this.iidmgenParameters.add(parameter);
-                addParamInMap(parameter.getName(),  parameter.getValue().toString());
+                addParamInMap(parameter.getName(), parameter.getValue().toString());
 
                 parameter = new IIDMParameter(PsseFixedData.ANGLE_0, angle);
                 this.iidmgenParameters.add(parameter);
@@ -563,19 +464,17 @@ public class GeneratorRecord extends ModelicaRecord {
 
                 double mbase = this.generator.getRatedS();
                 double refValue = Math.sqrt(Math.pow(pelec, 2) + Math.pow(qelec, 2));
-                if(mbase <= refValue)
-                {
-                    mbase = 1.1*refValue;
+                if (mbase <= refValue) {
+                    mbase = 1.1 * refValue;
                     changedMbse = true;
                 }
                 parameter = new IIDMParameter(PsseFixedData.M_b, mbase);
                 this.iidmgenParameters.add(parameter);
-                addParamInMap(parameter.getName(),  parameter.getValue().toString());
-            } else
-            {
-                parameter = new IIDMParameter(PsseFixedData.V_0, voltage/generator.getTerminal().getVoltageLevel().getNominalV());
+                addParamInMap(parameter.getName(), parameter.getValue().toString());
+            } else {
+                parameter = new IIDMParameter(PsseFixedData.V_0, voltage / generator.getTerminal().getVoltageLevel().getNominalV());
                 this.iidmgenParameters.add(parameter);
-                addParamInMap(parameter.getName(),  parameter.getValue().toString());
+                addParamInMap(parameter.getName(), parameter.getValue().toString());
 
                 parameter = new IIDMParameter(PsseFixedData.ANGLE_0, angle);
                 this.iidmgenParameters.add(parameter);

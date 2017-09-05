@@ -35,27 +35,27 @@ public class ActionParameters {
     @Override
     public String toString() {
         String parametersString = "actionParameters[";
-        for(String name : getNames()) {
-            if ( getValue(name) instanceof Float ) {
+        for (String name : getNames()) {
+            if (getValue(name) instanceof Float) {
                 float value = (Float) getValue(name);
-                parametersString += name + "=" + value +"f,";
+                parametersString += name + "=" + value + "f,";
             }
-            if ( getValue(name) instanceof Integer ) {
+            if (getValue(name) instanceof Integer) {
                 int value = (Integer) getValue(name);
-                parametersString += name + "=" + value +",";
+                parametersString += name + "=" + value + ",";
             }
-            if ( getValue(name) instanceof String ) {
+            if (getValue(name) instanceof String) {
                 String value = (String) getValue(name);
-                parametersString += name + "='" + value +"',";
+                parametersString += name + "='" + value + "',";
             }
-            if ( getValue(name) instanceof Boolean ) {
+            if (getValue(name) instanceof Boolean) {
                 boolean value = (Boolean) getValue(name);
-                parametersString += name + "=" + value +",";
+                parametersString += name + "=" + value + ",";
             }
         }
-        if ( parametersString.length() > 19 )
-            parametersString = parametersString.substring(0, parametersString.length()-1);
-        parametersString+= "]";
+        if (parametersString.length() > 19)
+            parametersString = parametersString.substring(0, parametersString.length() - 1);
+        parametersString += "]";
         return parametersString;
     }
 

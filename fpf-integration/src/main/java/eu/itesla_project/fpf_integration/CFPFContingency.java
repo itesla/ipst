@@ -35,8 +35,8 @@ public class CFPFContingency {
         String ch = ",";
         String out = getNumber() + ch +
                 getNumberBranchesOnOutage();
-        for( int i = 0; i < numberBranchesOnOutage; i++ ) {
-            out += ch + branchesOnOutage.get( i );
+        for (int i = 0; i < numberBranchesOnOutage; i++) {
+            out += ch + branchesOnOutage.get(i);
         }
         return out;
     }

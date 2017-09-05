@@ -51,8 +51,8 @@ public class ConnectCouplingDevicesRecord extends ModelicaRecord {
     public String parseName(String name) {
         String parsedName = name.trim();
 
-        if(parsedName.contains("-")) {
-            if(!parsedName.startsWith("_")) {
+        if (parsedName.contains("-")) {
+            if (!parsedName.startsWith("_")) {
                 parsedName = "_" + parsedName;
             }
             parsedName = parsedName.replaceAll("-", "_");
@@ -61,13 +61,13 @@ public class ConnectCouplingDevicesRecord extends ModelicaRecord {
         int posi = parsedName.indexOf('_');
         int pose = parsedName.lastIndexOf('_');
         if (pose > posi) {
-            parsedName = parsedName.substring(posi+1, pose);
+            parsedName = parsedName.substring(posi + 1, pose);
         }
-           parsedName = parsedName.replaceAll("\\s", "_");
+        parsedName = parsedName.replaceAll("\\s", "_");
 
-           if(parsedName.substring(0, 1).matches("[0-9]")) {
+        if (parsedName.substring(0, 1).matches("[0-9]")) {
             parsedName = "b_" + parsedName;
-           }
+        }
         return parsedName;
     }
 

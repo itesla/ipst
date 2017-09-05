@@ -65,12 +65,19 @@ public class ConnectRegulatorRecord extends ModelicaRecord {
     public String parseName(String name) { //example: flr flr_BLAYAI1
         String parsedName = name.trim();
 
-        if(name.length() > eqName.length()) parsedName = name.substring(eqName.length());
-        else if(eqName.length() > name.length()) parsedName = eqName.substring(name.length());
+        if (name.length() > eqName.length()) {
+            parsedName = name.substring(eqName.length());
+        } else if (eqName.length() > name.length()) {
+            parsedName = eqName.substring(name.length());
+        }
 
-        if(parsedName.trim().startsWith("_")) parsedName = parsedName.trim().replaceFirst("_","").toLowerCase();
+        if (parsedName.trim().startsWith("_")) {
+            parsedName = parsedName.trim().replaceFirst("_", "").toLowerCase();
+        }
 
-        if(eqName.startsWith("_")) eqName = eqName.replaceFirst("_", "");
+        if (eqName.startsWith("_")) {
+            eqName = eqName.replaceFirst("_", "");
+        }
 
         eqName = eqName.substring(0, eqName.indexOf("_"));
 

@@ -28,8 +28,9 @@ public class InitializationRecord extends ModelicaRecord {
 
     @Override
     public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
-        if(globalVar != null)
+        if (globalVar != null) {
             this.addValue(globalVar.getName() + " = " + globalVar.getValue() + StaticData.SEMICOLON);
+        }
     }
 
     @Override

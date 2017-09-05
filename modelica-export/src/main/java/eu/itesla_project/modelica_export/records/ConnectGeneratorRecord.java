@@ -35,24 +35,30 @@ public class ConnectGeneratorRecord extends ConnectRecord {
 
     @Override
     public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
-        if(!isConnected) this.addValue(StaticData.COMMENT);
+        if (!isConnected) {
+            this.addValue(StaticData.COMMENT);
+        }
 
         this.addValue(StaticData.CONNECT);
         this.addValue(super.nodeName1);
 
-        if(this.node1 instanceof Bus) this.addValue("." + StaticData.POSITIVE_PIN + ", ");
-        else this.addValue("." + StaticData.NEGATIVE_PIN + ", ");
+        if (this.node1 instanceof Bus) {
+            this.addValue("." + StaticData.POSITIVE_PIN + ", ");
+        } else {
+            this.addValue("." + StaticData.NEGATIVE_PIN + ", ");
+        }
 
         this.addValue(super.nodeName2);
 
-        if(!isInyection) {
-            if(this.sourceEngine instanceof EurostagEngine) {
+        if (!isInyection) {
+            if (this.sourceEngine instanceof EurostagEngine) {
                 this.addValue("." + EurostagFixedData.GEN_SORTIE_PIN);
-            } else if(this.sourceEngine instanceof PsseEngine) {
+            } else if (this.sourceEngine instanceof PsseEngine) {
                 this.addValue("." + StaticData.POSITIVE_PIN);
             }
+        } else {
+            this.addValue("." + StaticData.POSITIVE_PIN);
         }
-        else this.addValue("." + StaticData.POSITIVE_PIN);
 
         this.addValue(StaticData.ANNOT_CONNECT);
     }

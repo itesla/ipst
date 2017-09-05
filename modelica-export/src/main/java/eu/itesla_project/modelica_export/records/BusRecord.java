@@ -38,15 +38,14 @@ public class BusRecord extends ModelicaRecord {
         this.bus = bus;
         this.busId = bus.getId();
 
-        if(!Float.isNaN(this.bus.getV())) {
+        if (!Float.isNaN(this.bus.getV())) {
             this.busVoltage = bus.getV() / bus.getVoltageLevel().getNominalV();
 
             this.busAngle = this.bus.getAngle();
 
             addParameter(StaticData.V_0, this.busVoltage);
             addParameter(StaticData.ANGLE_0, this.busAngle);
-        }
-        else {
+        } else {
             this.busVoltage = Float.NaN;
         }
 
@@ -63,7 +62,7 @@ public class BusRecord extends ModelicaRecord {
         this.busVoltage = voltage;
         this.busAngle = angle;
 
-        if(!Float.isNaN(this.busVoltage)) {
+        if (!Float.isNaN(this.busVoltage)) {
             addParameter(StaticData.V_0, this.busVoltage);
             addParameter(StaticData.ANGLE_0, this.busAngle);
         }
@@ -73,25 +72,28 @@ public class BusRecord extends ModelicaRecord {
     public void createModelicaName(ModExportContext modContext, DDBManager ddbManager, SimulatorInst modelicaSim) {
         String modelicaName = parseName(this.busId);
         modelicaName = StaticData.PREF_BUS + modelicaName;
-        if(this.bus != null) modContext.dictionary.add(this.bus, modelicaName);
+        if (this.bus != null) {
+            modContext.dictionary.add(this.bus, modelicaName);
+        }
         super.setModelicaName(modelicaName);
 
         ModelTemplate model = null;
         String ddbid = StaticData.MTC_PREFIX_NAME + super.mtcMapper.get(DEFAULT_BUS_TYPE);
 
         ModelTemplateContainer mtc = ddbManager.findModelTemplateContainer(ddbid);
-        if(mtc == null) {
+        if (mtc == null) {
 //            _log.warn("EUROSTAG Model Template Container does not exist. Searching Default MODELICA Model Template Container in DDB.");
             mtc = ddbManager.findModelTemplateContainer(StaticData.MTC_PREFIX_NAME + DEFAULT_BUS_TYPE);
         }
 
-        if(mtc != null) {
-            for(ModelTemplate mt : mtc.getModelTemplates()) {
-                if(mt.getTypeName().equalsIgnoreCase(DEFAULT_BUS_TYPE)) model = mt;
+        if (mtc != null) {
+            for (ModelTemplate mt : mtc.getModelTemplates()) {
+                if (mt.getTypeName().equalsIgnoreCase(DEFAULT_BUS_TYPE)) {
+                    model = mt;
+                }
             }
 
-            if(model != null)
-            {
+            if (model != null) {
 //                String data = new String(model.getData("mo"));
 //                super.setModelData(data);
                 super.setModelicaType(model.getTypeName());
@@ -99,13 +101,11 @@ public class BusRecord extends ModelicaRecord {
 //                List<DefaultParameters> defSetParams = model.getDefaultParameters();
 //                List<Parameter> defParameters = defSetParams.get(0).getParameters();
 //                for(Parameter param : defParameters) busParameters.add(param);
-            }
-            else {
+            } else {
                 super.setCorrect(false);
 //                _log.warn("MODELICA Model Template does not exist in DDB");
             }
-        }
-        else {
+        } else {
             super.setCorrect(false);
             _log.error("MODELICA Model Template Container does not exist in DDB.");
         }
@@ -114,29 +114,30 @@ public class BusRecord extends ModelicaRecord {
     @Override
     public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
         //We suppose: if V=NaN the bus is disconnected.
-        if(!Float.isNaN(this.busVoltage)) {
-            if(super.isCorrect()) {
-                if (super.getModelicaType() != null) this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);
-                else this.addValue(DEFAULT_BUS_TYPE + StaticData.WHITE_SPACE);
+        if (!Float.isNaN(this.busVoltage)) {
+            if (super.isCorrect()) {
+                if (super.getModelicaType() != null) {
+                    this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);
+                } else {
+                    this.addValue(DEFAULT_BUS_TYPE + StaticData.WHITE_SPACE);
+                }
                 this.addValue(super.getModelicaName());
                 this.addValue(" (");
                 this.addValue(StaticData.NEW_LINE);
 
-                if(!iidmbusParameters.isEmpty()) {
-                    for(int i=0; i<iidmbusParameters.size()-1; i++) {
+                if (!iidmbusParameters.isEmpty()) {
+                    for (int i = 0; i < iidmbusParameters.size() - 1; i++) {
                         this.addValue("\t " + iidmbusParameters.get(i).getName() + " = " + iidmbusParameters.get(i).getValue() + ",");
                         this.addValue(StaticData.NEW_LINE);
                     }
-                    this.addValue("\t " + iidmbusParameters.get(iidmbusParameters.size()-1).getName() + " = " + iidmbusParameters.get(iidmbusParameters.size()-1).getValue());
+                    this.addValue("\t " + iidmbusParameters.get(iidmbusParameters.size() - 1).getName() + " = " + iidmbusParameters.get(iidmbusParameters.size() - 1).getValue());
                     this.addValue(StaticData.NEW_LINE);
-                }
-                else if(!busParameters.isEmpty())
-                {
-                    for(int i=0; i<busParameters.size()-1; i++) {
+                } else if (!busParameters.isEmpty()) {
+                    for (int i = 0; i < busParameters.size() - 1; i++) {
                         this.addValue("\t " + busParameters.get(i).getName() + " = " + busParameters.get(i).getValue() + ",");
                         this.addValue(StaticData.NEW_LINE);
                     }
-                    this.addValue("\t " + busParameters.get(busParameters.size()-1).getName() + " = " + busParameters.get(busParameters.size()-1).getValue());
+                    this.addValue("\t " + busParameters.get(busParameters.size() - 1).getName() + " = " + busParameters.get(busParameters.size() - 1).getValue());
                     this.addValue(StaticData.NEW_LINE);
                 }
                 this.addValue("\t " + EurostagFixedData.ANNOT);
@@ -144,10 +145,10 @@ public class BusRecord extends ModelicaRecord {
                 //Clear data
                 iidmbusParameters = null;
                 busParameters = null;
+            } else {
+                _log.error(this.getModelicaName() + " not added to grid model.");
             }
-            else _log.error(this.getModelicaName() + " not added to grid model.");
-        }
-        else {
+        } else {
             _log.warn("Bus " + this.getModelicaName() + " disconnected.");
             this.addValue(StaticData.COMMENT + " Bus " + this.getModelicaName() + " disconnected.");
         }

@@ -12,8 +12,7 @@ import java.util.Collection;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public interface ActionsContingenciesAssociation
-{
+public interface ActionsContingenciesAssociation {
 
     Collection<String> getContingenciesId();
 

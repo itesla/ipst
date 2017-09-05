@@ -115,10 +115,12 @@ public class BusData implements EquipmentData {
 
     private String listToString(List<String> list) {
         String listString = "";
-        for (String string : list)
+        for (String string : list) {
             listString += string + ";";
-        if ( ! listString.isEmpty() )
-                listString = listString.substring(0, listString.length()-1);
+        }
+        if (!listString.isEmpty()) {
+            listString = listString.substring(0, listString.length() - 1);
+        }
         return listString;
     }
 

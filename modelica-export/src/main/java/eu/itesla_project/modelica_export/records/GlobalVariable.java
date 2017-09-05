@@ -34,8 +34,11 @@ public class GlobalVariable {
 
     @Override
     public String toString() {
-        if(value != null) return "  " + type + StaticData.WHITE_SPACE + name + " = " + value + StaticData.SEMICOLON;
-        else return "  " + type + StaticData.WHITE_SPACE + name + StaticData.SEMICOLON;
+        if (value != null) {
+            return "  " + type + StaticData.WHITE_SPACE + name + " = " + value + StaticData.SEMICOLON;
+        } else {
+            return "  " + type + StaticData.WHITE_SPACE + name + StaticData.SEMICOLON;
+        }
     }
 
     public void setType(String type) {

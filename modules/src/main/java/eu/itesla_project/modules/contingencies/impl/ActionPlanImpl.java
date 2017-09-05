@@ -26,12 +26,11 @@ public class ActionPlanImpl implements ActionPlan {
 
     private  List<String> zones = new ArrayList<String>();
 
-    private  Map<BigInteger, ActionPlanOption> priorityOption= new HashMap<BigInteger,ActionPlanOption>();
+    private  Map<BigInteger, ActionPlanOption> priorityOption = new HashMap<BigInteger, ActionPlanOption>();
 
 
 
-    public ActionPlanImpl(String _name, String _description, List<String> _zones, Map<BigInteger, ActionPlanOption> _priorityOptions)
-    {
+    public ActionPlanImpl(String _name, String _description, List<String> _zones, Map<BigInteger, ActionPlanOption> _priorityOptions) {
         this.name                =          _name;
         this.description         =          _description;
         this.zones               =          _zones;
@@ -41,27 +40,23 @@ public class ActionPlanImpl implements ActionPlan {
 
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return this.description;
     }
 
     @Override
-    public List<String> getZones()
-    {
+    public List<String> getZones() {
         return this.zones;
 
     }
 
     @Override
-    public Map<BigInteger, ActionPlanOption> getPriorityOption()
-    {
+    public Map<BigInteger, ActionPlanOption> getPriorityOption() {
         return this.priorityOption;
     }
 

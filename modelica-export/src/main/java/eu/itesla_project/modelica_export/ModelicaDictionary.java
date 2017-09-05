@@ -25,7 +25,9 @@ public final class ModelicaDictionary {
 
     public boolean add(Identifiable identifiable, String modelicaName) {
 
-        if (dictionary.containsKey(identifiable.getId())) return false;
+        if (dictionary.containsKey(identifiable.getId())) {
+            return false;
+        }
         
         dictionary.put(identifiable.getId(), modelicaName);
         return true;
@@ -33,7 +35,9 @@ public final class ModelicaDictionary {
     
     public boolean add(Internal internal, String modelicaName) {
 
-        if (dictionary.containsKey(internal.getNativeId())) return false;
+        if (dictionary.containsKey(internal.getNativeId())) {
+            return false;
+        }
         
         dictionary.put(internal.getNativeId(), modelicaName);
         return true;
@@ -41,7 +45,9 @@ public final class ModelicaDictionary {
     
     public boolean add(String sourceId, String modelicaName) {
 
-        if (dictionary.containsKey(sourceId)) return false;
+        if (dictionary.containsKey(sourceId)) {
+            return false;
+        }
         
         dictionary.put(sourceId, modelicaName);
         return true;
@@ -60,8 +66,7 @@ public final class ModelicaDictionary {
 
         if (!dictionary.containsKey(identifiable.getId())) {
             _log.info("IIDM name: " + identifiable.getId() + ". Modelica name: " + dictionary.get(identifiable.getId()));
-        }
-        else {
+        } else {
             _log.info("IIDM name: " + identifiable.getName());
         }
         

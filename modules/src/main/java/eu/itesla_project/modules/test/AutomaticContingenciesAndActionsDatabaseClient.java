@@ -89,22 +89,19 @@ public class AutomaticContingenciesAndActionsDatabaseClient implements Contingen
     }
 
     @Override
-    public Contingency getContingency(String name, Network network)
-    {
+    public Contingency getContingency(String name, Network network) {
         throw new UnsupportedOperationException();
     }
 
 
 
     @Override
-    public Collection<Action> getActions(Network network)
-    {
+    public Collection<Action> getActions(Network network) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Action getAction(String id, Network network)
-    {
+    public Action getAction(String id, Network network) {
         throw new UnsupportedOperationException();
     }
 

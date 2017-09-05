@@ -25,75 +25,75 @@ public class ContingencyStatesIndexesSynthesis implements Serializable {
 
    private static final long serialVersionUID = 1L;
 
-   private final  Map<String,Map> contingencyMap=new HashMap<String,Map>();
+   private final  Map<String, Map> contingencyMap = new HashMap<String, Map>();
 
-   private String workflowId;
-   
-   public ContingencyStatesIndexesSynthesis() {
+    private String workflowId;
+
+    public ContingencyStatesIndexesSynthesis() {
 
     }
-   public ContingencyStatesIndexesSynthesis(String workflowId) {
-       this.workflowId=workflowId;
-   }
 
-   public String getWorkflowId() {
+    public ContingencyStatesIndexesSynthesis(String workflowId) {
+        this.workflowId = workflowId;
+    }
+
+    public String getWorkflowId() {
         return workflowId;
     }
+
     public void setWorkflowId(String workflowId) {
         this.workflowId = workflowId;
     }
 
-    public void addStateIndexes(String contingencyId, Integer stateId, List<SecurityIndexInfo> indexes){
+    public void addStateIndexes(String contingencyId, Integer stateId, List<SecurityIndexInfo> indexes) {
 
         //Map<Integer,List<SecurityIndexInfo>> statesIndexes = contingencyMap.get(contingencyId);
-        Map<Integer,Map<SecurityIndexType,SecurityIndexInfo>> statesIndexes = contingencyMap.get(contingencyId);
+        Map<Integer, Map<SecurityIndexType, SecurityIndexInfo>> statesIndexes = contingencyMap.get(contingencyId);
 
-        if(statesIndexes==null)
+        if (statesIndexes == null) {
             //statesIndexes = new HashMap<Integer,List<SecurityIndexInfo>>();
-            statesIndexes = new HashMap<Integer,Map<SecurityIndexType,SecurityIndexInfo>>();
+            statesIndexes = new HashMap<Integer, Map<SecurityIndexType, SecurityIndexInfo>>();
+        }
 
-        Map<SecurityIndexType,SecurityIndexInfo> mapIndexType = new  EnumMap<SecurityIndexType,SecurityIndexInfo>(SecurityIndexType.class);
+        Map<SecurityIndexType, SecurityIndexInfo> mapIndexType = new EnumMap<SecurityIndexType, SecurityIndexInfo>(SecurityIndexType.class);
 
 
         //for (Map.Entry entry : mapIndexType.entrySet()) {
-          //  System.out.println("mapIndexType:   "+ entry.getKey() + ", " + entry.getValue());
+        //  System.out.println("mapIndexType:   "+ entry.getKey() + ", " + entry.getValue());
         //}
 
-        for (int i=0; i<SecurityIndexType.values().length; i++){
+        for (int i = 0; i < SecurityIndexType.values().length; i++) {
             mapIndexType.put(SecurityIndexType.values()[i], new SecurityIndexInfo());
 
         }
 
-        for (SecurityIndexInfo index :indexes){
+        for (SecurityIndexInfo index : indexes) {
             mapIndexType.put(SecurityIndexType.fromLabel(index.type), index);
         }
 
         statesIndexes.put(stateId, mapIndexType);
-        System.out.println(" state index stateid: "+ stateId + ", " + mapIndexType);
+        System.out.println(" state index stateid: " + stateId + ", " + mapIndexType);
 
         contingencyMap.put(contingencyId, statesIndexes);
 
 
-
     }
-    
-    public class SecurityIndexInfo implements Serializable{
+
+    public class SecurityIndexInfo implements Serializable {
 
         String description;
         boolean ok;
         String type;
         String value;
 
-        public SecurityIndexInfo(SecurityIndex idx)
-        {
+        public SecurityIndexInfo(SecurityIndex idx) {
 
             this.type          = idx.getId().getSecurityIndexType().getLabel();
             this.description  = idx.toString();
-            this.ok=idx.isOk();
+            this.ok = idx.isOk();
         }
 
-        public SecurityIndexInfo()
-        {
+        public SecurityIndexInfo() {
 
 
             this.description  = "";
@@ -116,7 +116,7 @@ public class ContingencyStatesIndexesSynthesis implements Serializable {
             this.type = type;
         }
 
-        public String getValue(){
+        public String getValue() {
             return value;
         }
         public void setValue(String value) {

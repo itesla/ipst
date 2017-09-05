@@ -50,37 +50,36 @@ public abstract class BranchRecord extends ModelicaRecord {
         
         String branchName = parseName(branch.getId()); //CIM ID
         String modelicaName = DEFAULT_BRANCH_PREFIX + branchName; //CIM ID
-        modelicaName = WordUtils.uncapitalize(modelicaName.substring(0,1)) + modelicaName.substring(1);
+        modelicaName = WordUtils.uncapitalize(modelicaName.substring(0, 1)) + modelicaName.substring(1);
         
 //        modelicaName = parseName(modelicaName); //Añadido de cara al conversor de PSSE
         modContext.dictionary.add(branch, modelicaName);
         super.setModelicaName(modelicaName);
         
         ModelTemplate model = null;
-        String ddbid = StaticData.MTC_PREFIX_NAME + super.mtcMapper.get(DEFAULT_BRANCH_PREFIX.substring(0,1).toUpperCase() + DEFAULT_BRANCH_PREFIX);
+        String ddbid = StaticData.MTC_PREFIX_NAME + super.mtcMapper.get(DEFAULT_BRANCH_PREFIX.substring(0, 1).toUpperCase() + DEFAULT_BRANCH_PREFIX);
 
         ModelTemplateContainer mtc = ddbManager.findModelTemplateContainer(ddbid);
 
-        if(mtc == null) {
+        if (mtc == null) {
 //            _log.warn("EUROSTAG Model Template Container does not exist. Searching Default MODELICA Model Template Container in DDB.");
             mtc = ddbManager.findModelTemplateContainer(StaticData.MTC_PREFIX_NAME + DEFAULT_BRANCH_TYPE);
         }
 
-        if(mtc != null) {
-            for(ModelTemplate mt : mtc.getModelTemplates()) {
-                if(mt.getTypeName().equalsIgnoreCase(DEFAULT_BRANCH_TYPE)) model = mt;
+        if (mtc != null) {
+            for (ModelTemplate mt : mtc.getModelTemplates()) {
+                if (mt.getTypeName().equalsIgnoreCase(DEFAULT_BRANCH_TYPE)) {
+                    model = mt;
+                }
             }
 
-            if(model != null)
-            {
+            if (model != null) {
                 super.setModelicaType(model.getTypeName());
-            }
-            else {
+            } else {
                 super.setCorrect(false);
                 _log.error("MODELICA Model Template does not exist in DDB.");
             }
-        }
-        else {
+        } else {
             super.setCorrect(false);
 //            _log.error("MODELICA Model Template Container does not exist in DDB.");
         }
@@ -99,22 +98,28 @@ public abstract class BranchRecord extends ModelicaRecord {
     }
 
     public void setDEFAULT_BRANCH_PREFIX(String Default_Branch_Prefix) {
-        DEFAULT_BRANCH_PREFIX = WordUtils.uncapitalize(Default_Branch_Prefix.substring(0,1)) + Default_Branch_Prefix.substring(1);
+        DEFAULT_BRANCH_PREFIX = WordUtils.uncapitalize(Default_Branch_Prefix.substring(0, 1)) + Default_Branch_Prefix.substring(1);
     }
 
     @Override
     public String parseName(String name) {
            String parsedName = name.trim();
 
-        if(parsedName.contains("-")) {
-            if(!parsedName.startsWith("_")) parsedName = "_" + parsedName;
+        if (parsedName.contains("-")) {
+            if (!parsedName.startsWith("_")) {
+                parsedName = "_" + parsedName;
+            }
             parsedName = parsedName.replaceAll("-", "_");
         }
            parsedName = parsedName.replaceAll("\\s", "_");
            parsedName = parsedName.replaceAll(StaticData.DOT, "_");
 
-           if(parsedName.substring(0, 1).matches("[0-9]")) parsedName = "l_" + parsedName;
-           while(parsedName.endsWith("_")) parsedName = parsedName.substring(0, parsedName.length()-1);
+        if (parsedName.substring(0, 1).matches("[0-9]")) {
+            parsedName = "l_" + parsedName;
+        }
+        while (parsedName.endsWith("_")) {
+            parsedName = parsedName.substring(0, parsedName.length() - 1);
+        }
 
         return parsedName;
     }

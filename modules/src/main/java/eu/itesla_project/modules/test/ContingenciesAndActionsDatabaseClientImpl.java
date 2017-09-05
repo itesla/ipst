@@ -135,8 +135,9 @@ public class ContingenciesAndActionsDatabaseClientImpl implements ContingenciesA
     public Collection<ActionsContingenciesAssociation> getActionsCtgAssociationsByContingency(String contingencyId) {
         List<ActionsContingenciesAssociation> associationForContingency = new ArrayList<ActionsContingenciesAssociation>();
         for (ActionsContingenciesAssociation association : associations) {
-            if ( association.getContingenciesId().contains(contingencyId))
+            if ( association.getContingenciesId().contains(contingencyId)) {
                 associationForContingency.add(association);
+            }
         }
         return associationForContingency;
     }
@@ -146,16 +147,18 @@ public class ContingenciesAndActionsDatabaseClientImpl implements ContingenciesA
             String equipmentId, ConstraintType constraintType) {
         List<ActionsContingenciesAssociation> associationForContingency = new ArrayList<ActionsContingenciesAssociation>();
         for (ActionsContingenciesAssociation association : associations) {
-            if ( constraintOnEquipment(association.getConstraints(), equipmentId, constraintType) )
+            if (constraintOnEquipment(association.getConstraints(), equipmentId, constraintType)) {
                 associationForContingency.add(association);
+            }
         }
         return associationForContingency;
     }
 
     private boolean constraintOnEquipment(Collection<Constraint> constraints, String equipmentId, ConstraintType constraintType) {
-        for(Constraint constraint : constraints) {
-            if ( equipmentId.equals(constraint.getEquipment()) && constraintType.equals(constraint.getType()) )
+        for (Constraint constraint : constraints) {
+            if (equipmentId.equals(constraint.getEquipment()) && constraintType.equals(constraint.getType())) {
                 return true;
+            }
         }
         return false;
     }

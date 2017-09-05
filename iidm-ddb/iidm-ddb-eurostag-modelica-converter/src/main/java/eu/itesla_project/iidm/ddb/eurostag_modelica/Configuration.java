@@ -53,12 +53,13 @@ public class Configuration {
         } catch (IOException e) {
             Utils.throwConverterException("Cannot read configuration file  " + configurationFileName + ": " + e.getMessage(), log);
         } finally {
-            if ( configurationFileStream != null )
+            if (configurationFileStream != null) {
                 try {
                     configurationFileStream.close();
                 } catch (IOException e) {
                     log.error("Error closing configuration file stream: " + e.getMessage());
                 }
+            }
         }
 
     }

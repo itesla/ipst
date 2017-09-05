@@ -41,12 +41,12 @@ import org.hibernate.validator.constraints.NotEmpty;
 @Entity
 @Table(
         name = "CONNECTIONSCHEMA",
-        uniqueConstraints={
-               @UniqueConstraint (columnNames={"cimId","simulator_id"})
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"cimId", "simulator_id"})
         }
-    )
+)
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ConnectionSchema implements Serializable{
+public class ConnectionSchema implements Serializable {
     private static final long serialVersionUID = 1L;
 
     //The synthetic id of the object.
@@ -59,8 +59,8 @@ public class ConnectionSchema implements Serializable{
 //    public void setId(Long id) {
 //        this.id = id;
 //    }
-    
-    @Column(nullable=false,unique=false)
+
+    @Column(nullable = false, unique = false)
     @NotEmpty
     private String cimId;
     public String getCimId() {
@@ -70,8 +70,8 @@ public class ConnectionSchema implements Serializable{
         this.cimId = cimId;
     }
 
-    @ElementCollection(fetch=FetchType.EAGER)
-    @CollectionTable(name="CONNECTION")
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "CONNECTION")
     private List<Connection> connections = new ArrayList<Connection>();
 
     public List<Connection> getConnections() {
@@ -95,14 +95,14 @@ public class ConnectionSchema implements Serializable{
     protected ConnectionSchema() {
     }
 
-    public ConnectionSchema(String cimId,SimulatorInst sim) {
+    public ConnectionSchema(String cimId, SimulatorInst sim) {
         this.cimId = cimId;
-        this.simulator=sim;
+        this.simulator = sim;
     }
 
     public ConnectionSchema(String cimId) {
         this.cimId = cimId;
-        this.simulator=null;
+        this.simulator = null;
     }
 
 }

@@ -31,7 +31,7 @@ public class InitializationData {
     //Init variables & others
     private Map<String, List<String>> regInitVarsFromGen = new HashMap<String, List<String>>();
     private Map<String, List<String>> regInitVarsFromReg = new HashMap<String, List<String>>();
-    private Map<String, Map<String, List<String>>> regInitVarsFromOtherRegs = new HashMap<String, Map<String,List<String>>>();
+    private Map<String, Map<String, List<String>>> regInitVarsFromOtherRegs = new HashMap<String, Map<String, List<String>>>();
     private Map<String, List<String>> regInitOtherVars = new HashMap<String, List<String>>();
 
     //Regulator's and generator's variables initialized

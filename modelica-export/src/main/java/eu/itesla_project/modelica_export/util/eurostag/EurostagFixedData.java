@@ -75,8 +75,8 @@ public class EurostagFixedData {
     public final static String    r            = "r";
     public final static String    ALPHA        = "alpha";
     public final static String    BETA        = "beta";
-    public final static String    TRAFOINCLUDED    ="transformerIncluded";
-    public final static String    SATURATED        ="Saturated";
+    public final static String    TRAFOINCLUDED    = "transformerIncluded";
+    public final static String    SATURATED        = "Saturated";
     public final static String    INLMDV            = "IWLMDV";
     public final static String    TX                = "TX";
     public final static String    XD                = "XD";

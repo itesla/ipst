@@ -58,7 +58,7 @@ public class Initialization {
 
         GeneratorInitData genInitData;
         List<RegulatorInitData> regsInitDataList;
-        for(InitializationData initData : initializationDataList) {
+        for (InitializationData initData : initializationDataList) {
             genInitData = createGeneratorInitData(initData);
             initData.setGeneratorInitData(genInitData);
 
@@ -68,7 +68,7 @@ public class Initialization {
 
         this.fileName = "log/machines" + StaticData.MO_INIT_EXTENSION;
         File file = new File(this.fileName);
-        if(!file.exists()) {
+        if (!file.exists()) {
             file.getParentFile().mkdir();
         }
 
@@ -85,16 +85,16 @@ public class Initialization {
         String modelData;
         String modelName;
 
-        for(InitializationData initData : initializationDataList) {
+        for (InitializationData initData : initializationDataList) {
             Map<Internal, RegulatorRecord> regRecordsMap = initData.getRegulatorRecordsMap();
 
-            for(Internal internal : regRecordsMap.keySet()) {
+            for (Internal internal : regRecordsMap.keySet()) {
                 RegulatorRecord regRecord = regRecordsMap.get(internal);
                 modelData = regRecord.getDataInit();
                 modelName = searchModelName(modelData);
- 
-                if(!regsAdded.contains(modelName)) {
-                    if(modelData != null) {
+
+                if (!regsAdded.contains(modelName)) {
+                    if (modelData != null) {
                         writer.append(modelData);
                         writer.append(StaticData.NEW_LINE);
 
@@ -129,7 +129,7 @@ public class Initialization {
             writerMo.append(StaticData.WITHIN);
             writerMo.append(StaticData.NEW_LINE);
 
-            for(InitializationData initData : this.initializationDataList) {
+            for (InitializationData initData : this.initializationDataList) {
                 /*this.fileName = "log/";
                 File file = new File(this.fileName);
                 if(!file.exists()) {
@@ -198,10 +198,10 @@ public class Initialization {
         InitializationRunner init = new InitializationRunner(omc, new File(this.fileName), initializationDataList);
         init.initializer();
 
-        for(InitializationData initData : initializationDataList) {
+        for (InitializationData initData : initializationDataList) {
             List<RegulatorInitData> regInitDataList = initData.getRegulatorsInitDataList();
 
-            for(RegulatorInitData regInit : regInitDataList) {
+            for (RegulatorInitData regInit : regInitDataList) {
                 regInit.addRegRecordParameters(initData.getRegInitializedValues().get(regInit.getRegName()));
             }
 
@@ -210,17 +210,18 @@ public class Initialization {
     }
 
     private void addGeneratorInitParameters(GeneratorInitData genInitData) throws IOException {
-        int i=0;
+        int i = 0;
         int size = genInitData.getParamsMap().entrySet().size();
 
-        for(String param : genInitData.getParamsMap().keySet()) {
+        for (String param : genInitData.getParamsMap().keySet()) {
             String paramName = param;
             String paramValue = genInitData.getParamsMap().get(param);
 
-            if(i < size-1)
+            if (i < size - 1) {
                 writerMo.append("\t" + paramName + " = " + paramValue + ",");
-            else
+            } else {
                 writerMo.append("\t" + paramName + " = " + paramValue);
+            }
             writerMo.append(StaticData.NEW_LINE);
             i++;
         }
@@ -228,23 +229,24 @@ public class Initialization {
 
     private void addRegulatorInitParameters(List<RegulatorInitData> regInitData) throws IOException {
 
-        for(RegulatorInitData reg : regInitData) {
+        for (RegulatorInitData reg : regInitData) {
             writerMo.append("  " + reg.getRegModel() + StaticData.WHITE_SPACE + reg.getRegName());
             writerMo.append(StaticData.NEW_LINE);
             writerMo.append(" (");
             writerMo.append(StaticData.NEW_LINE);
 
-            int i=0;
+            int i = 0;
             int size = reg.getParamsMap().entrySet().size();
 
-            for(String param : reg.getParamsMap().keySet()) {
+            for (String param : reg.getParamsMap().keySet()) {
                 String paramName = param;
                 String paramValue = reg.getParamsMap().get(param);
 
-                if(i < size-1)
+                if (i < size - 1) {
                     writerMo.append("\t" + paramName + " = " + paramValue + ",");
-                else
+                } else {
                     writerMo.append("\t" + paramName + " = " + paramValue);
+                }
 
                 writerMo.append(StaticData.NEW_LINE);
                 i++;
@@ -259,13 +261,15 @@ public class Initialization {
         String deviceFrom, deviceTo;
 
         // Connect between GEN_INIT and REG_INIT
-        for(RegulatorInitData reg : regInitData) {
-            for(String pinName : reg.getPinsList()) {
-                if(genInitData.getPinsList().contains(pinName)) {
+        for (RegulatorInitData reg : regInitData) {
+            for (String pinName : reg.getPinsList()) {
+                if (genInitData.getPinsList().contains(pinName)) {
                     deviceFrom = genInitData.getGenRecord().getModelicaName().concat(".").concat(pinName);
                     deviceTo = reg.getRegName().concat(".").concat(pinName);
 
-                    if(connectedPins.contains(deviceFrom) && connectedPins.contains(deviceTo)) continue;
+                    if (connectedPins.contains(deviceFrom) && connectedPins.contains(deviceTo)) {
+                        continue;
+                    }
 
                     writerMo.append("\t" + EurostagFixedData.CONNECT);
                     writerMo.append(deviceFrom);
@@ -281,13 +285,13 @@ public class Initialization {
 
         // Connect between REG_INIT and REG_INIT
         String conName;
-        for(RegulatorInitData reg : regInitData) {
-            for(RegulatorInitData reg2 : regInitData) {
-                if(reg != reg2) {
-                    for(String pin : reg.getPinsList()) {
+        for (RegulatorInitData reg : regInitData) {
+            for (RegulatorInitData reg2 : regInitData) {
+                if (reg != reg2) {
+                    for (String pin : reg.getPinsList()) {
                         conName = findConnection(pin, reg2.getRegRecord().getModelData());
 
-                        if(conName != null && !genInitData.getPinsList().contains(conName)) {
+                        if (conName != null && !genInitData.getPinsList().contains(conName)) {
                             /*if(genInitData.getPinsList().contains(conName)) {
                                 writerMo.append("\t" + EurostagFixedData.CONNECT);
 
@@ -304,7 +308,9 @@ public class Initialization {
                                 deviceFrom = reg.getRegName().concat(".").concat(pin);
                                 deviceTo = reg2.getRegName().concat(".").concat(conName);
 
-                                if(connectedPins.contains(deviceFrom) && connectedPins.contains(deviceTo)) continue;
+                                if (connectedPins.contains(deviceFrom) && connectedPins.contains(deviceTo)) {
+                                    continue;
+                                }
 
                                 writerMo.append("\t" + EurostagFixedData.CONNECT);
                                 writerMo.append(deviceFrom);
@@ -330,15 +336,15 @@ public class Initialization {
         BufferedReader buffer = new BufferedReader(new StringReader(regModelData));
 
         try {
-            while (!(line=buffer.readLine()).equals(StaticData.EQUATION)) {
+            while (!(line = buffer.readLine()).equals(StaticData.EQUATION)) {
                 line = line.trim();
                 //if (line.contains("Connectors")) {
                 if (line.contains("RealOutput") || line.contains("RealInput")) {
                     pinName = line.split(" ")[1];
-                    pinName = pinName.substring(0, pinName.length()-1);
-                    if (pinName.equals(pin) &&  line.split(" ").length>2) {
-                        conName = StaticData.PIN +  line.split(" ")[2].replaceAll("([\\W|[_]])+", "");
-                    } else if(pinName.equals(pin) &&  line.split(" ").length==2) {
+                    pinName = pinName.substring(0, pinName.length() - 1);
+                    if (pinName.equals(pin) && line.split(" ").length > 2) {
+                        conName = StaticData.PIN + line.split(" ")[2].replaceAll("([\\W|[_]])+", "");
+                    } else if (pinName.equals(pin) && line.split(" ").length == 2) {
                         conName = pinName;
                     }
                 }
@@ -356,15 +362,17 @@ public class Initialization {
         String genInitModel = null;
         ModelTemplate initializationMT = null;
 
-        if(initData.getGeneratorRecord().getModelicaType().equals(EurostagModDefaultTypes.M1S_MACHINES))
+        if (initData.getGeneratorRecord().getModelicaType().equals(EurostagModDefaultTypes.M1S_MACHINES)) {
             genInitModel = EurostagModDefaultTypes.M1S_INIT_MODEL;
-        else if(initData.getGeneratorRecord().getModelicaType().equals(EurostagModDefaultTypes.M2S_MACHINES))
+        }
+        else if (initData.getGeneratorRecord().getModelicaType().equals(EurostagModDefaultTypes.M2S_MACHINES)) {
             genInitModel = EurostagModDefaultTypes.M2S_INIT_MODEL;
+        }
 
         ModelTemplateContainer mtc = ddbManager.findModelTemplateContainer(StaticData.MTC_PREFIX_NAME + genInitModel);
 
-        for(ModelTemplate mt : mtc.getModelTemplates()) {
-            if(mt.getTypeName().equals(genInitModel)) {
+        for (ModelTemplate mt : mtc.getModelTemplates()) {
+            if (mt.getTypeName().equals(genInitModel)) {
                 initializationMT = mt;
                 break;
             }
@@ -391,13 +399,13 @@ public class Initialization {
         HashMap<String, List<String>> regulatorInitVarsByRegulator = new HashMap<String, List<String>>();
 
         //Cogemos toda la lista de reguladores y sus initVars asociadas.
-        for(Internal reg : regRecords.keySet()) {
+        for (Internal reg : regRecords.keySet()) {
             RegulatorRecord regulatorRecord = regRecords.get(reg);
             modelData = regRecords.get(reg).getDataInit();
             modelName = searchModelName(modelData);
             regName = null;
 
-            if(modelName != null)
+            if (modelName != null)
                 regName = modelName.substring(0, modelName.lastIndexOf("_")) + "_" + parseName(initData.getGenerator().getId().trim());
 
             //Calculamos las init variables de los REGULADORES (init_X)
@@ -407,10 +415,9 @@ public class Initialization {
             try {
                 regulatorInitializationVars = Utils.parseRegInitVariables(buffer);
 
-                if(!regulatorInitVarsByRegulator.containsKey(regName)) {
+                if (!regulatorInitVarsByRegulator.containsKey(regName)) {
                     regulatorInitVarsByRegulator.put(regName, regulatorInitializationVars);
-                }
-                else {
+                } else {
                     regulatorInitVarsByRegulator.get(regName).addAll(regulatorInitializationVars);
                 }
             } catch (IOException e) {
@@ -425,14 +432,15 @@ public class Initialization {
         Map<String, Map<String, List<String>>> regInitVarsFromOtherRegs = new HashMap<String, Map<String,List<String>>>();
         Map<String, List<String>> regInitOtherVars = new HashMap<String, List<String>>();
 
-        for(Internal reg : regRecords.keySet()) {
+        for (Internal reg : regRecords.keySet()) {
             RegulatorRecord regulatorRecord = regRecords.get(reg);
             modelData = regRecords.get(reg).getDataInit();
             modelName = searchModelName(modelData);
             regName = null;
 
-            if(modelName != null)
+            if (modelName != null) {
                 regName = modelName.substring(0, modelName.lastIndexOf("_")) + "_" + parseName(initData.getGenerator().getId().trim());
+            }
             //Calculamos las init variables de los REGULADORES (init_X)
             BufferedReader buffer = new BufferedReader(new StringReader(regulatorRecord.getModelData()));
             HashMap<String, List<String>> regInitVarsInOthersTemp = new HashMap<String, List<String>>();
@@ -443,61 +451,54 @@ public class Initialization {
                 buffer = new BufferedReader(new StringReader(initData.getGeneratorInitData().getGenModelData()));
                 List<String> generatorInitializationVars = Utils.parseModelPins(buffer);
 
-                for(String st : regulatorInitializationVars) {
+                for (String st : regulatorInitializationVars) {
                     String varPin = st.replace(StaticData.INIT_VAR, StaticData.PIN);
-                    if(generatorInitializationVars.contains(varPin)) {
-                        if(!regInitVarsFromGen.containsKey(regName)) {
+                    if (generatorInitializationVars.contains(varPin)) {
+                        if (!regInitVarsFromGen.containsKey(regName)) {
                             List<String> pin = new ArrayList<String>();
                             pin.add(st);
                             regInitVarsFromGen.put(regName, pin);
-                        }
-                        else {
+                        } else {
                             regInitVarsFromGen.get(regName).add(st);
                         }
-                    }
-                    else {
-                        if(regulatorInitializationVars.contains(varPin)) {
-                            if(!regInitVarsFromReg.containsKey(regName)) {
+                    } else {
+                        if (regulatorInitializationVars.contains(varPin)) {
+                            if (!regInitVarsFromReg.containsKey(regName)) {
                                 List<String> pin = new ArrayList<String>();
                                 pin.add(st);
                                 regInitVarsFromReg.put(regName, pin);
-                            }
-                            else {
+                            } else {
                                 regInitVarsFromReg.get(regName).add(st);
                             }
-                        }
-                        else {
-                            for(String r : regulatorInitVarsByRegulator.keySet()) {
-                            //    if(!r.equals(regName)) {
-                                    if(regulatorInitVarsByRegulator.get(r).contains(varPin)) {
-                                        if(!regInitVarsFromOtherRegs.containsKey(regName)) {
+                        } else {
+                            for (String r : regulatorInitVarsByRegulator.keySet()) {
+                                //    if(!r.equals(regName)) {
+                                    if (regulatorInitVarsByRegulator.get(r).contains(varPin)) {
+                                        if (!regInitVarsFromOtherRegs.containsKey(regName)) {
                                             Map<String, List<String>> mapReg = new HashMap<>();
                                             List<String> pin = new ArrayList<>();
                                             pin.add(st);
                                             mapReg.put(r, pin);
                                             regInitVarsFromOtherRegs.put(regName, mapReg);
-                                        }
-                                        else {
-                                            if(!regInitVarsFromOtherRegs.get(regName).containsKey(r)) {
+                                        } else {
+                                            if (!regInitVarsFromOtherRegs.get(regName).containsKey(r)) {
                                                 List<String> pin = new ArrayList<>();
-                                                pin.add(st);
-                                                regInitVarsFromOtherRegs.get(regName).put(r, pin);
-                                            }
-                                            else {
-                                                regInitVarsFromOtherRegs.get(regName).get(r).add(st);
-                                            }
+                                                    pin.add(st);
+                                                    regInitVarsFromOtherRegs.get(regName).put(r, pin);
+                                                }
+                                                else {
+                                                    regInitVarsFromOtherRegs.get(regName).get(r).add(st);
+                                                }
                                         }
-                                    }
-                                    else {
+                                    } else {
 
                                         String initVar = st.replace(StaticData.PIN, StaticData.INIT_VAR);
-                                        if(!regInitOtherVars.containsKey(regName)) {
+                                        if (!regInitOtherVars.containsKey(regName)) {
                                             List<String> initVars = new ArrayList<>();
                                             initVars.add(initVar);
                                             regInitOtherVars.put(regName, initVars);
-                                        }
-                                        else {
-                                            if(!regInitOtherVars.get(regName).contains(initVar)) {
+                                        } else {
+                                            if (!regInitOtherVars.get(regName).contains(initVar)) {
                                                 regInitOtherVars.get(regName).add(initVar);
                                             }
                                         }
@@ -530,7 +531,7 @@ public class Initialization {
         String patron = null;
         String name = null;
 
-        if(regInitModel != null) {
+        if (regInitModel != null) {
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(regInitModel);
             boolean found = false;
@@ -579,7 +580,7 @@ public class Initialization {
 
     private DDBManager ddbManager;
 
-    private JavaOMCAPI omc;//OMC IMPORTANTE hacer un clear al final!
+    private JavaOMCAPI omc; //OMC IMPORTANTE hacer un clear al final!
 
     private Writer writerMo;
     private String fileName;

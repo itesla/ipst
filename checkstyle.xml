@@ -13,5 +13,12 @@
         <module name="EmptyCatchBlock">
             <property name="exceptionVariableName" value="ignored"/>
         </module>
+        <module name="LeftCurly"/>
+        <module name="NeedBraces"/>
+        <module name="NoWhitespaceAfter"/>
+        <module name="NoWhitespaceBefore"/>
+        <module name="RightCurly"/>
+        <module name="WhitespaceAfter"/>
+        <module name="WhitespaceAround"/>
     </module>
 </module>

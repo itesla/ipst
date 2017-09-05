@@ -31,12 +31,17 @@ public class ConnectCapacitorRecord extends ConnectRecord {
 
     @Override
     public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
-        if(!isConnected) this.addValue(StaticData.COMMENT);
+        if (!isConnected) {
+            this.addValue(StaticData.COMMENT);
+        }
         this.addValue(EurostagFixedData.CONNECT);
         this.addValue(super.nodeName1);
 
-        if(this.node1 instanceof Bus) this.addValue("." + StaticData.POSITIVE_PIN + ", ");
-        else this.addValue("." + StaticData.POSITIVE_PIN + ", ");
+        if (this.node1 instanceof Bus) {
+            this.addValue("." + StaticData.POSITIVE_PIN + ", ");
+        } else {
+            this.addValue("." + StaticData.POSITIVE_PIN + ", ");
+        }
 
         this.addValue(super.nodeName2);
 

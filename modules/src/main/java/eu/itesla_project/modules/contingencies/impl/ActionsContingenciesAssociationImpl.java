@@ -26,8 +26,7 @@ public class ActionsContingenciesAssociationImpl implements ActionsContingencies
     Collection<String> actions             = new ArrayList<String>(); // could be ActionPlan or ElementaryAction
 
 
-    public ActionsContingenciesAssociationImpl(List<String>  _contingencies , List<Constraint>  _constraints, List<String> _actions)
-    {
+    public ActionsContingenciesAssociationImpl(List<String>  _contingencies, List<Constraint>  _constraints, List<String> _actions) {
         this.contingencies        =        _contingencies;
         this.constraints         =         _constraints;
         this.actions             =        _actions;

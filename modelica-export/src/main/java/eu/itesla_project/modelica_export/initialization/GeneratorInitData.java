@@ -68,37 +68,40 @@ public class GeneratorInitData {
         float angle = 0;
 
         if (generator.getTerminal().getBusView().getBus() != null) {
-            if (!Float.isNaN(generator.getTerminal().getBusView().getBus().getV()))
+            if (!Float.isNaN(generator.getTerminal().getBusView().getBus().getV())) {
                 voltage = generator.getTerminal().getBusView().getBus().getV();
-            if (!Float.isNaN(generator.getTerminal().getBusView().getBus().getAngle()))
+            }
+            if (!Float.isNaN(generator.getTerminal().getBusView().getBus().getAngle())) {
                 angle = generator.getTerminal().getBusView().getBus().getAngle();
+            }
         }
 
         float modulo = voltage / this.generator.getTerminal().getVoltageLevel().getNominalV();
-        float angulo =  (float) (angle*Math.PI/180);
+        float angulo = (float) (angle * Math.PI / 180);
 
         double ur0 = modulo * Math.cos(angulo);
         double ui0 = modulo * Math.sin(angulo);
 
         params.put(EurostagFixedData.INIT_UR0, String.valueOf(ur0));
         params.put(EurostagFixedData.INIT_UI0, String.valueOf(ui0));
-        params.put(EurostagFixedData.INIT_P0, String.valueOf(this.generator.getTerminal().getP()/StaticData.SNREF_VALUE));
-        params.put(EurostagFixedData.INIT_Q0, String.valueOf(this.generator.getTerminal().getQ()/StaticData.SNREF_VALUE));
+        params.put(EurostagFixedData.INIT_P0, String.valueOf(this.generator.getTerminal().getP() / StaticData.SNREF_VALUE));
+        params.put(EurostagFixedData.INIT_Q0, String.valueOf(this.generator.getTerminal().getQ() / StaticData.SNREF_VALUE));
         params.put(EurostagFixedData.INIT_NDSAT, this.genRecord.getGenParamsMap().get(EurostagFixedData.SND.toUpperCase()));
         params.put(EurostagFixedData.INIT_NQSAT, this.genRecord.getGenParamsMap().get(EurostagFixedData.SNQ.toUpperCase()));
         params.put(EurostagFixedData.INIT_MDSATIN, this.genRecord.getGenParamsMap().get(EurostagFixedData.MD.toUpperCase()));
         params.put(EurostagFixedData.INIT_MQSATIN, this.genRecord.getGenParamsMap().get(EurostagFixedData.MQ.toUpperCase()));
         params.put(EurostagFixedData.INIT_RSTATIN, this.genRecord.getGenParamsMap().get(EurostagFixedData.RSTATIN.toUpperCase()));
         params.put(EurostagFixedData.INIT_LSTATIN, this.genRecord.getGenParamsMap().get(EurostagFixedData.LSTATIN.toUpperCase()));
-        if(this.genRecord.getGenParamsMap().get(EurostagFixedData.MD0PU.toUpperCase()) != null)
+        if (this.genRecord.getGenParamsMap().get(EurostagFixedData.MD0PU.toUpperCase()) != null) {
             params.put(EurostagFixedData.INIT_MD0PU, this.genRecord.getGenParamsMap().get(EurostagFixedData.MD0PU.toUpperCase()));
+        }
         params.put(EurostagFixedData.INIT_OMEGA0, "1.0");
         params.put(EurostagFixedData.INIT_PPUWLMDV, this.genRecord.getGenParamsMap().get(EurostagFixedData.PNALT.toUpperCase()));
         params.put(EurostagFixedData.SATURATED, this.genRecord.getGenParamsMap().get(EurostagFixedData.SATURATED.toUpperCase()));
         params.put(EurostagFixedData.INLMDV, this.genRecord.getGenParamsMap().get(EurostagFixedData.INLMDV.toUpperCase()));
 
         //M1S & M2S IF TRAFO INCLUDED
-        if(trafoIncluded.equals(Boolean.TRUE.toString())) {
+        if (trafoIncluded.equals(Boolean.TRUE.toString())) {
             params.put(EurostagFixedData.INIT_SNTFO, this.genRecord.getGenParamsMap().get(EurostagFixedData.SNTFO.toUpperCase()));
             params.put(EurostagFixedData.INIT_UNRESTFO, this.genRecord.getGenParamsMap().get(EurostagFixedData.U2N.toUpperCase()));
             params.put(EurostagFixedData.INIT_UNOMNW, this.genRecord.getGenParamsMap().get(EurostagFixedData.V2.toUpperCase()));
@@ -109,7 +112,7 @@ public class GeneratorInitData {
         }
 
         //M1S INIT
-        if(this.genModel.equals(EurostagModDefaultTypes.M1S_INIT_MODEL)) {
+        if (this.genModel.equals(EurostagModDefaultTypes.M1S_INIT_MODEL)) {
             params.put(EurostagFixedData.INIT_MQ0PU, this.genRecord.getGenParamsMap().get(EurostagFixedData.MQ0PU.toUpperCase()));
             params.put(EurostagFixedData.INIT_LDPU, this.genRecord.getGenParamsMap().get(EurostagFixedData.LDPU.toUpperCase()));
             params.put(EurostagFixedData.INIT_RROTIN, this.genRecord.getGenParamsMap().get(EurostagFixedData.RROTIN.toUpperCase()));
@@ -118,11 +121,13 @@ public class GeneratorInitData {
             params.put(EurostagFixedData.INIT_LQ1PU, this.genRecord.getGenParamsMap().get(EurostagFixedData.LQ1PU.toUpperCase()));
             params.put(EurostagFixedData.INIT_RQ2PU, this.genRecord.getGenParamsMap().get(EurostagFixedData.RQ2PU.toUpperCase()));
             params.put(EurostagFixedData.INIT_LQ2PU, this.genRecord.getGenParamsMap().get(EurostagFixedData.LQ2PU.toUpperCase()));
-            if(this.genRecord.getGenParamsMap().get(EurostagFixedData.MCANPU.toUpperCase()) != null) //TODO Just for testing
+            if (this.genRecord.getGenParamsMap().get(EurostagFixedData.MCANPU.toUpperCase()) != null) {
+                //TODO Just for testing
                 params.put(EurostagFixedData.INIT_MCANPU, this.genRecord.getGenParamsMap().get(EurostagFixedData.MCANPU.toUpperCase()));
+            }
         }
         //M2S INIT
-        if(this.genModel.equals(EurostagModDefaultTypes.M2S_INIT_MODEL)) {
+        if (this.genModel.equals(EurostagModDefaultTypes.M2S_INIT_MODEL)) {
             params.put(EurostagFixedData.INIT_XPD, this.genRecord.getGenParamsMap().get(EurostagFixedData.XPD.toUpperCase()));
             params.put(EurostagFixedData.INIT_XD, this.genRecord.getGenParamsMap().get(EurostagFixedData.XD.toUpperCase()));
             params.put(EurostagFixedData.INIT_XSD, this.genRecord.getGenParamsMap().get(EurostagFixedData.XSD.toUpperCase()));
@@ -143,8 +148,8 @@ public class GeneratorInitData {
     public void addGenRecordParameters(Map<String, String> initValues) {
         IIDMParameter parameter;
 
-        if(initValues != null && !initValues.isEmpty()) {
-            for(String param : initValues.keySet()) {
+        if (initValues != null && !initValues.isEmpty()) {
+            for (String param : initValues.keySet()) {
                 String machinePar = EurostagFixedData.MACHINE_PAR.get(EurostagFixedData.MACHINE_INIT_PAR.indexOf(param));
                 parameter = new IIDMParameter(machinePar, initValues.get(param));
                 this.genRecord.getIidmgenParameters().add(parameter);

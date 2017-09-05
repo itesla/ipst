@@ -40,8 +40,8 @@ public abstract class ConnectRecord extends ModelicaRecord {
     public String parseName(String name) {
         String parsedName = name.trim();
 
-        if(parsedName.contains("-")) {
-            if(!parsedName.startsWith("_")) {
+        if (parsedName.contains("-")) {
+            if (!parsedName.startsWith("_")) {
                 parsedName = "_" + parsedName;
             }
             parsedName = parsedName.replaceAll("-", "_");
@@ -50,15 +50,17 @@ public abstract class ConnectRecord extends ModelicaRecord {
         int posi = parsedName.indexOf('_');
         int pose = parsedName.lastIndexOf('_');
         if (pose > posi) {
-            parsedName = parsedName.substring(posi+1, pose);
+            parsedName = parsedName.substring(posi + 1, pose);
         }
-           parsedName = parsedName.replaceAll("\\s", "_");
+        parsedName = parsedName.replaceAll("\\s", "_");
 
-           if(parsedName.substring(0, 1).matches("[0-9]")) {
+        if (parsedName.substring(0, 1).matches("[0-9]")) {
             parsedName = "b_" + parsedName;
-           }
+        }
 
-           while(parsedName.endsWith("_")) parsedName = parsedName.substring(0, parsedName.length()-1);
+        while (parsedName.endsWith("_")) {
+            parsedName = parsedName.substring(0, parsedName.length() - 1);
+        }
 
         return parsedName;
     }

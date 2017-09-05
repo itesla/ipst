@@ -47,12 +47,13 @@ public class FixedTransformerRecord extends BranchRecord {
         Equipments.ConnectionInfo info2 = Equipments.getConnectionInfoInBusBreakerView(this.transformer.getTerminal2());
         Bus b2 = info2.getConnectionBus();
 
-        if((!Float.isNaN(b1.getV()) && info1.isConnected()) || (!Float.isNaN(b2.getV()) && info2.isConnected())) {
+        if ((!Float.isNaN(b1.getV()) && info1.isConnected()) || (!Float.isNaN(b2.getV()) && info2.isConnected())) {
             if (super.isCorrect()) {
-                if (super.getModelicaType() != null)
+                if (super.getModelicaType() != null) {
                     this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);
-                else
+                } else {
                     this.addValue(DEFAULT_FIXED_TRAFO_TYPE + StaticData.WHITE_SPACE);
+                }
                 this.addValue(super.getModelicaName());
                 this.addValue(" (");
                 this.addValue(StaticData.NEW_LINE);
@@ -96,10 +97,10 @@ public class FixedTransformerRecord extends BranchRecord {
                 //Clear data
                 iidmbranchParameters = null;
                 branchParameters = null;
-            } else
+            } else {
                 _log.error(this.getModelicaName() + " not added to grid model.");
-        }
-        else {
+            }
+        } else {
             _log.warn("Fixed transformer " + this.getModelicaName() + " disconnected.");
             this.addValue(StaticData.COMMENT + " Fixed transformer " + this.getModelicaName() + " disconnected.");
         }

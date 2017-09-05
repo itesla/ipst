@@ -35,16 +35,14 @@ public class LineRecord extends BranchRecord {
         
         boolean isSendingOpen = line.getTerminal1().isConnected() ? true : false;
         boolean isReceivingOpen = line.getTerminal2().isConnected() ? true : false;
-  
-        if(!isSendingOpen && isReceivingOpen) { //Opening Sending
+
+        if (!isSendingOpen && isReceivingOpen) { //Opening Sending
             super.setDEFAULT_BRANCH_TYPE(DEFAULT_OPEN_LINE_TYPE);
             super.addParameter(this.iidmbranchParameters, EurostagFixedData.OPENR, false);
-        }
-        else if(isSendingOpen && !isReceivingOpen) { //Opening receiving
+        } else if (isSendingOpen && !isReceivingOpen) { //Opening receiving
             super.setDEFAULT_BRANCH_TYPE(DEFAULT_OPEN_LINE_TYPE);
             super.addParameter(this.iidmbranchParameters, EurostagFixedData.OPENR, true);
-        }
-        else {
+        } else {
             super.setDEFAULT_BRANCH_TYPE(DEFAULT_LINE_TYPE);
         }
         super.setDEFAULT_BRANCH_PREFIX(StaticData.PREF_LINE);
@@ -62,27 +60,31 @@ public class LineRecord extends BranchRecord {
         Equipments.ConnectionInfo info2 = Equipments.getConnectionInfoInBusBreakerView(this.line.getTerminal2());
         Bus b2 = info2.getConnectionBus();
 
-        if((!Float.isNaN(b1.getV()) && info1.isConnected()) || (!Float.isNaN(b2.getV()) && info2.isConnected())) {
-            if(super.isCorrect()) {
-                if (super.getModelicaType() != null) this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);
-                else this.addValue(super.DEFAULT_BRANCH_TYPE + StaticData.WHITE_SPACE);
+        if ((!Float.isNaN(b1.getV()) && info1.isConnected()) || (!Float.isNaN(b2.getV()) && info2.isConnected())) {
+            if (super.isCorrect()) {
+                if (super.getModelicaType() != null) {
+                    this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);
+                }
+                else {
+                    this.addValue(super.DEFAULT_BRANCH_TYPE + StaticData.WHITE_SPACE);
+                }
                 this.addValue(super.getModelicaName());
                 this.addValue(" (");
                 this.addValue(StaticData.NEW_LINE);
 
-                if(!super.iidmbranchParameters.isEmpty()) {
-                    for(int i=0; i<super.iidmbranchParameters.size()-1; i++) {
+                if (!super.iidmbranchParameters.isEmpty()) {
+                    for (int i = 0; i < super.iidmbranchParameters.size() - 1; i++) {
                         this.addValue("\t " + super.iidmbranchParameters.get(i).getName() + " = " + super.iidmbranchParameters.get(i).getValue() + ",");
                         this.addValue(StaticData.NEW_LINE);
                     }
-                    this.addValue("\t " + super.iidmbranchParameters.get(super.iidmbranchParameters.size()-1).getName() + " = " + super.iidmbranchParameters.get(super.iidmbranchParameters.size()-1).getValue());
+                    this.addValue("\t " + super.iidmbranchParameters.get(super.iidmbranchParameters.size() - 1).getName() + " = " + super.iidmbranchParameters.get(super.iidmbranchParameters.size() - 1).getValue());
                     this.addValue(StaticData.NEW_LINE);
-                } else if(!super.branchParameters.isEmpty()) {
-                    for(int i=0; i<super.branchParameters.size()-1; i++) {
+                } else if (!super.branchParameters.isEmpty()) {
+                    for (int i = 0; i < super.branchParameters.size() - 1; i++) {
                         this.addValue("\t " + super.branchParameters.get(i).getName() + " = " + super.branchParameters.get(i).getValue() + ",");
                         this.addValue(StaticData.NEW_LINE);
                     }
-                    this.addValue("\t " + super.branchParameters.get(super.branchParameters.size()-1).getName() + " = " + super.branchParameters.get(super.branchParameters.size()-1).getValue());
+                    this.addValue("\t " + super.branchParameters.get(super.branchParameters.size() - 1).getName() + " = " + super.branchParameters.get(super.branchParameters.size() - 1).getValue());
                     this.addValue(StaticData.NEW_LINE);
                 }
 
@@ -91,10 +93,10 @@ public class LineRecord extends BranchRecord {
                 //Clear data
                 iidmbranchParameters = null;
                 branchParameters = null;
+            } else {
+                _log.error(this.getModelicaName() + " not added to grid model.");
             }
-            else _log.error(this.getModelicaName() + " not added to grid model.");
-        }
-        else {
+        } else {
             _log.warn("Line " + this.getModelicaName() + " disconnected.");
             this.addValue(StaticData.COMMENT + " Line " + this.getModelicaName() + " disconnected.");
         }
@@ -108,12 +110,12 @@ public class LineRecord extends BranchRecord {
         //super.iidmbranchParameters = new ArrayList<IIDMParameter>();
         float tNominalV = ((Line) this.line).getTerminal2().getVoltageLevel().getNominalV();
         float voltage = Float.isNaN(tNominalV) == false ? tNominalV : 0;
-        float Z = (voltage * voltage)/SNREF;
+        float Z = (voltage * voltage) / SNREF;
 
-        super.addParameter(this.iidmbranchParameters, StaticData.R, this.line.getR()/Z);
-        super.addParameter(this.iidmbranchParameters, StaticData.X, this.line.getX()/Z);
-        super.addParameter(this.iidmbranchParameters, StaticData.G, this.line.getG1()*Z);
-        super.addParameter(this.iidmbranchParameters, StaticData.B, this.line.getB1()*Z);
+        super.addParameter(this.iidmbranchParameters, StaticData.R, this.line.getR() / Z);
+        super.addParameter(this.iidmbranchParameters, StaticData.X, this.line.getX() / Z);
+        super.addParameter(this.iidmbranchParameters, StaticData.G, this.line.getG1() * Z);
+        super.addParameter(this.iidmbranchParameters, StaticData.B, this.line.getB1() * Z);
     }
 
     @Override

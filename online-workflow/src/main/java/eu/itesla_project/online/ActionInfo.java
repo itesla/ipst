@@ -22,10 +22,9 @@ public class ActionInfo implements Serializable{
 
     private String id;
 
-    public ActionInfo(String id){
-        this.id=id;
+    public ActionInfo(String id) {
+        this.id = id;
     }
-
 
 
     public String getId() {

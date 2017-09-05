@@ -10,8 +10,7 @@ package eu.itesla_project.iidm.ddb.modelica_imp_exp;
  * @author Luis Maria Zamarreno <zamarrenolm@aia.com>
  * @author Silvia Machado <machados@aia.es>
  */
-public interface CommentScannerEventHandler
-{
+public interface CommentScannerEventHandler {
     void onQuoted(String quoted, boolean open, boolean close);
 
     void onLineComment(String lineComment);

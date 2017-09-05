@@ -20,27 +20,28 @@ public class BinaryOperator implements Operator {
 
 
     public BinaryOperator(OperatorType type, Operator first, Operator second) {
-        this.type=type;
-        this.first=first;
-        this.second=second;
+        this.type = type;
+        this.first = first;
+        this.second = second;
     }
 
-    public OperatorType getType(){
+    public OperatorType getType() {
         return type;
     }
 
-    public Operator getFirstOperator(){
+    public Operator getFirstOperator() {
         return first;
     }
-    public Operator getSecondOperator(){
+
+    public Operator getSecondOperator() {
         return second;
     }
 
-    public String toString(){
-        StringBuffer sb=new StringBuffer();
-        sb.append("("+first);
-        sb.append(" "+getType()+" ");
-        sb.append(second+")");
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("(" + first);
+        sb.append(" " + getType() + " ");
+        sb.append(second + ")");
 
         return sb.toString();
     }

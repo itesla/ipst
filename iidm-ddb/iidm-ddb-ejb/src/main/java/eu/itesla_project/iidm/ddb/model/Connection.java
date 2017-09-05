@@ -22,18 +22,18 @@ import javax.persistence.Lob;
 public class Connection implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    public static final int EQUIPMENT_TYPE=0;
-    public static final int INTERNAL_TYPE=1;
-    public static final int INSIDE_CONNECTION=0;
-    public static final int OUTSIDE_CONNECTION=1;
+    public static final int EQUIPMENT_TYPE = 0;
+    public static final int INTERNAL_TYPE = 1;
+    public static final int INSIDE_CONNECTION = 0;
+    public static final int OUTSIDE_CONNECTION = 1;
 
-    String id1=null;  //nativeid or cimId
+    String id1 = null;  //nativeid or cimId
     int id1Type;  //0 equipment, 1 internal
-    String id2=null; //nativeid or cimId
+    String id2 = null; //nativeid or cimId
     int id2Type;  //0 equipment, 1 internal
-    String conPointName1=null;
-    String conPointName2=null;
-    int conType=0;  //0 inside, 1 outside
+    String conPointName1 = null;
+    String conPointName2 = null;
+    int conType = 0;  //0 inside, 1 outside
     
     public String getId1() {
         return id1;
@@ -107,9 +107,9 @@ public class Connection implements Serializable {
             String conPointName2, int conType) {
         super();
         this.id1 = id1;
-        this.id1Type=id1Type;
+        this.id1Type = id1Type;
         this.id2 = id2;
-        this.id2Type=id2Type;
+        this.id2Type = id2Type;
         this.conPointName1 = conPointName1;
         this.conPointName2 = conPointName2;
         this.conType = conType;
@@ -154,39 +154,53 @@ public class Connection implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         Connection other = (Connection) obj;
         if (conPointName1 == null) {
-            if (other.conPointName1 != null)
+            if (other.conPointName1 != null) {
                 return false;
-        } else if (!conPointName1.equals(other.conPointName1))
+            }
+        } else if (!conPointName1.equals(other.conPointName1)) {
             return false;
+        }
         if (conPointName2 == null) {
-            if (other.conPointName2 != null)
+            if (other.conPointName2 != null) {
                 return false;
-        } else if (!conPointName2.equals(other.conPointName2))
+            }
+        } else if (!conPointName2.equals(other.conPointName2)) {
             return false;
-        if (conType != other.conType)
+        }
+        if (conType != other.conType) {
             return false;
+        }
         if (id1 == null) {
-            if (other.id1 != null)
+            if (other.id1 != null) {
                 return false;
-        } else if (!id1.equals(other.id1))
+            }
+        } else if (!id1.equals(other.id1)) {
             return false;
-        if (id1Type != other.id1Type)
+        }
+        if (id1Type != other.id1Type) {
             return false;
+        }
         if (id2 == null) {
-            if (other.id2 != null)
+            if (other.id2 != null) {
                 return false;
-        } else if (!id2.equals(other.id2))
+            }
+        } else if (!id2.equals(other.id2)) {
             return false;
-        if (id2Type != other.id2Type)
+        }
+        if (id2Type != other.id2Type) {
             return false;
+        }
         return true;
     }
 

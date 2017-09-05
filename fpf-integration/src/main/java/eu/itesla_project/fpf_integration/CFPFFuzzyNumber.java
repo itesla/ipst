@@ -35,8 +35,8 @@ public class CFPFFuzzyNumber {
         return this.numPoints;
     }
 
-    public double getFuzzyNumber( int point ){
-        return fuzzyNumber[ point ];
+    public double getFuzzyNumber(int point) {
+        return fuzzyNumber[point];
     }
 
     public double[] getFuzzyNumber() {

@@ -211,13 +211,12 @@ public final class ModelConverter {
      * @return
      */
     public static ConnectRecord getModelicaRecord(Bus bus, TwoWindingsTransformer transformer, ModExportContext modContext, boolean fixed, DDBManager ddbManager, SimulatorInst simulator) {
-        if(fixed) {
+        if (fixed) {
             ConnectFixedTransformerRecord connectFixedTrafoRecord = new ConnectFixedTransformerRecord(bus, transformer);
             connectFixedTrafoRecord.createModelicaName(modContext, ddbManager, simulator);
 
             return connectFixedTrafoRecord;
-        }
-        else {
+        } else {
             ConnectDetailedTransformerRecord connectDetailedTrafoRecord = new ConnectDetailedTransformerRecord(bus, transformer);
             connectDetailedTrafoRecord.createModelicaName(modContext, ddbManager, simulator);
 
@@ -227,13 +226,12 @@ public final class ModelConverter {
 
     //TODO ELIMINAR en cuanto se obtenga la informaci?n de los PINS de la DDB (usar el m?todo anterior)
     public static ConnectRecord getModelicaRecord(TwoWindingsTransformer transformer, Bus bus, ModExportContext modContext, boolean fixed, DDBManager ddbManager, SimulatorInst simulator) {
-        if(fixed) {
+        if (fixed) {
             ConnectFixedTransformerRecord connectFixedTrafoRecord = new ConnectFixedTransformerRecord(transformer, bus);
             connectFixedTrafoRecord.createModelicaName(modContext, ddbManager, simulator);
 
             return connectFixedTrafoRecord;
-        }
-        else {
+        } else {
             ConnectDetailedTransformerRecord connectDetailedTrafoRecord = new ConnectDetailedTransformerRecord(transformer, bus);
             connectDetailedTrafoRecord.createModelicaName(modContext, ddbManager, simulator);
 
@@ -305,13 +303,12 @@ public final class ModelConverter {
 //        TransformerForTest trafoForTest = new TransformerForTest(transformer, snref);
 //        trafoForTest.createModelicaName(modContext, ddbManager, simulator);
 //        return trafoForTest;
-        if(fixed) {
+        if (fixed) {
             FixedTransformerRecord fixedTrafoRecord = new FixedTransformerRecord(transformer, snref);
             fixedTrafoRecord.createModelicaName(modContext, ddbManager, simulator);
 
             return fixedTrafoRecord;
-        }
-        else {
+        } else {
             DetailedTransformerRecord detailedTrafoRecord = new DetailedTransformerRecord(transformer, snref);
             detailedTrafoRecord.createModelicaName(modContext, ddbManager, simulator);
 

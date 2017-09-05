@@ -36,15 +36,14 @@ public class InitializationRunner {
     }
 
     public void initializer() {
-        try
-        {
+        try {
             Map<String, List<String>> regInitVarsFromGen;
             Map<String, List<String>> regInitVarsFromReg;
             Map<String, Map<String, List<String>>> regInitVarsFromOtherRegs;
             Map<String, List<String>> regInitOtherVars;
 
             omc.loadFile(this.fileName.getAbsolutePath());
-            for(InitializationData initData : initializationDataList) {
+            for (InitializationData initData : initializationDataList) {
                 this.genInitValues = new HashMap<String, String>();
                 this.regInitValues = new HashMap<String, Map<String, String>>();
                 regInitVarsFromGen = initData.getRegInitVarsFromGen();
@@ -58,8 +57,7 @@ public class InitializationRunner {
                 String machine = compList != null ? compList[0].split(",")[1] : compString.split(",")[1];
                 List<String> regsList = new ArrayList<>();
                 List<String> componentsList = Arrays.asList(compList);
-                for (int i = 1; i < componentsList.size(); i++)
-                {
+                for (int i = 1; i < componentsList.size(); i++) {
                     String st = componentsList.get(i);
                     st = st.substring(st.indexOf(",") + 1, st.length());
                     String regulator = st.substring(0, st.indexOf(","));
@@ -72,15 +70,14 @@ public class InitializationRunner {
                 long init = System.currentTimeMillis();
                 omc.simulate(initData.getModelName(), "0", "1", "dassl");
                 omc.getErrorString();
-                _log.debug("Inicialización (ms) = " + (System.currentTimeMillis()-init));
+                _log.debug("Inicialización (ms) = " + (System.currentTimeMillis() - init));
 
                 /**
                  * Getting initialized generator data in order to put it in the
                  * machine's model.
                  */
                 String value;
-                for (String st : EurostagFixedData.MACHINE_INIT_PAR)
-                {
+                for (String st : EurostagFixedData.MACHINE_INIT_PAR) {
                     value = omc.getValue(machine.concat(".").concat(st), "1");
                     genInitValues.put(st, value.trim());
                 }
@@ -94,15 +91,12 @@ public class InitializationRunner {
                 String var;
                 // At first we calculate which are the variables to get them from the initialization process: pin_X and regInit.
                 //We get also the pin_X from the generators
-                for (String reg : regsList)
-                {
+                for (String reg : regsList) {
                     //Getting the initialization variables from the generator.
                     variablesList = regInitVarsFromGen.get(reg);
-                    if (variablesList != null && !variablesList.isEmpty())
-                    {
+                    if (variablesList != null && !variablesList.isEmpty()) {
                         valuesMap = new HashMap<String, String>();
-                        for (String st : variablesList)
-                        {
+                        for (String st : variablesList) {
                             var = st.replace(StaticData.INIT_VAR, StaticData.PIN);
                             value = omc.getValue(machine.concat(".").concat(var), "1");
                             valuesMap.put(st, value);
@@ -111,63 +105,49 @@ public class InitializationRunner {
                     }
                     //Getting the initialization variables from the regulators.
                     variablesList = regInitVarsFromReg.get(reg);
-                    if (variablesList != null && !variablesList.isEmpty())
-                    {
+                    if (variablesList != null && !variablesList.isEmpty()) {
                         valuesMap = new HashMap<String, String>();
-                        for (String st : variablesList)
-                        {
+                        for (String st : variablesList) {
                             var = st.replace(StaticData.INIT_VAR, StaticData.PIN);
                             value = omc.getValue(reg.concat(".").concat(var), "1");
                             valuesMap.put(st, value);
                         }
-                        if (!regInitValues.containsKey(reg))
-                        {
+                        if (!regInitValues.containsKey(reg)) {
                             regInitValues.put(reg, valuesMap);
-                        } else
-                        {
+                        } else {
                             regInitValues.get(reg).putAll(valuesMap);
                         }
                     }
                     //Getting the initialization variables that shouldn't be connected but we need its values.
                     variablesList = regInitOtherVars.get(reg);
-                    if(variablesList != null && !variablesList.isEmpty())
-                    {
+                    if (variablesList != null && !variablesList.isEmpty()) {
                         valuesMap = new HashMap<String, String>();
-                        for (String st : variablesList)
-                        {
+                        for (String st : variablesList) {
                             var = st.replace(StaticData.INIT_VAR, StaticData.PIN);
                             value = omc.getValue(reg.concat(".").concat(var), "1");
                             valuesMap.put(st, value);
                         }
-                        if (!regInitValues.containsKey(reg))
-                        {
+                        if (!regInitValues.containsKey(reg)) {
                             regInitValues.put(reg, valuesMap);
-                        } else
-                        {
+                        } else {
                             regInitValues.get(reg).putAll(valuesMap);
                         }
                     }
                     //Gettint the initialization variables coming from other regulators.
                     Map<String, List<String>> mapVarsOthers = regInitVarsFromOtherRegs.get(reg);
-                    if(mapVarsOthers != null && !mapVarsOthers.isEmpty())
-                    {
-                        for (String otherReg : mapVarsOthers.keySet())
-                        {
+                    if (mapVarsOthers != null && !mapVarsOthers.isEmpty()) {
+                        for (String otherReg : mapVarsOthers.keySet()) {
                             variablesList = mapVarsOthers.get(otherReg);
-                            if (variablesList != null && !variablesList.isEmpty())
-                            {
+                            if (variablesList != null && !variablesList.isEmpty()) {
                                 valuesMap = new HashMap<String, String>();
-                                for (String st : variablesList)
-                                {
+                                for (String st : variablesList) {
                                     var = st.replace(StaticData.INIT_VAR, StaticData.PIN);
                                     value = omc.getValue(otherReg.concat(".").concat(var), "1");
                                     valuesMap.put(st, value);
                                 }
-                                if (!regInitValues.containsKey(reg))
-                                {
+                                if (!regInitValues.containsKey(reg)) {
                                     regInitValues.put(reg, valuesMap);
-                                } else
-                                {
+                                } else {
                                     regInitValues.get(reg).putAll(valuesMap);
                                 }
                             }
@@ -182,8 +162,7 @@ public class InitializationRunner {
             omc.clear();
 //            // Delete .xml, .c, .h, .o and other files created by JavaOMC
 //            deleteInitFiles();
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
             _log.error(ex.getMessage(), ex);
         }
     }
@@ -192,28 +171,21 @@ public class InitializationRunner {
         String workingDir = System.getProperty("user.dir");
         System.out.println("Working directory = " + workingDir);
         Path dirPath = Paths.get(workingDir);
-        File[] initFiles = dirPath.toFile().listFiles(new FilenameFilter()
-        {
+        File[] initFiles = dirPath.toFile().listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 return (name.startsWith(modelName) && (!name.endsWith(".mat")));
             }
         });
-        for (File f : initFiles)
-        {
-            try
-            {
+        for (File f : initFiles) {
+            try {
                 boolean deleted = Files.deleteIfExists(Paths.get(f.getPath()));
-                if (!deleted)
-                {
+                if (!deleted) {
                     _log.error("File " + f + " has not been deleted.");
-                }
-                else
-                {
+                } else {
                     _log.info("Deleted: " + f.getName());
                 }
-            } catch (FileSystemException exc)
-            {
+            } catch (FileSystemException exc) {
                 _log.error(exc.getMessage(), exc);
             }
         }
