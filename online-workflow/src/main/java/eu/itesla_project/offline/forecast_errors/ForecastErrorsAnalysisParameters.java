@@ -117,9 +117,9 @@ public class ForecastErrorsAnalysisParameters implements Serializable{
         Integer method = config.getIntProperty("method");
 		Integer nClusters = config.getIntProperty("nClusters");
 		double percentileHistorical = config.getDoubleProperty("percentileHistorical");
-		Integer modalityGaussian = config.getOptionalIntProperty("modalityGaussian");
-		Integer outliers = config.getOptionalIntProperty("outliers");
-		Integer conditionalSampling = config.getOptionalIntProperty("conditionalSampling");
+        Integer modalityGaussian = config.getOptionalIntegerProperty("modalityGaussian").orElse(null);
+        Integer outliers = config.getOptionalIntegerProperty("outliers").orElse(null);
+        Integer conditionalSampling = config.getOptionalIntegerProperty("conditionalSampling").orElse(null);
 		Integer nSamples = config.getIntProperty("nSamples");
 		Set<Country> countries = config.getEnumSetProperty("countries", Country.class, DEFAULT_COUNTRIES);
 		CaseType caseType = config.getEnumProperty("caseType", CaseType.class, DEFAULT_CASE_TYPE);
