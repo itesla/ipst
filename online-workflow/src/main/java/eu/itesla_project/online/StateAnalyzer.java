@@ -77,6 +77,7 @@ public class StateAnalyzer implements Callable<Void> {
         Objects.requireNonNull(stateListener);
         Objects.requireNonNull(constraintsModifier);
         Objects.requireNonNull(parameters);
+        Objects.requireNonNull(computationManager);
         this.context = context;
         this.sampler = sampler;
         this.loadFlow = loadFlow;

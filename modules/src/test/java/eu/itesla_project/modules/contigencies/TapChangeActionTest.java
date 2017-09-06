@@ -53,18 +53,21 @@ public class TapChangeActionTest {
         PhaseTapChanger tapChanger = network.getTwoWindingsTransformer("PS1").getPhaseTapChanger();
         assertEquals(1, tapChanger.getTapPosition());
 
+
         TapChangeAction action = new TapChangeAction("PS1", 2);
         ModificationTask task = action.toTask();
-        FileSystem fileSystem = Jimfs.newFileSystem(Configuration.unix());
-        Path localDir = fileSystem.getPath("/tmp");
-        ComputationManager computationManager = new LocalComputationManager(localDir);
-        task.modify(network, computationManager);
-        assertEquals(2, tapChanger.getTapPosition());
+        try (FileSystem fileSystem = Jimfs.newFileSystem(Configuration.unix())) {
+            Path localDir = fileSystem.getPath("/tmp");
+            ComputationManager computationManager = new LocalComputationManager(localDir);
+            task.modify(network, computationManager);
+            assertEquals(2, tapChanger.getTapPosition());
 
-        try {
-            action.toTask(null);
-            fail();
-        } catch (UnsupportedOperationException exc) {
+            try {
+                action.toTask(null);
+                fail();
+            } catch (UnsupportedOperationException exc) {
+            }
         }
+
     }
 }
