@@ -243,7 +243,7 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
         optimizer.init(new CorrectiveControlOptimizerParameters());
         if (parameters.isHandleViolationsInN() && parameters.analyseBasecase()) { // I need to analyze basecase before initializing the sampler
             new StateAnalyzer(oCtx, sampler, loadflow, rulesFacade, optimizer, stabilization, impactAnalysis, onlineDb, stateListener,
-                    constraintsModifier, parameters).call();
+                    constraintsModifier, parameters, computationManager).call();
         }
         sampler.init(new MontecarloSamplerParameters(oCtx.getTimeHorizon(), parameters.getFeAnalysisId(), parameters.getStates()));
 
@@ -254,7 +254,7 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
         List<Callable<Void>> tasks = new ArrayList<>(statesNumber);
         for (int i = 0; i < statesNumber; i++) {
             tasks.add(new StateAnalyzer(oCtx, sampler, loadflow, rulesFacade, optimizer, stabilization, impactAnalysis, onlineDb, stateListener,
-                    constraintsModifier, parameters));
+                    constraintsModifier, parameters, computationManager));
         }
         ExecutorService taskExecutor = Executors.newFixedThreadPool(startParameters.getThreads());
         taskExecutor.invokeAll(tasks);
