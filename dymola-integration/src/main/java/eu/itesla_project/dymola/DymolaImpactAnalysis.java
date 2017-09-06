@@ -260,19 +260,7 @@ public class DymolaImpactAnalysis implements ImpactAnalysis {
 
     @Override
     public ImpactAnalysisResult run(SimulationState state, Set<String> contingencyIds) throws Exception {
-        checkState(state);
-
-        try (CommandExecutor executor = computationManager.newCommandExecutor(DymolaUtil.createEnv(config), WORKING_DIR_PREFIX, config.isDebug())) {
-            Path workingDir = executor.getWorkingDir();
-
-            List<Contingency> contingencies = new ArrayList<>();
-            Command cmd = before(state, contingencyIds, workingDir, contingencies);
-
-            // start execution
-            ExecutionReport report = executor.start(new CommandExecution(cmd, contingencies.size(), priority, ImmutableMap.of("state", state.getName())));
-
-            return after(workingDir, contingencies, report);
-        }
+        return runAsync(state, contingencyIds, null).join();
     }
 
     @Override
