@@ -16,9 +16,9 @@ class DymolaState implements SimulationState {
 
     private final String name;
 
-    
+
     DymolaState(String name) {
-    this.name=name;
+        this.name = name;
     }
 
     @Override

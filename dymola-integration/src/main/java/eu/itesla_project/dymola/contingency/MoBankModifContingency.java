@@ -25,12 +25,14 @@ public class MoBankModifContingency extends MoContingency {
         return MoContingencyElementType.MO_BANK_MODIF;
     }
 
-    //TODO
+    // TODO
     @Override
     public AbstractTrippingTask toTask() {
         return null;
     }
 
-    public double getT1() {return Double.parseDouble(getEventParameters().get("t1"));}
+    public double getT1() {
+        return Double.parseDouble(getEventParameters().get("t1"));
+    }
 
 }

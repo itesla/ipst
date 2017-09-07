@@ -36,7 +36,7 @@ public class RetryOnExceptionStrategy {
         public void errorOccured(Exception e) throws Exception {
             numberOfTriesLeft--;
             if (!shouldRetry()) {
-                String excMsg=(e!=null)? e.getMessage() : "";
+                String excMsg = (e != null) ? e.getMessage() : "";
                 throw new Exception("Retry Failed: Total " + numberOfRetries
                         + " attempts made at interval " + getTimeToWait()
                         + "ms - Exception message: " + excMsg);

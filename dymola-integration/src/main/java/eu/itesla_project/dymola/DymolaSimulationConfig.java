@@ -60,11 +60,11 @@ public class DymolaSimulationConfig {
 
     public DymolaSimulationConfig(int numberOfIntervals,
                                   double outputInterval, String method, double tolerance, double outputFixedstepSize) {
-        this.numberOfIntervals =numberOfIntervals;
-        this.outputInterval =outputInterval;
-        this.method =method;
-        this.tolerance =tolerance;
-        this.outputFixedstepSize =outputFixedstepSize;
+        this.numberOfIntervals = numberOfIntervals;
+        this.outputInterval = outputInterval;
+        this.method = method;
+        this.tolerance = tolerance;
+        this.outputFixedstepSize = outputFixedstepSize;
     }
 
     public String getMethod() {

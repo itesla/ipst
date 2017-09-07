@@ -31,7 +31,12 @@ public class MoLineFaultContingency extends MoContingency {
         return null;
     }
 
-    public double getT1() {return Double.parseDouble(getEventParameters().get("time_1"));}
-    public double getT2() {return Double.parseDouble(getEventParameters().get("time_2"));}
+    public double getT1() {
+        return Double.parseDouble(getEventParameters().get("time_1"));
+    }
+
+    public double getT2() {
+        return Double.parseDouble(getEventParameters().get("time_2"));
+    }
 
 }
