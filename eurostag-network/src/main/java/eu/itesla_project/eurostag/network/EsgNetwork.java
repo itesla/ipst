@@ -104,7 +104,7 @@ public class EsgNetwork {
         }
         for (EsgStaticVarCompensator svc : getStaticVarCompensators()) {
             if (getNode(svc.getZnodsvc().toString()) == null) {
-                throw new RuntimeException("Static VAR compensator '" + svc.getZnamsvc() +"' reference an unknown connection node '"
+                throw new RuntimeException("Static VAR compensator '" + svc.getZnamsvc() + "' reference an unknown connection node '"
                         + svc.getZnodsvc() + "'");
             }
         }
