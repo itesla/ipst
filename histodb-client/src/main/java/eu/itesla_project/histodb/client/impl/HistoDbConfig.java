@@ -52,7 +52,7 @@ public class HistoDbConfig {
         this.connectionParameters = Objects.requireNonNull(connectionParameters);
         this.proxyParameters = proxyParameters;
         this.storeName = Objects.requireNonNull(storeName);
-        this.sourceName= sourceName;
+        this.sourceName = sourceName;
     }
 
     public ConnectionParameters getConnectionParameters() {
