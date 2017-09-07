@@ -34,7 +34,7 @@ public class Element {
         this.idEu = idEu;
         this.nameEu = nameEu;
         this.pathModelica = nameModelica;
-        this.nameModelica = nameModelica.split("\\.")[nameModelica.split("\\.").length-1];
+        this.nameModelica = nameModelica.split("\\.")[nameModelica.split("\\.").length - 1];
         this.param = param;
         this.nInputPins = nInputPins;
     }

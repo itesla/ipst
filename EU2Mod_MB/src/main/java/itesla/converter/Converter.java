@@ -53,10 +53,10 @@ public class Converter {
         }
     }
 
-    private ModelicaModel EUparser() throws IOException{
+    private ModelicaModel EUparser() throws IOException {
         String sep = ";";
         String line;
-        Hashtable<Integer,Element> CT = new Hashtable<Integer,Element>(); //correspondance table
+        Hashtable<Integer, Element> CT = new Hashtable<Integer, Element>(); //correspondance table
 
         String[] CTline;
         Integer CTidEu;
@@ -67,12 +67,12 @@ public class Converter {
         InputStreamReader reader = new InputStreamReader(CorrespondenceTable);
         BufferedReader bufferCT = new BufferedReader(reader);
         line = bufferCT.readLine(); //reads headings
-        while((line=bufferCT.readLine())!=null){
+        while ((line = bufferCT.readLine()) != null) {
             CTline = line.split(sep);
             CTidEu = Integer.parseInt(CTline[0]);
             nameEu = CTline[1];
 
-            if (CTline.length>=3) {
+            if (CTline.length >= 3) {
                 nInputPins = Integer.parseInt(CTline[2]);
                 nameModelica = CTline[3].trim();
             } else {
@@ -80,7 +80,7 @@ public class Converter {
                 nInputPins = 0;
             }
             param = new ArrayList<String>();
-            for (int i = 4; i<CTline.length; ++i) {
+            for (int i = 4; i < CTline.length; ++i) {
                 param.add(CTline[i]);
             }
             Element elt = new Element(CTidEu, nameEu, nameModelica, param, nInputPins);
@@ -100,9 +100,9 @@ public class Converter {
         ModelicaModel MO;
         File parFile = new File(pathPar);
         ParParser parData = new ParParser(parFile);
-        if (nBlocks==0) {
-            isEmpty=true;
-            MO = new ModelicaModel(pathfrm,parData);
+        if (nBlocks == 0) {
+            isEmpty = true;
+            MO = new ModelicaModel(pathfrm, parData);
         } else {
             String[][] paramEu = EUfile.getParamEU();
             Integer[] GraphicalNumber = EUfile.getGraphicalNumber();
@@ -115,19 +115,19 @@ public class Converter {
             //creation of the n blocks
             //counter of the blocks of the same type
             Block[] Macroblock = new Block[nBlocks];
-            Hashtable<Integer,Integer> CountIdBlock = new Hashtable<Integer, Integer>();
-            for (int i = 0; i<nBlocks; i++){
+            Hashtable<Integer, Integer> CountIdBlock = new Hashtable<Integer, Integer>();
+            for (int i = 0; i < nBlocks; i++) {
                 String[] paramBlock = new String[8];
                 String[] entriesBlock = new String[5];
                 if (CountIdBlock.containsKey(idEu[i])) {
-                    CountIdBlock.put(idEu[i], CountIdBlock.get(idEu[i])+1);
+                    CountIdBlock.put(idEu[i], CountIdBlock.get(idEu[i]) + 1);
                 } else {
                     CountIdBlock.put(idEu[i], 1);
                 }
-                for (int j=0; j<8; j++) {
+                for (int j = 0; j < 8; j++) {
                     paramBlock[j] = paramEu[j][i];
                 }
-                for (int j=0; j<5; j++){
+                for (int j = 0; j < 5; j++) {
                     entriesBlock[j] = entries[j][i];
                 }
                 Macroblock[i] = new Block(paramBlock, entriesBlock, Blocksoutput[i], GraphicalNumber[i], idEu[i], CountIdBlock.get(idEu[i]), CT.get(idEu[i]).nInputPins);
@@ -140,7 +140,9 @@ public class Converter {
     public void convert2MO() throws IOException {
         File frm = new File(pathfrm);
         String nameModel = frm.getName().split("\\.")[0];
-        if (init) nameModel = nameModel+"_init";
+        if (init) {
+            nameModel = nameModel + "_init";
+        }
         File outFile = new File(pathOut, nameModel + ".mo");
         BufferedWriter out = new BufferedWriter(new FileWriter(outFile));
 
@@ -152,47 +154,47 @@ public class Converter {
 
         if (!isEmpty) {
             List<Integer> setIds = parData.getSetIds();
-            for (int i=0; i<setIds.size(); i++) {
+            for (int i = 0; i < setIds.size(); i++) {
                 out.write("//" + parData.getMacroblockInstance(setIds.get(i), parData.getModelName() + "_" + setIds.get(i).toString()) + "\n");
             }
 
-            for (int i=0; i<MO.outputParamInit.size(); i++){
+            for (int i = 0; i < MO.outputParamInit.size(); i++) {
                 out.write(MO.outputParamInit.get(i) + "\n");
             }
-            for (int i=0; i<MO.outputParamDeclaration.size(); i++){
+            for (int i = 0; i < MO.outputParamDeclaration.size(); i++) {
                 out.write(MO.outputParamDeclaration.get(i) + "\n");
             }
-            for (int i=0; i<MO.outputBlocksDeclaration.size(); i++){
+            for (int i = 0; i < MO.outputBlocksDeclaration.size(); i++) {
                 out.write(MO.outputBlocksDeclaration.get(i) + "\n");
             }
-            for (int i=0; i<MO.outputPositiveImPin.size(); i++){
+            for (int i = 0; i < MO.outputPositiveImPin.size(); i++) {
                 out.write(MO.outputPositiveImPin.get(i) + "\n");
             }
-            for (int i=0; i<MO.outputNegativeImPin.size(); i++){
+            for (int i = 0; i < MO.outputNegativeImPin.size(); i++) {
                 out.write(MO.outputNegativeImPin.get(i) + "\n");
             }
 
             out.write("equation\n");
-            if (MO.outputConnection.size()>0) {
-                for (int i=0; i<MO.outputConnection.size(); i++){
+            if (MO.outputConnection.size() > 0) {
+                for (int i = 0; i < MO.outputConnection.size(); i++) {
                     out.write(MO.outputConnection.get(i) + "\n");
                 }
             }
             if (!MO.outputInputConnection.isEmpty()) {
-                for (int i=0; i<MO.outputInputConnection.size(); i++){
+                for (int i = 0; i < MO.outputInputConnection.size(); i++) {
                     out.write(MO.outputInputConnection.get(i) + "\n");
                 }
             }
-            for (int i=0; i<MO.outputOutputConnection.size(); i++){
+            for (int i = 0; i < MO.outputOutputConnection.size(); i++) {
                 out.write(MO.outputOutputConnection.get(i) + "\n");
             }
-            if (!MO.outputZeroPins.isEmpty()){
-                for (int i=0; i<MO.outputZeroPins.size(); i++){
+            if (!MO.outputZeroPins.isEmpty()) {
+                for (int i = 0; i < MO.outputZeroPins.size(); i++) {
                     out.write(MO.outputZeroPins.get(i) + "\n");
                 }
             }
         } else {
-            for (int i=0; i<MO.outputParamDeclaration.size(); i++){
+            for (int i = 0; i < MO.outputParamDeclaration.size(); i++) {
                 out.write(MO.outputParamDeclaration.get(i) + "\n");
             }
             out.write("equation\n");
@@ -209,9 +211,9 @@ public class Converter {
 
         File frm = new File(pathfrm);
         String nameModel = frm.getName().split("\\.")[0];
-        File outFile = new    File(pathOut, "connections_"+nameModel + ".txt");
+        File outFile = new    File(pathOut, "connections_" + nameModel + ".txt");
         BufferedWriter out = new BufferedWriter(new FileWriter(outFile));
-        for (int i=0; i<MO.NamedLinks.size(); i++) {
+        for (int i = 0; i < MO.NamedLinks.size(); i++) {
             out.write(MO.NamedLinks.get(i) + "\n");
         }
         out.close();

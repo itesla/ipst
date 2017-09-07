@@ -58,21 +58,21 @@ public class EU_MBparser {
         BufferedReader buffer;
         buffer = new BufferedReader(new FileReader(EUfile));
 
-        while((line=buffer.readLine())!=null){
+        while ((line = buffer.readLine()) != null) {
             dataLine = line.trim().split(sep);
             dataFile.add(dataLine);
         }
         buffer.close();
 
         //parse
-        nBlocks=Integer.parseInt(dataFile.get(2)[0]);
-        if (nBlocks>0) {
-            Integer rowsPerBlockPars = (nBlocks-1)/6 + 1;
-            Integer rowsPerBlockEntries = (nBlocks-1)/14 + 1;
-            Integer rowsPerBlockOutput = (nBlocks-1)/13 + 1;
-            Integer rowsPerBlockGraph = (nBlocks-1)/14 + 1;
-            Integer rowsPerBlockLocation = (nBlocks-1)/21 +1;
-            Integer rowsPerBlockType = (nBlocks-1)/21 + 1;
+        nBlocks = Integer.parseInt(dataFile.get(2)[0]);
+        if (nBlocks > 0) {
+            Integer rowsPerBlockPars = (nBlocks - 1) / 6 + 1;
+            Integer rowsPerBlockEntries = (nBlocks - 1) / 14 + 1;
+            Integer rowsPerBlockOutput = (nBlocks - 1) / 13 + 1;
+            Integer rowsPerBlockGraph = (nBlocks - 1) / 14 + 1;
+            Integer rowsPerBlockLocation = (nBlocks - 1) / 21 + 1;
+            Integer rowsPerBlockType = (nBlocks - 1) / 21 + 1;
 
             paramEu = new String[8][nBlocks];
             entries = new String[5][nBlocks];
@@ -84,57 +84,57 @@ public class EU_MBparser {
             int rowIni = 3;
             int nDatosPerBlock = 8;
             String[][] auxParameters = Extract(dataFile, rowIni, rowsPerBlockPars, nDatosPerBlock, nBlocks);
-            for (int i=0; i<8; i++){
-                for (int j=0; j<nBlocks; j++){
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < nBlocks; j++) {
                     paramEu[i][j] = auxParameters[i][j];
                 }
             }
 
             //entries
-            rowIni = rowIni + nDatosPerBlock*rowsPerBlockPars;
+            rowIni = rowIni + nDatosPerBlock * rowsPerBlockPars;
             nDatosPerBlock = 5;
             String[][] auxEntries = Extract(dataFile, rowIni, rowsPerBlockEntries, nDatosPerBlock, nBlocks);
-            for (int i=0; i<5; i++){
-                for (int j=0; j<nBlocks; j++){
+            for (int i = 0; i < 5; i++) {
+                for (int j = 0; j < nBlocks; j++) {
                     entries[i][j] = auxEntries[i][j];
                 }
             }
 
             //output
-            rowIni = rowIni + nDatosPerBlock*rowsPerBlockEntries;
+            rowIni = rowIni + nDatosPerBlock * rowsPerBlockEntries;
             nDatosPerBlock = 1;
             String[][] auxOutput = Extract(dataFile, rowIni, rowsPerBlockOutput, nDatosPerBlock, nBlocks);
-            for (int j=0; j<nBlocks; j++){
+            for (int j = 0; j < nBlocks; j++) {
                 Blocksoutput[j] = auxOutput[0][j];
             }
 
             //graphical number
-            rowIni = rowIni + nDatosPerBlock*rowsPerBlockOutput;
+            rowIni = rowIni + nDatosPerBlock * rowsPerBlockOutput;
             nDatosPerBlock = 1;
             String[][] auxGraphical = Extract(dataFile, rowIni, rowsPerBlockGraph, nDatosPerBlock, nBlocks);
-            for (int j=0; j<nBlocks; j++){
+            for (int j = 0; j < nBlocks; j++) {
                 GraphicalNumber[j] = Integer.parseInt(auxGraphical[0][j]);
             }
 
             //id Eurostag
-            rowIni = rowIni + rowsPerBlockGraph + 2*rowsPerBlockLocation;
+            rowIni = rowIni + rowsPerBlockGraph + 2 * rowsPerBlockLocation;
             nDatosPerBlock = 1;
             String[][] auxIdEu = Extract(dataFile, rowIni, rowsPerBlockType, nDatosPerBlock, nBlocks);
-            for (int j=0; j<nBlocks; j++){
+            for (int j = 0; j < nBlocks; j++) {
                 idEu[j] = Integer.parseInt(auxIdEu[0][j]);
             }
 
             //Links
-            rowIni = rowIni + 3*rowsPerBlockType*nDatosPerBlock;
+            rowIni = rowIni + 3 * rowsPerBlockType * nDatosPerBlock;
             nLinks = Integer.parseInt(dataFile.get(rowIni)[0]);
-            Integer rowsPerLink = (nLinks-1)/21 + 1;
+            Integer rowsPerLink = (nLinks - 1) / 21 + 1;
 
             link = new Integer[nLinks][3];
-            rowIni = rowIni + 22*rowsPerLink + 1;
-            if (nLinks>0) {
+            rowIni = rowIni + 22 * rowsPerLink + 1;
+            if (nLinks > 0) {
                 String[][] auxLink = Extract(dataFile, rowIni, rowsPerLink, 3, nLinks);
-                for (int i=0; i<3; i++){
-                    for (int j=0; j<nLinks; j++){
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < nLinks; j++) {
                         link[j][i] = Integer.parseInt(auxLink[i][j]);
                     }
                 }
@@ -176,15 +176,15 @@ public class EU_MBparser {
 
     static private String[][] Extract(List<String[]> frmFile, Integer ini, Integer rowsPerBlockPars, Integer nDatosPerBlock, Integer nBlocks) {
         String[][] output = new String[nDatosPerBlock][nBlocks];
-        Integer count=0;
+        Integer count = 0;
         Integer indexBlock;
         Integer indexValue;
-        Integer nlines = rowsPerBlockPars*nDatosPerBlock;
-        for(int i=0; i<nlines; ++i){
-            for (int j=0; j<frmFile.get(ini+i).length; j++){
+        Integer nlines = rowsPerBlockPars * nDatosPerBlock;
+        for (int i = 0; i < nlines; ++i) {
+            for (int j = 0; j < frmFile.get(ini + i).length; j++) {
                 indexBlock = count % nBlocks;
-                indexValue = count/nBlocks;
-                output[indexValue][indexBlock] = frmFile.get(ini+i)[j];
+                indexValue = count / nBlocks;
+                output[indexValue][indexBlock] = frmFile.get(ini + i)[j];
                 count += 1;
             }
         }

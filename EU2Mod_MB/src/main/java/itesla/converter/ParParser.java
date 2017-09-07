@@ -72,22 +72,22 @@ public class ParParser {
             String[] parLine;
             Boolean condition = false;
             while (!condition) {
-                line=buffer.readLine();
-                                if (line.trim().isEmpty()) {
-                                    continue;
-                                }
+                line = buffer.readLine();
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
                 parLine = line.trim().split(sep);
                 if (parLine[0].equals(modelName)) {
                     condition = true;
-                    nSets = parLine.length-1;
-                    for (int i=1; i<parLine.length; ++i){
+                    nSets = parLine.length - 1;
+                    for (int i = 1; i < parLine.length; ++i) {
                         idSet.put(Integer.parseInt(parLine[i]), i);
                         setIds.add(Integer.parseInt(parLine[i]));
                     }
                 }
             }
 
-            while((line=buffer.readLine())!=null){
+            while ((line = buffer.readLine()) != null) {
                 if (line.isEmpty()) {
                     firstBlock = false;
                 }
@@ -95,18 +95,18 @@ public class ParParser {
                     parLine = line.trim().split(sep);
                     nParameters++;
                     linesxBlock++;
-                    if (parLine[0].substring(0, 1).equals("%")){
+                    if (parLine[0].substring(0, 1).equals("%")) {
                         parNames.add(parLine[0].substring(1));
                         parTypes.put(parLine[0].substring(1), "parameter Real[:]");
                         //lengthArrayParameter = Integer.parseInt(parLine[1]);
                         listArrayLength.clear();
-                        for (int i=1; i<(parLine.length-1); i++) {
+                        for (int i = 1; i < (parLine.length - 1); i++) {
                             listArrayLength.add(Integer.parseInt(parLine[i]));
                         }
                         Collections.sort(listArrayLength);
-                        lengthArrayParameter = listArrayLength.get(listArrayLength.size()-1);
+                        lengthArrayParameter = listArrayLength.get(listArrayLength.size() - 1);
 
-                        for (int i=0; i<lengthArrayParameter*2; i++) {
+                        for (int i = 0; i < lengthArrayParameter * 2; i++) {
                             line = buffer.readLine();
                             linesxBlock++;
                         }
@@ -116,7 +116,7 @@ public class ParParser {
                     }
                 } else if (line.trim().split(sep)[0].equals(modelName)) {
                     parLine = line.trim().split(sep);
-                    for (int i=1; i<parLine.length; ++i) {
+                    for (int i = 1; i < parLine.length; ++i) {
                         idSet.put(Integer.parseInt(parLine[i]), nSets + i);
                         setIds.add(Integer.parseInt(parLine[i]));
                     }
@@ -134,30 +134,29 @@ public class ParParser {
     }
 
     public String getModelName() {
-        return(modelName);
+        return (modelName);
     }
 
     public Integer getnParameters() {
-        return(nParameters);
+        return (nParameters);
     }
 
     public Integer getnSets() {
-        return(nSets);
+        return (nSets);
     }
 
     public List<String> getParNames() {
-        return(parNames);
+        return (parNames);
     }
 
     public List<Integer> getSetIds() {
-        return(setIds);
+        return (setIds);
     }
 
 
     public HashMap<String, String> getParTypes() {
-        return(parTypes);
+        return (parTypes);
     }
-
 
 
     public HashMap<String, String> getSetParameters(Integer instanceSet) {
@@ -165,8 +164,8 @@ public class ParParser {
 
         //output = modelName + " " + instanceName + "(";
         Integer n = idSet.get(instanceSet);
-        Integer nQuotient = (n-1)/5;
-        Integer nRemainder = ((n-1) % 5)+1;
+        Integer nQuotient = (n - 1) / 5;
+        Integer nRemainder = ((n - 1) % 5) + 1;
         Integer lengthArrayParameter;
         String key, value;
 
@@ -180,48 +179,48 @@ public class ParParser {
             Boolean condition = false;
             List<Integer> listArrayLength = new ArrayList<Integer>();
             while (!condition) {
-                line=buffer.readLine();
+                line = buffer.readLine();
                 parLine = line.trim().split(sep);
                 if (parLine[0].equals(modelName)) {
                     condition = true;
                 }
             }
 
-            for (int i=0; i<nQuotient*(linesxBlock+2); i++) {
+            for (int i = 0; i < nQuotient * (linesxBlock + 2); i++) {
                 line = buffer.readLine();
             }
-            for (int i=0; i<nParameters; i++) {
+            for (int i = 0; i < nParameters; i++) {
                 line = buffer.readLine();
                 parLine = line.trim().split(sep);
-                if (parLine[0].substring(0, 1).equals("%")){
-                    arrayLength=parLine;
+                if (parLine[0].substring(0, 1).equals("%")) {
+                    arrayLength = parLine;
                     lengthArrayParameter = Integer.parseInt(parLine[nRemainder]);
 
                     listArrayLength.clear();
-                    for (int j=1; j<(parLine.length-1); j++) {
+                    for (int j = 1; j < (parLine.length - 1); j++) {
                         listArrayLength.add(Integer.parseInt(parLine[j]));
                     }
                     Collections.sort(listArrayLength);
-                    maxDim = listArrayLength.get(listArrayLength.size()-1);
+                    maxDim = listArrayLength.get(listArrayLength.size() - 1);
 
                     //output = output + parLine[0].substring(1) + "={";
                     key = parLine[0].substring(1);
                     value = "{";
-                    for (int j=0; j<lengthArrayParameter*2; j++) {
+                    for (int j = 0; j < lengthArrayParameter * 2; j++) {
                         line = buffer.readLine();
                         parLine = line.trim().split(sep);
                         //output = output + parLine[0];
                         //value = value + parLine[0];
-                        value = value + parLine[getColumn(arrayLength, j+1, nRemainder)];
-                        if (j==lengthArrayParameter*2-1) {
-                            value = value+"}";
+                        value = value + parLine[getColumn(arrayLength, j + 1, nRemainder)];
+                        if (j == lengthArrayParameter * 2 - 1) {
+                            value = value + "}";
                         } else {
                             value = value + ",";
                         }
                     }
 
-                    if (lengthArrayParameter<maxDim) {
-                        for (int j=0; j<(maxDim*2-lengthArrayParameter*2); j++) {
+                    if (lengthArrayParameter < maxDim) {
+                        for (int j = 0; j < (maxDim * 2 - lengthArrayParameter * 2); j++) {
                             line = buffer.readLine();
                         }
                     }
@@ -251,8 +250,8 @@ public class ParParser {
 
 
     public HashMap<Integer, HashMap<String, String>> getParameters() {
-        HashMap<Integer, HashMap<String, String>> output = new HashMap<Integer, HashMap<String,String>>();
-        HashMap<String,String> setParameters;
+        HashMap<Integer, HashMap<String, String>> output = new HashMap<Integer, HashMap<String, String>>();
+        HashMap<String, String> setParameters;
         for (Integer id : setIds) {
             setParameters = getSetParameters(id);
             output.put(id, setParameters);
@@ -265,8 +264,8 @@ public class ParParser {
         String output;
         output = modelName + " " + instanceName + "(";
         Integer n = idSet.get(instanceSet);
-        Integer nQuotient = (n-1)/5;
-        Integer nRemainder = ((n-1) % 5)+1;
+        Integer nQuotient = (n - 1) / 5;
+        Integer nRemainder = ((n - 1) % 5) + 1;
         Integer lengthArrayParameter;
 
 
@@ -281,47 +280,47 @@ public class ParParser {
             Integer maxDim;
 
             while (!condition) {
-                line=buffer.readLine();
+                line = buffer.readLine();
                 parLine = line.trim().split(sep);
                 if (parLine[0].equals(modelName)) {
                     condition = true;
                 }
             }
 
-            for (int i=0; i<nQuotient*(linesxBlock+2); i++) {
+            for (int i = 0; i < nQuotient * (linesxBlock + 2); i++) {
                 line = buffer.readLine();
             }
-            for (int i=0; i<nParameters; i++) {
+            for (int i = 0; i < nParameters; i++) {
                 line = buffer.readLine();
                 parLine = line.trim().split(sep);
-                if (parLine[0].substring(0, 1).equals("%")){
+                if (parLine[0].substring(0, 1).equals("%")) {
 
                     listArrayLength.clear();
-                    for (int j=1; j<(parLine.length-1); j++) {
+                    for (int j = 1; j < (parLine.length - 1); j++) {
                         listArrayLength.add(Integer.parseInt(parLine[j]));
                     }
                     Collections.sort(listArrayLength);
-                    maxDim = listArrayLength.get(listArrayLength.size()-1);
+                    maxDim = listArrayLength.get(listArrayLength.size() - 1);
 
                     arrayLength = parLine;
                     lengthArrayParameter = Integer.parseInt(parLine[nRemainder]);
                     output = output + parLine[0].substring(1) + "={";
 
 
-                    for (int j=0; j<lengthArrayParameter*2; j++) {
+                    for (int j = 0; j < lengthArrayParameter * 2; j++) {
                         line = buffer.readLine();
                         parLine = line.trim().split(sep);
                         output = output + parLine[getColumn(arrayLength, j, nRemainder)];
-                        if (j==lengthArrayParameter*2-1) {
-                            output = output+"}";
+                        if (j == lengthArrayParameter * 2 - 1) {
+                            output = output + "}";
                         } else {
                             output = output + ",";
                         }
                     }
 
 
-                    if (lengthArrayParameter<maxDim) {
-                        for (int j=0; j<(maxDim-lengthArrayParameter); j++) {
+                    if (lengthArrayParameter < maxDim) {
+                        for (int j = 0; j < (maxDim - lengthArrayParameter); j++) {
                             line = buffer.readLine();
                         }
                     }
@@ -330,8 +329,8 @@ public class ParParser {
                 } else {
                     output = output + parLine[0] + "=" + parLine[nRemainder];
                 }
-                if (i<nParameters-1) {
-                    output = output+",";
+                if (i < nParameters - 1) {
+                    output = output + ",";
                 } else {
                     output = output + ");";
                 }
@@ -356,14 +355,14 @@ public class ParParser {
      * array lengths
      */
     private Integer getColumn(String[] arrayLength, Integer nrow, Integer ncol) {
-        Integer output=0;
+        Integer output = 0;
 
-        for (int i=1; i<=ncol; i++) {
-            if (nrow<=2*Integer.parseInt(arrayLength[i])) {
-                output=output+1;
+        for (int i = 1; i <= ncol; i++) {
+            if (nrow <= 2 * Integer.parseInt(arrayLength[i])) {
+                output = output + 1;
             }
         }
-        output = output-1;
+        output = output - 1;
         return output;
     }
 
