@@ -18,10 +18,8 @@ import java.util.regex.Matcher;
  * @author Luis Maria Zamarreno <zamarrenolm@aia.com>
  * @author Silvia Machado <machados@aia.es>
  */
-public class ModelicaSimpleParser implements CommentScannerEventHandler
-{
-    public ModelicaSimpleParser(ModelicaParserEventHandler eventHandler)
-    {
+public class ModelicaSimpleParser implements CommentScannerEventHandler {
+    public ModelicaSimpleParser(ModelicaParserEventHandler eventHandler) {
         this.eventHandler = eventHandler;
         commentScanner = new CommentScanner(this);
         commentScanner.setQuote(ModelicaGrammar.QUOTE_REGEX);
@@ -29,22 +27,19 @@ public class ModelicaSimpleParser implements CommentScannerEventHandler
         commentScanner.setBlockComment(ModelicaGrammar.BLOCK_COMMENT_START_REGEX, ModelicaGrammar.BLOCK_COMMENT_END_REGEX);
     }
 
-    public void parse(File file) throws IOException
-    {
+    public void parse(File file) throws IOException {
         initFile(file);
         eventHandler.onStartFile(file);
         commentScanner.scan(file);
         eventHandler.onEndFile(file);
     }
 
-    void initFile(File file)
-    {
+    void initFile(File file) {
         isPendingEndClass = false;
         pendingEndClassIdent = null;
     }
 
-    void parseLine(String line)
-    {
+    void parseLine(String line) {
         initLine(line);
 
         // We will only try to parse class specifiers and parameters
@@ -53,16 +48,20 @@ public class ModelicaSimpleParser implements CommentScannerEventHandler
         tryParseParameterSpecifier();
 
         // Emit events for the found elements
-        if (isClassSpecifier) emitStartClass();
-        if (isParameter) eventHandler.onParameter(parameter);
+        if (isClassSpecifier) {
+            emitStartClass();
+        }
+        if (isParameter) {
+            eventHandler.onParameter(parameter);
+        }
         eventHandler.onLine(originalLine);
-        if (isEndClassSpecifier) emitEndClass();
+        if (isEndClassSpecifier) {
+            emitEndClass();
+        }
     }
 
-    void emitStartClass()
-    {
-        if (isPendingEndClass)
-        {
+    void emitStartClass() {
+        if (isPendingEndClass) {
             eventHandler.onEndClass(pendingEndClassIdent);
             isPendingEndClass = false;
             pendingEndClassIdent = null;
@@ -80,17 +79,14 @@ public class ModelicaSimpleParser implements CommentScannerEventHandler
         // end Gendcls_data;
         // In the example,
         // The call to GENROU is a line of text that must be considered inside the definition of record Genrou_data
-        if (!isComposition)
-        {
+        if (!isComposition) {
             isPendingEndClass = true;
             pendingEndClassIdent = ident;
         }
     }
 
-    void emitEndClass()
-    {
-        if (isPendingEndClass)
-        {
+    void emitEndClass() {
+        if (isPendingEndClass) {
             eventHandler.onEndClass(pendingEndClassIdent);
             isPendingEndClass = false;
             pendingEndClassIdent = null;
@@ -98,8 +94,7 @@ public class ModelicaSimpleParser implements CommentScannerEventHandler
         eventHandler.onEndClass(ident);
     }
 
-    void initLine(String line)
-    {
+    void initLine(String line) {
         isClassSpecifier = false;
         isComposition = false;
         isEndClassSpecifier = false;
@@ -115,25 +110,26 @@ public class ModelicaSimpleParser implements CommentScannerEventHandler
         log.debug("TOKENS " + Arrays.toString(tokens));
     }
 
-    void tryParseClassSpecifier()
-    {
+    void tryParseClassSpecifier() {
         int k;
 
         // First ignore optional class qualifiers
-        for (k = 0; k < tokens.length; k++)
-        {
-            if (!ModelicaGrammar.isClassQualifier(tokens[k])) break;
+        for (k = 0; k < tokens.length; k++) {
+            if (!ModelicaGrammar.isClassQualifier(tokens[k])) {
+                break;
+            }
         }
         // Then check if we have found a class qualifier
-        if (ModelicaGrammar.isClassSpecifier(tokens[k]))
-        {
+        if (ModelicaGrammar.isClassSpecifier(tokens[k])) {
             isClassSpecifier = true;
             // The keyword package is a class specifier and a class group specifier
             specifier = tokens[k];
             k++;
             ident = tokens[k];
             k++;
-            if (k >= tokens.length || !tokens[k].equals("=")) isComposition = true;
+            if (k >= tokens.length || !tokens[k].equals("=")) {
+                isComposition = true;
+            }
 
             // Assume the first quoted in the line is the comment
             comment = getFirstQuoted(parsingLine, 0);
@@ -142,20 +138,19 @@ public class ModelicaSimpleParser implements CommentScannerEventHandler
         }
     }
 
-    void tryParseEndClassSpecifier()
-    {
-        if (tokens.length < 2) return;
+    void tryParseEndClassSpecifier() {
+        if (tokens.length < 2) {
+            return;
+        }
         String whatEnds = tokens[1].replace(";", "");
         isEndClassSpecifier = tokens[0].equals(ModelicaGrammar.END) && !ModelicaGrammar.isEndForNonClassSpecifier(whatEnds);
-        if (isEndClassSpecifier)
-        {
+        if (isEndClassSpecifier) {
             specifier = ModelicaGrammar.END;
             ident = whatEnds;
         }
     }
 
-    void tryParseParameterSpecifier()
-    {
+    void tryParseParameterSpecifier() {
         // We will only parse parameter specifiers according to the following rules:
         // Completely defined in a single line
         // Line contains at least three tokens
@@ -166,49 +161,53 @@ public class ModelicaSimpleParser implements CommentScannerEventHandler
         // Values will be checked against identified built-in type
 
         ModelicaParameter param = new ModelicaParameter();
-        if (!isParameterSpecifier()) return;
-        if (!checkParameterBuiltinType(param)) return;
+        if (!isParameterSpecifier()) {
+            return;
+        }
+        if (!checkParameterBuiltinType(param)) {
+            return;
+        }
 
         // Rest of the line is parsed without taking into account default tokenization
         // We move through the line text using an index
         int p = skipParameterType(param);
-        if (p < 0) return;
+        if (p < 0) {
+            return;
+        }
         p = checkParameterName(param, p);
-        if (p < 0) return;
-        if (!checkParameterValue(param, p)) return;
+        if (p < 0) {
+            return;
+        }
+        if (!checkParameterValue(param, p)) {
+            return;
+        }
 
         isParameter = true;
         parameter = param;
     }
 
-    boolean isParameterSpecifier()
-    {
+    boolean isParameterSpecifier() {
         return tokens.length >= 3 && tokens[0].equals(ModelicaGrammar.PARAMETER);
     }
 
-    boolean checkParameterBuiltinType(ModelicaParameter param)
-    {
+    boolean checkParameterBuiltinType(ModelicaParameter param) {
         String type = tokens[1];
-        if (ModelicaGrammar.isBuiltinType(type))
-        {
+        if (ModelicaGrammar.isBuiltinType(type)) {
             param.type = type;
             return true;
         }
         return false;
     }
 
-    int skipParameterType(ModelicaParameter param)
-    {
+    int skipParameterType(ModelicaParameter param) {
         // We start to process at the end of the "parameter <built-in type>" string
         Matcher matcher = ModelicaGrammar.PARAMETER_TYPE_REGEX.matcher(parsingLine);
         int p = 0;
-        if (matcher.find())
-        {
+        if (matcher.find()) {
             p = matcher.end();
             String expected = param.type;
             String found = matcher.group("type");
-            if (!expected.equals(found))
-            {
+            if (!expected.equals(found)) {
                 log.warn("Parameter specifier, type mismatch " + expected + " != " + found + " analyzing line " + parsingLine);
                 return -1;
             }
@@ -216,8 +215,7 @@ public class ModelicaSimpleParser implements CommentScannerEventHandler
         return p;
     }
 
-    int checkParameterName(ModelicaParameter param, int p)
-    {
+    int checkParameterName(ModelicaParameter param, int p) {
         // Name is obtained from current line at current position
         // Ignoring a potential parenthesized expression (class modification)
         // And up to an equal character, trimming trailing blanks
@@ -225,25 +223,21 @@ public class ModelicaSimpleParser implements CommentScannerEventHandler
         int sp = parsingLine.indexOf(ModelicaGrammar.CLASS_MODIFICATION_START, p);
         int eq = parsingLine.indexOf(ModelicaGrammar.EQ, p);
         // The parenthesis happens before the first equal sign, skip class modification
-        if (sp >= 0 && sp < eq)
-        {
+        if (sp >= 0 && sp < eq) {
             param.name = parsingLine.substring(p, sp);
             p = parsingLine.indexOf(ModelicaGrammar.CLASS_MODIFICATION_END, sp + 1);
-            if (p < 0)
-            {
+            if (p < 0) {
                 log.warn("Parameter specifier. Unbalanced parenthesis in class modification, line [" + parsingLine + "]");
                 return -1;
             }
             // Look for first equal sign after parenthesis
             eq = parsingLine.indexOf(ModelicaGrammar.EQ, p);
         }
-        if (eq < 0)
-        {
+        if (eq < 0) {
             log.debug("Parameter specifier. Missing equal in line [" + parsingLine + "]");
             return -1;
         }
-        if (param.name == null)
-        {
+        if (param.name == null) {
             param.name = parsingLine.substring(p, eq);
         }
         param.name = param.name.trim();
@@ -251,18 +245,16 @@ public class ModelicaSimpleParser implements CommentScannerEventHandler
         return p;
     }
 
-    boolean checkParameterValue(ModelicaParameter param, int p)
-    {
-        if (ModelicaGrammar.isStringType(param.type)) return checkParameterValueQuoted(param, p);
+    boolean checkParameterValue(ModelicaParameter param, int p) {
+        if (ModelicaGrammar.isStringType(param.type)) {
+            return checkParameterValueQuoted(param, p);
+        }
         String value = extractParameterValue(p);
         // Check that value is a proper value (a constant, not an expression)
-        if (ModelicaGrammar.isBooleanType(param.type) && !(value.equals(ModelicaGrammar.TRUE) || value.equals(ModelicaGrammar.FALSE)))
-        {
+        if (ModelicaGrammar.isBooleanType(param.type) && !(value.equals(ModelicaGrammar.TRUE) || value.equals(ModelicaGrammar.FALSE))) {
             log.debug("Parameter specifier. Wrong value [" + value + "] for Boolean in line [" + parsingLine + "]");
             return false;
-        }
-        else if (ModelicaGrammar.isNumberType(param.type) && !ModelicaGrammar.NUMBER_REGEX.matcher(value).matches())
-        {
+        } else if (ModelicaGrammar.isNumberType(param.type) && !ModelicaGrammar.NUMBER_REGEX.matcher(value).matches()) {
             log.debug("Parameter specifier. Wrong value (not a number) [" + value + "] for " + param.type + " in line [" + parsingLine + "]");
             return false;
         }
@@ -270,27 +262,25 @@ public class ModelicaSimpleParser implements CommentScannerEventHandler
         return true;
     }
 
-    boolean checkParameterValueQuoted(ModelicaParameter param, int p)
-    {
+    boolean checkParameterValueQuoted(ModelicaParameter param, int p) {
         String quoted = getFirstQuoted(parsingLine, p);
-        if (quoted == null) return false;
+        if (quoted == null) {
+            return false;
+        }
         param.value = quoted;
         return true;
     }
 
-    static String getFirstQuoted(String line, int p)
-    {
+    static String getFirstQuoted(String line, int p) {
         Matcher q = ModelicaGrammar.QUOTE_REGEX.matcher(line);
-        if (!q.find(p))
-        {
+        if (!q.find(p)) {
             log.debug("Get first quoted. Missing quoted start in line [" + line + "]");
             return null;
         }
 
         int qs = q.end();
         int restart = (qs > 1 ? qs - 1 : qs);
-        if (!q.find(restart))
-        {
+        if (!q.find(restart)) {
             log.debug("Get first quoted. Missing quoted end in line [" + line + "]");
             return null;
         }
@@ -299,28 +289,29 @@ public class ModelicaSimpleParser implements CommentScannerEventHandler
         return line.substring(qs, qe);
     }
 
-    String extractParameterValue(int p)
-    {
+    String extractParameterValue(int p) {
         // The end of the value field should be delimited by a quote (formal comment) or a semicolon
         int ev = parsingLine.indexOf('"', p);
-        if (ev < 0) ev = parsingLine.indexOf(';', p);
+        if (ev < 0) {
+            ev = parsingLine.indexOf(';', p);
+        }
         // Assume value is the rest of the line
-        if (ev < 0) ev = parsingLine.length();
+        if (ev < 0) {
+            ev = parsingLine.length();
+        }
 
         return parsingLine.substring(p, ev).trim();
     }
 
     @Override
-    public void onQuoted(String quoted, boolean open, boolean close)
-    {
+    public void onQuoted(String quoted, boolean open, boolean close) {
         // For multi line strings we will preserve in the parsing line only the contents of the first line
         // (the text from the open quote to the end of the line)
         // Intermediate lines and quoted text of last line will be removed from the parsing line
         // If we would like to preserve all text we could open-close every line but add "+" after each line except the last one
         // Both approaches solve the problem of finding class specifier keywords inside a quoted text
         boolean preserve = (open && close) || (open && !close);
-        if (preserve)
-        {
+        if (preserve) {
             parsingLineBuilder.append('"');
             parsingLineBuilder.append(quoted);
             parsingLineBuilder.append('"');
@@ -328,26 +319,22 @@ public class ModelicaSimpleParser implements CommentScannerEventHandler
     }
 
     @Override
-    public void onLineComment(String lineComment)
-    {
+    public void onLineComment(String lineComment) {
         // Ignore comments for line prepared to the parser (they are still maintained in the original line)
     }
 
     @Override
-    public void onBlockComment(String blockComment, boolean open, boolean close)
-    {
+    public void onBlockComment(String blockComment, boolean open, boolean close) {
         // Ignore comments for line prepared to the parser (they are still maintained in the original line)
     }
 
     @Override
-    public void onText(String text)
-    {
+    public void onText(String text) {
         parsingLineBuilder.append(text);
     }
 
     @Override
-    public void onLineScanned(String originalLine)
-    {
+    public void onLineScanned(String originalLine) {
         this.originalLine = originalLine;
         String line = parsingLineBuilder.toString();
         parsingLineBuilder.delete(0, parsingLineBuilder.length());

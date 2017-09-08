@@ -45,7 +45,7 @@ public class EquipmentListProducer {
 
     @PostConstruct
     public void retrieveAllEquipments() {
-        log.log(Level.INFO," produces equipments list ");
-        this.equipments= pmanager.findEquipmentsAll();
+        log.log(Level.INFO, " produces equipments list ");
+        this.equipments = pmanager.findEquipmentsAll();
     }
 }

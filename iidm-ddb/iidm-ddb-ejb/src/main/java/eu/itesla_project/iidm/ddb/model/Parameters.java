@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
  * @author Quinary <itesla@quinary.com>
  */
 @Entity
-@Table(name="PARAMETERS")
+@Table(name = "PARAMETERS")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Parameters implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -46,22 +46,24 @@ public class Parameters implements Serializable {
         this.simulator = simulator;
     }
     
-    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER, orphanRemoval=true)   
-    @JoinTable(name="PARAMETERS_PARAMETER", joinColumns={@JoinColumn(name="PS_ID", referencedColumnName="id")}, inverseJoinColumns={@JoinColumn(name="P_ID", referencedColumnName="id")})
-    @OrderColumn(name="pindx")
-    private List<Parameter> pars =new ArrayList<Parameter>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinTable(name = "PARAMETERS_PARAMETER", joinColumns = {@JoinColumn(name = "PS_ID", referencedColumnName = "id")}, inverseJoinColumns = {@JoinColumn(name = "P_ID", referencedColumnName = "id")})
+    @OrderColumn(name = "pindx")
+    private List<Parameter> pars = new ArrayList<Parameter>();
+
     public List<Parameter> getParameters() {
         return pars;
     }
+
     public void setParameters(List<Parameter> parameters) {
         this.pars = parameters;
     }
 
     public boolean containsParameterWithName(String name) {
-        boolean found=false;
+        boolean found = false;
         for (Parameter p : getParameters()) {
             if (p.name.equals(name)) {
-                found=true;
+                found = true;
                 break;
             }
         }
@@ -72,7 +74,7 @@ public class Parameters implements Serializable {
         if (!containsParameterWithName(parameter.name)) {
             getParameters().add(parameter);
         } else {
-            throw new RuntimeException("parameter with name "+parameter.name+" already exist in this parameter list");
+            throw new RuntimeException("parameter with name " + parameter.name + " already exist in this parameter list");
         }
     }
 

@@ -97,7 +97,7 @@ public interface DDBManager {
 
 
     public ConnectionSchema save(ConnectionSchema schema);
-    public ConnectionSchema findConnectionSchema(String cimId,SimulatorInst simulator);
+    public ConnectionSchema findConnectionSchema(String cimId, SimulatorInst simulator);
     public List<ConnectionSchema> findConnectionSchemasAll();
     public int findConnectionSchemasAllCount();
     public List<ConnectionSchema> findConnectionSchemasAllMaxResults(int firstResult, int maxResult);

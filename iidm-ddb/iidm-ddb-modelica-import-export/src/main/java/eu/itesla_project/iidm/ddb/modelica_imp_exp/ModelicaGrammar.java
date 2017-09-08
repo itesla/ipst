@@ -16,10 +16,8 @@ import java.util.regex.Pattern;
  * @author Luis Maria Zamarreno <zamarrenolm@aia.com>
  * @author Silvia Machado <machados@aia.es>
  */
-public class ModelicaGrammar
-{
-    public static CommentScanner newCommentScanner(CommentScannerEventHandler e)
-    {
+public class ModelicaGrammar {
+    public static CommentScanner newCommentScanner(CommentScannerEventHandler e) {
         CommentScanner s = new CommentScanner(e);
         s.setQuote(ModelicaGrammar.QUOTE_REGEX);
         s.setLineComment(ModelicaGrammar.LINE_COMMENT_REGEX);
@@ -27,48 +25,39 @@ public class ModelicaGrammar
         return s;
     }
 
-    public static boolean isClassQualifier(String keyword)
-    {
+    public static boolean isClassQualifier(String keyword) {
         return belongs(keyword, CLASS_QUALIFIERS);
     }
 
-    public static boolean isClassSpecifier(String keyword)
-    {
+    public static boolean isClassSpecifier(String keyword) {
         return belongs(keyword, CLASS_SPECIFIERS);
     }
 
-    public static boolean isStringType(String type)
-    {
+    public static boolean isStringType(String type) {
         return type.equals(BUILTIN_TYPE_STRING);
     }
 
-    public static boolean isRealType(String type)
-    {
+    public static boolean isRealType(String type) {
         return type.equals(BUILTIN_TYPE_REAL);
     }
 
-    public static boolean isIntegerType(String type)
-    {
+    public static boolean isIntegerType(String type) {
         return type.equals(BUILTIN_TYPE_INTEGER);
     }
 
-    public static boolean isNumberType(String type)
-    {
+    public static boolean isNumberType(String type) {
         return type.equals(BUILTIN_TYPE_REAL) || type.equals(BUILTIN_TYPE_INTEGER);
     }
 
-    public static boolean isBooleanType(String type)
-    {
+    public static boolean isBooleanType(String type) {
         return type.equals(BUILTIN_TYPE_BOOLEAN);
     }
 
-    public static boolean isNumber(String value)
-    {
+    public static boolean isNumber(String value) {
         return NUMBER_REGEX.matcher(value).matches();
     }
 
-    public static boolean isBoolean(String value)
-    {
+    public static boolean isBoolean(String value) {
         return value.equals(ModelicaGrammar.TRUE) || value.equals(ModelicaGrammar.FALSE);
     }
 
@@ -107,25 +96,25 @@ public class ModelicaGrammar
     static final String            FALSE                            = "false";
     static final Pattern        NUMBER_REGEX                    = Pattern.compile("[-+]?\\s*\\d+([\\.]\\d+)?([eE][-+]?\\d+)?");
 
-    static boolean isClassGroupSpecifier(String keyword)
-    {
+    static boolean isClassGroupSpecifier(String keyword) {
         return belongs(keyword, CLASS_GROUP_SPECIFIERS);
     }
 
-    static boolean isEndForNonClassSpecifier(String keyword)
-    {
+    static boolean isEndForNonClassSpecifier(String keyword) {
         return belongs(keyword, ENDS_OF_NON_CLASS_SPECIFIERS);
     }
 
-    static boolean isBuiltinType(String keyword)
-    {
+    static boolean isBuiltinType(String keyword) {
         return belongs(keyword, BUILTIN_TYPES);
     }
 
-    static boolean belongs(String keyword, Set<String> keywords)
-    {
-        if (keyword == null) return false;
-        if (keyword.equals("")) return false;
+    static boolean belongs(String keyword, Set<String> keywords) {
+        if (keyword == null) {
+            return false;
+        }
+        if (keyword.equals("")) {
+            return false;
+        }
         return keywords.contains(keyword);
     }
 }

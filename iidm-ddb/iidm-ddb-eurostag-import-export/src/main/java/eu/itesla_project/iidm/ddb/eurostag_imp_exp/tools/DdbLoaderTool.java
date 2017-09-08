@@ -41,15 +41,15 @@ public class DdbLoaderTool implements Tool {
         String eurostagVersion = line.getOptionValue(DdbLoaderCommand.EUROSTAG_VERSION);
         
         DdbConfig ddbConfig = new DdbConfig(jbossHost, jbossPort, jbossUser, jbossPassword);
-        Path ddData=Paths.get(dataDir);
-        Path ddPath =ddData.resolve("gene");
-        Path genPath=ddData.resolve("reguls");
-        Path dicoPath=ddData.resolve("dico.txt");
-        DynDataLoader dn= new DynDataLoader(
+        Path ddData = Paths.get(dataDir);
+        Path ddPath = ddData.resolve("gene");
+        Path genPath = ddData.resolve("reguls");
+        Path dicoPath = ddData.resolve("dico.txt");
+        DynDataLoader dn = new DynDataLoader(
                 dicoPath,
                 ddPath,
                 genPath,
-                eurostagVersion,//"5.1.1",
+                eurostagVersion, //"5.1.1",
                 ddbConfig.getJbossHost(), ddbConfig.getJbossPort(), ddbConfig.getJbossUser(), ddbConfig.getJbossPassword()
                 );
         dn.loadDynData();

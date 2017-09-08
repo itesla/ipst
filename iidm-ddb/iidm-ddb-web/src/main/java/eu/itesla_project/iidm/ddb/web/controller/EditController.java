@@ -24,7 +24,6 @@ import eu.itesla_project.iidm.ddb.model.ModelTemplateContainer;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
 
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 @Model
@@ -61,7 +60,7 @@ public class EditController {
         return this.modelTemplCont;
     }
 
-    public void setModelTemplCont(    ModelTemplateContainer _mtc) {
+    public void setModelTemplCont(ModelTemplateContainer _mtc) {
         this.modelTemplCont = _mtc;
     }
 
@@ -69,7 +68,7 @@ public class EditController {
         return this.modelTempl;
     }
 
-    public void setModelTempl(    ModelTemplate _mt) {
+    public void setModelTempl(ModelTemplate _mt) {
         this.modelTempl = _mt;
     }
 
@@ -84,21 +83,22 @@ public class EditController {
 
     public String edit(ModelTemplateContainer mtc) {
 
-        log.info(" edit enter::  mtc.ddbId: "+mtc.getDdbId() + " "+mtc.getComment());
+        log.info(" edit enter::  mtc.ddbId: " + mtc.getDdbId() + " " + mtc.getComment());
 
         FacesContext context = FacesContext.getCurrentInstance();
-        ResourceBundle bundle= context.getApplication().getResourceBundle(context, "msg");
+        ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
 
         this.modelTemplCont = mtc;
         try {
-            if (modelTemplCont != null) return "edit";
-            else throw new Exception("Edit:modelTemplCont IS NULL");
+            if (modelTemplCont != null) {
+                return "edit";
+            } else {
+                throw new Exception("Edit:modelTemplCont IS NULL");
             }
-        catch (Exception e)
-        {
-            log.log(Level.WARNING,"Edit: Edit:modelTemplCont IS NULL");
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Edit: Edit:modelTemplCont IS NULL");
             String errorMessage = getRootErrorMessage(e);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("edit.success.msg"));
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, bundle.getString("edit.success.msg"));
             facesContext.addMessage(null, m);
             return "edit";
         }
@@ -108,25 +108,23 @@ public class EditController {
     public String delete() {
 
         FacesContext context = FacesContext.getCurrentInstance();
-        ResourceBundle bundle= context.getApplication().getResourceBundle(context, "msg");
-        try
-        {
-            if (modelTemplCont != null)
-            {
-                log.log(Level.INFO,"Delete model template container :["+ modelTemplCont.getId() +" " +modelTemplCont.getDdbId() + " "+ modelTemplCont.getComment()+"]");
-                this.modelTemplCont = pmanager.findModelTemplateContainer(modelTemplCont.getDdbId() );
+        ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
+        try {
+            if (modelTemplCont != null) {
+                log.log(Level.INFO, "Delete model template container :[" + modelTemplCont.getId() + " " + modelTemplCont.getDdbId() + " " + modelTemplCont.getComment() + "]");
+                this.modelTemplCont = pmanager.findModelTemplateContainer(modelTemplCont.getDdbId());
                 pmanager.delete(this.modelTemplCont);
-                FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, modelTemplCont.getDdbId()+ " "+bundle.getString("delete.operation.msg"), bundle.getString("success.msg"));
+                FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, modelTemplCont.getDdbId() + " " + bundle.getString("delete.operation.msg"), bundle.getString("success.msg"));
                 facesContext.addMessage(null, m);
                 return "list";
-            } else    throw new Exception("Delete: modelTemplCont IS NULL");
+            } else {
+                throw new Exception("Delete: modelTemplCont IS NULL");
+            }
 
-        }
-        catch (Exception e)
-        {
-            log.log(Level.WARNING," delete:: catch an Exception" + e.getMessage());
+        } catch (Exception e) {
+            log.log(Level.WARNING, " delete:: catch an Exception" + e.getMessage());
             String errorMessage = getRootErrorMessage(e);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("delete.failure.msg"));
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, bundle.getString("delete.failure.msg"));
             facesContext.addMessage(null, m);
             return "edit";
         }
@@ -140,50 +138,48 @@ public class EditController {
 
     public String update() {
         FacesContext context = FacesContext.getCurrentInstance();
-        ResourceBundle bundle= context.getApplication().getResourceBundle(context, "msg");
-        try
-        {
-            if (modelTemplCont != null)
-            {
-                log.log(Level.INFO,"update: Model Template Controller: ["+ modelTemplCont.getId() +" " +modelTemplCont.getDdbId() + " "+ modelTemplCont.getComment()+"]");
+        ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
+        try {
+            if (modelTemplCont != null) {
+                log.log(Level.INFO, "update: Model Template Controller: [" + modelTemplCont.getId() + " " + modelTemplCont.getDdbId() + " " + modelTemplCont.getComment() + "]");
                 pmanager.save(modelTemplCont);
                 FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("update.operation.msg"), bundle.getString("update.success.msg"));
                 facesContext.addMessage(null, m);
                 return "edit";
+            } else {
+                throw new Exception("update: newModelTemplateContainer IS NULL");
             }
-            else    throw new Exception("update: newModelTemplateContainer IS NULL");
 
-        }
-        catch (Exception e) {
-            log.log(Level.WARNING,"update:: catch an Exception" + e.getMessage());
+        } catch (Exception e) {
+            log.log(Level.WARNING, "update:: catch an Exception" + e.getMessage());
             String errorMessage = getRootErrorMessage(e);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage,  bundle.getString("update.failure.msg"));
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, bundle.getString("update.failure.msg"));
             facesContext.addMessage(null, m);
             return "edit";
         }
     }
 
 
-    public void displayNewMT(){
-        this.showNewMt=true;
+    public void displayNewMT() {
+        this.showNewMt = true;
     }
 
 
     public void addModelTemplate() throws Exception {
         FacesContext context = FacesContext.getCurrentInstance();
-        ResourceBundle bundle= context.getApplication().getResourceBundle(context, "msg");
+        ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
         try {
-            log.log(Level.INFO," addModelTemplate enter:: "+modelTempl.getComment() );
+            log.log(Level.INFO, " addModelTemplate enter:: " + modelTempl.getComment());
             modelTemplCont.getModelTemplates().add(modelTempl);
             pmanager.save(modelTemplCont);
             modelTempl = new ModelTemplate();
             FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("add.operation.msg"), bundle.getString("add.success.msg"));
             facesContext.addMessage(null, m);
-            log.log(Level.INFO," model template added: ;");
+            log.log(Level.INFO, " model template added: ;");
         } catch (Exception e) {
-            log.log(Level.WARNING,"Error ---");
+            log.log(Level.WARNING, "Error ---");
             String errorMessage = getRootErrorMessage(e);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("add.failure.msg"));
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, bundle.getString("add.failure.msg"));
             facesContext.addMessage(null, m);
 
         }

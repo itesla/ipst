@@ -21,19 +21,17 @@ import eu.itesla_project.iidm.ddb.model.SimulatorInst;
  */
 public class Sorter {
 
-    public static Comparator<Parameters> compareParamSetNum = new Comparator<Parameters>()
-            {
+    public static Comparator<Parameters> compareParamSetNum = new Comparator<Parameters>() {
             // This is where the sorting happens.
-                public int compare(Parameters p1, Parameters p2)
-                {   System.out.println(" compare "+p1.getDefParamSetNum() + " with "+p2.getDefParamSetNum());
-                    int diff= p1.getDefParamSetNum() - p2.getDefParamSetNum() ;
-                    return (diff==0 && p1.getSimulator().equals(p2.getSimulator()))? 0 :diff;
+                public int compare(Parameters p1, Parameters p2) {
+                System.out.println(" compare " + p1.getDefParamSetNum() + " with " + p2.getDefParamSetNum());
+                int diff = p1.getDefParamSetNum() - p2.getDefParamSetNum();
+                return (diff == 0 && p1.getSimulator().equals(p2.getSimulator())) ? 0 : diff;
 
                 }
             };
 
-            public static void main(String[] args)
-            {
+            public static void main(String[] args) {
                 SimulatorInst simulEurostag1 = new SimulatorInst(Simulator.EUROSTAG, "rel 1.0.0");
                 SimulatorInst simulEurostag2 = new SimulatorInst(Simulator.EUROSTAG, "rel 2.0.0");
                 SimulatorInst simulEurostag3 = new SimulatorInst(Simulator.EUROSTAG, "rel 3.0.0");
@@ -63,14 +61,15 @@ public class Sorter {
                 params.add(pm3);
 
 
-            for (Parameters par : params)
-                System.out.println("Before sorting on defParamSetNum: " + par.getDefParamSetNum() + par.getSimulator().toString());
+                for (Parameters par : params) {
+                    System.out.println("Before sorting on defParamSetNum: " + par.getDefParamSetNum() + par.getSimulator().toString());
+                }
+                System.out.println("........................................................ ");
+                Collections.sort(params, compareParamSetNum);
 
-            System.out.println("........................................................ ");
-            Collections.sort(params, compareParamSetNum);
-
-            for (Parameters par : params)
-                System.out.println("After sorting on defParamSetNum: " + par.getDefParamSetNum()+ par.getSimulator().toString());
+                for (Parameters par : params) {
+                    System.out.println("After sorting on defParamSetNum: " + par.getDefParamSetNum() + par.getSimulator().toString());
+                }
         }
 
 }

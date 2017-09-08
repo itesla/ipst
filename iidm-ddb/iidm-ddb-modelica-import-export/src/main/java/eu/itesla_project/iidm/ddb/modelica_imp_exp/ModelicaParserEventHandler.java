@@ -12,8 +12,7 @@ import java.io.File;
  * @author Luis Maria Zamarreno <zamarrenolm@aia.com>
  * @author Silvia Machado <machados@aia.es>
  */
-public interface ModelicaParserEventHandler
-{
+public interface ModelicaParserEventHandler {
     void onStartFile(File file);
 
     void onEndFile(File file);

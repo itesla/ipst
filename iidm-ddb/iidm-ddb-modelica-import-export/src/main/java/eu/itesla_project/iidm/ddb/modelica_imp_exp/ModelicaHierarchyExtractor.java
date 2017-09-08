@@ -12,48 +12,40 @@ import java.io.File;
  * @author Luis Maria Zamarreno <zamarrenolm@aia.com>
  * @author Silvia Machado <machados@aia.es>
  */
-public class ModelicaHierarchyExtractor implements ModelicaParserEventHandler
-{
+public class ModelicaHierarchyExtractor implements ModelicaParserEventHandler {
     private ModelicaHierarchy    h;
 
-    public ModelicaHierarchy getHierarchy()
-    {
+    public ModelicaHierarchy getHierarchy() {
         return h;
     }
 
     @Override
-    public void onStartClass(String specifier, String ident, String comment, boolean isComposition, String line)
-    {
+    public void onStartClass(String specifier, String ident, String comment, boolean isComposition, String line) {
         // Prepare the hierarchy before handling the line
         h.push(new ModelicaHierarchy.Item(specifier, ident, comment, isComposition, line));
     }
 
     @Override
-    public void onEndClass(String ident)
-    {
+    public void onEndClass(String ident) {
         h.pop();
     }
 
     @Override
-    public void onParameter(ModelicaParameter param)
-    {
+    public void onParameter(ModelicaParameter param) {
     }
 
     @Override
-    public void onLine(String line)
-    {
+    public void onLine(String line) {
     }
 
     @Override
-    public void onStartFile(File file)
-    {
+    public void onStartFile(File file) {
         // A new hierarchy for every parsed file
         h = new ModelicaHierarchy();
     }
 
     @Override
-    public void onEndFile(File file)
-    {
+    public void onEndFile(File file) {
         h = null;
     }
 }

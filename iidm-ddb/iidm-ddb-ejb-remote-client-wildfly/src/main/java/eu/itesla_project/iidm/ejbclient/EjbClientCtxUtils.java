@@ -86,7 +86,7 @@ public class EjbClientCtxUtils {
                 "true");
         p.put("jboss.naming.client.connect.options.org.xnio.Options.SASL_POLICY_NOPLAINTEXT", "false");
         //p.put("remote.connection.default.connect.options.org.xnio.Options.SASL_POLICY_NOPLAINTEXT","false");
-        p.put("remote.connection.default.connect.options.org.xnio.Options.SASL_DISALLOWED_MECHANISMS","JBOSS-LOCAL-USER");
+        p.put("remote.connection.default.connect.options.org.xnio.Options.SASL_DISALLOWED_MECHANISMS", "JBOSS-LOCAL-USER");
 
         p.put("jboss.naming.client.ejb.context", true);
 
@@ -100,7 +100,7 @@ public class EjbClientCtxUtils {
         if ((jbHost == null) || ("".equals(jbHost))) {
             jbHost = host;
         }
-        LOGGER.info("****JBOSS 8.x**** host: " + jbHost + ", port: " +port+ ", username: " + userName);
+        LOGGER.info("****JBOSS 8.x**** host: " + jbHost + ", port: " + port + ", username: " + userName);
 
         p.put(javax.naming.Context.PROVIDER_URL, "http-remoting://" + jbHost + ":"
                 + port);
@@ -131,7 +131,7 @@ public class EjbClientCtxUtils {
     }
 
 
-    public static void close(Context context) throws Exception{
+    public static void close(Context context) throws Exception {
         context.close();
     }
 }

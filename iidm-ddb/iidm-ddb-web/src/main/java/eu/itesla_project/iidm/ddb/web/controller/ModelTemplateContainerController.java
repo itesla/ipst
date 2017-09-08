@@ -89,7 +89,7 @@ public class ModelTemplateContainerController {
     private String data;
 
     @Produces
-    private Map<String,ModelData> mtData;
+    private Map<String, ModelData> mtData;
 
     private Integer numDefaultParameters;
 
@@ -107,11 +107,11 @@ public class ModelTemplateContainerController {
 
     @PostConstruct
     public void initModelTemplateContainer() {
-        log.info("initModelTemplateContainer enter "+this.currentddbid);
+        log.info("initModelTemplateContainer enter " + this.currentddbid);
         this.modelTemplateContainer = new ModelTemplateContainer("", "");
         this.modelTemplate = new ModelTemplate();
-        lazyDataModel=new LazyModelTemplateContainerDataModel(pmanager);
-        modelTemplatesCount=lazyDataModel.getRowCount();
+        lazyDataModel = new LazyModelTemplateContainerDataModel(pmanager);
+        modelTemplatesCount = lazyDataModel.getRowCount();
 
     /*
         Map<String,String> params =   FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
@@ -177,9 +177,8 @@ public class ModelTemplateContainerController {
 
     public void setDdbId(String ddbId) {
         this.ddbId = ddbId;
-        if(ddbId!= null)
-        {
-            this.modelTemplateContainer=pmanager.findModelTemplateContainer(ddbId);
+        if (ddbId != null) {
+            this.modelTemplateContainer = pmanager.findModelTemplateContainer(ddbId);
         }
     }
 
@@ -197,11 +196,11 @@ public class ModelTemplateContainerController {
     }
 
 
-    public Map<String,ModelData> getMtData() {
+    public Map<String, ModelData> getMtData() {
         return mtData;
     }
 
-    public void setMtData(Map<String,ModelData> mtData) {
+    public void setMtData(Map<String, ModelData> mtData) {
         this.mtData = mtData;
     }
 
@@ -273,16 +272,15 @@ public class ModelTemplateContainerController {
         }
 
 
-    public void downLoadFile(ModelTemplate mt, String mapKey){
-            if (mt!= null) {
-                System.out.println("mt id  "+mt.getId() + " mt comment "+mt.getComment() + "mapkey "+mapKey );
-                byte[]  fileMap=mt.getData(mapKey);
+    public void downLoadFile(ModelTemplate mt, String mapKey) {
+            if (mt != null) {
+                System.out.println("mt id  " + mt.getId() + " mt comment " + mt.getComment() + "mapkey " + mapKey);
+                byte[] fileMap = mt.getData(mapKey);
                 ;
                 ByteArrayInputStream bis = new ByteArrayInputStream(fileMap);
-                fileData = new  DefaultStreamedContent(bis, "text/plain", mapKey+".txt");
+                fileData = new DefaultStreamedContent(bis, "text/plain", mapKey + ".txt");
 
-                }
-            else {
+            } else {
                 System.out.println("mt is null ");
 
             }
@@ -292,18 +290,18 @@ public class ModelTemplateContainerController {
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
         try {
-            log.log(Level.INFO," Create add  [ddbId:" +modelTemplateContainer.getDdbId() + " MTC Comment:"+ modelTemplateContainer.getComment() +" MT Comment "+modelTemplate.getComment() +" "+modelTemplate.getSimulator().getId()+ " "+modelTemplate.getSimulator().getSimulator()+"]");
+            log.log(Level.INFO, " Create add  [ddbId:" + modelTemplateContainer.getDdbId() + " MTC Comment:" + modelTemplateContainer.getComment() + " MT Comment " + modelTemplate.getComment() + " " + modelTemplate.getSimulator().getId() + " " + modelTemplate.getSimulator().getSimulator() + "]");
 
             modelTemplateContainer.getModelTemplates().add(modelTemplate);
 
             pmanager.save(modelTemplateContainer);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO,  bundle.getString("create.operation.msg"), bundle.getString("create.success.msg"));
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("create.operation.msg"), bundle.getString("create.success.msg"));
             facesContext.addMessage(null, m);
-            log.log(Level.INFO,"New model template container added: ["+ modelTemplateContainer.getId() +" " +modelTemplateContainer.getDdbId() + " "+ modelTemplateContainer.getComment() +"]");
+            log.log(Level.INFO, "New model template container added: [" + modelTemplateContainer.getId() + " " + modelTemplateContainer.getDdbId() + " " + modelTemplateContainer.getComment() + "]");
             // initModelTemplateContainer();
             return "list?faces-redirect=true";
         } catch (Exception e) {
-            log.log(Level.WARNING,"Error during creation of ["+ modelTemplateContainer.getId() +" " +modelTemplateContainer.getDdbId() + " "+ modelTemplateContainer.getComment()+"]");
+            log.log(Level.WARNING, "Error during creation of [" + modelTemplateContainer.getId() + " " + modelTemplateContainer.getDdbId() + " " + modelTemplateContainer.getComment() + "]");
             String errorMessage = getRootErrorMessage(e);
             FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("create.failure.msg"));
             facesContext.addMessage(null, m);
@@ -313,11 +311,11 @@ public class ModelTemplateContainerController {
 
 
     public String view(String ddbId) {
-        log.log(Level.INFO,"view:: enter  parameter ddbId: " + ddbId);
-        this.ddbId=ddbId;
+        log.log(Level.INFO, "view:: enter  parameter ddbId: " + ddbId);
+        this.ddbId = ddbId;
         this.modelTemplateContainer = pmanager.findModelTemplateContainer(ddbId);
         this.buildDefParamTable();
-        log.log(Level.INFO,"view:: for  model template container: ["+ modelTemplateContainer.getId() +" " +modelTemplateContainer.getDdbId() + " "+ modelTemplateContainer.getComment()+"]");
+        log.log(Level.INFO, "view:: for  model template container: [" + modelTemplateContainer.getId() + " " + modelTemplateContainer.getDdbId() + " " + modelTemplateContainer.getComment() + "]");
         return "/modelTemplateContainer/details?faces-redirect=true&includeViewParams=true";
     }
 
@@ -327,20 +325,17 @@ public class ModelTemplateContainerController {
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
         this.modelTemplateContainer = pmanager.findModelTemplateContainer(ddbId);
-        this.currentddbid=ddbId;
-        this.ddbId=ddbId;
-        try
-        {
-            if (modelTemplateContainer != null)
-            {
+        this.currentddbid = ddbId;
+        this.ddbId = ddbId;
+        try {
+            if (modelTemplateContainer != null) {
                 buildDefParamTable();
                 return "/modelTemplateContainer/edit?faces-redirect=true&includeViewParams=true";
+            } else {
+                throw new Exception("Edit:modelTemplateContainer IS NULL");
             }
-            else throw new Exception("Edit:modelTemplateContainer IS NULL");
-        }
-        catch (Exception e)
-        {
-            log.log(Level.WARNING,"Edit: Edit: modelTemplateContainer IS NULL");
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Edit: Edit: modelTemplateContainer IS NULL");
             String errorMessage = getRootErrorMessage(e);
             FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("edit.failure.msg"));
             facesContext.addMessage(null, m);
@@ -352,7 +347,7 @@ public class ModelTemplateContainerController {
 
 
     public String delete(String ddbId) {
-        log.log(Level.INFO,"delete:: enter  parameter ddbId: " + ddbId);
+        log.log(Level.INFO, "delete:: enter  parameter ddbId: " + ddbId);
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
         this.modelTemplateContainer = pmanager.findModelTemplateContainer(ddbId);
@@ -360,17 +355,18 @@ public class ModelTemplateContainerController {
         try {
 
             if (modelTemplateContainer != null) {
-                log.log(Level.INFO,"Delete model template container :["+ modelTemplateContainer.getId() +" " +modelTemplateContainer.getDdbId() + " "+ modelTemplateContainer.getComment()+"]");
-                this.modelTemplateContainer = pmanager.findModelTemplateContainer(modelTemplateContainer.getDdbId() );
+                log.log(Level.INFO, "Delete model template container :[" + modelTemplateContainer.getId() + " " + modelTemplateContainer.getDdbId() + " " + modelTemplateContainer.getComment() + "]");
+                this.modelTemplateContainer = pmanager.findModelTemplateContainer(modelTemplateContainer.getDdbId());
                 pmanager.delete(this.modelTemplateContainer);
-                FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, modelTemplateContainer.getDdbId()+" "+bundle.getString("delete.operation.msg"),  bundle.getString("success.msg"));
+                FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, modelTemplateContainer.getDdbId() + " " + bundle.getString("delete.operation.msg"), bundle.getString("success.msg"));
                 facesContext.addMessage(null, m);
                 return "list?faces-redirect=true";
-            } else
+            } else {
                 throw new Exception("Delete: modelTemplateContainer IS NULL");
+            }
 
         } catch (Exception e) {
-            log.log(Level.WARNING," delete:: catch an Exception" + e.getMessage());
+            log.log(Level.WARNING, " delete:: catch an Exception" + e.getMessage());
             String errorMessage = getRootErrorMessage(e);
             FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("delete.failure.msg"));
             facesContext.addMessage(null, m);
@@ -379,25 +375,26 @@ public class ModelTemplateContainerController {
     }
 
     public String update(String ddbId) {
-        log.log(Level.INFO,"update:: enter parameter ddbId: " + ddbId);
+        log.log(Level.INFO, "update:: enter parameter ddbId: " + ddbId);
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
         try {
             ModelTemplateContainer mtcFromDB = pmanager.findModelTemplateContainer(ddbId);
             if (mtcFromDB != null) {
-                log.log(Level.INFO,"update: Model Template Controller: ["+ mtcFromDB.getId() +"] "); // +modelTemplateContainer.getDdbId() + " "+ modelTemplateContainer.getComment()+"]");
+                log.log(Level.INFO, "update: Model Template Controller: [" + mtcFromDB.getId() + "] "); // +modelTemplateContainer.getDdbId() + " "+ modelTemplateContainer.getComment()+"]");
 
                 mtcFromDB.setComment(modelTemplateContainer.getComment());
                 pmanager.save(mtcFromDB);
                 this.modelTemplateContainer = mtcFromDB;
-                FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO,bundle.getString("update.operation.msg"), bundle.getString("update.success.msg"));
+                FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("update.operation.msg"), bundle.getString("update.success.msg"));
                 facesContext.addMessage(null, m);
                 return "edit";
-            } else
+            } else {
                 throw new Exception("update: newModelTemplateContainer IS NULL");
+            }
 
         } catch (Exception e) {
-            log.log(Level.WARNING,"update:: catch an Exception" + e.getMessage());
+            log.log(Level.WARNING, "update:: catch an Exception" + e.getMessage());
             String errorMessage = getRootErrorMessage(e);
             FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage,  bundle.getString("update.failure.msg"));
             facesContext.addMessage(null, m);
@@ -407,18 +404,18 @@ public class ModelTemplateContainerController {
 
     public void addModelTemplate(String ddbId)  {
 
-        log.log(Level.INFO,"addModelTemplate:: enter  parameter ddbId: " + ddbId +" MT DafaultParameters.setNum: " +this.numDefaultParameters);
+        log.log(Level.INFO, "addModelTemplate:: enter  parameter ddbId: " + ddbId + " MT DafaultParameters.setNum: " + this.numDefaultParameters);
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
 
         try {
 
             this.modelTemplateContainer = pmanager.findModelTemplateContainer(ddbId);
-            log.log(Level.INFO,"  addModelTemplate  [ddbId:" +modelTemplateContainer.getDdbId() + " MTC Comment:"+ modelTemplateContainer.getComment() +" MT Comment "+modelTemplate.getComment() +" "+modelTemplate.getSimulator().getId()+ " "+modelTemplate.getSimulator().getSimulator()+"]");
-            List<ModelTemplate> modelTemplates=modelTemplateContainer.getModelTemplates();
+            log.log(Level.INFO, "  addModelTemplate  [ddbId:" + modelTemplateContainer.getDdbId() + " MTC Comment:" + modelTemplateContainer.getComment() + " MT Comment " + modelTemplate.getComment() + " " + modelTemplate.getSimulator().getId() + " " + modelTemplate.getSimulator().getSimulator() + "]");
+            List<ModelTemplate> modelTemplates = modelTemplateContainer.getModelTemplates();
 
-            for (ModelTemplate mt :modelTemplates){
-                if (mt.getSimulator().equals(modelTemplate.getSimulator() )){
+            for (ModelTemplate mt : modelTemplates) {
+                if (mt.getSimulator().equals(modelTemplate.getSimulator())) {
                     throw new Exception ("Model Template is already present!");
                 }
             }
@@ -428,12 +425,12 @@ public class ModelTemplateContainerController {
             this.modelTemplateContainer = pmanager.findModelTemplateContainer(ddbId);
             modelTemplate = new ModelTemplate();
             this.buildDefParamTable();
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO,bundle.getString("add.operation.msg"), bundle.getString("add.success.msg"));
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("add.operation.msg"), bundle.getString("add.success.msg"));
             facesContext.addMessage(null, m);
-            log.log(Level.INFO," model template added: ;");
+            log.log(Level.INFO, " model template added: ;");
 
         } catch (Exception e) {
-            log.log(Level.WARNING,"Errors :"+ e.getMessage());
+            log.log(Level.WARNING, "Errors :" + e.getMessage());
             e.printStackTrace();
             String errorMessage = getRootErrorMessage(e);
             FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("add.failure.msg"));
@@ -445,91 +442,92 @@ public class ModelTemplateContainerController {
 
 
 
-    public void removeModelTemplate(String ddbId,ModelTemplate modelTemplate)  {
-        log.log(Level.INFO,"removeModelTemplate:: enter  parameter ddbId: " + ddbId +" MT  ID"+modelTemplate.getId()+ " Simulator" +modelTemplate.getSimulator());
+    public void removeModelTemplate(String ddbId, ModelTemplate modelTemplate) {
+        log.log(Level.INFO, "removeModelTemplate:: enter  parameter ddbId: " + ddbId + " MT  ID" + modelTemplate.getId() + " Simulator" + modelTemplate.getSimulator());
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
-        try
-        {
+        try {
             this.modelTemplateContainer = pmanager.findModelTemplateContainer(ddbId);
-            log.log(Level.INFO,"  removeModelTemplate  [ddbId:" +modelTemplateContainer.getDdbId() + " MTC Comment:"+ modelTemplateContainer.getComment() +" MT Comment "+modelTemplate.getComment() +" "+modelTemplate.getId()+ " "+modelTemplate.getSimulator()+"]");
+            log.log(Level.INFO, "  removeModelTemplate  [ddbId:" + modelTemplateContainer.getDdbId() + " MTC Comment:" + modelTemplateContainer.getComment() + " MT Comment " + modelTemplate.getComment() + " " + modelTemplate.getId() + " " + modelTemplate.getSimulator() + "]");
             modelTemplateContainer.getModelTemplates().remove(modelTemplate);
             pmanager.save(modelTemplateContainer);
             modelTemplate = new ModelTemplate();
             this.modelTemplateContainer = pmanager.findModelTemplateContainer(ddbId);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO,bundle.getString("delete.operation.msg"), bundle.getString("delete.success.msg"));
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("delete.operation.msg"), bundle.getString("delete.success.msg"));
             facesContext.addMessage(null, m);
-            log.log(Level.INFO," model template removed: ;");
+            log.log(Level.INFO, " model template removed: ;");
 
-        }
-        catch (Exception e)
-        {
-            log.log(Level.WARNING,"Error ---");
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Error ---");
             String errorMessage = getRootErrorMessage(e);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,errorMessage,bundle.getString("add.failure.msg"));
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, bundle.getString("add.failure.msg"));
             facesContext.addMessage(null, m);
         }
     }
 
 
     public String detailModelTemplate(ModelTemplate modelTemplate)  {
-        log.log(Level.INFO,"detailModelTemplate:: enter  parameter ddbId:  MT  ID"+modelTemplate.getId()+ " Simulator" +modelTemplate.getSimulator());
-        this.modelTemplate=modelTemplate;
-        Map<String, ModelData> modelDataMap=modelTemplate.modelDataMap();
-        Set<String> mapKey=modelDataMap.keySet();
+        log.log(Level.INFO, "detailModelTemplate:: enter  parameter ddbId:  MT  ID" + modelTemplate.getId() + " Simulator" + modelTemplate.getSimulator());
+        this.modelTemplate = modelTemplate;
+        Map<String, ModelData> modelDataMap = modelTemplate.modelDataMap();
+        Set<String> mapKey = modelDataMap.keySet();
         this.mtMapKeyList = new ArrayList<String>();
         mtMapKeyList.addAll(mapKey);
-        log.log(Level.INFO, " mapKey  "+mapKey.toString());
+        log.log(Level.INFO, " mapKey  " + mapKey.toString());
 
         /**for (String p: mtMapKeyList){
 
-            log.log(Level.INFO, " p "+p);
-        }**/
-        log.log(Level.INFO,"detailModelTemplate:: enter  MT  ID"+modelTemplate.getId()+ " Simulator:" +modelTemplate.getSimulator() +" comment: "+modelTemplate.getComment());
+         log.log(Level.INFO, " p "+p);
+         }**/
+        log.log(Level.INFO, "detailModelTemplate:: enter  MT  ID" + modelTemplate.getId() + " Simulator:" + modelTemplate.getSimulator() + " comment: " + modelTemplate.getComment());
         return "/modelTemplate/details";
     }
 
 
     public void onRowToggle(ToggleEvent event) {
-        log.log(Level.INFO,":: onRowToggle enter");
-        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,     "Row State " + event.getVisibility(), "Model Template :" + ((ModelTemplate) event.getData()).getId() ); 
+        log.log(Level.INFO, ":: onRowToggle enter");
+        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Row State " + event.getVisibility(), "Model Template :" + ((ModelTemplate) event.getData()).getId());
         FacesContext.getCurrentInstance().addMessage(null, msg);  
     }  
 
 
-    private void buildDefParamTable(){
+    private void buildDefParamTable() {
         log.log(Level.INFO, "buildDefParamTable enter");
-        Map <ModelTemplate,List<Integer>> mtList    = new HashMap<ModelTemplate,List<Integer>> ();
-        List<ModelTemplate> modelTemplates=this.modelTemplateContainer.getModelTemplates();
+        Map<ModelTemplate, List<Integer>> mtList = new HashMap<ModelTemplate, List<Integer>>();
+        List<ModelTemplate> modelTemplates = this.modelTemplateContainer.getModelTemplates();
 
-        for (ModelTemplate elem: modelTemplates ) {
-            if (elem.getDefaultParameters()!= null) {
+        for (ModelTemplate elem : modelTemplates) {
+            if (elem.getDefaultParameters() != null) {
 
-                List<Integer> setNumList= new ArrayList<Integer>();
-                for (DefaultParameters df: elem.getDefaultParameters()){
-                    log.log(Level.INFO, " key: setNum  :"+df.getSetNum() +" defParamListSize: "+df.getParameters().size());
+                List<Integer> setNumList = new ArrayList<Integer>();
+                for (DefaultParameters df : elem.getDefaultParameters()) {
+                    log.log(Level.INFO, " key: setNum  :" + df.getSetNum() + " defParamListSize: " + df.getParameters().size());
                     setNumList.add(df.getSetNum());
 
                 }
                 //sort by defSetNum
                 Collections.sort(setNumList);
-                mtList.put(elem,setNumList) ;
+                mtList.put(elem, setNumList);
             }
         }
-        this.modelTemplateList= mtList;
+        this.modelTemplateList = mtList;
 
 
     }
 
 
-    public List<Parameter> getMtDefParams(ModelTemplate mt, Integer setNum){
-        List<ModelTemplate> modelTemplates=this.modelTemplateContainer.getModelTemplates();
-        for (ModelTemplate elem: modelTemplates ) {
-            if (elem.getDefaultParameters()!= null )
-                if (elem.equals(mt))
-                    for (DefaultParameters df: elem.getDefaultParameters()){
-                        if (setNum.equals(df.getSetNum()))    return df.getParameters();
+    public List<Parameter> getMtDefParams(ModelTemplate mt, Integer setNum) {
+        List<ModelTemplate> modelTemplates = this.modelTemplateContainer.getModelTemplates();
+        for (ModelTemplate elem : modelTemplates) {
+            if (elem.getDefaultParameters() != null) {
+                if (elem.equals(mt)) {
+                    for (DefaultParameters df : elem.getDefaultParameters()) {
+                        if (setNum.equals(df.getSetNum())) {
+                            return df.getParameters();
+                        }
                     }
+                }
+            }
         }
         return null;
 

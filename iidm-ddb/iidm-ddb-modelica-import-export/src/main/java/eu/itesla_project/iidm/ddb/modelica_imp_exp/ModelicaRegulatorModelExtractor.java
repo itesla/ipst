@@ -12,17 +12,14 @@ import java.io.File;
  * @author Luis Maria Zamarreno <zamarrenolm@aia.com>
  * @author Silvia Machado <machados@aia.es>
  */
-public class ModelicaRegulatorModelExtractor extends ModelicaModelExtractor
-{
-    ModelicaRegulatorModelExtractor(String libPackageName, String regulatorsPackageName)
-    {
+public class ModelicaRegulatorModelExtractor extends ModelicaModelExtractor {
+    ModelicaRegulatorModelExtractor(String libPackageName, String regulatorsPackageName) {
         this.libPackageName = libPackageName;
         this.regulatorsPackageName = regulatorsPackageName;
     }
 
     @Override
-    public void onStartFile(File file)
-    {
+    public void onStartFile(File file) {
         String newLine = System.getProperty("line.separator");
         super.onStartFile(file);
         text.append(ModelicaGrammar.PACKAGE);
@@ -36,8 +33,7 @@ public class ModelicaRegulatorModelExtractor extends ModelicaModelExtractor
     }
 
     @Override
-    public void onEndFile(File file)
-    {
+    public void onEndFile(File file) {
         String newLine = System.getProperty("line.separator");
         super.onEndFile(file);
         text.append(ModelicaGrammar.END);
@@ -52,8 +48,7 @@ public class ModelicaRegulatorModelExtractor extends ModelicaModelExtractor
     }
 
     @Override
-    public String getMainClassQualifiedName()
-    {
+    public String getMainClassQualifiedName() {
         return libPackageName + "." + regulatorsPackageName + "." + mainClassQualifiedName;
     }
 

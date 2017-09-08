@@ -12,24 +12,20 @@ import java.io.File;
  * @author Luis Maria Zamarreno <zamarrenolm@aia.com>
  * @author Silvia Machado <machados@aia.es>
  */
-public class ModelicaModelExtractor extends ModelicaMainClassExtractor
-{
+public class ModelicaModelExtractor extends ModelicaMainClassExtractor {
     @Override
-    public void onStartFile(File file)
-    {
+    public void onStartFile(File file) {
         super.onStartFile(file);
         text = new StringBuilder(8192);
     }
 
     @Override
-    public void onLine(String line)
-    {
+    public void onLine(String line) {
         text.append(line);
         text.append(System.getProperty("line.separator"));
     }
 
-    public String getText()
-    {
+    public String getText() {
         return text.toString();
     }
 

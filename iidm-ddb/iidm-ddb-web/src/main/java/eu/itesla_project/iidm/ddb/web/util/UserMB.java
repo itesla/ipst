@@ -25,8 +25,8 @@ import javax.servlet.http.HttpSession;
 public class UserMB {
     String user;
 
-    public String getUser(){
-        if(user == null){
+    public String getUser() {
+        if (user == null) {
             ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
             String user = context.getUserPrincipal().getName();
         }
@@ -34,11 +34,11 @@ public class UserMB {
         return user;
     }
 
-    public boolean isUserAdmin(){
+    public boolean isUserAdmin() {
         return getRequest().isUserInRole("ADMIN");
     }
 
-    public String logOut_old(){
+    public String logOut_old() {
         getRequest().getSession().invalidate();
         //return "logout";
         //return "/index.xhtml";
@@ -54,7 +54,7 @@ public class UserMB {
     public void logOut() throws IOException {
         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
         ec.invalidateSession();
-        ec.redirect(ec.getRequestContextPath()+"/index.jsf");
+        ec.redirect(ec.getRequestContextPath() + "/index.jsf");
     }
 
     private HttpServletRequest getRequest() {

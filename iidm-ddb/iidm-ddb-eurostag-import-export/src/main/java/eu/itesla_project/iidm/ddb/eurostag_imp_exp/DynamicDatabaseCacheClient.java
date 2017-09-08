@@ -59,10 +59,11 @@ public class DynamicDatabaseCacheClient implements DynamicDatabaseClient {
     }
 
     private List<Generator> filterGenerators(Network network, boolean isFiltered) {
-        List<Generator> filtGens=new ArrayList<>();
+        List<Generator> filtGens = new ArrayList<>();
         for (Generator g : Identifiables.sort(network.getGenerators())) {
-            if ( !filteredGenerator(g,isFiltered) )
+            if (!filteredGenerator(g, isFiltered)) {
                 filtGens.add(g);
+            }
         }
         return filtGens;
     }

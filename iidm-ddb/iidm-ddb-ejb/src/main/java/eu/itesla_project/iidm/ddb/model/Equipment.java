@@ -27,10 +27,10 @@ import org.hibernate.validator.constraints.NotEmpty;
  * @author Quinary <itesla@quinary.com>
  */
 @Entity
-@Table(name="EQUIPMENT")
+@Table(name = "EQUIPMENT")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
-public class Equipment implements Serializable{
+public class Equipment implements Serializable {
     private static final long serialVersionUID = 1L;
 
     //The synthetic id of the object.
@@ -43,9 +43,9 @@ public class Equipment implements Serializable{
 //    public void setId(Long id) {
 //        this.id = id;
 //    }
-    
+
     //TBD: unique=true to be matched with versions&co 
-    @Column(nullable=false,unique=true)
+    @Column(nullable = false, unique = true)
     @NotEmpty
     private String cimId;
     public String getCimId() {
@@ -57,11 +57,11 @@ public class Equipment implements Serializable{
     
     //@OneToOne(cascade = CascadeType.PERSIST, fetch=FetchType.EAGER)
     //@OneToOne(fetch=FetchType.EAGER)
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     ModelTemplateContainer modelContainer;
     
     //@OneToOne(cascade = CascadeType.PERSIST, fetch=FetchType.EAGER)
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     ParametersContainer parametersContainer;
     public ModelTemplateContainer getModelContainer() {
         return modelContainer;
@@ -80,7 +80,7 @@ public class Equipment implements Serializable{
     }
 
     public Equipment(String cimId) {
-        this.cimId=cimId;
+        this.cimId = cimId;
     }
 
 }

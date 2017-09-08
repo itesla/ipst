@@ -29,9 +29,8 @@ public class LazyEquipmentDataModel extends LazyDataModel<Equipment> {
 
    
 
-   public LazyEquipmentDataModel( DDBManager pmanager)
-   {
-       this.pmanager=pmanager;
+   public LazyEquipmentDataModel( DDBManager pmanager) {
+       this.pmanager = pmanager;
        setPageSize(10);
        setRowCount(pmanager.findEquipmentAllCount());
    }

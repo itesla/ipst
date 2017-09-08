@@ -16,14 +16,14 @@ import eu.itesla_project.commons.tools.Command;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class DdbLoaderCommand implements Command{
+public class DdbLoaderCommand implements Command {
 
-    public final static  DdbLoaderCommand INSTANCE=new DdbLoaderCommand();
-    public final static String PSSE_VERSION="psse-version";
-    public final static String HOST="host";
-    public final static String PORT="port";
-    public final static String USER="user";
-    public final static String PASSWORD="password";
+    public final static  DdbLoaderCommand INSTANCE = new DdbLoaderCommand();
+    public final static String PSSE_VERSION = "psse-version";
+    public final static String HOST = "host";
+    public final static String PORT = "port";
+    public final static String USER = "user";
+    public final static String PASSWORD = "password";
     public final static String PSSE_DYRFILEPATH = "dyr-file";
     public final static String PSSE_MAPPINGFILEPATH = "mapping-file";
     public final static String OPTION_REMOVE = "remove-data-flag";

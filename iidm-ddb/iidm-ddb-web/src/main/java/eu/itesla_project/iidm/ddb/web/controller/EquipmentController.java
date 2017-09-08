@@ -74,7 +74,7 @@ public class EquipmentController {
 
   // private TreeMap<SimulatorInst,List<Connection>> treeMapConnection ;
    
-   private List<Connection> schemaConnections ;
+   private List<Connection> schemaConnections;
    
    private List<SimulatorInst> keySimulatorInst;
    
@@ -118,30 +118,32 @@ public class EquipmentController {
    public void initNewEquipment() {
        log.log(Level.INFO, " initNewEquipment enter:: ");
 
-       lazyDataModel=new LazyEquipmentDataModel(pmanager);
-       equipmentsCount=lazyDataModel.getRowCount();
+       lazyDataModel = new LazyEquipmentDataModel(pmanager);
+       equipmentsCount = lazyDataModel.getRowCount();
 
-       String paramCimId=null;
+       String paramCimId = null;
        FacesContext ctx = FacesContext.getCurrentInstance();
        Map<String, String> parameters = ctx.getExternalContext().getRequestParameterMap();
        if (parameters.containsKey("cimId")) {
-           paramCimId = (String)parameters.get("cimId");
-           log.log(Level.INFO, " param :: "+paramCimId);
+           paramCimId = (String) parameters.get("cimId");
+           log.log(Level.INFO, " param :: " + paramCimId);
        }
-       if (paramCimId == null)
+       if (paramCimId == null) {
            this.newEquipment = new Equipment("");
-       else
-           this.newEquipment=pmanager.findEquipment(paramCimId);
+       } else {
+           this.newEquipment = pmanager.findEquipment(paramCimId);
+       }
 
-       if (this.newEquipment!= null)
-           log.log(Level.INFO, " newEquipment :: "+this.newEquipment.getCimId());
+       if (this.newEquipment != null) {
+           log.log(Level.INFO, " newEquipment :: " + this.newEquipment.getCimId());
+       }
 
-       List<String> internalsSource = new ArrayList<String>();  
-       List<String> internalsTarget = new ArrayList<String>();  
-       
+       List<String> internalsSource = new ArrayList<String>();
+       List<String> internalsTarget = new ArrayList<String>();
+
        Query q1 = em.createQuery("SELECT m.nativeId FROM Internal m order by m.nativeId");
-       
-       internalsSource=q1.getResultList();
+
+       internalsSource = q1.getResultList();
 
        /*
        List<Internal> internalToConnect=pmanager.findInternalsAll();
@@ -255,11 +257,10 @@ public String getCimId() {
    public void setCimId(String cimId) {
         this.cimId = cimId;
 
-        if(cimId != null)
-        {
-            this.newEquipment=pmanager.findEquipment(cimId);
-            buildConnectionTable();
-        }
+       if (cimId != null) {
+           this.newEquipment = pmanager.findEquipment(cimId);
+           buildConnectionTable();
+       }
    }
 
    public List<String> getModelTemplateContainerDdbids() {
@@ -310,123 +311,126 @@ public String getCimId() {
        FacesContext context = FacesContext.getCurrentInstance();
        ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
        try {
-           log.log(Level.INFO," Create new Equipment: [cimIdId: " +newEquipment.getCimId()
-                    +"  Model Container DDBID: "+ selectedModelTemplateContainer
-                    +"  Parameter Container: "+selectedParametersContainer +"]");
+           log.log(Level.INFO, " Create new Equipment: [cimIdId: " + newEquipment.getCimId()
+                   + "  Model Container DDBID: " + selectedModelTemplateContainer
+                   + "  Parameter Container: " + selectedParametersContainer + "]");
 
-            ModelTemplateContainer mc=pmanager.findModelTemplateContainer(this.selectedModelTemplateContainer);
-            newEquipment.setModelContainer(mc);
+           ModelTemplateContainer mc = pmanager.findModelTemplateContainer(this.selectedModelTemplateContainer);
+           newEquipment.setModelContainer(mc);
 
-            ParametersContainer pc=pmanager.findParametersContainer(this.selectedParametersContainer);
-            newEquipment.setParametersContainer(pc);
+           ParametersContainer pc = pmanager.findParametersContainer(this.selectedParametersContainer);
+           newEquipment.setParametersContainer(pc);
 
-            pmanager.save(this.newEquipment);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("create.operation.msg"), bundle.getString("create.success.msg"));
-            facesContext.addMessage(null, m);
-            return "list?faces-redirect=true";
-        } catch (Exception e) {
-            log.log(Level.WARNING,"Error during creation of ["+ newEquipment.getCimId()+"]");
-            String errorMessage = getRootErrorMessage(e);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("create.failure.msg"));
-            facesContext.addMessage(null, m);
-            return "create";
-        }
+           pmanager.save(this.newEquipment);
+           FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("create.operation.msg"), bundle.getString("create.success.msg"));
+           facesContext.addMessage(null, m);
+           return "list?faces-redirect=true";
+       } catch (Exception e) {
+           log.log(Level.WARNING, "Error during creation of [" + newEquipment.getCimId() + "]");
+           String errorMessage = getRootErrorMessage(e);
+           FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, bundle.getString("create.failure.msg"));
+           facesContext.addMessage(null, m);
+           return "create";
+       }
     }
    
    
    public String delete(String cimId) throws Exception {
-           FacesContext context = FacesContext.getCurrentInstance();
-        ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
+       FacesContext context = FacesContext.getCurrentInstance();
+       ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
 
-        try {
-            log.log(Level.INFO," Delete Equipment: [cimIdId: " +cimId +"]");
-            this.newEquipment=pmanager.findEquipment(cimId);
-            pmanager.delete(this.newEquipment);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("delete.operation.msg"), bundle.getString("delete.success.msg"));
-            facesContext.addMessage(null, m);
-            return "list?faces-redirect=true";
-        } catch (Exception e) {
-            log.log(Level.WARNING,"Error during delete of ["+ newEquipment.getCimId()+"]");
-            String errorMessage = getRootErrorMessage(e);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("delete.failure.msg"));
-            facesContext.addMessage(null, m);
-            return "edit";
-        }
+       try {
+           log.log(Level.INFO, " Delete Equipment: [cimIdId: " + cimId + "]");
+           this.newEquipment = pmanager.findEquipment(cimId);
+           pmanager.delete(this.newEquipment);
+           FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("delete.operation.msg"), bundle.getString("delete.success.msg"));
+           facesContext.addMessage(null, m);
+           return "list?faces-redirect=true";
+       } catch (Exception e) {
+           log.log(Level.WARNING, "Error during delete of [" + newEquipment.getCimId() + "]");
+           String errorMessage = getRootErrorMessage(e);
+           FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, bundle.getString("delete.failure.msg"));
+           facesContext.addMessage(null, m);
+           return "edit";
+       }
     }
    
    public String edit(Equipment eq) {
-        log.log(Level.INFO," edit enter:: ["+eq.getCimId()+"]");
-        this.cimId=eq.getCimId();
-        FacesContext context = FacesContext.getCurrentInstance();
-        ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
-        this.newEquipment=pmanager.findEquipment(eq.getCimId());
-        try
-        {
-            if (newEquipment != null) {
-                log.log(Level.INFO,"Edit Equipment : ["+ newEquipment.getCimId()+"]");
-                this.buildConnectionTable();
-                return "edit?faces-redirect=true&includeViewParams=true";
-            }
-            else throw new Exception("Edit: Equipment not found!");
-        }
-        catch (Exception e)
-        {
-            log.log(Level.WARNING,"edit equipment:: catch an Exception" + e.getMessage());
-            String errorMessage = getRootErrorMessage(e);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage,  bundle.getString("edit.failure.msg"));
-            facesContext.addMessage(null, m);
-            return "edit";
-        }
+       log.log(Level.INFO, " edit enter:: [" + eq.getCimId() + "]");
+       this.cimId = eq.getCimId();
+       FacesContext context = FacesContext.getCurrentInstance();
+       ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
+       this.newEquipment = pmanager.findEquipment(eq.getCimId());
+       try {
+           if (newEquipment != null) {
+               log.log(Level.INFO, "Edit Equipment : [" + newEquipment.getCimId() + "]");
+               this.buildConnectionTable();
+               return "edit?faces-redirect=true&includeViewParams=true";
+           } else {
+               throw new Exception("Edit: Equipment not found!");
+           }
+       } catch (Exception e) {
+           log.log(Level.WARNING, "edit equipment:: catch an Exception" + e.getMessage());
+           String errorMessage = getRootErrorMessage(e);
+           FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, bundle.getString("edit.failure.msg"));
+           facesContext.addMessage(null, m);
+           return "edit";
+       }
     }
    
 
    public void onTransfer(TransferEvent event) {  
-       log.log(Level.INFO,"onTransfer:: enter");
+       log.log(Level.INFO, "onTransfer:: enter");
        FacesContext context = FacesContext.getCurrentInstance();
        ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
        StringBuilder builder = new StringBuilder();
-       for(Object item : event.getItems()) {  
+       for (Object item : event.getItems()) {
            builder.append((String) item).append("<br />");
        }  
-       FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,bundle.getString("connection.operation.transf.msg"),bundle.getString("connection.success.msg"));  
+       FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("connection.operation.transf.msg"), bundle.getString("connection.success.msg"));
        FacesContext.getCurrentInstance().addMessage(null, msg);  
    }  
   
    
-   public void addConnectionWithInternal(String paramCimId ){
-       log.log(Level.INFO,"addConnectionWithInternal::  paramCimId: "+paramCimId );
+   public void addConnectionWithInternal(String paramCimId ) {
+       log.log(Level.INFO, "addConnectionWithInternal::  paramCimId: " + paramCimId);
 
        FacesContext context = FacesContext.getCurrentInstance();
        ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
 
-       if (paramCimId  != null && this.internals != null && this.internals.getTarget().size()> 0) {
-           this.newEquipment=pmanager.findEquipment(paramCimId);
-              ConnectionSchema cs=pmanager.findConnectionSchema(paramCimId, null);
-              if (cs==null)   cs= new ConnectionSchema(paramCimId);
-
-              List<Connection> connections = new ArrayList<Connection>();
-              if (cs.getConnections() !=null && cs.getConnections().size()>0)
-                  connections= cs.getConnections();
-
-           for(Object item : this.internals.getTarget())   {
-               Connection connToAdd=new Connection (paramCimId, 0, (String)item, 1, null,null, 0);
-               //to avoid connection duplicated
-               if (!connections.contains(connToAdd))
-                   connections.add(new Connection (paramCimId, 0, (String)item, 1, null,null, 0));
+       if (paramCimId != null && this.internals != null && this.internals.getTarget().size() > 0) {
+           this.newEquipment = pmanager.findEquipment(paramCimId);
+           ConnectionSchema cs = pmanager.findConnectionSchema(paramCimId, null);
+           if (cs == null) {
+               cs = new ConnectionSchema(paramCimId);
            }
-           
-           if (connections!= null  && connections.size()>0) { 
+
+           List<Connection> connections = new ArrayList<Connection>();
+           if (cs.getConnections() != null && cs.getConnections().size() > 0) {
+               connections = cs.getConnections();
+           }
+
+           for (Object item : this.internals.getTarget()) {
+               Connection connToAdd = new Connection(paramCimId, 0, (String) item, 1, null, null, 0);
+               //to avoid connection duplicated
+               if (!connections.contains(connToAdd)) {
+                   connections.add(new Connection(paramCimId, 0, (String) item, 1, null, null, 0));
+               }
+           }
+
+           if (connections != null && connections.size() > 0) {
                cs.setConnections(connections);
                pmanager.save(cs);
-               log.log(Level.INFO,"addConnectionWithInternal:: connectionsaved");
+               log.log(Level.INFO, "addConnectionWithInternal:: connectionsaved");
                buildConnectionTable();
-               FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,bundle.getString("connection.operation.add.msg"),bundle.getString("connection.add.success.msg"));
+               FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("connection.operation.add.msg"), bundle.getString("connection.add.success.msg"));
                FacesContext.getCurrentInstance().addMessage(null, msg);
-           }else log.log(Level.INFO,"addConnectionWithInternal:: no connection added");
-       }
-       else {
-           log.log(Level.INFO,"addConnectionWithInternal:: No connection added");
-           FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,bundle.getString("connection.add.failure.msg"),null);
+           } else {
+               log.log(Level.INFO, "addConnectionWithInternal:: no connection added");
+           }
+       } else {
+           log.log(Level.INFO, "addConnectionWithInternal:: No connection added");
+           FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("connection.add.failure.msg"), null);
            FacesContext.getCurrentInstance().addMessage(null, msg);
        }
    }
@@ -488,21 +492,19 @@ public String getCimId() {
 */
    
    private void buildConnectionTable() {
-       log.log(Level.INFO," buildConnectionTable enter:: ") ;
-       try
-         {
-             this.schemaConnections=  new ArrayList<Connection>();
-             String cimId=this.newEquipment.getCimId();
-             ConnectionSchema connSchema =pmanager.findConnectionSchema(cimId, null);
-             if (connSchema!=null)
-                 this.schemaConnections= connSchema.getConnections();
-             else
-                 log.log(Level.INFO," there aren't  connectionSchema ") ;
-         }
-         catch (Exception exc)
-         {
+       log.log(Level.INFO, " buildConnectionTable enter:: ");
+       try {
+             this.schemaConnections = new ArrayList<Connection>();
+             String cimId = this.newEquipment.getCimId();
+             ConnectionSchema connSchema = pmanager.findConnectionSchema(cimId, null);
+             if (connSchema != null) {
+                 this.schemaConnections = connSchema.getConnections();
+             } else {
+                 log.log(Level.INFO, " there aren't  connectionSchema ");
+             }
+         } catch (Exception exc) {
              exc.printStackTrace();
-             log.log(Level.INFO,"  exception "+exc.getMessage()) ;
+             log.log(Level.INFO, "  exception " + exc.getMessage());
          }
      }
    

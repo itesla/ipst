@@ -50,12 +50,14 @@ public class Converter {
         setWorkingDirectory(configuration.workingDir);
 
         this.ddbManager = ddbManager;
-        eurostagSimulator=this.ddbManager.findSimulator(Simulator.EUROSTAG, eurostagVersion);
-        if ( eurostagSimulator == null )
+        eurostagSimulator = this.ddbManager.findSimulator(Simulator.EUROSTAG, eurostagVersion);
+        if (eurostagSimulator == null) {
             Utils.throwConverterException("Unsupported Eurostag version " + eurostagVersion, log);
-        modelicaSimulator=this.ddbManager.findSimulator(Simulator.MODELICA, modelicaVersion);
-        if ( modelicaSimulator == null )
+        }
+        modelicaSimulator = this.ddbManager.findSimulator(Simulator.MODELICA, modelicaVersion);
+        if (modelicaSimulator == null) {
             Utils.throwConverterException("Unsupported Modelica version " + modelicaVersion, log);
+        }
     }
 
     public String getEurostagVersion() {
@@ -100,29 +102,33 @@ public class Converter {
             // get the internal
             Internal internal = ddbManager.findInternal(nativeId);
             // check if it does exist
-            if ( internal == null )
+            if (internal == null) {
                 Utils.throwConverterException("No Internal with " + nativeId + " id in the DDB", log);
+            }
             log.debug("Found Internal " + internal.getNativeId());
 
             // check if data in modelica format is already in the ddb
             ModelTemplate modelTemplateModelica = ddbManager.findModelTemplate(internal, modelicaSimulator);
-            if ( !overwrite ) {
-                if ( modelTemplateModelica != null )
+            if (!overwrite) {
+                if (modelTemplateModelica != null) {
                     Utils.throwConverterException("Internal " + nativeId + " already has data in Modelica format in the DDB", log);
+                }
             }
 
             // get the model template for eurostag
             ModelTemplate modelTemplateEurostag = ddbManager.findModelTemplate(internal, eurostagSimulator);
             // check if it does exist
-            if ( modelTemplateEurostag == null )
+            if ( modelTemplateEurostag == null ) {
                 Utils.throwConverterException("No Eurostag v. " + eurostagSimulator.getVersion() + " ModelTemplate for Internal " + nativeId + " in the DDB", log);
+            }
             log.debug("Found Eurostag ModelTemplate " + modelTemplateEurostag.getId() + " for Internal " + nativeId);
 
             // get the macroblock name parameter
             String macroblockName = ddbManager.getStringParameter(internal, eurostagSimulator, "macroblock.name");
             // check if it does exist
-            if ( macroblockName == null )
+            if ( macroblockName == null ) {
                 Utils.throwConverterException("No macroblock name in Eurostag v. " + eurostagSimulator.getVersion() + " Parameters for Internal " + nativeId + " in the DDB", log);
+            }
             log.debug("Found Macroblock " + macroblockName  + " among Eurostag parameters of Internal " + nativeId);
 
             // save eurostag data files
@@ -132,18 +138,20 @@ public class Converter {
 
             // convert eurostag files
             modelicaFileName = macroblockName.toLowerCase() + ".mo";
-            if ( saveInitFile )
+            if (saveInitFile) {
                 modelicaInitFileName = macroblockName.toLowerCase() + "_init.mo";
+            }
             HashMap<Integer, HashMap<String, String>> allParameterSets = null;
             try {
                 itesla.converter.Converter conversor = new itesla.converter.Converter(frmFile, workingDirectory + File.separator, false); // must add separator to working dir to correctly run conversion
                 conversor.convert2MO();
-                if ( saveInitFile ) {
+                if (saveInitFile) {
                     itesla.converter.Converter initConversor = new itesla.converter.Converter(frmFile, workingDirectory + File.separator, true);
                     initConversor.convert2MO();
                 }
-                if ( saveParametersSets )
+                if (saveParametersSets) {
                     allParameterSets = conversor.parData.getParameters();
+                }
             } catch (Exception e) {
                 Utils.throwConverterException("Error converting " + nativeId + ": " + e.getMessage(), log);
             }
@@ -159,7 +167,7 @@ public class Converter {
 
             // read modelica init data from file
             byte[] modelicaInitData = null;
-            if ( saveInitFile ) {
+            if (saveInitFile) {
                 try {
                     log.debug("Reading Modelica init data for Internal " + nativeId + " from file " + modelicaInitFileName);
                     modelicaInitData = Utils.readFile(workingDirectory, modelicaInitFileName);
@@ -170,21 +178,23 @@ public class Converter {
 
             // store modelica data
             ModelTemplateContainer modelTemplateContainer = internal.getModelContainer();
-            if ( modelTemplateModelica == null ) {
+            if (modelTemplateModelica == null) {
                 modelTemplateModelica = new ModelTemplate(modelicaSimulator, macroblockName.toLowerCase(), macroblockName);
             } else { // in order to update the model template, I need to remove and then add it
                 List<ModelTemplate> modelTemplates = modelTemplateContainer.getModelTemplates();
                 ModelTemplate modelTemplateToRemove = null;
                 for (ModelTemplate modelTemplate : modelTemplates) {
-                    if ( modelTemplate.getId().longValue() == modelTemplateModelica.getId().longValue() )
+                    if (modelTemplate.getId().longValue() == modelTemplateModelica.getId().longValue()) {
                         modelTemplateToRemove = modelTemplate;
+                    }
                 }
                 modelTemplates.remove(modelTemplateToRemove);
                 modelTemplateContainer.setModelTemplates(modelTemplates);
             }
             modelTemplateModelica.setData("mo", modelicaData);
-            if ( saveInitFile )
+            if (saveInitFile) {
                 modelTemplateModelica.setData("init_mo", modelicaInitData);
+            }
             if ( saveParametersSets ) {
                 List<DefaultParameters> defaultParametersList = getDefaultParametersList(allParameterSets);
                 modelTemplateModelica.setDefaultParameters(defaultParametersList);
@@ -201,8 +211,9 @@ public class Converter {
                 List<Parameters> parametersList = parametersContainer.getParameters();
                 Parameters parametersToRemove = null;
                 for (Parameters parameters : parametersList) {
-                    if ( parameters.getId().longValue() == parametersModelica.getId().longValue() )
+                    if (parameters.getId().longValue() == parametersModelica.getId().longValue()) {
                         parametersToRemove = parameters;
+                    }
                 }
                 parametersList.remove(parametersToRemove);
                 parametersContainer.setParameters(parametersList);
@@ -295,8 +306,9 @@ public class Converter {
             List<Parameters> parametersList = parametersContainer.getParameters();
             Parameters parametersToRemove = null;
             for (Parameters parameters : parametersList) {
-                if ( parameters.getId().longValue() == parametersModelica.getId().longValue() )
+                if (parameters.getId().longValue() == parametersModelica.getId().longValue()) {
                     parametersToRemove = parameters;
+                }
             }
             parametersList.remove(parametersToRemove);
             parametersContainer.setParameters(parametersList);
@@ -315,8 +327,9 @@ public class Converter {
         // get data from model template
         byte[] data = modelTemplate.getData(dataType);
         // check if it does exist
-        if ( data == null )
+        if (data == null) {
             Utils.throwConverterException("No data for " + dataType + " file in the DDB for Internal " + nativeId, log);
+        }
         log.debug("Saving Eurostag " + dataType + " file for Internal " + nativeId);
         // save data into file
         String dataFileName = macroblockName.toLowerCase() + "." + dataType;

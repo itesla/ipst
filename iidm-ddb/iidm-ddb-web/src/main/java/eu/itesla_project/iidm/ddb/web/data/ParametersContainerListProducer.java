@@ -50,10 +50,10 @@ public class ParametersContainerListProducer {
     
     @PostConstruct
     public void retrieveAllParametersContainer() {
-        log.log(Level.INFO," create parametersContainerAll  list ");
+        log.log(Level.INFO, " create parametersContainerAll  list ");
 
-        this.parametersContainerAll= pmanager.findParametersContainerAll();
-        log.log(Level.INFO," DONE create parametersContainerAll  list ");
+        this.parametersContainerAll = pmanager.findParametersContainerAll();
+        log.log(Level.INFO, " DONE create parametersContainerAll  list ");
     /*    this.parametersContainerDdbids  = new ArrayList<String>();
 
         for (ParametersContainer pc :parametersContainerAll) {

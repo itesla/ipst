@@ -64,9 +64,9 @@ public class ParametersController {
 
     private String currentddbid;         // ddbid ParametersContainer
 
-    private ParameterWeb parameterWeb =new ParameterWeb();  
+    private ParameterWeb parameterWeb = new ParameterWeb();
 
-    private List<ParameterWeb> addedParams =new ArrayList<ParameterWeb>();
+    private List<ParameterWeb> addedParams = new ArrayList<ParameterWeb>();
 
     private List<ParameterWeb> dbParams = new ArrayList<ParameterWeb>();
 
@@ -86,7 +86,7 @@ public class ParametersController {
 
     public void initParametersContainer() {
         log.info("initParametersContainer ");
-        this.parameters= new Parameters();
+        this.parameters = new Parameters();
     }
 
     public Long getCurrentId() {
@@ -95,7 +95,7 @@ public class ParametersController {
 
     //currentID pk of parametersTable
     public void setCurrentId(Long currentId) {
-        log.log(Level.INFO,"setCurrentId:: enter  parameter currentId: "+currentId);
+        log.log(Level.INFO, "setCurrentId:: enter  parameter currentId: " + currentId);
 
         this.currentId = currentId;
 
@@ -104,8 +104,8 @@ public class ParametersController {
                 Parameters.class);
         query.setParameter("arg1", currentId);
         List<Parameters> res = query.getResultList();
-        this.parameters= res.size() > 0 ? res.get(0) : null;
-        this.dbParams=buildParamsEditableTable(parameters);
+        this.parameters = res.size() > 0 ? res.get(0) : null;
+        this.dbParams = buildParamsEditableTable(parameters);
     }
 
 
@@ -209,17 +209,17 @@ public class ParametersController {
 
 
     public String detailParameters(Parameters parameters)  {
-        log.log(Level.INFO,"detailParameters:: enter  parameter ddbId:  MT  ID"+parameters.getId()+ " Simulator" +parameters.getSimulator());
-        this.parameters=parameters;
-        log.log(Level.INFO,"detailParameters:: enter  MT  ID"+parameters.getId()+ " Simulator:" +parameters.getSimulator() +" derfParamSetNum: "+parameters.getDefParamSetNum());
+        log.log(Level.INFO, "detailParameters:: enter  parameter ddbId:  MT  ID" + parameters.getId() + " Simulator" + parameters.getSimulator());
+        this.parameters = parameters;
+        log.log(Level.INFO, "detailParameters:: enter  MT  ID" + parameters.getId() + " Simulator:" + parameters.getSimulator() + " derfParamSetNum: " + parameters.getDefParamSetNum());
         return "/parameters/details";
         }
 
 
-    public void save(){
-        log.log(Level.INFO," Save enter ::");
-        log.log(Level.INFO," ParametersContainer: [ddbId:" +this.currentddbid +"] " +
-                "        - [Parameters [defParamSetNum "+parameters.getDefParamSetNum() + " simulator "+parameters.getSimulator()+"]");
+    public void save() {
+        log.log(Level.INFO, " Save enter ::");
+        log.log(Level.INFO, " ParametersContainer: [ddbId:" + this.currentddbid + "] " +
+                "        - [Parameters [defParamSetNum " + parameters.getDefParamSetNum() + " simulator " + parameters.getSimulator() + "]");
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
         try {
@@ -234,48 +234,47 @@ public class ParametersController {
             }
 
             for (ParameterWeb pw : addedParams) {
-                log.log(Level.INFO,"parameterAdded [Name: "+pw.getName()+ ", Value: "+ pw.getValue() + ", Type: "+pw.getType() + "]");
-                if (pw.getValue()!= null) {
+                log.log(Level.INFO, "parameterAdded [Name: " + pw.getName() + ", Value: " + pw.getValue() + ", Type: " + pw.getType() + "]");
+                if (pw.getValue() != null) {
 
                     switch (pw.getType()) {
                         case "Integer":
-                            this.parameters.addParameter(new ParameterInteger(pw.getName(),Integer.valueOf(pw.getValue().toString())));
+                            this.parameters.addParameter(new ParameterInteger(pw.getName(), Integer.valueOf(pw.getValue().toString())));
                             break;
                         case "Float":
-                            this.parameters.addParameter(new ParameterFloat(pw.getName(),Float.valueOf(pw.getValue().toString())));
+                            this.parameters.addParameter(new ParameterFloat(pw.getName(), Float.valueOf(pw.getValue().toString())));
                             break;
                         case "Boolean":
-                            this.parameters.addParameter(new ParameterBoolean(pw.getName(),Boolean.valueOf(pw.getValue().toString())));
+                            this.parameters.addParameter(new ParameterBoolean(pw.getName(), Boolean.valueOf(pw.getValue().toString())));
                             break;
                         case "String":
-                            this.parameters.addParameter(new ParameterString(pw.getName(),pw.getValue().toString()));
+                            this.parameters.addParameter(new ParameterString(pw.getName(), pw.getValue().toString()));
                             break;
                     default: throw new RuntimeException(pw.getType() + " not supported.");
                     }
                     pmanager.save(this.parameters);
-                }
-                else{
-                    log.log(Level.INFO,"parameterAdded has a NULL value will be rejected!");
+                } else {
+                    log.log(Level.INFO, "parameterAdded has a NULL value will be rejected!");
                 }
             }
 
-            this.dbParams=this.buildParamsEditableTable(this.parameters);
-            this.addedParams=new ArrayList<ParameterWeb>();
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO,  "Parameters  "+bundle.getString("add.operation.msg"), bundle.getString("add.success.msg"));
+            this.dbParams = this.buildParamsEditableTable(this.parameters);
+            this.addedParams = new ArrayList<ParameterWeb>();
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, "Parameters  " + bundle.getString("add.operation.msg"), bundle.getString("add.success.msg"));
             facesContext.addMessage(null, m);
 
         } catch (Exception e) {
-            log.log(Level.WARNING,"Error :"+ e.getMessage());
+            log.log(Level.WARNING, "Error :" + e.getMessage());
             e.printStackTrace();
             String errorMessage = getRootErrorMessage(e);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage,bundle.getString("add.failure.msg"));
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, bundle.getString("add.failure.msg"));
             facesContext.addMessage(null, m);
         }
 
     }
 
-    public String delete(){
-        log.log(Level.INFO, "Delete: [ parametersId: " +this.parameters.getId() + " "+"defParamSetNum: "+this.parameters.getDefParamSetNum() +"]");
+    public String delete() {
+        log.log(Level.INFO, "Delete: [ parametersId: " + this.parameters.getId() + " " + "defParamSetNum: " + this.parameters.getDefParamSetNum() + "]");
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
         try {
@@ -285,43 +284,41 @@ public class ParametersController {
             for (Parameters ps : parametersList) {
                 if (ps.getId().compareTo(this.parameters.getId()) == 0) {
                     this.parameters = ps;
-                }else
+                } else {
                     parametersUpdated.add(ps);
+                }
             }
 
             paramitersContainer.setParameters(parametersUpdated);
             paramitersContainer = pmanager.save(paramitersContainer);
 
-            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,  "Parameters  "+bundle.getString("delete.operation.msg"), bundle.getString("delete.success.msg"));
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,  "Parameters  " + bundle.getString("delete.operation.msg"), bundle.getString("delete.success.msg"));
             FacesContext.getCurrentInstance().addMessage(null, msg);
             return "../parametersContainer/list.jsf";
 
         } catch (Exception ex) {
             String errorMessage = getRootErrorMessage(ex);
-            log.log(Level.WARNING,"Error  "+errorMessage);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage,bundle.getString("delete.failure.msg"));
+            log.log(Level.WARNING, "Error  " + errorMessage);
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, bundle.getString("delete.failure.msg"));
             facesContext.addMessage(null, m);
             return "edit";
 
         }
     }
 
-    public void update(){
-        log.log(Level.INFO, "update: [ id: " +this.parameters.getId() + " "+"defParamSetNum: "+this.parameters.getDefParamSetNum() +"]");
+    public void update() {
+        log.log(Level.INFO, "update: [ id: " + this.parameters.getId() + " " + "defParamSetNum: " + this.parameters.getDefParamSetNum() + "]");
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
-        try
-        {
-            this.parameters=pmanager.save(parameters);
+        try {
+            this.parameters = pmanager.save(parameters);
             FacesMessage msg = new FacesMessage("Parameters succesfully");
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("update.operation.msg")    ,bundle.getString("update.success.msg"));
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("update.operation.msg"), bundle.getString("update.success.msg"));
             FacesContext.getCurrentInstance().addMessage(null, msg);
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             String errorMessage = getRootErrorMessage(ex);
-            log.log(Level.WARNING,"Error  "+errorMessage);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage,bundle.getString("update.failure.msg"));
+            log.log(Level.WARNING, "Error  " + errorMessage);
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, bundle.getString("update.failure.msg"));
             facesContext.addMessage(null, m);
         }
     }
@@ -329,19 +326,19 @@ public class ParametersController {
 
     public void addSimulatorParameters()  {
 
-        log.log(Level.INFO," addParameters enter ::");
-        log.log(Level.INFO," ParametersContainer: [ddbId:" +this.currentddbid +"] " +
-                "        - [Parameters [defParamSetNum "+parameters.getDefParamSetNum() + " simulator "+parameters.getSimulator()+"]");
+        log.log(Level.INFO, " addParameters enter ::");
+        log.log(Level.INFO, " ParametersContainer: [ddbId:" + this.currentddbid + "] " +
+                "        - [Parameters [defParamSetNum " + parameters.getDefParamSetNum() + " simulator " + parameters.getSimulator() + "]");
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
         try {
 
             ParametersContainer parametersContainer = pmanager.findParametersContainer(this.currentddbid);
-            List<Parameters> parametersList=parametersContainer.getParameters();
-            for (Parameters p :parametersList)
-            {
-                if (p.getSimulator().equals(parameters.getSimulator() ))
-                    throw new Exception ("Parameters for "+parameters.getSimulator() +" is already present!");
+            List<Parameters> parametersList = parametersContainer.getParameters();
+            for (Parameters p : parametersList) {
+                if (p.getSimulator().equals(parameters.getSimulator())) {
+                    throw new Exception("Parameters for " + parameters.getSimulator() + " is already present!");
+                }
             }
             parametersContainer.getParameters().add(parameters);
             pmanager.save(parametersContainer);
@@ -350,10 +347,8 @@ public class ParametersController {
             FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("add.operation.msg"), bundle.getString("add.success.msg"));
             facesContext.addMessage(null, m);
 
-        }
-        catch (Exception e)
-        {
-            log.log(Level.WARNING,"Error :"+ e.getMessage());
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Error :" + e.getMessage());
             e.printStackTrace();
             String errorMessage = getRootErrorMessage(e);
             FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("add.failure.msg"));
@@ -364,81 +359,73 @@ public class ParametersController {
 
 
     public void onRowEdit(RowEditEvent event) {
-        log.log(Level.INFO, "  onRowEdit::  ParameteContainer: [ ddbid= "+this.currentddbid +"]  Parameters per simulatore [id: "+ this.currentId+"]");
+        log.log(Level.INFO, "  onRowEdit::  ParameteContainer: [ ddbid= " + this.currentddbid + "]  Parameters per simulatore [id: " + this.currentId + "]");
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
-        try
-        {
+        try {
             //retrieve container Instance
             ParametersContainer paramitersContainer = pmanager.findParametersContainer(this.currentddbid);
             // one list for each simulator
             List<Parameters> parametersContainerList = paramitersContainer.getParameters();
-            boolean findParameters=false;
-            int index=0;
+            boolean findParameters = false;
+            int index = 0;
             // retrieve simulator parameter to update
-            for (Parameters pt : parametersContainerList)
-            {
+            for (Parameters pt : parametersContainerList) {
 
-                log.log(Level.INFO, " parameter id "+ pt.getId() +" simulator "+ pt.getSimulator());
-                if (pt.getId().compareTo(currentId) == 0)
-                {
+                log.log(Level.INFO, " parameter id " + pt.getId() + " simulator " + pt.getSimulator());
+                if (pt.getId().compareTo(currentId) == 0) {
                     this.parameters = pt;
-                    findParameters=true;
-                    log.log(Level.INFO, " parameters found id: "+this.parameters.getId() + " simulator "+this.parameters.getSimulator().toString() +" index "+ index);
+                    findParameters = true;
+                    log.log(Level.INFO, " parameters found id: " + this.parameters.getId() + " simulator " + this.parameters.getSimulator().toString() + " index " + index);
                     break;
                 }
                 index++;
             }
 
-            if (findParameters)
-            {
+            if (findParameters) {
                 ParameterWeb paramSelected = (ParameterWeb) event.getObject();
                 Parameter paramToUpdate = null;
-                log.log(Level.INFO, " rowSeleted [Name: "+paramSelected.getName() +",  Value:"+ paramSelected.getValue() + ", Type: "+paramSelected.getType() +"]");
+                log.log(Level.INFO, " rowSeleted [Name: " + paramSelected.getName() + ",  Value:" + paramSelected.getValue() + ", Type: " + paramSelected.getType() + "]");
 
-                if (this.parameters.containsParameterWithName(paramSelected.getName()))
-                {
+                if (this.parameters.containsParameterWithName(paramSelected.getName())) {
                     List<Parameter> paramNameValueList = this.parameters.getParameters();
-                    for (Parameter pvl : paramNameValueList)
-                    {
-                        log.log(Level.INFO, " pvl [name: "+pvl.getName() + ", value:  "+ pvl.getValue() +", id: "+pvl.getId()+"]");
-                        if (pvl.getName().equals(paramSelected.getName()))
-                        {
+                    for (Parameter pvl : paramNameValueList) {
+                        log.log(Level.INFO, " pvl [name: " + pvl.getName() + ", value:  " + pvl.getValue() + ", id: " + pvl.getId() + "]");
+                        if (pvl.getName().equals(paramSelected.getName())) {
                             paramToUpdate = pvl;
                             log.log(Level.INFO, " Trovato ");
                         }
                     }
 
-                    if (paramToUpdate!= null)
-                    {
+                    if (paramToUpdate != null) {
                         switch (paramSelected.getType()) {
-                        case "Float":
-                            ((ParameterFloat) paramToUpdate).setValue(Float.valueOf(paramSelected.getValue().toString()));
-                            break;
-                        case "Integer":
-                            ((ParameterInteger) paramToUpdate).setValue(Integer.valueOf(paramSelected.getValue().toString()));
-                            break;
-                        case "Boolean":
-                            ((ParameterBoolean) paramToUpdate).setValue(Boolean.valueOf(paramSelected.getValue().toString()));
-                            break;
-                        case "String":
-                            ((ParameterString) paramToUpdate).setValue(String.valueOf(paramSelected.getValue().toString()));
-                            break;
-                        default:
-                            throw new RuntimeException(paramSelected.getType() + " not supported.");
-                    }
+                            case "Float":
+                                ((ParameterFloat) paramToUpdate).setValue(Float.valueOf(paramSelected.getValue().toString()));
+                                break;
+                            case "Integer":
+                                ((ParameterInteger) paramToUpdate).setValue(Integer.valueOf(paramSelected.getValue().toString()));
+                                break;
+                            case "Boolean":
+                                ((ParameterBoolean) paramToUpdate).setValue(Boolean.valueOf(paramSelected.getValue().toString()));
+                                break;
+                            case "String":
+                                ((ParameterString) paramToUpdate).setValue(String.valueOf(paramSelected.getValue().toString()));
+                                break;
+                            default:
+                                throw new RuntimeException(paramSelected.getType() + " not supported.");
+                        }
 
-                    paramToUpdate=pmanager.save(paramToUpdate);
-                    dbParams=buildParamsEditableTable(this.parameters);
-                      reinit();
-                      FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, "Parameter "+bundle.getString("update.operation.msg"), bundle.getString("update.success.msg"));
-                    facesContext.addMessage(null, m);
+                        paramToUpdate = pmanager.save(paramToUpdate);
+                        dbParams = buildParamsEditableTable(this.parameters);
+                        reinit();
+                        FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, "Parameter " + bundle.getString("update.operation.msg"), bundle.getString("update.success.msg"));
+                        facesContext.addMessage(null, m);
                 }
-            }
-            else log.log(Level.WARNING, "There aren't any paramater to update:" );
+            } else {
+                    log.log(Level.WARNING, "There aren't any paramater to update:" );
+                }
         }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
         log.log(Level.WARNING, "Error :" + e.getMessage());
         e.printStackTrace();
         String errorMessage = getRootErrorMessage(e);
@@ -452,30 +439,29 @@ public class ParametersController {
         log.log(Level.INFO, "  onRowCancel enter: ");
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
-        try
-        {
+        try {
             // get Parameters Container
               ParametersContainer paramitersContainer = pmanager.findParametersContainer(this.currentddbid);
               List<Parameters> parametersContainerList = paramitersContainer.getParameters();
-              for (Parameters pt : parametersContainerList)
-              {
-                  if (pt.getId().compareTo(currentId) == 0) this.parameters = pt;
+              for (Parameters pt : parametersContainerList) {
+                  if (pt.getId().compareTo(currentId) == 0) {
+                      this.parameters = pt;
+                  }
               }
 
-              ParameterWeb paramSelected=(ParameterWeb) event.getObject();
-              //Parameter paramToCancel= null;
-              log.log(Level.INFO, "  onRowCancel Parameter [Name: "+paramSelected.getName() + ", Value: "+paramSelected.getValue() + ",Type:  "+ paramSelected.getType());
-              if (this.parameters.containsParameterWithName(paramSelected.getName()))
-              {
-                  ArrayList<Parameter> parametersToUpdate = new ArrayList<Parameter>();
-                  List<Parameter> paramNameValueList=this.parameters.getParameters();
-                  for (Parameter pvl : paramNameValueList)
-                  {
-                      if (!pvl.getName().equals(paramSelected.getName()))
+            ParameterWeb paramSelected = (ParameterWeb) event.getObject();
+            //Parameter paramToCancel= null;
+            log.log(Level.INFO, "  onRowCancel Parameter [Name: " + paramSelected.getName() + ", Value: " + paramSelected.getValue() + ",Type:  " + paramSelected.getType());
+            if (this.parameters.containsParameterWithName(paramSelected.getName())) {
+                ArrayList<Parameter> parametersToUpdate = new ArrayList<Parameter>();
+                List<Parameter> paramNameValueList = this.parameters.getParameters();
+                  for (Parameter pvl : paramNameValueList) {
+                      if (!pvl.getName().equals(paramSelected.getName())) {
                           parametersToUpdate.add(pvl);
+                      }
                     }
                   this.parameters.setParameters(parametersToUpdate);
-                  this.parameters=pmanager.save(this.parameters);
+                  this.parameters = pmanager.save(this.parameters);
                   log.log(Level.FINEST, "  parameters saved! ");
 
                   //for (Parameter parameter : this.parameters.getParameters()) {
@@ -492,16 +478,14 @@ public class ParametersController {
                        }
 
                   }*/
-                  this.dbParams=buildParamsEditableTable(this.parameters);
+                  this.dbParams = buildParamsEditableTable(this.parameters);
                   log.log(Level.INFO, "  after removing par end -  dbParams " + this.dbParams.size());
                   reinit();
-                  FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, ((ParameterWeb) event.getObject()).getName() +" "+bundle.getString("delete.operation.msg"), bundle.getString("delete.success.msg"));
+                  FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, ((ParameterWeb) event.getObject()).getName() + " " + bundle.getString("delete.operation.msg"), bundle.getString("delete.success.msg"));
                   facesContext.addMessage(null, m);
               }
-          }
-        catch (Exception e)
-        {
-              log.log(Level.WARNING,"Error :"+ e.getMessage());
+          } catch (Exception e) {
+              log.log(Level.WARNING, "Error :" + e.getMessage());
               e.printStackTrace();
               String errorMessage = getRootErrorMessage(e);
               FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("delete.failure.msg"));
@@ -512,31 +496,32 @@ public class ParametersController {
 
     
     public String reinit() {  
-        log.log(Level.INFO," reint enter::") ;
-        parameterWeb = new ParameterWeb("","","");
+        log.log(Level.INFO, " reint enter::");
+        parameterWeb = new ParameterWeb("", "", "");
         return null;
     }
-    
-    private List<ParameterWeb> buildParamsEditableTable(Parameters _params){
-        log.log(Level.INFO," buildParamsEditableTable enter::") ;
+
+    private List<ParameterWeb> buildParamsEditableTable(Parameters _params) {
+        log.log(Level.INFO, " buildParamsEditableTable enter::");
         List<ParameterWeb> pwList = new ArrayList<ParameterWeb>();
-        for (Parameter  p:_params.getParameters())
-        {
-            log.log(Level.INFO," _params [Name: " +p.getName() + ", Value: "+p.getValue() + "]");
+        for (Parameter p : _params.getParameters()) {
+            log.log(Level.INFO, " _params [Name: " + p.getName() + ", Value: " + p.getValue() + "]");
             ParameterWeb pw = new ParameterWeb();
             pw.setName(p.getName());
-            Object pValue=p.getValue();
+            Object pValue = p.getValue();
             pw.setValue(pValue);
 
-            if (pValue instanceof java.lang.String)
+            if (pValue instanceof java.lang.String) {
                 pw.setType("String");
-            else if (pValue instanceof java.lang.Float)
+            } else if (pValue instanceof java.lang.Float) {
                 pw.setType("Float");
-            else if (pValue instanceof java.lang.Integer)
+            } else if (pValue instanceof java.lang.Integer) {
                 pw.setType("Integer");
-            else if (pValue instanceof java.lang.Boolean)
+            } else if (pValue instanceof java.lang.Boolean) {
                 pw.setType("Boolean");
-            else pw.setType("Object");
+            } else {
+                pw.setType("Object");
+            }
 
             pwList.add(pw);
         }

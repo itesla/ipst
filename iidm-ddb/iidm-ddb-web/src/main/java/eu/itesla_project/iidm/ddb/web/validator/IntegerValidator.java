@@ -28,13 +28,13 @@ public class IntegerValidator implements Validator {
         String objString = objValue.toString();
          boolean valid = true;
         try {
-            Integer valueInt=Integer.valueOf(objString);
-        }catch(NumberFormatException nEx){
-            valid=false;
+            Integer valueInt = Integer.valueOf(objString);
+        } catch (NumberFormatException nEx) {
+            valid = false;
 
         }
         if (!valid) {
-            FacesMessage message = new FacesMessage( FacesMessage.SEVERITY_ERROR,bundle.getString("invalid.integer.summary.msg"),
+            FacesMessage message = new FacesMessage( FacesMessage.SEVERITY_ERROR, bundle.getString("invalid.integer.summary.msg"),
                     bundle.getString("invalid.integer.detail.msg"));
             throw new ValidatorException(message);
         }

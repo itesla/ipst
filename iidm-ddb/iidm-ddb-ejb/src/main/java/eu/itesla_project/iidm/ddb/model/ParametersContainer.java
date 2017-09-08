@@ -34,9 +34,9 @@ import org.hibernate.validator.constraints.NotEmpty;
  * @author Quinary <itesla@quinary.com>
  */
 @Entity
-@Table(name="PARAMETERSCONTAINER")
+@Table(name = "PARAMETERSCONTAINER")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ParametersContainer implements Serializable{
+public class ParametersContainer implements Serializable {
     private static final long serialVersionUID = 1L;
 
     //The synthetic id of the object.
@@ -50,7 +50,7 @@ public class ParametersContainer implements Serializable{
 //        this.id = id;
 //    }
     
-    @Column(nullable=false, unique=true)
+    @Column(nullable = false, unique = true)
     @NotEmpty
     private String ddbId;
     
@@ -62,9 +62,9 @@ public class ParametersContainer implements Serializable{
     }
 
 
-    @OneToMany(cascade = CascadeType.ALL,fetch=FetchType.EAGER, orphanRemoval=true)
-    @JoinTable(name="PARAMETERSCONTAINER_PARAMETERS", joinColumns={@JoinColumn(name="PC_ID", referencedColumnName="id")}, inverseJoinColumns={@JoinColumn(name="P_ID", referencedColumnName="id")})
-    @OrderColumn(name="pcindx")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinTable(name = "PARAMETERSCONTAINER_PARAMETERS", joinColumns = {@JoinColumn(name = "PC_ID", referencedColumnName = "id")}, inverseJoinColumns = {@JoinColumn(name = "P_ID", referencedColumnName = "id")})
+    @OrderColumn(name = "pcindx")
     private List<Parameters> parameters = new ArrayList<Parameters>();
     public List<Parameters> getParameters() {
         return parameters;

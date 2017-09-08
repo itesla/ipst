@@ -46,8 +46,8 @@ public class SimulatorInstListProducer {
     @PostConstruct
     public void retrieveAllSimulators() {
 
-        log.log(Level.INFO," find All simulators ");
-        this.simulatorsAll= pmanager.findSimulatorsAll();
+        log.log(Level.INFO, " find All simulators ");
+        this.simulatorsAll = pmanager.findSimulatorsAll();
         
     }
     
@@ -55,9 +55,10 @@ public class SimulatorInstListProducer {
     @Named
     public List<String> getEurostagVersions() {
         List<String> eurostagVersions = new ArrayList<String>();
-        for(SimulatorInst sim : simulatorsAll) {
-            if ( sim.getSimulator() == Simulator.EUROSTAG )
+        for (SimulatorInst sim : simulatorsAll) {
+            if ( sim.getSimulator() == Simulator.EUROSTAG ) {
                 eurostagVersions.add(sim.getVersion());
+            }
         }
         return eurostagVersions;
     }
@@ -66,9 +67,10 @@ public class SimulatorInstListProducer {
     @Named
     public List<String> getModelicaVersions() {
         List<String> modelicaVersions = new ArrayList<String>();
-        for(SimulatorInst sim : simulatorsAll) {
-            if ( sim.getSimulator() == Simulator.MODELICA )
+        for (SimulatorInst sim : simulatorsAll) {
+            if ( sim.getSimulator() == Simulator.MODELICA ) {
                 modelicaVersions.add(sim.getVersion());
+            }
         }
         return modelicaVersions;
     }

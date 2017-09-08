@@ -34,9 +34,9 @@ import org.hibernate.validator.constraints.NotEmpty;
  * @author Quinary <itesla@quinary.com>
  */
 @Entity
-@Table(name="MODELTEMPLATECONTAINER")
+@Table(name = "MODELTEMPLATECONTAINER")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ModelTemplateContainer  implements Serializable{
+public class ModelTemplateContainer implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -50,8 +50,8 @@ public class ModelTemplateContainer  implements Serializable{
 //    public void setId(Long id) {
 //        this.id = id;
 //    }
-    
-    @Column(name="ddbid", nullable=false, unique=true)
+
+    @Column(name = "ddbid", nullable = false, unique = true)
     @NotEmpty
     private String ddbId;
     
@@ -71,10 +71,10 @@ public class ModelTemplateContainer  implements Serializable{
         this.comment = comment;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,fetch=FetchType.EAGER)
-    @JoinTable(name="MODELTEMPLATECONTAINER_MODELTEMPLATE", joinColumns={@JoinColumn(name="MTC_ID", referencedColumnName="id")}, inverseJoinColumns={@JoinColumn(name="MT_ID", referencedColumnName="id")})
-    @OrderColumn(name="mtcindx")
-    private List<ModelTemplate> modelTemplates= new ArrayList<ModelTemplate>();
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinTable(name = "MODELTEMPLATECONTAINER_MODELTEMPLATE", joinColumns = {@JoinColumn(name = "MTC_ID", referencedColumnName = "id")}, inverseJoinColumns = {@JoinColumn(name = "MT_ID", referencedColumnName = "id")})
+    @OrderColumn(name = "mtcindx")
+    private List<ModelTemplate> modelTemplates = new ArrayList<ModelTemplate>();
     public List<ModelTemplate> getModelTemplates() {
         return modelTemplates;
     }

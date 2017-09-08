@@ -34,12 +34,12 @@ public class Utils {
     }
 
     public static HashMap<String, Object> getHashMapFromParameters(Parameters pars) {
-        HashMap<String, Object> hm=new HashMap<String,Object>();
+        HashMap<String, Object> hm = new HashMap<String, Object>();
         if (pars != null) {
-            List<Parameter> parList=pars.getParameters();
+            List<Parameter> parList = pars.getParameters();
             for (Parameter parameter : parList) {
-                String varName=parameter.getName();
-                Object varValue=parameter.getValue();
+                String varName = parameter.getName();
+                Object varValue = parameter.getValue();
                 hm.put(varName, varValue);
             }
         }

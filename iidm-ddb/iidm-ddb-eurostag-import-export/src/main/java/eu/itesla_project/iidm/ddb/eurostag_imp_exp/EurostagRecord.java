@@ -16,9 +16,9 @@ import java.util.HashMap;
 public class EurostagRecord {
     String typeName;
 
-    String keyName=null;
+    String keyName = null;
 
-    HashMap<String,Object> data = new HashMap<String,Object>();
+    HashMap<String, Object> data = new HashMap<String, Object>();
 
     public String getTypeName() {
         return typeName;

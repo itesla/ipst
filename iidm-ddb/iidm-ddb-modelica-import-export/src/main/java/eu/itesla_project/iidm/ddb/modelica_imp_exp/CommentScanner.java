@@ -141,8 +141,7 @@ public class CommentScanner {
         MatchResult m = null;
         if (isInsideString) {
             m = find(quote, 0);
-        }
-        else if (isInsideBlockComment) {
+        } else if (isInsideBlockComment) {
             m = find(blockCommentEnd, 0);
         }
 
@@ -154,9 +153,8 @@ public class CommentScanner {
                     eventHandler.onBlockComment(line.substring(0, m.start()), false, true);
                 }
                 isInsideBlockComment = false;
-            }
-            // If we were inside string emit a quoted string, remove the flag
-            else if (isInsideString) {
+            } else if (isInsideString) {
+                // If we were inside string emit a quoted string, remove the flag
                 if (m.start() > 0) {
                     eventHandler.onQuoted(line.substring(0, quoteStart(m)), false, true);
                 }

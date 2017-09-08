@@ -20,12 +20,12 @@ public class EjbClientCtx implements AutoCloseable {
 
     static Logger LOGGER = LoggerFactory.getLogger(EjbClientCtx.class.getName());
 
-    static Context context=null;
+    static Context context = null;
 
     public EjbClientCtx(String host, int port, String userName, String userPassword) throws NamingException {
-        if (context==null) {
+        if (context == null) {
             synchronized (EjbClientCtx.class) {
-                if (context==null) {
+                if (context == null) {
                     context = EjbClientCtxUtils.createEjbContext(host, port, userName, userPassword);
                 }
             }

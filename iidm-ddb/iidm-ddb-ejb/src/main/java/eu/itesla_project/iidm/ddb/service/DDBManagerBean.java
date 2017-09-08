@@ -57,7 +57,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 @Remote(DDBManager.class)
 @WebService
 @EndpointProperties(value = {
-        @EndpointProperty(key =  "ws-security.validate.token",value="false")
+        @EndpointProperty(key =  "ws-security.validate.token", value = "false")
 })
 @InInterceptors(interceptors = {
       "org.apache.cxf.interceptor.LoggingInInterceptor",
@@ -93,58 +93,66 @@ public class DDBManagerBean implements DDBManager {
 
 //      System.out.println("look up EJBContext by standard name: " + sctxLookup);
 //      System.out.println("                     Principal name: " + sctxLookup.getCallerPrincipal().getName());
-        Principal cPrincipal=sctxLookup.getCallerPrincipal();
+        Principal cPrincipal = sctxLookup.getCallerPrincipal();
         return cPrincipal;
 }
 
     @WebMethod(operationName = "saveModelTemplateContainer")
     public ModelTemplateContainer save(ModelTemplateContainer p) {
-        Principal cPrincipal= getCallerPrincipal();
-        if (log.isLoggable(Level.FINE))
-            log.log(Level.FINE, "Persisting ModelTemplateContainer: " + p.getDdbId() + ", user: " + ((cPrincipal!=null)?cPrincipal.getName():null));
-        if (p.getId() == null)
+        Principal cPrincipal = getCallerPrincipal();
+        if (log.isLoggable(Level.FINE)) {
+            log.log(Level.FINE, "Persisting ModelTemplateContainer: " + p.getDdbId() + ", user: " + ((cPrincipal != null) ? cPrincipal.getName() : null));
+        }
+        if (p.getId() == null) {
             em.persist(p);
-        else
+        } else {
             em.merge(p);
+        }
         // parameterEventSrc.fire(parameter);
         return p;
     }
 
     @WebMethod(operationName = "saveParametersContainer")
     public ParametersContainer save(ParametersContainer p)  {
-        Principal cPrincipal= getCallerPrincipal();
-        if (log.isLoggable(Level.FINE))
-            log.log(Level.FINE, "Persisting ParametersContainer: " + p.getDdbId() + ", user: " + ((cPrincipal!=null)?cPrincipal.getName():null));
-        if (p.getId() == null)
+        Principal cPrincipal = getCallerPrincipal();
+        if (log.isLoggable(Level.FINE)) {
+            log.log(Level.FINE, "Persisting ParametersContainer: " + p.getDdbId() + ", user: " + ((cPrincipal != null) ? cPrincipal.getName() : null));
+        }
+        if (p.getId() == null) {
             em.persist(p);
-        else
+        } else {
             em.merge(p);
+        }
         // parameterEventSrc.fire(parameter);
         return p;
     }
 
     @WebMethod(operationName = "saveParameters")
     public Parameters save(Parameters p)  {
-        Principal cPrincipal= getCallerPrincipal();
-        if (log.isLoggable(Level.FINE))
-            log.log(Level.FINE, "Persisting Parameters: " + p.getId() + ", user: " + ((cPrincipal!=null)?cPrincipal.getName():null));
-        if (p.getId() == null)
+        Principal cPrincipal = getCallerPrincipal();
+        if (log.isLoggable(Level.FINE)) {
+            log.log(Level.FINE, "Persisting Parameters: " + p.getId() + ", user: " + ((cPrincipal != null) ? cPrincipal.getName() : null));
+        }
+        if (p.getId() == null) {
             em.persist(p);
-        else
+        } else {
             em.merge(p);
+        }
         // parameterEventSrc.fire(parameter);
         return p;
     }
 
     @WebMethod(operationName = "saveDefaultParameters")
     public DefaultParameters save(DefaultParameters p)  {
-        Principal cPrincipal= getCallerPrincipal();
-        if (log.isLoggable(Level.FINE))
-            log.log(Level.FINE, "Persisting Default parameters: " + p.getId() + ", user: " + ((cPrincipal!=null)?cPrincipal.getName():null));
-        if (p.getId() == null)
+        Principal cPrincipal = getCallerPrincipal();
+        if (log.isLoggable(Level.FINE)) {
+            log.log(Level.FINE, "Persisting Default parameters: " + p.getId() + ", user: " + ((cPrincipal != null) ? cPrincipal.getName() : null));
+        }
+        if (p.getId() == null) {
             em.persist(p);
-        else
+        } else {
             em.merge(p);
+        }
         // parameterEventSrc.fire(parameter);
         return p;
     }
@@ -152,13 +160,15 @@ public class DDBManagerBean implements DDBManager {
 
     @Override
     public Parameter save(Parameter p) {
-        Principal cPrincipal= getCallerPrincipal();
-        if (log.isLoggable(Level.FINE))
-            log.log(Level.FINE, "Persisting Parameter: " + p.getId() + ", user: " + ((cPrincipal!=null)?cPrincipal.getName():null));
-        if (p.getId() == null)
+        Principal cPrincipal = getCallerPrincipal();
+        if (log.isLoggable(Level.FINE)) {
+            log.log(Level.FINE, "Persisting Parameter: " + p.getId() + ", user: " + ((cPrincipal != null) ? cPrincipal.getName() : null));
+        }
+        if (p.getId() == null) {
             em.persist(p);
-        else
+        } else {
             em.merge(p);
+        }
         // parameterEventSrc.fire(parameter);
         return p;
     }
@@ -168,13 +178,15 @@ public class DDBManagerBean implements DDBManager {
 
     @WebMethod(operationName = "saveEquipment")
     public Equipment save(Equipment p)  {
-        Principal cPrincipal= getCallerPrincipal();
-        if (log.isLoggable(Level.FINE))
-            log.log(Level.FINE, "Persisting Equipment: " + p.getCimId()  + ", user: " + ((cPrincipal!=null)?cPrincipal.getName():null));
-        if (p.getId() == null)
+        Principal cPrincipal = getCallerPrincipal();
+        if (log.isLoggable(Level.FINE)) {
+            log.log(Level.FINE, "Persisting Equipment: " + p.getCimId() + ", user: " + ((cPrincipal != null) ? cPrincipal.getName() : null));
+        }
+        if (p.getId() == null) {
             em.persist(p);
-        else
+        } else {
             em.merge(p);
+        }
         // parameterEventSrc.fire(parameter);
         // em.flush();
         return p;
@@ -182,35 +194,37 @@ public class DDBManagerBean implements DDBManager {
 
     @WebMethod(operationName = "saveInternal")
     public Internal save(Internal p) {
-        Principal cPrincipal= getCallerPrincipal();
-        if (log.isLoggable(Level.FINE))
-            log.log(Level.FINE, "Persisting Internal: " + p.getNativeId() + ", user: " + ((cPrincipal!=null)?cPrincipal.getName():null));
-        if (p.getId() == null)
+        Principal cPrincipal = getCallerPrincipal();
+        if (log.isLoggable(Level.FINE)) {
+            log.log(Level.FINE, "Persisting Internal: " + p.getNativeId() + ", user: " + ((cPrincipal != null) ? cPrincipal.getName() : null));
+        }
+        if (p.getId() == null) {
             em.persist(p);
-        else
+        } else {
             em.merge(p);
+        }
         // parameterEventSrc.fire(parameter);
         return p;
     }
 
 
     public List<Equipment> findEquipmentsAll() {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         TypedQuery<Equipment> query = em.createQuery(
                 "SELECT m FROM Equipment m order by m.id", Equipment.class);
         return query.getResultList();
     }
 
     public int findEquipmentAllCount() {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         Query query = em.createQuery(
                 "SELECT count(m) FROM Equipment m");
-        return ((Long)query.getSingleResult()).intValue();
+        return ((Long) query.getSingleResult()).intValue();
     }
 
 
     public List<Equipment> findEquipmentsAllMaxResults(int firstResult, int maxResult) {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         TypedQuery<Equipment> query = em.createQuery(
                 "SELECT m FROM Equipment m order by m.id", Equipment.class);
         query.setFirstResult(firstResult);
@@ -221,7 +235,7 @@ public class DDBManagerBean implements DDBManager {
 
 
     public Equipment findEquipment(String cimId) {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         TypedQuery<Equipment> query = em.createQuery(
                 "SELECT m FROM Equipment m WHERE m.cimId = :arg1",
                 Equipment.class);
@@ -231,21 +245,21 @@ public class DDBManagerBean implements DDBManager {
     }
 
     public List<Internal> findInternalsAll() {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         TypedQuery<Internal> query = em.createQuery("SELECT m FROM Internal m order by m.id",
                 Internal.class);
         return query.getResultList();
     }
 
     public int findInternalsAllCount() {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         Query query = em.createQuery(
                 "SELECT count(m) FROM Internal m");
-        return ((Long)query.getSingleResult()).intValue();
+        return ((Long) query.getSingleResult()).intValue();
     }
 
     public List<Internal> findInternalsAllMaxResults(int firstResult, int maxResult) {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         TypedQuery<Internal> query = em.createQuery("SELECT m FROM Internal m order by m.id",
                 Internal.class);
         query.setFirstResult(firstResult);
@@ -254,7 +268,7 @@ public class DDBManagerBean implements DDBManager {
     }
 
     public Internal findInternal(String nativeId) {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         if ((nativeId == null)) {
             throw new RuntimeException("nativeId must be not null");
         }
@@ -267,7 +281,7 @@ public class DDBManagerBean implements DDBManager {
     }
 
     public List<ModelTemplateContainer> findModelTemplateContainerAll() {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         TypedQuery<ModelTemplateContainer> query = em.createQuery(
                 "SELECT m FROM ModelTemplateContainer m order by m.id",
                 ModelTemplateContainer.class);
@@ -275,14 +289,14 @@ public class DDBManagerBean implements DDBManager {
     }
 
     public int findModelTemplateContainerAllCount() {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         Query query = em.createQuery(
                 "SELECT count(m) FROM ModelTemplateContainer m");
-        return ((Long)query.getSingleResult()).intValue();
+        return ((Long) query.getSingleResult()).intValue();
     }
 
     public List<ModelTemplateContainer> findModelTemplateContainerAllMaxResults(int firstResult, int maxResult) {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         TypedQuery<ModelTemplateContainer> query = em.createQuery("SELECT m FROM ModelTemplateContainer m order by m.id",
                 ModelTemplateContainer.class);
         query.setFirstResult(firstResult);
@@ -292,7 +306,7 @@ public class DDBManagerBean implements DDBManager {
 
 
     public ModelTemplateContainer findModelTemplateContainer(String ddbId) {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         TypedQuery<ModelTemplateContainer> query = em.createQuery(
                 "SELECT m FROM ModelTemplateContainer m WHERE m.ddbId = :arg1",
                 ModelTemplateContainer.class);
@@ -302,7 +316,7 @@ public class DDBManagerBean implements DDBManager {
     }
 
     public ParametersContainer findParametersContainer(String ddbId) {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         TypedQuery<ParametersContainer> query = em.createQuery(
                 "SELECT m FROM ParametersContainer m WHERE m.ddbId = :arg1",
                 ParametersContainer.class);
@@ -312,7 +326,7 @@ public class DDBManagerBean implements DDBManager {
     }
 
     public List<ParametersContainer> findParametersContainerAll() {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         TypedQuery<ParametersContainer> query = em.createQuery(
                 "SELECT m FROM ParametersContainer m order by m.id",
                 ParametersContainer.class);
@@ -321,14 +335,14 @@ public class DDBManagerBean implements DDBManager {
     }
 
     public int findParametersContainerAllCount() {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         Query query = em.createQuery(
                 "SELECT count(m) FROM ParametersContainer m");
-        return ((Long)query.getSingleResult()).intValue();
+        return ((Long) query.getSingleResult()).intValue();
     }
 
     public List<ParametersContainer> findParametersContainerAllMaxResults(int firstResult, int maxResult) {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         TypedQuery<ParametersContainer> query = em.createQuery("SELECT m FROM ParametersContainer m order by m.id",
                 ParametersContainer.class);
         query.setFirstResult(firstResult);
@@ -339,8 +353,8 @@ public class DDBManagerBean implements DDBManager {
 
     @WebMethod(operationName = "deleteEquipment")
     public void delete(Equipment p) {
-        Principal cPrincipal= getCallerPrincipal();
-        if (p==null) {
+        Principal cPrincipal = getCallerPrincipal();
+        if (p == null) {
             throw new RuntimeException("Equipment must be not null");
         }
         log.log(Level.FINE, "Deleting equipment:  " + p.getId());
@@ -352,8 +366,8 @@ public class DDBManagerBean implements DDBManager {
 
     @WebMethod(operationName = "deleteModelTemplateContainer")
     public void delete(ModelTemplateContainer p) {
-        Principal cPrincipal= getCallerPrincipal();
-        if (p==null) {
+        Principal cPrincipal = getCallerPrincipal();
+        if (p == null) {
             throw new RuntimeException("ModelTemplateContainer must be not null");
         }
         log.log(Level.FINE, "Deleting modeltemplatecontainer:  " + p.getId());
@@ -364,8 +378,8 @@ public class DDBManagerBean implements DDBManager {
     }
 
     public SimulatorInst findSimulator(Simulator sim, String version) {
-        Principal cPrincipal= getCallerPrincipal();
-        if ((sim==null) || (version==null)) {
+        Principal cPrincipal = getCallerPrincipal();
+        if ((sim == null) || (version == null)) {
             throw new RuntimeException("Simulator and version must be not null");
         }
         TypedQuery<SimulatorInst> query = em
@@ -379,7 +393,7 @@ public class DDBManagerBean implements DDBManager {
     }
 
     public List<SimulatorInst> findSimulatorsAll() {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         TypedQuery<SimulatorInst> query = em
                 .createQuery(
                         "SELECT m FROM SimulatorInst m order by m.id",
@@ -389,33 +403,32 @@ public class DDBManagerBean implements DDBManager {
     }
 
     public int findSimulatorsAllCount() {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         Query query = em.createQuery(
                 "SELECT count(m) FROM SimulatorInst m");
-        return ((Long)query.getSingleResult()).intValue();
+        return ((Long) query.getSingleResult()).intValue();
     }
 
     @WebMethod(operationName = "saveSimulator")
-    public SimulatorInst save(SimulatorInst p)
-     {
-        Principal cPrincipal= getCallerPrincipal();
-        if (p==null) {
-            throw new RuntimeException("SimulatorInst must be not null");
-        }
+    public SimulatorInst save(SimulatorInst p) {
+        Principal cPrincipal = getCallerPrincipal();
+         if (p == null) {
+             throw new RuntimeException("SimulatorInst must be not null");
+         }
         log.log(Level.FINE, "Persisting SimulatorInst" + p);
-        if (p.getId() == null)
+        if (p.getId() == null) {
             em.persist(p);
-        else
+        } else {
             em.merge(p);
-        // parameterEventSrc.fire(parameter);
-        return p;
+        }
+         // parameterEventSrc.fire(parameter);
+         return p;
      }
 
     @WebMethod(operationName = "deleteSimulator")
-    public void delete(SimulatorInst simInst)
-     {
-        Principal cPrincipal= getCallerPrincipal();
-        if (simInst==null) {
+    public void delete(SimulatorInst simInst) {
+        Principal cPrincipal = getCallerPrincipal();
+        if (simInst == null) {
             throw new RuntimeException("SimulatorInst must be not null");
         }
         log.log(Level.FINE, "Deleting simulator:  " + simInst.getId());
@@ -452,8 +465,8 @@ public class DDBManagerBean implements DDBManager {
         if ((equipment == null) || (simulator == null)) {
             throw new RuntimeException("Equipment and SimulatorInst must be not null");
         }
-        Principal cPrincipal= getCallerPrincipal();
-        return ((equipment==null) ? null : this.findModelTemplate(equipment.getModelContainer(), simulator));
+        Principal cPrincipal = getCallerPrincipal();
+        return ((equipment == null) ? null : this.findModelTemplate(equipment.getModelContainer(), simulator));
     }
 
 
@@ -472,29 +485,31 @@ public class DDBManagerBean implements DDBManager {
     private <T extends Parameter> T getParameterOrDefaultByNameAndType(Equipment equipment, SimulatorInst simulator,
             String name,  Class<T> parClass) {
         //get parameters for the current internal,simulator
-        Parameters pars=this.findParameters(equipment,simulator);
+        Parameters pars = this.findParameters(equipment, simulator);
         //first try retrieving parameter by name from Parameters set (has precedence over default parameter, if set)
-        T par=getParameterByNameAndType(
+        T par = getParameterByNameAndType(
                 pars.getParameters(),
                 name,
                 parClass);
-        if (par!=null)
+        if (par != null) {
             return par;
+        }
         //here parameter is not found explicitly in the parameter container set, try default set linked to the ModelTemplate
-        ModelTemplate mt=this.findModelTemplate(equipment.getModelContainer(), simulator);
+        ModelTemplate mt = this.findModelTemplate(equipment.getModelContainer(), simulator);
         if (pars.getDefParamSetNum() > 0) {
-            DefaultParameters defParams=mt.defaultParametersBySetNum(pars.getDefParamSetNum());
+            DefaultParameters defParams = mt.defaultParametersBySetNum(pars.getDefParamSetNum());
             if (defParams != null) {
-                List<Parameter> dParamList=defParams.getParameters();
-                T parD=getParameterByNameAndType(dParamList,
+                List<Parameter> dParamList = defParams.getParameters();
+                T parD = getParameterByNameAndType(dParamList,
                         name,
                         parClass);
-                if (parD!=null)
+                if (parD != null) {
                     return parD;
+                }
             }
         }
         //here no parameter with given name had been found
-        throw new RuntimeException("parameter with name " + name + " and type " + parClass.getName() +" is not defined");
+        throw new RuntimeException("parameter with name " + name + " and type " + parClass.getName() + " is not defined");
     }
 
 
@@ -504,7 +519,7 @@ public class DDBManagerBean implements DDBManager {
     @WebMethod(operationName = "findParametersEquipment")
     public Parameters findParameters(Equipment equipment,
             SimulatorInst simulator) {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         ParametersContainer pc1 = equipment.getParametersContainer();
         List<Parameters> plist = pc1.getParameters();
         for (Parameters parameters : plist) {
@@ -517,48 +532,48 @@ public class DDBManagerBean implements DDBManager {
 
     @WebMethod(operationName = "getFloatParameterEquipment")
     public Float getFloatParameter(Equipment equipment,
-            SimulatorInst simulator, String name) {
-        ParameterFloat par=getParameterOrDefaultByNameAndType(equipment, simulator,
+                                   SimulatorInst simulator, String name) {
+        ParameterFloat par = getParameterOrDefaultByNameAndType(equipment, simulator,
                 name,
                 ParameterFloat.class);
-        return ((par!=null) ? (par.getValue() ) : null);
+        return ((par != null) ? (par.getValue()) : null);
     }
 
     @WebMethod(operationName = "getStringParameterEquipment")
     public String getStringParameter(Equipment equipment,
             SimulatorInst simulator, String name) {
-        ParameterString par=getParameterOrDefaultByNameAndType(equipment, simulator,
+        ParameterString par = getParameterOrDefaultByNameAndType(equipment, simulator,
                 name,
                 ParameterString.class);
-        return ((par!=null) ? (par.getValue() ) : null);
+        return ((par != null) ? (par.getValue()) : null);
     }
 
     @WebMethod(operationName = "getIntegerParameterEquipment")
     public Integer getIntegerParameter(Equipment equipment,
-            SimulatorInst simulator, String name) {
-        ParameterInteger par=getParameterOrDefaultByNameAndType(equipment, simulator,
+                                       SimulatorInst simulator, String name) {
+        ParameterInteger par = getParameterOrDefaultByNameAndType(equipment, simulator,
                 name,
                 ParameterInteger.class);
-        return ((par!=null) ? (par.getValue() ) : null);
+        return ((par != null) ? (par.getValue()) : null);
     }
 
     @WebMethod(operationName = "getBooleanParameterEquipment")
     public Boolean getBooleanParameter(Equipment equipment,
-            SimulatorInst simulator, String name) {
-        ParameterBoolean par=getParameterOrDefaultByNameAndType(equipment, simulator,
+                                       SimulatorInst simulator, String name) {
+        ParameterBoolean par = getParameterOrDefaultByNameAndType(equipment, simulator,
                 name,
                 ParameterBoolean.class);
-        return ((par!=null) ? (par.getValue() ) : null);
+        return ((par != null) ? (par.getValue()) : null);
     }
 
     @WebMethod(operationName = "getTableParameterEquipment")
     public ParameterTable getTableParameter(Equipment equipment,
-            SimulatorInst simulator, String name) {
+                                            SimulatorInst simulator, String name) {
 
-        ParameterTable par=getParameterOrDefaultByNameAndType(equipment, simulator,
+        ParameterTable par = getParameterOrDefaultByNameAndType(equipment, simulator,
                 name,
                 ParameterTable.class);
-        return ((par!=null) ? (par) : null);
+        return ((par != null) ? (par) : null);
     }
 
 
@@ -569,7 +584,7 @@ public class DDBManagerBean implements DDBManager {
      */
     @WebMethod(operationName = "findModelTemplateInternal")
     public ModelTemplate findModelTemplate(Internal internal, SimulatorInst simulator) {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         return this.findModelTemplate(internal.getModelContainer(), simulator);
     }
 
@@ -578,7 +593,7 @@ public class DDBManagerBean implements DDBManager {
      */
     @WebMethod(operationName = "findParametersInternal")
     public Parameters findParameters(Internal internal, SimulatorInst simulator) {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         ParametersContainer pc1 = internal.getParametersContainer();
         List<Parameters> plist = pc1.getParameters();
         for (Parameters parameters : plist) {
@@ -593,29 +608,31 @@ public class DDBManagerBean implements DDBManager {
     private <T extends Parameter> T getParameterOrDefaultByNameAndType(Internal internal, SimulatorInst simulator,
             String name,  Class<T> parClass) {
         //get parameters for the current internal,simulator
-        Parameters pars=this.findParameters(internal,simulator);
+        Parameters pars = this.findParameters(internal, simulator);
         //first try retrieving parameter by name from Parameters set (has precedence over default parameter, if set)
-        T par=getParameterByNameAndType(
+        T par = getParameterByNameAndType(
                 pars.getParameters(),
                 name,
                 parClass);
-        if (par!=null)
+        if (par != null) {
             return par;
+        }
         //here parameter is not found explicitly in the parameter container set, try default set linked to the ModelTemplate
-        ModelTemplate mt=this.findModelTemplate(internal.getModelContainer(), simulator);
+        ModelTemplate mt = this.findModelTemplate(internal.getModelContainer(), simulator);
         if (pars.getDefParamSetNum() > 0) {
-            DefaultParameters defParams=mt.defaultParametersBySetNum(pars.getDefParamSetNum());
+            DefaultParameters defParams = mt.defaultParametersBySetNum(pars.getDefParamSetNum());
             if (defParams != null) {
-                List<Parameter> dParamList=defParams.getParameters();
-                T parD=getParameterByNameAndType(dParamList,
+                List<Parameter> dParamList = defParams.getParameters();
+                T parD = getParameterByNameAndType(dParamList,
                         name,
                         parClass);
-                if (parD!=null)
+                if (parD != null) {
                     return parD;
+                }
             }
         }
         //here no parameter with given name had been found
-        throw new RuntimeException("parameter with name " + name + " and type " + parClass.getName() +" is not defined");
+        throw new RuntimeException("parameter with name " + name + " and type " + parClass.getName() + " is not defined");
     }
 
 
@@ -623,62 +640,62 @@ public class DDBManagerBean implements DDBManager {
     @WebMethod(operationName = "getFloatParameterInternal")
     public Float getFloatParameter(Internal internal, SimulatorInst simulator,
             String name) {
-        ParameterFloat par=getParameterOrDefaultByNameAndType(
+        ParameterFloat par = getParameterOrDefaultByNameAndType(
                 internal,
                 simulator,
                 name,
                 ParameterFloat.class);
-        return ((par!=null) ? (par.getValue() ) : null);
+        return ((par != null) ? (par.getValue()) : null);
     }
 
     @WebMethod(operationName = "getStringParameterInternal")
     public String getStringParameter(Internal internal, SimulatorInst simulator,
-            String name) {
-        ParameterString par=getParameterOrDefaultByNameAndType(
+                                     String name) {
+        ParameterString par = getParameterOrDefaultByNameAndType(
                 internal,
                 simulator,
                 name,
                 ParameterString.class);
-        return ((par!=null) ? (par.getValue() ) : null);
+        return ((par != null) ? (par.getValue()) : null);
     }
 
     @WebMethod(operationName = "getIntegerParameterInternal")
     public Integer getIntegerParameter(Internal internal, SimulatorInst simulator,
-            String name) {
-        ParameterInteger par=getParameterOrDefaultByNameAndType(
+                                       String name) {
+        ParameterInteger par = getParameterOrDefaultByNameAndType(
                 internal,
                 simulator,
                 name,
                 ParameterInteger.class);
-        return ((par!=null) ? (par.getValue() ) : null);
+        return ((par != null) ? (par.getValue()) : null);
     }
 
     @WebMethod(operationName = "getBooleanParameterInternal")
     public Boolean getBooleanParameter(Internal internal, SimulatorInst simulator,
-            String name) {
-        ParameterBoolean par=getParameterOrDefaultByNameAndType(
+                                       String name) {
+        ParameterBoolean par = getParameterOrDefaultByNameAndType(
                 internal,
                 simulator,
                 name,
                 ParameterBoolean.class);
-        return ((par!=null) ? (par.getValue() ) : null);
+        return ((par != null) ? (par.getValue()) : null);
     }
 
     @WebMethod(operationName = "getTableParameterInternal")
     public ParameterTable getTableParameter(Internal internal, SimulatorInst simulator, String name) {
-        ParameterTable par=getParameterOrDefaultByNameAndType(
+        ParameterTable par = getParameterOrDefaultByNameAndType(
                 internal,
                 simulator,
                 name,
                 ParameterTable.class);
-        return ((par!=null) ? (par ) : null);
+        return ((par != null) ? (par) : null);
     }
 
 
     @Override
     @WebMethod(operationName = "deleteParametersContainer")
     public void delete(ParametersContainer p) {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         log.log(Level.FINE, "Deleting ParametersContainer:  " + p.getId());
         ParametersContainer mtc1 = em.merge(p);
         em.remove(mtc1);
@@ -688,7 +705,7 @@ public class DDBManagerBean implements DDBManager {
     @Override
     @WebMethod(operationName = "deleteInternal")
     public void delete(Internal p) {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         log.log(Level.FINE, "Deleting Internal:  " + p.getId());
         Internal mtc1 = em.merge(p);
         em.remove(mtc1);
@@ -698,28 +715,32 @@ public class DDBManagerBean implements DDBManager {
     @Override
     @WebMethod(operationName = "getModelDataEquipment")
     public byte[] getModelData(Equipment eqInstance, SimulatorInst simulator, String dname) {
-        ModelTemplate mt=this.findModelTemplate(eqInstance, simulator);
-        if (mt!=null) {
+        ModelTemplate mt = this.findModelTemplate(eqInstance, simulator);
+        if (mt != null) {
             return mt.getData(dname);
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     @Override
     @WebMethod(operationName = "getModelDataInternal")
     public byte[] getModelData(Internal internalInstance, SimulatorInst simulator, String dname) {
-        ModelTemplate mt=this.findModelTemplate(internalInstance, simulator);
-        if (mt!=null) {
+        ModelTemplate mt = this.findModelTemplate(internalInstance, simulator);
+        if (mt != null) {
             return mt.getData(dname);
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
 
     // parameters container parameters accessors
     @WebMethod(operationName = "getParametersParametersContainer")
     public Parameters findParameters(ParametersContainer parametersContainer,
-            SimulatorInst simulator) {
-        Principal cPrincipal= getCallerPrincipal();
-        if ((parametersContainer!=null) && (simulator!=null)) {
+                                     SimulatorInst simulator) {
+        Principal cPrincipal = getCallerPrincipal();
+        if ((parametersContainer != null) && (simulator != null)) {
             List<Parameters> plist = parametersContainer.getParameters();
             for (Parameters parameters : plist) {
                 if (parameters.getSimulator().getId() == simulator.getId()) {
@@ -732,81 +753,84 @@ public class DDBManagerBean implements DDBManager {
 
 
     private <T extends Parameter> T getParameterByNameAndType(ParametersContainer parametersContainer, SimulatorInst simulator,
-            String name,  Class<T> parClass) {
+                                                              String name, Class<T> parClass) {
 
         List<Parameters> plist = parametersContainer.getParameters();
-        Parameters pars=null;
+        Parameters pars = null;
         for (Parameters parameters : plist) {
             if (parameters.getSimulator().getId() == simulator.getId()) {
-                pars=parameters;
+                pars = parameters;
                 break;
             }
         }
-        T par=getParameterByNameAndType(
+        T par = getParameterByNameAndType(
                 pars.getParameters(),
                 name,
                 parClass);
-        if (par!=null)
+        if (par != null) {
             return par;
-        throw new RuntimeException("parameter with name " + name + " and type " + parClass.getName() +" is not defined");
+        }
+        throw new RuntimeException("parameter with name " + name + " and type " + parClass.getName() + " is not defined");
     }
 
 
     @WebMethod(operationName = "getFloatParameterParametersContainer")
     public Float getFloatParameter(ParametersContainer parametersContainer,
-            SimulatorInst simulator, String name) {
-        ParameterFloat par=getParameterByNameAndType(parametersContainer, simulator,
+                                   SimulatorInst simulator, String name) {
+        ParameterFloat par = getParameterByNameAndType(parametersContainer, simulator,
                 name,
                 ParameterFloat.class);
-        return ((par!=null) ? (par.getValue() ) : null);
+        return ((par != null) ? (par.getValue()) : null);
     }
 
     @WebMethod(operationName = "getStringParameterParametersContainer")
     public String getStringParameter(ParametersContainer parametersContainer,
-            SimulatorInst simulator, String name) {
-        ParameterString par=getParameterByNameAndType(parametersContainer, simulator,
+                                     SimulatorInst simulator, String name) {
+        ParameterString par = getParameterByNameAndType(parametersContainer, simulator,
                 name,
                 ParameterString.class);
-        return ((par!=null) ? (par.getValue() ) : null);
+        return ((par != null) ? (par.getValue()) : null);
     }
 
     @WebMethod(operationName = "getIntegerParameterParametersContainer")
     public Integer getIntegerParameter(ParametersContainer parametersContainer,
-            SimulatorInst simulator, String name) {
-        ParameterInteger par=getParameterByNameAndType(parametersContainer, simulator,
+                                       SimulatorInst simulator, String name) {
+        ParameterInteger par = getParameterByNameAndType(parametersContainer, simulator,
                 name,
                 ParameterInteger.class);
-        return ((par!=null) ? (par.getValue() ) : null);
+        return ((par != null) ? (par.getValue()) : null);
     }
 
     @WebMethod(operationName = "getBooleanParameterParametersContainer")
     public Boolean getBooleanParameter(ParametersContainer parametersContainer,
-            SimulatorInst simulator, String name) {
-        ParameterBoolean par=getParameterByNameAndType(parametersContainer, simulator,
+                                       SimulatorInst simulator, String name) {
+        ParameterBoolean par = getParameterByNameAndType(parametersContainer, simulator,
                 name,
                 ParameterBoolean.class);
-        return ((par!=null) ? (par.getValue() ) : null);
+        return ((par != null) ? (par.getValue()) : null);
     }
 
     @WebMethod(operationName = "getTableParameterParametersContainer")
     public ParameterTable getTableParameter(ParametersContainer parametersContainer,
-            SimulatorInst simulator, String name) {
+                                            SimulatorInst simulator, String name) {
 
-        ParameterTable par=getParameterByNameAndType(parametersContainer, simulator,
+        ParameterTable par = getParameterByNameAndType(parametersContainer, simulator,
                 name,
                 ParameterTable.class);
-        return ((par!=null) ? (par) : null);
+        return ((par != null) ? (par) : null);
     }
 
     @WebMethod(operationName = "saveConnectionSchema")
     public ConnectionSchema save(ConnectionSchema schema) {
-        Principal cPrincipal= getCallerPrincipal();
-        if (log.isLoggable(Level.FINE))
-            log.log(Level.FINE, "Persisting ConnectionSchema: " + schema.getCimId() + ", user: " + ((cPrincipal!=null)?cPrincipal.getName():null));
-        if (schema.getId() == null)
+        Principal cPrincipal = getCallerPrincipal();
+        if (log.isLoggable(Level.FINE)) {
+            log.log(Level.FINE, "Persisting ConnectionSchema: " + schema.getCimId() + ", user: " + ((cPrincipal != null) ? cPrincipal.getName() : null));
+        }
+        if (schema.getId() == null) {
             em.persist(schema);
-        else
+        } else {
             em.merge(schema);
+        }
         // parameterEventSrc.fire(parameter);
         return schema;
     }
@@ -814,7 +838,7 @@ public class DDBManagerBean implements DDBManager {
     @Override
     public ConnectionSchema findConnectionSchema(String cimId,
             SimulatorInst simulator) {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         TypedQuery<ConnectionSchema> query = null;
         if (simulator == null) {
             query = em.createQuery("SELECT c FROM ConnectionSchema c WHERE c.cimId = :arg1 and c.simulator is null", ConnectionSchema.class);
@@ -830,20 +854,20 @@ public class DDBManagerBean implements DDBManager {
 
     @Override
     public List<ConnectionSchema> findConnectionSchemasAll() {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         TypedQuery<ConnectionSchema> query = em.createQuery("SELECT c FROM ConnectionSchema c order by c.id", ConnectionSchema.class);
         return query.getResultList();
     }
 
     public int findConnectionSchemasAllCount() {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         Query query = em.createQuery(
                 "SELECT count(m) FROM ConnectionSchema m");
-        return ((Long)query.getSingleResult()).intValue();
+        return ((Long) query.getSingleResult()).intValue();
     }
 
     public List<ConnectionSchema> findConnectionSchemasAllMaxResults(int firstResult, int maxResult) {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         TypedQuery<ConnectionSchema> query = em.createQuery("SELECT c FROM ConnectionSchema c order by c.id", ConnectionSchema.class);
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResult);
@@ -853,7 +877,7 @@ public class DDBManagerBean implements DDBManager {
 
     @Override
     public void delete(ConnectionSchema schema) {
-        Principal cPrincipal= getCallerPrincipal();
+        Principal cPrincipal = getCallerPrincipal();
         log.log(Level.FINE, "Deleting ConnectionSchema:  " + schema.getId());
         ConnectionSchema schema1 = em.merge(schema);
         em.remove(schema1);

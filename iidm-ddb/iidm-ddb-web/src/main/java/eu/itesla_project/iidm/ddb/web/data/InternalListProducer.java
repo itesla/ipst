@@ -47,8 +47,8 @@ public class InternalListProducer {
 
     @PostConstruct
     public void retrieveAllInternals() {
-        log.log(Level.INFO," produces internals list ");
-        this.internals= pmanager.findInternalsAll();
-        log.log(Level.INFO," produced internals list size "+internals.size());
+        log.log(Level.INFO, " produces internals list ");
+        this.internals = pmanager.findInternalsAll();
+        log.log(Level.INFO, " produced internals list size " + internals.size());
     }
 }

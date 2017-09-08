@@ -220,16 +220,17 @@ public class ModelTemplateController {
                 Object pValue = p.getValue();
                 pw.setValue(pValue);
 
-                if (pValue instanceof java.lang.String)
+                if (pValue instanceof java.lang.String) {
                     pw.setType("String");
-                else if (pValue instanceof java.lang.Float)
+                } else if (pValue instanceof java.lang.Float) {
                     pw.setType("Float");
-                else if (pValue instanceof java.lang.Integer)
+                } else if (pValue instanceof java.lang.Integer) {
                     pw.setType("Integer");
-                else if (pValue instanceof java.lang.Boolean)
+                } else if (pValue instanceof java.lang.Boolean) {
                     pw.setType("Boolean");
-                else
+                } else {
                     pw.setType("String"); // default
+                }
                 pwList.add(pw);
             }
 
@@ -250,7 +251,7 @@ public class ModelTemplateController {
     }
 
     public String detailModelTemplate(ModelTemplate modelTemplate) {
-        log.log(Level.INFO,    "detailModelTemplate:: enter  ddbId: MT  ID"+ modelTemplate.getId()    + " Simulator"    + modelTemplate.getSimulator());
+        log.log(Level.INFO, "detailModelTemplate:: enter  ddbId: MT  ID" + modelTemplate.getId() + " Simulator" + modelTemplate.getSimulator());
 
         this.modelTemplate = modelTemplate;
         Map<String, ModelData> modelDataMap = modelTemplate.modelDataMap();
@@ -261,7 +262,7 @@ public class ModelTemplateController {
     }
 
     public StreamedContent getModelTemplateData(String key) {
-        log.log(Level.INFO,    "getModelTemplateData:: enter  key: "+key);
+        log.log(Level.INFO,    "getModelTemplateData:: enter  key: " + key);
         StreamedContent file = null;
         ByteArrayInputStream out = new ByteArrayInputStream(modelTemplate.getData(key));
         file = new DefaultStreamedContent(out, "text/txt", modelTemplate.getSimulator().toString() + "." + key);
@@ -269,12 +270,12 @@ public class ModelTemplateController {
     }
 
     public void downloadData(String key) {
-        log.log(Level.INFO,    "downloadData:: enter  key: "+key);
+        log.log(Level.INFO, "downloadData:: enter  key: " + key);
         byte[] res = modelTemplate.getData(key);
         FacesContext facesContext = FacesContext.getCurrentInstance();
         ExternalContext externalContext = facesContext.getExternalContext();
-        externalContext.setResponseHeader("Content-Length",    String.valueOf(res.length));
-        externalContext.setResponseHeader("Content-Disposition","attachment;filename=\"" + key + "\"");
+        externalContext.setResponseHeader("Content-Length", String.valueOf(res.length));
+        externalContext.setResponseHeader("Content-Disposition", "attachment;filename=\"" + key + "\"");
         try {
             externalContext.getResponseOutputStream().write(res);
         } catch (IOException e) {
@@ -285,11 +286,10 @@ public class ModelTemplateController {
     }
 
     public void deleteData(String key) {
-        log.log(Level.INFO, "enter deleteData    by key: " + key+ " currentid : " + this.currentId + " currentddbid: "+ this.currentddbid);
+        log.log(Level.INFO, "enter deleteData    by key: " + key + " currentid : " + this.currentId + " currentddbid: " + this.currentddbid);
         FacesContext context = FacesContext.getCurrentInstance();
-        ResourceBundle bundle= context.getApplication().getResourceBundle(context, "msg");
-        try
-        {
+        ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
+        try {
             ModelTemplateContainer modelTemplateContainer = pmanager.findModelTemplateContainer(this.currentddbid);
             List<ModelTemplate> modelTemplates = modelTemplateContainer.getModelTemplates();
             for (ModelTemplate mt : modelTemplates) {
@@ -300,17 +300,15 @@ public class ModelTemplateController {
 
             Map<String, ModelData> modelDataMap = this.modelTemplate.modelDataMap();
             modelDataMap.remove(key);
-            List<ModelTemplate> modelTemplateUpdated=updateModelTemplatesData(modelDataMap, modelTemplates);
+            List<ModelTemplate> modelTemplateUpdated = updateModelTemplatesData(modelDataMap, modelTemplates);
             modelTemplateContainer.setModelTemplates(modelTemplateUpdated);
             modelTemplateContainer = pmanager.save(modelTemplateContainer);
             Set<String> mapKey = modelDataMap.keySet();
             this.keyList = new ArrayList<String>();
             keyList.addAll(mapKey);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, key + " "+bundle.getString("delete.operation.msg"), bundle.getString("success.msg"));
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, key + " " + bundle.getString("delete.operation.msg"), bundle.getString("success.msg"));
             FacesContext.getCurrentInstance().addMessage(null, m);
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             log.log(Level.WARNING, "Error :" + ex.getMessage());
             String errorMessage = getRootErrorMessage(ex);
             FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, bundle.getString("delete.failure.msg"));
@@ -321,34 +319,33 @@ public class ModelTemplateController {
 
     public void updloadData() {
         FacesContext context = FacesContext.getCurrentInstance();
-        ResourceBundle bundle= context.getApplication().getResourceBundle(context, "msg");
+        ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
         log.log(Level.INFO,    " enter uploadData for  MT_id:" + this.getCurrentId()    + " MTC_id:" + this.getCurrentddbid());
         try {
-            if (this.dataName != null && !this.dataName.equals("")    && this.dataFile != null)
-            {
+            if (this.dataName != null && !this.dataName.equals("")    && this.dataFile != null) {
                 ModelTemplateContainer modelTemplateContainer = pmanager.findModelTemplateContainer(this.currentddbid);
                 List<ModelTemplate> modelTemplates = modelTemplateContainer.getModelTemplates();
-                for (ModelTemplate mt : modelTemplates)
-                {
-                    if (mt.getId().compareTo(currentId) == 0)    this.modelTemplate = mt;
+                for (ModelTemplate mt : modelTemplates) {
+                    if (mt.getId().compareTo(currentId) == 0) {
+                        this.modelTemplate = mt;
+                    }
 
                 }
 
                 Map<String, ModelData> mapData = this.modelTemplate.modelDataMap();
                 mapData.put(dataName, new ModelData(dataFile.getContents()));
-                List<ModelTemplate> modelTemplateUpdated=updateModelTemplatesData(mapData, modelTemplates);
+                List<ModelTemplate> modelTemplateUpdated = updateModelTemplatesData(mapData, modelTemplates);
                 modelTemplateContainer.setModelTemplates(modelTemplateUpdated);
                 modelTemplateContainer = pmanager.save(modelTemplateContainer);
 
-                log.log(Level.INFO,    " ModelTemplateContainer save  "+ dataFile.getFileName());
+                log.log(Level.INFO,    " ModelTemplateContainer save  " + dataFile.getFileName());
                 Set<String> mapKey = mapData.keySet();
                 this.keyList = new ArrayList<String>();
                 keyList.addAll(mapKey);
-                FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,dataFile.getFileName()+ " " +bundle.getString("upload.operation.msg"), bundle.getString("success.msg"));
+                FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, dataFile.getFileName() + " " + bundle.getString("upload.operation.msg"), bundle.getString("success.msg"));
                 FacesContext.getCurrentInstance().addMessage(null, msg);
-                this.dataName="";
-            }
-            else {
+                this.dataName = "";
+            } else {
                 if (this.dataName.equals("") && this.dataFile != null) {
                     throw new Exception("Data can't be empty");
                 }
@@ -365,7 +362,7 @@ public class ModelTemplateController {
     public String deleteMT() {
         log.log(Level.INFO, "delete MT");
         FacesContext context = FacesContext.getCurrentInstance();
-        ResourceBundle bundle= context.getApplication().getResourceBundle(context, "msg");
+        ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
 
         try {
             ModelTemplateContainer modelTemplateContainer = pmanager.findModelTemplateContainer(this.currentddbid);
@@ -380,7 +377,7 @@ public class ModelTemplateController {
             log.log(Level.INFO, "deleteMT:  ModelTemplatesList  after remove  "    + modelTemplates.contains(this.modelTemplate));
             modelTemplateContainer.setModelTemplates(modelTemplates);
             modelTemplateContainer = pmanager.save(modelTemplateContainer);
-            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, this.modelTemplate.getComment() + " "+bundle.getString("delete.operation.msg"), bundle.getString("success.msg"));
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, this.modelTemplate.getComment() + " " + bundle.getString("delete.operation.msg"), bundle.getString("success.msg"));
             FacesContext.getCurrentInstance().addMessage(null, msg);
             return "../modelTemplateContainer/list.jsf";
 
@@ -397,16 +394,16 @@ public class ModelTemplateController {
     public void updateMT() {
         log.log(Level.INFO, "update: [ id: " + this.modelTemplate.getId() + " "    + " comment: " + this.modelTemplate.getComment() + "]");
         FacesContext context = FacesContext.getCurrentInstance();
-        ResourceBundle bundle= context.getApplication().getResourceBundle(context, "msg");
+        ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
         try {
             updateModelTemplates( );
-            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, this.modelTemplate.getComment() + " "+bundle.getString("update.operation.msg"), bundle.getString("update.success.msg"));
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, this.modelTemplate.getComment() + "  " + bundle.getString("update.operation.msg"), bundle.getString("update.success.msg"));
             FacesContext.getCurrentInstance().addMessage(null, msg);
 
         } catch (Exception ex) {
             String errorMessage = getRootErrorMessage(ex);
             log.log(Level.WARNING, "Error  " + errorMessage);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage,bundle.getString("update.failure.msg"));
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("update.failure.msg"));
             facesContext.addMessage(null, m);
         }
 
@@ -415,9 +412,8 @@ public class ModelTemplateController {
     public void saveDefParameters() {
         log.log(Level.INFO, "  saveDefParameters enter::");
         FacesContext context = FacesContext.getCurrentInstance();
-        ResourceBundle bundle= context.getApplication().getResourceBundle(context, "msg");
-        try
-        {
+        ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
+        try {
             ModelTemplateContainer modelTemplateContainer     = pmanager.findModelTemplateContainer(this.currentddbid);
             List<ModelTemplate> modelTemplates                 = modelTemplateContainer.getModelTemplates();
             for (ModelTemplate mt : modelTemplates) {
@@ -430,30 +426,30 @@ public class ModelTemplateController {
                 boolean isNewDefParameters = false;
                 DefaultParameters dp = null;
                 List<DefaultParameters> dparamsList = this.modelTemplate.getDefaultParameters();
-                if (dparamsList == null    || (dparamsList != null && dparamsList.size() == 0)) {
-                    log.log(Level.INFO,"  there aren't any DefaultParameters defined for modelTemplate: "+ this.modelTemplate.getId());
+                if (dparamsList == null || (dparamsList != null && dparamsList.size() == 0)) {
+                    log.log(Level.INFO, "  there aren't any DefaultParameters defined for modelTemplate: " + this.modelTemplate.getId());
                     dparamsList = new ArrayList<DefaultParameters>();
                     isNewDefParameters = true;
                 } else {
-                    log.log(Level.INFO, "  there are: " + dparamsList.size()+ " DefaultParameters defined for modelTemplate: "    + this.modelTemplate.getId());
+                    log.log(Level.INFO, "  there are: " + dparamsList.size() + " DefaultParameters defined for modelTemplate: "    + this.modelTemplate.getId());
                     dp = defaultParameterBySetNum(dparamsList, pw.getSetNum());
                 }
 
                 if (dp == null) {
-                    log.log(Level.INFO,"  make a new instance of default parameters");
+                    log.log(Level.INFO, "  make a new instance of default parameters");
                     dp = new DefaultParameters(pw.getSetNum());
                     isNewDefParameters = true;
                 }
                 try {
                     if (pw.getValue() != null) {
                         switch (pw.getType()) {
-                            case "Integer":     dp.addParameter(new ParameterInteger(pw.getName(),Integer.valueOf(pw.getValue().toString())));
+                            case "Integer":     dp.addParameter(new ParameterInteger(pw.getName(), Integer.valueOf(pw.getValue().toString())));
                                                 break;
-                            case "Float":        dp.addParameter(new ParameterFloat(pw.getName(),Float.valueOf(pw.getValue().toString())));
+                            case "Float":        dp.addParameter(new ParameterFloat(pw.getName(), Float.valueOf(pw.getValue().toString())));
                                                 break;
-                            case "Boolean":        dp.addParameter(new ParameterBoolean(pw.getName(),Boolean.valueOf(pw.getValue().toString())));
+                            case "Boolean":        dp.addParameter(new ParameterBoolean(pw.getName(), Boolean.valueOf(pw.getValue().toString())));
                                                 break;
-                            case "String":        dp.addParameter(new ParameterString(pw.getName(),pw.getValue().toString()));
+                            case "String":        dp.addParameter(new ParameterString(pw.getName(), pw.getValue().toString()));
                                                 break;
                             default: throw new RuntimeException(pw.getType() + " not supported.");
                         }
@@ -465,28 +461,31 @@ public class ModelTemplateController {
                             ListIterator<ModelTemplate> modelTemplateListIter = modelTemplates.listIterator();
                             while (modelTemplateListIter.hasNext()) {
                                 ModelTemplate mt = modelTemplateListIter.next();
-                                if (mt.equals(this.modelTemplate))
+                                if (mt.equals(this.modelTemplate)) {
                                     mt.setDefaultParameters(dparamsList);
+                                }
                                 modelTemplateUpdated.add(mt);
                             }
                             modelTemplateContainer.setModelTemplates(modelTemplateUpdated);
                             pmanager.save(modelTemplateContainer);
                         }
-                    } else    log.log(Level.WARNING," parameterAdded has a NULL value will be rejected!");
+                    } else {
+                        log.log(Level.WARNING, " parameterAdded has a NULL value will be rejected!");
+                    }
                 } catch (  RuntimeException ex) {
-                    log.log(Level.WARNING,    "Throw Exception :"+ ex.getMessage());
+                    log.log(Level.WARNING,    "Throw Exception :" + ex.getMessage());
                     throw new Exception(ex);
                 }
             }
             resetForms();
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, "Parameters " +bundle.getString("add.operation.msg"), bundle.getString("success.msg"));
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, "Parameters " + bundle.getString("add.operation.msg"), bundle.getString("success.msg"));
             facesContext.addMessage(null, m);
 
         } catch (Exception e) {
             log.log(Level.WARNING, "Error :" + e.getMessage());
             e.printStackTrace();
             String errorMessage = getRootErrorMessage(e);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,errorMessage, bundle.getString("add.failure.msg"));
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, bundle.getString("add.failure.msg"));
             facesContext.addMessage(null, m);
         }
     }
@@ -498,11 +497,10 @@ public class ModelTemplateController {
      */
     public void deleteDefaultParamerter(DefaultParameterWeb defParam) {
         FacesContext context = FacesContext.getCurrentInstance();
-        ResourceBundle bundle= context.getApplication().getResourceBundle(context, "msg");
-        try
-        {
+        ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
+        try {
             log.log(Level.INFO,    " DefaultParamerter to delete: "
-                    + "[Name: "+ defParam.getName() + " setNum: "+ defParam.getSetNum() + " Type: "+ defParam.getType() + "  Value: "+ defParam.getValue() + "]");
+                    + "[Name: " + defParam.getName() + " setNum: " + defParam.getSetNum() + " Type: " + defParam.getType() + "  Value: " + defParam.getValue() + "]");
             ModelTemplateContainer modelTemplateContainer = pmanager.findModelTemplateContainer(this.currentddbid);
             List<ModelTemplate> modelTemplates = modelTemplateContainer.getModelTemplates();
             // get current Model Template
@@ -517,7 +515,7 @@ public class ModelTemplateController {
                 log.log(Level.INFO,    " no default parameters list for Model Template selected:: ");
             } else {
                 // find parameters for setNum defParam.getSetNum
-                DefaultParameters dp = defaultParameterBySetNum(dparamsList,defParam.getSetNum());
+                DefaultParameters dp = defaultParameterBySetNum(dparamsList, defParam.getSetNum());
                 Parameter paramToRemove = removeParameter(dp, defParam);
                 if (paramToRemove != null) {
                     dp.getParameters().remove(paramToRemove);
@@ -528,30 +526,33 @@ public class ModelTemplateController {
                     List<DefaultParameters> dparamsListUpdated = new ArrayList<DefaultParameters>();
                     for (DefaultParameters elem : dparamsList) {
                         if (elem.getSetNum() != defParam.getSetNum()
-                                && elem.getParameters().size() > 0)
+                                && elem.getParameters().size() > 0) {
                             dparamsListUpdated.add(elem);
+                        }
                     }
                     ArrayList<ModelTemplate> modelTemplateUpdated = new ArrayList<ModelTemplate>();
                     ListIterator<ModelTemplate> modelTemplateListIter = modelTemplates.listIterator();
                     while (modelTemplateListIter.hasNext()) {
                         ModelTemplate mt = modelTemplateListIter.next();
                         if (mt.equals(this.modelTemplate)) {
-                            if (dparamsListUpdated.size() > 0)  mt.setDefaultParameters(dparamsListUpdated);
-                            else mt.setDefaultParameters(null);
+                            if (dparamsListUpdated.size() > 0) {
+                                mt.setDefaultParameters(dparamsListUpdated);
+                            } else {
+                                mt.setDefaultParameters(null);
+                            }
                         }
                         modelTemplateUpdated.add(mt);
                     }
-                    log.log(Level.INFO,    " modelTemplateList size con modelTemplate aggiornato: "+modelTemplateUpdated.size());
+                    log.log(Level.INFO,    " modelTemplateList size con modelTemplate aggiornato: " + modelTemplateUpdated.size());
                     modelTemplateContainer.setModelTemplates(modelTemplateUpdated);
                     modelTemplateContainer = pmanager.save(modelTemplateContainer);
                 }
-                FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "DefaultParameters " +bundle.getString("delete.operation.msg"), bundle.getString("success.msg"));
+                FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "DefaultParameters " + bundle.getString("delete.operation.msg"), bundle.getString("success.msg"));
                 resetForms();
                 FacesContext.getCurrentInstance().addMessage(null, msg);
             }
 
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             log.log(Level.WARNING, "Error :" + ex.getMessage());
             String errorMessage = getRootErrorMessage(ex);
             FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("delete.failure.msg"));
@@ -564,7 +565,9 @@ public class ModelTemplateController {
     private DefaultParameters defaultParameterBySetNum(
         List<DefaultParameters> dparamsList, int setNum) throws Exception {
         for (DefaultParameters dp : dparamsList) {
-            if (dp.getSetNum() == setNum)    return dp;
+            if (dp.getSetNum() == setNum) {
+                return dp;
+            }
         }
         return null;
     }
@@ -585,7 +588,9 @@ public class ModelTemplateController {
                 }
             }
             return paramToDelete;
-        } else    throw new Exception("DefaultParameter doesn't contain Parameter with name: "+ dfw.getName());
+        } else {
+            throw new Exception("DefaultParameter doesn't contain Parameter with name: " + dfw.getName());
+        }
     }
 
     private String getRootErrorMessage(Exception e) {
@@ -618,10 +623,11 @@ public class ModelTemplateController {
         ListIterator<ModelTemplate> modelTemplateListIter = modelTemplates.listIterator();
         while (modelTemplateListIter.hasNext()) {
             ModelTemplate mt = modelTemplateListIter.next();
-            if (mt.getId().compareTo(this.currentId) != 0)
+            if (mt.getId().compareTo(this.currentId) != 0) {
                 modelTemplatesUpdated.add(mt);
-            else
+            } else {
                 modelTemplatesUpdated.add(this.modelTemplate);
+            }
         }
         modelTemplateContainer.setModelTemplates(modelTemplatesUpdated);
         modelTemplateContainer = pmanager.save(modelTemplateContainer);
@@ -635,8 +641,9 @@ public class ModelTemplateController {
         ListIterator<ModelTemplate> modelTemplateListIter = modelTemplates.listIterator();
         while (modelTemplateListIter.hasNext()) {
             ModelTemplate mt = modelTemplateListIter.next();
-            if (mt.getId().compareTo(this.currentId) == 0)
+            if (mt.getId().compareTo(this.currentId) == 0) {
                 mt.setMdata(modelDataMap);
+            }
 
             modelTemplatesUpdated.add(mt);
         }
@@ -645,10 +652,11 @@ public class ModelTemplateController {
 
     private void resetForms() {
         log.log(Level.INFO, " resetForms enter");
-        if (this.modelTemplate.getDefaultParameters() != null)
+        if (this.modelTemplate.getDefaultParameters() != null) {
             buildDefParamsEditTable(this.modelTemplate.getDefaultParameters());
-        else
+        } else {
             this.keydbDefParams = new ArrayList<Integer>();
+        }
         this.addedDefParams = new ArrayList<DefaultParameterWeb>();
         this.defParameterWeb = new DefaultParameterWeb();
 

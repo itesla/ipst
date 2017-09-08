@@ -177,29 +177,33 @@ public void setSelectedModelTemplateContainer(
 @PostConstruct
    public void initInternal() {
        log.log(Level.INFO, " initInternal enter:: ");
-       lazyDataModel=new LazyInternalDataModel(pmanager);
-       internalsCount=pmanager.findInternalsAllCount();
+    lazyDataModel = new LazyInternalDataModel(pmanager);
+    internalsCount = pmanager.findInternalsAllCount();
 
-       String paramInternal=null;
-       FacesContext ctx = FacesContext.getCurrentInstance();
-       Map<String, String> parameters = ctx.getExternalContext().getRequestParameterMap();
-       if (parameters.containsKey("nativeId")) {
-           paramInternal = (String)parameters.get("nativeId");
-           log.log(Level.INFO, " param :: "+paramInternal);
-       }
+    String paramInternal = null;
+    FacesContext ctx = FacesContext.getCurrentInstance();
+    Map<String, String> parameters = ctx.getExternalContext().getRequestParameterMap();
+    if (parameters.containsKey("nativeId")) {
+        paramInternal = (String) parameters.get("nativeId");
+        log.log(Level.INFO, " param :: " + paramInternal);
+    }
 
-       if (paramInternal == null)        newInternal = new Internal("");
-       else
-       this.newInternal=pmanager.findInternal(paramInternal);
-       if (this.newInternal!= null) log.log(Level.INFO, " newInternal :: "+this.newInternal.getNativeId());
-       log.log(Level.INFO, " query ModelTemplateContainer");
-       Query q = em.createQuery("SELECT m.ddbId FROM ModelTemplateContainer m order by m.ddbId");
-       modelTemplateContainersValues = q.getResultList();
-       log.log(Level.INFO, "DONE query ModelTemplateContainer");
-       log.log(Level.INFO, " query parameterContainer");
-       Query q2 = em.createQuery("SELECT m.ddbId FROM ParametersContainer m order by m.ddbId");
-       parametersContainerValues = q2.getResultList();
-       log.log(Level.INFO, "DONE query parameterContainer");
+    if (paramInternal == null) {
+        newInternal = new Internal("");
+    } else {
+        this.newInternal = pmanager.findInternal(paramInternal);
+    }
+    if (this.newInternal != null) {
+        log.log(Level.INFO, " newInternal :: " + this.newInternal.getNativeId());
+    }
+    log.log(Level.INFO, " query ModelTemplateContainer");
+    Query q = em.createQuery("SELECT m.ddbId FROM ModelTemplateContainer m order by m.ddbId");
+    modelTemplateContainersValues = q.getResultList();
+    log.log(Level.INFO, "DONE query ModelTemplateContainer");
+    log.log(Level.INFO, " query parameterContainer");
+    Query q2 = em.createQuery("SELECT m.ddbId FROM ParametersContainer m order by m.ddbId");
+    parametersContainerValues = q2.getResultList();
+    log.log(Level.INFO, "DONE query parameterContainer");
     }
   
    public String getNativeId() {
@@ -219,19 +223,20 @@ public void setSelectedModelTemplateContainer(
 
     public void setNativeId(String currentNativeId) {
         this.nativeId = currentNativeId;
-        if(nativeId != null)
-            this.newInternal=pmanager.findInternal(nativeId);
+        if (nativeId != null) {
+            this.newInternal = pmanager.findInternal(nativeId);
+        }
     }
   
    public String create() throws Exception {
-        log.log(Level.INFO," Create new Internal: [nativeId: " +newInternal.getNativeId()
-                +"  Model Container DDBID: "+ selectedModelTemplateContainer
-                +"  Parameter Container: "+selectedParametersContainer +"]");
+        log.log(Level.INFO, " Create new Internal: [nativeId: " + newInternal.getNativeId()
+                + "  Model Container DDBID: " + selectedModelTemplateContainer
+                + "  Parameter Container: " + selectedParametersContainer + "]");
 
-        ModelTemplateContainer mc=pmanager.findModelTemplateContainer(this.selectedModelTemplateContainer);
-        newInternal.setModelContainer(mc);
+       ModelTemplateContainer mc = pmanager.findModelTemplateContainer(this.selectedModelTemplateContainer);
+       newInternal.setModelContainer(mc);
 
-        ParametersContainer pc=pmanager.findParametersContainer(this.selectedParametersContainer);
+       ParametersContainer pc = pmanager.findParametersContainer(this.selectedParametersContainer);
         newInternal.setParametersContainer(pc);
 
         FacesContext context = FacesContext.getCurrentInstance();
@@ -243,7 +248,7 @@ public void setSelectedModelTemplateContainer(
             facesContext.addMessage(null, m);
             return "list?faces-redirect=true";
         } catch (Exception e) {
-            log.log(Level.WARNING,"Error during creation of ["+ newInternal.getNativeId()+"]");
+            log.log(Level.WARNING, "Error during creation of [" + newInternal.getNativeId() + "]");
             String errorMessage = getRootErrorMessage(e);
             FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("create.failure.msg"));
             facesContext.addMessage(null, m);
@@ -253,45 +258,44 @@ public void setSelectedModelTemplateContainer(
    
   
    public String delete(String nativeId) throws Exception {
-       log.log(Level.INFO," Delete Internal: [nativeId: " +nativeId +"]");
+       log.log(Level.INFO, " Delete Internal: [nativeId: " + nativeId + "]");
 
        FacesContext context = FacesContext.getCurrentInstance();
        ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
 
-         try {
-             this.newInternal=pmanager.findInternal(nativeId);
-             pmanager.delete(this.newInternal);
+       try {
+           this.newInternal = pmanager.findInternal(nativeId);
+           pmanager.delete(this.newInternal);
              FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("delete.operation.msg"), bundle.getString("delete.success.msg"));
              facesContext.addMessage(null, m);
 
              return "list?faces-redirect=true";
          } catch (Exception e) {
-             log.log(Level.WARNING,"Error during delete of ["+ newInternal.getNativeId()+"]");
-             String errorMessage = getRootErrorMessage(e);
-             FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("delete.failure.msg"));
-             facesContext.addMessage(null, m);
-             return "edit";
-         }
+           log.log(Level.WARNING, "Error during delete of [" + newInternal.getNativeId() + "]");
+           String errorMessage = getRootErrorMessage(e);
+           FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, bundle.getString("delete.failure.msg"));
+           facesContext.addMessage(null, m);
+           return "edit";
+       }
      }
     
     public String edit(Internal internal) {
-        log.log(Level.INFO," edit enter:: ["+internal.getNativeId()+"]");
-         this.nativeId=internal.getNativeId();
+        log.log(Level.INFO, " edit enter:: [" + internal.getNativeId() + "]");
+        this.nativeId = internal.getNativeId();
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
-         try {
-             this.newInternal=pmanager.findInternal(internal.getNativeId());
-             if (internal != null) {
-                 log.log(Level.INFO,"Edit Internal : ["+ internal.getNativeId()+"]");
-                 return "edit?faces-redirect=true&includeViewParams=true";
-             }
-             else {
-                 throw new Exception("Edit: Internal not found!");
-             }
+        try {
+            this.newInternal = pmanager.findInternal(internal.getNativeId());
+            if (internal != null) {
+                log.log(Level.INFO, "Edit Internal : [" + internal.getNativeId() + "]");
+                return "edit?faces-redirect=true&includeViewParams=true";
+            } else {
+                throw new Exception("Edit: Internal not found!");
+            }
 
-         } catch (Exception e) {
-             log.log(Level.WARNING,"edit Internal:: catch an Exception" + e.getMessage());
-             String errorMessage = getRootErrorMessage(e);
+        } catch (Exception e) {
+            log.log(Level.WARNING, "edit Internal:: catch an Exception" + e.getMessage());
+            String errorMessage = getRootErrorMessage(e);
              FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("edit.failure.msg"));
              facesContext.addMessage(null, m);
              return "edit";
@@ -315,28 +319,28 @@ public void setSelectedModelTemplateContainer(
     }
 
     public void convertToModelica(Internal internal) {
-        log.log(Level.INFO,"convertToModelica enter:: ["+internal.getNativeId()+"]");
-        log.log(Level.INFO,"convertToModelica versions ["+eurostagVersion+","+modelicaVersion+"]");
+        log.log(Level.INFO, "convertToModelica enter:: [" + internal.getNativeId() + "]");
+        log.log(Level.INFO, "convertToModelica versions [" + eurostagVersion + "," + modelicaVersion + "]");
 
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
-         try {
-            log.log(Level.INFO,"convertToModelica Internal : ["+ internal.getNativeId()+"]");
+        try {
+            log.log(Level.INFO, "convertToModelica Internal : [" + internal.getNativeId() + "]");
             Converter eurostagModelicaConverter = new Converter(pmanager, eurostagVersion, modelicaVersion);
             eurostagModelicaConverter.convertAndSaveInternal(internal.getNativeId(), true);
             FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("convert.operation.msg"), bundle.getString("convert.success.msg"));
-             facesContext.addMessage(null, m);
-             newInternal=pmanager.findInternal(internal.getNativeId());
+            facesContext.addMessage(null, m);
+            newInternal = pmanager.findInternal(internal.getNativeId());
             //return "/internals/list";
          } catch (Exception e) {
-             log.log(Level.WARNING,"convertToModelica Internal:: catch an Exception" + e.getMessage());
-             String errorMessage = getRootErrorMessage(e);
-             FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("convert.failure.msg"));
-             facesContext.addMessage(null, m);
+            log.log(Level.WARNING, "convertToModelica Internal:: catch an Exception" + e.getMessage());
+            String errorMessage = getRootErrorMessage(e);
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, bundle.getString("convert.failure.msg"));
+            facesContext.addMessage(null, m);
 
-             newInternal=pmanager.findInternal(internal.getNativeId());
-         }
-     }
+            newInternal = pmanager.findInternal(internal.getNativeId());
+        }
+    }
    
   private String getRootErrorMessage(Exception e) {
         // Default to general error message that registration failed.

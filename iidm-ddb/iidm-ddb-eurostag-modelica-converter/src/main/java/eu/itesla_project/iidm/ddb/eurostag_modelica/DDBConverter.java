@@ -63,7 +63,7 @@ public class DDBConverter {
             try {
                 EjbClientCtxUtils.close(this.context);
             } catch (Exception e) {
-                log.error(e.getMessage(),e);
+                log.error(e.getMessage(), e);
             }
         }
     }
@@ -95,8 +95,9 @@ public class DDBConverter {
         } catch (ConversionException e) {
             log.error("Error converting DDB data from eurostag to modelica: " + e.getMessage());
         } finally {
-            if ( DDBConverter != null )
+            if ( DDBConverter != null ) {
                 DDBConverter.close();
+            }
         }
 
     }

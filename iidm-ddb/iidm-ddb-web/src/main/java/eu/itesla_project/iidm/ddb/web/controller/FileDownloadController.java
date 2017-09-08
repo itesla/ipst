@@ -32,29 +32,28 @@ public class FileDownloadController {
       
     public FileDownloadController() {          
         System.out.println("fileDowloadController");
-        InputStream stream = ((ServletContext)FacesContext.getCurrentInstance().getExternalContext().getContext()).getResourceAsStream("/modelTemplateContainer/test.jpg");  
-        file = new DefaultStreamedContent(stream, "image/jpg", "test.jpg");  
+        InputStream stream = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getResourceAsStream("/modelTemplateContainer/test.jpg");
+        file = new DefaultStreamedContent(stream, "image/jpg", "test.jpg");
     }
-  
-    public StreamedContent getFile() {  
-        System.out.println("return file "+file.getName());
-        return file;  
+
+    public StreamedContent getFile() {
+        System.out.println("return file " + file.getName());
+        return file;
     }
     
     public void setFile(StreamedContent file) {  
         this.file = file;  
-    }  
-    
-    public void downLoadFile(ModelTemplate mt, String mapKey){
-        if (mt!= null) {
-            System.out.println("mt id  "+mt.getId() + " mt comment "+mt.getComment() + "mapkey "+mapKey );
-            byte[]  fileMap=mt.getData(mapKey);
+    }
+
+    public void downLoadFile(ModelTemplate mt, String mapKey) {
+        if (mt != null) {
+            System.out.println("mt id  " + mt.getId() + " mt comment " + mt.getComment() + "mapkey " + mapKey);
+            byte[] fileMap = mt.getData(mapKey);
             ;
             ByteArrayInputStream bis = new ByteArrayInputStream(fileMap);
-            file = new  DefaultStreamedContent(bis, "text/plain", mapKey+".txt");
+            file = new DefaultStreamedContent(bis, "text/plain", mapKey + ".txt");
 
-            }
-        else {
+        } else {
             System.out.println("mt is null ");
 
         }

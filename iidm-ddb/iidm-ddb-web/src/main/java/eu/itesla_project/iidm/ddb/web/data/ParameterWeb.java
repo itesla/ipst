@@ -78,9 +78,9 @@ public class ParameterWeb {
         this.value = value;
     }
 
-    
-    public String toString(){
-        return "Parameter [ Type: " +this.type+ " Name: "+ this.name+" Value: "+this.value + "]";
+
+    public String toString() {
+        return "Parameter [ Type: " + this.type + " Name: " + this.name + " Value: " + this.value + "]";
 
     }
     

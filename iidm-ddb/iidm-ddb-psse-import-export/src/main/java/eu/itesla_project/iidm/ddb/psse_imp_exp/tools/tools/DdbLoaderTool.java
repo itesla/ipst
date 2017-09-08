@@ -43,11 +43,11 @@ public class DdbLoaderTool implements Tool {
         String optionRemoveData = line.getOptionValue(DdbLoaderCommand.OPTION_REMOVE);
         
         DdbConfig ddbConfig = new DdbConfig(jbossHost, jbossPort, jbossUser, jbossPassword);
-        Path dyrPath=Paths.get(dyrPathS);
-        Path mappingPath=Paths.get(mappingPathS);
+        Path dyrPath = Paths.get(dyrPathS);
+        Path mappingPath = Paths.get(mappingPathS);
         DdbDyrLoader dyrLoader = new DdbDyrLoader();
 
-        boolean removeDataAfterHavingLoadedIt=Boolean.parseBoolean(optionRemoveData);
+        boolean removeDataAfterHavingLoadedIt = Boolean.parseBoolean(optionRemoveData);
 
         dyrLoader.load(dyrPath, mappingPath, psseVersion, ddbConfig, removeDataAfterHavingLoadedIt);
     }

@@ -29,9 +29,8 @@ private DDBManager pmanager;
 
    
 
-   public LazyInternalDataModel( DDBManager pmanager)
-   {
-       this.pmanager=pmanager;
+   public LazyInternalDataModel( DDBManager pmanager) {
+       this.pmanager = pmanager;
        setPageSize(10);
        setRowCount(pmanager.findInternalsAllCount());
    }

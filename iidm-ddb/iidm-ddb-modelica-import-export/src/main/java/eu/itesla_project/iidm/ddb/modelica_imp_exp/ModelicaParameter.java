@@ -10,9 +10,8 @@ package eu.itesla_project.iidm.ddb.modelica_imp_exp;
  * @author Luis Maria Zamarreno <zamarrenolm@aia.com>
  * @author Silvia Machado <machados@aia.es>
  */
-public class ModelicaParameter
-{
-    public String    type;
-    public String    name;
-    public String    value;
+public class ModelicaParameter {
+    public String type;
+    public String name;
+    public String value;
 }

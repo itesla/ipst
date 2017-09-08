@@ -13,7 +13,7 @@ import javax.persistence.*;
  * @author Quinary <itesla@quinary.com>
  */
 @Entity
-@Table(name="PARAMETERSTRING")
+@Table(name = "PARAMETERSTRING")
 @DiscriminatorValue("string")
 public class ParameterString extends Parameter implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -25,8 +25,8 @@ public class ParameterString extends Parameter implements Serializable {
     }
     public ParameterString(String name, String value) {
         super();
-        this.name=name;
-        this.value=value;
+        this.name = name;
+        this.value = value;
     }
     public String getValue() {
         return value;

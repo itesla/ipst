@@ -19,7 +19,7 @@ import java.io.Reader;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class MemoryBufferedReader extends BufferedReader{
+public class MemoryBufferedReader extends BufferedReader {
 
     public MemoryBufferedReader(Reader in) {
         super(in);
@@ -29,11 +29,11 @@ public class MemoryBufferedReader extends BufferedReader{
         super(in, sz);
     }
 
-    String bufferedLine=null;
+    String bufferedLine = null;
 
     @Override
     public String readLine() throws IOException {
-        bufferedLine=super.readLine();
+        bufferedLine = super.readLine();
         return bufferedLine;
     }
 

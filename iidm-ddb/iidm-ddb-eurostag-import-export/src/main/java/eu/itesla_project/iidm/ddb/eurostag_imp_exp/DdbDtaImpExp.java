@@ -45,8 +45,8 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
     static Logger log = LoggerFactory.getLogger(DdbDtaImpExp.class);
 
 
-    String estg[][]=new String[][] {
-            {"M1U", "Unsaturated generator defined by its internal parameters - full model",},
+    String estg[][] = new String[][] {
+            {"M1U", "Unsaturated generator defined by its internal parameters - full model", },
             {"M1DU", "Unsaturated generator defined by its internal parameters - full model - type Fortescue"},
             {"M2U", "Unsaturated generator defined by its external parameters - full model"},
             {"M2DU", "Unsaturated generator defined by its external parameters - full model - type Fortescue"},
@@ -86,19 +86,19 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             ////          {"R",    "Macroblock"}
     };
 
-    public String eurostagVersion="5.1.1";
+    public String eurostagVersion = "5.1.1";
     private final DdbConfig config;
     private final DdExportConfig configExport;
     private String jndiName;
     private Network network;
     private Map<String, Character> parallelIndexes;
-    private boolean updateFlag=false;
+    private boolean updateFlag = false;
 
-    Hashtable<String, Set<String>> macroblocksPinNames= new Hashtable<>();
-    Hashtable<String, List<String>> EquipmentsInternalsMap= new Hashtable<>();
-    Hashtable<String, String> equipmentsTypeMap= new Hashtable<>();
+    Hashtable<String, Set<String>> macroblocksPinNames = new Hashtable<>();
+    Hashtable<String, List<String>> EquipmentsInternalsMap = new Hashtable<>();
+    Hashtable<String, String> equipmentsTypeMap = new Hashtable<>();
     //structure tracking regs names
-    Set<String> uniqueRegNamesSet=new TreeSet<>();
+    Set<String> uniqueRegNamesSet = new TreeSet<>();
     //structure tracking RST zones
     HashMap<String, ArrayList<String>> geneRst = new HashMap<String, ArrayList<String>>();
     HashMap<String, String> pilotPointRst = new HashMap<String, String>();
@@ -132,7 +132,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         return null;
     }
 
-    public EjbClientCtx newEjbClientEcx() throws NamingException{
+    public EjbClientCtx newEjbClientEcx() throws NamingException {
         return new  EjbClientCtx(config.getJbossHost(), Integer.parseInt(config.getJbossPort()), config.getJbossUser(), config.getJbossPassword());
     }
 
@@ -158,53 +158,53 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         try {
             log.info("Reading mapping cimid-eurostagid file: " + mappingFile.toAbsolutePath());
             Map<String, String> mapping = readWithCsvMapReader(mappingFile);
-            log.info("Loading data from: " + dtaFile.toAbsolutePath() +", Eurostag version: " + eurostagVersion + ", regulators directory: " + regsFolder.toAbsolutePath());
+            log.info("Loading data from: " + dtaFile.toAbsolutePath() + ", Eurostag version: " + eurostagVersion + ", regulators directory: " + regsFolder.toAbsolutePath());
             loadEurostagData(dtaFile, mapping, eurostagVersion, regsFolder);
         } catch (Throwable e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
         }
     }
     public void loadEurostagData(Path dtaFile, Map<String, String> dicoMap, String eurostagVersion, Path regsFolder) {
-        try  (EjbClientCtx cx=newEjbClientEcx()){
+        try  (EjbClientCtx cx = newEjbClientEcx()) {
             DDBManager ddbmanager = cx.connectEjb(DDBMANAGERJNDINAME);
-            SimulatorInst eurostagSim=getOrCreateEurostagSimulatorInst(ddbmanager, eurostagVersion);
+            SimulatorInst eurostagSim = getOrCreateEurostagSimulatorInst(ddbmanager, eurostagVersion);
 
             //make sure eurostag models catalog is loaded
             loadEurostagTemplatesCatalog(ddbmanager);
 
-            final Map<String,Path> regsMapping=buildRegsFilesMapping(regsFolder);
+            final Map<String, Path> regsMapping = buildRegsFilesMapping(regsFolder);
 
             if (!Files.exists(dtaFile)) {
-                log.error(dtaFile +" does not exist");
+                log.error(dtaFile + " does not exist");
             } else {
 
                 if (!Files.isDirectory(dtaFile)) {
                     // process single file
                     try {
-                        feedDDBWithEurostagData(dtaFile, dicoMap, eurostagSim , ddbmanager,regsMapping);
+                        feedDDBWithEurostagData(dtaFile, dicoMap, eurostagSim, ddbmanager, regsMapping);
                     } catch (Throwable t) {
-                        log.error(t.getMessage()+ "; file " + dtaFile, t);
+                        log.error(t.getMessage() + "; file " + dtaFile, t);
                     }
                 } else {
                     // process a directory, recursively
-                    final Map<String, String> dicoMapF=dicoMap;
+                    final Map<String, String> dicoMapF = dicoMap;
                     final SimulatorInst eurostagSimF = eurostagSim;
-                    final DDBManager ddbmanagerF=ddbmanager;
+                    final DDBManager ddbmanagerF = ddbmanager;
 
                     Files.walkFileTree(dtaFile,
-                            new SimpleFileVisitor<Path> (){
+                            new SimpleFileVisitor<Path> () {
                         @Override
                         public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
                             if (attr.isRegularFile()) {
-                                String aFileName=file.toString();
+                                String aFileName = file.toString();
                                 if ((aFileName.endsWith(".dd")) || (aFileName.endsWith(".dta"))) {
                                     try {
-                                        feedDDBWithEurostagData(file, dicoMapF, eurostagSimF , ddbmanagerF,regsMapping);
+                                        feedDDBWithEurostagData(file, dicoMapF, eurostagSimF, ddbmanagerF, regsMapping);
                                     } catch (Throwable t) {
-                                        log.error(t.getMessage()+ "; file " + file, t);
+                                        log.error(t.getMessage() + "; file " + file, t);
                                     }
                                 } else {
-                                    log.warn("file " + file +" not recognized (not .dd, nor .dta): skipped!");
+                                    log.warn("file " + file + " not recognized (not .dd, nor .dta): skipped!");
                                 }
                             } else {
                                 log.warn("file %s not a regular file: skipped!", file);
@@ -218,7 +218,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                         // If this method is not overridden and an error occurs, an IOException is thrown.
                         @Override
                         public FileVisitResult visitFileFailed(Path file, IOException exc) {
-                            log.error(exc.getMessage(),exc);
+                            log.error(exc.getMessage(), exc);
                             return FileVisitResult.CONTINUE;
                         }
                     });
@@ -227,14 +227,14 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
             processConnections(ddbmanager);
         } catch (Exception e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
         }
 
     }
     //load ddb with eurostag templates
     public void loadEurostagTemplatesCatalog(DDBManager ddbmanager) {
         try {
-            SimulatorInst eurostagSim=getOrCreateEurostagSimulatorInst(ddbmanager, eurostagVersion);
+            SimulatorInst eurostagSim = getOrCreateEurostagSimulatorInst(ddbmanager, eurostagVersion);
             feedDDBWithEurostagModelTemplates(estg, eurostagSim, ddbmanager);
         } catch (Throwable e) {
             log.error(e.getMessage());
@@ -273,7 +273,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
     }
     public void feedDDBWithEurostagData(Path inputFile,
             Map<String, String> dicoMap, SimulatorInst eurostagSim,
-            DDBManager ddbmanager, Map<String,Path> regsMapping) throws Exception {
+            DDBManager ddbmanager, Map<String, Path> regsMapping) throws Exception {
         log.info("Processing file: " + inputFile.toAbsolutePath());
         // first parse the .dta file
         ArrayList<EurostagRecord> retZones = DtaParser.parseZones(inputFile);
@@ -324,22 +324,22 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             throw new RuntimeException(mName + ": cimId not found in mapping.");
         }
 
-        if (!equipmentsTypeMap.contains(cimId)){
+        if (!equipmentsTypeMap.contains(cimId)) {
             equipmentsTypeMap.put(cimId, zone.getTypeName());
         }
 
         Equipment eq1 = ddbmanager.findEquipment(cimId);
-        if ((eq1!=null) && (updateFlag==true)) {
-            Set<String> connectedInternals=getConnectedInternals(cimId,ddbmanager);
+        if ((eq1 != null) && (updateFlag == true)) {
+            Set<String> connectedInternals = getConnectedInternals(cimId, ddbmanager);
 
             //remove this equipment graph
             log.info("- removing existing equipment {}", cimId);
-            removeEquipment(cimId,ddbmanager);
-            eq1=null;
+            removeEquipment(cimId, ddbmanager);
+            eq1 = null;
 
             for (String internalId: connectedInternals) {
                 log.info("- removing existing connected internal {}", internalId);
-                removeInternal(internalId,ddbmanager);
+                removeInternal(internalId, ddbmanager);
             }
 
         }
@@ -354,7 +354,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
         ParametersContainer pc1 = ddbmanager.findParametersContainer(mName);
         if (pc1 == null) {
-            log.debug("-- creating Parameters Container " + mName +" plus parameters.");
+            log.debug("-- creating Parameters Container " + mName + " plus parameters.");
             pc1 = new ParametersContainer(mName);
             Parameters pars = new Parameters(eurostagSim);
             for (String varName : zone.getData().keySet()) {
@@ -418,22 +418,22 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             throw new RuntimeException(mName + ": cimId not found in mapping.");
         }
 
-        if (!equipmentsTypeMap.contains(cimId)){
+        if (!equipmentsTypeMap.contains(cimId)) {
             equipmentsTypeMap.put(cimId, zone.getTypeName());
         }
 
         Equipment eq1 = ddbmanager.findEquipment(cimId);
-        if ((eq1!=null) && (updateFlag==true)) {
-            Set<String> connectedInternals=getConnectedInternals(cimId,ddbmanager);
+        if ((eq1 != null) && (updateFlag == true)) {
+            Set<String> connectedInternals = getConnectedInternals(cimId, ddbmanager);
 
             //remove this equipment graph
             log.info("- removing existing equipment {}", cimId);
-            removeEquipment(cimId,ddbmanager);
-            eq1=null;
+            removeEquipment(cimId, ddbmanager);
+            eq1 = null;
 
             for (String internalId: connectedInternals) {
                 log.info("- removing existing connected internal {}", internalId);
-                removeInternal(internalId,ddbmanager);
+                removeInternal(internalId, ddbmanager);
             }
 
         }
@@ -448,7 +448,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
         ParametersContainer pc1 = ddbmanager.findParametersContainer(mName);
         if (pc1 == null) {
-            log.debug("-- creating Parameters Container " + mName +" plus parameters.");
+            log.debug("-- creating Parameters Container " + mName + " plus parameters.");
             pc1 = new ParametersContainer(mName);
             Parameters pars = new Parameters(eurostagSim);
             for (String varName : zone.getData().keySet()) {
@@ -494,7 +494,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         return cimId;
     }
     private String populateDDB_R(EurostagRecord zone, Map<String, String> amap,
-            DDBManager ddbmanager, SimulatorInst eurostagSim, Map<String,Path> regsMapping) {
+            DDBManager ddbmanager, SimulatorInst eurostagSim, Map<String, Path> regsMapping) {
 
 
         log.debug("-Creating DDB component (R) " + zone);
@@ -510,8 +510,8 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                     "native id cannot be null; machine name is " + machineName);
         }
 
-        addToEquipmentsInternalMap(nativeId,macroblockName);
-        addPinNames(nativeId,macroblockName,retrieveActualRegPath(macroblockName+"."+"frm", regsMapping));
+        addToEquipmentsInternalMap(nativeId, macroblockName);
+        addPinNames(nativeId, macroblockName, retrieveActualRegPath(macroblockName + "." + "frm", regsMapping));
 
         //MTC and MT handling
         String mtc_ddbid = MTC_PREFIX_NAME + macroblockName;
@@ -524,10 +524,10 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         }
 
         //find a mt for this mtc and simulator
-        ModelTemplate mt1=null;
-        for(ModelTemplate mt: mtc1.getModelTemplates()) {
+        ModelTemplate mt1 = null;
+        for (ModelTemplate mt : mtc1.getModelTemplates()) {
             if ((mt.getSimulator().equals(eurostagSim)) && ("R".equals(mt.getTypeName())) && (mt.getComment().equals(macroblockName))) {
-                mt1=mt;
+                mt1 = mt;
                 break;
             }
         }
@@ -538,8 +538,8 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                 mtc1.getModelTemplates().remove(mt1);
                 mtc1 = ddbmanager.save(mtc1);
                 mtc1 = ddbmanager.findModelTemplateContainer(mtc_ddbid);
-                mt1=null;
-                removePinNames(nativeId,macroblockName);
+                mt1 = null;
+                removePinNames(nativeId, macroblockName);
             } else {
                 log.info("--- using existing Model Template: {}, {}, {}", mt1.getSimulator(), mt1.getTypeName(), mt1.getComment());
             }
@@ -554,8 +554,8 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             // if a regulator file does not exist, it does not throw any exception but logs a warning
             // ... some regulators, e.g. pcp or rcp, could not be available at this time
             // to be resolved externally before a computation ....
-            for (String extension : Arrays.asList( "fri","frm","par","pcp","rcp")) {
-                Path friPath=retrieveActualRegPath(macroblockName+"."+extension, regsMapping);
+            for (String extension : Arrays.asList("fri", "frm", "par", "pcp", "rcp")) {
+                Path friPath = retrieveActualRegPath(macroblockName + "." + extension, regsMapping);
                 if ((friPath == null) || (Files.notExists(friPath))) {
                     log.warn("--- Regulator file " + macroblockName + "." + extension
                             + " does not exist");
@@ -564,7 +564,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                     try {
                         mt1.setData(extension, Files.readAllBytes(friPath));
                     } catch (IOException e) {
-                        log.error("Could not read regulator file "+friPath+", " + e.getMessage(), e);
+                        log.error("Could not read regulator file " + friPath + ", " + e.getMessage(), e);
                     }
                 }
             }
@@ -572,7 +572,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             mtc1.getModelTemplates().add(mt1);
             mtc1 = ddbmanager.save(mtc1);
 
-            addPinNames(nativeId,macroblockName,retrieveActualRegPath(macroblockName+"."+"frm", regsMapping));
+            addPinNames(nativeId, macroblockName, retrieveActualRegPath(macroblockName + "." + "frm", regsMapping));
         }
 
 
@@ -591,7 +591,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                 if (varFType == null) {
                     //this is not a variable belonging to R; it's a modificated parameter
                     //by default insert it into the db as an int (ref. eurostag doc. 09_Dynamyc_Data_File.pdf, Macroblocks section)
-                    log.debug("---- varName "+ varName + " is not in the list associated component " +zone.typeName +"; handle it as an additional modification parameter, with a float type");
+                    log.debug("---- varName " + varName + " is not in the list associated component " + zone.typeName + "; handle it as an additional modification parameter, with a float type");
                     varFType = "F8";
                 }
                 Object varValue = zone.getData().get(varName);
@@ -644,7 +644,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
     }
     private String populateDDB_Default(EurostagRecord zone, Map<String, String> amap,
             DDBManager ddbmanager, SimulatorInst eurostagSim) {
-        log.warn("- Not supported, skipping:  {}" , zone);
+        log.warn("- Not supported, skipping:  {}", zone);
         return null;
     }
 
@@ -664,7 +664,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                 log.warn("- conn. schema with cimId " + nativeId + ", already exists! currently defined connections: " + cs.getConnections());
             }
             //machineInterfaceVariables is the set of this machine type variables names
-            Set<String> machineInterfaceVariables=DtaParser.getInterfaceVariablesNamesByComponentTypeName(equipmentsTypeMap.get(nativeId));
+            Set<String> machineInterfaceVariables = DtaParser.getInterfaceVariablesNamesByComponentTypeName(equipmentsTypeMap.get(nativeId));
             log.debug("-- equipment " + nativeId + ", variable names: " + machineInterfaceVariables);
 
             //create a connection machine-macroblock, for each macroblock
@@ -672,10 +672,10 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             log.debug("--- processing machine-regulators connections, for equipment " + nativeId);
             //for each regulator/macroblock; mName is the eurostag name of the regulator
             for (String mName : EquipmentsInternalsMap.get(nativeId)) {
-                String internalID=nativeId+"_"+mName; // internaID name of the regulator
+                String internalID = nativeId + "_" + mName; // internaID name of the regulator
                 List<Connection> definedConnections = cs.getConnections();
                 //create a direct machine-macroblock connection iff machine and macroblock share -at least- one variable
-                Set<String> machineRegulatorIntSet=Sets.intersection(machineInterfaceVariables, Sets.newHashSet(macroblocksPinNames.get(mName)));
+                Set<String> machineRegulatorIntSet = Sets.intersection(machineInterfaceVariables, Sets.newHashSet(macroblocksPinNames.get(mName)));
                 log.debug("---- regulator: " + mName + " (internalId: " + internalID + "); reg. variable names: " + macroblocksPinNames.get(mName) + ", equip. regul. common vars: " + machineRegulatorIntSet);
                 if (!machineRegulatorIntSet.isEmpty()) {
                     for (String pinName : machineRegulatorIntSet) {
@@ -696,16 +696,16 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             //create connections macroblock-macroblock
             log.debug("--- processing regulator-regulator connections, for equipment " + nativeId);
             for (int i = 0; i < EquipmentsInternalsMap.get(nativeId).size(); i++) {
-                for (int j = i+1; j < EquipmentsInternalsMap.get(nativeId).size(); j++) {
-                    String id1 = EquipmentsInternalsMap.get(nativeId).get( i);
-                    String id2 = EquipmentsInternalsMap.get(nativeId).get( j);
-                    Set<String> intSet=Sets.intersection(Sets.newHashSet(macroblocksPinNames.get(id1)), Sets.newHashSet(macroblocksPinNames.get(id2)));
+                for (int j = i + 1; j < EquipmentsInternalsMap.get(nativeId).size(); j++) {
+                    String id1 = EquipmentsInternalsMap.get(nativeId).get(i);
+                    String id2 = EquipmentsInternalsMap.get(nativeId).get(j);
+                    Set<String> intSet = Sets.intersection(Sets.newHashSet(macroblocksPinNames.get(id1)), Sets.newHashSet(macroblocksPinNames.get(id2)));
                     log.debug("--- reg: " + id1 + ", reg: " + id2 + ", common variable names:" + intSet);
-                    boolean toBeProcessed=(intSet.size()>0);
+                    boolean toBeProcessed = (intSet.size() > 0);
                     if (toBeProcessed) {
                         for (String pinName : intSet) {
-                            String longId1=nativeId+"_"+id1;
-                            String longId2=nativeId+"_"+id2;
+                            String longId1 = nativeId + "_" + id1;
+                            String longId2 = nativeId + "_" + id2;
                             Connection newC = new Connection(longId1, Connection.INTERNAL_TYPE, longId2, Connection.INTERNAL_TYPE, pinName, pinName, Connection.INSIDE_CONNECTION);
                             List<Connection> definedConnections = cs.getConnections();
                             if (!definedConnections.contains(newC)) {
@@ -734,8 +734,8 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
      *
      */
     public Map<String, Path> buildRegsFilesMapping(Path regsFolderPath) {
-        Map<String, Path> regsMap=new HashMap<>();
-        regsMap=new HashMap<>();
+        Map<String, Path> regsMap = new HashMap<>();
+        regsMap = new HashMap<>();
         try (DirectoryStream<Path> flow = Files.newDirectoryStream(
                 regsFolderPath, "*")) {
             for (Path item : flow) {
@@ -749,7 +749,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         return regsMap;
     }
 
-    public Path retrieveActualRegPath(String tentativeFileName, Map<String,Path> regsMap) {
+    public Path retrieveActualRegPath(String tentativeFileName, Map<String, Path> regsMap) {
         if (!regsMap.containsKey(tentativeFileName.toLowerCase())) {
             return null;
         } else {
@@ -763,25 +763,25 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
 
     private void addToEquipmentsInternalMap(String nativeId, String macroblockName) {
-        List<String> macroblocks=null;
+        List<String> macroblocks = null;
         if (!EquipmentsInternalsMap.containsKey(nativeId)) {
-            macroblocks=new ArrayList<String>();
+            macroblocks = new ArrayList<String>();
         } else {
-            macroblocks=EquipmentsInternalsMap.get(nativeId);
+            macroblocks = EquipmentsInternalsMap.get(nativeId);
         }
-        if (!macroblocks.contains(macroblockName)){
+        if (!macroblocks.contains(macroblockName)) {
             macroblocks.add(macroblockName);
         }
-        EquipmentsInternalsMap.put(nativeId,macroblocks);
+        EquipmentsInternalsMap.put(nativeId, macroblocks);
     }
 
     private void addPinNames(String nativeId, String macroblockName, Path friPath) {
         log.debug("addPinNames: NativeId " + nativeId + ", Macroblock " + macroblockName + ", file " + friPath);
         if (!macroblocksPinNames.containsKey(macroblockName)) {
-            log.debug(" ---------- Reading pin names from file {}" , macroblockName, friPath);
+            log.debug(" ---------- Reading pin names from file {}", macroblockName, friPath);
             Converter converter = new Converter(friPath.toAbsolutePath().toString(), "/tmp", false);
 
-            List<String> pinNames=converter.getConnections();
+            List<String> pinNames = converter.getConnections();
             for (String pinName : pinNames) {
                 log.debug(" --------------  {}", pinName);
             }
@@ -821,7 +821,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
     public void dumpDtaFile(Path workingDir, String fileName,
             Network network, Map<String, Character> parallelIndexes, String eurostagVersion,
             Map<String, String> iidm2eurostagId) {
-        try (EjbClientCtx cx=newEjbClientEcx()){
+        try (EjbClientCtx cx = newEjbClientEcx()) {
             DDBManager ddbmanager = cx.connectEjb(DDBMANAGERJNDINAME);
             dumpDtaFile(workingDir, fileName, network, parallelIndexes, eurostagVersion, iidm2eurostagId, ddbmanager);
 
@@ -883,7 +883,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
         try (PrintStream dtaOutStream = new PrintStream(Files.newOutputStream(destFile)); PrintStream genListOutStream = new PrintStream(Files.newOutputStream(workingDir.resolve(DICT_GENS_CSV))); PrintStream skippedGensOutStream = new PrintStream(Files.newOutputStream(workingDir.resolve(SKIPPED_GENS_CSV)))) {
 
-            SimulatorInst eurostagSim=ddbmanager.findSimulator(Simulator.EUROSTAG, eurostagVersion);
+            SimulatorInst eurostagSim = ddbmanager.findSimulator(Simulator.EUROSTAG, eurostagVersion);
             if (eurostagSim == null) {
                 throw new RuntimeException("Could not find Eurostag simulator version " + eurostagVersion);
             }
@@ -892,11 +892,11 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             // collect generators cim ids for the DTA exporter
             log.warn("Skipping generators: network, generator Id, min P, P, max P");
             for (Generator g : Identifiables.sort(network.getGenerators())) {
-                if (!filteredGenerator(g))
+                if (!filteredGenerator(g)) {
                     cimIds.add(g.getId());
-                else {
-                    log.warn("skipped generator: {};{};{};{};{}", network.getId(),g.getId(), g.getMinP(), -g.getTerminal().getP(), g.getMaxP());
-                    skippedGensOutStream.println(network.getId()+";"+g.getId()+";"+g.getMinP()+";"+ (-g.getTerminal().getP()) +";"+g.getMaxP());
+                } else {
+                    log.warn("skipped generator: {};{};{};{};{}", network.getId(), g.getId(), g.getMinP(), -g.getTerminal().getP(), g.getMaxP());
+                    skippedGensOutStream.println(network.getId() + ";" + g.getId() + ";" + g.getMinP() + ";" + (-g.getTerminal().getP()) + ";" + g.getMaxP());
                 }
             }
 
@@ -925,36 +925,36 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
             dumpDataRST(eurostagSim, ddbmanager, dtaOutStream, iidm2eurostagId, workingDir);
 
-            if(configExport.getAutomatonA14()) {
+            if (configExport.getAutomatonA14()) {
                 HashMap<String, Object> zm = new HashMap<String, Object>();
-                EurostagRecord eRecord=new EurostagRecord("TRF", zm);
-                zm.put("keyword","TRF");
-                zm.put("type.zone","PTA");
-                zm.put("zone.name","*");
-                zm.put("device.name","PRTRF1");
-                zm.put("time.down.change","5");
-                zm.put("max.taps.down","1");
-                zm.put("time.up.change","5");
-                zm.put("max.taps.up","1");
-                DtaParser.dumpZone(eRecord,dtaOutStream);
+                EurostagRecord eRecord = new EurostagRecord("TRF", zm);
+                zm.put("keyword", "TRF");
+                zm.put("type.zone", "PTA");
+                zm.put("zone.name", "*");
+                zm.put("device.name", "PRTRF1");
+                zm.put("time.down.change", "5");
+                zm.put("max.taps.down", "1");
+                zm.put("time.up.change", "5");
+                zm.put("max.taps.up", "1");
+                DtaParser.dumpZone(eRecord, dtaOutStream);
             }
 
-            if(configExport.getExportACMC()) {
+            if (configExport.getExportACMC()) {
                 HashMap<String, Object> zm = new HashMap<String, Object>();
-                EurostagRecord eRecord=new EurostagRecord("BAT", zm);
-                zm.put("keyword","BAT");
-                zm.put("type.zone","PBA");
-                zm.put("zone.name","*");
-                zm.put("bank.name","");
-                zm.put("model.name","PRBAT1");
-                zm.put("min.time1","0.5");
-                zm.put("min.time2","2.5");
-                zm.put("min.time3","0.2");
-                zm.put("min.time4","0.2");
-                DtaParser.dumpZone(eRecord,dtaOutStream);
+                EurostagRecord eRecord = new EurostagRecord("BAT", zm);
+                zm.put("keyword", "BAT");
+                zm.put("type.zone", "PBA");
+                zm.put("zone.name", "*");
+                zm.put("bank.name", "");
+                zm.put("model.name", "PRBAT1");
+                zm.put("min.time1", "0.5");
+                zm.put("min.time2", "2.5");
+                zm.put("min.time3", "0.2");
+                zm.put("min.time4", "0.2");
+                DtaParser.dumpZone(eRecord, dtaOutStream);
             }
 
-            dumpDataLoadPatternAndBehaviour(cimIds, eurostagSim, ddbmanager,dtaOutStream);
+            dumpDataLoadPatternAndBehaviour(cimIds, eurostagSim, ddbmanager, dtaOutStream);
 
             dumpDataAutomatons(eurostagSim, ddbmanager, dtaOutStream, iidm2eurostagId);
 
@@ -993,34 +993,34 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         }
 
         //TBD: hardcoded, for now, both the load pattern and the behaviour
-        HashMap<String, Object> zmLoadPattern=new HashMap<String,Object>();
+        HashMap<String, Object> zmLoadPattern = new HashMap<String, Object>();
         zmLoadPattern.put("keyword", "LOADP");
         zmLoadPattern.put("pattern.identifier", "CH");
-        zmLoadPattern.put("reg_subload.name","VOLTA1");
-        zmLoadPattern.put("REG_RPPROPA",new Float(1));
-        zmLoadPattern.put("REG_RQPROPA",new Float(1));
+        zmLoadPattern.put("reg_subload.name", "VOLTA1");
+        zmLoadPattern.put("REG_RPPROPA", new Float(1));
+        zmLoadPattern.put("REG_RQPROPA", new Float(1));
         zmLoadPattern.put("REG_RALFAPA", configExport.getLoadPatternAlpha());
         zmLoadPattern.put("REG_RBETAPA", configExport.getLoadPatternBeta());
-        zmLoadPattern.put("REG_RGAMMAPA",new Float(0));
-        zmLoadPattern.put("REG_RDELTAPA",new Float(0));
-        EurostagRecord eRecord=new EurostagRecord("LOADP", zmLoadPattern);
+        zmLoadPattern.put("REG_RGAMMAPA", new Float(0));
+        zmLoadPattern.put("REG_RDELTAPA", new Float(0));
+        EurostagRecord eRecord = new EurostagRecord("LOADP", zmLoadPattern);
         try {
-            DtaParser.dumpZone(eRecord,out);
+            DtaParser.dumpZone(eRecord, out);
         } catch (ParseException e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
         }
 
 
         // hardcoded; definition: assuming 'whole network W'. ....
-        HashMap<String, Object> zmLoadBehaviour=new HashMap<String,Object>();
+        HashMap<String, Object> zmLoadBehaviour = new HashMap<String, Object>();
         zmLoadBehaviour.put("keyword", "CH");
         zmLoadBehaviour.put("identifier", "CH");
-        zmLoadBehaviour.put("definition","W");
-        EurostagRecord eBRecord=new EurostagRecord("CH", zmLoadBehaviour);
+        zmLoadBehaviour.put("definition", "W");
+        EurostagRecord eBRecord = new EurostagRecord("CH", zmLoadBehaviour);
         try {
-            DtaParser.dumpZone(eBRecord,out);
+            DtaParser.dumpZone(eBRecord, out);
         } catch (ParseException e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
         }
 
     }
@@ -1029,7 +1029,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             PrintStream dtaOutStream, Network network) {
         //retrieve directly and not directly connected internals
         Set<String> internalIds = getConnectedInternals(cimId, ddbmanager);
-        log.info("- connected internals: " + cimId+": "+ internalIds);
+        log.info("- connected internals: " + cimId + ": " + internalIds);
         for (String nativeId : internalIds) {
             Internal internal = ddbmanager
                     .findInternal(nativeId);
@@ -1037,9 +1037,9 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                 log.warn("- internal with nativeId: " + nativeId
                         + " not found !");
             } else {
-                String substMachineName=null;
-                if (iidm2eurostagId!=null) {
-                    substMachineName=iidm2eurostagId.get(eq.getCimId());
+                String substMachineName = null;
+                if (iidm2eurostagId != null) {
+                    substMachineName = iidm2eurostagId.get(eq.getCimId());
                 }
                 try {
                     dumpData(internal, eurostagSim, ddbmanager, dtaOutStream, substMachineName, iidm2eurostagId, network);
@@ -1047,7 +1047,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                     log.error("could not write macro.lis file, due to " + e.getMessage());
                 }
                 // dump regulator files start
-                String macroblockName=ddbmanager.getStringParameter(
+                String macroblockName = ddbmanager.getStringParameter(
                         internal, eurostagSim,
                         PAR_MACROBLOCK__NAME);
                 if (macroblockName == null) {
@@ -1060,12 +1060,12 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                 ModelTemplateContainer mtc = internal
                         .getModelContainer();
 
-                boolean foundFRI=false;
-                boolean foundFRM=false;
-                boolean foundPAR=false;
-                boolean foundPCP=false;
-                boolean foundRCP=false;
-                boolean foundRegFile=false;
+                boolean foundFRI = false;
+                boolean foundFRM = false;
+                boolean foundPAR = false;
+                boolean foundPCP = false;
+                boolean foundRCP = false;
+                boolean foundRegFile = false;
                 for (ModelTemplate mt : mtc.getModelTemplates()) {
                     if ((mt.getSimulator().getSimulator() == Simulator.EUROSTAG)
                             && (mt.getSimulator().getVersion()
@@ -1075,24 +1075,24 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                                 .keySet()) {
                             switch (dataKey) {
                             case "pcp":
-                                foundRegFile=true;
-                                foundPCP=true;
+                                foundRegFile = true;
+                                foundPCP = true;
                                 break;
                             case "rcp":
-                                foundRegFile=true;
-                                foundRCP=true;
+                                foundRegFile = true;
+                                foundRCP = true;
                                 break;
                             case "fri":
-                                foundRegFile=true;
-                                foundFRI=true;
+                                foundRegFile = true;
+                                foundFRI = true;
                                 break;
                             case "frm":
-                                foundRegFile=true;
-                                foundFRM=true;
+                                foundRegFile = true;
+                                foundFRM = true;
                                 break;
                             case "par":
-                                foundRegFile=true;
-                                foundPAR=true;
+                                foundRegFile = true;
+                                foundPAR = true;
                                 break;
                             default:
                                 log.warn("- regfile extension not recognized: " + dataKey);
@@ -1118,21 +1118,21 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
                 //keeps track of reg name, pro .pcp, .rcp compiling
                 //skipping those regs that do not have both .rcp and .pcp files
-                if (((foundFRI==true) && (foundFRM==true) && (foundPAR==true))
-                        && ((foundPCP==false) || (foundRCP==false))) {
+                if (((foundFRI == true) && (foundFRM == true) && (foundPAR == true))
+                        && ((foundPCP == false) || (foundRCP == false))) {
                     uniqueRegNamesSet.add(intName);
                 }
                 //keeps track of generators in RST zones
-                if(configExport.getExportRST()) {
+                if (configExport.getExportRST()) {
                     Parameters params = ddbmanager.findParameters(internal, eurostagSim);
-                    HashMap<String, Object> parsList=Utils.getHashMapFromParameters(params);
-                    if(parsList.containsKey("macroblock.name")
+                    HashMap<String, Object> parsList = Utils.getHashMapFromParameters(params);
+                    if (parsList.containsKey("macroblock.name")
                             && parsList.containsKey("machine.name")
                             && parsList.containsKey("coupling.par1")
                             && ((String) parsList.get("macroblock.name")).equals(configExport.getRSTRegulGenerator())) {
 
                         String zoneRstName = ((String) parsList.get("coupling.par1")).substring(3); // "M  ZoneName"
-                        if(!geneRst.containsKey(zoneRstName)) {
+                        if (!geneRst.containsKey(zoneRstName)) {
                             geneRst.put(zoneRstName, new ArrayList<String>());
                         }
                         geneRst.get(zoneRstName).add(cimId);
@@ -1156,30 +1156,30 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         }
 
         if (log.isDebugEnabled()) {
-            log.trace("Dumping data for: " +inst.getCimId());
+            log.trace("Dumping data for: " + inst.getCimId());
         }
-        ModelTemplate mtc=ddbmanager.findModelTemplate(inst, simInst);
-        if (mtc==null) {
+        ModelTemplate mtc = ddbmanager.findModelTemplate(inst, simInst);
+        if (mtc == null) {
             throw new RuntimeException("Could not find any model templates for simulator: " + simInst.toString());
         }
 
         //get type name from model template data, normalizing result to common set of components (e.g. both M2 U and M2DU are in fact
         // represented in eurostag with the same set of parameters
-        String zoneTypeName=null;
+        String zoneTypeName = null;
         switch (mtc.getTypeName()) {
         case "M1U":
         case "M1DU":
         case "M1S":
-        case "M1DS":  zoneTypeName="M1";
+        case "M1DS":  zoneTypeName = "M1";
         break;
         case "M2U":
         case "M2DU":
         case "M2S":
-        case "M2DS":  zoneTypeName="M2";
+        case "M2DS":  zoneTypeName = "M2";
         break;
-        case "M21": zoneTypeName="M21";
+        case "M21": zoneTypeName = "M21";
         break;
-        case "R":  zoneTypeName="R";
+        case "R":  zoneTypeName = "R";
         break;
 
         default:
@@ -1187,29 +1187,29 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             break;
 
         }
-        if (zoneTypeName==null) {
-            throw new RuntimeException(" not supported typeName " + mtc.getTypeName() );
+        if (zoneTypeName == null) {
+            throw new RuntimeException(" not supported typeName " + mtc.getTypeName());
         }
 
         log.trace(" model template typename: " + mtc.getTypeName());
-        Parameters pars=ddbmanager.findParameters(inst, simInst);
-        HashMap<String, Object> zm=Utils.getHashMapFromParameters(pars);
+        Parameters pars = ddbmanager.findParameters(inst, simInst);
+        HashMap<String, Object> zm = Utils.getHashMapFromParameters(pars);
 
         //change machine.name, according to the mapping  iidm2eurostagId<cimid, eurostagid>
         switch (zoneTypeName) {
         case "M2": case "M1":
-            if (iidm2eurostagId!=null) {
-                String substMachineName=iidm2eurostagId.get(inst.getCimId());
-                if ((substMachineName!=null) && (!"".equals(substMachineName))) {
-                    zm.put("machine.name",substMachineName);
+            if (iidm2eurostagId != null) {
+                String substMachineName = iidm2eurostagId.get(inst.getCimId());
+                if ((substMachineName != null) && (!"".equals(substMachineName))) {
+                    zm.put("machine.name", substMachineName);
                 }
 
                 if (log.isDebugEnabled()) {
-                    log.trace(" machine.name mapped to new eurostag id: " +substMachineName);
+                    log.trace(" machine.name mapped to new eurostag id: " + substMachineName);
                 }
 
-                String nodeName=iidm2eurostagId.get(network.getGenerator(inst.getCimId()).getTerminal().getBusBreakerView().getConnectableBus().getId());
-                zm.put("connection.node.name",nodeName);
+                String nodeName = iidm2eurostagId.get(network.getGenerator(inst.getCimId()).getTerminal().getBusBreakerView().getConnectableBus().getId());
+                zm.put("connection.node.name", nodeName);
                 //Connection node name needed for RST couplings
                 //zm.put("connection.node.name",null);
                 //if (log.isDebugEnabled()) {
@@ -1218,12 +1218,12 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
                 //systematically, do not export fortescue data, more complex than what we need (Jun 20, 2013)
                 if ("D".equals(zm.get("type.fortescue"))) {
-                    zm.put("type.fortescue",null);
+                    zm.put("type.fortescue", null);
                     //TBD (Sept 04, 2013) eurostag complains if transformer.included data is missing and the machine is not fortescue
                     // since it happens frequently in french data, I'm forcing it to 'N'  but ... is it correct?
                     // Moreover, is it still needed to skip fortescue ?
                     if ("".equals(zm.get("transformer.included"))) {
-                        zm.put("transformer.included","N");
+                        zm.put("transformer.included", "N");
                     }
                 }
                 //
@@ -1240,14 +1240,14 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             break;
         }
 
-        EurostagRecord eRecord=new EurostagRecord(zoneTypeName, zm);
+        EurostagRecord eRecord = new EurostagRecord(zoneTypeName, zm);
 
         try {
-            DtaParser.dumpZone(eRecord,out);
+            DtaParser.dumpZone(eRecord, out);
             DtaParser.dumpGensInertia(inst.getCimId(), eRecord, gensOut);
 
         } catch (ParseException e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -1266,58 +1266,58 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         }
 
         if (log.isDebugEnabled()) {
-            log.trace("Dumping data for: " +inst.getNativeId());
+            log.trace("Dumping data for: " + inst.getNativeId());
         }
 
         //ModelTemplate mtc=ddbmanager.findModelTemplate(inst, simInst);
-        ModelTemplate mtc=null;
+        ModelTemplate mtc = null;
         for (ModelTemplate mt : inst.getModelContainer().getModelTemplates()) {
-            if (mt.getSimulator().equals(simInst)){
-                mtc=mt;
+            if (mt.getSimulator().equals(simInst)) {
+                mtc = mt;
                 break;
             }
         }
-        if (mtc==null) {
+        if (mtc == null) {
             throw new RuntimeException("Could not find any model templates for simulator: " + simInst.toString());
         }
 
         //get type name from model template data, normalizing result to common set of components (e.g. both M2 U and M2DU are in fact
         // represented in eurostag with the same set of parameters
-        String zoneTypeName=null;
+        String zoneTypeName = null;
         switch (mtc.getTypeName()) {
-        case "R":  zoneTypeName="R";
+        case "R":  zoneTypeName = "R";
         break;
-        case "RMA":  zoneTypeName="RMA";
+        case "RMA":  zoneTypeName = "RMA";
         break;
         default:
             break;
 
         }
-        if (zoneTypeName==null) {
+        if (zoneTypeName == null) {
             throw new RuntimeException(" not supported typeName " + mtc.getTypeName() );
         }
 
         log.trace(" model template typename: " + mtc.getTypeName());
         //Parameters pars=ddbmanager.findParameters(inst, simInst);
-        Parameters pars=null;
+        Parameters pars = null;
         for (Parameters ps : inst.getParametersContainer().getParameters()) {
-            if (ps.getSimulator().equals(simInst)){
-                pars=ps;
+            if (ps.getSimulator().equals(simInst)) {
+                pars = ps;
                 break;
             }
         }
-        HashMap<String, Object> zm=Utils.getHashMapFromParameters(pars);
+        HashMap<String, Object> zm = Utils.getHashMapFromParameters(pars);
 
         //change connection.node.name, according to the mapping  iidm2eurostagId<cimid, eurostagid>
         switch (zoneTypeName) {
         case "R":
-            if ((machineName!=null) && !("".equals(machineName))) {
-                zm.put("machine.name",machineName);
+            if ((machineName != null) && !("".equals(machineName))) {
+                zm.put("machine.name", machineName);
             }
             break;
         case "RMA":
-            if ((machineName!=null) && !("".equals(machineName))) {
-                zm.put("machine.name",machineName);
+            if ((machineName != null) && !("".equals(machineName))) {
+                zm.put("machine.name", machineName);
             }
             break;
         default:
@@ -1325,43 +1325,43 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         }
 
         //[06 sept 2013] This way, no node name is mentioned in the .dta, the correpsondance is only carried by the machine names.
-        boolean couplingDataExists=false;
+        boolean couplingDataExists = false;
         for (int i = 1; i < 10; i++) {
-            String apar=(String) zm.get("coupling.par"+i);
-            if ((apar!=null) && (!"".equals(apar.trim()))) {
-                couplingDataExists=true;
+            String apar = (String) zm.get("coupling.par" + i);
+            if ((apar != null) && (!"".equals(apar.trim()))) {
+                couplingDataExists = true;
                 break;
             }
         }
 
-        if(((String) zm.get("macroblock.name")).equals(configExport.getRSTRegulInjector())) {
+        if (((String) zm.get("macroblock.name")).equals(configExport.getRSTRegulInjector())) {
             // RST coupling machine
             String zoneRST = (String) zm.get("machine.name");
-            if(!geneRst.containsKey(zoneRST)) {
-                log.warn("Reference generator can't be found - RST zone: "+zoneRST);
+            if (!geneRst.containsKey(zoneRST)) {
+                log.warn("Reference generator can't be found - RST zone: " + zoneRST);
             } else {
                 int coupling = 1;
                 // Coupling 1 to 3 : nodes
                 String defaultBus = null;
                 String stationPilotPoint = pilotPointRst.get(zoneRST);
-                for(Bus bus : network.getVoltageLevel(stationPilotPoint).getBusBreakerView().getBuses()) {
-                    if(coupling < 4) {
+                for (Bus bus : network.getVoltageLevel(stationPilotPoint).getBusBreakerView().getBuses()) {
+                    if (coupling < 4) {
                         String busEsgName = iidm2eurostagId.get(bus.getId());
-                        if(busEsgName != null) {
-                            zm.put("coupling.par"+coupling,"N  "+busEsgName);
+                        if (busEsgName != null) {
+                            zm.put("coupling.par" + coupling, "N  " + busEsgName);
                             coupling++;
                             defaultBus = busEsgName;
                         }
                     }
                 }
-                while(coupling<=3) {
-                    zm.put("coupling.par"+coupling,"N  "+defaultBus); // not used
+                while (coupling <= 3) {
+                    zm.put("coupling.par" + coupling, "N  " + defaultBus); // not used
                     coupling++;
                 }
                 // Coupling 4 to 9 : generators
                 String gene = pilotGeneratorsRst.get(zoneRST);
-                for(int j=0;j<6;j++) {
-                    zm.put("coupling.par"+coupling,"M  "+iidm2eurostagId.get(gene));
+                for (int j = 0; j < 6; j++) {
+                    zm.put("coupling.par" + coupling, "M  " + iidm2eurostagId.get(gene));
                     coupling++;
                 }
                 /*
@@ -1406,103 +1406,103 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                 */
 
             }
-        } else if(((String) zm.get("macroblock.name")).equals(configExport.getACMCRegul())) {
+        } else if (((String) zm.get("macroblock.name")).equals(configExport.getACMCRegul())) {
             // ACMC coupling MA and Pilot station
             String acmcMachineName = (String) zm.get("machine.name");
             String pilotStation = ((String) zm.get("coupling.par2")).substring(3);
 
             String defaultNode = null;
             int couplingParam = 1;
-            for(VoltageLevel station : network.getVoltageLevels()) {
-                if(station.getName().equals(pilotStation)) {
+            for (VoltageLevel station : network.getVoltageLevels()) {
+                if (station.getName().equals(pilotStation)) {
                     // Looking for connected nodes
-                    for(Bus bus : station.getBusBreakerView().getBuses()) {
+                    for (Bus bus : station.getBusBreakerView().getBuses()) {
                         String pilotNewName = iidm2eurostagId.get(bus.getId());
-                        if(pilotNewName != null) {
-                            zm.put("coupling.par"+couplingParam,"N  "+pilotNewName);
+                        if (pilotNewName != null) {
+                            zm.put("coupling.par" + couplingParam, "N  " + pilotNewName);
                             defaultNode = pilotNewName;
                             couplingParam++;
                         }
-                        if(couplingParam == 5) {
+                        if (couplingParam == 5) {
                             break;
                         }
                     }
-                    for(int cpl=couplingParam;cpl<5;cpl++) {
-                        zm.put("coupling.par"+cpl,"N  "+defaultNode); // not used
+                    for (int cpl = couplingParam; cpl < 5; cpl++) {
+                        zm.put("coupling.par" + cpl, "N  " + defaultNode); // not used
                     }
                 }
             }
-            if(defaultNode == null || "".equals(defaultNode)) {
-                log.error("No pilot station found for shunt : "+acmcMachineName);
+            if (defaultNode == null || "".equals(defaultNode)) {
+                log.error("No pilot station found for shunt : " + acmcMachineName);
             }
             ArrayList<String> bankInAcmc = acmcs.get(acmcMachineName);
             int couplingDevice = 5;
-            for(String bank : bankInAcmc) {
-                zm.put("coupling.par"+couplingDevice,"S  "+bank);
+            for (String bank : bankInAcmc) {
+                zm.put("coupling.par" + couplingDevice, "S  " + bank);
                 couplingDevice++;
             }
-            if(couplingDevice > 9) {
-                log.warn("Too many shunts for : "+acmcMachineName);
+            if (couplingDevice > 9) {
+                log.warn("Too many shunts for : " + acmcMachineName);
             }
             String defaultBank = bankInAcmc.get(0);
-            for(int cpl=couplingDevice;cpl<=9;cpl++) {
-                zm.put("coupling.par"+cpl,"S  "+defaultBank); // not used
+            for (int cpl = couplingDevice; cpl <= 9; cpl++) {
+                zm.put("coupling.par" + cpl, "S  " + defaultBank); // not used
             }
 
-            zm.put("BAT225T",bankInAcmc.size());
+            zm.put("BAT225T", bankInAcmc.size());
 
-        } else if(((String) zm.get("macroblock.name")).equals(configExport.getRSTRegulGenerator())) {
-            if(configExport.getExportRST()) {
+        } else if (((String) zm.get("macroblock.name")).equals(configExport.getRSTRegulGenerator())) {
+            if (configExport.getExportRST()) {
                 // First coupling to injector machine
-                zm.put("coupling.par2",null);
-                zm.put("coupling.par3",null);
-                zm.put("coupling.par4",null);
-                zm.put("coupling.par5",null);
-                zm.put("coupling.par6",null);
-                zm.put("coupling.par7",null);
-                zm.put("coupling.par8",null);
-                zm.put("coupling.par9",null);
+                zm.put("coupling.par2", null);
+                zm.put("coupling.par3", null);
+                zm.put("coupling.par4", null);
+                zm.put("coupling.par5", null);
+                zm.put("coupling.par6", null);
+                zm.put("coupling.par7", null);
+                zm.put("coupling.par8", null);
+                zm.put("coupling.par9", null);
             } else { // Write the previously deleted regulation RSTRegulGeneratorDelete
                 zm.put("macroblock.name", configExport.getRSTRegulGeneratorDelete());
                 zm.put("psetnum", 1);
-                zm.put("coupling.par1",null);
-                zm.put("coupling.par2",null);
-                zm.put("coupling.par3",null);
-                zm.put("coupling.par4",null);
-                zm.put("coupling.par5",null);
-                zm.put("coupling.par6",null);
-                zm.put("coupling.par7",null);
-                zm.put("coupling.par8",null);
-                zm.put("coupling.par9",null);
+                zm.put("coupling.par1", null);
+                zm.put("coupling.par2", null);
+                zm.put("coupling.par3", null);
+                zm.put("coupling.par4", null);
+                zm.put("coupling.par5", null);
+                zm.put("coupling.par6", null);
+                zm.put("coupling.par7", null);
+                zm.put("coupling.par8", null);
+                zm.put("coupling.par9", null);
             }
         } else {
-            if (couplingDataExists==true) {
-                log.warn("coupling macroblock data in ddb -  macroblock name: "+zm.get("macroblock.name") + "; machine name: " + machineName);
+            if (couplingDataExists == true) {
+                log.warn("coupling macroblock data in ddb -  macroblock name: " + zm.get("macroblock.name") + "; machine name: " + machineName);
             }
-            zm.put("coupling.par1",null);
-            zm.put("coupling.par2",null);
-            zm.put("coupling.par3",null);
-            zm.put("coupling.par4",null);
-            zm.put("coupling.par5",null);
-            zm.put("coupling.par6",null);
-            zm.put("coupling.par7",null);
-            zm.put("coupling.par8",null);
-            zm.put("coupling.par9",null);
+            zm.put("coupling.par1", null);
+            zm.put("coupling.par2", null);
+            zm.put("coupling.par3", null);
+            zm.put("coupling.par4", null);
+            zm.put("coupling.par5", null);
+            zm.put("coupling.par6", null);
+            zm.put("coupling.par7", null);
+            zm.put("coupling.par8", null);
+            zm.put("coupling.par9", null);
             if (log.isDebugEnabled()) {
                 log.trace(" coupling.par(s) mapped to empty string" );
             }
         }
 
-        EurostagRecord eRecord=new EurostagRecord(zoneTypeName, zm);
+        EurostagRecord eRecord = new EurostagRecord(zoneTypeName, zm);
         try {
             // RST export ?
-            if(configExport.getExportRST()
+            if (configExport.getExportRST()
                     || (!((String) zm.get("macroblock.name")).equals(configExport.getRSTRegulGenerator())
-                            && !((String) zm.get("macroblock.name")).equals(configExport.getRSTRegulInjector()))) {
-                DtaParser.dumpZone(eRecord,out);
+                    && !((String) zm.get("macroblock.name")).equals(configExport.getRSTRegulInjector()))) {
+                DtaParser.dumpZone(eRecord, out);
             }
         } catch (ParseException e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -1510,39 +1510,41 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
     public void dumpDataAutomatons(SimulatorInst eurostagSim, DDBManager ddbmanager,
             PrintStream dtaOutStream, Map<String, String> iidm2eurostagId) throws ParseException, IOException {
 
-        if(configExport.getAutomatonA11()) {
+        if (configExport.getAutomatonA11()) {
             // A11
             DtaParser.dumpAutomatonHeader("A11", false, dtaOutStream);
             for (Generator g : network.getGenerators()) {
                 Equipment eq = ddbmanager.findEquipment(g.getId());
                 if (eq != null) {
-                    if ( !filteredGenerator(g) )
+                    if (!filteredGenerator(g)) {
                         dumpDataGeneratorAutomaton(g, eurostagSim, "A11", dtaOutStream, iidm2eurostagId);
-                    else
-                        log.warn("Dump automaton A11: skipping generator {} P outside limits MinP:{} P:{} MaxP:{},  ", g.getId(),g.getMinP(), -g.getTerminal().getP(), g.getMaxP());
+                    } else {
+                        log.warn("Dump automaton A11: skipping generator {} P outside limits MinP:{} P:{} MaxP:{},  ", g.getId(), g.getMinP(), -g.getTerminal().getP(), g.getMaxP());
+                    }
                 }
             }
             DtaParser.dumpAutomatonHeader("A11", true, dtaOutStream);
         }
 
-        if(configExport.getAutomatonA12()) {
+        if (configExport.getAutomatonA12()) {
             DtaParser.dumpAutomatonHeader("A12", false, dtaOutStream);
             for (Generator g : network.getGenerators()) {
                 Equipment eq = ddbmanager.findEquipment(g.getId());
                 if (eq != null) {
-                    if ( !filteredGenerator(g) )
+                    if (!filteredGenerator(g)) {
                         dumpDataGeneratorAutomaton(g, eurostagSim, "A12", dtaOutStream, iidm2eurostagId);
-                    else
-                        log.warn("Dump automaton A12: skipping generator {} P outside limits MinP:{} P:{} MaxP:{},  ", g.getId(),g.getMinP(), -g.getTerminal().getP(), g.getMaxP());
+                    } else {
+                        log.warn("Dump automaton A12: skipping generator {} P outside limits MinP:{} P:{} MaxP:{},  ", g.getId(), g.getMinP(), -g.getTerminal().getP(), g.getMaxP());
+                    }
                 }
             }
             DtaParser.dumpAutomatonHeader("A12", true, dtaOutStream);
         }
 
-        if(configExport.getAutomatonA14()) {
+        if (configExport.getAutomatonA14()) {
             DtaParser.dumpAutomatonHeader("A14", false, dtaOutStream);
             for (TwoWindingsTransformer t : network.getTwoWindingsTransformers()) {
-                if(t.getPhaseTapChanger() == null // no TD
+                if (t.getPhaseTapChanger() == null // no TD
                         && t.getRatioTapChanger() != null
                         && t.getRatioTapChanger().hasLoadTapChangingCapabilities() // has tap changer
                         && t.getRatioTapChanger().isRegulating()
@@ -1550,21 +1552,22 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                         && t.getTerminal2().getVoltageLevel().getNominalV() >= 63.0 // no TG
                         ) {
                     dumpDataTransformerAutomaton(t, eurostagSim, "A14_HT", dtaOutStream, iidm2eurostagId);
-                } else if(t.getPhaseTapChanger() != null
+                } else if (t.getPhaseTapChanger() != null
                         && t.getPhaseTapChanger().getRegulationMode() != PhaseTapChanger.RegulationMode.FIXED_TAP
                         && t.getPhaseTapChanger().isRegulating()) { // TD
                     //TODO
                     //dumpDataTransformerAutomaton(t, eurostagSim, "A14_TD", dtaOutStream, iidm2eurostagId);
                 }
             }
-            if(configExport.getLVLoadModeling()) {
-                for(Load l : network.getLoads()) {
-                    if(l.getTerminal().getVoltageLevel().getNominalV() <= 100 && l.getTerminal().isConnected()) { // connected HV load
-                        if(l.getLoadType() != LoadType.AUXILIARY) {
+            if (configExport.getLVLoadModeling()) {
+                for (Load l : network.getLoads()) {
+                    if (l.getTerminal().getVoltageLevel().getNominalV() <= 100 && l.getTerminal().isConnected()) { // connected HV load
+                        if (l.getLoadType() != LoadType.AUXILIARY) {
                             dumpDataLoadAutomaton(l, eurostagSim, "A14_MT", dtaOutStream, iidm2eurostagId);
                         } else {
-                            if (log.isDebugEnabled())
+                            if (log.isDebugEnabled()) {
                                 log.trace(l.getId() + " is considered as a generator auxiliary alimentation");
+                            }
                         }
                     }
                 }
@@ -1584,25 +1587,25 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         }
 
         if (log.isDebugEnabled()) {
-            log.trace("Dumping data for: " +g.getId());
+            log.trace("Dumping data for: " + g.getId());
         }
 
         HashMap<String, Object> zm = new HashMap<String, Object>();
 
         //change machine.name, according to the mapping  iidm2eurostagId<cimid, eurostagid>
-        if (iidm2eurostagId!=null) {
-            String substMachineName=iidm2eurostagId.get(g.getId());
-            if ((substMachineName!=null) && (!"".equals(substMachineName))) {
-                zm.put("machine.name",substMachineName);
+        if (iidm2eurostagId != null) {
+            String substMachineName = iidm2eurostagId.get(g.getId());
+            if ((substMachineName != null) && (!"".equals(substMachineName))) {
+                zm.put("machine.name", substMachineName);
             }
 
             if (log.isDebugEnabled()) {
-                log.trace(" machine.name mapped to new eurostag id: " +substMachineName);
+                log.trace(" machine.name mapped to new eurostag id: " + substMachineName);
             }
 
-            String substNodeName=iidm2eurostagId.get(g.getTerminal().getBusBreakerView().getConnectableBus().getId());
-            if ((substNodeName!=null) && (!"".equals(substNodeName))) {
-                zm.put("connection.node.name",substNodeName);
+            String substNodeName = iidm2eurostagId.get(g.getTerminal().getBusBreakerView().getConnectableBus().getId());
+            if ((substNodeName != null) && (!"".equals(substNodeName))) {
+                zm.put("connection.node.name", substNodeName);
             }
 
             if (log.isDebugEnabled()) {
@@ -1612,23 +1615,23 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
         switch (typeName) {
         case "A11":
-            zm.put("USINF","0.7");
-            zm.put("USRINF","0.707");
-            zm.put("TINF","0.7");
-            zm.put("TRINF","0.");
-            zm.put("DELINF","0.");
-            zm.put("USSUP","1.2");
-            zm.put("USRSUP","1.188");
-            zm.put("TSUP","3.");
-            zm.put("TRSUP","0.");
-            zm.put("DELSUP","0.");
+            zm.put("USINF", "0.7");
+            zm.put("USRINF", "0.707");
+            zm.put("TINF", "0.7");
+            zm.put("TRINF", "0.");
+            zm.put("DELINF", "0.");
+            zm.put("USSUP", "1.2");
+            zm.put("USRSUP", "1.188");
+            zm.put("TSUP", "3.");
+            zm.put("TRSUP", "0.");
+            zm.put("DELSUP", "0.");
             break;
         case "A12":
-            zm.put("VIMIN","47.5");
-            zm.put("TMIN","1.");
-            zm.put("VIMAX","55.");
-            zm.put("TMAX","1.");
-            zm.put("TDEL","0.");
+            zm.put("VIMIN", "47.5");
+            zm.put("TMIN", "1.");
+            zm.put("VIMAX", "55.");
+            zm.put("TMAX", "1.");
+            zm.put("TDEL", "0.");
             break;
         default:
             log.error("not supported keyword " + typeName);
@@ -1638,12 +1641,12 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
         log.trace(" typename: " + typeName);
 
-        EurostagRecord eRecord=new EurostagRecord(typeName, zm);
+        EurostagRecord eRecord = new EurostagRecord(typeName, zm);
 
         try {
-            DtaParser.dumpZone(eRecord,out);
+            DtaParser.dumpZone(eRecord, out);
         } catch (ParseException e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
         }
     }
     public void dumpDataTransformerAutomaton(TwoWindingsTransformer t, SimulatorInst simInst, String typeName, PrintStream out, Map<String, String> iidm2eurostagId) throws IOException {
@@ -1657,18 +1660,18 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             throw new RuntimeException("Simulator must be EUROSTAG");
         }
         if (log.isDebugEnabled()) {
-            log.trace("Dumping data for: " +t.getId());
+            log.trace("Dumping data for: " + t.getId());
         }
 
         HashMap<String, Object> zm = new HashMap<String, Object>();
 
         //change node.name, according to the mapping  iidm2eurostagId<cimid, eurostagid>
-        if (iidm2eurostagId!=null) {
-            String substNodeName1=iidm2eurostagId.get(t.getTerminal1().getBusBreakerView().getConnectableBus().getId());
-            String substNodeName2=iidm2eurostagId.get(t.getTerminal2().getBusBreakerView().getConnectableBus().getId());
-            if ((substNodeName1!=null) && (!"".equals(substNodeName1)) && (substNodeName2!=null) && (!"".equals(substNodeName2))) {
-                zm.put("sending.node",substNodeName2);
-                zm.put("receiving.node",substNodeName1);
+        if (iidm2eurostagId != null) {
+            String substNodeName1 = iidm2eurostagId.get(t.getTerminal1().getBusBreakerView().getConnectableBus().getId());
+            String substNodeName2 = iidm2eurostagId.get(t.getTerminal2().getBusBreakerView().getConnectableBus().getId());
+            if ((substNodeName1 != null) && (!"".equals(substNodeName1)) && (substNodeName2 != null) && (!"".equals(substNodeName2))) {
+                zm.put("sending.node", substNodeName2);
+                zm.put("receiving.node", substNodeName1);
             }
 
             if (log.isDebugEnabled()) {
@@ -1677,36 +1680,36 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             }
         }
 
-        zm.put("index",parallelIndexes.get(t.getId()));
+        zm.put("index", parallelIndexes.get(t.getId()));
 
         String newTypeName = "";
         switch (typeName) {
         case "A14_HT":
-            zm.put("R","0");
-            zm.put("E1","0.015");
-            zm.put("E2","0.01");
-            zm.put("T1","30.0");
-            zm.put("TINT","10.0");
-            zm.put("setpoint","2");
-            zm.put("time.margin","3.0");
-            zm.put("tap.direction","-1");
-            zm.put("TMAN","10.0");
-            zm.put("V1","0.5");
-            zm.put("V2","0.6");
-            zm.put("TV1","30.0");
-            zm.put("TDEL","10.0");
+            zm.put("R", "0");
+            zm.put("E1", "0.015");
+            zm.put("E2", "0.01");
+            zm.put("T1", "30.0");
+            zm.put("TINT", "10.0");
+            zm.put("setpoint", "2");
+            zm.put("time.margin", "3.0");
+            zm.put("tap.direction", "-1");
+            zm.put("TMAN", "10.0");
+            zm.put("V1", "0.5");
+            zm.put("V2", "0.6");
+            zm.put("TV1", "30.0");
+            zm.put("TDEL", "10.0");
             newTypeName = "A14";
             break;
         case "A14_TD":
-            zm.put("T1","23.0");
-            zm.put("TINT","6.0");
-            zm.put("setpoint","1");
-            zm.put("VC","0.98");
-            zm.put("time.margin","0.");
-            zm.put("control.type",1);
-            zm.put("tap.direction","+1");
-            zm.put("transfo.side","S");
-            zm.put("TMAN","0.0");
+            zm.put("T1", "23.0");
+            zm.put("TINT", "6.0");
+            zm.put("setpoint", "1");
+            zm.put("VC", "0.98");
+            zm.put("time.margin", "0.");
+            zm.put("control.type", 1);
+            zm.put("tap.direction", "+1");
+            zm.put("transfo.side", "S");
+            zm.put("TMAN", "0.0");
             newTypeName = "A14";
             break;
         default:
@@ -1716,12 +1719,12 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
         log.trace(" typename: " + typeName);
 
-        EurostagRecord eRecord=new EurostagRecord(newTypeName, zm);
+        EurostagRecord eRecord = new EurostagRecord(newTypeName, zm);
 
         try {
-            DtaParser.dumpZone(eRecord,out);
+            DtaParser.dumpZone(eRecord, out);
         } catch (ParseException e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
         }
     }
     public void dumpDataLoadAutomaton(Load l, SimulatorInst simInst, String typeName, PrintStream out, Map<String, String> iidm2eurostagId) throws IOException {
@@ -1735,18 +1738,18 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             throw new RuntimeException("Simulator must be EUROSTAG");
         }
         if (log.isDebugEnabled()) {
-            log.trace("Dumping data for: " +l.getId());
+            log.trace("Dumping data for: " + l.getId());
         }
 
         HashMap<String, Object> zm = new HashMap<String, Object>();
 
         //change node.name, according to the mapping  iidm2eurostagId<cimid, eurostagid>
-        if (iidm2eurostagId!=null) {
-            String substNodeName1=iidm2eurostagId.get(l.getId());
-            String substNodeName2=iidm2eurostagId.get(l.getTerminal().getBusBreakerView().getConnectableBus().getId());
-            if ((substNodeName1!=null) && (!"".equals(substNodeName1)) && (substNodeName2!=null) && (!"".equals(substNodeName2))) {
-                zm.put("sending.node",substNodeName2);
-                zm.put("receiving.node",substNodeName1);
+        if (iidm2eurostagId != null) {
+            String substNodeName1 = iidm2eurostagId.get(l.getId());
+            String substNodeName2 = iidm2eurostagId.get(l.getTerminal().getBusBreakerView().getConnectableBus().getId());
+            if ((substNodeName1 != null) && (!"".equals(substNodeName1)) && (substNodeName2 != null) && (!"".equals(substNodeName2))) {
+                zm.put("sending.node", substNodeName2);
+                zm.put("receiving.node", substNodeName1);
             }
 
             if (log.isDebugEnabled()) {
@@ -1757,20 +1760,20 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         String newTypeName = "";
         switch (typeName) {
         case "A14_MT":
-            zm.put("index","1");
-            zm.put("R","0");
-            zm.put("E1","0.015");
-            zm.put("E2","0.01");
-            zm.put("T1","60.0");
-            zm.put("TINT","10.0");
-            zm.put("setpoint","2");
-            zm.put("time.margin","3.0");
-            zm.put("tap.direction","-1");
-            zm.put("TMAN","10.0");
-            zm.put("V1","0.5");
-            zm.put("V2","0.6");
-            zm.put("TV1","60.0");
-            zm.put("TDEL","10.0");
+            zm.put("index", "1");
+            zm.put("R", "0");
+            zm.put("E1", "0.015");
+            zm.put("E2", "0.01");
+            zm.put("T1", "60.0");
+            zm.put("TINT", "10.0");
+            zm.put("setpoint", "2");
+            zm.put("time.margin", "3.0");
+            zm.put("tap.direction", "-1");
+            zm.put("TMAN", "10.0");
+            zm.put("V1", "0.5");
+            zm.put("V2", "0.6");
+            zm.put("TV1", "60.0");
+            zm.put("TDEL", "10.0");
             newTypeName = "A14";
             break;
         default:
@@ -1780,12 +1783,12 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
         log.trace(" typename: " + typeName);
 
-        EurostagRecord eRecord=new EurostagRecord(newTypeName, zm);
+        EurostagRecord eRecord = new EurostagRecord(newTypeName, zm);
 
         try {
-            DtaParser.dumpZone(eRecord,out);
+            DtaParser.dumpZone(eRecord, out);
         } catch (ParseException e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
         }
     }
     public void dumpDataRST(SimulatorInst eurostagSim, DDBManager ddbmanager,
@@ -1803,73 +1806,73 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         if (eurostagSim.getSimulator() != Simulator.EUROSTAG) {
             throw new RuntimeException("Simulator must be EUROSTAG");
         }
-        if (iidm2eurostagId==null) {
+        if (iidm2eurostagId == null) {
             throw new RuntimeException("Iidm2Eurostag dictionary must not be null");
         }
-        if(configExport.getExportRST()) {
+        if (configExport.getExportRST()) {
             //TODO : automatic choose of RST generators
             // Pilot generators configuration : parsing
             String generatorsRaw = configExport.getRSTPilotGenerators();
             String[] zonesRaw = generatorsRaw.split(";");
-            for(String zoneRaw : zonesRaw) {
+            for (String zoneRaw : zonesRaw) {
                 String[] zoneGenerator = zoneRaw.split(":");
                 pilotGeneratorsRst.put(zoneGenerator[0], zoneGenerator[1]);
             }
 
             // M21
             List<Equipment> equipsAll = ddbmanager.findEquipmentsAll();
-            for(Equipment eq : equipsAll) {
-                ModelTemplate mt=ddbmanager.findModelTemplate(eq, eurostagSim);
-                if (mt==null) {
+            for (Equipment eq : equipsAll) {
+                ModelTemplate mt = ddbmanager.findModelTemplate(eq, eurostagSim);
+                if (mt == null) {
                     throw new RuntimeException("Could not find any model templates for simulator: " + eurostagSim.toString());
                 }
 
-                if(eq.getModelContainer().getDdbId().equals(MTC_PREFIX_NAME + "M21")) {
+                if (eq.getModelContainer().getDdbId().equals(MTC_PREFIX_NAME + "M21")) {
                     if (log.isDebugEnabled()) {
-                        log.trace("Dumping data for: " +eq.getCimId());
+                        log.trace("Dumping data for: " + eq.getCimId());
                     }
                     String zoneTypeName = "M21";
                     log.trace(" model template typename: " + mt.getTypeName());
-                    Parameters pars=ddbmanager.findParameters(eq, eurostagSim);
-                    HashMap<String, Object> zm=Utils.getHashMapFromParameters(pars);
+                    Parameters pars = ddbmanager.findParameters(eq, eurostagSim);
+                    HashMap<String, Object> zm = Utils.getHashMapFromParameters(pars);
 
                     String zoneRST = (String) zm.get("machine.name");
                     // Modification pilot point
                     String pilotPoint = (String) zm.get("connection.node.name");
                     String substpilotPoint = null;
-                    for(VoltageLevel station : network.getVoltageLevels()) {
-                        if(station.getName().equals(pilotPoint)) {
+                    for (VoltageLevel station : network.getVoltageLevels()) {
+                        if (station.getName().equals(pilotPoint)) {
                             // Looking for a connected bus
-                            for(Bus bus : station.getBusBreakerView().getBuses()) {
-                                if(bus.getConnectedComponent().getNum() == Component.MAIN_NUM || substpilotPoint == null) {
+                            for (Bus bus : station.getBusBreakerView().getBuses()) {
+                                if (bus.getConnectedComponent().getNum() == Component.MAIN_NUM || substpilotPoint == null) {
                                     substpilotPoint = iidm2eurostagId.get(bus.getId());
                                 }
                             }
                             pilotPointRst.put(zoneRST, station.getId());
                         }
                     }
-                    if(substpilotPoint == null) {
-                        log.warn("Pilot point "+pilotPoint+" isn't in the network - Broken RST zone: "+zoneRST);
+                    if (substpilotPoint == null) {
+                        log.warn("Pilot point " + pilotPoint + " isn't in the network - Broken RST zone: " + zoneRST);
                     }
-                    zm.put("connection.node.name",substpilotPoint);
+                    zm.put("connection.node.name", substpilotPoint);
 
-                    EurostagRecord eRecord=new EurostagRecord(zoneTypeName, zm);
+                    EurostagRecord eRecord = new EurostagRecord(zoneTypeName, zm);
                     try {
                         DtaParser.dumpZone(eRecord, dtaOutStream);
 
                     } catch (ParseException e) {
-                        log.error(e.getMessage(),e);
+                        log.error(e.getMessage(), e);
                     }
                     // Regulator
                     dumpDataInternals(workingDir, zoneRST, eq, eurostagSim, iidm2eurostagId, ddbmanager, dtaOutStream, network);
                     // Regulator files
                     String intName = configExport.getRSTRegulInjector().toLowerCase();
-                    boolean foundFRI=false;
-                    boolean foundFRM=false;
-                    boolean foundPAR=false;
-                    boolean foundPCP=false;
-                    boolean foundRCP=false;
-                    boolean foundRegFile=false;
+                    boolean foundFRI = false;
+                    boolean foundFRM = false;
+                    boolean foundPAR = false;
+                    boolean foundPCP = false;
+                    boolean foundRCP = false;
+                    boolean foundRegFile = false;
                     if ((mt.getSimulator().getSimulator() == Simulator.EUROSTAG)
                             && (mt.getSimulator().getVersion()
                                     .equals(eurostagVersion))) {
@@ -1878,24 +1881,24 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                                 .keySet()) {
                             switch (dataKey) {
                             case "pcp":
-                                foundRegFile=true;
-                                foundPCP=true;
+                                foundRegFile = true;
+                                foundPCP = true;
                                 break;
                             case "rcp":
-                                foundRegFile=true;
-                                foundRCP=true;
+                                foundRegFile = true;
+                                foundRCP = true;
                                 break;
                             case "fri":
-                                foundRegFile=true;
-                                foundFRI=true;
+                                foundRegFile = true;
+                                foundFRI = true;
                                 break;
                             case "frm":
-                                foundRegFile=true;
-                                foundFRM=true;
+                                foundRegFile = true;
+                                foundFRM = true;
                                 break;
                             case "par":
-                                foundRegFile=true;
-                                foundPAR=true;
+                                foundRegFile = true;
+                                foundPAR = true;
                                 break;
                             default:
                                 log.warn("- regfile extension not recognized: " + dataKey);
@@ -1911,8 +1914,8 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                             }
                             //keeps track of reg name, pro .pcp, .rcp compiling
                             //skipping those regs that do not have both .rcp and .pcp files
-                            if (((foundFRI==true) && (foundFRM==true) && (foundPAR==true))
-                                    && ((foundPCP==false) || (foundRCP==false))) {
+                            if (((foundFRI == true) && (foundFRM == true) && (foundPAR == true))
+                                    && ((foundPCP == false) || (foundRCP == false))) {
                                 uniqueRegNamesSet.add(intName);
                             }
                         }
@@ -1924,53 +1927,53 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
     public void dumpDataACMC(SimulatorInst eurostagSim, DDBManager ddbmanager,
             PrintStream dtaOutStream, Map<String, String> iidm2eurostagId, Path workingDir) throws ParseException, IOException {
 
-        if(configExport.getExportACMC()) {
+        if (configExport.getExportACMC()) {
 
             // MA
             List<Equipment> equipsAll = ddbmanager.findEquipmentsAll();
-            for(Equipment eq : equipsAll) {
-                ModelTemplate mt=ddbmanager.findModelTemplate(eq, eurostagSim);
-                if (mt==null) {
+            for (Equipment eq : equipsAll) {
+                ModelTemplate mt = ddbmanager.findModelTemplate(eq, eurostagSim);
+                if (mt == null) {
                     throw new RuntimeException("Could not find any model templates for simulator: " + eurostagSim.toString());
                 }
 
-                if(eq.getModelContainer().getDdbId().equals(MTC_PREFIX_NAME + "MA")) {
+                if (eq.getModelContainer().getDdbId().equals(MTC_PREFIX_NAME + "MA")) {
                     if (log.isDebugEnabled()) {
-                        log.trace("Dumping data for: " +eq.getCimId());
+                        log.trace("Dumping data for: " + eq.getCimId());
                     }
                     String zoneTypeName = "MA";
                     log.trace(" model template typename: " + mt.getTypeName());
-                    Parameters pars=ddbmanager.findParameters(eq, eurostagSim);
-                    HashMap<String, Object> zm=Utils.getHashMapFromParameters(pars);
+                    Parameters pars = ddbmanager.findParameters(eq, eurostagSim);
+                    HashMap<String, Object> zm = Utils.getHashMapFromParameters(pars);
 
                     ArrayList<String> bankInAcmc = new ArrayList<String>();
                     String acmcName = (String) zm.get("ma.name");
                     // Modification shunt nameS
                     String connectingStation = (String) zm.get("equipment.name");
-                    for(VoltageLevel station : network.getVoltageLevels()) {
-                        if(station.getName().equals(connectingStation)) {
+                    for (VoltageLevel station : network.getVoltageLevels()) {
+                        if (station.getName().equals(connectingStation)) {
                             // Looking for shunts at the connecting station
-                            for(ShuntCompensator shunt : station.getShunts()) {
+                            for (ShuntCompensator shunt : station.getShunts()) {
                                 bankInAcmc.add(iidm2eurostagId.get(shunt.getId()));
                             }
                         }
                     }
-                    if(bankInAcmc.isEmpty()) {
-                        log.warn("No shunt/station found for station name :"+connectingStation);
+                    if (bankInAcmc.isEmpty()) {
+                        log.warn("No shunt/station found for station name :" + connectingStation);
                     } else {
                         acmcs.put(acmcName, bankInAcmc);
-                        zm.put("equipment.name",bankInAcmc.get(0)); // Any of the banks = not used
+                        zm.put("equipment.name", bankInAcmc.get(0)); // Any of the banks = not used
 
-                        EurostagRecord eRecord=new EurostagRecord(zoneTypeName, zm);
+                        EurostagRecord eRecord = new EurostagRecord(zoneTypeName, zm);
                         try {
                             DtaParser.dumpZone(eRecord, dtaOutStream);
                         } catch (ParseException e) {
-                            log.error(e.getMessage(),e);
+                            log.error(e.getMessage(), e);
                         }
 
                         // Regulator RMA
                         Set<String> internalIds = getConnectedInternals(acmcName, ddbmanager);
-                        log.info("- connected internals: " + acmcName+": "+ internalIds);
+                        log.info("- connected internals: " + acmcName + ": " + internalIds);
                         for (String nativeId : internalIds) {
                             Internal internal = ddbmanager.findInternal(nativeId);
                             if (internal == null) {
@@ -1982,7 +1985,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                                     log.error("could not write macro.lis file, due to " + e.getMessage());
                                 }
                                 // dump regulator files start
-                                String macroblockName=ddbmanager.getStringParameter(internal, eurostagSim, PAR_MACROBLOCK__NAME);
+                                String macroblockName = ddbmanager.getStringParameter(internal, eurostagSim, PAR_MACROBLOCK__NAME);
                                 if (macroblockName == null) {
                                     throw new RuntimeException("null macroblock.name for internal " + internal);
                                 }
@@ -1990,12 +1993,12 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                                 String intName = macroblockName.toLowerCase();
                                 ModelTemplateContainer mtc = internal.getModelContainer();
 
-                                boolean foundFRI=false;
-                                boolean foundFRM=false;
-                                boolean foundPAR=false;
-                                boolean foundPCP=false;
-                                boolean foundRCP=false;
-                                boolean foundRegFile=false;
+                                boolean foundFRI = false;
+                                boolean foundFRM = false;
+                                boolean foundPAR = false;
+                                boolean foundPCP = false;
+                                boolean foundRCP = false;
+                                boolean foundRegFile = false;
                                 for (ModelTemplate mt2 : mtc.getModelTemplates()) {
                                     if ((mt2.getSimulator().getSimulator() == Simulator.EUROSTAG)
                                             && (mt2.getSimulator().getVersion().equals(eurostagVersion))) {
@@ -2004,24 +2007,24 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                                                 .keySet()) {
                                             switch (dataKey) {
                                             case "pcp":
-                                                foundRegFile=true;
-                                                foundPCP=true;
+                                                foundRegFile = true;
+                                                foundPCP = true;
                                                 break;
                                             case "rcp":
-                                                foundRegFile=true;
-                                                foundRCP=true;
+                                                foundRegFile = true;
+                                                foundRCP = true;
                                                 break;
                                             case "fri":
-                                                foundRegFile=true;
-                                                foundFRI=true;
+                                                foundRegFile = true;
+                                                foundFRI = true;
                                                 break;
                                             case "frm":
-                                                foundRegFile=true;
-                                                foundFRM=true;
+                                                foundRegFile = true;
+                                                foundFRM = true;
                                                 break;
                                             case "par":
-                                                foundRegFile=true;
-                                                foundPAR=true;
+                                                foundRegFile = true;
+                                                foundPAR = true;
                                                 break;
                                             default:
                                                 log.warn("- regfile extension not recognized: " + dataKey);
@@ -2046,8 +2049,8 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                                 }
                                 //keeps track of reg name, pro .pcp, .rcp compiling
                                 //skipping those regs that do not have both .rcp and .pcp files
-                                if (((foundFRI==true) && (foundFRM==true) && (foundPAR==true))
-                                        && ((foundPCP==false) || (foundRCP==false))) {
+                                if (((foundFRI == true) && (foundFRM == true) && (foundPAR == true))
+                                        && ((foundPCP == false) || (foundRCP == false))) {
                                     uniqueRegNamesSet.add(intName);
                                 }
                             }
@@ -2055,58 +2058,58 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                     }
                 }
             }
-            for(String acmc : acmcs.keySet()) {
+            for (String acmc : acmcs.keySet()) {
                 ArrayList<String> bankInAcmc = acmcs.get(acmc);
                 char internalVariableCount = 'A';
-                for(String bank : bankInAcmc) {
+                for (String bank : bankInAcmc) {
                     // A33 + EVT N225
                     HashMap<String, Object> zm2 = new HashMap<String, Object>();
-                    zm2.put("keyword","A33");
-                    zm2.put("ma.name",acmc);
-                    zm2.put("interface.name","N225"+internalVariableCount);
-                    zm2.put("block.number","---");
-                    zm2.put("c.type",1);
-                    zm2.put("S1","0.7");
-                    zm2.put("S2","0.5");
-                    zm2.put("S3","2.0");
-                    zm2.put("T1","0.0");
-                    zm2.put("TDEL","0.0");
-                    zm2.put("ev.keyword","EV");
-                    zm2.put("ev.type","CAP BANK");
-                    zm2.put("equipment.name",bank);
-                    zm2.put("seq.params","1   1  0                                          0.");
+                    zm2.put("keyword", "A33");
+                    zm2.put("ma.name", acmc);
+                    zm2.put("interface.name", "N225" + internalVariableCount);
+                    zm2.put("block.number", "---");
+                    zm2.put("c.type", 1);
+                    zm2.put("S1", "0.7");
+                    zm2.put("S2", "0.5");
+                    zm2.put("S3", "2.0");
+                    zm2.put("T1", "0.0");
+                    zm2.put("TDEL", "0.0");
+                    zm2.put("ev.keyword", "EV");
+                    zm2.put("ev.type", "CAP BANK");
+                    zm2.put("equipment.name", bank);
+                    zm2.put("seq.params", "1   1  0                                          0.");
 
-                    EurostagRecord eRecord=new EurostagRecord("A33_ACMC", zm2);
+                    EurostagRecord eRecord = new EurostagRecord("A33_ACMC", zm2);
 
                     try {
-                        DtaParser.dumpZone(eRecord,dtaOutStream);
+                        DtaParser.dumpZone(eRecord, dtaOutStream);
                     } catch (ParseException e) {
-                        log.error(e.getMessage(),e);
+                        log.error(e.getMessage(), e);
                     }
 
                     // A33 + EVT D225
                     zm2 = new HashMap<String, Object>();
-                    zm2.put("keyword","A33");
-                    zm2.put("ma.name",acmc);
-                    zm2.put("interface.name","D225"+internalVariableCount);
-                    zm2.put("block.number","---");
-                    zm2.put("c.type",1);
-                    zm2.put("S1","0.7");
-                    zm2.put("S2","0.5");
-                    zm2.put("S3","2.0");
-                    zm2.put("T1","0.0");
-                    zm2.put("TDEL","0.0");
-                    zm2.put("ev.keyword","EV");
-                    zm2.put("ev.type","CAP BANK");
-                    zm2.put("equipment.name",bank);
-                    zm2.put("seq.params","-1  1  0                                          0.");
+                    zm2.put("keyword", "A33");
+                    zm2.put("ma.name", acmc);
+                    zm2.put("interface.name", "D225" + internalVariableCount);
+                    zm2.put("block.number", "---");
+                    zm2.put("c.type", 1);
+                    zm2.put("S1", "0.7");
+                    zm2.put("S2", "0.5");
+                    zm2.put("S3", "2.0");
+                    zm2.put("T1", "0.0");
+                    zm2.put("TDEL", "0.0");
+                    zm2.put("ev.keyword", "EV");
+                    zm2.put("ev.type", "CAP BANK");
+                    zm2.put("equipment.name", bank);
+                    zm2.put("seq.params", "-1  1  0                                          0.");
 
-                    eRecord=new EurostagRecord("A33_ACMC", zm2);
+                    eRecord = new EurostagRecord("A33_ACMC", zm2);
 
                     try {
-                        DtaParser.dumpZone(eRecord,dtaOutStream);
+                        DtaParser.dumpZone(eRecord, dtaOutStream);
                     } catch (ParseException e) {
-                        log.error(e.getMessage(),e);
+                        log.error(e.getMessage(), e);
                     }
                     internalVariableCount++;
                 }
@@ -2115,11 +2118,11 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
     }
 
     public SimulatorInst getOrCreateEurostagSimulatorInst(DDBManager ddbmanager, String eurostagVersion) {
-        SimulatorInst eurostagSim=ddbmanager.findSimulator(Simulator.EUROSTAG, eurostagVersion);
-        if (eurostagSim==null) {
+        SimulatorInst eurostagSim = ddbmanager.findSimulator(Simulator.EUROSTAG, eurostagVersion);
+        if (eurostagSim == null) {
             log.debug("* Creating simulator Eurostag, version " + eurostagVersion);
-            eurostagSim=new SimulatorInst(Simulator.EUROSTAG,eurostagVersion);
-            eurostagSim=ddbmanager.save(eurostagSim);
+            eurostagSim = new SimulatorInst(Simulator.EUROSTAG, eurostagVersion);
+            eurostagSim = ddbmanager.save(eurostagSim);
         }
         return eurostagSim;
     }
@@ -2147,23 +2150,23 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
      * Clean up Functions
      ********************************* */
     public void unloadEurostagData() {
-        try  (EjbClientCtx cx=newEjbClientEcx()){
+        try (EjbClientCtx cx = newEjbClientEcx()) {
             DDBManager ddbmanager = cx.connectEjb(DDBMANAGERJNDINAME);
 
-            for(Equipment eq : ddbmanager.findEquipmentsAll()) {
+            for (Equipment eq : ddbmanager.findEquipmentsAll()) {
                 removeEquipment(eq.getCimId(), ddbmanager);
             }
-            for(Internal in : ddbmanager.findInternalsAll()) {
+            for (Internal in : ddbmanager.findInternalsAll()) {
                 removeInternal(in.getNativeId(), ddbmanager);
             }
-            for(ConnectionSchema cs : ddbmanager.findConnectionSchemasAll()) {
+            for (ConnectionSchema cs : ddbmanager.findConnectionSchemasAll()) {
                 ddbmanager.delete(cs);
             }
-            for(ModelTemplateContainer mtc : ddbmanager.findModelTemplateContainerAll()) {
+            for (ModelTemplateContainer mtc : ddbmanager.findModelTemplateContainerAll()) {
                 removeModelTemplateContainer(mtc.getDdbId(), ddbmanager);
             }
         } catch (Exception e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
         }
     }
     public void removeEquipment(String cimId, DDBManager ddbmanager) {
@@ -2190,7 +2193,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         }
     }
     public void removeEquipment(String cimId) {
-        try (EjbClientCtx cx=newEjbClientEcx()){
+        try (EjbClientCtx cx = newEjbClientEcx()) {
             DDBManager ddbmanager = cx.connectEjb(DDBMANAGERJNDINAME);
             removeEquipment(cimId, ddbmanager);
         } catch (Exception e) {
@@ -2215,7 +2218,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         }
     }
     public void removeInternal(String nativeId) {
-        try (EjbClientCtx cx=newEjbClientEcx()){
+        try (EjbClientCtx cx = newEjbClientEcx()) {
             DDBManager ddbmanager = cx.connectEjb(DDBMANAGERJNDINAME);
             removeInternal(nativeId, ddbmanager);
         } catch (Exception e) {
@@ -2234,7 +2237,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         }
     }
     public void removeModelTemplateContainer(String mtcId) {
-        try (EjbClientCtx cx=newEjbClientEcx()){
+        try (EjbClientCtx cx = newEjbClientEcx()) {
             DDBManager ddbmanager = cx.connectEjb(DDBMANAGERJNDINAME);
             removeModelTemplateContainer(mtcId, ddbmanager);
         } catch (Exception e) {
@@ -2243,7 +2246,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
     }
     public void unloadEurostagTemplatesCatalog(DDBManager ddbmanager, String eurostagVersion) {
         try {
-            SimulatorInst eurostagSim=getOrCreateEurostagSimulatorInst(ddbmanager, eurostagVersion);
+            SimulatorInst eurostagSim = getOrCreateEurostagSimulatorInst(ddbmanager, eurostagVersion);
             removeFromDDBEurostagModelTemplates(estg, eurostagSim, ddbmanager);
 
         } catch (Throwable e) {

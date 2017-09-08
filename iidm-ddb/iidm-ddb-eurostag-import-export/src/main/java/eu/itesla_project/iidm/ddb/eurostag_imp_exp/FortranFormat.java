@@ -122,13 +122,13 @@ public class FortranFormat {
 
             @Override
             public Object parse(final Unit u, final String s, final Options options) throws IOException {
-                if(s.length()==0){
-                    if(options.isReturnZeroForBlanks()){
+                if (s.length() == 0) {
+                    if (options.isReturnZeroForBlanks()) {
                         return Integer.valueOf(0);
-                    }else{
+                    } else {
                         return null;
                     }
-                }else{
+                } else {
                     return Integer.parseInt(s);
                 }
             }
@@ -181,21 +181,21 @@ public class FortranFormat {
                     s = (neg ? '-' : "") + newDF(dfs.toString()).format(d);
 
                     //pro Eurostag, make it compact: drop the leading zero character, if the string starts with "0." or "-0."
-                    if (s.length()> u.getLength()) {
+                    if (s.length() > u.getLength()) {
                         if (s.startsWith("0.")) {
-                            s=s.substring(1,s.length());
+                            s = s.substring(1, s.length());
                         } else if (s.startsWith("-0.")) {
-                            s="-"+s.substring(2,s.length());
+                            s = "-" + s.substring(2, s.length());
                         }
                         //then, if needed, 'truncate' to match the desired length
                         //todo - round instead?
-                        if ((s.indexOf('.') != -1) && (s.substring(0,u.getLength()).indexOf('.') != -1)) {
-                            s=s.substring(0,u.getLength());
+                        if ((s.indexOf('.') != -1) && (s.substring(0, u.getLength()).indexOf('.') != -1)) {
+                            s = s.substring(0, u.getLength());
                         }
                     }
                 }
 
-                String retVal=format(s, u.getLength(), true);
+                String retVal = format(s, u.getLength(), true);
                 //bic add final . if Integer ... needed?  it seems it's not needed.
 //                if ((retVal.trim().length()>0) && (!retVal.contains("."))) {
 //                    retVal=retVal+".";
@@ -219,7 +219,9 @@ public class FortranFormat {
                 if (returning == null && options.isReturnZeroForBlanks()) {
                     returning = Double.valueOf(0);
                 }
-                if (returning == null) { return null; }
+                if (returning == null) {
+                    return null;
+                }
                 return options.isReturnFloats() && s.length() != 0 ? new Float(returning) : returning;
             }
         },
@@ -686,17 +688,23 @@ public class FortranFormat {
          *             the parse exception
          */
         public SpecificationStringInterpreter(final String s) throws ParseException {
-            if (s == null) { throw new NullPointerException("The format specification string may not be null."); }
+            if (s == null) {
+                throw new NullPointerException("The format specification string may not be null.");
+            }
             original = s;
 
             //check for malformatted root parenthesis
             final int open = s.indexOf('(');
-            if (open == -1) { throw new ParseException(
+            if (open == -1) {
+                throw new ParseException(
                     "Fortran format specification strings must begin with an open parenthesis '(' and end with a close parenthesis ')'. Blank spaces are tolerated before an open parenthesis and any characters are tolerated after a close parenthesis. No characters outside of the root parenthesis affect the format specification.",
-                    0); }
+                    0);
+            }
             final int close = findClosingParenthesis(s, open);
             final String before = s.substring(0, open);
-            if (before.replaceAll(" ", "").length() != 0) { throw new ParseException("Only spaces may precede the root parenthesis.", 0); }
+            if (before.replaceAll(" ", "").length() != 0) {
+                throw new ParseException("Only spaces may precede the root parenthesis.", 0);
+            }
 
             input = s.substring(open + 1, close).replaceAll(" ", "");
             withCommas = checkCommas(input);
@@ -935,7 +943,9 @@ public class FortranFormat {
                     exponent.append('2');
                 }
                 for (int i = 0; i < repeats; i++) {
-                    if (!DESCRIPTOR_HASH.containsKey(type.toString())) { throw new ParseException("Unsupported Edit Descriptor: " + type.toString(), original.indexOf(type.toString())); }
+                    if (!DESCRIPTOR_HASH.containsKey(type.toString())) {
+                        throw new ParseException("Unsupported Edit Descriptor: " + type.toString(), original.indexOf(type.toString()));
+                    }
                     final Unit u = new Unit(DESCRIPTOR_HASH.get(type.toString()), after.length() == 0 ? 0 : Integer.parseInt(after.toString()));
                     if (decimal.length() != 0) {
                         u.decimalLength = Integer.parseInt(decimal.toString());
@@ -1240,7 +1250,7 @@ public class FortranFormat {
     public ArrayList<Object> parse(final String s) throws IOException {
         final StringTokenizer st = new StringTokenizer(s, "\n");
         final ArrayList<Object> returning = new ArrayList<Object>(units.size());
-        StringReader sr = new StringReader(st.hasMoreTokens()?st.nextToken():"");
+        StringReader sr = new StringReader(st.hasMoreTokens() ? st.nextToken() : "");
         for (final Unit u : units) {
             final char[] chars = new char[u.length];
             sr.read(chars, 0, u.length);
@@ -1254,7 +1264,7 @@ public class FortranFormat {
             if (u.type == EditDescriptor.FORMAT_SCANNING_CONTROL) {
                 break;
             } else if (u.type == EditDescriptor.POSITIONING_VERTICAL) {
-                sr = new StringReader(st.hasMoreTokens()?st.nextToken():"");
+                sr = new StringReader(st.hasMoreTokens() ? st.nextToken() : "");
             } else {
                 if (!u.type.isNonRepeatable()) {
                     returning.add(u.type.parse(u, complete, options));
@@ -1353,7 +1363,7 @@ public class FortranFormat {
     }
 
 
-    public static DecimalFormat newDF_(String formatString){
+    public static DecimalFormat newDF_(String formatString) {
         DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.UK);
         otherSymbols.setDecimalSeparator('.');
         otherSymbols.setGroupingSeparator(',');
@@ -1362,7 +1372,7 @@ public class FortranFormat {
     }
 
 
-    public static DecimalFormat newDF___(String formatString){
+    public static DecimalFormat newDF___(String formatString) {
         DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.ENGLISH);
         otherSymbols.setDecimalSeparator('.');
         otherSymbols.setGroupingSeparator(' ');
@@ -1370,12 +1380,12 @@ public class FortranFormat {
         return df;
     }
 
-    public static DecimalFormat newDF(String formatString){
+    public static DecimalFormat newDF(String formatString) {
         DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.ENGLISH);
         otherSymbols.setDecimalSeparator('.');
         otherSymbols.setGroupingSeparator(' ');
         //DecimalFormat df = new DecimalFormat("####.####",otherSymbols);
-        DecimalFormat df = new DecimalFormat("########.########",otherSymbols);
+        DecimalFormat df = new DecimalFormat("########.########", otherSymbols);
         return df;
     }
 

@@ -19,8 +19,8 @@ import javax.persistence.*;
 @Entity
 @Table(
         name = "SIMULATORINST",
-        uniqueConstraints={
-               @UniqueConstraint (columnNames={"version","simulator"})
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"version", "simulator"})
         }
     )
 public class SimulatorInst implements Serializable {
@@ -33,8 +33,8 @@ public class SimulatorInst implements Serializable {
 
     public SimulatorInst(Simulator simulator, String version) {
         super();
-        this.simulator=simulator;
-        this.version=version;
+        this.simulator = simulator;
+        this.version = version;
     }
 
 
@@ -51,7 +51,7 @@ public class SimulatorInst implements Serializable {
 
     //@Enumerated(EnumType.STRING)
     @Enumerated
-    @Column(nullable=false)
+    @Column(nullable = false)
     private Simulator  simulator;
 
     public Simulator getSimulator() {
@@ -61,7 +61,7 @@ public class SimulatorInst implements Serializable {
         this.simulator = simulator;
     }
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String version;
 
     public String getVersion() {
@@ -72,7 +72,7 @@ public class SimulatorInst implements Serializable {
     }
     @Override
     public String toString() {
-        return "SimulatorInst [simulator=" + simulator + ", version=" + version+ "]";
+        return "SimulatorInst [simulator=" + simulator + ", version=" + version + "]";
     }
 
     @Override

@@ -23,17 +23,17 @@ public class PsseRegisterFactory {
     static Map<String, PsseRegisterType> modelsTypesDict = new HashMap<>();
     static Map<String, String[]> modelsParsDict = new HashMap<String, String[]>();
     static Map<String, String[]> modelsPinsDict = new HashMap<String, String[]>();
-    static LinkedHashSet<String> modelsPinsToBeIgnored= new LinkedHashSet<>();
+    static LinkedHashSet<String> modelsPinsToBeIgnored = new LinkedHashSet<>();
 
     static {
-        modelsTypesDict.put("GENROU",PsseRegisterType.GENERATOR);
-        modelsTypesDict.put("GENSAL",PsseRegisterType.GENERATOR);
-        modelsTypesDict.put("HYGOV",PsseRegisterType.TURBINE_GOVERNOR);
-        modelsTypesDict.put("IEEET2", PsseRegisterType.EXCITATION_SYSTEM );
-        modelsTypesDict.put("IEESGO",PsseRegisterType.TURBINE_GOVERNOR);
-        modelsTypesDict.put("SCRX",PsseRegisterType.EXCITATION_SYSTEM);
-        modelsTypesDict.put("SEXS",PsseRegisterType.EXCITATION_SYSTEM);
-        modelsTypesDict.put("STAB2A",PsseRegisterType.STABILIZER);
+        modelsTypesDict.put("GENROU", PsseRegisterType.GENERATOR);
+        modelsTypesDict.put("GENSAL", PsseRegisterType.GENERATOR);
+        modelsTypesDict.put("HYGOV", PsseRegisterType.TURBINE_GOVERNOR);
+        modelsTypesDict.put("IEEET2", PsseRegisterType.EXCITATION_SYSTEM);
+        modelsTypesDict.put("IEESGO", PsseRegisterType.TURBINE_GOVERNOR);
+        modelsTypesDict.put("SCRX", PsseRegisterType.EXCITATION_SYSTEM);
+        modelsTypesDict.put("SEXS", PsseRegisterType.EXCITATION_SYSTEM);
+        modelsTypesDict.put("STAB2A", PsseRegisterType.STABILIZER);
 
         modelsTypesDict.put("TGOV1", PsseRegisterType.TURBINE_GOVERNOR );
         modelsTypesDict.put("ESST1A", PsseRegisterType.EXCITATION_SYSTEM );
@@ -45,7 +45,7 @@ public class PsseRegisterFactory {
         modelsTypesDict.put("IEEEX1", PsseRegisterType.EXCITATION_SYSTEM );
         modelsTypesDict.put("GAST", PsseRegisterType.TURBINE_GOVERNOR );
         //PENDING
-        modelsTypesDict.put("WT4G1",PsseRegisterType.GENERIC_WIND_GENERATOR );
+        modelsTypesDict.put("WT4G1", PsseRegisterType.GENERIC_WIND_GENERATOR );
 
         //TODO to be verified
         /*
@@ -68,7 +68,7 @@ public class PsseRegisterFactory {
         modelsParsDict.put("IEESGO", new String[]{"T_1", "T_2", "T_3", "T_4", "T_5", "T_6", "K_1", "K_2", "K_3", "P_MAX", "P_MIN"});
         modelsParsDict.put("SCRX", new String[]{"T_AT_B", "T_B", "K", "T_E", "E_MIN", "E_MAX", "C_SWITCH", "r_cr_fd"});
         modelsParsDict.put("SEXS", new String[]{"T_AT_B", "T_B", "K", "T_E", "E_MIN", "E_MAX"});
-        modelsParsDict.put("STAB2A", new String[]{"K_2", "T_2", "K_3", "T_3", "K_4", "K_5","T_5","H_LIM"});
+        modelsParsDict.put("STAB2A", new String[]{"K_2", "T_2", "K_3", "T_3", "K_4", "K_5", "T_5", "H_LIM"});
 
         modelsParsDict.put("TGOV1", new String[]{"R", "T_1", "V_MAX", "V_MIN", "T_2", "T_3", "D_t"});
         modelsParsDict.put("ESST1A", new String[]{"IM", "IM1", "T_R", "V_IMAX", "V_IMIN", "T_C", "T_B", "T_C1", "T_B1", "K_A", "T_A", "V_AMAX", "V_AMIN", "V_RMAX", "V_RMIN", "K_C", "K_F", "T_F", "K_LR", "I_LR"});
@@ -124,14 +124,14 @@ public class PsseRegisterFactory {
     }
 
     private static boolean checkConsistency(Map<String, String[]> modelParametersDictionary) {
-        boolean isConsistent=true;
+        boolean isConsistent = true;
         for (String s : modelParametersDictionary.keySet()) {
-            HashMap<String,String> tempMap=new HashMap<>();
+            HashMap<String, String> tempMap = new HashMap<>();
             //check that actual params list size is matching with the declared
             for (int i = 0; i < modelParametersDictionary.get(s).length; i++) {
                 if (tempMap.containsKey(modelParametersDictionary.get(s)[i])) {
-                    isConsistent=false;
-                    throw new RuntimeException("model " + s +" contains multiple occurrence of parameter " + modelParametersDictionary.get(s)[i]);
+                    isConsistent = false;
+                    throw new RuntimeException("model " + s + " contains multiple occurrence of parameter " + modelParametersDictionary.get(s)[i]);
                 } else {
                     tempMap.put(modelParametersDictionary.get(s)[i], modelParametersDictionary.get(s)[i]);
                 }
@@ -142,28 +142,29 @@ public class PsseRegisterFactory {
 
     public static PsseRegister createRegister(String busNum, String model, String id, List<Float> parameters) {
         if (modelsParsDict.containsKey(model)) {
-            int expectedParamsNum= modelsParsDict.get(model).length;
-            int actualParamsNum=parameters.size();
-            if (expectedParamsNum != actualParamsNum)
-                throw new RuntimeException("wrong number of parameters for model "+model+": expected " + expectedParamsNum + ", found " + actualParamsNum);
-            LinkedHashMap<String,Float> regPars=new LinkedHashMap<>();
-            for (int i=0; i < modelsParsDict.get(model).length; i++) {
-                regPars.put(modelsParsDict.get(model)[i],parameters.get(i));
+            int expectedParamsNum = modelsParsDict.get(model).length;
+            int actualParamsNum = parameters.size();
+            if (expectedParamsNum != actualParamsNum) {
+                throw new RuntimeException("wrong number of parameters for model " + model + ": expected " + expectedParamsNum + ", found " + actualParamsNum);
             }
-            LinkedHashSet<String> regPins=new LinkedHashSet<>();
-            for (int i=0; i < modelsPinsDict.get(model).length; i++) {
+            LinkedHashMap<String, Float> regPars = new LinkedHashMap<>();
+            for (int i = 0; i < modelsParsDict.get(model).length; i++) {
+                regPars.put(modelsParsDict.get(model)[i], parameters.get(i));
+            }
+            LinkedHashSet<String> regPins = new LinkedHashSet<>();
+            for (int i = 0; i < modelsPinsDict.get(model).length; i++) {
                 regPins.add(modelsPinsDict.get(model)[i]);
             }
-            return new PsseRegister(busNum, model,id, modelsTypesDict.get(model), regPars, regPins );
+            return new PsseRegister(busNum, model, id, modelsTypesDict.get(model), regPars, regPins);
         } else {
-            log.warn("{} not in dictionary: skipping.",model);
+            log.warn("{} not in dictionary: skipping.", model);
         }
         return null;
     }
 
     public static LinkedHashSet<String> intersectPinsSets(PsseRegister psseReg1, PsseRegister psseReg2) {
-        LinkedHashSet<String> retSet=new LinkedHashSet<>();
-        return Sets.difference(Sets.intersection(psseReg1.pins,psseReg2.pins), modelsPinsToBeIgnored).copyInto(retSet);
+        LinkedHashSet<String> retSet = new LinkedHashSet<>();
+        return Sets.difference(Sets.intersection(psseReg1.pins, psseReg2.pins), modelsPinsToBeIgnored).copyInto(retSet);
     }
 
 }

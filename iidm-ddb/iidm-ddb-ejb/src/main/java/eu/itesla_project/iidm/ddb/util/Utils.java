@@ -40,7 +40,7 @@ import javax.xml.bind.Unmarshaller;
 public class Utils {
 
     public static List<String> getEquipmentData(Equipment eq) {
-        List<String> ret=new ArrayList<String>();
+        List<String> ret = new ArrayList<String>();
         ret.add("Equipment id:" + eq.getId() + ", cimId:" + eq.getCimId());
 
         ModelTemplateContainer mtc1 = eq.getModelContainer();
@@ -51,17 +51,17 @@ public class Utils {
             for (ModelTemplate modelTemplate : mlist) {
                 ret.add("  Model template - " + modelTemplate.getComment() + ", "
                         + modelTemplate.getSimulator());
-                List<DefaultParameters> dparams=modelTemplate.getDefaultParameters();
-                int defsetindex=1;
+                List<DefaultParameters> dparams = modelTemplate.getDefaultParameters();
+                int defsetindex = 1;
                 for (DefaultParameters defaultParameters : dparams) {
                     ret.add("   defaultparameters - " + defsetindex);
-                    List<Parameter> dparams2=defaultParameters.getParameters();
+                    List<Parameter> dparams2 = defaultParameters.getParameters();
                     for (Parameter parameter : dparams2) {
-                        ret.add("     param - "+ parameter.getName() + ", "
+                        ret.add("     param - " + parameter.getName() + ", "
                                 + parameter.getValue());
 
                     }
-                    defsetindex=defsetindex+1;
+                    defsetindex = defsetindex + 1;
                 }
             }
         } else {
@@ -87,7 +87,7 @@ public class Utils {
     }
 
     public static void dump(Equipment eq, Logger log) {
-        List<String> equipData=Utils.getEquipmentData(eq);
+        List<String> equipData = Utils.getEquipmentData(eq);
         for (String dataLine : equipData) {
             log.info(dataLine);
         }
@@ -135,30 +135,30 @@ public class Utils {
         log.info("Internal id:" + eq.getId() + ", nativeId:" + eq.getNativeId());
 
         ModelTemplateContainer mtc1 = eq.getModelContainer();
-        if (mtc1!=null) {
+        if (mtc1 != null) {
         log.info(" Model template container " + mtc1.getDdbId() + ", "
                 + mtc1.getComment());
         List<ModelTemplate> mlist = mtc1.getModelTemplates();
         for (ModelTemplate modelTemplate : mlist) {
             log.info("  Model template - " + modelTemplate.getComment() + ", "
                     + modelTemplate.getSimulator());
-            List<DefaultParameters> dparams=modelTemplate.getDefaultParameters();
-            int defsetindex=1;
+            List<DefaultParameters> dparams = modelTemplate.getDefaultParameters();
+            int defsetindex = 1;
             for (DefaultParameters defaultParameters : dparams) {
                 log.info("   defaultparameters - " + defsetindex);
-                List<Parameter> dparams2=defaultParameters.getParameters();
+                List<Parameter> dparams2 = defaultParameters.getParameters();
                 for (Parameter parameter : dparams2) {
-                    log.info("     param - "+ parameter.getName() + ", "
+                    log.info("     param - " + parameter.getName() + ", "
                             + parameter.getValue());
 
                 }
-                defsetindex=defsetindex+1;
+                defsetindex = defsetindex + 1;
             }
         }
 
         }
         ParametersContainer pc1 = eq.getParametersContainer();
-        if (pc1!=null) {
+        if (pc1 != null) {
         log.info(" Parameter  container " + pc1.getDdbId());
         List<Parameters> plist = pc1.getParameters();
         for (Parameters parameters : plist) {
@@ -176,28 +176,28 @@ public class Utils {
 
 
     public static void dump(ModelTemplateContainer m, Logger log) {
-        log.info("ModelTemplateContainer:- ddbid:" + m.getDdbId() +", "+ m.getComment() +",  (id:" + m.getId()+")");
+        log.info("ModelTemplateContainer:- ddbid:" + m.getDdbId() + ", " + m.getComment() + ",  (id:" + m.getId() + ")");
         List<ModelTemplate> mlist = m.getModelTemplates();
         for (ModelTemplate modelTemplate : mlist) {
             log.info("  Model template - " + modelTemplate.getComment() + ", "
                     + modelTemplate.getSimulator());
-            List<DefaultParameters> dparams=modelTemplate.getDefaultParameters();
-            int defsetindex=1;
+            List<DefaultParameters> dparams = modelTemplate.getDefaultParameters();
+            int defsetindex = 1;
             for (DefaultParameters defaultParameters : dparams) {
                 log.info("   defaultparameters - " + defsetindex);
-                List<Parameter> dparams2=defaultParameters.getParameters();
+                List<Parameter> dparams2 = defaultParameters.getParameters();
                 for (Parameter parameter : dparams2) {
-                    log.info("     param - "+ parameter.getName() + ", "
+                    log.info("     param - " + parameter.getName() + ", "
                             + parameter.getValue());
 
                 }
-                defsetindex=defsetindex+1;
+                defsetindex = defsetindex + 1;
             }
         }
     }
 
 
-    static Class jaxbClasses[] = { Equipment.class, Parameter.class,
+    static Class jaxbClasses[] = {Equipment.class, Parameter.class,
             Internal.class, SimulatorInst.class, ModelTemplateContainer.class,
             ParametersContainer.class, ParameterString.class,
             ParameterInteger.class, ParameterFloat.class,

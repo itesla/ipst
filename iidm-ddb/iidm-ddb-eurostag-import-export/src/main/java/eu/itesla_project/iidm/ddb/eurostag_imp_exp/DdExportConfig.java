@@ -172,7 +172,9 @@ public class DdExportConfig {
         return loadPatternBeta;
     }
 
-    public boolean getGensPQfilter() { return gensPQfilter; }
+    public boolean getGensPQfilter() {
+        return gensPQfilter;
+    }
 
     public void setAutomatonA11(Boolean automatonA11) {
         this.automatonA11 = automatonA11;
@@ -226,5 +228,7 @@ public class DdExportConfig {
         this.loadPatternBeta = loadPatternBeta;
     }
 
-    public void setGensPQfilter(boolean gensPQfilter) { this.gensPQfilter = gensPQfilter; }
+    public void setGensPQfilter(boolean gensPQfilter) {
+        this.gensPQfilter = gensPQfilter;
+    }
 }

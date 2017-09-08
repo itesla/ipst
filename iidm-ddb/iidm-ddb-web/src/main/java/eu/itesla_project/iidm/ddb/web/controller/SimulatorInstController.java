@@ -53,7 +53,7 @@ public class SimulatorInstController {
 
     @PostConstruct
     public void initSimulatorInst() {
-        log.log(Level.INFO ,"initSimulatorInst:: enter");
+        log.log(Level.INFO, "initSimulatorInst:: enter");
         simulatorInst = new SimulatorInst();
         setSimulatorValues();
     }
@@ -67,7 +67,7 @@ public class SimulatorInstController {
     }
 
     public void setSimulatorValues() {
-        this.simulatorValues=Simulator.values();
+        this.simulatorValues = Simulator.values();
     }
 
     public Simulator[] getSimulatorValues() {
@@ -75,21 +75,21 @@ public class SimulatorInstController {
     }
 
     public String create() throws Exception {
-        log.log(Level.INFO," create enter:");
+        log.log(Level.INFO, " create enter:");
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
         try {
-            log.log(Level.INFO," create enter version: "+simulatorInst.getVersion() +" id: " +simulatorInst.getId() + " simulator  "+simulatorInst.getSimulator());
+            log.log(Level.INFO, " create enter version: " + simulatorInst.getVersion() + " id: " + simulatorInst.getId() + " simulator  " + simulatorInst.getSimulator());
             pmanager.save(simulatorInst);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("create.operation.msg"),bundle.getString("create.success.msg"));
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("create.operation.msg"), bundle.getString("create.success.msg"));
             facesContext.addMessage(null, m);
-            log.log(Level.INFO,"New simulator added: [id:"+ simulatorInst.getId() +" simulator:" +simulatorInst.getSimulator().name() + "Version: "+ simulatorInst.getVersion() +"]");
+            log.log(Level.INFO, "New simulator added: [id:" + simulatorInst.getId() + " simulator:" + simulatorInst.getSimulator().name() + "Version: " + simulatorInst.getVersion() + "]");
             // initSimulatorInst();
             return "list";
         } catch (Exception e) {
-            log.log(Level.WARNING,"Error during creation of: [id:"+ simulatorInst.getId() +" simulator" +simulatorInst.getSimulator().name() + " "+ simulatorInst.getVersion() +"]");
+            log.log(Level.WARNING, "Error during creation of: [id:" + simulatorInst.getId() + " simulator" + simulatorInst.getSimulator().name() + " " + simulatorInst.getVersion() + "]");
             String errorMessage = getRootErrorMessage(e);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("create.failure.msg"));
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, bundle.getString("create.failure.msg"));
             facesContext.addMessage(null, m);
             return "create";
         }
@@ -97,31 +97,30 @@ public class SimulatorInstController {
 
 
     public String view(SimulatorInst _simulatorInst) {
-        log.log(Level.INFO," view enter:: ["+_simulatorInst.toString()+"]");
-        this.simulatorInst=pmanager.findSimulator(_simulatorInst.getSimulator(),_simulatorInst.getVersion());
-        log.log(Level.INFO,"view:: for model simulator: ["+ simulatorInst.getId() +" " +simulatorInst.getSimulator().name() + " "+ simulatorInst.getVersion() +"]");
+        log.log(Level.INFO, " view enter:: [" + _simulatorInst.toString() + "]");
+        this.simulatorInst = pmanager.findSimulator(_simulatorInst.getSimulator(), _simulatorInst.getVersion());
+        log.log(Level.INFO, "view:: for model simulator: [" + simulatorInst.getId() + " " + simulatorInst.getSimulator().name() + " " + simulatorInst.getVersion() + "]");
         return "details";
     }
 
 
     public String edit(SimulatorInst _simulatorInst) {
-        log.log(Level.INFO," edit enter:: ["+_simulatorInst.toString()+"]");
+        log.log(Level.INFO, " edit enter:: [" + _simulatorInst.toString() + "]");
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
 
-        this.simulatorInst=pmanager.findSimulator(_simulatorInst.getSimulator(),_simulatorInst.getVersion());
-        try
-        {
+        this.simulatorInst = pmanager.findSimulator(_simulatorInst.getSimulator(), _simulatorInst.getVersion());
+        try {
             if (simulatorInst != null) {
-                log.log(Level.INFO,"Edit SimulatorInst : ["+ simulatorInst.getId() +" " +simulatorInst.getSimulator().name() + " "+ simulatorInst.getVersion() +"]");
+                log.log(Level.INFO, "Edit SimulatorInst : [" + simulatorInst.getId() + " " + simulatorInst.getSimulator().name() + " " + simulatorInst.getVersion() + "]");
                 return "edit";
+            } else {
+                throw new Exception("Edit: SimulatorInst not found!");
             }
-            else throw new Exception("Edit: SimulatorInst not found!");
-        }
-        catch (Exception e) {
-            log.log(Level.WARNING,"edit simulator:: catch an Exception" + e.getMessage());
+        } catch (Exception e) {
+            log.log(Level.WARNING, "edit simulator:: catch an Exception" + e.getMessage());
             String errorMessage = getRootErrorMessage(e);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("edit.failure.msg"));
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, bundle.getString("edit.failure.msg"));
             facesContext.addMessage(null, m);
             return "edit";
         }
@@ -129,28 +128,25 @@ public class SimulatorInstController {
 
 
     public String delete(SimulatorInst _simulatorInst) {
-        log.log(Level.INFO," delete enter:: ["+_simulatorInst.toString()+"]");
+        log.log(Level.INFO, " delete enter:: [" + _simulatorInst.toString() + "]");
 
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
-        SimulatorInst simInst=pmanager.findSimulator(_simulatorInst.getSimulator(),_simulatorInst.getVersion());
-        try
-        {
-            if (simInst != null)
-            {
-                log.log(Level.INFO,"Delete simulator :["+ simInst.getId() +" " +simInst.getSimulator().name() + " "+ simInst.getVersion() +"]");
+        SimulatorInst simInst = pmanager.findSimulator(_simulatorInst.getSimulator(), _simulatorInst.getVersion());
+        try {
+            if (simInst != null) {
+                log.log(Level.INFO, "Delete simulator :[" + simInst.getId() + " " + simInst.getSimulator().name() + " " + simInst.getVersion() + "]");
                 pmanager.delete(simInst);
-                FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO,    simulatorInst.toString()+ " "+bundle.getString("delete.operation.msg"), bundle.getString("success.msg"));
+                FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, simulatorInst.toString() + " " + bundle.getString("delete.operation.msg"), bundle.getString("success.msg"));
                 facesContext.addMessage(null, m);
                 return "list";
+            } else {
+                throw new Exception("Delete: SimulatorInst not found");
             }
-            else throw new Exception("Delete: SimulatorInst not found");
-        }
-        catch (Exception e)
-        {
-            log.log(Level.WARNING," delete simulator:: catch an Exception" + e.getMessage());
+        } catch (Exception e) {
+            log.log(Level.WARNING, " delete simulator:: catch an Exception" + e.getMessage());
             String errorMessage = getRootErrorMessage(e);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("delete.failure.msg"));
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, bundle.getString("delete.failure.msg"));
             facesContext.addMessage(null, m);
             return "edit";
         }

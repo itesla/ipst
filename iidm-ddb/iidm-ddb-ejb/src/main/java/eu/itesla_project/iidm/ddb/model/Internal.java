@@ -31,13 +31,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(
     name = "INTERNAL",
-    uniqueConstraints={
-           @UniqueConstraint (columnNames={"nativeId"})
+    uniqueConstraints = {
+            @UniqueConstraint(columnNames = {"nativeId"})
     }
 )
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
-public class Internal  implements Serializable{
+public class Internal  implements Serializable {
     private static final long serialVersionUID = 1L;
 
     // The synthetic id of the object.
@@ -53,7 +53,7 @@ public class Internal  implements Serializable{
 //    }
 
     //TBD: unique=true to be matched with versions&co
-    @Column(nullable=false)
+    @Column(nullable = false)
     @NotEmpty
     private String nativeId;
     public String getNativeId() {
@@ -86,18 +86,18 @@ public class Internal  implements Serializable{
 
 
     //@OneToOne(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     ModelTemplateContainer modelContainer;
 
     //@OneToOne(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     ParametersContainer parametersContainer;
 
     protected Internal() {
     }
 
     public Internal(String nativeId) {
-        this.nativeId=nativeId;
+        this.nativeId = nativeId;
     }
 
 }

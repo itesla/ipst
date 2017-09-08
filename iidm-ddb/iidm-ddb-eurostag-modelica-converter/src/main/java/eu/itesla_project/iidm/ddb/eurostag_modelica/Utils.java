@@ -41,7 +41,7 @@ public class Utils {
              os.write(fileContent, 0, fileContent.length);
          } catch (IOException e) {
              e.printStackTrace();
-         }finally{
+        } finally {
              try {
                  os.close();
              } catch (IOException e) {
@@ -72,8 +72,9 @@ public class Utils {
     public static boolean deleteFile1(String fileName) throws IOException {
         File file = new File(fileName);
         boolean deleted = false;
-        if ( file.exists() )
+        if (file.exists()) {
             deleted = file.delete();
+        }
         return deleted;
     }
 
@@ -83,8 +84,9 @@ public class Utils {
     }
 
     public static void checkNull(Object parameter, String parameterName, Logger log) throws ConversionException {
-        if ( parameter == null )
+        if (parameter == null) {
             Utils.throwConverterException(parameterName + " is null", log);
+        }
     }
 
 }

@@ -9,7 +9,6 @@ package eu.itesla_project.iidm.ddb.psse_imp_exp;
 import java.util.*;
 
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 public class PsseRegister {
@@ -20,17 +19,17 @@ public class PsseRegister {
 
     PsseRegisterType type;
 
-    LinkedHashMap<String,Float> parameters=new LinkedHashMap<>();
+    LinkedHashMap<String, Float> parameters = new LinkedHashMap<>();
 
-    LinkedHashSet<String> pins=new LinkedHashSet<>();
+    LinkedHashSet<String> pins = new LinkedHashSet<>();
 
-    public PsseRegister(String busNum, String model, String id, PsseRegisterType type, LinkedHashMap<String,Float> parameters, LinkedHashSet<String> pins) {
+    public PsseRegister(String busNum, String model, String id, PsseRegisterType type, LinkedHashMap<String, Float> parameters, LinkedHashSet<String> pins) {
         BusNum = busNum;
         Model = model;
         Id = id;
-        this.type=type;
-        this.parameters=parameters;
-        this.pins=pins;
+        this.type = type;
+        this.parameters = parameters;
+        this.pins = pins;
     }
 
     public String getBusNum() {
@@ -59,13 +58,13 @@ public class PsseRegister {
 
     @Override
     public String toString() {
-        String parVals="";
+        String parVals = "";
         for (String s : parameters.keySet()) {
-            parVals=parVals+" ["+s+"="+parameters.get(s)+"]";
+            parVals = parVals + " [" + s + "=" + parameters.get(s) + "]";
         }
-        String pinNames="";
+        String pinNames = "";
         for (String s : pins) {
-            pinNames=pinNames+s+" ";
+            pinNames = pinNames + s + " ";
         }
         return "eu.itesla_project.iidm.ddb.psse_imp_exp.PsseRegister{" +
                 "BusNum='" + BusNum + '\'' +

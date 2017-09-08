@@ -28,9 +28,9 @@ public class FloatValidator implements Validator {
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
         boolean valid = true;
         try {
-            Float valueFloat=Float.valueOf(objString);
-        }catch(NumberFormatException nEx){
-            valid=false;
+            Float valueFloat = Float.valueOf(objString);
+        } catch (NumberFormatException nEx) {
+            valid = false;
 
         }
         if (!valid) {

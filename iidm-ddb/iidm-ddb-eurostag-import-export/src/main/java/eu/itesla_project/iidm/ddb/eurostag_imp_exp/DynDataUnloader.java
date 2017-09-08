@@ -17,10 +17,10 @@ import org.slf4j.LoggerFactory;
 public class DynDataUnloader {
     static Logger log = LoggerFactory.getLogger(DynDataUnloader.class.getName());
 
-    String jbossHost="127.0.0.1";
-    String jbossPort="4447";
-    String jbossUser="user";
-    String jbossPassword="password";
+    String jbossHost = "127.0.0.1";
+    String jbossPort = "4447";
+    String jbossUser = "user";
+    String jbossPassword = "password";
 
 
 
@@ -34,11 +34,11 @@ public class DynDataUnloader {
      * @param jbossUser
      * @param jbossPassword
      */
-    public DynDataUnloader(String jbossHost, String jbossPort, String jbossUser, String jbossPassword) {;
-        this.jbossHost=jbossHost;
-        this.jbossPort=jbossPort;
-        this.jbossUser=jbossUser;
-        this.jbossPassword=jbossPassword;
+    public DynDataUnloader(String jbossHost, String jbossPort, String jbossUser, String jbossPassword) {
+        this.jbossHost = jbossHost;
+        this.jbossPort = jbossPort;
+        this.jbossUser = jbossUser;
+        this.jbossPassword = jbossPassword;
     }
 
 

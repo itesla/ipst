@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 public class LibUploaderTest {
 
     public static void main(String[] args) {
-        if(args.length > 0) {
+        if (args.length > 0) {
             libFilePath = Paths.get(args[0]);
             elementsPath = Paths.get(args[1]);
             mappingFilePath = Paths.get(args[2]);
@@ -31,8 +31,7 @@ public class LibUploaderTest {
             isLibrary = Boolean.parseBoolean(args[7]);
             isRegulator = Boolean.parseBoolean(args[8]);
 
-        }
-        else {
+        } else {
                isLibrary = true;
                isRegulator = false;
         }

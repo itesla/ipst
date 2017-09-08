@@ -12,7 +12,7 @@ import javax.persistence.metamodel.MapAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2013-01-29T15:19:18.288+0100")
+@Generated(value = "Dali", date = "2013-01-29T15:19:18.288+0100")
 @StaticMetamodel(ModelTemplate.class)
 public class ModelTemplate_ {
     public static volatile SingularAttribute<ModelTemplate, Long> id;

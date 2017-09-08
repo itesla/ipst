@@ -45,8 +45,8 @@ public class ModelTemplateContainerListProducer {
 
     @PostConstruct
     public void retrieveAllModelTemplateContainer() {
-        log.log(Level.INFO," produces list ");
-        this.modelTemplateContainers= pmanager.findModelTemplateContainerAll();
-        log.log(Level.INFO,"DONE produced list ");
+        log.log(Level.INFO, " produces list ");
+        this.modelTemplateContainers = pmanager.findModelTemplateContainerAll();
+        log.log(Level.INFO, "DONE produced list ");
     }
 }

@@ -26,13 +26,13 @@ import java.nio.file.Paths;
 @AutoService(Tool.class)
 public class DdbUpdateEurostagDataTool implements Tool {
 
-    public final static String DATA_DIR="data-dir";
-    public final static String DD_FILE="dd-file";
-    public final static String EUROSTAG_VERSION="eurostag-version";
-    public final static String HOST="host";
-    public final static String PORT="port";
-    public final static String USER="user";
-    public final static String PASSWORD="password";
+    public final static String DATA_DIR = "data-dir";
+    public final static String DD_FILE = "dd-file";
+    public final static String EUROSTAG_VERSION = "eurostag-version";
+    public final static String HOST = "host";
+    public final static String PORT = "port";
+    public final static String USER = "user";
+    public final static String PASSWORD = "password";
 
     private static Command COMMAND = new Command() {
 
@@ -131,14 +131,14 @@ public class DdbUpdateEurostagDataTool implements Tool {
         String jbossPassword = line.getOptionValue(PASSWORD);
         String eurostagVersion = line.getOptionValue(EUROSTAG_VERSION);
 
-        Path ddFilePath=Paths.get(ddFile);
-        Path ddData=Paths.get(dataDir);
-        Path ddPath =ddData.resolve("gene");
-        Path genPath=ddData.resolve("reguls");
-        Path dicoPath=ddData.resolve("dico.txt");
+        Path ddFilePath = Paths.get(ddFile);
+        Path ddData = Paths.get(dataDir);
+        Path ddPath = ddData.resolve("gene");
+        Path genPath = ddData.resolve("reguls");
+        Path dicoPath = ddData.resolve("dico.txt");
 
         if ((ddFilePath.toFile().isFile()) == false) {
-            throw new RuntimeException(DD_FILE +": "+ ddFile + " is not a file!");
+            throw new RuntimeException(DD_FILE + ": " + ddFile + " is not a file!");
         }
 
         DdbDtaImpExp ddbImpExp = new DdbDtaImpExp(new DdbConfig(jbossHost, jbossPort, jbossUser, jbossPassword));

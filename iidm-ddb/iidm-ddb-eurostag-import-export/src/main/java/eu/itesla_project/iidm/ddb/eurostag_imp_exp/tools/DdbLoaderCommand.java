@@ -15,16 +15,16 @@ import eu.itesla_project.commons.tools.Command;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class DdbLoaderCommand implements Command{
+public class DdbLoaderCommand implements Command {
 
-    public final static  DdbLoaderCommand INSTANCE=new DdbLoaderCommand();
+    public final static  DdbLoaderCommand INSTANCE = new DdbLoaderCommand();
 
-    public final static String DATA_DIR="data-dir";
-    public final static String EUROSTAG_VERSION="eurostag-version";
-    public final static String HOST="host";
-    public final static String PORT="port";
-    public final static String USER="user";
-    public final static String PASSWORD="password";
+    public final static String DATA_DIR = "data-dir";
+    public final static String EUROSTAG_VERSION = "eurostag-version";
+    public final static String HOST = "host";
+    public final static String PORT = "port";
+    public final static String USER = "user";
+    public final static String PASSWORD = "password";
 
     @Override
     public String getName() {

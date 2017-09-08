@@ -19,9 +19,9 @@ import org.hibernate.validator.constraints.NotEmpty;
  * @author Quinary <itesla@quinary.com>
  */
 @Entity
-@Table(name="PARAMETER")
-@Inheritance(strategy=InheritanceType.JOINED)
-@DiscriminatorColumn(name="PAR_TYPE", discriminatorType=DiscriminatorType.STRING)
+@Table(name = "PARAMETER")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "PAR_TYPE", discriminatorType = DiscriminatorType.STRING)
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class Parameter implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -37,7 +37,7 @@ public abstract class Parameter implements Serializable {
 //        this.id = id;
 //    }
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     @NotEmpty
     protected String name;
     public String getName() {
@@ -52,7 +52,7 @@ public abstract class Parameter implements Serializable {
     }
     public Parameter(String name) {
         super();
-        this.name=name;
+        this.name = name;
     }
    
     public abstract Object getValue();

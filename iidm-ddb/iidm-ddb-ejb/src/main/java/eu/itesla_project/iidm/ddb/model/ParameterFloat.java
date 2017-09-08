@@ -14,7 +14,7 @@ import javax.persistence.*;
  * @author Quinary <itesla@quinary.com>
  */
 @Entity
-@Table(name="PARAMETERFLOAT")
+@Table(name = "PARAMETERFLOAT")
 @DiscriminatorValue("float")
 public class ParameterFloat extends Parameter implements Serializable {
 
@@ -29,14 +29,14 @@ public class ParameterFloat extends Parameter implements Serializable {
     }
     public ParameterFloat(String name, Float value) {
         super();
-        this.name=name;
-        this.value=value;
+        this.name = name;
+        this.value = value;
     }
 
     public ParameterFloat(String name, float value) {
         super();
-        this.name=name;
-        this.value=Float.valueOf(value);
+        this.name = name;
+        this.value = Float.valueOf(value);
     }
 
 

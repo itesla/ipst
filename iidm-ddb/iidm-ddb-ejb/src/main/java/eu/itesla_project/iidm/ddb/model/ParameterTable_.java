@@ -10,7 +10,7 @@ import javax.annotation.Generated;
 import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2013-01-14T18:56:11.761+0100")
+@Generated(value = "Dali", date = "2013-01-14T18:56:11.761+0100")
 @StaticMetamodel(ParameterTable.class)
 public class ParameterTable_ extends Parameter_ {
     public static volatile ListAttribute<ParameterTable, TableRow> value;

@@ -52,7 +52,7 @@ public class ParametersContainerController {
 
     @Inject
     private Logger log;
-    private Map<SimulatorInst,List<ParameterWeb>> simulatorParams;
+    private Map<SimulatorInst, List<ParameterWeb>> simulatorParams;
     private List<Parameters> sortedParamList;
 
     @Inject
@@ -79,9 +79,9 @@ public class ParametersContainerController {
     public void initParametersContainerController() {
         log.info("initParametersContainerController ");
         this.parametersContainer = new ParametersContainer("");
-        this.newParameters= new Parameters();
-        lazyDataModel=new LazyParametersContainerDataModel(pmanager);
-        parametersCount=lazyDataModel.getRowCount();
+        this.newParameters = new Parameters();
+        lazyDataModel = new LazyParametersContainerDataModel(pmanager);
+        parametersCount = lazyDataModel.getRowCount();
 
     }
 
@@ -126,24 +126,24 @@ public class ParametersContainerController {
 
     public void setDdbId(String ddbId) {
         this.ddbId = ddbId;
-        if(ddbId!= null)
-        {
-            parametersContainer=pmanager.findParametersContainer(ddbId);
-            this.simulatorParams=  new Hashtable<SimulatorInst, List<ParameterWeb>>();
-            if(parametersContainer!=null)
-                for (Parameters pc :this.parametersContainer.getParameters() ){
+        if (ddbId != null) {
+            parametersContainer = pmanager.findParametersContainer(ddbId);
+            this.simulatorParams = new Hashtable<SimulatorInst, List<ParameterWeb>>();
+            if (parametersContainer != null) {
+                for (Parameters pc : this.parametersContainer.getParameters()) {
 
-                    SimulatorInst simulInst =pc.getSimulator();
+                    SimulatorInst simulInst = pc.getSimulator();
                     List<ParameterWeb> pwList = new ArrayList<ParameterWeb>();
 
-                    for (Parameter  p: pc.getParameters()){
-                        log.log(Level.INFO," _params [Name: " +p.getName() + ", Value: "+p.getValue() + "]");
+                    for (Parameter p : pc.getParameters()) {
+                        log.log(Level.INFO, " _params [Name: " + p.getName() + ", Value: " + p.getValue() + "]");
                         ParameterWeb pw = new ParameterWeb(p.getName(), p.getValue());
                         pwList.add(pw);
                     }
 
                     simulatorParams.put(simulInst, pwList);
                 }
+            }
 
         }
     }
@@ -174,11 +174,11 @@ public class ParametersContainerController {
         this.sortedParamList = sortedParamList;
     }
 
-    public Map<SimulatorInst,List<ParameterWeb>> getSimulatorParams() {
+    public Map<SimulatorInst, List<ParameterWeb>> getSimulatorParams() {
         return simulatorParams;
     }
 
-    public void setSimulatorParams(Map<SimulatorInst,List<ParameterWeb>> simulatorParams) {
+    public void setSimulatorParams(Map<SimulatorInst, List<ParameterWeb>> simulatorParams) {
         this.simulatorParams = simulatorParams;
     }
 
@@ -197,20 +197,20 @@ public class ParametersContainerController {
 
         try {
 
-            log.log(Level.INFO," Create add ParametersContainer: [ddbId:" +parametersContainer.getDdbId() +"] " +
-                    "                        - [Parameters [defParamSetNum "+newParameters.getDefParamSetNum() + " simulator "+newParameters.getSimulator()+"]");
+            log.log(Level.INFO, " Create add ParametersContainer: [ddbId:" + parametersContainer.getDdbId() + "] " +
+                    "                        - [Parameters [defParamSetNum " + newParameters.getDefParamSetNum() + " simulator " + newParameters.getSimulator() + "]");
 
             parametersContainer.getParameters().add(this.newParameters);
-            parametersContainer=pmanager.save(parametersContainer);
+            parametersContainer = pmanager.save(parametersContainer);
             FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("create.operation.msg"), bundle.getString("create.success.msg"));
             facesContext.addMessage(null, m);
-            log.log(Level.INFO,"New parametersContainer added: ["+ parametersContainer.getId() +" " +parametersContainer.getDdbId() +"]");
+            log.log(Level.INFO, "New parametersContainer added: [" + parametersContainer.getId() + " " + parametersContainer.getDdbId() + "]");
             return "list?faces-redirect=true&includeViewParams=true";
 
         } catch (Exception e) {
-            log.log(Level.WARNING,"Error during creation of parametersContainer: ["+ parametersContainer.getId() +" " +parametersContainer.getDdbId() +"]");
+            log.log(Level.WARNING, "Error during creation of parametersContainer: [" + parametersContainer.getId() + " " + parametersContainer.getDdbId() + "]");
             String errorMessage = getRootErrorMessage(e);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("create.failure.msg"));
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, bundle.getString("create.failure.msg"));
             facesContext.addMessage(null, m);
             return "create";
         }
@@ -218,20 +218,20 @@ public class ParametersContainerController {
 
 
     public String view(String ddbId) {
-        log.log(Level.INFO,"view:: enter  parameter ddbId: " + ddbId);
+        log.log(Level.INFO, "view:: enter  parameter ddbId: " + ddbId);
         this.parametersContainer = pmanager.findParametersContainer(ddbId);
-        this.ddbId=ddbId;
+        this.ddbId = ddbId;
         // List<Map> getSimulatorParams()
 
-        this.simulatorParams=  new Hashtable<SimulatorInst, List<ParameterWeb>>();
+        this.simulatorParams = new Hashtable<SimulatorInst, List<ParameterWeb>>();
 
-        for (Parameters pc :this.parametersContainer.getParameters() ){
+        for (Parameters pc : this.parametersContainer.getParameters()) {
 
-            SimulatorInst simulInst =pc.getSimulator();
+            SimulatorInst simulInst = pc.getSimulator();
             List<ParameterWeb> pwList = new ArrayList<ParameterWeb>();
 
-            for (Parameter  p: pc.getParameters()){
-                log.log(Level.INFO," _params [Name: " +p.getName() + ", Value: "+p.getValue() + "]");
+            for (Parameter p : pc.getParameters()) {
+                log.log(Level.INFO, " _params [Name: " + p.getName() + ", Value: " + p.getValue() + "]");
                 ParameterWeb pw = new ParameterWeb(p.getName(), p.getValue());
                 pwList.add(pw);
             }
@@ -240,31 +240,32 @@ public class ParametersContainerController {
         }
 
 
-        log.log(Level.INFO,"view:: for  parameters container: ["+ parametersContainer.getId() +" " +parametersContainer.getDdbId() + " ]");
+        log.log(Level.INFO, "view:: for  parameters container: [" + parametersContainer.getId() + " " + parametersContainer.getDdbId() + " ]");
         return "/parametersContainer/details?faces-redirect=true&includeViewParams=true";
 
     }
 
 
     public String edit(String ddbId) {
-        log.log(Level.INFO," edit enter:: parameter ddbId: " + ddbId);
-        log.log(Level.INFO," Create add ParametersContainer: [ddbId:" +parametersContainer.getDdbId() +"] " +
-                "                        - [Parameters [defParamSetNum "+newParameters.getDefParamSetNum() + " simulator "+newParameters.getSimulator()+"]");
+        log.log(Level.INFO, " edit enter:: parameter ddbId: " + ddbId);
+        log.log(Level.INFO, " Create add ParametersContainer: [ddbId:" + parametersContainer.getDdbId() + "] " +
+                "                        - [Parameters [defParamSetNum " + newParameters.getDefParamSetNum() + " simulator " + newParameters.getSimulator() + "]");
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
-        this.ddbId=ddbId;
+        this.ddbId = ddbId;
         this.parametersContainer = pmanager.findParametersContainer(ddbId);
         try {
             if (parametersContainer != null) {
                 this.sortParameters();
                 return "edit?faces-redirect=true&includeViewParams=true";
+            } else {
+                throw new Exception("Edit:parametersContainer not found!");
             }
-            else     throw new Exception("Edit:parametersContainer not found!");
 
         } catch (Exception e) {
-            log.log(Level.WARNING,"Edit: Edit: parametersContainer not found");
+            log.log(Level.WARNING, "Edit: Edit: parametersContainer not found");
             String errorMessage = getRootErrorMessage(e);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("edit.failure.msg"));
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, bundle.getString("edit.failure.msg"));
             facesContext.addMessage(null, m);
             return "edit";
         }
@@ -272,51 +273,47 @@ public class ParametersContainerController {
 
 
     public String delete() {
-        log.log(Level.INFO," delete enter ::");
-        log.log(Level.INFO," ParametersContainer: [ddbId:" +parametersContainer.getDdbId() +"] " +
-                "        - [Parameters [defParamSetNum "+newParameters.getDefParamSetNum() + " simulator "+newParameters.getSimulator()+"]");
+        log.log(Level.INFO, " delete enter ::");
+        log.log(Level.INFO, " ParametersContainer: [ddbId:" + parametersContainer.getDdbId() + "] " +
+                "        - [Parameters [defParamSetNum " + newParameters.getDefParamSetNum() + " simulator " + newParameters.getSimulator() + "]");
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
 
-        try
-        {
+        try {
             this.parametersContainer = pmanager.findParametersContainer(parametersContainer.getDdbId());
-            if (parametersContainer != null)
-            {
-                log.log(Level.INFO,"Delete parametersContainer :["+ parametersContainer.getId() +" " +parametersContainer.getDdbId() +"]");
+            if (parametersContainer != null) {
+                log.log(Level.INFO, "Delete parametersContainer :[" + parametersContainer.getId() + " " + parametersContainer.getDdbId() + "]");
                 pmanager.delete(this.parametersContainer);
-                FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO,    parametersContainer.getDdbId()+ " "+bundle.getString("delete.operation.msg"), bundle.getString("success.msg"));
+                FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, parametersContainer.getDdbId() + " " + bundle.getString("delete.operation.msg"), bundle.getString("success.msg"));
                 facesContext.addMessage(null, m);
                 return "list?faces-redirect=true";
-            } else
+            } else {
                 throw new Exception("Delete: parametersContainer not found");
-        }
-        catch (Exception e)
-        {
-            log.log(Level.WARNING," delete:: catch an Exception" + e.getMessage());
+            }
+        } catch (Exception e) {
+            log.log(Level.WARNING, " delete:: catch an Exception" + e.getMessage());
             String errorMessage = getRootErrorMessage(e);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("delete.failure.msg"));
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, bundle.getString("delete.failure.msg"));
             facesContext.addMessage(null, m);
             return "edit";
         }
     }
 
 
-    public void addParameters()  {
+    public void addParameters() {
 
-        log.log(Level.INFO," addParameters enter ::");
-        log.log(Level.INFO," ParametersContainer: [ddbId:" +parametersContainer.getDdbId() +"] - [Parameters [defParamSetNum "+newParameters.getDefParamSetNum() + " simulator "+newParameters.getSimulator()+"]");
+        log.log(Level.INFO, " addParameters enter ::");
+        log.log(Level.INFO, " ParametersContainer: [ddbId:" + parametersContainer.getDdbId() + "] - [Parameters [defParamSetNum " + newParameters.getDefParamSetNum() + " simulator " + newParameters.getSimulator() + "]");
 
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
 
-        try
-        {
+        try {
             this.parametersContainer = pmanager.findParametersContainer(parametersContainer.getDdbId());
-            List<Parameters> parametersList=parametersContainer.getParameters();
-            for (Parameters p :parametersList){
-                if (p.getSimulator().equals(newParameters.getSimulator() )){
-                    throw new Exception ("Parameters is already present!");
+            List<Parameters> parametersList = parametersContainer.getParameters();
+            for (Parameters p : parametersList) {
+                if (p.getSimulator().equals(newParameters.getSimulator())) {
+                    throw new Exception("Parameters is already present!");
                 }
             }
 
@@ -324,26 +321,26 @@ public class ParametersContainerController {
             pmanager.save(parametersContainer);
             newParameters = new Parameters();
             this.parametersContainer = pmanager.findParametersContainer(parametersContainer.getDdbId());
-            if (parametersContainer != null)     this.sortParameters();
+            if (parametersContainer != null) {
+                this.sortParameters();
+            }
             FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("add.operation.msg"), bundle.getString("add.success.msg"));
             facesContext.addMessage(null, m);
-        }
-        catch (Exception e)
-        {
-            log.log(Level.WARNING,"Error :"+ e.getMessage());
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Error :" + e.getMessage());
             e.printStackTrace();
             String errorMessage = getRootErrorMessage(e);
-            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("add.failure.msg"));
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, bundle.getString("add.failure.msg"));
             facesContext.addMessage(null, m);
 
         }
     }
 
-    private void sortParameters(){
-        List<Parameters> paramList=this.parametersContainer.getParameters();
-        Collections.sort(paramList,Sorter.compareParamSetNum);
-        this.sortedParamList=paramList;
-        }
+    private void sortParameters() {
+        List<Parameters> paramList = this.parametersContainer.getParameters();
+        Collections.sort(paramList, Sorter.compareParamSetNum);
+        this.sortedParamList = paramList;
+    }
 
 
     private String getRootErrorMessage(Exception e) {

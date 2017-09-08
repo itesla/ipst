@@ -14,7 +14,7 @@ import javax.persistence.*;
  * @author Quinary <itesla@quinary.com>
  */
 @Entity
-@Table(name="PARAMETERINTEGER")
+@Table(name = "PARAMETERINTEGER")
 @DiscriminatorValue("integer")
 public class ParameterInteger extends Parameter implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -26,8 +26,8 @@ public class ParameterInteger extends Parameter implements Serializable {
     }
     public ParameterInteger(String name, Integer value) {
         super();
-        this.name=name;
-        this.value=value;
+        this.name = name;
+        this.value = value;
     }
     public Integer getValue() {
         return value;

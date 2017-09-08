@@ -17,65 +17,59 @@ import java.util.List;
  * @author Luis Maria Zamarreno <zamarrenolm@aia.com>
  * @author Silvia Machado <machados@aia.es>
  */
-public class ModelicaMainClassExtractor extends ModelicaHierarchyExtractor
-{
+public class ModelicaMainClassExtractor extends ModelicaHierarchyExtractor {
     @Override
-    public void onStartFile(File file)
-    {
+    public void onStartFile(File file) {
         super.onStartFile(file);
         initFile(file);
     }
 
     @Override
-    public void onStartClass(String specifier, String ident, String comment, boolean isComposition, String line)
-    {
+    public void onStartClass(String specifier, String ident, String comment, boolean isComposition, String line) {
         super.onStartClass(specifier, ident, comment, isComposition, line);
         log.debug("Class [" + specifier + "], [" + ident + "]");
         checkMainClass();
     }
 
     @Override
-    public void onParameter(ModelicaParameter param)
-    {
+    public void onParameter(ModelicaParameter param) {
         ModelicaHierarchy.Item currentItem = getHierarchy().getStack().peek();
-        if (currentItem == mainClass)
-        {
+        if (currentItem == mainClass) {
             parameters.add(param);
         }
     }
 
-    public String getMainClassQualifiedName()
-    {
+    public String getMainClassQualifiedName() {
         return mainClassQualifiedName;
     }
 
-    public String getMainClassComment()
-    {
+    public String getMainClassComment() {
         return mainClass.comment;
     }
 
-    public List<ModelicaParameter> getParameters()
-    {
+    public List<ModelicaParameter> getParameters() {
         return parameters;
     }
 
-    void initFile(File file)
-    {
+    void initFile(File file) {
         mainClass = null;
         mainClassQualifiedName = null;
         parameters = null;
     }
 
-    void checkMainClass()
-    {
+    void checkMainClass() {
         // This is not the main class if the main class has already been identified
-        if (mainClass != null) return;
+        if (mainClass != null) {
+            return;
+        }
 
         // Consider if the current context of hierarchy is the main class
         ModelicaHierarchy.Item current = getHierarchy().getStack().peek();
 
         // Packages are not considered
-        if (current.isClassGroup) return;
+        if (current.isClassGroup) {
+            return;
+        }
 
         // We have found the main class
         mainClass = current;
@@ -83,9 +77,9 @@ public class ModelicaMainClassExtractor extends ModelicaHierarchyExtractor
         parameters = new ArrayList<ModelicaParameter>();
     }
 
-    ModelicaHierarchy.Item    mainClass;
-    String                    mainClassQualifiedName;
-    List<ModelicaParameter>    parameters;
+    ModelicaHierarchy.Item mainClass;
+    String mainClassQualifiedName;
+    List<ModelicaParameter> parameters;
 
-    static final Logger log    = LoggerFactory.getLogger(ModelicaMainClassExtractor.class);
+    static final Logger log = LoggerFactory.getLogger(ModelicaMainClassExtractor.class);
 }
