@@ -38,7 +38,7 @@ public class OfflineWorkflowStatus implements Serializable {
     public OfflineWorkflowStatus(String workflowId, OfflineWorkflowStep step, OfflineWorkflowCreationParameters creationParameters) {
         this.workflowId = Objects.requireNonNull(workflowId);
         this.step = Objects.requireNonNull(step);
-        if(!step.equals(OfflineWorkflowStep.IDLE) && !step.equals(OfflineWorkflowStep.SECURITY_RULES_COMPUTATION)) {
+        if (!step.equals(OfflineWorkflowStep.IDLE) && !step.equals(OfflineWorkflowStep.SECURITY_RULES_COMPUTATION)) {
             throw new IllegalStateException("start parameters must be provided in initialization");
         }
         this.creationParameters = Objects.requireNonNull(creationParameters);
