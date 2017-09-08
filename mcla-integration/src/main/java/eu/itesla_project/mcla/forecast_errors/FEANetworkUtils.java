@@ -32,7 +32,7 @@ public class FEANetworkUtils {
         Objects.requireNonNull(generatorsIds, "generatorsIds is null");
         Objects.requireNonNull(loadsIds, "loadsIds is null");
         ArrayList<StochasticVariable> stochasticVariables = new ArrayList<StochasticVariable>();
-        for( String generatorId : generatorsIds ) {
+        for (String generatorId : generatorsIds) {
             Generator generator = network.getGenerator(generatorId);
             if ( generator != null ) {
                 String stochasticVariablesType = null;
@@ -52,7 +52,7 @@ public class FEANetworkUtils {
                 stochasticVariables.add(stochasticVariable);
             }
         }
-        for( String loadId : loadsIds ) {
+        for (String loadId : loadsIds) {
             Load load = network.getLoad(loadId);
             if ( load != null ) {
                 Country country = load.getTerminal().getVoltageLevel().getSubstation().getCountry();

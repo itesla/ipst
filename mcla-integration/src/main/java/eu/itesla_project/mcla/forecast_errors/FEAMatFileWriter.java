@@ -54,7 +54,7 @@ public class FEAMatFileWriter {
         LOGGER.debug("Preparing snapshots mat data");
         MLDouble snapshotsData = histoDataAsMLDouble("snap_filt", forecastErrorsHistoricalData.getSnapshotsData());
         LOGGER.debug("Saving mat data into " + matFile.toString());
-        List<MLArray> mlarray= new ArrayList<>();
+        List<MLArray> mlarray = new ArrayList<>();
 //        mlarray.add((MLArray) stochasticVariables );
         mlarray.add((MLArray) injections );
         mlarray.add((MLArray) forecastsData );
@@ -65,12 +65,13 @@ public class FEAMatFileWriter {
     }
 
     private MLCell histoDataHeadersAsMLChar(List<String> histoDataHeaders) {
-        int colsSize =histoDataHeaders.size() - 2;
-        MLCell injections = new MLCell("inj_ID", new int[]{1,colsSize});
+        int colsSize = histoDataHeaders.size() - 2;
+        MLCell injections = new MLCell("inj_ID", new int[]{1, colsSize});
         int i = 0;
         for ( String colkey : histoDataHeaders ) {
-            if ( colkey.equals("forecastTime") || colkey.equals("datetime"))
+            if ( colkey.equals("forecastTime") || colkey.equals("datetime")) {
                 continue;
+            }
             injections.set(new MLChar("", colkey), 0, i);
             i++;
         }
@@ -79,7 +80,7 @@ public class FEAMatFileWriter {
 
     private MLStructure stochasticVariablesAsMLStructure(List<StochasticVariable> stochasticVariables) {
         MLStructure stochVars = null;
-        stochVars = new MLStructure("stochasticVariables", new int[]{1,stochasticVariables.size()});
+        stochVars = new MLStructure("stochasticVariables", new int[]{1, stochasticVariables.size()});
         int i = 0;
         for (StochasticVariable stochasticVariable : stochasticVariables) {
             putStochasticVariablesIntoMLStructure(stochasticVariable, stochVars, i);
@@ -99,8 +100,8 @@ public class FEAMatFileWriter {
     }
 
     private MLCell injectionCountriesAsMLChar(List<StochasticVariable> stochasticVariables) {
-        int colsSize =stochasticVariables.size()*2;
-        MLCell injectionsCountries = new MLCell("nat_ID", new int[]{1,colsSize});
+        int colsSize = stochasticVariables.size() * 2;
+        MLCell injectionsCountries = new MLCell("nat_ID", new int[]{1, colsSize});
         int i = 0;
         for ( StochasticVariable injection : stochasticVariables ) {
             injectionsCountries.set(new MLChar("", injection.getCountry().name()), 0, i);

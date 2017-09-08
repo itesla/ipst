@@ -66,9 +66,9 @@ public class MontecarloSamplerConfig {
             int centering,
             boolean debug
             ) {
-        Objects.requireNonNull(binariesDir,"sampler compiled binaries directory is null");
-        Objects.requireNonNull(runtimeHomeDir,"matlab runtime directory is null");
-        Objects.requireNonNull(tmpDir,"tmp directory is null");
+        Objects.requireNonNull(binariesDir, "sampler compiled binaries directory is null");
+        Objects.requireNonNull(runtimeHomeDir, "matlab runtime directory is null");
+        Objects.requireNonNull(tmpDir, "tmp directory is null");
 
         this.binariesDir = binariesDir;
         this.runtimeHomeDir = runtimeHomeDir;
@@ -107,7 +107,9 @@ public class MontecarloSamplerConfig {
         return optionSign;
     }
 
-    public Integer getCentering() { return centering; }
+    public Integer getCentering() {
+        return centering;
+    }
 
     public boolean isDebug() {
         return debug;
@@ -119,7 +121,7 @@ public class MontecarloSamplerConfig {
 
     @Override
     public String toString() {
-        return "MontecarloSamplerConfig ["+ ", binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir + ", tmpDir=" + tmpDir
+        return "MontecarloSamplerConfig [" + ", binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir + ", tmpDir=" + tmpDir
                 + ", optionSign=" + optionSign + ", centering=" + centering + ", debug=" + debug + "]";
     }
 

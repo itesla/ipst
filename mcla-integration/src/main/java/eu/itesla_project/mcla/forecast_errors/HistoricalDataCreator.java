@@ -98,30 +98,35 @@ public class HistoricalDataCreator {
                 for (String generatorId : generatorsIds) {
                     // generators active power
                     String activePowerValue = (String) componentMap.get(generatorId + "_P");
-                    if (forecastTime == 0)
+                    if (forecastTime == 0) {
                         snapshotsData.put(rowcount, generatorId + "_P", (activePowerValue != null) ? Float.valueOf(activePowerValue) : Float.NaN);
-                    else
+                    } else {
                         forecastsData.put(rowcount, generatorId + "_P", (activePowerValue != null) ? Float.valueOf(activePowerValue) : Float.NaN);
+                    }
                     // generators reactive power
                     String reactivePowerValue = (String) componentMap.get(generatorId + "_Q");
-                    if (forecastTime == 0)
+                    if (forecastTime == 0) {
                         snapshotsData.put(rowcount, generatorId + "_Q", (reactivePowerValue != null) ? Float.valueOf(reactivePowerValue) : Float.NaN);
-                    else
+                    } else {
                         forecastsData.put(rowcount, generatorId + "_Q", (reactivePowerValue != null) ? Float.valueOf(reactivePowerValue) : Float.NaN);
+                    }
                 }
                 for (String loadId : loadsIds) {
                     // loads active power
-                    String activePowerValue = (String) componentMap.get(loadId+ "_P");
-                    if (forecastTime == 0)
+                    String activePowerValue = (String) componentMap.get(loadId + "_P");
+                    if (forecastTime == 0) {
                         snapshotsData.put(rowcount, loadId + "_P", (activePowerValue != null) ? Float.valueOf(activePowerValue) : Float.NaN);
-                    else
+                    } else {
                         forecastsData.put(rowcount, loadId + "_P", (activePowerValue != null) ? Float.valueOf(activePowerValue) : Float.NaN);
+                    }
                     // loads reactive power
-                    String reactivePowerValue = (String) componentMap.get(loadId+ "_Q");
-                    if (forecastTime == 0)
+                    String reactivePowerValue = (String) componentMap.get(loadId + "_Q");
+                    if (forecastTime == 0) {
                         snapshotsData.put(rowcount, loadId + "_Q", (reactivePowerValue != null) ? Float.valueOf(reactivePowerValue) : Float.NaN);
-                    else
+                    } else {
                         forecastsData.put(rowcount, loadId + "_Q", (reactivePowerValue != null) ? Float.valueOf(reactivePowerValue) : Float.NaN);
+                    }
+
                 }
                 if (odd) {
                     rowcount++;
@@ -135,12 +140,13 @@ public class HistoricalDataCreator {
             LOGGER.error("Error loading historical data from cvs file" + historicalDataCsvFile.toString() + ": " + e.getMessage());
             throw e;
         } finally {
-            if (csvMapReader != null)
+            if (csvMapReader != null) {
                 try {
                     csvMapReader.close();
                 } catch (IOException e) {
                     LOGGER.error("Error closing CSV map reader: " + e.getMessage());
                 }
+            }
         }
         forecastErrorsHistoricalData = new ForecastErrorsHistoricalData(generatorsIds, loadsIds, stochasticVariables, forecastsData, snapshotsData);
         return forecastErrorsHistoricalData;

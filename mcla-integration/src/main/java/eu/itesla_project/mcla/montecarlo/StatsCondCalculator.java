@@ -119,7 +119,7 @@ public class StatsCondCalculator {
             report.log();
 
             LOGGER.debug("Retrieving FPF file {}", FPFFORECASTERRORSFILENAME + ".csv");
-            Files.copy(Paths.get(workingDir.toString(), FPFFORECASTERRORSFILENAME+".csv"), destPath, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(Paths.get(workingDir.toString(), FPFFORECASTERRORSFILENAME + ".csv"), destPath, StandardCopyOption.REPLACE_EXISTING);
         }
     }
 
@@ -149,7 +149,7 @@ public class StatsCondCalculator {
                 .args(args1)
                 .inputFiles(new InputFile(localForecastErrorsDataFile.getFileName().toString()),
                         new InputFile(localNetworkDataMatFile.getFileName().toString()))
-                .outputFiles(new OutputFile(MCSOUTPUTFILENAME), new OutputFile(MCSOUTPUTFILENAME+".csv"))
+                .outputFiles(new OutputFile(MCSOUTPUTFILENAME), new OutputFile(MCSOUTPUTFILENAME + ".csv"))
                 .build();
     }
 

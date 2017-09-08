@@ -48,8 +48,9 @@ public class NetworkUtils {
         Objects.requireNonNull(network, "network is null");
         ArrayList<String> generatorsIds = new ArrayList<String>();
         for ( Generator generator : network.getGenerators() ) {
-            if ( isConnected(generator) )
+            if (isConnected(generator)) {
                 generatorsIds.add(generator.getId());
+            }
         }
         Collections.sort(generatorsIds);
         return generatorsIds;
@@ -58,8 +59,10 @@ public class NetworkUtils {
     public static boolean isConnected(Generator generator) {
         Bus generatorBus = generator.getTerminal().getBusBreakerView().getBus();
         float voltage = getV(generator.getTerminal());
-        if ( generatorBus != null && !Float.isNaN(voltage) )  // generator is connected
+        if (generatorBus != null && !Float.isNaN(voltage)) {
+            // generator is connected
             return true;
+        }
         return false;
     }
 
@@ -76,9 +79,10 @@ public class NetworkUtils {
     public static ArrayList<String> getConnectedLoadsIds(Network network) {
         Objects.requireNonNull(network, "network is null");
         ArrayList<String> loadsIds = new ArrayList<String>();
-        for ( Load load : network.getLoads() ) {
-            if ( isConnected(load) )
+        for (Load load : network.getLoads()) {
+            if (isConnected(load)) {
                 loadsIds.add(load.getId());
+            }
         }
         Collections.sort(loadsIds);
         return loadsIds;
@@ -87,8 +91,10 @@ public class NetworkUtils {
     public static boolean isConnected(Load load) {
         Bus generatorBus = load.getTerminal().getBusBreakerView().getBus();
         float voltage = getV(load.getTerminal());
-        if ( generatorBus != null && !Float.isNaN(voltage) )  // load is connected
+        if (generatorBus != null && !Float.isNaN(voltage)) {
+            // load is connected
             return true;
+        }
         return false;
     }
 

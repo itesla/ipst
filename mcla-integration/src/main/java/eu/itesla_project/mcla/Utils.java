@@ -50,8 +50,9 @@ public class Utils {
         } catch (IOException e) {
             throw e;
         } finally {
-            if ( csvReader != null )
+            if (csvReader != null) {
                 csvReader.close();
+            }
         }
 
     }
@@ -75,8 +76,9 @@ public class Utils {
         Map<String, MLArray> matFileContent = matFileReader.read(matFile.toFile());
         MLDouble doublesMatrix = (MLDouble) matFileContent.get(doublesMatrixName);
         double[][] doubles = null;
-        if ( doublesMatrix != null )
+        if (doublesMatrix != null) {
             doubles = doublesMatrix.getArray();
+        }
         return doubles;
     }
 

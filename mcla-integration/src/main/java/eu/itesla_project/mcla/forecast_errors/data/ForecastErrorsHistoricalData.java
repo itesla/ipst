@@ -20,13 +20,13 @@ public class ForecastErrorsHistoricalData {
     List<String> generatorsIds = new ArrayList<String>();
     List<String> loadsIds = new ArrayList<String>();
     List<StochasticVariable> stochasticVariables = new ArrayList<StochasticVariable>();
-    ArrayTable<Integer,String,Float> forecastsData = null;
-    ArrayTable<Integer,String,Float> snapshotsData = null;
+    ArrayTable<Integer, String, Float> forecastsData = null;
+    ArrayTable<Integer, String, Float> snapshotsData = null;
 
     public ForecastErrorsHistoricalData(List<String> generatorsIds, List<String> loadsIds,
                                         List<StochasticVariable> stochasticVariables,
-                                        ArrayTable<Integer,String,Float> forecastsData,
-                                        ArrayTable<Integer,String,Float> snapshotsData) {
+                                        ArrayTable<Integer, String, Float> forecastsData,
+                                        ArrayTable<Integer, String, Float> snapshotsData) {
         this.generatorsIds = generatorsIds;
         this.loadsIds = loadsIds;
         this.stochasticVariables = stochasticVariables;
@@ -57,24 +57,27 @@ public class ForecastErrorsHistoricalData {
         for ( String generatorId : getGeneratorsIds() ) {
             forecastErrorsHistoricalData += generatorId + ",";
         }
-        if ( getGeneratorsIds().size() > 0 )
-            forecastErrorsHistoricalData = forecastErrorsHistoricalData.substring(0, forecastErrorsHistoricalData.length()-1);
+        if (getGeneratorsIds().size() > 0) {
+            forecastErrorsHistoricalData = forecastErrorsHistoricalData.substring(0, forecastErrorsHistoricalData.length() - 1);
+        }
         forecastErrorsHistoricalData += "]";
         // loads ids
         forecastErrorsHistoricalData += "\nloadIds[";
         for ( String loadId : getLoadsIds() ) {
             forecastErrorsHistoricalData += loadId + ",";
         }
-        if ( getLoadsIds().size() > 0 )
-            forecastErrorsHistoricalData = forecastErrorsHistoricalData.substring(0, forecastErrorsHistoricalData.length()-1);
+        if (getLoadsIds().size() > 0) {
+            forecastErrorsHistoricalData = forecastErrorsHistoricalData.substring(0, forecastErrorsHistoricalData.length() - 1);
+        }
         forecastErrorsHistoricalData += "]";
         // stochastic variables
         forecastErrorsHistoricalData += "\nstochVars[";
         for ( StochasticVariable stocasticVariable : getStochasticVariables() ) {
             forecastErrorsHistoricalData += stocasticVariable + ",";
         }
-        if ( getStochasticVariables().size() > 0 )
-            forecastErrorsHistoricalData = forecastErrorsHistoricalData.substring(0, forecastErrorsHistoricalData.length()-1);
+        if (getStochasticVariables().size() > 0) {
+            forecastErrorsHistoricalData = forecastErrorsHistoricalData.substring(0, forecastErrorsHistoricalData.length() - 1);
+        }
         forecastErrorsHistoricalData += "]";
         // forecasts data
         forecastErrorsHistoricalData += "\nforecastData[\n";
@@ -83,16 +86,18 @@ public class ForecastErrorsHistoricalData {
             for ( String columnName : getForecastsData().columnKeyList() ) {
                 forecastErrorsHistoricalData += columnName + ",";
             }
-            if ( getForecastsData().columnKeyList().size() > 0 )
-                forecastErrorsHistoricalData = forecastErrorsHistoricalData.substring(0, forecastErrorsHistoricalData.length()-1);
+            if (getForecastsData().columnKeyList().size() > 0) {
+                forecastErrorsHistoricalData = forecastErrorsHistoricalData.substring(0, forecastErrorsHistoricalData.length() - 1);
+            }
             forecastErrorsHistoricalData += "]";
             for ( Integer rowName : getForecastsData().rowKeyList() ) {
                 forecastErrorsHistoricalData += "\n[";
                 for ( String columnName : getForecastsData().columnKeyList() ) {
                     forecastErrorsHistoricalData += getForecastsData().get(rowName, columnName) + ",";
                 }
-                if ( getForecastsData().columnKeyList().size() > 0 )
-                    forecastErrorsHistoricalData = forecastErrorsHistoricalData.substring(0, forecastErrorsHistoricalData.length()-1);
+                if (getForecastsData().columnKeyList().size() > 0) {
+                    forecastErrorsHistoricalData = forecastErrorsHistoricalData.substring(0, forecastErrorsHistoricalData.length() - 1);
+                }
                 forecastErrorsHistoricalData += "]";
             }
         }
@@ -104,16 +109,18 @@ public class ForecastErrorsHistoricalData {
             for ( String columnName : getSnapshotsData().columnKeyList() ) {
                 forecastErrorsHistoricalData += columnName + ",";
             }
-            if ( getSnapshotsData().columnKeyList().size() > 0 )
-                forecastErrorsHistoricalData = forecastErrorsHistoricalData.substring(0, forecastErrorsHistoricalData.length()-1);
+            if (getSnapshotsData().columnKeyList().size() > 0) {
+                forecastErrorsHistoricalData = forecastErrorsHistoricalData.substring(0, forecastErrorsHistoricalData.length() - 1);
+            }
             forecastErrorsHistoricalData += "]";
             for ( Integer rowName : getSnapshotsData().rowKeyList() ) {
                 forecastErrorsHistoricalData += "\n[";
                 for ( String columnName : getSnapshotsData().columnKeyList() ) {
                     forecastErrorsHistoricalData += getSnapshotsData().get(rowName, columnName) + ",";
                 }
-                if ( getSnapshotsData().columnKeyList().size() > 0 )
-                    forecastErrorsHistoricalData = forecastErrorsHistoricalData.substring(0, forecastErrorsHistoricalData.length()-1);
+                if (getSnapshotsData().columnKeyList().size() > 0) {
+                    forecastErrorsHistoricalData = forecastErrorsHistoricalData.substring(0, forecastErrorsHistoricalData.length() - 1);
+                }
                 forecastErrorsHistoricalData += "]";
             }
         }

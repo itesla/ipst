@@ -41,18 +41,21 @@ public class MCSMatFileReader {
         // get generators active power
         MLDouble pGen = (MLDouble) matFileContent.get("PGEN");
         double[][] generatorsActivePower = null;
-        if ( pGen != null )
+        if (pGen != null) {
             generatorsActivePower = pGen.getArray();
+        }
         // get loads active power
         MLDouble pLoad = (MLDouble) matFileContent.get("PLOAD");
         double[][] loadsActivePower = null;
-        if ( pLoad != null )
+        if (pLoad != null) {
             loadsActivePower = pLoad.getArray();
+        }
         // get loads reactive power
         MLDouble qLoad = (MLDouble) matFileContent.get("QLOAD");
         double[][] loadsReactivePower = null;
-        if ( qLoad != null )
+        if (qLoad != null) {
             loadsReactivePower = qLoad.getArray();
+        }
         
         SampledData sampledData = new SampledData(generatorsActivePower, loadsActivePower, loadsReactivePower);
         return sampledData;

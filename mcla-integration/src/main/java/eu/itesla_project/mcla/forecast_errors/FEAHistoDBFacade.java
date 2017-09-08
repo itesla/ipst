@@ -40,13 +40,11 @@ public final class FEAHistoDBFacade {
         attributeIds.add(new HistoDbMetaAttributeId(HistoDbMetaAttributeType.datetime));
         attributeIds.add(new HistoDbMetaAttributeId(HistoDbMetaAttributeType.horizon));
         attributeIds.add(new HistoDbMetaAttributeId(HistoDbMetaAttributeType.forecastTime));
-        generatorsIds.forEach( generatorId -> 
-        {
+        generatorsIds.forEach( generatorId -> {
             attributeIds.add(new HistoDbNetworkAttributeId(generatorId, HistoDbAttr.P));
             attributeIds.add(new HistoDbNetworkAttributeId(generatorId, HistoDbAttr.Q));
         });
-        loadsIds.forEach( loadId -> 
-        {
+        loadsIds.forEach( loadId -> {
             attributeIds.add(new HistoDbNetworkAttributeId(loadId, HistoDbAttr.P));
             attributeIds.add(new HistoDbNetworkAttributeId(loadId, HistoDbAttr.Q));
         });

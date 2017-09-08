@@ -45,8 +45,9 @@ public class StochasticVariable {
 
     @Override
     public String toString() {
-        if ( getId() == null || getType() == null )
+        if (getId() == null || getType() == null) {
             return null;
+        }
         return "[" + getId() + "," + getType() + "]";
     }
 }

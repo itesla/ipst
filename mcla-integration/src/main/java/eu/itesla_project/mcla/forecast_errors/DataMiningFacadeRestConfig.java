@@ -41,8 +41,8 @@ public class DataMiningFacadeRestConfig {
         this.restServiceUrl = restServiceUrl;
         this.serviceUser = serviceUser;
         this.servicePassword = servicePassword;
-        this.tmpDir=tmpDir;
-        this.debug=debug;
+        this.tmpDir = tmpDir;
+        this.debug = debug;
     }
 
     public DataMiningFacadeRestConfig(String restServiceUrl,

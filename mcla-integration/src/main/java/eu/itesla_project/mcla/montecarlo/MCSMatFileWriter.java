@@ -51,7 +51,7 @@ public class MCSMatFileWriter {
         LOGGER.debug("Preparing loads mat data");
         MLStructure loads  = loadsDataAsMLStructure(mcNetworkSamplingData.getLoadsData());
         LOGGER.debug("Saving mat data into " + matFile.toString());
-        List<MLArray> mlarray= new ArrayList<>();
+        List<MLArray> mlarray = new ArrayList<>();
         mlarray.add((MLArray) buses );
         mlarray.add((MLArray) generators );
         mlarray.add((MLArray) loads );
@@ -61,7 +61,7 @@ public class MCSMatFileWriter {
 
     private MLStructure busesDataAsMLStructure(ArrayList<BusData> busesData) {
         MLStructure buses = null;
-        buses = new MLStructure("nodo", new int[]{1,busesData.size()});
+        buses = new MLStructure("nodo", new int[]{1, busesData.size()});
         int i = 0;
         for (BusData busData : busesData) {
             putBusDataIntoMLStructure(busData, buses, i);
@@ -79,37 +79,37 @@ public class MCSMatFileWriter {
         MLChar codice = new MLChar("", busData.getBusId());
         buses.setField("codice", codice, 0, i);
         // ID
-        MLInt64 id = new MLInt64("", new long[]{ busData.getBusIndex() }, 1);
+        MLInt64 id = new MLInt64("", new long[]{busData.getBusIndex()}, 1);
         buses.setField("ID", id, 0, i);
         // type
-        MLInt64 type = new MLInt64("", new long[]{ busData.getBusType() }, 1);
+        MLInt64 type = new MLInt64("", new long[]{busData.getBusType()}, 1);
         buses.setField("type", type, 0, i);
         // Vnom
-        MLDouble vNom = new MLDouble("", new double[]{ busData.getNominalVoltage() }, 1);
+        MLDouble vNom = new MLDouble("", new double[]{busData.getNominalVoltage()}, 1);
         buses.setField("Vnom", vNom, 0, i);
         // V
-        MLDouble v = new MLDouble("", new double[]{ busData.getVoltage() }, 1);
+        MLDouble v = new MLDouble("", new double[]{busData.getVoltage()}, 1);
         buses.setField("V", v, 0, i);
         // angle
-        MLDouble angle = new MLDouble("", new double[]{ busData.getAngle() }, 1);
+        MLDouble angle = new MLDouble("", new double[]{busData.getAngle()}, 1);
         buses.setField("angle", angle, 0, i);
         // Vmin
-        MLDouble vMin = new MLDouble("", new double[]{ busData.getMinVoltage() }, 1);
+        MLDouble vMin = new MLDouble("", new double[]{busData.getMinVoltage()}, 1);
         buses.setField("Vmin", vMin, 0, i);
         // Vmax
-        MLDouble vMax = new MLDouble("", new double[]{ busData.getMaxVoltage() }, 1);
+        MLDouble vMax = new MLDouble("", new double[]{busData.getMaxVoltage()}, 1);
         buses.setField("Vmax", vMax, 0, i);
         // P
-        MLDouble p = new MLDouble("", new double[]{ busData.getActivePower() }, 1);
+        MLDouble p = new MLDouble("", new double[]{busData.getActivePower()}, 1);
         buses.setField("P", p, 0, i);
         // Q
-        MLDouble q = new MLDouble("", new double[]{ busData.getReactivePower() }, 1);
+        MLDouble q = new MLDouble("", new double[]{busData.getReactivePower() }, 1);
         buses.setField("Q", q, 0, i);
     }
 
     private MLStructure generatorsDataAsMLStructure(ArrayList<GeneratorData> generatorsData) {
         MLStructure generators = null;
-        generators = new MLStructure("generatore", new int[]{1,generatorsData.size()});
+        generators = new MLStructure("generatore", new int[]{1, generatorsData.size()});
         int i = 0;
         for (GeneratorData generatorData : generatorsData) {
             putGeneratorDataIntoMLStructure(generatorData, generators, i);
@@ -121,7 +121,7 @@ public class MCSMatFileWriter {
     private void putGeneratorDataIntoMLStructure(GeneratorData generatorData, MLStructure generators, int i) {
         LOGGER.debug("Preparing mat data for generator " + generatorData.getGeneratorId());
         // estremo_ID
-        MLInt64 estremo_ID = new MLInt64("", new long[]{ generatorData.getBusIndex() }, 1);
+        MLInt64 estremo_ID = new MLInt64("", new long[]{generatorData.getBusIndex() }, 1);
         generators.setField("estremo_ID", estremo_ID, 0, i);
         // estremo
         MLChar estremo = new MLChar("", generatorData.getBusId());
@@ -131,48 +131,50 @@ public class MCSMatFileWriter {
         generators.setField("codice", codice, 0, i);
         // conn
         int connected = 0;
-        if ( generatorData.isConnected() )
+        if (generatorData.isConnected()) {
             connected = 1;
-        MLInt64 conn = new MLInt64("", new long[]{ connected }, 1);
+        }
+        MLInt64 conn = new MLInt64("", new long[]{connected}, 1);
         generators.setField("conn", conn, 0, i);
         // P
-        MLDouble p = new MLDouble("", new double[]{ generatorData.getActvePower() }, 1);
+        MLDouble p = new MLDouble("", new double[]{generatorData.getActvePower()}, 1);
         generators.setField("P", p, 0, i);
         // Q
-        MLDouble q = new MLDouble("", new double[]{ generatorData.getReactvePower() }, 1);
+        MLDouble q = new MLDouble("", new double[]{generatorData.getReactvePower()}, 1);
         generators.setField("Q", q, 0, i);
         // Qmax
-        MLDouble qMax = new MLDouble("", new double[]{ generatorData.getMaxReactivePower() }, 1);
+        MLDouble qMax = new MLDouble("", new double[]{generatorData.getMaxReactivePower()}, 1);
         generators.setField("Qmax", qMax, 0, i);
         // Qmin
-        MLDouble qMin = new MLDouble("", new double[]{ generatorData.getMinReactivePower() }, 1);
+        MLDouble qMin = new MLDouble("", new double[]{generatorData.getMinReactivePower()}, 1);
         generators.setField("Qmin", qMin, 0, i);
         // Pmin
-        MLDouble pMin = new MLDouble("", new double[]{ generatorData.getMinActivePower() }, 1);
+        MLDouble pMin = new MLDouble("", new double[]{generatorData.getMinActivePower() }, 1);
         generators.setField("Pmin", pMin, 0, i);
         // Pmax
-        MLDouble pMax = new MLDouble("", new double[]{ generatorData.getMaxActivePower() }, 1);
+        MLDouble pMax = new MLDouble("", new double[]{generatorData.getMaxActivePower()}, 1);
         generators.setField("Pmax", pMax, 0, i);
         // Anom
-        MLDouble aNom = new MLDouble("", new double[]{ generatorData.getNominalPower() }, 1);
+        MLDouble aNom = new MLDouble("", new double[]{generatorData.getNominalPower()}, 1);
         generators.setField("Anom", aNom, 0, i);
         // RES
-        MLInt64 res = new MLInt64("", new long[]{ generatorData.getRenewableEnergySource() }, 1);
+        MLInt64 res = new MLInt64("", new long[]{generatorData.getRenewableEnergySource()}, 1);
         generators.setField("RES", res, 0, i);
         // fuel
-        MLInt64 fuel = new MLInt64("", new long[]{ generatorData.getFuelType() }, 1);
+        MLInt64 fuel = new MLInt64("", new long[]{generatorData.getFuelType()}, 1);
         generators.setField("fuel", fuel, 0, i);
         // dispacc
         int dispatchable = 0;
-        if ( generatorData.isDispatchable() )
+        if (generatorData.isDispatchable()) {
             dispatchable = 1;
-        MLInt64 dispacc = new MLInt64("", new long[]{ dispatchable }, 1);
+        }
+        MLInt64 dispacc = new MLInt64("", new long[]{dispatchable}, 1);
         generators.setField("dispacc", dispacc, 0, i);
     }
 
     private MLStructure loadsDataAsMLStructure(ArrayList<LoadData> loadsData) {
         MLStructure loads = null;
-        loads = new MLStructure("carico", new int[]{1,loadsData.size()});
+        loads = new MLStructure("carico", new int[]{1, loadsData.size()});
         int i = 0;
         for (LoadData loadData : loadsData) {
             putGeneratorDataIntoMLStructure(loadData, loads, i);
@@ -184,7 +186,7 @@ public class MCSMatFileWriter {
     private void putGeneratorDataIntoMLStructure(LoadData loadData, MLStructure loads, int i) {
         LOGGER.debug("Preparing mat data for load " + loadData.getLoadId());
         // estremo_ID
-        MLInt64 estremo_ID = new MLInt64("", new long[]{ loadData.getBusIndex() }, 1);
+        MLInt64 estremo_ID = new MLInt64("", new long[]{loadData.getBusIndex()}, 1);
         loads.setField("estremo_ID", estremo_ID, 0, i);
         // estremo
         MLChar estremo = new MLChar("", loadData.getBusId());
@@ -194,18 +196,19 @@ public class MCSMatFileWriter {
         loads.setField("codice", codice, 0, i);
         // conn
         int connected = 0;
-        if ( loadData.isConnected() )
+        if (loadData.isConnected()) {
             connected = 1;
-        MLInt64 disp = new MLInt64("", new long[]{ connected }, 1);
+        }
+        MLInt64 disp = new MLInt64("", new long[]{connected}, 1);
         loads.setField("conn", disp, 0, i);
         // P
-        MLDouble p = new MLDouble("", new double[]{ loadData.getActvePower() }, 1);
+        MLDouble p = new MLDouble("", new double[]{loadData.getActvePower()}, 1);
         loads.setField("P", p, 0, i);
         // Q
-        MLDouble q = new MLDouble("", new double[]{ loadData.getReactvePower() }, 1);
+        MLDouble q = new MLDouble("", new double[]{loadData.getReactvePower()}, 1);
         loads.setField("Q", q, 0, i);
         // V
-        MLDouble v = new MLDouble("", new double[]{ loadData.getVoltage() }, 1);
+        MLDouble v = new MLDouble("", new double[]{loadData.getVoltage()}, 1);
         loads.setField("V", v, 0, i);
     }
 

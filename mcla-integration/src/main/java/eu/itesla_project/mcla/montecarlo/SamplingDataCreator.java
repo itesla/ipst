@@ -91,7 +91,7 @@ public class SamplingDataCreator {
             LOGGER.debug(busData.toString());
         }
         if ( slackBusData.getSlackBusIndex() != -1) {
-            BusData busData = busesData.get(slackBusData.getSlackBusIndex()-1);
+            BusData busData = busesData.get(slackBusData.getSlackBusIndex() - 1);
             busData.setBusType(BusData.BUS_TYPE_SLACK); // slack bus
             LOGGER.debug(busData.toString());
         }
@@ -99,14 +99,19 @@ public class SamplingDataCreator {
     }
 
     protected void updateSlackBusData(Bus bus, Integer busIndex, SlackBusData slackBusData) {
-        if ( bus.getGenerators() == null ) return;
+        if ( bus.getGenerators() == null ) {
+            return;
+        }
         //...slackbus has at least one generator connected
-        for ( Generator generator :  bus.getGenerators() )
-        {
+        for (Generator generator : bus.getGenerators()) {
               //...which has a generator with voltage regulator on
-              if ( !generator.isVoltageRegulatorOn()) continue;
+              if ( !generator.isVoltageRegulatorOn()) {
+                  continue;
+              }
               //...assure the generator is the one connected to the bus (and not on the aggregated buses)
-              if ( !generator.getTerminal().getBusBreakerView().getBus().getId().equals(bus.getId()) ) return;
+              if ( !generator.getTerminal().getBusBreakerView().getBus().getId().equals(bus.getId()) ) {
+                  return;
+              }
               //...candidate slackbus
               if ( slackBusData.getSlackBusIndex() == -1 ) {
                   slackBusData.setSlackBusIndex(busIndex);
@@ -124,14 +129,15 @@ public class SamplingDataCreator {
     protected ArrayList<GeneratorData> getGeneratorData(HashMap<String, Integer> busMapping) {
         ArrayList<GeneratorData> generatorsData = new ArrayList<GeneratorData>();
         // I put the generators in a specific order, the same used when producing the matrix of historical data, for the forecast errors analysis
-        for( String generatorId : generatorsIds ) {
+        for (String generatorId : generatorsIds) {
             Generator generator = network.getGenerator(generatorId);
-            if ( generator != null ) {
+            if (generator != null) {
                 GeneratorData generatorData = new GeneratorData(generator.getId());
                 Bus generatorBus = generator.getTerminal().getBusBreakerView().getBus();
-                if ( generatorBus == null )
+                if (generatorBus == null) {
                     generatorBus = generator.getTerminal().getBusBreakerView().getConnectableBus();
-                if ( generatorBus == null ) { // it should not happen
+                }
+                if (generatorBus == null) { // it should not happen
                     LOGGER.warn("Skipping generator " + generator.getId() + ": not connected/connectable to a bus");
                     continue;
                 }
@@ -162,13 +168,14 @@ public class SamplingDataCreator {
     protected ArrayList<LoadData> getLoadData(HashMap<String, Integer> busMapping) {
         ArrayList<LoadData> loadsData = new ArrayList<LoadData>();
         // I put the loads in a specific order, the same used when producing the matrix of historical data, for the forecast errors analysis
-        for( String loadId : loadsIds ) {
+        for (String loadId : loadsIds) {
             Load load = network.getLoad(loadId);
             if ( load != null ) {
                 LoadData loadData = new LoadData(load.getId());
                 Bus loadBus = load.getTerminal().getBusBreakerView().getBus();
-                if ( loadBus == null )
+                if (loadBus == null) {
                     loadBus = load.getTerminal().getBusBreakerView().getConnectableBus();
+                }
                 if ( loadBus == null ) { // it should not happen
                     LOGGER.warn("Skipping load " + load.getId() + ": not connected/connectable to a bus");
                     continue;

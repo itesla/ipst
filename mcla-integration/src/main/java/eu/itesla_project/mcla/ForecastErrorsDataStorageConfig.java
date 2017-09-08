@@ -28,7 +28,7 @@ public class ForecastErrorsDataStorageConfig {
     private final Path forecastErrorsDir;
 
     public ForecastErrorsDataStorageConfig(Path forecastErrorsDir) {
-        Objects.requireNonNull(forecastErrorsDir,"forecast errors data directory is null");
+        Objects.requireNonNull(forecastErrorsDir, "forecast errors data directory is null");
 
         this.forecastErrorsDir = forecastErrorsDir;
     }
@@ -48,7 +48,7 @@ public class ForecastErrorsDataStorageConfig {
 
     @Override
     public String toString() {
-        return "ForecastErrorsDataStorageConfig ["+ "forecastErrorsDir=" + forecastErrorsDir + "]";
+        return "ForecastErrorsDataStorageConfig [" + "forecastErrorsDir=" + forecastErrorsDir + "]";
     }
 
 

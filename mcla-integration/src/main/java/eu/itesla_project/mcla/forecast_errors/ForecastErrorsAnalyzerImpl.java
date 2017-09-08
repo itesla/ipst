@@ -41,13 +41,13 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
     private static final String FEAOUTPUTFILENAME = "feanalyzeroutput.mat";
     private static final String FEASAMPLERFILENAME = "feasampleroutput.mat";
 
-    private static final String M2PATHPREFIX="feam2output_";
-    private static final String MATPATHSUFFIX=".mat";
-    private static final String M1OUTPUTFILENAME="feam1output.mat";
-    private static final String M0OUTPUTFILENAME="feam0output.mat";
-    private static final String M0OUTPUTFILENAMECSV=M0OUTPUTFILENAME+".csv";
-    private static final String GUIOUTPUTFILENAME="feaguioutput.mat";
-    private static final String M2OUTPUTFILENAME= M2PATHPREFIX + Command.EXECUTION_NUMBER_PATTERN + MATPATHSUFFIX;
+    private static final String M2PATHPREFIX = "feam2output_";
+    private static final String MATPATHSUFFIX = ".mat";
+    private static final String M1OUTPUTFILENAME = "feam1output.mat";
+    private static final String M0OUTPUTFILENAME = "feam0output.mat";
+    private static final String M0OUTPUTFILENAMECSV = M0OUTPUTFILENAME + ".csv";
+    private static final String GUIOUTPUTFILENAME = "feaguioutput.mat";
+    private static final String M2OUTPUTFILENAME = M2PATHPREFIX + Command.EXECUTION_NUMBER_PATTERN + MATPATHSUFFIX;
 
     private static final String WP5_M1 = "wp5fea_m1";
     private static final String WP5_M2 = "wp5fea_m2";
@@ -209,7 +209,7 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
                 .program(wp5_m1)
                 .args(args1)
                 .inputFiles(new InputFile(historicalDataMatFile.getFileName().toString()))
-                .outputFiles(new OutputFile(M1OUTPUTFILENAME),new OutputFile(M0OUTPUTFILENAME), new OutputFile(M0OUTPUTFILENAMECSV), new OutputFile(GUIOUTPUTFILENAME))
+                .outputFiles(new OutputFile(M1OUTPUTFILENAME), new OutputFile(M0OUTPUTFILENAME), new OutputFile(M0OUTPUTFILENAMECSV), new OutputFile(GUIOUTPUTFILENAME))
                 .build();
     }
 
@@ -227,8 +227,8 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
                         M2OUTPUTFILENAME,
                         Command.EXECUTION_NUMBER_PATTERN,
                         // ""+parameters.getModalityGaussian(), removed in v1.8
-                        ""+parameters.getIr(),
-                        ""+config.gettFlags())
+                        "" + parameters.getIr(),
+                        "" + config.gettFlags())
                 .inputFiles(new InputFile(M1OUTPUTFILENAME))
                 .outputFiles(new OutputFile(M2OUTPUTFILENAME))
                 .build();
@@ -241,22 +241,22 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
         } else {
             wp5_m2_reduce = WP5_M2_REDUCE;
         }
-        List<InputFile> m2partsfiles=new ArrayList<InputFile>(parameters.getnClusters()+1);
+        List<InputFile> m2partsfiles = new ArrayList<InputFile>(parameters.getnClusters() + 1);
         m2partsfiles.add(new InputFile(M1OUTPUTFILENAME));
         for (int i = 0; i < parameters.getnClusters(); i++) {
-            m2partsfiles.add(new InputFile(M2PATHPREFIX+i+MATPATHSUFFIX));
+            m2partsfiles.add(new InputFile(M2PATHPREFIX + i + MATPATHSUFFIX));
         }
         return new SimpleCommandBuilder()
                 .id("wp5_m2_reduce")
                 .program(wp5_m2_reduce)
-                .args(M1OUTPUTFILENAME,".",
+                .args(M1OUTPUTFILENAME, ".",
                         M2PATHPREFIX,
-                        ""+parameters.getnClusters(),
+                        "" + parameters.getnClusters(),
                         FEAOUTPUTFILENAME,
                         //  ""+parameters.getModalityGaussian(),  removed in v1.8
-                        ""+config.getPercpuGaussLoad(),
-                        ""+config.getPercpuGaussRes(),
-                        ""+config.getCorrelationGauss())
+                        "" + config.getPercpuGaussLoad(),
+                        "" + config.getPercpuGaussRes(),
+                        "" + config.getCorrelationGauss())
                 .inputFiles(m2partsfiles)
                 .outputFiles(new OutputFile(FEAOUTPUTFILENAME))
                 .build();
@@ -272,7 +272,7 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
         List<String> args1 = new ArrayList<>();
         args1.add(FEAOUTPUTFILENAME);
         args1.add(FEASAMPLERFILENAME);
-        args1.add(""+parameters.getnSamples());
+        args1.add("" + parameters.getnSamples());
         if (config.getRngSeed() != null) {
             args1.add(Integer.toString(config.getRngSeed()));
         }

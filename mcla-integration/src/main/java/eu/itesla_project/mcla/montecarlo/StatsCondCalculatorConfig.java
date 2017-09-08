@@ -49,9 +49,9 @@ public class StatsCondCalculatorConfig {
             Integer rngSeed,
             boolean debug
     ) {
-        Objects.requireNonNull(binariesDir,"sampler compiled binaries directory is null");
-        Objects.requireNonNull(runtimeHomeDir,"matlab runtime directory is null");
-        Objects.requireNonNull(tmpDir,"tmp directory is null");
+        Objects.requireNonNull(binariesDir, "sampler compiled binaries directory is null");
+        Objects.requireNonNull(runtimeHomeDir, "matlab runtime directory is null");
+        Objects.requireNonNull(tmpDir, "tmp directory is null");
 
         this.binariesDir = binariesDir;
         this.runtimeHomeDir = runtimeHomeDir;
@@ -99,8 +99,8 @@ public class StatsCondCalculatorConfig {
 
     @Override
     public String toString() {
-        return "StatsCondCalculatorConfig ["+ ", binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir + ", tmpDir=" + tmpDir
-                + ", rngSeed=" + rngSeed +", debug=" + debug + "]";
+        return "StatsCondCalculatorConfig [" + ", binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir + ", tmpDir=" + tmpDir
+                + ", rngSeed=" + rngSeed + ", debug=" + debug + "]";
     }
 
 }

@@ -71,21 +71,21 @@ public class ForecastErrorsAnalyzerConfig {
             Integer rngSeed,
             boolean debug
             ) {
-        Objects.requireNonNull(binariesDir,"sampler compiled binaries directory is null");
-        Objects.requireNonNull(runtimeHomeDir,"matlab runtime directory is null");
+        Objects.requireNonNull(binariesDir, "sampler compiled binaries directory is null");
+        Objects.requireNonNull(runtimeHomeDir, "matlab runtime directory is null");
 
-        this.binariesDir=binariesDir;
+        this.binariesDir = binariesDir;
         this.runtimeHomeDir = runtimeHomeDir;
         this.rngSeed = rngSeed;
-        this.checkModule0=checkModule0;
-        this.percpuGaussLoad=percpuGaussLoad;
-        this.percpuGaussRes=percpuGaussRes;
-        this.correlationGauss=correlationGauss;
-        this.tolVar=tolVar;
-        this.nMinObsFract=nMinObsFract;
-        this.nMinObsInterv=nMinObsInterv;
-        this.imputationMeth=imputationMeth;
-        this.nGaussians=nGaussians;
+        this.checkModule0 = checkModule0;
+        this.percpuGaussLoad = percpuGaussLoad;
+        this.percpuGaussRes = percpuGaussRes;
+        this.correlationGauss = correlationGauss;
+        this.tolVar = tolVar;
+        this.nMinObsFract = nMinObsFract;
+        this.nMinObsInterv = nMinObsInterv;
+        this.imputationMeth = imputationMeth;
+        this.nGaussians = nGaussians;
         this.kOutlier = kOutlier;
         this.tolerance = tolerance;
         this.iterations = iterations;
@@ -95,7 +95,7 @@ public class ForecastErrorsAnalyzerConfig {
         this.histo_estremeQ = histo_estremeQ;
         this.thresGUI = thresGUI;
         this.nats = nats;
-        this.debug=debug;
+        this.debug = debug;
     }
 
     public static ForecastErrorsAnalyzerConfig load() {
@@ -108,8 +108,8 @@ public class ForecastErrorsAnalyzerConfig {
         double percpuGaussLoad = config.getDoubleProperty("percpuGaussLoad");
         double percpuGaussRes = config.getDoubleProperty("percpuGaussRes");
         double correlationGauss = config.getDoubleProperty("correlationGauss");
-        double tolVar= config.getDoubleProperty("tolvar");
-        double nMinObsFract= config.getDoubleProperty("Nmin_obs_fract");
+        double tolVar = config.getDoubleProperty("tolvar");
+        double nMinObsFract = config.getDoubleProperty("Nmin_obs_fract");
         Integer nMinObsInterv = config.getOptionalIntProperty("Nmin_obs_interv");
         Integer imputationMeth = config.getOptionalIntProperty("imputation_meth");
         Integer nGaussians = config.getOptionalIntProperty("Ngaussians");
@@ -122,7 +122,7 @@ public class ForecastErrorsAnalyzerConfig {
         Integer tFlags = config.getOptionalIntProperty("tFlags");
         double histo_estremeQ = config.getDoubleProperty("histo_estremeQ");
         double thresGUI = config.getDoubleProperty("thresGUI");
-        String nats = config.getStringProperty("nats","All");
+        String nats = config.getStringProperty("nats", "All");
 
         return new ForecastErrorsAnalyzerConfig(binariesDir, runtimeHomeDir, checkModule0, percpuGaussLoad, percpuGaussRes, correlationGauss, tolVar, nMinObsFract, nMinObsInterv, imputationMeth, nGaussians, kOutlier, tolerance, iterations, epsilo, conditionalSampling, tFlags, histo_estremeQ, thresGUI, nats, rngSeed, debug);
     }
@@ -171,23 +171,41 @@ public class ForecastErrorsAnalyzerConfig {
         return nGaussians;
     }
 
-    public Integer getkOutlier() { return kOutlier; }
+    public Integer getkOutlier() {
+        return kOutlier;
+    }
 
-    public double getTolerance() { return tolerance; }
+    public double getTolerance() {
+        return tolerance;
+    }
 
-    public Integer getIterations() { return iterations;}
+    public Integer getIterations() {
+        return iterations;
+    }
 
-    public double getEpsilo() { return epsilo; }
+    public double getEpsilo() {
+        return epsilo;
+    }
 
-    public Integer getConditionalSampling() { return conditionalSampling; }
+    public Integer getConditionalSampling() {
+        return conditionalSampling;
+    }
 
-    public Integer gettFlags() { return tFlags; }
+    public Integer gettFlags() {
+        return tFlags;
+    }
 
-    public double getHisto_estremeQ() { return histo_estremeQ; }
+    public double getHisto_estremeQ() {
+        return histo_estremeQ;
+    }
 
-    public double getThresGUI() { return thresGUI; }
+    public double getThresGUI() {
+        return thresGUI;
+    }
 
-    public String getNats() { return nats; }
+    public String getNats() {
+        return nats;
+    }
 
     public Integer getRngSeed() {
         return rngSeed;

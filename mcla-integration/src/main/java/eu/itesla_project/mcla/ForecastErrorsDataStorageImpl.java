@@ -70,8 +70,9 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
         if ( Files.exists(analysisDataFolder) ) {
             Path forecastErrorsFile = Paths.get(analysisDataFolder.toString(), forecastErrorsFileName);
             LOGGER.info("Forecast errors analysis file for {} analysis and {} time horizon is {} ", analysisId, timeHorizon.getName(), forecastErrorsFile);
-            if ( Files.exists(forecastErrorsFile) )
+            if (Files.exists(forecastErrorsFile)) {
                 return true;
+            }
         }
         return false;
     }
@@ -155,8 +156,9 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
         Path analysisDataFolder = Paths.get(config.getForecastErrorsDir().toString(), analysisId.replaceAll(" ", "_"));
         Path forecastErrorsFile = Paths.get(analysisDataFolder.toString(), forecastErrorsFileName);
         boolean deleted = forecastErrorsFile.toFile().delete();
-        if ( analysisDataFolder.toFile().list().length == 0 )
+        if (analysisDataFolder.toFile().list().length == 0) {
             analysisDataFolder.toFile().delete();
+        }
         return deleted;
     }
 
@@ -322,11 +324,11 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
         LOGGER.info("Data folder for analysis is {} ", config.getForecastErrorsDir());
         if ( Files.exists(config.getForecastErrorsDir()) ) {
             File[] analysisFiles = config.getForecastErrorsDir().toFile().listFiles();
-            Arrays.sort(analysisFiles, new Comparator<File>(){
-                public int compare(File f1, File f2)
-                {
+            Arrays.sort(analysisFiles, new Comparator<File>() {
+                public int compare(File f1, File f2) {
                     return Long.valueOf(f1.lastModified()).compareTo(f2.lastModified());
-                } });
+                }
+            });
             for (File analysisFile : analysisFiles) {
                 if ( analysisFile.isDirectory() ) {
                     ForecastErrorsAnalysisDetails analysis = new ForecastErrorsAnalysisDetails(analysisFile.getName());
@@ -339,7 +341,7 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
                     });
                     for (File feDataFile : feDataFiles) {
                         analysis.addFEDataTimeHorizon(TimeHorizon.fromName(feDataFile.getName().substring(FORECAST_ERRORS_FILENAME_PREFIX.length(),
-                                                                                                          feDataFile.getName().length()-4)));
+                                                                                                          feDataFile.getName().length() - 4)));
                     }
                     // add list of time horizons where statistics data is available
                     File[] statsDataFiles = analysisFile.listFiles(new FilenameFilter() {
@@ -349,7 +351,7 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
                     });
                     for (File statsDataFile : statsDataFiles) {
                         analysis.addFEStatisticsTimeHorizon(TimeHorizon.fromName(statsDataFile.getName().substring(STATISTICS_FILENAME_PREFIX.length(),
-                                                                                                                   statsDataFile.getName().length()-4)));
+                                                                                                                   statsDataFile.getName().length() - 4)));
                     }
                     // add list of time horizons where gui uncertainties data is available
                     File[] uncertainDataFiles = analysisFile.listFiles(new FilenameFilter() {
@@ -359,7 +361,7 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
                     });
                     for (File uncertainDataFile : uncertainDataFiles) {
                         analysis.addFEGuiUncertaintiesTimeHorizon(TimeHorizon.fromName(uncertainDataFile.getName().substring(UNCERTAINTIES_GUI_FILENAME_PREFIX.length(),
-                                                                                                                                 uncertainDataFile.getName().length()-4)));
+                                                                                                                                 uncertainDataFile.getName().length() - 4)));
                     }
                     analysisList.add(analysis);
                 }
@@ -389,8 +391,9 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
             deleted = deleted && deleteGuiUncertainties(analysisId, timeHorizon);
         }
         // delete also analysis parameters
-        if ( isForecastErrorsFileAvailable(analysisId, timeHorizon, parametersFileName(timeHorizon)))
+        if (isForecastErrorsFileAvailable(analysisId, timeHorizon, parametersFileName(timeHorizon))) {
             deleteForecastErrorsFile(analysisId, timeHorizon, parametersFileName(timeHorizon));
+        }
         return deleted && analysisAvailable;
     }
 
@@ -401,8 +404,9 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
             Files.createDirectories(analysisDataFolder);
         }
         Path parametersFile = Paths.get(analysisDataFolder.toString(), parametersFileName(timeHorizon));
-        if ( Files.exists(parametersFile) )
+        if (Files.exists(parametersFile)) {
             parametersFile.toFile().delete();
+        }
         parameters.toFile(parametersFile);
     }
 
@@ -411,8 +415,9 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
         Path analysisDataFolder = Paths.get(config.getForecastErrorsDir().toString(), analysisId.replaceAll(" ", "_"));
         if ( Files.exists(analysisDataFolder) ) {
             Path parametersFile = Paths.get(analysisDataFolder.toString(), parametersFileName(timeHorizon));
-            if ( Files.exists(parametersFile) )
+            if (Files.exists(parametersFile)) {
                 return ForecastErrorsAnalyzerParameters.fromFile(parametersFile);
+            }
         }
         LOGGER.warn("Parameters not available for analysis {} and time horizon {}", analysisId, timeHorizon);
         return null;
