@@ -45,8 +45,11 @@ disp(sprintf(' epsilo:  %s', epsiloS));
 disp(sprintf(' conditional_sampling:  %s', conditional_samplingS));
 disp(sprintf(' histo_estremeQ:  %s', histo_estremeQs));
 disp(sprintf(' thresGUI:  %s', thresGUIs));
+disp(sprintf(' unimod:  %s', unimod));
 disp(sprintf(' mode of inversion:  %s', modo_invs));
-
+disp(sprintf(' isdeterministics:  %s', isdeterministics));
+disp(sprintf(' isuniforms:  %s', isuniforms));
+disp(sprintf(' opt_GUIs:  %s', opt_GUIs));
 
 modo_inv=str2double(modo_invs);
 par_tolvar = str2double(tolvar);% minimum variance of imput variables, in MW
