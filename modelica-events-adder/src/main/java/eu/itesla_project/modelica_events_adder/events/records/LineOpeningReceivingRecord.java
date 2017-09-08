@@ -28,7 +28,7 @@ public class LineOpeningReceivingRecord extends EventRecord {
         this.recordsMap = recordsMap;
         super.setModelicaType(EventsStaticData.LINE_OPEN_REC_MODEL);
 
-        for(String par : event.getParams()) {
+        for (String par : event.getParams()) {
             String name = par.split("=")[0];
             String value = par.split("=")[1];
             addParameter(name, value);
@@ -51,12 +51,12 @@ public class LineOpeningReceivingRecord extends EventRecord {
         this.addValue(" (");
         this.addValue(StaticData.NEW_LINE);
 
-        if(!iidmParameters.isEmpty()) {
-            for(int i=0; i<iidmParameters.size()-1; i++) {
+        if (!iidmParameters.isEmpty()) {
+            for (int i = 0; i < iidmParameters.size() - 1; i++) {
                 this.addValue("\t " + iidmParameters.get(i).getName() + " = " + iidmParameters.get(i).getValue() + ",");
                 this.addValue(StaticData.NEW_LINE);
             }
-            this.addValue("\t " + iidmParameters.get(iidmParameters.size()-1).getName() + " = " + iidmParameters.get(iidmParameters.size()-1).getValue());
+            this.addValue("\t " + iidmParameters.get(iidmParameters.size() - 1).getName() + " = " + iidmParameters.get(iidmParameters.size() - 1).getValue());
             this.addValue(StaticData.NEW_LINE);
         }
 

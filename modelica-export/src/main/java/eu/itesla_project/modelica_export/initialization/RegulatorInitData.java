@@ -43,7 +43,7 @@ public class RegulatorInitData {
     }
 
     private void fillDataList() throws IOException {
-        if(this.regModelData != null) {
+        if (this.regModelData != null) {
             BufferedReader buffer = new BufferedReader(new StringReader(this.regModelData));
 
             this.pinsList = Utils.parseModelPins(buffer); //paramsAndPins.get(1);
@@ -51,8 +51,8 @@ public class RegulatorInitData {
             //Cogemos las init variables
             this.initVars = Utils.getOtherRegVars(buffer);
             Map<String, String> params = this.regRecord.getRegParamsMap();
-            if((params != null) && (!params.isEmpty())) {
-                for(String par : params.keySet()) {
+            if ((params != null) && (!params.isEmpty())) {
+                for (String par : params.keySet()) {
                     this.paramsMap.put(par, params.get(par));
                 }
             }
@@ -66,11 +66,11 @@ public class RegulatorInitData {
         try {
             List<String> initList = Utils.parseRegInitVariables(buffer);
 
-            if(regInitValues != null && !regInitValues.isEmpty()) {
-                for(String param : regInitValues.keySet()) {
+            if (regInitValues != null && !regInitValues.isEmpty()) {
+                for (String param : regInitValues.keySet()) {
                     String paramValue = regInitValues.get(param);
 //                    param = param.trim().replace(StaticData.PIN, "pin_");
-                    if(initList.contains(param)) {
+                    if (initList.contains(param)) {
                         parameter = new IIDMParameter(param, paramValue.trim());
                         this.regRecord.getIidmregParameters().add(parameter);
                     }

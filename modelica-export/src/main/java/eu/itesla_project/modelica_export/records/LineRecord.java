@@ -64,8 +64,7 @@ public class LineRecord extends BranchRecord {
             if (super.isCorrect()) {
                 if (super.getModelicaType() != null) {
                     this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);
-                }
-                else {
+                } else {
                     this.addValue(super.DEFAULT_BRANCH_TYPE + StaticData.WHITE_SPACE);
                 }
                 this.addValue(super.getModelicaName());

@@ -57,12 +57,11 @@ public class ModelicaMainExporter {
         this._modelicaLibPath = modelicaLibtPath;
         this.loadFlowFactory = loadFlowFactory;
 
-        if(sourceEngine.toLowerCase().compareTo(StaticData.EUROSTAG) == 0) {
+        if (sourceEngine.toLowerCase().compareTo(StaticData.EUROSTAG) == 0) {
             this._sourceEngine = new EurostagEngine(sourceEngine, sourceVersion);
         } else if (sourceEngine.toLowerCase().compareTo(StaticData.PSSE) == 0) {
             this._sourceEngine = new PsseEngine(sourceEngine, sourceVersion);
-        }
-        else {
+        } else {
             _log.error("This source engine doesn't exist.");
         }
         _log.info("Modelica main exporter created, slackId = " + this._slackId);
@@ -81,12 +80,11 @@ public class ModelicaMainExporter {
         this._modelicaLibPath = modelicaLibtPath;
         this.loadFlowFactory = loadFlowFactory;
 
-        if(sourceEngine.toLowerCase().compareTo(StaticData.EUROSTAG) == 0) {
+        if (sourceEngine.toLowerCase().compareTo(StaticData.EUROSTAG) == 0) {
             this._sourceEngine = new EurostagEngine(sourceEngine, sourceVersion);
         } else if (sourceEngine.toLowerCase().compareTo(StaticData.PSSE) == 0) {
             this._sourceEngine = new PsseEngine(sourceEngine, sourceVersion);
-        }
-        else {
+        } else {
             _log.error("This source engine doesn't exist.");
         }
     }
@@ -94,31 +92,33 @@ public class ModelicaMainExporter {
     public void export(Path outputParentDir) {
         _log.info("Exporting model from " + this._sourceEngine.getName() + ", version " + this._sourceEngine.getVersion() + "...");
         long initTime = System.currentTimeMillis();
-        try  (EjbClientCtx ctx=newEjbClientEcx(); ComputationManager _computationManager = new LocalComputationManager()) {
+        try  (EjbClientCtx ctx = newEjbClientEcx(); ComputationManager _computationManager = new LocalComputationManager()) {
             long endEjb = System.currentTimeMillis();
             _log.debug("Connexion EJB = " + (endEjb - initTime));
 
             //Executing LF
             long endStep = System.currentTimeMillis();
-            _log.debug("ModelicaMainExporter. StepUpTrafos = " + (endStep-endEjb));
+            _log.debug("ModelicaMainExporter. StepUpTrafos = " + (endStep - endEjb));
             // Even if we are reading a different solution from a file, run a Loadflow
             // (it seems this allows to setup properly disconnected elements)
             runLoadFlow(_computationManager);
-            if (READ_SOLUTION_FROM_FILE) readSolutionFromFile();
+            if (READ_SOLUTION_FROM_FILE) {
+                readSolutionFromFile();
+            }
 
             long endLF = System.currentTimeMillis();
-            _log.debug("ModelicaMainExporter. HELM LF (ms) = " + (endLF-endStep));
+            _log.debug("ModelicaMainExporter. HELM LF (ms) = " + (endLF - endStep));
 
             //Exporting model
             DDBManager ddbmanager = ctx.connectEjb(DDBMANAGERJNDINAME);
 
             ModelicaExport export = null;
 
-            if(this._sourceEngine instanceof EurostagEngine) {
+            if (this._sourceEngine instanceof EurostagEngine) {
                 //To have the same representation/results between HELM and PSS/E the sign of P and Q in generators have been changed
                 //Moreover, for Eurostag the sign must be the same in IIDM and HELM and as it has been changed in the HELM integration
                 //i should be changed after this in the IIDM
-                for(Generator gen : _network.getGenerators()) {
+                for (Generator gen : _network.getGenerators()) {
                     float P = -gen.getTerminal().getP();
                     float Q = -gen.getTerminal().getQ();
 
@@ -127,11 +127,9 @@ public class ModelicaMainExporter {
                 }
 
                 export = new ModelicaExport(_network, ddbmanager, paramsDictionary, this._modelicaLibPath.toFile(), _sourceEngine);
-            }
-            else if(this._sourceEngine instanceof PsseEngine) {
+            } else if (this._sourceEngine instanceof PsseEngine) {
                 export = new ModelicaExport(_network, ddbmanager, paramsDictionary, _sourceEngine);
-            }
-            else {
+            } else {
                 _log.error("The source engine must be eurostaqg or psse.");
                 System.exit(-1);
             }
@@ -141,7 +139,7 @@ public class ModelicaMainExporter {
             _log.info("Writer time = " + (System.currentTimeMillis() - preWrite));
             ctx.close();
             long endExport = System.currentTimeMillis();
-            _log.debug("ModelicaMainExporter. Export (ms) = " + (endExport-endLF));
+            _log.debug("ModelicaMainExporter. Export (ms) = " + (endExport - endLF));
 
             long duration = endExport - initTime;
 
@@ -159,7 +157,7 @@ public class ModelicaMainExporter {
         //((HELMLoadFlow) loadflow).setSlack(this._slackId);
         LoadFlowResult lfResults = loadflow.run();
 
-        if(!lfResults.isOk()) {
+        if (!lfResults.isOk()) {
             System.out.println("LF has not been successfuly completed.");
             _log.info("Loadflow finished. isOk == false");
             System.exit(-1);
@@ -192,7 +190,7 @@ public class ModelicaMainExporter {
             try {
                 reader = new BufferedReader(new FileReader(filename));
                 line = reader.readLine();
-                while((line = reader.readLine()) != null) {
+                while ((line = reader.readLine()) != null) {
                     List<String> fields = new ArrayList<String>(Arrays.asList(line.split(",")));
                     recordHandler.processRecord(fields);
                 }
@@ -204,9 +202,9 @@ public class ModelicaMainExporter {
 
     private void readSolutionFromFile() {
         CsvReader csv = new CsvReader();
-        HashMap<String,String> ids = readIdMappings(csv, FILENAME_LOADFLOW_SOLUTION_ID_MAPPINGS);
-        HashMap<String,Voltage> voltages = readSolutionVoltagesFromFile(csv, FILENAME_LOADFLOW_SOLUTION_VOLTAGES);
-        HashMap<String,Reactive> reactives = readSolutionReactivesFromFile(csv, FILENAME_LOADFLOW_SOLUTION_Q_GENERATORS);
+        HashMap<String, String> ids = readIdMappings(csv, FILENAME_LOADFLOW_SOLUTION_ID_MAPPINGS);
+        HashMap<String, Voltage> voltages = readSolutionVoltagesFromFile(csv, FILENAME_LOADFLOW_SOLUTION_VOLTAGES);
+        HashMap<String, Reactive> reactives = readSolutionReactivesFromFile(csv, FILENAME_LOADFLOW_SOLUTION_Q_GENERATORS);
 
         // Check mappings against read mappings in voltages file
         for (Voltage voltage : voltages.values()) {
@@ -261,9 +259,9 @@ public class ModelicaMainExporter {
             }
         }
     }
-    private HashMap<String,String> readIdMappings(CsvReader reader, String filename) {
+    private HashMap<String, String> readIdMappings(CsvReader reader, String filename) {
         _log.info("Reading mapping of identifiers from file [" + filename + "]");
-        HashMap<String,String> mappings = new HashMap(100);
+        HashMap<String, String> mappings = new HashMap(100);
         reader.read(filename, new RecordHandler() {
             public void processRecord(List<String> fields) {
                 String externalId = fields.get(0);
@@ -275,9 +273,9 @@ public class ModelicaMainExporter {
         return mappings;
     }
 
-    private HashMap<String,Voltage> readSolutionVoltagesFromFile(CsvReader reader, String filename) {
+    private HashMap<String, Voltage> readSolutionVoltagesFromFile(CsvReader reader, String filename) {
         _log.info("Reading solution voltages from file [" + filename + "]");
-        HashMap<String,Voltage> voltages = new HashMap(1000);
+        HashMap<String, Voltage> voltages = new HashMap(1000);
         reader.read(filename, new RecordHandler() {
             public void processRecord(List<String> fields) {
                 Voltage voltage = new Voltage();
@@ -298,9 +296,9 @@ public class ModelicaMainExporter {
         return voltages;
     }
 
-    private HashMap<String,Reactive> readSolutionReactivesFromFile(CsvReader reader, String filename) {
+    private HashMap<String, Reactive> readSolutionReactivesFromFile(CsvReader reader, String filename) {
         _log.info("Reading solution reactives from file [" + filename + "]");
-        HashMap<String,Reactive> reactives = new HashMap(100);
+        HashMap<String, Reactive> reactives = new HashMap(100);
         reader.read(filename, new RecordHandler() {
             public void processRecord(List<String> fields) {
                 Reactive reactive = new Reactive();
@@ -313,15 +311,18 @@ public class ModelicaMainExporter {
         });
         return reactives;
     }
-    public EjbClientCtx newEjbClientEcx() throws NamingException{
-        return new  EjbClientCtx(_jbossHost, _jbossPort, _jbossUser,_jbossPassword);
+    public EjbClientCtx newEjbClientEcx() throws NamingException {
+        return new  EjbClientCtx(_jbossHost, _jbossPort, _jbossUser, _jbossPassword);
     }
-    
+
     private static void writeNetworkData(Network network, boolean isOld) {
         String text = null;
         String filename = null;
-        if(isOld) text = "Old";
-        else text = "New";
+        if (isOld) {
+            text = "Old";
+        } else {
+            text = "New";
+        }
         filename = network.getName() + "_"  + text;
 
         _log.info(String.format("NETWORK %s", filename));
@@ -330,8 +331,7 @@ public class ModelicaMainExporter {
         _log.info("#------------  ---------------- ");
         _log.info("#        Name          Q (MVAR)         TargetQ          P (MVAR)         TargetP");
         _log.info("#------------  ----------------  --------------  ----------------  --------------");
-        for(Generator gen : network.getGenerators())
-        {
+        for (Generator gen : network.getGenerators()) {
             _log.info(String.format("%s %15.8f %15.8f %15.8f %15.8f", gen.getId(), gen.getTerminal().getQ(), gen.getTargetQ(), gen.getTerminal().getP(), gen.getTargetP()));
         }
         _log.info("END GENERATORS\n");
@@ -339,8 +339,7 @@ public class ModelicaMainExporter {
         _log.info("BUSES");
         _log.info("#        Name          V (kV) Angle (Degrees) ");
         _log.info("#------------ --------------- --------------- ");
-        for(Bus bus : network.getBusBreakerView().getBuses())
-        {
+        for (Bus bus : network.getBusBreakerView().getBuses()) {
             _log.info(String.format("%s %15.8f %15.8f", bus.getId(), bus.getV(), bus.getAngle()));
         }
         _log.info("END BUSES\n");
@@ -350,8 +349,7 @@ public class ModelicaMainExporter {
         _log.info("#                         ------------------------------- ------------------------------- ");
         _log.info("#                    Name            From              To            From              To ");
         _log.info("#------------------------ --------------- --------------- --------------- --------------- ");
-        for(Line line : network.getLines())
-        {
+        for (Line line : network.getLines()) {
             _log.info(String.format("%s %15.8f %15.8f %15.8f %15.8f", line.getId(), line.getTerminal1().getQ(), line.getTerminal2().getQ(), line.getTerminal1().getP(), line.getTerminal2().getP()));
         }
         _log.info("END BRANCHES\n");
@@ -361,8 +359,7 @@ public class ModelicaMainExporter {
         _log.info("#                         ------------------------------- ------------------------------- ");
         _log.info("#                    Name            From              To            From              To ");
         _log.info("#------------------------ --------------- --------------- --------------- --------------- ");
-        for(Branch trafo : network.getTwoWindingsTransformers())
-        {
+        for (Branch trafo : network.getTwoWindingsTransformers()) {
             _log.info(String.format("%s %15.8f %15.8f %15.8f %15.8f", trafo.getId(), trafo.getTerminal1().getQ(), trafo.getTerminal2().getQ(), trafo.getTerminal1().getP(), trafo.getTerminal2().getP()));
         }
         _log.info("END TRANSFORMERS\n");

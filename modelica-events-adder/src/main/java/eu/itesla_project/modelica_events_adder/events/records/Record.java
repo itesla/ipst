@@ -19,7 +19,7 @@ public class Record {
     public Record() {
         this.data = new StringBuilder();
         this.currentLinePos = 2;
-        this.data.append(String.format("%-" + this.currentLinePos + "s" , ""));
+        this.data.append(String.format("%-" + this.currentLinePos + "s", ""));
     }
 
     public void addValue(String nodeName) {
@@ -51,8 +51,7 @@ public class Record {
         this.modelicaType = modelicaType;
     }
 
-    public String getModelicaType()
-    {
+    public String getModelicaType() {
         return modelicaType;
     }
 

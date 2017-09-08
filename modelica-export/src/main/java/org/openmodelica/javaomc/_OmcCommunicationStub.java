@@ -10,16 +10,14 @@ package org.openmodelica.javaomc;
 
 
 // As simple as can be omc communication, sending and recieving of strings.
-public class _OmcCommunicationStub extends org.omg.CORBA.portable.ObjectImpl implements OmcCommunication
-{
+public class _OmcCommunicationStub extends org.omg.CORBA.portable.ObjectImpl implements OmcCommunication {
 
   /**
      *
      */
     private static final long serialVersionUID = -2199076960265794510L;
 
-public String sendExpression (String expr)
-  {
+public String sendExpression (String expr) {
             org.omg.CORBA.portable.InputStream $in = null;
             try {
                 org.omg.CORBA.portable.OutputStream $out = _request ("sendExpression", true);
@@ -38,8 +36,7 @@ public String sendExpression (String expr)
             }
   } // sendExpression
 
-  public String sendClass (String model)
-  {
+  public String sendClass (String model) {
             org.omg.CORBA.portable.InputStream $in = null;
             try {
                 org.omg.CORBA.portable.OutputStream $out = _request ("sendClass", true);
@@ -62,13 +59,11 @@ public String sendExpression (String expr)
   private static String[] __ids = {
     "IDL:OmcCommunication:1.0"};
 
-  public String[] _ids ()
-  {
-    return (String[])__ids.clone ();
+  public String[] _ids () {
+    return (String[]) __ids.clone();
   }
 
-  private void readObject (java.io.ObjectInputStream s) throws java.io.IOException
-  {
+  private void readObject (java.io.ObjectInputStream s) throws java.io.IOException {
      String str = s.readUTF ();
      String[] args = null;
      java.util.Properties props = null;
@@ -77,8 +72,7 @@ public String sendExpression (String expr)
      _set_delegate (delegate);
   }
 
-  private void writeObject (java.io.ObjectOutputStream s) throws java.io.IOException
-  {
+  private void writeObject (java.io.ObjectOutputStream s) throws java.io.IOException {
      String[] args = null;
      java.util.Properties props = null;
      String str = org.omg.CORBA.ORB.init (args, props).object_to_string (this);

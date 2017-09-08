@@ -47,8 +47,7 @@ public abstract class EventRecord extends ModelicaRecord {
         this.modelicaType = modelicaType;
     }
 
-    public String getModelicaType()
-    {
+    public String getModelicaType() {
         return modelicaType;
     }
 

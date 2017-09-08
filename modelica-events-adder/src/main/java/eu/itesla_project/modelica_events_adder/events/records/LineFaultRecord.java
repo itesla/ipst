@@ -29,7 +29,7 @@ public class LineFaultRecord extends EventRecord {
         this.conRecList = conRecList;
         super.setModelicaType(EventsStaticData.LINE_MODEL);
 
-        for(String par : event.getParams()) {
+        for (String par : event.getParams()) {
             String name = par.split("=")[0];
             String value = par.split("=")[1];
             addParameter(name, value);
@@ -58,12 +58,12 @@ public class LineFaultRecord extends EventRecord {
         this.addValue(" (");
         this.addValue(StaticData.NEW_LINE);
 
-        if(!iidmParameters.isEmpty()) {
-            for(int i=0; i<iidmParameters.size()-1; i++) {
+        if (!iidmParameters.isEmpty()) {
+            for (int i = 0; i < iidmParameters.size() - 1; i++) {
                 this.addValue("\t " + iidmParameters.get(i).getName() + " = " + iidmParameters.get(i).getValue() + ",");
                 this.addValue(StaticData.NEW_LINE);
             }
-            this.addValue("\t " + iidmParameters.get(iidmParameters.size()-1).getName() + " = " + iidmParameters.get(iidmParameters.size()-1).getValue());
+            this.addValue("\t " + iidmParameters.get(iidmParameters.size() - 1).getName() + " = " + iidmParameters.get(iidmParameters.size() - 1).getValue());
             this.addValue(StaticData.NEW_LINE);
         }
 
@@ -105,8 +105,8 @@ public class LineFaultRecord extends EventRecord {
         String voltage = busFromRecord.getParamsMap().get(StaticData.VOLTAGE);
         String angle = busFromRecord.getParamsMap().get(StaticData.ANGLE);
 
-        double vreal = Double.parseDouble(voltage)*Math.cos(Double.parseDouble(angle));
-        double vimag = Double.parseDouble(voltage)*Math.sin(Double.parseDouble(angle));
+        double vreal = Double.parseDouble(voltage) * Math.cos(Double.parseDouble(angle));
+        double vimag = Double.parseDouble(voltage) * Math.sin(Double.parseDouble(angle));
 
 //        String vReal = busFromRecord.getParamsMap().get(StaticData.VO_REAL);
 //        String vImg = busFromRecord.getParamsMap().get(StaticData.VO_IMG);
@@ -119,8 +119,8 @@ public class LineFaultRecord extends EventRecord {
         voltage = busToRecord.getParamsMap().get(StaticData.VOLTAGE);
         angle = busToRecord.getParamsMap().get(StaticData.ANGLE);
 
-        vreal = Double.parseDouble(voltage)*Math.cos(Double.parseDouble(angle));
-        vimag = Double.parseDouble(voltage)*Math.sin(Double.parseDouble(angle));
+        vreal = Double.parseDouble(voltage) * Math.cos(Double.parseDouble(angle));
+        vimag = Double.parseDouble(voltage) * Math.sin(Double.parseDouble(angle));
 
 //        vReal = busToRecord.getParamsMap().get(StaticData.VO_REAL);
 //        vImg = busToRecord.getParamsMap().get(StaticData.VO_IMG);
@@ -151,18 +151,15 @@ public class LineFaultRecord extends EventRecord {
         List<ConnectRecord> busesList = new ArrayList<ConnectRecord>();
 
         int i = 0;
-        for(ConnectRecord conRec : this.conRecList)
-        {
-            if(conRec.containsElement(this.lineRecord.getModelicaName()))
-            {
+        for (ConnectRecord conRec : this.conRecList) {
+            if (conRec.containsElement(this.lineRecord.getModelicaName())) {
                 System.out.println("Connect con la linea: " + this.lineRecord.getModelicaName());
-                if(conRec.getConnectedElement(this.lineRecord.getModelicaName()).startsWith(StaticData.PREF_BUS))
-                {
+                if (conRec.getConnectedElement(this.lineRecord.getModelicaName()).startsWith(StaticData.PREF_BUS)) {
                     busesList.add(conRec);
                     i++;
                 }
             }
-            if(i == 2) {
+            if (i == 2) {
                 break;
             }
         }

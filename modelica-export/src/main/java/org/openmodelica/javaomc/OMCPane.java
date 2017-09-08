@@ -13,8 +13,7 @@ import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 
-public class OMCPane extends JPanel implements ActionListener, KeyListener
-{
+public class OMCPane extends JPanel implements ActionListener, KeyListener {
 
     /**
      *
@@ -34,9 +33,8 @@ public class OMCPane extends JPanel implements ActionListener, KeyListener
     /**
      * This is the default constructor
      */
-    public OMCPane()
-    {
-        super(new GridLayout(1,0));
+    public OMCPane() {
+        super(new GridLayout(1, 0));
         initialize();
         this.omc = new OMCProxy();;
         history.clear();
@@ -58,8 +56,7 @@ public class OMCPane extends JPanel implements ActionListener, KeyListener
      *
      * @return void
      */
-    private void initialize()
-    {
+    private void initialize() {
         this.setSize(398, 260);
         this.add(getJSplitPane(), null);
     }
@@ -69,10 +66,8 @@ public class OMCPane extends JPanel implements ActionListener, KeyListener
      *
      * @return javax.swing.JTextField
      */
-    private JTextField getJTextField()
-    {
-        if (jTextField == null)
-        {
+    private JTextField getJTextField() {
+        if (jTextField == null) {
             jTextField = new JTextField();
             jTextField.setName("Expression");
             jTextField.setColumns(100);
@@ -86,10 +81,8 @@ public class OMCPane extends JPanel implements ActionListener, KeyListener
      *
      * @return javax.swing.JButton
      */
-    private JButton getJButton()
-    {
-        if (jButton == null)
-        {
+    private JButton getJButton() {
+        if (jButton == null) {
             jButton = new JButton();
             jButton.setText("Send");
             jButton.setActionCommand("send");
@@ -103,10 +96,8 @@ public class OMCPane extends JPanel implements ActionListener, KeyListener
      *
      * @return javax.swing.JButton
      */
-    private JButton getJDemoButton()
-    {
-        if (jDemoButton == null)
-        {
+    private JButton getJDemoButton() {
+        if (jDemoButton == null) {
             jDemoButton = new JButton();
             jDemoButton.setText("Demo");
             jDemoButton.setActionCommand("demo");
@@ -120,10 +111,8 @@ public class OMCPane extends JPanel implements ActionListener, KeyListener
      *
      * @return javax.swing.JTextArea
      */
-    private JTextArea getJTextArea()
-    {
-        if (jTextArea == null)
-        {
+    private JTextArea getJTextArea() {
+        if (jTextArea == null) {
             jTextArea = new JTextArea();
             jTextArea.setColumns(100);
             jTextArea.setRows(20);
@@ -131,52 +120,40 @@ public class OMCPane extends JPanel implements ActionListener, KeyListener
         return jTextArea;
     }
 
-    public void executeCommand(String command)
-    {
+    public void executeCommand(String command) {
         System.out.println("Expression:" + command);
         if (command != null &&
-            command.length() > 0)
-        {
+            command.length() > 0) {
             history.add(command);
             String result = "";
-            try
-            {
+            try {
                 jTextArea.append("\nSending expression:" + command);
                 result = omc.sendExpression(command);
                 jTextArea.append("\nGot reply:" + result);
-            }
-            catch(Exception ex)
-            {
+            } catch (Exception ex) {
                 jTextArea.append(
-                  "\nError while sending expression: " + command + "\n"+
+                  "\nError while sending expression: " + command + "\n" +
                   ex.getMessage());
             }
             jTextField.setText("");
-        }
-        else
-        {
+        } else {
             jTextArea.append("\nNo expression sent because is empty");
         }
     }
 
-    public void actionPerformed(ActionEvent e)
-    {
+    public void actionPerformed(ActionEvent e) {
         System.out.println("ActionCommand:" + e.getActionCommand());
-        if (e.getActionCommand().equals("send"))
-        {
+        if (e.getActionCommand().equals("send")) {
             executeCommand(jTextField.getText());
         }
-        if (e.getActionCommand().equals("demo"))
-        {
-            Thread t = new Thread()
-            {
-                public void run()
-                {
+        if (e.getActionCommand().equals("demo")) {
+            Thread t = new Thread() {
+                public void run() {
                     jTextArea.append("\n// ******************************  DEMO STARTS *************************************");
                     jTextArea.append("\n// ******************************  Starting BouncingBall DEMO **********************");
                     jTextArea.append("\n// send the BouncingBall model");
                     executeCommand("\n" +
-                            "model BouncingBall\n"+
+                            "model BouncingBall\n" +
                             "  parameter Real e=0.7 \"coefficient of restitution\";\n" +
                             "  parameter Real g=9.81 \"gravity acceleration\";\n" +
                             "  Real h(start=1) \"height of ball\";\n" +
@@ -276,26 +253,23 @@ public class OMCPane extends JPanel implements ActionListener, KeyListener
 
     public void keyPressed(KeyEvent e) {
         // TODO Auto-generated method stub
-        if (e.getKeyCode() == KeyEvent.VK_ENTER)
-        {
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             executeCommand(jTextField.getText());
         }
-        if (e.getKeyCode() == KeyEvent.VK_UP)
-        {
+        if (e.getKeyCode() == KeyEvent.VK_UP) {
             // set the last command in the text field
-            jTextField.setText(history.get(history.size()-1));
+            jTextField.setText(history.get(history.size() - 1));
             // move the last command at the beginning!
-            String tmp = history.get(history.size()-1);
+            String tmp = history.get(history.size() - 1);
             history.add(0, tmp);
-            history.remove(history.size()-1);
+            history.remove(history.size() - 1);
         }
-        if (e.getKeyCode() == KeyEvent.VK_DOWN)
-        {
+        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
             // set the first command in the text field
             jTextField.setText(history.get(0));
             // move the first command at the end!
             String tmp = history.get(0);
-            history.add(history.size()-1, tmp);
+            history.add(history.size() - 1, tmp);
             history.remove(0);
         }
     }

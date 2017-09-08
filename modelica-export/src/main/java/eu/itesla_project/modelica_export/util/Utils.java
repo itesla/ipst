@@ -32,10 +32,15 @@ public class Utils {
         Scanner scanner = new Scanner(modelicaModel);
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
-            if(line.trim().startsWith("within")) continue;
-            else if(line.trim().startsWith("package PowerSystems")) continue;
-            else if(line.trim().startsWith("end PowerSystems")) continue;
-            else cleanedModel = cleanedModel + System.getProperty("line.separator") + line;
+            if (line.trim().startsWith("within")) {
+                continue;
+            } else if (line.trim().startsWith("package PowerSystems")) {
+                continue;
+            } else if (line.trim().startsWith("end PowerSystems")) {
+                continue;
+            } else {
+                cleanedModel = cleanedModel + System.getProperty("line.separator") + line;
+            }
         }
         scanner.close();
         return cleanedModel;
@@ -62,21 +67,20 @@ public class Utils {
         List<String> pinsList = new ArrayList<String>();
         String[] lineData;
 
-        String line =buffer.readLine();
+        String line = buffer.readLine();
 
-        while(!(line=buffer.readLine()).equals(StaticData.EQUATION)) {
-            if(line.trim().startsWith(EurostagFixedData.PARAMETER)) {
+        while (!(line = buffer.readLine()).equals(StaticData.EQUATION)) {
+            if (line.trim().startsWith(EurostagFixedData.PARAMETER)) {
                 lineData = line.trim().split(StaticData.WHITE_SPACE);
-                if(lineData.length >= 3) {
-                    String paramName = lineData[2].endsWith(StaticData.SEMICOLON) == true ? lineData[2].substring(0, lineData[2].length()-1) : lineData[2];
+                if (lineData.length >= 3) {
+                    String paramName = lineData[2].endsWith(StaticData.SEMICOLON) == true ? lineData[2].substring(0, lineData[2].length() - 1) : lineData[2];
 
                     paramsList.add(paramName);
                 }
-            }
-            else if(line.trim().startsWith(EurostagModDefaultTypes.PIN_TYPE)) {
+            } else if (line.trim().startsWith(EurostagModDefaultTypes.PIN_TYPE)) {
                 lineData = line.trim().split(StaticData.WHITE_SPACE);
-                if(lineData.length >= 2) {
-                    String pinName = lineData[1].endsWith(StaticData.SEMICOLON) == true ? lineData[1].substring(0, lineData[1].length()-1) : lineData[1];
+                if (lineData.length >= 2) {
+                    String pinName = lineData[1].endsWith(StaticData.SEMICOLON) == true ? lineData[1].substring(0, lineData[1].length() - 1) : lineData[1];
                     pinsList.add(pinName);
                 }
             }
@@ -94,13 +98,13 @@ public class Utils {
         List<String> pinsList = new ArrayList<String>();
         String[] lineData;
 
-        String line =buffer.readLine();
-        while(line != null) {
+        String line = buffer.readLine();
+        while (line != null) {
             //if(line.trim().startsWith(EurostagModDefaultTypes.PIN_TYPE) && !line.contains("isInitValue")) {
-            if((line.trim().startsWith(EurostagModDefaultTypes.PIN_TYPE) || line.trim().startsWith(EurostagModDefaultTypes.INPUT_PIN_TYPE) || line.trim().startsWith(EurostagModDefaultTypes.OUTPUT_PIN_TYPE)) && !line.contains("isInitValue")) { //Parseo de pines //21-8-2014 modificación && line.contains("isInitValue")
+            if ((line.trim().startsWith(EurostagModDefaultTypes.PIN_TYPE) || line.trim().startsWith(EurostagModDefaultTypes.INPUT_PIN_TYPE) || line.trim().startsWith(EurostagModDefaultTypes.OUTPUT_PIN_TYPE)) && !line.contains("isInitValue")) { //Parseo de pines //21-8-2014 modificación && line.contains("isInitValue")
                 lineData = line.trim().split(StaticData.WHITE_SPACE);
-                if(lineData.length >= 2) {
-                    String pinName = lineData[1].endsWith(StaticData.SEMICOLON) == true ? lineData[1].substring(0, lineData[1].length()-1) : lineData[1];
+                if (lineData.length >= 2) {
+                    String pinName = lineData[1].endsWith(StaticData.SEMICOLON) == true ? lineData[1].substring(0, lineData[1].length() - 1) : lineData[1];
                     pinsList.add(pinName);
                 }
             }
@@ -114,12 +118,12 @@ public class Utils {
         List<String> pinsList = new ArrayList<String>();
         String[] lineData;
 
-        String line =buffer.readLine();
-        while(line != null) {
-            if(line.contains("isInitValue")) {
+        String line = buffer.readLine();
+        while (line != null) {
+            if (line.contains("isInitValue")) {
                 lineData = line.trim().split(StaticData.WHITE_SPACE);
-                if(lineData.length >= 2) {
-                    String pinName = lineData[1].endsWith(StaticData.SEMICOLON) == true ? lineData[1].substring(0, lineData[1].length()-1) : lineData[1];
+                if (lineData.length >= 2) {
+                    String pinName = lineData[1].endsWith(StaticData.SEMICOLON) == true ? lineData[1].substring(0, lineData[1].length() - 1) : lineData[1];
                     pinsList.add(pinName);
                 }
             }
@@ -134,13 +138,13 @@ public class Utils {
         List<String> initList = new ArrayList<String>();
         String[] lineData;
 
-        String line =buffer.readLine();
-        while(line != null) {
-            if(line.trim().startsWith(EurostagFixedData.PARAMETER) && !line.contains("=")) {
+        String line = buffer.readLine();
+        while (line != null) {
+            if (line.trim().startsWith(EurostagFixedData.PARAMETER) && !line.contains("=")) {
                 lineData = line.trim().split(StaticData.WHITE_SPACE);
-                if(lineData.length >= 3) {
-                    String varName = lineData[2].endsWith(StaticData.SEMICOLON) == true ? lineData[2].substring(0, lineData[2].length()-1) : lineData[2];
-                    if(varName.startsWith(StaticData.INIT_VAR)) {
+                if (lineData.length >= 3) {
+                    String varName = lineData[2].endsWith(StaticData.SEMICOLON) == true ? lineData[2].substring(0, lineData[2].length() - 1) : lineData[2];
+                    if (varName.startsWith(StaticData.INIT_VAR)) {
                         initList.add(varName);
                     }
                 }

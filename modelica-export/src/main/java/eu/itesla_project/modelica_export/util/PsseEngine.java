@@ -95,7 +95,7 @@ public class PsseEngine extends SourceEngine {
 
         map = new HashMap<String, String>();
         //GENROU MACHINES
-        for(int i=0; i<this.genrouParams.length; i++) {
+        for (int i = 0; i < this.genrouParams.length; i++) {
             modelicaPar = this.genrouParams[i][0];
             sourcePar = this.genrouParams[i][1];
 
@@ -104,7 +104,7 @@ public class PsseEngine extends SourceEngine {
         paramsDictionary.put(PsseModDefaultTypes.GENROU, map);
 
         //GENSAL MACHINES
-        for(int i=0; i<this.gensalParams.length; i++) {
+        for (int i = 0; i < this.gensalParams.length; i++) {
             modelicaPar = this.gensalParams[i][0];
             sourcePar = this.gensalParams[i][1];
 
@@ -113,7 +113,7 @@ public class PsseEngine extends SourceEngine {
         paramsDictionary.put(this.GENSAL, map);
 
         //WT4G1 MACHINES
-        for(int i=0; i<this.wt4g1Params.length; i++) {
+        for (int i = 0; i < this.wt4g1Params.length; i++) {
             modelicaPar = this.wt4g1Params[i][0];
             sourcePar = this.wt4g1Params[i][1];
 

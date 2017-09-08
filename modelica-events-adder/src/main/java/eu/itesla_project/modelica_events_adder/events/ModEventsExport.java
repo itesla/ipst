@@ -49,11 +49,11 @@ public class ModEventsExport {
         export(Paths.get("."));
     }
 
-    public void export(Path outputParentDir){
+    public void export(Path outputParentDir) {
 
 
         //We read the events files in order to have a list of devices with events.
-        if(eventsFile != null && eventsFile.length() > 0) {
+        if (eventsFile != null && eventsFile.length() > 0) {
             eventsParser = new EventsParser(eventsFile);
             eventsParser.parse();
             eventsMap = eventsParser.getEventsMap();
@@ -74,8 +74,8 @@ public class ModEventsExport {
             eventFilePrefix = moFileName + "_events_";
 
             //For each network file with events:
-            for(Integer fileId : eventsMap.keySet()) {
-                if(eventsMap.get(fileId) == null || eventsMap.get(fileId).isEmpty()) {
+            for (Integer fileId : eventsMap.keySet()) {
+                if (eventsMap.get(fileId) == null || eventsMap.get(fileId).isEmpty()) {
                     log.error("There is no event.");
                     System.exit(0);
                 }
@@ -93,15 +93,15 @@ public class ModEventsExport {
 
                 eventsList = eventsMap.get(fileId);
 
-                for(Event event : eventsList) {
+                for (Event event : eventsList) {
                     Record record = recordsMap.get(event.getCIMDevice().toLowerCase());
 
-                    if(record == null) {
+                    if (record == null) {
                         log.warn("This device doesn't exist in the model.");
                         continue;
                     }
 
-                    if(event.getType().equals(EventsStaticData.BUS_FAULT)) { //Adding a BUS_FAULT event
+                    if (event.getType().equals(EventsStaticData.BUS_FAULT)) { //Adding a BUS_FAULT event
                         eventRecord = EventCreator.getBusEventRecord(record, event);
                         eventRecord.createRecord();
 
@@ -113,8 +113,7 @@ public class ModEventsExport {
                         //We add the fault connection
                         String faultConnect = createBusFaultConnection(eventRecord, record);
                         modified = stWriter.toString().replace(StaticData.CON_OTHERS, StaticData.CON_OTHERS.concat("\n").concat(faultConnect));
-                    }
-                    else if(event.getType().equals(EventsStaticData.LINE_FAULT)) { //Adding a LINE_FAULT event
+                    } else if (event.getType().equals(EventsStaticData.LINE_FAULT)) { //Adding a LINE_FAULT event
                         eventRecord = EventCreator.getLineEventRecord(record, event, recordsMap, conRecordsList);
                         eventRecord.createRecord();
 
@@ -125,36 +124,35 @@ public class ModEventsExport {
 
                         //We modify the fault connections
                         modified = stWriter.toString().replace(record.getModelicaName().concat("."), eventRecord.getModelicaName().concat("."));
-                    } else if(event.getType().equals(EventsStaticData.LINE_OPEN_REC)) {//Adding a LINE OPEN RECEIVING event
+                    } else if (event.getType().equals(EventsStaticData.LINE_OPEN_REC)) { //Adding a LINE OPEN RECEIVING event
                         eventRecord = EventCreator.getLineOpenRecEventRecord(record, event, recordsMap);
                         eventRecord.createRecord();
 
                         //We delete the line model and add the line opening receiving.
                         modified = stWriter.toString().replace(record.toString().trim(), eventRecord.toString().trim());
-                    }
-                    else if(event.getType().equals(EventsStaticData.BANK_MODIF)) {//Adding a BANK MODIFICATION event
+                    } else if (event.getType().equals(EventsStaticData.BANK_MODIF)) { //Adding a BANK MODIFICATION event
                         eventRecord = EventCreator.getBankModificationRecord(record, event);
                         eventRecord.createRecord();
 
                         //We delete the capacitor bank model and add the bank modification event.
                         modified = stWriter.toString().replace(record.toString().trim(), eventRecord.toString().trim());
-                    } else if(event.getType().equals(EventsStaticData.LOAD_VAR)) { //Adding a LOAD VARIATION event
+                    } else if (event.getType().equals(EventsStaticData.LOAD_VAR)) { //Adding a LOAD VARIATION event
                         eventRecord = EventCreator.getLoadVariationRecord(record, event, recordsMap);
                         eventRecord.createRecord();
 
                         //We delete the load model and add the load variation event.
                         modified = stWriter.toString().replace(record.toString().trim(), eventRecord.toString().trim());
-                    } else if(event.getType().equals(EventsStaticData.LINE_2_OPEN)) {//Adding a LINE 2 OPENINGS event
+                    } else if (event.getType().equals(EventsStaticData.LINE_2_OPEN)) { //Adding a LINE 2 OPENINGS event
                         eventRecord = EventCreator.getLine2OpenEventRecord(record, event, recordsMap);
                         eventRecord.createRecord();
 
                         //We delete the line model and add the line 2 openings.
                         modified = stWriter.toString().replace(record.toString().trim(), eventRecord.toString().trim());
-                    } else if(event.getType().equals(EventsStaticData.BREAKER)) {//Adding a BREAKER
+                    } else if (event.getType().equals(EventsStaticData.BREAKER)) { //Adding a BREAKER
                         //If the device is a branch TWO breakers should be created
                         String breakerEvent;
                         String breakerConnect;
-                        if(record.getModelicaName().startsWith(StaticData.PREF_LINE) || record.getModelicaName().startsWith(StaticData.PREF_TRAFO)) {
+                        if (record.getModelicaName().startsWith(StaticData.PREF_LINE) || record.getModelicaName().startsWith(StaticData.PREF_TRAFO)) {
                             List<Record> busesRecords = getBusesRecord(record);
 
                             eventRecord = EventCreator.getBreakerEventRecord(busesRecords.get(0), event);
@@ -189,7 +187,7 @@ public class ModEventsExport {
                         modified = stWriter.toString().replace(StaticData.CON_OTHERS, StaticData.CON_OTHERS.concat("\n").concat(breakerConnect));
                     }
 
-                    if(record != null) {
+                    if (record != null) {
                         stWriter = new StringWriter();
                         stWriter.write(modified);
                     }
@@ -198,8 +196,8 @@ public class ModEventsExport {
                 writer.write(stWriter.toString());
                 writer.close();
             }
-        }catch (FileNotFoundException e) {
-                log.error(e.getMessage(), e);
+        } catch (FileNotFoundException e) {
+            log.error(e.getMessage(), e);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
@@ -207,9 +205,8 @@ public class ModEventsExport {
 
     private StringWriter deleteConnections(Record record1, Record record2, StringWriter stWriter) {
         String modified = null;
-        for(ConnectRecord conRec : conRecordsList) {
-            if(conRec.containsElement(record1.getModelicaName()) && conRec.containsElement(record2.getModelicaName()))
-            {
+        for (ConnectRecord conRec : conRecordsList) {
+            if (conRec.containsElement(record1.getModelicaName()) && conRec.containsElement(record2.getModelicaName())) {
                 modified = stWriter.toString().replace(conRec.getConnectLine(), "");
             }
         }
@@ -221,12 +218,9 @@ public class ModEventsExport {
 
     private Record getBus(Record record) {
         String busName = null;
-        for(ConnectRecord conRec : conRecordsList)
-        {
-            if(conRec.containsElement(record.getModelicaName()))
-            {
-                if(conRec.getConnectedElement(record.getModelicaName()).startsWith(StaticData.PREF_BUS))
-                {
+        for (ConnectRecord conRec : conRecordsList) {
+            if (conRec.containsElement(record.getModelicaName())) {
+                if (conRec.getConnectedElement(record.getModelicaName()).startsWith(StaticData.PREF_BUS)) {
                     busName = conRec.getConnectedElement(record.getModelicaName());
                     break;
                 }
@@ -240,17 +234,14 @@ public class ModEventsExport {
         List<ConnectRecord> busesList = new ArrayList<ConnectRecord>();
 
         int i = 0;
-        for(ConnectRecord conRec : conRecordsList)
-        {
-            if(conRec.containsElement(record.getModelicaName()))
-            {
-                if(conRec.getConnectedElement(record.getModelicaName()).startsWith(StaticData.PREF_BUS))
-                {
+        for (ConnectRecord conRec : conRecordsList) {
+            if (conRec.containsElement(record.getModelicaName())) {
+                if (conRec.getConnectedElement(record.getModelicaName()).startsWith(StaticData.PREF_BUS)) {
                     busesList.add(conRec);
                     i++;
                 }
             }
-            if(i == 2) {
+            if (i == 2) {
                 break;
             }
         }
@@ -280,7 +271,7 @@ public class ModEventsExport {
         while ((line = reader.readLine()) != null) {
 
             //Create the Modelica records
-            if(line.trim().startsWith(StaticData.IPSL)) {
+            if (line.trim().startsWith(StaticData.IPSL)) {
                 paramsMap = new HashMap<String, String>();
                 isInsideRecord = true;
                 record = new Record();
@@ -294,16 +285,14 @@ public class ModEventsExport {
 
                 record.addValue(line);
                 record.addValue(StaticData.NEW_LINE);
-            }
-            else if(line.trim().startsWith(StaticData.CONNECT)) {
+            } else if (line.trim().startsWith(StaticData.CONNECT)) {
                 data = line.trim().split(",");
-                elemF = data[0].trim().substring(data[0].indexOf("(")+1, data[0].indexOf("."));
-                elemT = data[1].trim().substring(0, data[1].indexOf(".")-1);
+                elemF = data[0].trim().substring(data[0].indexOf("(") + 1, data[0].indexOf("."));
+                elemT = data[1].trim().substring(0, data[1].indexOf(".") - 1);
                 connectRecord = new ConnectRecord(elemF, elemT, line.trim());
 
                 conRecordsList.add(connectRecord);
-            }
-            else if(line.trim().endsWith(StaticData.SEMICOLON) && isInsideRecord) {
+            } else if (line.trim().endsWith(StaticData.SEMICOLON) && isInsideRecord) {
                 isInsideRecord = false;
                 record.addValue(line);
                 record.addValue(StaticData.NEW_LINE);
@@ -311,11 +300,10 @@ public class ModEventsExport {
 
                 String CIMid = EventsHelper.parseModelicaToCIM(modelicaName, modelicaType);
 
-                if(!recordsMap.containsKey(CIMid)) {
+                if (!recordsMap.containsKey(CIMid)) {
                     recordsMap.put(CIMid, record);
                 }
-            }
-            else if(isInsideRecord) {
+            } else if (isInsideRecord) {
                 record.addValue(line);
                 record.addValue(StaticData.NEW_LINE);
 

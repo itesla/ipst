@@ -364,8 +364,7 @@ public class Initialization {
 
         if (initData.getGeneratorRecord().getModelicaType().equals(EurostagModDefaultTypes.M1S_MACHINES)) {
             genInitModel = EurostagModDefaultTypes.M1S_INIT_MODEL;
-        }
-        else if (initData.getGeneratorRecord().getModelicaType().equals(EurostagModDefaultTypes.M2S_MACHINES)) {
+        } else if (initData.getGeneratorRecord().getModelicaType().equals(EurostagModDefaultTypes.M2S_MACHINES)) {
             genInitModel = EurostagModDefaultTypes.M2S_INIT_MODEL;
         }
 
@@ -405,8 +404,9 @@ public class Initialization {
             modelName = searchModelName(modelData);
             regName = null;
 
-            if (modelName != null)
+            if (modelName != null) {
                 regName = modelName.substring(0, modelName.lastIndexOf("_")) + "_" + parseName(initData.getGenerator().getId().trim());
+            }
 
             //Calculamos las init variables de los REGULADORES (init_X)
             BufferedReader buffer = new BufferedReader(new StringReader(regulatorRecord.getModelData()));
@@ -429,7 +429,7 @@ public class Initialization {
         //Init variables data from gens, from regs, etc
         Map<String, List<String>> regInitVarsFromGen = new HashMap<String, List<String>>();
         Map<String, List<String>> regInitVarsFromReg = new HashMap<String, List<String>>();
-        Map<String, Map<String, List<String>>> regInitVarsFromOtherRegs = new HashMap<String, Map<String,List<String>>>();
+        Map<String, Map<String, List<String>>> regInitVarsFromOtherRegs = new HashMap<String, Map<String, List<String>>>();
         Map<String, List<String>> regInitOtherVars = new HashMap<String, List<String>>();
 
         for (Internal reg : regRecords.keySet()) {
@@ -484,11 +484,10 @@ public class Initialization {
                                             if (!regInitVarsFromOtherRegs.get(regName).containsKey(r)) {
                                                 List<String> pin = new ArrayList<>();
                                                     pin.add(st);
-                                                    regInitVarsFromOtherRegs.get(regName).put(r, pin);
-                                                }
-                                                else {
-                                                    regInitVarsFromOtherRegs.get(regName).get(r).add(st);
-                                                }
+                                                regInitVarsFromOtherRegs.get(regName).put(r, pin);
+                                            } else {
+                                                regInitVarsFromOtherRegs.get(regName).get(r).add(st);
+                                            }
                                         }
                                     } else {
 

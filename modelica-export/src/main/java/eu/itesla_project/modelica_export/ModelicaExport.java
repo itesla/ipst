@@ -136,11 +136,9 @@ public class ModelicaExport {
         long initTime = System.currentTimeMillis();
         SimulatorInst modelicaSim = _ddbManager.findSimulator(Simulator.MODELICA, modelicaVersion);
         SimulatorInst sourceSim = null;
-        if (this._sourceEngine instanceof EurostagEngine)
-        {
+        if (this._sourceEngine instanceof EurostagEngine) {
             sourceSim = _ddbManager.findSimulator(Simulator.EUROSTAG, this._sourceEngine.getVersion());
-        } else if (this._sourceEngine instanceof PsseEngine)
-        {
+        } else if (this._sourceEngine instanceof PsseEngine) {
             sourceSim = _ddbManager.findSimulator(Simulator.PSSE, this._sourceEngine.getVersion());
         }
 

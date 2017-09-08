@@ -56,8 +56,9 @@ public class RegulatorRecord extends ModelicaRecord {
                 List<Parameters> parameters = in.getParametersContainer().getParameters();
                 Parameters modelicaParameters = null;
                 for (Parameters param : parameters) {
-                    if (param.getSimulator().equals(modelicaSim))
+                    if (param.getSimulator().equals(modelicaSim)) {
                         modelicaParameters = param;
+                    }
                 }
 
                 if (model != null) {
@@ -73,8 +74,9 @@ public class RegulatorRecord extends ModelicaRecord {
                         // Cogemos el setNum correspondiente // por defecto se
                         // coge el primero
                         int setNum = -1;
-                        if (modelicaParameters != null && modelicaParameters.getParameters().isEmpty())
+                        if (modelicaParameters != null && modelicaParameters.getParameters().isEmpty()) {
                             setNum = modelicaParameters.getDefParamSetNum();
+                        }
 
                         if (setNum != -1) {
                             if ((defSetParams != null) && (!defSetParams.isEmpty())) {
@@ -84,12 +86,14 @@ public class RegulatorRecord extends ModelicaRecord {
                                         break;
                                     }
                                 }
-                            } else
+                            } else {
                                 _log.error("Regulator " + this.getModelicaName() + " has not default parameters.");
+                            }
 
                         }
-                        if (defParameters == null || defParameters.isEmpty())
+                        if (defParameters == null || defParameters.isEmpty()) {
                             defParameters = defSetParams.get(0).getParameters();
+                        }
 
                         for (Parameter param : defParameters) {
                             regParameters.add(param);
@@ -113,15 +117,17 @@ public class RegulatorRecord extends ModelicaRecord {
                         parameters = in.getParametersContainer().getParameters();
                         modelicaParameters = null;
                         for (Parameters param : parameters) {
-                            if (param.getSimulator().equals(modelicaSim))
+                            if (param.getSimulator().equals(modelicaSim)) {
                                 modelicaParameters = param;
+                            }
                         }
 
                         if (modelicaParameters == null) {
                             List<DefaultParameters> defSetParams = model.getDefaultParameters();
                             List<Parameter> defParameters = new ArrayList<Parameter>();
-                            if ((defSetParams != null) && (!defSetParams.isEmpty()))
+                            if ((defSetParams != null) && (!defSetParams.isEmpty())) {
                                 defParameters = defSetParams.get(0).getParameters();
+                            }
                             for (Parameter param : defParameters) {
                                 regParameters.add(param);
                                 addParamInMap(param.getName(), param.getValue().toString());
@@ -140,8 +146,7 @@ public class RegulatorRecord extends ModelicaRecord {
                 Parameters modelicaParameters = null;
                 if (parameters != null) {
                     modelicaParameters = parameters;
-                }
-                else {
+                } else {
                     // Cogemos directamente los de PSSE (que en teoria tienen el
                     // mismo nombre)
                     modelicaParameters = ddbManager.findParameters(in, this.sourceSim);
@@ -159,8 +164,9 @@ public class RegulatorRecord extends ModelicaRecord {
                         // Cogemos el setNum correspondiente // por defecto se
                         // coge el primero
                         int setNum = -1;
-                        if (modelicaParameters != null && modelicaParameters.getParameters().isEmpty())
+                        if (modelicaParameters != null && modelicaParameters.getParameters().isEmpty()) {
                             setNum = modelicaParameters.getDefParamSetNum();
+                        }
 
                         if (setNum != -1) {
                             if ((defSetParams != null) && (!defSetParams.isEmpty())) {
@@ -170,12 +176,14 @@ public class RegulatorRecord extends ModelicaRecord {
                                         break;
                                     }
                                 }
-                            } else
+                            } else {
                                 _log.error("Regulator " + this.getModelicaName() + " has not default parameters.");
+                            }
 
                         }
-                        if (defParameters == null || defParameters.isEmpty())
+                        if (defParameters == null || defParameters.isEmpty()) {
                             defParameters = defSetParams.get(0).getParameters();
+                        }
 
                         for (Parameter param : defParameters) {
                             regParameters.add(param);
@@ -204,15 +212,17 @@ public class RegulatorRecord extends ModelicaRecord {
                         List<Parameters> parametersList = in.getParametersContainer().getParameters();
                         modelicaParameters = null;
                         for (Parameters param : parametersList) {
-                            if (param.getSimulator().equals(modelicaSim))
+                            if (param.getSimulator().equals(modelicaSim)) {
                                 modelicaParameters = param;
+                            }
                         }
 
                         if (modelicaParameters == null) {
                             List<DefaultParameters> defSetParams = model.getDefaultParameters();
                             List<Parameter> defParameters = new ArrayList<Parameter>();
-                            if ((defSetParams != null) && (!defSetParams.isEmpty()))
+                            if ((defSetParams != null) && (!defSetParams.isEmpty())) {
                                 defParameters = defSetParams.get(0).getParameters();
+                            }
                             for (Parameter param : defParameters) {
                                 regParameters.add(param);
                                 addParamInMap(param.getName(), param.getValue().toString());
@@ -253,8 +263,9 @@ public class RegulatorRecord extends ModelicaRecord {
         }
         // Nordic 32
 
-        if (super.getModelicaType() != null)
+        if (super.getModelicaType() != null) {
             this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);
+        }
 
         this.addValue(super.getModelicaName());
         this.addValue(" (");
@@ -325,7 +336,7 @@ public class RegulatorRecord extends ModelicaRecord {
                     continue;
                 }
 
-                if(this.getModelicaType().equalsIgnoreCase(PsseModDefaultTypes.SCRX) && regParameters.get(i).getName().equalsIgnoreCase("C_SWITCH")) {
+                if (this.getModelicaType().equalsIgnoreCase(PsseModDefaultTypes.SCRX) && regParameters.get(i).getName().equalsIgnoreCase("C_SWITCH")) {
                     boolean cswitch = regParameters.get(i).getValue().equals(new Double(1.0)) ? true : false;
                     this.addValue("\t " + regParameters.get(i).getName() + " = " + cswitch + ",");
                     this.addValue(StaticData.NEW_LINE);
@@ -401,13 +412,15 @@ public class RegulatorRecord extends ModelicaRecord {
         parsedName = parsedName.replaceAll("\\-", "_");
         eqName = eqName.replaceAll("\\-", "_");
 
-        if (name.length() > eqName.length())
+        if (name.length() > eqName.length()) {
             parsedName = parsedName.substring(eqName.length());
-        else if (eqName.length() > name.length())
+        } else if (eqName.length() > name.length()) {
             parsedName = eqName.substring(name.length());
+        }
 
-        if (parsedName.trim().startsWith("_"))
+        if (parsedName.trim().startsWith("_")) {
             parsedName = parsedName.trim().replaceFirst("_", "").toLowerCase();
+        }
 
         parsedName = parsedName + "_" + eqName;
         parsedName = parsedName.replaceAll(StaticData.DOT, "_");

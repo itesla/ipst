@@ -38,8 +38,8 @@ public class EventsParser {
             reader = new BufferedReader(new FileReader(this.eventsFile));
             String line = null;
 
-            while((line = reader.readLine()) != null) {
-                if(line.startsWith("#")) { //Commented events
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("#")) { //Commented events
                     continue;
                 }
                 Event event;
@@ -57,10 +57,9 @@ public class EventsParser {
                 event = new Event(fileId, id, eventType, device, data);
 
                 //
-                if(eventsMap.containsKey(fileId)) {
+                if (eventsMap.containsKey(fileId)) {
                     eventsMap.get(fileId).add(event);
-                }
-                else {
+                } else {
                     List<Event> evList = new ArrayList<Event>();
                     evList.add(event);
                     eventsMap.put(fileId, evList);

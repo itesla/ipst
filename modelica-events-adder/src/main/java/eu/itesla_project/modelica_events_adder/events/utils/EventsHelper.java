@@ -40,26 +40,20 @@ public class EventsHelper {
 //        String prefixType = modelicaType.substring(modelicaType.lastIndexOf(".")+1);
         String cimid = null;
 
-        if(modelicaName.startsWith(StaticData.PREF_BUS)) {
-            cimid = "_" + (modelicaName.substring(modelicaName.indexOf("__")+2)).replaceAll("_", "-");
-        }
-        else if(modelicaName.startsWith(StaticData.PREF_GEN)) { //gen_gENROU__78bb0400_86f5_11e4_824f_c8f73332c8f4(
-            cimid = "_" + (modelicaName.substring(modelicaName.indexOf("__")+2)).replaceAll("_", "-");
-        }
-        else if(modelicaName.startsWith(StaticData.PREF_LINE)) {
-            cimid = "_" + (modelicaName.substring(modelicaName.indexOf("__")+2)).replaceAll("_", "-");
-        }
-        else if(modelicaName.startsWith(StaticData.PREF_TRAFO)) { //trafo_PwPhaseTransformer__78bb01eb_86f5_11e4_824f_c8f73332c8f4__78bb01e4_86f5_11e4_824f_c8f73332c8f4_1(
-            cimid = "_" + (modelicaName.substring(modelicaName.indexOf("__")+2)).replaceAll("_", "-");
-        }
-        else if(modelicaName.startsWith(StaticData.PREF_LOAD)) { //load_pwLoadVoltageDependence__78bb02fa_86f5_11e4_824f_c8f73332c8f4
-            cimid = "_" + (modelicaName.substring(modelicaName.indexOf("__")+2)).replaceAll("_", "-");
-        }
-        else if(modelicaName.startsWith(StaticData.PREF_CAP)) {
-            cimid = "_" + (modelicaName.substring(modelicaName.indexOf("__")+2)).replaceAll("_", "-");
-        }
-        else if(modelicaName.startsWith(StaticData.PREF_REG)) {
-            cimid = "_" + (modelicaName.substring(modelicaName.indexOf("__")+2)).replaceAll("_", "-");
+        if (modelicaName.startsWith(StaticData.PREF_BUS)) {
+            cimid = "_" + (modelicaName.substring(modelicaName.indexOf("__") + 2)).replaceAll("_", "-");
+        } else if (modelicaName.startsWith(StaticData.PREF_GEN)) { //gen_gENROU__78bb0400_86f5_11e4_824f_c8f73332c8f4(
+            cimid = "_" + (modelicaName.substring(modelicaName.indexOf("__") + 2)).replaceAll("_", "-");
+        } else if (modelicaName.startsWith(StaticData.PREF_LINE)) {
+            cimid = "_" + (modelicaName.substring(modelicaName.indexOf("__") + 2)).replaceAll("_", "-");
+        } else if (modelicaName.startsWith(StaticData.PREF_TRAFO)) { //trafo_PwPhaseTransformer__78bb01eb_86f5_11e4_824f_c8f73332c8f4__78bb01e4_86f5_11e4_824f_c8f73332c8f4_1(
+            cimid = "_" + (modelicaName.substring(modelicaName.indexOf("__") + 2)).replaceAll("_", "-");
+        } else if (modelicaName.startsWith(StaticData.PREF_LOAD)) { //load_pwLoadVoltageDependence__78bb02fa_86f5_11e4_824f_c8f73332c8f4
+            cimid = "_" + (modelicaName.substring(modelicaName.indexOf("__") + 2)).replaceAll("_", "-");
+        } else if (modelicaName.startsWith(StaticData.PREF_CAP)) {
+            cimid = "_" + (modelicaName.substring(modelicaName.indexOf("__") + 2)).replaceAll("_", "-");
+        } else if (modelicaName.startsWith(StaticData.PREF_REG)) {
+            cimid = "_" + (modelicaName.substring(modelicaName.indexOf("__") + 2)).replaceAll("_", "-");
         }
         return cimid;
     }

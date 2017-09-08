@@ -59,8 +59,7 @@ import org.omg.CORBA.ORB;
  * @author Andreas Remar
  * @author Adrian Pop
  */
-public class OMCProxy 
-{
+public class OMCProxy {
 
     /* the CORBA object */
     private static OmcCommunication omcc;
@@ -78,7 +77,7 @@ public class OMCProxy
     /* indicates if the Modelica System Library has been loaded */
     private boolean systemLibraryLoaded = false;
 
-    private String[] standardLibraryPackages = { "Modelica" };
+    private String[] standardLibraryPackages = {"Modelica"};
 
     /* debug options  */
     /* should we trace the calls to sendExpression? */
@@ -87,8 +86,7 @@ public class OMCProxy
 
     private static boolean existingCorbaFileIsNew = false;
 
-    public OMCProxy()
-    {
+    public OMCProxy() {
 
     }
 
@@ -96,30 +94,23 @@ public class OMCProxy
      * Reads in the OMC CORBA object reference from a file on disk.
      * @return the object reference as a <code>String</code>
      */
-    private static String readObjectFromFile() throws ConnectException
-    {
+    private static String readObjectFromFile() throws ConnectException {
         File f = new File(getPathToObject());
         String stringifiedObjectReference = null;
 
         BufferedReader br = null;
         FileReader fr = null;
-        try
-        {
+        try {
             fr = new FileReader(f);
-        }
-        catch(IOException e)
-        {
+        } catch (IOException e) {
             throw new ConnectException("Unable to read OpenModelica Compiler CORBA object from " + f.toString());
         }
 
         br = new BufferedReader(fr);
 
-        try
-        {
+        try {
             stringifiedObjectReference = br.readLine();
-        }
-        catch(IOException e)
-        {
+        } catch (IOException e) {
             throw new ConnectException("Unable to read OpenModelica Compiler"
                     + " CORBA object from " + getPathToObject());
         }
@@ -145,17 +136,14 @@ public class OMCProxy
     /**
      * @return Returns the path to the OMC CORBA object that is stored on disk.
      */
-    private static String getPathToObject()
-    {
+    private static String getPathToObject() {
         String fileName = null;
 
         /* This mirrors the way OMC creates the object file. */
-        switch (os)
-        {
+        switch (os) {
         case UNIX:
             String username = System.getenv("USER");
-            if(username == null)
-            {
+            if (username == null) {
                 username = "nobody";
             }
             fileName = "/tmp/openmodelica." + username + ".objid." + corbaSessionName;
@@ -188,12 +176,10 @@ public class OMCProxy
      * @return full path to the omc binary
      * @throws ConnectException if the path could not be determined
      */
-    private static File[] getOmcBinaryPaths() throws ConnectException
-    {
+    private static File[] getOmcBinaryPaths() throws ConnectException {
         String binaryName = "omc";
 
-        if (os == osType.WINDOWS)
-        {
+        if (os == osType.WINDOWS) {
             binaryName += ".exe";
         }
 
@@ -211,10 +197,9 @@ public class OMCProxy
          * variable.
          */
         String openModelicaHome = System.getenv("OPENMODELICAHOME");
-        if(openModelicaHome == null)
-        {
-            final String m = "Environment variable OPENMODELICAHOME not set, "+System.getenv("OPENMODELICAHOME");
-            logOMCStatus("Environment variable OPENMODELICAHOME not set,"+
+        if (openModelicaHome == null) {
+            final String m = "Environment variable OPENMODELICAHOME not set, " + System.getenv("OPENMODELICAHOME");
+            logOMCStatus("Environment variable OPENMODELICAHOME not set," +
                     " don't know how to start OMC from standard path.");
             throw new ConnectException(m);
         }
@@ -222,30 +207,25 @@ public class OMCProxy
         omcWorkingDirectory = new File(openModelicaHome);
 
         /* the subdirectories where omc binary may be located, hurray for standards! */
-        String[] subdirs = { "", "bin", "Compiler" };
+        String[] subdirs = {"", "bin", "Compiler" };
 
-        for (String subdir : subdirs)
-        {
+        for (String subdir : subdirs) {
 
             String path = omcWorkingDirectory.getAbsolutePath() + File.separator;
             path += subdir.equals("") ? binaryName :  subdir + File.separator + binaryName;
 
             File file = new File(path);
 
-            if (file.exists())
-            {
+            if (file.exists()) {
                 omcBinary = file;
                 logOMCStatus("Using omc-binary at '" + omcBinary.getAbsolutePath() + "'");
                 break;
-            }
-            else
-            {
+            } else {
                 logOMCStatus("No omc binary at: [" + path + "]");
             }
         }
 
-        if (omcBinary == null)
-        {
+        if (omcBinary == null) {
             logOMCStatus("Could not fine omc-binary on the OPENMODELICAHOME path");
             throw new ConnectException("Unable to start the OpenModelica Compiler, binary not found");
         }
@@ -256,8 +236,7 @@ public class OMCProxy
     /**
      * Start a new OMC server.
      */
-    private static void startServer() throws ConnectException
-    {
+    private static void startServer() throws ConnectException {
         File tmp[] = getOmcBinaryPaths();
 
         File omcBinary = tmp[0];
@@ -271,24 +250,22 @@ public class OMCProxy
          */
         File f = new File(getPathToObject());
         long lastModified = 0;
-        if(f.exists())
-        {
+        if (f.exists()) {
             lastModified = f.lastModified();
             logOMCStatus("OMC object reference file is already on disk, we try to use it.");
-            if (existingCorbaFileIsNew) return;
+            if (existingCorbaFileIsNew) {
+                return;
+            }
             logOMCStatus("OMC object reference file is already on disk, but is old, start a new server.");
         }
 
-        String command[] = { omcBinary.getAbsolutePath(), "+c=" + corbaSessionName, "+d=interactiveCorba" };
-        try
-        {
+        String command[] = {omcBinary.getAbsolutePath(), "+c=" + corbaSessionName, "+d=interactiveCorba"};
+        try {
             logOMCStatus("Running command " + command[0] + " " + command[1] + " " + command[2]);
             logOMCStatus("Setting working directory to " + workingDirectory.getAbsolutePath());
             ProcessStartThread pt = new ProcessStartThread(command, workingDirectory);
             pt.start();
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             logOMCStatus("Error running command " + e.getMessage());
             logOMCStatus("Unable to start OMC, giving up.");
@@ -303,22 +280,16 @@ public class OMCProxy
          * 5 seconds, abort. (Very arbitrary 5 seconds..)
          */
         int ticks = 0;
-        while(!f.exists() || (f.exists() && lastModified == f.lastModified()) )
-        {
-            try
-            {
-                logOMCStatus("Waiting for OMC CORBA object reference to appear on disk ... for "+ (ticks+1) + " seconds");
+        while (!f.exists() || (f.exists() && lastModified == f.lastModified()) ) {
+            try {
+                logOMCStatus("Waiting for OMC CORBA object reference to appear on disk ... for " + (ticks + 1) + " seconds");
                 Thread.sleep(100);
-            }
-            catch(InterruptedException e)
-            {
-                /* ignore */
+            } catch (InterruptedException ignored) {
             }
             ticks++;
 
             /* If we've waited for around 5 seconds, abort the wait for OMC */
-            if(ticks > 50)
-            {
+            if (ticks > 50) {
                 logOMCStatus("No OMC object reference file created after approximately 50 seconds.");
                 logOMCStatus("It seems OMC does not want to start, giving up.");
                 throw new ConnectException("Unable to start the Open Modelica Compiler. Waited for 5 seconds, but it didn't respond.");
@@ -332,8 +303,7 @@ public class OMCProxy
      * CORBA object, and then narrows that object to an OmcCommunication
      * object.
      */
-    private static void setupOmcc(String stringifiedObjectReference)
-    {
+    private static void setupOmcc(String stringifiedObjectReference) {
         /* Can't remember why this is needed. But it is. */
         String args[] = {null};
 
@@ -351,19 +321,13 @@ public class OMCProxy
      * @return the name of the operating system. If an unknown os is found,
      * the default is Unix.
      */
-    private static osType getOs()
-    {
+    private static osType getOs() {
         String osName = System.getProperty("os.name");
-        if(osName.contains("Linux"))
-        {
+        if (osName.contains("Linux")) {
             return osType.UNIX;
-        }
-        else if(osName.contains("Windows"))
-        {
+        } else if (osName.contains("Windows")) {
             return osType.WINDOWS;
-        }
-        else
-        {
+        } else {
             logWarning("'" + osName + "' not officialy supported OS");
             /* If the OS is not GNU/Linux or Windows, default to Unix */
             return osType.UNIX;
@@ -375,8 +339,7 @@ public class OMCProxy
      * @throws ConnectException if we're unable to start communicating with
      * the server
      */
-    protected void init() throws ConnectException
-    {
+    protected void init() throws ConnectException {
         /*
          * Get type of operating system, used for finding object
          * reference and starting OMC if the reference is faulty
@@ -386,14 +349,11 @@ public class OMCProxy
         /* See if an OMC server is already running */
         File f = new File(getPathToObject());
         String stringifiedObjectReference = null;
-        if(!f.exists())
-        {
+        if (!f.exists()) {
             /* If a server isn't running, start it */
             logOMCStatus("No OMC object reference found, starting server.");
             startServer();
-        }
-        else
-        {
+        } else {
             logOMCStatus("Old OMC CORBA object reference present," + " assuming OMC is running.");
         }
 
@@ -406,8 +366,7 @@ public class OMCProxy
          */
         setupOmcc(stringifiedObjectReference);
 
-        try
-        {
+        try {
             /*
              * Test the server by trying to send an expression to it.
              * This might fail if the object reference found on disk didn't
@@ -417,9 +376,7 @@ public class OMCProxy
             logOMCStatus("Trying to send expression to OMC.");
             omcc.sendExpression("1+1");
             logOMCStatus("Expression sent successfully.");
-        }
-        catch(org.omg.CORBA.COMM_FAILURE e)
-        {
+        } catch (org.omg.CORBA.COMM_FAILURE e) {
             /* Start server and set up omcc */
             logOMCStatus("Failed sending expression, will try to start OMC.");
             existingCorbaFileIsNew = false;
@@ -427,17 +384,14 @@ public class OMCProxy
             stringifiedObjectReference = readObjectFromFile();
             setupOmcc(stringifiedObjectReference);
 
-            try
-            {
+            try {
                 /* Once again try to send an expression to OMC. If it fails this
                  * time it's time to send back an exception to the caller of
                  * this function. */
                 logOMCStatus("Trying to send expression to OMC.");
                 omcc.sendExpression("1+1");
                 logOMCStatus("Expression sent successfully.");
-            }
-            catch(org.omg.CORBA.COMM_FAILURE x)
-            {
+            } catch (org.omg.CORBA.COMM_FAILURE x) {
                 logOMCStatus("Failed sending expression, giving up.");
                 throw new ConnectException("Unable to start the OpenModelica Compiler.");
             }
@@ -458,26 +412,21 @@ public class OMCProxy
     // old synchronization aka 'private synchronized String sendExpression(String exp)'
     // doesnt work when there is possibility of multiple instances of OMCProxy objects
     public String sendExpression(String exp)
-        throws ConnectException
-    {
+            throws ConnectException {
         String retval = null;
 
-        if(hasInitialized == false)
-        {
+        if (hasInitialized == false) {
             init();
         }
 
-        try
-        {
+        try {
             logOMCCall(exp);
             retval = omcc.sendExpression(exp);
             logOMCReply(retval);
-        }
-        catch(org.omg.CORBA.COMM_FAILURE x)
-        {
-            logOMCCallError("Error while sending expression " + exp + " ["+x+"]");
+        } catch (org.omg.CORBA.COMM_FAILURE x) {
+            logOMCCallError("Error while sending expression " + exp + " [" + x + "]");
             /* lost connection to OMC or something */
-            throw new ConnectException("Couldn't send expression to the "+
+            throw new ConnectException("Couldn't send expression to the " +
                     "OpenModelica Compiler. Tried sending: " + exp);
         }
 
@@ -490,10 +439,8 @@ public class OMCProxy
      *
      * @param expression the expression that is about to be sent to OMC
      */
-    public static void logOMCCall(String expression)
-    {
-        if (!traceOMCCalls)
-        {
+    public static void logOMCCall(String expression) {
+        if (!traceOMCCalls) {
             return;
         }
         System.out.println(">> " + expression);
@@ -504,10 +451,8 @@ public class OMCProxy
      * when communicating with omc
      * @param message the message to log
      */
-    public static void logOMCCallError(String message)
-    {
-        if(!traceOMCCalls)
-        {
+    public static void logOMCCallError(String message) {
+        if (!traceOMCCalls) {
             return;
         }
         System.out.println(message);
@@ -518,10 +463,8 @@ public class OMCProxy
      * tracing flag traceOMCStatus is set
      * @param message the message to log
      */
-    public static void logOMCStatus(String message)
-    {
-        if (!traceOMCStatus)
-        {
+    public static void logOMCStatus(String message) {
+        if (!traceOMCStatus) {
             return;
         }
         System.out.println("OMCSTATUS: " + message);
@@ -533,17 +476,14 @@ public class OMCProxy
      *
      * @param reply the reply recieved from the OMC
      */
-    public static void logOMCReply(String reply)
-    {
-        if (!traceOMCCalls)
-        {
+    public static void logOMCReply(String reply) {
+        if (!traceOMCCalls) {
             return;
         }
 
         StringTokenizer tokenizer = new StringTokenizer(reply, "\n");
 
-        while (tokenizer.hasMoreTokens())
-        {
+        while (tokenizer.hasMoreTokens()) {
             System.out.println("<< " + tokenizer.nextToken());
         }
     }
@@ -560,9 +500,8 @@ public class OMCProxy
      * @throws UnexpectedReplyException
      * @throws InitializationException
      */
-    public String getClassNames(String className) throws ConnectException
-    {
-        String retval = sendExpression("getClassNames("+className+")");
+    public String getClassNames(String className) throws ConnectException {
+        String retval = sendExpression("getClassNames(" + className + ")");
 
         /* fetch error string but ignore it */
         //getErrorString();
@@ -577,8 +516,7 @@ public class OMCProxy
      * @return the type of restriction of the class
      * @throws ConnectException
      */
-    public String getRestriction(String className) throws ConnectException
-    {
+    public String getRestriction(String className) throws ConnectException {
         String reply = sendExpression("getClassRestriction(" + className + ")");
 
         /* remove " around the reply */
@@ -593,18 +531,16 @@ public class OMCProxy
      * @return the <code>String</code> of errors
      * @throws ConnectException
      */
-    private String getErrorString() throws ConnectException
-    {
+    private String getErrorString() throws ConnectException {
         String res = sendExpression("getErrorString()");
 
         /* Make sure the error string isn't empty */
-        if(res != null && res.length() > 2)
-        {
+        if (res != null && res.length() > 2) {
             res = res.trim();
             return res.substring(1, res.length() - 1);
-        }
-        else
+        } else {
             return "";
+        }
     }
 
 
@@ -618,8 +554,7 @@ public class OMCProxy
      * @throws UnexpectedReplyException
      * @throws InitializationException
      */
-    public String loadSourceFile(String file) throws ConnectException
-    {
+    public String loadSourceFile(String file) throws ConnectException {
         String retval =    sendExpression("loadFileInteractiveQualified(\"" + file + "\")");
         retval = retval.trim();
         // String errorString = getErrorString();
@@ -638,17 +573,15 @@ public class OMCProxy
      * @throws ConnectException
      * @throws InvocationError
      */
-    public String getClassLocation(String className) throws ConnectException, InvocationError
-    {
+    public String getClassLocation(String className) throws ConnectException, InvocationError {
         String retval = sendExpression("getCrefInfo(" + className + ")");
 
         /* fetch error string but ignore it */
         getErrorString();
 
-        if(retval.contains("Error") || retval.contains("error"))
-        {
+        if (retval.contains("Error") || retval.contains("error")) {
             throw new
-                InvocationError("Fetching file position of " + className, "getCrefInfo(" + className + ")");
+                    InvocationError("Fetching file position of " + className, "getCrefInfo(" + className + ")");
         }
 
 
@@ -675,8 +608,7 @@ public class OMCProxy
      * @return true if className is a package, false otherwise
      * @throws ConnectException
      */
-    public boolean isPackage(String className) throws ConnectException
-    {
+    public boolean isPackage(String className) throws ConnectException {
         String retval = sendExpression("isPackage(" + className + ")");
 
         /* fetch error string but ignore it */
@@ -693,9 +625,8 @@ public class OMCProxy
      * @return a <code>Collection</code> (of <code>ElementsInfo</code>)
      * containing the information about className
      */
-    public String getElements(String className)    throws ConnectException, InvocationError
-    {
-        String retval = sendExpression("getElementsInfo("+ className +")");
+    public String getElements(String className)    throws ConnectException, InvocationError {
+        String retval = sendExpression("getElementsInfo(" + className + ")");
 
         /* fetch error string */
         getErrorString();
@@ -703,9 +634,8 @@ public class OMCProxy
         return retval;
     }
 
-    public String getClassInfo(String className) throws ConnectException
-    {
-        String retval = sendExpression("getClassInformation("+ className +")");
+    public String getClassInfo(String className) throws ConnectException {
+        String retval = sendExpression("getClassInformation(" + className + ")");
 
         /* fetch error string but ignore it */
         getErrorString();
@@ -718,8 +648,7 @@ public class OMCProxy
      * @return the name of the compiler that this plugin tries to communicate
      * with (at least it tries...)
      */
-    public String getCompilerName()
-    {
+    public String getCompilerName() {
         return "OpenModelica Compiler";
     }
 
@@ -730,10 +659,8 @@ public class OMCProxy
      * @throws ConnectException if we're unable to start communicating with
      * the server
      */
-    public String[] getStandardLibrary() throws ConnectException
-    {
-        if (!systemLibraryLoaded)
-        {
+    public String[] getStandardLibrary() throws ConnectException {
+        if (!systemLibraryLoaded) {
             sendExpression("loadModel(Modelica)");
 
             /* fetch error string but ignore it */
@@ -745,13 +672,11 @@ public class OMCProxy
         return standardLibraryPackages;
     }
 
-    public static void logBug(String where, String message)
-    {
-        System.out.println("Error: " + where + " Message: "+ message);
+    public static void logBug(String where, String message) {
+        System.out.println("Error: " + where + " Message: " + message);
     }
 
-    public static void logWarning(String message)
-    {
+    public static void logWarning(String message) {
         System.out.println("Warning: " + message);
     }
 
