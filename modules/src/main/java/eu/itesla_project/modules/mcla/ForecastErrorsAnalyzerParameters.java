@@ -93,11 +93,13 @@ public class ForecastErrorsAnalyzerParameters {
         return conditionalSampling;
     }
 
-    public Integer getnSamples() { return nSamples; }
+    public Integer getnSamples() {
+        return nSamples;
+    }
 
     public void toFile(Path file) throws FileNotFoundException, IOException {
         Properties properties = new Properties();
-        try(OutputStream output = new FileOutputStream(file.toFile())) {
+        try (OutputStream output = new FileOutputStream(file.toFile())) {
             properties.setProperty("histoInterval", histoInterval.toString());
             properties.setProperty("feAnalysisId", feAnalysisId);
             properties.setProperty("ir", Double.toString(ir));
@@ -115,7 +117,7 @@ public class ForecastErrorsAnalyzerParameters {
 
     public static ForecastErrorsAnalyzerParameters fromFile(Path file) throws FileNotFoundException, IOException {
         Properties properties = new Properties();
-        try(InputStream input =  new FileInputStream(file.toFile())) {
+        try (InputStream input =  new FileInputStream(file.toFile())) {
             properties.load(input);
             return new ForecastErrorsAnalyzerParameters(
                     Interval.parse(properties.getProperty("histoInterval")),

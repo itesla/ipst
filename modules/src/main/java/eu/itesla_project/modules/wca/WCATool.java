@@ -291,7 +291,7 @@ public class WCATool implements Tool {
                     }
                 }
                 context.getOutputStream().println(table.render());
-            } else if (Files.isDirectory(caseFile)){
+            } else if (Files.isDirectory(caseFile)) {
                 if (outputCsvFile == null) {
                     throw new RuntimeException("In case of multiple wca, you have to specify and ouput to csv file");
                 }

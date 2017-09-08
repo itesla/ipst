@@ -59,22 +59,28 @@ public class IIDM2DB {
 
         Map<String, Map<String, JSONArray>> toposPerSubstation = new HashMap();
 
-        LinkedHashMap<HistoDbAttributeId,Object> getValueMap(HorizonKey key) {
+        LinkedHashMap<HistoDbAttributeId, Object> getValueMap(HorizonKey key) {
 
-            LinkedHashMap<HistoDbAttributeId,Object> valueMap = this.get(key);
+            LinkedHashMap<HistoDbAttributeId, Object> valueMap = this.get(key);
 
-            if (valueMap == null) this.put(key, valueMap = new LinkedHashMap<HistoDbAttributeId, Object>());
+            if (valueMap == null) {
+                this.put(key, valueMap = new LinkedHashMap<HistoDbAttributeId, Object>());
+            }
 
             return valueMap;
         }
 
         public boolean hasForecastValues() {
-            return keySet().size()>1 || (keySet().size()==1 && keySet().iterator().next().forecastDistance>0);
+            return keySet().size() > 1 || (keySet().size() == 1 && keySet().iterator().next().forecastDistance > 0);
         }
 
-        public LinkedHashMap<HistoDbAttributeId,Object> getSingleValueMap() {
-            if (this.size() == 0) throw new IllegalStateException("This CimValuesMap has no horizons");
-            if (this.size() > 1) throw new IllegalStateException("This CimValuesMap has several horizons " + this.keySet());
+        public LinkedHashMap<HistoDbAttributeId, Object> getSingleValueMap() {
+            if (this.size() == 0) {
+                throw new IllegalStateException("This CimValuesMap has no horizons");
+            }
+            if (this.size() > 1) {
+                throw new IllegalStateException("This CimValuesMap has several horizons " + this.keySet());
+            }
 
             return this.values().iterator().next();
         }
@@ -82,7 +88,9 @@ public class IIDM2DB {
         void addTopology(String substationId, String topoHash, JSONArray topo) {
             Map<String, JSONArray> topos = toposPerSubstation.get(substationId);
 
-            if (topos == null) toposPerSubstation.put(substationId, topos = new HashMap());
+            if (topos == null) {
+                toposPerSubstation.put(substationId, topos = new HashMap());
+            }
 
             topos.put(topoHash, topo);
         }
@@ -218,14 +226,26 @@ public class IIDM2DB {
                 String horizon = n.getForecastDistance() > 0 ? "DACF" : "SN"; // for backward compatibility
                 final LinkedHashMap<HistoDbAttributeId, Object> valueMap = valuesMap.getValueMap(new HorizonKey(n.getForecastDistance(), horizon));
 
-                if (config.getCimName() != null && !valueMap.containsKey(HistoDbMetaAttributeId.cimName)) valueMap.put(HistoDbMetaAttributeId.cimName, config.getCimName());
+                if (config.getCimName() != null && !valueMap.containsKey(HistoDbMetaAttributeId.cimName)) {
+                    valueMap.put(HistoDbMetaAttributeId.cimName, config.getCimName());
+                }
 
                 if (config.isExtractTemporalFields()) {
-                    if (!valueMap.containsKey(HistoDbMetaAttributeId.datetime)) valueMap.put(HistoDbMetaAttributeId.datetime, n.getCaseDate().toDate());
-                    if (!valueMap.containsKey(HistoDbMetaAttributeId.daytime)) valueMap.put(HistoDbMetaAttributeId.daytime, n.getCaseDate().getMillisOfDay());
-                    if (!valueMap.containsKey(HistoDbMetaAttributeId.month)) valueMap.put(HistoDbMetaAttributeId.month, n.getCaseDate().getMonthOfYear());
-                    if (!valueMap.containsKey(HistoDbMetaAttributeId.forecastTime)) valueMap.put(HistoDbMetaAttributeId.forecastTime, n.getForecastDistance());
-                    if (!valueMap.containsKey(HistoDbMetaAttributeId.horizon)) valueMap.put(HistoDbMetaAttributeId.horizon, horizon);
+                    if (!valueMap.containsKey(HistoDbMetaAttributeId.datetime)) {
+                        valueMap.put(HistoDbMetaAttributeId.datetime, n.getCaseDate().toDate());
+                    }
+                    if (!valueMap.containsKey(HistoDbMetaAttributeId.daytime)) {
+                        valueMap.put(HistoDbMetaAttributeId.daytime, n.getCaseDate().getMillisOfDay());
+                    }
+                    if (!valueMap.containsKey(HistoDbMetaAttributeId.month)) {
+                        valueMap.put(HistoDbMetaAttributeId.month, n.getCaseDate().getMonthOfYear());
+                    }
+                    if (!valueMap.containsKey(HistoDbMetaAttributeId.forecastTime)) {
+                        valueMap.put(HistoDbMetaAttributeId.forecastTime, n.getForecastDistance());
+                    }
+                    if (!valueMap.containsKey(HistoDbMetaAttributeId.horizon)) {
+                        valueMap.put(HistoDbMetaAttributeId.horizon, horizon);
+                    }
                 }
 
                 vl.visitEquipments(new DefaultTopologyVisitor() {
@@ -508,7 +528,7 @@ public class IIDM2DB {
             digest = Arrays.copyOfRange(digest, 0, 6);
             base64hash = Base64.encodeBase64String(digest).trim();
         } catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
-            throw new RuntimeException("Failed to compute topology hash from"+topoRep, e);
+            throw new RuntimeException("Failed to compute topology hash from" + topoRep, e);
         }
 
         return base64hash;

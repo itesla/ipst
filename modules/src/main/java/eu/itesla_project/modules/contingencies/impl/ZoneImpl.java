@@ -34,17 +34,15 @@ public class ZoneImpl implements Zone {
     private List<VoltageLevel> voltageLevels;
 
 
-    public ZoneImpl(String _name, BigInteger _number, List<VoltageLevel> _voltageLevels )
-    {
-        this.name =_name;
+    public ZoneImpl(String _name, BigInteger _number, List<VoltageLevel> _voltageLevels ) {
+        this.name = _name;
         this.number = _number;
         this.voltageLevels = _voltageLevels;
 
     }
 
-    public ZoneImpl(String _name, BigInteger _number, List<VoltageLevel> _voltageLevels, String _description)
-    {
-        this.name =_name;
+    public ZoneImpl(String _name, BigInteger _number, List<VoltageLevel> _voltageLevels, String _description) {
+        this.name = _name;
         this.number = _number;
         this.voltageLevels = _voltageLevels;
         this.description = _description;
@@ -52,21 +50,18 @@ public class ZoneImpl implements Zone {
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
             return this.name;
     }
 
 
     @Override
-    public BigInteger getNumber()
-    {
+    public BigInteger getNumber() {
         return this.number;
     }
 
     @Override
-    public List<VoltageLevel> getVoltageLevels()
-    {
+    public List<VoltageLevel> getVoltageLevels() {
         return voltageLevels;
     }
 

@@ -22,14 +22,14 @@ public class GeneratorStartAction implements ActionElement {
     private Number achievmentIndex;
 
     public GeneratorStartAction(String genId) {
-        this.equipmentId=genId;
+        this.equipmentId = genId;
     }
 
 
     public GeneratorStartAction(String genId, Number implementationTime, Number achievmentIndex ) {
-        this.equipmentId=genId;
-        this.implementationTime=implementationTime;
-        this.achievmentIndex=achievmentIndex;
+        this.equipmentId = genId;
+        this.implementationTime = implementationTime;
+        this.achievmentIndex = achievmentIndex;
     }
 
     @Override

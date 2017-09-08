@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public interface StateProcessingStatus {
 
-    public Map<String,String> getStatus();
+    public Map<String, String> getStatus();
     public String getDetail();
 
 }

@@ -41,7 +41,7 @@ public class PostContingencyState {
 
     @Override
     public String toString() {
-        return "postCtgState[newtwork= "+ network.getId() + ", id=" + stateId + ", cid=" + contingency.getId() + "]";
+        return "postCtgState[newtwork= " + network.getId() + ", id=" + stateId + ", cid=" + contingency.getId() + "]";
     }
 
 

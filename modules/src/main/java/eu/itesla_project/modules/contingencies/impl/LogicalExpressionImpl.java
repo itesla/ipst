@@ -19,7 +19,7 @@ public class LogicalExpressionImpl implements LogicalExpression {
 
     private Operator operator;
 
-    public LogicalExpressionImpl (){
+    public LogicalExpressionImpl () {
 
     }
 
@@ -28,7 +28,7 @@ public class LogicalExpressionImpl implements LogicalExpression {
         return operator;
     }
     public void setOperator(Operator operator) {
-        this.operator=operator;
+        this.operator = operator;
 
     }
 

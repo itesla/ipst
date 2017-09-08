@@ -85,8 +85,7 @@ public class ActionImpl implements Action {
     }
 
     @Override
-    public Collection<String> getZones() 
-    {
+    public Collection<String> getZones() {
         return zones;
     }
  
@@ -94,10 +93,11 @@ public class ActionImpl implements Action {
     public ModificationTask toTask() {
         List<ModificationTask> subTasks = new ArrayList<>(elements.size());
         for (ActionElement element : elements) {
-            if ( element instanceof GenerationRedispatching)
+            if (element instanceof GenerationRedispatching) {
                 subTasks.add(element.toTask(parameters));
-            else
+            } else {
                 subTasks.add(element.toTask());
+            }
         }
         return new CompoundModificationTask(subTasks);
     }

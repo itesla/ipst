@@ -44,7 +44,7 @@ public class RedispatcherConfig {
 
     @Override
     public String toString() {
-        return "RedispatcherConfig ["+ "redispatchLimitsPercentage=" + redispatchLimitsPercentage + "]";
+        return "RedispatcherConfig [" + "redispatchLimitsPercentage=" + redispatchLimitsPercentage + "]";
     }
 
 

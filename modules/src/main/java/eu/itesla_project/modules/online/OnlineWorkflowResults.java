@@ -51,7 +51,7 @@ public interface OnlineWorkflowResults {
      * @param contingencyId the id of the contingency
      * @return a map of [id, action found flag] for the states requiring corrective actions
      */
-    Map<Integer,Boolean> getUnsafeStatesWithActions(String contingencyId);
+    Map<Integer, Boolean> getUnsafeStatesWithActions(String contingencyId);
 
     /**
      * Get the unstable states, given a contingency
@@ -100,7 +100,7 @@ public interface OnlineWorkflowResults {
      * @param stateId the id of the state
      * @return the map of [index, security flag] pair, output of a T-D simulation on a state for a contingency
      */
-    Map<String,Boolean> getIndexesData(String contingencyId, Integer stateId);
+    Map<String, Boolean> getIndexesData(String contingencyId, Integer stateId);
 
 
     /**

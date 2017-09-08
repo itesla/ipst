@@ -24,7 +24,7 @@ public class CorrectiveControlOptimizerResult {
 
     private String actionPlan = null;
     Map<String, Collection<String>> actions = new HashMap<String, Collection<String>>();
-    Map<String,ActionParameters> equipments = new HashMap<>();
+    Map<String, ActionParameters> equipments = new HashMap<>();
     private CCOFinalStatus finalStatus;
     private String cause;
 
@@ -53,8 +53,8 @@ public class CorrectiveControlOptimizerResult {
         return actions.get(actionId);
     }
 
-    public Map<String,ActionParameters> getEquipmentsWithParameters(String actionId) {
-        Map<String,ActionParameters> actionEquipments = new HashMap<String, ActionParameters>();
+    public Map<String, ActionParameters> getEquipmentsWithParameters(String actionId) {
+        Map<String, ActionParameters> actionEquipments = new HashMap<String, ActionParameters>();
         for (String equipmentId : actions.get(actionId)) {
             actionEquipments.put(equipmentId, equipments.get(actionEquipmentId(actionId, equipmentId)));
         }
@@ -69,7 +69,7 @@ public class CorrectiveControlOptimizerResult {
         this.actionPlan = actionPlan;
     }
 
-    public void addAction(String actionId, Map<String,ActionParameters> actionEquipments) {
+    public void addAction(String actionId, Map<String, ActionParameters> actionEquipments) {
         actions.put(actionId, actionEquipments.keySet());
         for (String equipmentId : actionEquipments.keySet()) {
             equipments.put(actionEquipmentId(actionId, equipmentId), actionEquipments.get(equipmentId));
@@ -78,8 +78,9 @@ public class CorrectiveControlOptimizerResult {
 
     public void addEquipment(String actionId, String equipmentId, ActionParameters parameters) {
         Collection<String> actionEquiments = new ArrayList<String>();
-        if ( equipments.containsKey(actionId) )
+        if (equipments.containsKey(actionId)) {
             actionEquiments = actions.get(actionId);
+        }
         actionEquiments.add(equipmentId);
         actions.put(actionId, actionEquiments);
         equipments.put(actionEquipmentId(actionId, equipmentId), parameters);

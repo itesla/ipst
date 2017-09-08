@@ -199,7 +199,9 @@ public class OnlineConfig {
         return simulatorFactoryClass;
     }
 
-    public Class<? extends MontecarloSamplerFactory> getMontecarloSamplerFactory() {return montecarloSamplerFactory;}
+    public Class<? extends MontecarloSamplerFactory> getMontecarloSamplerFactory() {
+        return montecarloSamplerFactory;
+    }
 
     public Class<? extends CaseRepositoryFactory> getCaseRepositoryFactoryClass() {
         return caseRepositoryFactoryClass;

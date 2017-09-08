@@ -36,9 +36,9 @@ public class GeneratorsRedispatching implements ModificationTask {
     public void modify(Network network) {
         Float deltaP = (Float) actionsParameters.getValue(ActionParameters.REDISPATCHING_DELTAP_PARAMETER);
         if ( deltaP == null ) {
-            throw new ITeslaException("Missing delta P parameter for redispatching of generators "+generatorIds);
+            throw new ITeslaException("Missing delta P parameter for redispatching of generators " + generatorIds);
         }
-        for(String generatorId : generatorIds) {
+        for (String generatorId : generatorIds) {
             Generator g = network.getGenerator(generatorId);
             if (g == null) {
                 throw new ITeslaException("Generator '" + generatorId + "' not found");

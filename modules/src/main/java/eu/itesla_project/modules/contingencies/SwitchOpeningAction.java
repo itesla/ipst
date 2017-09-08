@@ -24,15 +24,15 @@ public class SwitchOpeningAction implements ActionElement {
     private Number achievmentIndex;
 
     public SwitchOpeningAction(String vlId, String switchId) {
-        this.voltageLevelId=vlId;
-        this.equipmentId=switchId;
+        this.voltageLevelId = vlId;
+        this.equipmentId = switchId;
     }
 
     public SwitchOpeningAction(String vlId, String switchId, Number implementationTime, Number achievmentIndex ) {
-        this.voltageLevelId=vlId;
-        this.equipmentId=switchId;
-        this.implementationTime=implementationTime;
-        this.achievmentIndex=achievmentIndex;
+        this.voltageLevelId = vlId;
+        this.equipmentId = switchId;
+        this.implementationTime = implementationTime;
+        this.achievmentIndex = achievmentIndex;
     }
 
     @Override

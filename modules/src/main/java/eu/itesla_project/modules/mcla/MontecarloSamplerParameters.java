@@ -32,5 +32,7 @@ public class MontecarloSamplerParameters {
         return feAnalysisId;
     }
 
-    public int getnSamples() { return nSamples; }
+    public int getnSamples() {
+        return nSamples;
+    }
 }

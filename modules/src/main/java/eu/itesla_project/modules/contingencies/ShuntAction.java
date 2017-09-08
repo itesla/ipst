@@ -22,13 +22,13 @@ public class ShuntAction implements ActionElement {
 
 
     public ShuntAction(String elementId) {
-        this.equipmentId=elementId;
+        this.equipmentId = elementId;
     }
 
     public ShuntAction(String elementId, Number implementationTime, Number achievmentIndex ) {
-        this.equipmentId=elementId;
-        this.implementationTime=implementationTime;
-        this.achievmentIndex=achievmentIndex;
+        this.equipmentId = elementId;
+        this.implementationTime = implementationTime;
+        this.achievmentIndex = achievmentIndex;
     }
     
     @Override

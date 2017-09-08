@@ -19,9 +19,9 @@ public class VoltageLevelImpl implements VoltageLevel {
     private String id;
     private  BigInteger level;
 
-    public VoltageLevelImpl(String id, BigInteger level){
-        this.id=id;
-        this.level=level;
+    public VoltageLevelImpl(String id, BigInteger level) {
+        this.id = id;
+        this.level = level;
     }
 
     @Override

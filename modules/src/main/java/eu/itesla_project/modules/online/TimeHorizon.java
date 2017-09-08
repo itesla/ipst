@@ -20,8 +20,12 @@ public enum TimeHorizon {
             this.name = name;
             this.forecastTime = forecastTime;
         }
-        public String getName() { return name; }
-        public int getForecastTime() { return forecastTime; }
+        public String getName() {
+            return name;
+        }
+        public int getForecastTime() {
+            return forecastTime;
+        }
         public String getLabel() {
             String timeHorizon = name;
             if ( forecastTime > 0 ) {

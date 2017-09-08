@@ -27,8 +27,7 @@ public class OnlineProcess {
     private final String caseType;
     private final Map<String, String> workflowsMap = new HashMap<String, String>();
     
-    public OnlineProcess(@JsonProperty("id")String id, @JsonProperty("name")String name, @JsonProperty("owner")String owner, @JsonProperty("caseType")String caseType, @JsonProperty("date")DateTime date, @JsonProperty("creationDate")DateTime creationDate)
-    {
+    public OnlineProcess(@JsonProperty("id")String id, @JsonProperty("name")String name, @JsonProperty("owner")String owner, @JsonProperty("caseType")String caseType, @JsonProperty("date")DateTime date, @JsonProperty("creationDate")DateTime creationDate) {
         this.id = Objects.requireNonNull(id);
         this.name = Objects.requireNonNull(name);
         this.owner = Objects.requireNonNull(owner);

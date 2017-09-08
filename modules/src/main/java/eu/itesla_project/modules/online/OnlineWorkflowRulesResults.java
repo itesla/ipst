@@ -60,7 +60,7 @@ public interface OnlineWorkflowRulesResults {
      * @param stateId  the id of the state
      * @return the map of [index, security flag] pair, output of the application of the security rules  on a state for a contingency 
      */
-    Map<String,Boolean> getStateResults(String contingencyId, Integer stateId);
+    Map<String, Boolean> getStateResults(String contingencyId, Integer stateId);
 
     /**
      * Return if there are available rules for a state and a contingency

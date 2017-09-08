@@ -53,8 +53,9 @@ public class ActionParameters {
                 parametersString += name + "=" + value + ",";
             }
         }
-        if (parametersString.length() > 19)
+        if (parametersString.length() > 19) {
             parametersString = parametersString.substring(0, parametersString.length() - 1);
+        }
         parametersString += "]";
         return parametersString;
     }

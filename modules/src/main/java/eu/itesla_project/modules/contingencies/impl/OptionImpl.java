@@ -24,26 +24,23 @@ public class OptionImpl implements ActionPlanOption {
     private LogicalExpression logicalExpression;
 
     //[key= num value= actionId]
-    private Map<BigInteger, String> actions = new HashMap<BigInteger,String>();
+    private Map<BigInteger, String> actions = new HashMap<BigInteger, String>();
 
 
 
-    public OptionImpl(BigInteger _priority, LogicalExpression _logicalExpression, Map<BigInteger, String> actions)
-    {
-        this.priority=            _priority;
-        this.logicalExpression= _logicalExpression;
-        this.actions=     actions;
+    public OptionImpl(BigInteger _priority, LogicalExpression _logicalExpression, Map<BigInteger, String> actions) {
+        this.priority =            _priority;
+        this.logicalExpression = _logicalExpression;
+        this.actions =     actions;
     }
 
     @Override
-    public BigInteger getPriority()
-    {
+    public BigInteger getPriority() {
         return this.priority;
     }
 
     @Override
-    public Map<BigInteger, String> getActions()
-    {
+    public Map<BigInteger, String> getActions() {
             return this.actions;
 
     }

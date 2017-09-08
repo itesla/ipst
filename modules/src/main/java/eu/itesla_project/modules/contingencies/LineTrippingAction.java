@@ -34,16 +34,16 @@ public class LineTrippingAction implements ActionElement {
 
     
     public LineTrippingAction(String lineId, Number implementationTime, Number achievmentIndex ) {
-        this.equipmentId=lineId;
-        this.implementationTime=implementationTime;
-        this.achievmentIndex=achievmentIndex;
+        this.equipmentId = lineId;
+        this.implementationTime = implementationTime;
+        this.achievmentIndex = achievmentIndex;
     }
     
     public LineTrippingAction(String lineId, String substationId, Number implementationTime, Number achievmentIndex ) {
-        this.equipmentId=lineId;
+        this.equipmentId = lineId;
         this.substationId = substationId;
-        this.implementationTime=implementationTime;
-        this.achievmentIndex=achievmentIndex;
+        this.implementationTime = implementationTime;
+        this.achievmentIndex = achievmentIndex;
     }
     
     @Override
@@ -53,8 +53,9 @@ public class LineTrippingAction implements ActionElement {
     
     @Override
     public ModificationTask toTask() {
-        if ( substationId != null )
+        if (substationId != null) {
             return new BranchTripping(equipmentId, substationId);
+        }
         return new BranchTripping(equipmentId);
     }
     

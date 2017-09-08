@@ -20,7 +20,7 @@ public class RedispatchUtils {
 
     public static Map<String, Float> getParticipationFactor(Network network) {
         Map<String, Float> partecipationFactor = new HashMap<String, Float>();
-        for(Generator generator : network.getGenerators()) {
+        for (Generator generator : network.getGenerators()) {
             partecipationFactor.put(generator.getId(), generator.getMaxP());
         }
         return partecipationFactor;
@@ -28,13 +28,15 @@ public class RedispatchUtils {
 
     public static List<Generator> getRedispatchableGenerators(Network network, String[] generatorsToSkip, float redispatchLimitsPercentage) {
         List<Generator> redispatchableGenerators = new ArrayList<Generator>();
-        for(Generator generator : network.getGenerators()) {
+        for (Generator generator : network.getGenerators()) {
             if ( isRedispatchable(generator, redispatchLimitsPercentage) ) {
                 if ( generatorsToSkip != null ) { // check if there are generators to skip
-                    if ( !Arrays.asList(generatorsToSkip).contains(generator.getId()) ) // check if this generator have to be skipped
+                    if (!Arrays.asList(generatorsToSkip).contains(generator.getId())) { // check if this generator have to be skipped
                         redispatchableGenerators.add(generator);
-                } else
+                    }
+                } else {
                     redispatchableGenerators.add(generator);
+                }
             }
         }
         return redispatchableGenerators;
@@ -42,13 +44,15 @@ public class RedispatchUtils {
 
     public static List<Generator> filterRedispatchableGenerators(Network network, String[] generatorsToUse, float redispatchLimitsPercentage) {
         List<Generator> redispatchableGenerators = new ArrayList<Generator>();
-        for(Generator generator : network.getGenerators()) {
+        for (Generator generator : network.getGenerators()) {
             if ( isRedispatchable(generator, redispatchLimitsPercentage) ) {
                 if ( generatorsToUse != null ) { // check if there are generators to use
-                    if ( Arrays.asList(generatorsToUse).contains(generator.getId()) ) // check if this generator can be used
+                    if ( Arrays.asList(generatorsToUse).contains(generator.getId()) ) { // check if this generator can be used
                         redispatchableGenerators.add(generator);
-                } else
+                    }
+                } else {
                     redispatchableGenerators.add(generator);
+                }
             }
         }
         return redispatchableGenerators;
@@ -60,26 +64,27 @@ public class RedispatchUtils {
                 && (generator.getTerminal().getP() < 0) // inject power
                 && (generator.isVoltageRegulatorOn()) // has voltage regulator on
                 && (generator.getTargetP() <= getRedispatchPMax(generator, redispatchLimitsPercentage)
-                    && generator.getTargetP() >= getRedispatchPMin(generator, redispatchLimitsPercentage)) // target P is within redispatch limits
+                    && generator.getTargetP() >= getRedispatchPMin(generator, redispatchLimitsPercentage)); // target P is within redispatch limits
                 //&& (generator.getTargetP() <= generator.getMaxP() && generator.getTargetP() >= generator.getMinP()) // target P is within limits
-                ;
     }
 
     public static float getRedispatchPMax(Generator generator, float redispatchLimitsPercentage) {
         float redispatchPMax = generator.getMaxP();
-        if ( generator.getTargetP() < generator.getMinP() )
+        if (generator.getTargetP() < generator.getMinP()) {
             redispatchPMax = generator.getMinP() + redispatchLimitsPercentage * 0.01f * generator.getMaxP();
-        else
+        } else {
             redispatchPMax = generator.getTargetP() + redispatchLimitsPercentage * 0.01f * generator.getMaxP();
+        }
         return generator.getMaxP() > redispatchPMax ? redispatchPMax : generator.getMaxP();
     }
 
     public static float getRedispatchPMin(Generator generator, float redispatchLimitsPercentage) {
         float redispatchPMin = generator.getMinP();
-        if ( generator.getTargetP() > generator.getMaxP() )
+        if (generator.getTargetP() > generator.getMaxP()) {
             redispatchPMin = generator.getMaxP() - redispatchLimitsPercentage * 0.01f * generator.getMaxP();
-        else
+        } else {
             redispatchPMin = generator.getTargetP() - redispatchLimitsPercentage * 0.01f * generator.getMaxP();
+        }
         return generator.getMinP() < redispatchPMin ? redispatchPMin : generator.getMinP();
     }
 

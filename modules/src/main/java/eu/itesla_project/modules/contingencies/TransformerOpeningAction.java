@@ -34,16 +34,16 @@ public class TransformerOpeningAction implements ActionElement {
 
     
     public TransformerOpeningAction(String transformerId, Number implementationTime, Number achievmentIndex ) {
-        this.equipmentId=transformerId;
-        this.implementationTime=implementationTime;
-        this.achievmentIndex=achievmentIndex;
+        this.equipmentId = transformerId;
+        this.implementationTime = implementationTime;
+        this.achievmentIndex = achievmentIndex;
     }
     
     public TransformerOpeningAction(String lineId, String substationId, Number implementationTime, Number achievmentIndex ) {
-        this.equipmentId=lineId;
+        this.equipmentId = lineId;
         this.substationId = substationId;
-        this.implementationTime=implementationTime;
-        this.achievmentIndex=achievmentIndex;
+        this.implementationTime = implementationTime;
+        this.achievmentIndex = achievmentIndex;
     }
     
     @Override
@@ -53,8 +53,9 @@ public class TransformerOpeningAction implements ActionElement {
     
     @Override
     public ModificationTask toTask() {
-        if ( substationId != null )
+        if (substationId != null) {
             return new BranchTripping(equipmentId, substationId);
+        }
         return new BranchTripping(equipmentId);
     }
     

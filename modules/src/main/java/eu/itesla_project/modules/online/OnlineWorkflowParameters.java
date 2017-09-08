@@ -71,8 +71,9 @@ public class OnlineWorkflowParameters implements Serializable {
         if (caseFile != null) {
             if ((config.getStringProperty("baseCaseDate", null) != null)
                     || (config.getStringProperty("caseType", null) != null)
-                    || (config.getStringProperty("countries", null) != null))
+                    || (config.getStringProperty("countries", null) != null)) {
                 throw new RuntimeException("caseFile and ( baseCaseDate, caseType, countries ) are mutually exclusive options");
+            }
             return new OnlineWorkflowParameters(states,
                     histoInterval,
                     offlineWorkflowId,
