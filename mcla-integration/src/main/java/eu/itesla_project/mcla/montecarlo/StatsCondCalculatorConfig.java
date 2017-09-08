@@ -41,11 +41,16 @@ public class StatsCondCalculatorConfig {
 	private Path tmpDir;
     private final Integer rngSeed;
 	private final boolean debug;
+	private final Integer isdeterministic;
+	private final Integer isuniform;
+
 
 	public StatsCondCalculatorConfig(
 			Path binariesDir,
 			Path runtimeHomeDir,
 			Path tmpDir,
+			Integer isdeterministic,
+			Integer isuniform,
 			Integer rngSeed,
 			boolean debug
 	) {
@@ -58,6 +63,8 @@ public class StatsCondCalculatorConfig {
 		this.tmpDir = tmpDir;
         this.rngSeed = rngSeed;
 		this.debug = debug;
+		this.isdeterministic = isdeterministic;
+		this.isuniform = isuniform;
 	}
 	
 	public static StatsCondCalculatorConfig load() {
@@ -68,8 +75,10 @@ public class StatsCondCalculatorConfig {
         Path tmpDir = config.getPathProperty("tmpDir");
         Integer rngSeed = config.getOptionalIntegerProperty("rngSeed").orElse(null);
         boolean debug = config.getBooleanProperty("debug", false);
+		Integer isdeterministic = config.getOptionalIntegerProperty("isdeterministic").orElse(null);
+		Integer isuniform = config.getOptionalIntegerProperty("isuniform").orElse(null);
 
-        return new StatsCondCalculatorConfig(binariesDir, runtimeHomeDir, tmpDir, rngSeed, debug);
+		return new StatsCondCalculatorConfig(binariesDir, runtimeHomeDir, tmpDir, isdeterministic, isuniform, rngSeed, debug);
 	}
 	
 	public Path getBinariesDir() {
@@ -96,10 +105,20 @@ public class StatsCondCalculatorConfig {
 	public static Logger getLogger() {
 		return LOGGER;
 	}
-	
+
+	public Integer getIsdeterministic() {
+		return isdeterministic;
+	}
+
+	public Integer getIsuniform() {
+		return isuniform;
+	}
+
 	@Override
 	public String toString() {
 		return "StatsCondCalculatorConfig ["+ ", binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir + ", tmpDir=" + tmpDir
+				+ ", isdeterministic=" + isdeterministic
+				+ ", isuniform=" + isuniform
                 + ", rngSeed=" + rngSeed +", debug=" + debug + "]";
 	}
 	

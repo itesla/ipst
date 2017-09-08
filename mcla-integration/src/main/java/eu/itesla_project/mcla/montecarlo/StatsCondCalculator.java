@@ -35,7 +35,7 @@ public class StatsCondCalculator {
 	private static final String MCSINPUTFILEPREFIX = "mcsamplerinput_";
 	private static final String MCSOUTPUTFILENAME = "mcsampleroutput.mat";
 	private static final String FPFFORECASTERRORSFILENAME = "fea_stats_cond_for_FPF.mat";
-	private static final String WP5_FPF = "wp5fpf";
+	private static final String WP5_FPF = "fpf";
 
 	private final ComputationManager computationManager;
 	private final ForecastErrorsDataStorage forecastErrorsDataStorage;
@@ -139,6 +139,8 @@ public class StatsCondCalculator {
 		args1.add(localForecastErrorsDataFile.toAbsolutePath().toString());
 		args1.add(localNetworkDataMatFile.toAbsolutePath().toString());
 		args1.add(FPFFORECASTERRORSFILENAME);
+		args1.add(""+config.getIsdeterministic()); //added in v1.8.1
+		args1.add(""+config.getIsuniform()); //added in v1.8.1
 		if (config.getRngSeed() != null) {
 			args1.add(Integer.toString(config.getRngSeed()));
 		}

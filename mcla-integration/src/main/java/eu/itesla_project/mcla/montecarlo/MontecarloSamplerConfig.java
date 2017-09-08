@@ -57,6 +57,8 @@ public class MontecarloSamplerConfig {
     private Integer optionSign;
 	private Integer centering;
 	private final boolean debug;
+	private final Integer isdeterministic;
+	private final Integer full_dependence;
 	
 	public MontecarloSamplerConfig(
 			Path binariesDir,
@@ -64,6 +66,8 @@ public class MontecarloSamplerConfig {
 			Path tmpDir,
             int optionSign,
 			int centering,
+			int isdeterministic,
+			int full_dependence,
 			boolean debug
 			) {
 		Objects.requireNonNull(binariesDir,"sampler compiled binaries directory is null");
@@ -75,6 +79,8 @@ public class MontecarloSamplerConfig {
 		this.tmpDir = tmpDir;
         this.optionSign = optionSign;
 		this.centering = centering;
+		this.isdeterministic = isdeterministic;
+		this.full_dependence = full_dependence;
 		this.debug = debug;
 	}
 	
@@ -86,9 +92,11 @@ public class MontecarloSamplerConfig {
         Path tmpDir = config.getPathProperty("tmpDir");
         int optionSign = config.getIntProperty("optionSign");
 		int centering = config.getIntProperty("centering");
+		Integer isdeterministic = config.getOptionalIntegerProperty("isdeterministic").orElse(null);
+		Integer full_dependence = config.getOptionalIntegerProperty("full_dependence").orElse(null);
         boolean debug = config.getBooleanProperty("debug", false);
 
-        return new MontecarloSamplerConfig(binariesDir, runtimeHomeDir, tmpDir, optionSign, centering, debug);
+        return new MontecarloSamplerConfig(binariesDir, runtimeHomeDir, tmpDir, optionSign, centering, isdeterministic, full_dependence, debug);
 	}
 	
 	public Path getBinariesDir() {
@@ -109,6 +117,14 @@ public class MontecarloSamplerConfig {
 
 	public Integer getCentering() { return centering; }
 
+	public Integer getIsdeterministic() {
+		return isdeterministic;
+	}
+
+	public Integer getFull_dependence() {
+		return full_dependence;
+	}
+
 	public boolean isDebug() {
         return debug;
 	}
@@ -120,7 +136,7 @@ public class MontecarloSamplerConfig {
 	@Override
 	public String toString() {
 		return "MontecarloSamplerConfig ["+ ", binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir + ", tmpDir=" + tmpDir
-                + ", optionSign=" + optionSign + ", centering=" + centering + ", debug=" + debug + "]";
+                + ", optionSign=" + optionSign + ", centering=" + centering + ", isdeterministic=" + isdeterministic + ", full_dependence=" + full_dependence + ", debug=" + debug + "]";
 	}
 	
 }

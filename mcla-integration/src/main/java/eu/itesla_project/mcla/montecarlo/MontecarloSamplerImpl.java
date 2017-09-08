@@ -39,7 +39,7 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
 	private static final String MCSINPUTFILEPREFIX = "mcsamplerinput_";
 	private static final String MCSOUTPUTFILENAME = "mcsampleroutput.mat";
 	private static final String MCS_CSV_OUTPUTFILENAME = "printSamples.csv";
-	private static final String WP5_MCLA = "wp5mcla";
+	private static final String MCLA = "mcla";
 
 	private final ComputationManager computationManager;
 	private final ForecastErrorsDataStorage forecastErrorsDataStorage;
@@ -192,10 +192,12 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
         args1.add("" + nSamples);
         args1.add("" + config.getOptionSign());
 		args1.add("" + config.getCentering());
+		args1.add("" + config.getIsdeterministic()); //added in v1.8.1
+		args1.add("" + config.getFull_dependence()); //added in v1.8.1
 
 		return new SimpleCommandBuilder()
                 .id("matmcs")
-                .program(config.getBinariesDir().resolve(WP5_MCLA).toAbsolutePath().toString())
+                .program(config.getBinariesDir().resolve(MCLA).toAbsolutePath().toString())
                 .args(args1)
                 .inputFiles(new InputFile(localNetworkDataMatFile.getFileName().toString()),
 						new InputFile(localForecastErrorsDataFile.getFileName().toString()))
