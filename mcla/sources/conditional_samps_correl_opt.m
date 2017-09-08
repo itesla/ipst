@@ -1,5 +1,5 @@
 %
-% Copyright (c) 2016, Ricerca sul Sistema Energetico – RSE S.p.A. <itesla@rse-web.it>
+% Copyright (c) 2017, Ricerca sul Sistema Energetico – RSE S.p.A. <itesla@rse-web.it>
 % This Source Code Form is subject to the terms of the Mozilla Public
 % License, v. 2.0. If a copy of the MPL was not distributed with this
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -19,8 +19,11 @@
 % Outputs:
 % - snap_new1: Ns x Nsnap matrix with Ns samples of snapshots conditioned
 % to the specific forecast configuration
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% UPDATES June - July 2017
+% INPUTS: 
+% - full_dep = 1-> includes full corelation, 0-> accounts only for 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [snap_new1  quale_err var_out_of_lim] = conditional_samps(Y0,quale_forecast,y00,dati_cond,centering)
+function [snap_new1  quale_err var_out_of_lim] = conditional_samps_correl_opt(Y0,quale_forecast,y00,dati_cond,centering,full_dep)
 validation=0;
 % initialise some variables for cond sampling
 
@@ -97,7 +100,8 @@ for iy = 1:size(FO,2)
         dySS(find(matrice_yy(iy,:)>0))=dyS(iy);
         
         if isnan(quale_var)==0
-           quale_err(quale_var)=dySS(find(matrice_yy(iy,:)>0)); 
+            quali_for0 = find(matrice_yy(iy,:)>0);
+           quale_err(quale_var)=dySS(quali_for0(1)); 
            var_out_of_lim(quale_var)=iy;
         end
     end
@@ -140,8 +144,16 @@ switch solution
         % SOLUTION PREFERRED: CONDITIONING THE SAMPLES FROM m3 TAKING INTO ACCOUNT
         % VECTOR Y0
         
-        B1 = ( diag(covs_yy2.^(-0.5)))*invcorr_yy*( diag(covs_yy2.^(-0.5)));
-        cov_ey2 = ( diag(covs_ee2.^(0.5)))*corr_ey*( diag(covs_yy2.^(0.5)));
+        if full_dep==0
+            invcorr_yy = eye(size(cov_yy2));
+            B1 = ( diag(covs_yy2.^(-0.5)))*invcorr_yy*( diag(covs_yy2.^(-0.5)));
+            cov_ey2 = ( diag(covs_ee2.^(0.5)))*corr_ey*( diag(covs_yy2.^(0.5)));
+            cov_ey2 = cov_ey2.*((dati_cond.matrice_yy)');
+        else
+            B1 = ( diag(covs_yy2.^(-0.5)))*invcorr_yy*( diag(covs_yy2.^(-0.5)));
+            cov_ey2 = ( diag(covs_ee2.^(0.5)))*corr_ey*( diag(covs_yy2.^(0.5)));
+        end
+        
         snap_new1G = INVG_E_NEW1 + (cov_ey2*B1*dy')';
         %
     case 2

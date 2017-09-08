@@ -3,7 +3,7 @@
 % License, v. 2.0. If a copy of the MPL was not distributed with this
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
 %
-function [m_y std_y Y inj_ID tipovar idx_err idx_fore matrice idx_fore0 tipovar0] = testfiltering2(m_y, std_y, Y, inj_ID, tipovar, idx_err, idx_fore)
+function [m_y std_y Y inj_ID tipovar idx_err idx_fore matrice idx_fore0 tipovar0] = FILTERFOREC(m_y, std_y, Y, inj_ID, tipovar, idx_err, idx_fore)
 % SCRIPT FOR ELIMINATING LINEAR DEPENDENT ROWS OF CORRELATION MATRIX TO
 % REDUCE CONDITIONING NUMBER OF MATRIX AND MAKE ITS INVERSION EASIER
 perc = 0.9999;
@@ -37,7 +37,9 @@ while max_corr > perc
     Y(:,idx_fore(QualeC(1))) = [];
 
     inj_ID(idx_fore(QualeC(1)))=[];
+    
     tipovar(idx_fore(QualeC(1)))=[];
+    
     m_y(QualeC(1)) = [];
     std_y(QualeC(1)) = [];
     matrice(QualeC(1),:) = [];

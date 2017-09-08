@@ -1,5 +1,5 @@
 %
-% Copyright (c) 2016, Ioannis Konstantelos <i.konstantelos@imperial.ac.uk>
+% Copyright (c) 2017, Ioannis Konstantelos <i.konstantelos@imperial.ac.uk>
 % and Mingyang Sun <mingyang.sun11@imperial.ac.uk> – Imperial College London,
 % Ricerca sul Sistema Energetico – RSE S.p.A. <itesla@rse-web.it>
 % This Source Code Form is subject to the terms of the Mozilla Public

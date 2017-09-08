@@ -10,24 +10,30 @@
 %% ofile  - module3 output file, to be written
 %% s_scenarios - number of samples to generate (in ofile)
 %% s_rng_seed - int seed (optional, default is 'shuffle' on current date)
-function exitcode=FPF_HELPER(m1file, m2file, ofile, s_rng_seed)
+function exitcode=FPF_HELPER(m1file, m2file, ofile,isdeterministics,isuniforms, s_rng_seed)
 close all;
-mversion='1.8.0';
+mversion='1.8.1';
 disp(sprintf('wp5 - FEA STATS FOR FPF - version: %s', mversion));
 disp(sprintf(' m1file:  %s',m1file));
 disp(sprintf(' m2file:  %s',m2file));
 disp(sprintf(' ofile:  %s', ofile));
+disp(sprintf(' isdeterministic:  %s', isdeterministics));
+disp(sprintf(' isuniform:  %s', isuniforms));
+
+isdeterministic=str2double(isdeterministics);
+isuniform=str2double(isuniforms);
 
 moutput.errmsg='Ok';
 try
+    
     % module1: struct, output from module1
     load(m1file);
     % module2:  module2 output
     load(m2file);
     % s_scenarios: number of samples to generate
-   
+   if isdeterministic == 0
     %if seed is not specified, 'shuffle'  on current platform time    
-    if nargin < 4
+    if nargin < 6
         rng('shuffle','twister');
         disp(sprintf(' rng seed:  not specified, default is shuffle on current platform time'));
     else 
@@ -256,14 +262,35 @@ m_ec = mean(snap_new1,1)';
 std_ec = std(snap_new1,0,1)';
 
 else
+    
+    if isuniform==0
    %%%% MODALITY GAUSSIAN ACTIVATED 
    module2 = out(iout).module2;
    m_ec = zeros(length(are_forerrors),1);
    idx_loads = find(ismember(type_X(1,:),[2 3]));
    idx_RES = find(ismember(type_X(1,:),[1 4]));
+   if  isfield(module2.allparas,'stddev')==0 % working with multimodals
+   stddevs(intersect(idx_loads,are_forerrors))=0.05;
+   stddevs(intersect(idx_RES,are_forerrors))=0.15;    
+   else % working with gaussian forecast models
    stddevs(intersect(idx_loads,are_forerrors))=module2.allparas.stddev(1);
    stddevs(intersect(idx_RES,are_forerrors))=module2.allparas.stddev(2);
+   end
    std_ec = stddevs(find(ismember(idx_errA,are_forerrors)))'.*max(1e-6,abs(y0(find(ismember(idx_errA,are_forerrors))))');
+    else
+    %%%% MODALITY UNIFORM ACTIVATED 
+   module2 = out(iout).module2;
+   m_ec = zeros(length(are_forerrors),1);
+   idx_loadsP = find(ismember(type_X(1,:),[2]));
+   idx_loadsQ = find(ismember(type_X(1,:),[3]));
+   
+   idx_RES = find(ismember(type_X(1,:),[1 4]));
+   stddevs(intersect(idx_loadsP,are_forerrors))=(1/12)*(2*module2.allparas.band_unif(1))^2;%module2.allparas.stddev(1);
+   stddevs(intersect(idx_loadsQ,are_forerrors))=(1/12)*(2*module2.allparas.band_unif(2))^2;%module2.allparas.stddev(1);   
+   stddevs(intersect(idx_RES,are_forerrors))=(1/12)*(2*module2.allparas.band_unif(3))^2;%module2.allparas.stddev(2);
+   std_ec = stddevs(find(ismember(idx_errA,are_forerrors)))'.*max(1e-6,abs(y0(find(ismember(idx_errA,are_forerrors))))');    
+    end
+    
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % here ends the  RSE CODE, extracted from TEST_MCLA.m
@@ -297,7 +324,15 @@ fprintf(fid,fmtString,inj_print{:});
 fclose(fid);
 dlmwrite(csvFileName,m_print,'delimiter',',','-append');
 dlmwrite(csvFileName,std_print,'delimiter',',','-append');
-
+else
+     moutput(1).errmsg='det';
+   moutput(1).m_ec=[];
+   moutput(1).std_ec=[];
+   moutput(1).inj_ID=[];%(:,idx_errA);
+   moutput(1).rng_data=out(1).rng_data;
+   moutput(1).mversion=out(1).mversion;
+   totmoutput.outcomeFPF(1) = moutput(1);
+end
 
    exitcode=0;
 catch err

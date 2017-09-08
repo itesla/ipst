@@ -1,11 +1,9 @@
-%
 % Copyright (c) 2016, Ricerca sul Sistema Energetico – RSE S.p.A. <itesla@rse-web.it>
 % This Source Code Form is subject to the terms of the Mozilla Public
 % License, v. 2.0. If a copy of the MPL was not distributed with this
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
 %
-
-function [Y inj_ID idx_err1 idx_fore1 idx_err idx_fore ] = gaussian_conditional(err_new,inj_ID,outliers,Koutliers,tolvar,Nmin_obs_fr,Nmin_obs_interv,check_mod0,idx_err0,idx_fore0)
+function [Y inj_ID idx_err1 idx_fore1 idx_err idx_fore ] = gaussian_conditional(err_new,inj_ID,outliers,Koutliers,tolvar,Nmin_obs_fr,par_nnz,Nmin_obs_interv,check_mod0,idx_err0,idx_fore0,cs)
 
 
 % snap_new=snap_filt(:,3:end); %only snapshot fields without datetime and flag 0
@@ -37,7 +35,7 @@ Q2 = sum(Q1,1);
 perce = 1;discarded=[];
 Noriginalsamples = size(Y,1);
 Nmin_obs=Nmin_obs_fr*Noriginalsamples; % valid points for calculating the ECDFs 
-
+Nmin_nz=par_nnz*Noriginalsamples; % 
 allowable=[];
 idxallo=[];idxdis = [];qualefor = []; 
 %%% verifiche iniziali
@@ -49,23 +47,47 @@ for jY = 1:size(Y,2)
 %         if metrica > 2
 %             keyboard
 %         end
-        if (length(idxlambda{jY}) < Nmin_obs || length(non_sono_zeri{jY}) < Nmin_obs) || var(Y(idxlambda{jY},(jY))) < tolvar %|| metrica > 2% length(find(idxlambda{jY} == 0)) > 0.05*size(Y,1)
+        if (length(idxlambda{jY}) < Nmin_obs || length(non_sono_zeri{jY}) < Nmin_nz) || var(Y(idxlambda{jY},(jY))) < tolvar %|| metrica > 2% length(find(idxlambda{jY} == 0)) > 0.05*size(Y,1)
+            if cs == 0
             discarded = [discarded (jY)];
+            
  if ismember(jY,idx_err0)
             disp(['*** DISCARDED SNAPSHOT VARIABLE FOR INJ: ' inj_ID{jY} ' -> NaN SAMPLES (' num2str(100-100*length(idxlambda{jY})/size(Y,1)) '%), ZERO VALUES (' num2str(100-100*length(non_sono_zeri{jY})/size(Y,1)) '%), VARIANCE ' num2str(var(Y(idxlambda{jY},(jY)))) ' MW -- TREATED AS CONSTANT INJECTOR'])
         else
             disp(['*** DISCARDED FORECAST VARIABLE FOR INJ: ' inj_ID{jY} ' -> NaN SAMPLES (' num2str(100-100*length(idxlambda{jY})/size(Y,1)) '%), ZERO VALUES (' num2str(100-100*length(non_sono_zeri{jY})/size(Y,1)) '%), VARIANCE ' num2str(var(Y(idxlambda{jY},(jY)))) ' MW -- TREATED AS CONSTANT INJECTOR'])
 
+ end
+            else
+                if rem(jY,2)==0
+                discarded = [discarded (jY) jY-1];
+                            disp(['*** DISCARDED FORECAST VARIABLE FOR INJ: ' inj_ID{jY} ' -> NaN SAMPLES (' num2str(100-100*length(idxlambda{jY})/size(Y,1)) '%), ZERO VALUES (' num2str(100-100*length(non_sono_zeri{jY})/size(Y,1)) '%), VARIANCE ' num2str(var(Y(idxlambda{jY},(jY)))) ' MW -- TREATED AS CONSTANT INJECTOR'])
+
+                 disp(['*** DISCARDED CORRESPONDING SNAPSHOT VARIABLE FOR INJ: ' inj_ID{jY-1} ])
+                else
+                discarded = [discarded (jY) jY+1];    
+                
+                 disp(['*** DISCARDED SNAPSHOT VARIABLE FOR INJ: ' inj_ID{jY} ' -> NaN SAMPLES (' num2str(100-100*length(idxlambda{jY})/size(Y,1)) '%), ZERO VALUES (' num2str(100-100*length(non_sono_zeri{jY})/size(Y,1)) '%), VARIANCE ' num2str(var(Y(idxlambda{jY},(jY)))) ' MW -- TREATED AS CONSTANT INJECTOR'])
+
+                disp(['*** DISCARDED CORRESPONDING FORECAST VARIABLE FOR INJ: ' inj_ID{jY+1} ])
+
+                end
             end
+            
         else
+           
             allowable = [allowable (jY)];
             if rem(jY,2)==0
                qualefor = [qualefor jY/2]; 
             end
+            
         end
     
 end
 
+if cs == 1
+   intersectio = intersect(discarded,allowable);
+   allowable = setdiff(allowable,intersectio);
+end
 
 %%%%%%%%%%%
 %    keyboard
