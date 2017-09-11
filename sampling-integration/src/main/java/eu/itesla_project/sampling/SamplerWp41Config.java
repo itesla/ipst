@@ -75,7 +75,7 @@ public class SamplerWp41Config {
         double ir = config.getDoubleProperty("ir");
         double tflag = config.getDoubleProperty("tflag");
 
-        Integer rngSeed = config.getOptionalIntProperty("rngSeed");
+        Integer rngSeed = config.getOptionalIntegerProperty("rngSeed").orElse(null);
 
         int module3Timeout = config.getIntProperty("module3Timeout", MODULE3_DEFAULT_TIMEOUT);
 

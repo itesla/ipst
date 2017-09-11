@@ -10,6 +10,7 @@ package eu.itesla_project.online;
 import com.google.common.base.Function;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import eu.itesla_project.computation.ComputationManager;
 import eu.itesla_project.contingency.Contingency;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.iidm.network.StateManager;
@@ -55,6 +56,7 @@ public class StateAnalyzer implements Callable<Void> {
     private OnlineDb onlineDb;
     private Integer stateId;
     private OnlineWorkflowParameters parameters;
+    private ComputationManager computationManager;
     private StateAnalizerListener stateListener;
     private EnumMap<OnlineTaskType, OnlineTaskStatus> status = new EnumMap<OnlineTaskType, OnlineTaskStatus>(OnlineTaskType.class);
     Map<String, Boolean> loadflowResults = new HashMap<String, Boolean>();
@@ -63,7 +65,7 @@ public class StateAnalyzer implements Callable<Void> {
     public StateAnalyzer(OnlineWorkflowContext context, MontecarloSampler sampler, LoadFlow loadFlow,
                          OnlineRulesFacade rulesFacade, CorrectiveControlOptimizer optimizer, Stabilization stabilization,
                          ImpactAnalysis impactAnalysis, OnlineDb onlineDb, StateAnalizerListener stateListener, ConstraintsModifier constraintsModifier,
-                         OnlineWorkflowParameters parameters) {
+                         OnlineWorkflowParameters parameters, ComputationManager computationManager) {
         Objects.requireNonNull(context);
         Objects.requireNonNull(sampler);
         Objects.requireNonNull(loadFlow);
@@ -75,6 +77,7 @@ public class StateAnalyzer implements Callable<Void> {
         Objects.requireNonNull(stateListener);
         Objects.requireNonNull(constraintsModifier);
         Objects.requireNonNull(parameters);
+        Objects.requireNonNull(computationManager);
         this.context = context;
         this.sampler = sampler;
         this.loadFlow = loadFlow;
@@ -436,7 +439,7 @@ public class StateAnalyzer implements Callable<Void> {
             network.getStateManager().setWorkingState(postContingencyStateId);
             // apply contingency to post contingency state
             logger.info("{}: applying contingency {} to post contingency state {}", stateId, contingency.getId(), postContingencyStateId);
-            contingency.toTask().modify(network);
+            contingency.toTask().modify(network, computationManager);
             try {
                 // run load flow on post contingency state
                 logger.info("{}: running load flow on post contingency state {}", stateId, postContingencyStateId);
