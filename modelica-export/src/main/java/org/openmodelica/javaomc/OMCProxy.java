@@ -41,15 +41,13 @@
 
 package org.openmodelica.javaomc;
 
+import org.omg.CORBA.ORB;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.StringTokenizer;
-
-import org.openmodelica.javaomc.OmcCommunication;
-import org.openmodelica.javaomc.OmcCommunicationHelper;
-import org.omg.CORBA.ORB;
 
 /**
  * The OMCProxy is the glue between the OpenModelica Compiler and MDT.
