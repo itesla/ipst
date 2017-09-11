@@ -225,8 +225,7 @@ public final class WCAUtils {
         Objects.requireNonNull(injections);
         String originalStateId = network.getStateManager().getWorkingStateId();
         network.getStateManager().setWorkingState(stateId);
-        injections.keySet().forEach(injection -> 
-        {
+        injections.keySet().forEach(injection -> {
             Load load = network.getLoad(injection);
             if ( load != null ) {
                 float oldP = load.getTerminal().getP();
