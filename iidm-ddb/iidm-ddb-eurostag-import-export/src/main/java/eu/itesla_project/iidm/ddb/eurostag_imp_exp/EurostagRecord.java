@@ -6,7 +6,6 @@
  */
 package eu.itesla_project.iidm.ddb.eurostag_imp_exp;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**

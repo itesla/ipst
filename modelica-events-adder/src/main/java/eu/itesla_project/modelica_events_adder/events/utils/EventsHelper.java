@@ -8,12 +8,10 @@ package eu.itesla_project.modelica_events_adder.events.utils;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.itesla_project.modelica_events_adder.events.records.ConnectRecord;
 
 /**
  * @author Silvia Machado <machados@aia.es>

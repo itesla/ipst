@@ -6,7 +6,6 @@
  */
 package eu.itesla_project.online.tools;
 
-import java.util.List;
 
 import eu.itesla_project.commons.tools.ToolRunningContext;
 import org.apache.commons.cli.CommandLine;

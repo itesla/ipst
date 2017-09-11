@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
-import eu.itesla_project.iidm.ddb.model.Parameter;
 
 /**
  *

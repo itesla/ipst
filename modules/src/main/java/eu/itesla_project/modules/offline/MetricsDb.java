@@ -6,7 +6,6 @@
  */
 package eu.itesla_project.modules.offline;
 
-import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
 

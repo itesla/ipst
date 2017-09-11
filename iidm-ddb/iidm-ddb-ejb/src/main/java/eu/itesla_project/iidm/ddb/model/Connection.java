@@ -8,11 +8,7 @@ package eu.itesla_project.iidm.ddb.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.FetchType;
-import javax.persistence.Lob;
 
 /**
  *

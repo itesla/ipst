@@ -7,19 +7,14 @@
 package eu.itesla_project.iidm.ddb.web.controller;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.enterprise.inject.Model;
-import javax.enterprise.inject.Produces;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -34,14 +29,11 @@ import org.primefaces.model.DualListModel;
 import eu.itesla_project.iidm.ddb.model.Connection;
 import eu.itesla_project.iidm.ddb.model.ConnectionSchema;
 import eu.itesla_project.iidm.ddb.model.Equipment;
-import eu.itesla_project.iidm.ddb.model.Internal;
-import eu.itesla_project.iidm.ddb.model.ModelTemplate;
 import eu.itesla_project.iidm.ddb.model.ModelTemplateContainer;
 import eu.itesla_project.iidm.ddb.model.ParametersContainer;
 import eu.itesla_project.iidm.ddb.model.SimulatorInst;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
 import eu.itesla_project.iidm.ddb.web.data.LazyEquipmentDataModel;
-import eu.itesla_project.iidm.ddb.web.data.LazyInternalDataModel;
 
 
 // The @Model stereotype is a convenience mechanism to make this a request-scoped bean that has an

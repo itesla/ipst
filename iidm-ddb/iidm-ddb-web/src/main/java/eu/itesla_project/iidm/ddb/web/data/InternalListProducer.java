@@ -17,7 +17,6 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import eu.itesla_project.iidm.ddb.model.Equipment;
 import eu.itesla_project.iidm.ddb.model.Internal;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
 

@@ -12,7 +12,6 @@ import java.util.List;
 
 import eu.itesla_project.iidm.ddb.model.SimulatorInst;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
-import eu.itesla_project.modelica_export.records.BusRecord;
 import eu.itesla_project.modelica_export.util.IIDMParameter;
 import eu.itesla_project.modelica_export.util.StaticData;
 

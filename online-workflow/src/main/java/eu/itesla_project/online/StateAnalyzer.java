@@ -27,7 +27,6 @@ import eu.itesla_project.modules.optimizer.PostContingencyState;
 import eu.itesla_project.online.OnlineWorkflowImpl.StateAnalizerListener;
 import eu.itesla_project.security.LimitViolation;
 import eu.itesla_project.security.Security;
-import eu.itesla_project.security.Security.CurrentLimitType;
 import eu.itesla_project.simulation.*;
 import eu.itesla_project.simulation.securityindexes.SecurityIndex;
 import org.slf4j.Logger;

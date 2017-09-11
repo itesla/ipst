@@ -8,21 +8,15 @@ package eu.itesla_project.dymola;
 
 import eu.itesla_project.computation.ExecutionError;
 import eu.itesla_project.computation.ExecutionReport;
-import eu.itesla_project.iidm.network.Line;
 import eu.itesla_project.iidm.network.Network;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.GZIPInputStream;
 
 /**
  *
