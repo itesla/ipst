@@ -1,4 +1,4 @@
-% Copyright (c) 2016, Ricerca sul Sistema Energetico â€“ RSE S.p.A. <itesla@rse-web.it>
+% Copyright (c) 2016, Ricerca sul Sistema Energetico – RSE S.p.A. <itesla@rse-web.it>
 % This Source Code Form is subject to the terms of the Mozilla Public
 % License, v. 2.0. If a copy of the MPL was not distributed with this
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -89,13 +89,13 @@ end
 
 switch methods
     case 1
-        [Y inj_ID idx_errA idx_foreA  idx_err idx_fore ] = new_method_imputation(Y_new,inj_ID0,outliers,Koutliers,tolvar,Nmin_obs_fr,Nmin_obs_interv,check_mod0,idx_err,idx_fore,conditional_sampling);
+        [Y inj_ID idx_errA idx_foreA  idx_err idx_fore ] = new_method_imputation(Y_new,inj_ID0,outliers,Koutliers,tolvar,Nmin_obs_fr,par_nnz,Nmin_obs_interv,check_mod0,idx_err,idx_fore,conditional_sampling);
     case 2
-        [Y inj_ID idx_errA idx_foreA idx_err idx_fore ] = gaussian_conditional(Y_new,inj_ID0,outliers,Koutliers,tolvar,Nmin_obs_fr,Nmin_obs_interv,check_mod0,idx_err,idx_fore,conditional_sampling);
+        [Y inj_ID idx_errA idx_foreA idx_err idx_fore ] = gaussian_conditional(Y_new,inj_ID0,outliers,Koutliers,tolvar,Nmin_obs_fr,par_nnz,Nmin_obs_interv,check_mod0,idx_err,idx_fore,conditional_sampling);
     case 3
-        [Y inj_ID  obj idx_errA idx_foreA idx_err idx_fore ] = gaussian_mixture(Y_new,inj_ID0,outliers,Koutliers,Ngaussians,imputation_meth,tolvar,Nmin_obs_fr,Nmin_obs_interv,check_mod0,idx_err,idx_fore,conditional_sampling);
+        [Y inj_ID  obj idx_errA idx_foreA idx_err idx_fore ] = gaussian_mixture(Y_new,inj_ID0,outliers,Koutliers,Ngaussians,imputation_meth,tolvar,Nmin_obs_fr,par_nnz,Nmin_obs_interv,check_mod0,idx_err,idx_fore,conditional_sampling);
     case 4
-        [Y inj_ID idx_errA idx_foreA idx_err idx_fore ] = new_method_imputation4(Y_new,inj_ID0,outliers,Koutliers,tolvar,Nmin_obs_fr,Nmin_obs_interv,check_mod0,idx_err,idx_fore,conditional_sampling);
+        [Y inj_ID idx_errA idx_foreA idx_err idx_fore ] = new_method_imputation4(Y_new,inj_ID0,outliers,Koutliers,tolvar,Nmin_obs_fr,par_nnz,Nmin_obs_interv,check_mod0,idx_err,idx_fore,conditional_sampling);
     otherwise
         error('invalid method')
 end

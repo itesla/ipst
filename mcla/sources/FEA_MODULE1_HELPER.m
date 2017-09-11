@@ -51,6 +51,7 @@ disp(sprintf(' isdeterministics:  %s', isdeterministics));
 disp(sprintf(' isuniforms:  %s', isuniforms));
 disp(sprintf(' opt_GUIs:  %s', opt_GUIs));
 
+
 modo_inv=str2double(modo_invs);
 par_tolvar = str2double(tolvar);% minimum variance of imput variables, in MW
 par_Nmin_obs_fract = str2double(Nmin_obs_fract);% minim fraction of valid samples for each stochastic variables
@@ -58,6 +59,7 @@ par_nnz = str2double(Nnz);%
 par_Nmin_obs_interv = str2double(Nmin_obs_interv);% min nr of samples in common for each pair of variables
 par_imputation_meth = str2double(imputation_meth); % type of inputation techniques for gaussian mixture: 2= maximum likelihood, 1 = highest prob. gaussian
 unimodd = str2double(unimod);
+moutput.errmsg='Ok';
 par_outliers = str2double(outliers);% 0 = outliers are included as valid samples, 1 = outliers are excluded
 par_imputation_meth = str2double(imputation_meth); % type of inputation techniques for gaussian mixture: 2= maximum likelihood, 1 = highest prob. gaussian
 par_Ngaussians = str2double(Ngaussians); % nr of gaussians of the mixture
@@ -73,7 +75,7 @@ thresGUI=str2double(thresGUIs);
 isdeterministic = str2double(isdeterministics);
 isuniform=str2double(isuniforms);
 opt_GUI = str2num(opt_GUIs);
-moutput.errmsg='Ok';
+
 IR=str2double(IRs);
 K=str2double(Ks);
 % if seed is not specified, 'shuffle'  on current platform time
@@ -128,7 +130,7 @@ try
         nations{inat,2} =     [SNnat{inat}];
         nations{inat,3} =   inj_ID(inj_nat{inat});
         nations{inat,4} =   tipovar(inj_nat{inat});
-        if strcmp(lower(natS),'all')
+        if strcmp(lower(natS),'all') || strcmp(lower(natS),'ALL')
             selezionate(inat) =1;
         else
             if isempty(strfind(natS,quali_nats{inat}))
@@ -380,7 +382,7 @@ try
             %%% OF FORECAST ERRORS
             %%% CONDITIONAL SAMPLING DEACTIVATED -> UNCODITIONED SAMPLING
             %%% OF FORECAST ERRORS
-            [Y inj_ID idx_err idx_fore snapQ  inj_IDQ dummy1 dummy2 dummy3 dummy4] = MODULE0(snap_filt,forec_filt,inj_ID,flagPQ,method,par_tolvar,par_Nmin_obs_fract,par_nnz,par_Nmin_obs_interv,par_outliers,Koutliers,par_imputation_meth,par_Ngaussians,check_mod0,conditional_sampling);
+            [Y inj_ID idx_err idx_fore snapQ  inj_IDQ dummy1 dummy2 dummy3 dummy4] = MODULE0(snap_filt,forec_filt,inj_ID,flagPQ,method,par_tolvar,par_Nmin_obs_fract,par_nnz,par_Nmin_obs_interv,par_outliers,Koutliers,par_imputation_meth,par_Ngaussians,check_mod0,conditional_sampling,tipovar);
                 
         t_module0= toc;
         disp(['GAP FILLING MODULE COMPLETED IN ' num2str(t_module0) ' SECONDS'])
@@ -407,7 +409,10 @@ try
         dati_Q.inj_IDQ = inj_IDQ;
        dati_condUNI=[];
        dati_condMULTI=[];
+       inj_ID_uni = inj_ID;
+       
         end
+                
         
         moutput(1).errmsg='Ok';
         moutput(1).rng_data=rng_data;
