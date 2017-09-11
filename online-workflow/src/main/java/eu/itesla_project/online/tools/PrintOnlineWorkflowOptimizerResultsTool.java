@@ -112,24 +112,28 @@ public class PrintOnlineWorkflowOptimizerResultsTool implements Tool {
                         table.addCell(wfResults.getStateStatus(contingencyId, stateId).name());
                         values[i++] = wfResults.getStateStatus(contingencyId, stateId).name();
                         String json = "-";
-                        if ( wfResults.getActionsIds(contingencyId, stateId) != null )
+                        if ( wfResults.getActionsIds(contingencyId, stateId) != null ) {
 //                            json = Utils.actionsToJson(wfResults, contingencyId, stateId);
                             json = Utils.actionsToJsonExtended(wfResults, contingencyId, stateId);
+                        }
                         table.addCell(json);
                         values[i++] = json;
                         cvsWriter.writeRecord(values);
                     }
                 }
                 cvsWriter.flush();
-                if ( line.hasOption("csv"))
+                if (line.hasOption("csv")) {
                     context.getOutputStream().println(content.toString());
-                else
+                } else {
                     context.getOutputStream().println(table.render());
+                }
                 cvsWriter.close();
-            } else
+            } else {
                 context.getOutputStream().println("\nNo contingencies requiring corrective actions");
-        } else
+            }
+        } else {
             context.getOutputStream().println("No results for this workflow");
+        }
         onlinedb.close();
     }
 

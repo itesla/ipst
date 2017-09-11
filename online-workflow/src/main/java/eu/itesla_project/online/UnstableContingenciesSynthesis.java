@@ -19,23 +19,26 @@ import eu.itesla_project.modules.wca.WCAClusterNum;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class UnstableContingenciesSynthesis implements Serializable{
+public class UnstableContingenciesSynthesis implements Serializable {
 
 
     private static final long serialVersionUID = 1L;
 
     private String workflowId;
 
-    private Map<String, Integer> contingenciesCluster= new Hashtable<String, Integer>();
+    private Map<String, Integer> contingenciesCluster = new Hashtable<String, Integer>();
 
 
 
-    public UnstableContingenciesSynthesis( String workflowId, Map<String, WCACluster> contingenciesWithClusters ){
-        this.workflowId=workflowId;
-        Set<Entry<String,WCACluster>> contingencyWithCluster=contingenciesWithClusters.entrySet();
+    public UnstableContingenciesSynthesis(String workflowId, Map<String, WCACluster> contingenciesWithClusters) {
+        this.workflowId = workflowId;
+        Set<Entry<String, WCACluster>> contingencyWithCluster = contingenciesWithClusters.entrySet();
 
-        for (Entry<String,WCACluster> cc: contingencyWithCluster)
-            if( cc.getValue().getNum() != WCAClusterNum.ONE )    contingenciesCluster.put(cc.getKey(), new Integer(cc.getValue().getNum().toIntValue()));
+        for (Entry<String, WCACluster> cc : contingencyWithCluster) {
+            if (cc.getValue().getNum() != WCAClusterNum.ONE) {
+                contingenciesCluster.put(cc.getKey(), new Integer(cc.getValue().getNum().toIntValue()));
+            }
+        }
 
     }
 

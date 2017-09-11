@@ -18,14 +18,14 @@ public class WorkSynthesis implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String workflowId;
-    private HashMap<Integer,WorkStatus> status;
+    private HashMap<Integer, WorkStatus> status;
 
-    public WorkSynthesis(){};
+    public WorkSynthesis() {
+    }
 
-    public WorkSynthesis(String workflowId, HashMap<Integer,WorkStatus> status)
-    {
-        this.workflowId=workflowId;
-        this.status=status;
+    public WorkSynthesis(String workflowId, HashMap<Integer, WorkStatus> status) {
+        this.workflowId = workflowId;
+        this.status = status;
     }
 
     public String getWorkflowId() {

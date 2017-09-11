@@ -71,10 +71,11 @@ public class DeleteOnlineWorkflowStatesTool implements Tool {
         String workflowId = line.getOptionValue("workflow");
         context.getOutputStream().println("Deleting stored states of workflow " + workflowId);
         boolean deleted = onlinedb.deleteStates(workflowId);
-        if ( deleted )
+        if (deleted) {
             context.getOutputStream().println("Stored states of workflow " + workflowId + " deleted");
-        else
+        } else {
             context.getOutputStream().println("Cannot delete stored states of workflow " + workflowId);
+        }
         onlinedb.close();
     }
 

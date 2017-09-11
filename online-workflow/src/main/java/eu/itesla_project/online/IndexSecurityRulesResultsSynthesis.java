@@ -28,12 +28,12 @@ public class IndexSecurityRulesResultsSynthesis implements Serializable {
    private String workflowId;
 
    
-   private final  Map<String,Map<Integer,StateInfo>> contingencySecurityRulesMap=new HashMap<String,Map<Integer,StateInfo>>();
+   private final  Map<String, Map<Integer, StateInfo>> contingencySecurityRulesMap = new HashMap<String, Map<Integer, StateInfo>>();
 
-  
-   public IndexSecurityRulesResultsSynthesis(String workflowId ) {
-       this.workflowId=workflowId;
-   }
+
+    public IndexSecurityRulesResultsSynthesis(String workflowId) {
+        this.workflowId = workflowId;
+    }
    
    
    
@@ -62,36 +62,31 @@ public class IndexSecurityRulesResultsSynthesis implements Serializable {
 
    }*/
 
-   public String getWorkflowId() 
-   {
+   public String getWorkflowId() {
         return workflowId;
    }
    
-   public void setWorkflowId(String workflowId) 
-   {
+   public void setWorkflowId(String workflowId) {
         this.workflowId = workflowId;
    }
 
    
    
    
-   public void addStateSecurityRuleIndexes(String contingencyId, Integer stateId, SecurityRulesApplicationResults rulesApplicationResults)
-   {
-       Map<SecurityIndexType, StateStatus> indexStatus = rulesApplicationResults.getSecurityRulesResults(contingencyId,stateId);
+   public void addStateSecurityRuleIndexes(String contingencyId, Integer stateId, SecurityRulesApplicationResults rulesApplicationResults) {
+       Map<SecurityIndexType, StateStatus> indexStatus = rulesApplicationResults.getSecurityRulesResults(contingencyId, stateId);
        StateStatus stateStatus    = rulesApplicationResults.getStateStatus(contingencyId, stateId);
        StateInfo stateInfo         = new StateInfo (stateId, stateStatus, indexStatus);
 
        if (contingencySecurityRulesMap.containsKey(contingencyId)) {
-           Map<Integer,StateInfo> stateIndexInfo = contingencySecurityRulesMap.get(contingencyId);
-           stateIndexInfo.put(stateId,stateInfo);
+           Map<Integer, StateInfo> stateIndexInfo = contingencySecurityRulesMap.get(contingencyId);
+           stateIndexInfo.put(stateId, stateInfo);
            this.contingencySecurityRulesMap.put(contingencyId, stateIndexInfo);
-        }
-        else
-        {
-            Map<Integer,StateInfo> stateIndexStatus = new Hashtable<Integer,StateInfo>();
-            stateIndexStatus.put(stateId,stateInfo);
-            this.contingencySecurityRulesMap.put(contingencyId, stateIndexStatus);
-        }
+       } else {
+           Map<Integer, StateInfo> stateIndexStatus = new Hashtable<Integer, StateInfo>();
+           stateIndexStatus.put(stateId, stateInfo);
+           this.contingencySecurityRulesMap.put(contingencyId, stateIndexStatus);
+       }
 
     }
     
@@ -132,15 +127,13 @@ public class IndexSecurityRulesResultsSynthesis implements Serializable {
    
    
     
-    public class SecurityRulesResults implements Serializable
-    {
+    public class SecurityRulesResults implements Serializable {
 
         String type;
         String description;
         StateStatus status;
 
-        public SecurityRulesResults(SecurityIndexType idx, StateStatus status)
-        {
+        public SecurityRulesResults(SecurityIndexType idx, StateStatus status) {
 
             this.type          = idx.getLabel();
             this.description  = idx.toString();
@@ -167,7 +160,7 @@ public class IndexSecurityRulesResultsSynthesis implements Serializable {
             this.type = type;
         }
 
-        public StateStatus getStatus(){
+        public StateStatus getStatus() {
             return status;
         }
 
@@ -186,7 +179,7 @@ public class IndexSecurityRulesResultsSynthesis implements Serializable {
 
     
 
-        Map<SecurityIndexType,SecurityRulesResults> indexTypeSecurityRulesResults;
+        Map<SecurityIndexType, SecurityRulesResults> indexTypeSecurityRulesResults;
 
 
 
@@ -199,64 +192,59 @@ public class IndexSecurityRulesResultsSynthesis implements Serializable {
             this.indexTypeSecurityRulesResults = indexTypeSecurityRulesResults;
         }
 
-        public StateInfo(Integer stateId, StateStatus stateStatus,    Map<SecurityIndexType, StateStatus> results)
-        {
+        public StateInfo(Integer stateId, StateStatus stateStatus,    Map<SecurityIndexType, StateStatus> results) {
             this.status = stateStatus;
-            this.stateId=stateId;
+            this.stateId = stateId;
 
-            switch(stateStatus){
+            switch (stateStatus) {
             case SAFE:
-                this.statusCode="S";
+                this.statusCode = "S";
                 break;
 
             case UNSAFE:
-                this.statusCode="U";
+                this.statusCode = "U";
                 break;
             case SAFE_WITH_CORRECTIVE_ACTIONS:
-                this.statusCode="SWCA";
+                this.statusCode = "SWCA";
                 break;
             default:
-                this.statusCode="";
+                this.statusCode = "";
                 break;
             }
 
 
-            Map<SecurityIndexType,SecurityRulesResults> mapIndexTypeSR = new  EnumMap<SecurityIndexType,SecurityRulesResults>(SecurityIndexType.class);
+            Map<SecurityIndexType, SecurityRulesResults> mapIndexTypeSR = new  EnumMap<SecurityIndexType, SecurityRulesResults>(SecurityIndexType.class);
 
-            for (int i=0; i<SecurityIndexType.values().length; i++)    {
-                if (results.containsKey(SecurityIndexType.values()[i])){
-                    StateStatus status=results.get(SecurityIndexType.values()[i]);
-                    mapIndexTypeSR.put(SecurityIndexType.values()[i],new SecurityRulesResults(SecurityIndexType.values()[i], status));
-                }
-                else
+            for (int i = 0; i < SecurityIndexType.values().length; i++) {
+                if (results.containsKey(SecurityIndexType.values()[i])) {
+                    StateStatus status = results.get(SecurityIndexType.values()[i]);
+                    mapIndexTypeSR.put(SecurityIndexType.values()[i], new SecurityRulesResults(SecurityIndexType.values()[i], status));
+                } else {
                     mapIndexTypeSR.put(SecurityIndexType.values()[i], new SecurityRulesResults());
+                }
 
             }
 
-            this.indexTypeSecurityRulesResults=mapIndexTypeSR;
+            this.indexTypeSecurityRulesResults = mapIndexTypeSR;
 
         }
 
-        public Integer getStateId()
-        {
+        public Integer getStateId() {
             return stateId;
         }
 
-        public void setStateId(Integer _stateId)
-        {
+        public void setStateId(Integer _stateId) {
             this.stateId = _stateId;
         }
 
 
-        public StateStatus getStatus()
-        {
+        public StateStatus getStatus() {
             return this.status;
         }
 
 
-        public void setStatus(StateStatus _status)
-        {
-            this.status= _status;
+        public void setStatus(StateStatus _status) {
+            this.status =  _status;
         }
 
         public String getStatusCode() {

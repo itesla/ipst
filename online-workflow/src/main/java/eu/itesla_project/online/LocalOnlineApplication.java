@@ -113,7 +113,7 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
             } catch (Throwable t) {
                 LOGGER.error(t.toString(), t);
             }
-        } , 0, 20, TimeUnit.SECONDS);
+        }, 0, 20, TimeUnit.SECONDS);
     }
 
     @Override
@@ -133,10 +133,11 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
 
             if (!force) {
                 long tim = System.currentTimeMillis();
-                if (tim % 2 == 0)
+                if (tim % 2 == 0) {
                     busyCores.insert(0, computationManager.getResourcesStatus().getBusyCores());
-                else
+                } else {
                     busyCores.insert(0, 1);
+                }
 
                 busyCores.removeAt(busyCores.size() - 1); // remove the older
                                                           // one
@@ -238,8 +239,9 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
                     montecarloSamplerFactory, mergeOptimizerFactory, rulesFacadeFactory, onlineParams, startParams);
             workflow.addOnlineApplicationListener(this);
 
-            for (OnlineApplicationListener l : listeners)
+            for (OnlineApplicationListener l : listeners) {
                 workflow.addOnlineApplicationListener(l);
+            }
 
             if (startParams.getOnlineApplicationListenerFactoryClass() != null) {
                 additionalListener = startParams.getOnlineApplicationListenerFactoryClass().newInstance().create();
@@ -447,15 +449,16 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
 
     // start td simulations
     private Path getFile(Path folder, String filename) {
-        if (folder != null)
+        if (folder != null) {
             return Paths.get(folder.toString(), filename);
+        }
         return Paths.get(filename);
     }
 
     private void writeCsvViolations(String basecase, List<LimitViolation> networkViolations, CsvWriter cvsWriter)
             throws IOException {
         for (LimitViolation violation : networkViolations) {
-            String[] values = new String[] { basecase, violation.getSubjectId(), violation.getLimitType().name(),
+            String[] values = new String[] {basecase, violation.getSubjectId(), violation.getLimitType().name(),
                     Float.toString(violation.getValue()), Float.toString(violation.getLimit()) };
             cvsWriter.writeRecord(values);
         }
@@ -470,8 +473,9 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
             String[] resultsHeaders = new String[indexIds.length + 1];
             resultsHeaders[0] = "Basecase";
             int i = 1;
-            for (String securityIndexId : indexIds)
+            for (String securityIndexId : indexIds) {
                 resultsHeaders[i++] = securityIndexId;
+            }
             cvsWriter.writeRecord(resultsHeaders);
             cvsWriter.flush();
         }
@@ -480,8 +484,9 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
         int i = 1;
         for (String securityIndexId : indexIds) {
             String result = "NA";
-            if (tdSimulationResults.containsKey(securityIndexId))
+            if (tdSimulationResults.containsKey(securityIndexId)) {
                 result = tdSimulationResults.get(securityIndexId) ? "OK" : "KO";
+            }
             values[i++] = result;
         }
         cvsWriter.writeRecord(values);
@@ -507,7 +512,7 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
             CsvWriter resultsCvsWriter = new CsvWriter(resultsContent, ',');
             Set<String> securityIndexIds = new LinkedHashSet<>();
             try {
-                String[] violationsHeaders = new String[] { "Basecase", "Equipment", "Type", "Value", "Limit" };
+                String[] violationsHeaders = new String[] {"Basecase", "Equipment", "Type", "Value", "Limit" };
                 violationsCvsWriter.writeRecord(violationsHeaders);
                 violationsCvsWriter.flush();
 
@@ -543,7 +548,7 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    } , dataSource -> System.out.println("loading case " + dataSource.getBaseName()));
+                    }, dataSource -> System.out.println("loading case " + dataSource.getBaseName()));
                 }
             } catch (IOException ioxcp) {
                 ioxcp.printStackTrace();

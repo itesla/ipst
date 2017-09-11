@@ -12,7 +12,7 @@ import java.io.Serializable;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class StatusSynthesis implements Serializable{
+public class StatusSynthesis implements Serializable {
 
     /**
      *
@@ -21,10 +21,9 @@ public class StatusSynthesis implements Serializable{
     private final String workflowId;
     private final WorkflowStatusEnum status;
 
-    public StatusSynthesis(String workflowId, WorkflowStatusEnum status)
-    {
-        this.workflowId=workflowId;
-        this.status=status;
+    public StatusSynthesis(String workflowId, WorkflowStatusEnum status) {
+        this.workflowId = workflowId;
+        this.status = status;
     }
 
     public String getWorkflowId() {

@@ -87,14 +87,16 @@ public class ExportOnlineWorkflowStateTool implements Tool {
         Integer stateId = Integer.valueOf(line.getOptionValue("state"));
         Path folder =  line.hasOption("folder") ? Paths.get(line.getOptionValue("folder")) : null;
         List<Integer> storedStates = onlinedb.listStoredStates(workflowId);
-        if ( storedStates.contains(stateId) ) {
-            if ( folder != null )
+        if (storedStates.contains(stateId)) {
+            if (folder != null) {
                 context.getOutputStream().println("Exporting stored state " + stateId + " of workflow " + workflowId + " to folder " + folder);
-            else
+            } else {
                 context.getOutputStream().println("Exporting stored state " + stateId + " of workflow " + workflowId + " to current folder");
+            }
             onlinedb.exportState(workflowId, stateId, folder);
-        } else
+        } else {
             context.getOutputStream().println("No state " + stateId + " stored for workflow " + workflowId);
+        }
         onlinedb.close();
     }
 

@@ -35,7 +35,7 @@ public class CorrectiveControlOptimizerMock implements CorrectiveControlOptimize
     @Override
     public CorrectiveControlOptimizerResult run(PostContingencyState postContingencyState) throws Exception {
         CorrectiveControlOptimizerResult result = null;
-        if ( postContingencyState!= null ) {
+        if (postContingencyState != null) {
             logger.info("Working on contingency {} and state {}", postContingencyState.getContingency().getId(), postContingencyState.getStateId());
             result = new CorrectiveControlOptimizerResult(postContingencyState.getContingency().getId(), false);
             result.setFinalStatus(CCOFinalStatus.NO_CORRECTIVE_ACTION_FOUND);

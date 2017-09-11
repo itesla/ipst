@@ -28,7 +28,7 @@ public class OnlineDbMVStoreConfig {
     private final Path onlineDbDir;
 
     public OnlineDbMVStoreConfig(Path onlineDbDir) {
-        Objects.requireNonNull(onlineDbDir,"onlie db directory is null");
+        Objects.requireNonNull(onlineDbDir, "onlie db directory is null");
 
         this.onlineDbDir = onlineDbDir;
     }
@@ -48,7 +48,7 @@ public class OnlineDbMVStoreConfig {
 
     @Override
     public String toString() {
-        return "OnlineDbMVStoreConfig ["+ "onlineDbDir=" + onlineDbDir + "]";
+        return "OnlineDbMVStoreConfig [" + "onlineDbDir=" + onlineDbDir + "]";
     }
 
 }

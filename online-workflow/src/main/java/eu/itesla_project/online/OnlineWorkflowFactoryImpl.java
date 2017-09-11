@@ -50,11 +50,11 @@ public class OnlineWorkflowFactoryImpl implements OnlineWorkflowFactory {
             MergeOptimizerFactory mergeOptimizerFactory,
             RulesFacadeFactory rulesFacadeFactory,
             OnlineWorkflowParameters parameters,
-            OnlineWorkflowStartParameters startParameters){
+            OnlineWorkflowStartParameters startParameters) {
 
         return   new OnlineWorkflowImpl(computationManager, cadbClient, histoDbClient, rulesDbClient, wcaFactory, loadFlowFactory, feDataStorage,
                 onlineDB, uncertaintiesAnalyserFactory, optimizerFactory, simulatorFactory, caseRepository,
-                montecarloSamplerFactory,mergeOptimizerFactory, rulesFacadeFactory, parameters, startParameters); 
+                montecarloSamplerFactory, mergeOptimizerFactory, rulesFacadeFactory, parameters, startParameters);
 
     }
 }

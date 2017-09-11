@@ -90,14 +90,16 @@ public class ListForecastErrorsAnalysisTool implements Tool {
             for (TimeHorizon timeHorizon : mergedList) {
                 table.addCell(analysis.getAnalysisId());
                 table.addCell(formatter.print(analysis.getAnalysisDate()));
-                if ( analysis.getForecastErrorsDataList().contains(timeHorizon))
+                if (analysis.getForecastErrorsDataList().contains(timeHorizon)) {
                     table.addCell(timeHorizon.getName());
-                else
+                } else {
                     table.addCell("-");
-                if ( analysis.getForecastErrorsStatisticsList().contains(timeHorizon))
+                }
+                if (analysis.getForecastErrorsStatisticsList().contains(timeHorizon)) {
                     table.addCell(timeHorizon.getName());
-                else
+                } else {
                     table.addCell("-");
+                }
                 ForecastErrorsAnalyzerParameters parameters = feDataStorage.getParameters(analysis.getAnalysisId(), timeHorizon);
                 if ( parameters != null ) {
                     //table.addCell(parameters.toString().substring(32));
@@ -111,8 +113,9 @@ public class ListForecastErrorsAnalysisTool implements Tool {
                         value = value.substring(COLUMN_LENGTH);
                     }
                     table.addCell(value, new CellStyle(CellStyle.HorizontalAlign.left));
-                } else
+                } else {
                     table.addCell("-");
+                }
             }
         }
         context.getOutputStream().println(table.render());

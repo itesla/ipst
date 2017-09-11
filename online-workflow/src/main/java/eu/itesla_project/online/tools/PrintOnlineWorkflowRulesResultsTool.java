@@ -92,17 +92,18 @@ public class PrintOnlineWorkflowRulesResultsTool implements Tool {
         OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
         String workflowId = line.getOptionValue("workflow");
         OnlineWorkflowRulesResults wfRulesResults = onlinedb.getRulesResults(workflowId);
-        if ( line.hasOption("wca"))
+        if (line.hasOption("wca")) {
             wfRulesResults = onlinedb.getWcaRulesResults(workflowId);
-        if ( wfRulesResults != null ) {
-            if ( !wfRulesResults.getContingenciesWithSecurityRulesResults().isEmpty() ) {
+        }
+        if (wfRulesResults != null) {
+            if (!wfRulesResults.getContingenciesWithSecurityRulesResults().isEmpty()) {
                 OnlineWorkflowParameters parameters = onlinedb.getWorkflowParameters(workflowId);
                 SecurityIndexType[] securityIndexTypes = parameters.getSecurityIndexes() == null ? SecurityIndexType.values()
                         : parameters.getSecurityIndexes().toArray(new SecurityIndexType[parameters.getSecurityIndexes().size()]);
-                Table table = new Table(securityIndexTypes.length+3, BorderStyle.CLASSIC_WIDE);
+                Table table = new Table(securityIndexTypes.length + 3, BorderStyle.CLASSIC_WIDE);
                 StringWriter content = new StringWriter();
                 CsvWriter cvsWriter = new CsvWriter(content, ',');
-                String[] headers = new String[securityIndexTypes.length+3];
+                String[] headers = new String[securityIndexTypes.length + 3];
                 int i = 0;
                 table.addCell("Contingency", new CellStyle(CellStyle.HorizontalAlign.center));
                 headers[i++] = "Contingency";
@@ -117,7 +118,7 @@ public class PrintOnlineWorkflowRulesResultsTool implements Tool {
                 cvsWriter.writeRecord(headers);
                 for (String contingencyId : wfRulesResults.getContingenciesWithSecurityRulesResults()) {
                     for (Integer stateId : wfRulesResults.getStatesWithSecurityRulesResults(contingencyId)) {
-                        String[] values = new String[securityIndexTypes.length+3];
+                        String[] values = new String[securityIndexTypes.length + 3];
                         i = 0;
                         table.addCell(contingencyId);
                         values[i++] = contingencyId;
@@ -140,27 +141,31 @@ public class PrintOnlineWorkflowRulesResultsTool implements Tool {
                     }
                 }
                 cvsWriter.flush();
-                if ( line.hasOption("csv"))
+                if (line.hasOption("csv")) {
                     context.getOutputStream().println(content.toString());
-                else
+                } else {
                     context.getOutputStream().println(table.render());
+                }
                 cvsWriter.close();
-            } else
+            } else {
                 context.getOutputStream().println("\nNo results of security rules applications for this workflow");
-        } else
+            }
+        } else {
             context.getOutputStream().println("No results for this workflow");
+        }
         onlinedb.close();
     }
 
-    private HashMap<String, String> getRulesResults(Map<String,Boolean> stateResults, SecurityIndexType[] securityIndexTypes, List<SecurityIndexType> invalidRules) {
+    private HashMap<String, String> getRulesResults(Map<String, Boolean> stateResults, SecurityIndexType[] securityIndexTypes, List<SecurityIndexType> invalidRules) {
         HashMap<String, String> rulesResults = new HashMap<String, String>();
         for (SecurityIndexType securityIndexType : securityIndexTypes) {
-            if ( stateResults.containsKey(securityIndexType.getLabel()) )
+            if (stateResults.containsKey(securityIndexType.getLabel())) {
                 rulesResults.put(securityIndexType.getLabel(), stateResults.get(securityIndexType.getLabel()) ? "Safe" : "Unsafe");
-            else if ( invalidRules.contains(securityIndexType) )
+            } else if (invalidRules.contains(securityIndexType)) {
                 rulesResults.put(securityIndexType.getLabel(), INVALID_RULE);
-            else
+            } else {
                 rulesResults.put(securityIndexType.getLabel(), "-");
+            }
         }
         return rulesResults;
     }

@@ -79,7 +79,7 @@ public class OnlineWorkflowContext {
     }
 
     public void setNetwork(Network network) {
-        this.network=network;
+        this.network = network;
     }
 
     public int incrementStateCounter() {

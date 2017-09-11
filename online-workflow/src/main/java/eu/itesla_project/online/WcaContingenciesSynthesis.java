@@ -18,23 +18,24 @@ import eu.itesla_project.modules.wca.WCACluster;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class WcaContingenciesSynthesis implements Serializable{
+public class WcaContingenciesSynthesis implements Serializable {
 
 
     private static final long serialVersionUID = 1L;
 
     private String workflowId;
 
-    private Map<String, Integer> contingenciesCluster= new Hashtable<String, Integer>();
+    private Map<String, Integer> contingenciesCluster = new Hashtable<String, Integer>();
 
 
 
-    public WcaContingenciesSynthesis( String workflowId, Map<String, WCACluster> contingenciesWithClusters ){
-        this.workflowId=workflowId;
-        Set<Entry<String,WCACluster>> contingencyWithCluster=contingenciesWithClusters.entrySet();
+    public WcaContingenciesSynthesis(String workflowId, Map<String, WCACluster> contingenciesWithClusters) {
+        this.workflowId = workflowId;
+        Set<Entry<String, WCACluster>> contingencyWithCluster = contingenciesWithClusters.entrySet();
 
-        for (Entry<String,WCACluster> cc: contingencyWithCluster)
+        for (Entry<String, WCACluster> cc : contingencyWithCluster) {
             contingenciesCluster.put(cc.getKey(), new Integer(cc.getValue().getNum().toIntValue()));
+        }
 
     }
 

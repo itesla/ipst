@@ -123,15 +123,18 @@ public class PrintOnlineWorkflowWcaResultsTool implements Tool {
                     cvsWriter.writeRecord(values);
                 }
                 cvsWriter.flush();
-                if ( line.hasOption("csv"))
+                if (line.hasOption("csv")) {
                     context.getOutputStream().println(content.toString());
-                else
+                } else {
                     context.getOutputStream().println(table.render());
+                }
                 cvsWriter.close();
-            } else
+            } else {
                 context.getOutputStream().println("\nNo results of security rules applications for this workflow");
-        } else
+            }
+        } else {
             context.getOutputStream().println("No results for this workflow");
+        }
         onlinedb.close();
     }
 

@@ -16,35 +16,34 @@ import eu.itesla_project.modules.online.StateProcessingStatus;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class WorkStatus implements StateProcessingStatus,Serializable {
+public class WorkStatus implements StateProcessingStatus, Serializable {
 
     private Integer stateId;
 
     private String timeHorizon;
 
-    private HashMap<String,String> status;
+    private HashMap<String, String> status;
 
     private String detail;
 
 
-
-    public WorkStatus(Integer stateId, EnumMap<OnlineTaskType, OnlineTaskStatus> st, String time)
-    {
-        this.stateId=stateId;
-        this.timeHorizon=time;
-        this.status=new HashMap<String, String>();
-                for(OnlineTaskType k :st.keySet())
-                    status.put(k.toString(), st.get(k).toString());
+    public WorkStatus(Integer stateId, EnumMap<OnlineTaskType, OnlineTaskStatus> st, String time) {
+        this.stateId = stateId;
+        this.timeHorizon = time;
+        this.status = new HashMap<String, String>();
+        for (OnlineTaskType k : st.keySet()) {
+            status.put(k.toString(), st.get(k).toString());
+        }
     }
 
-    public WorkStatus(Integer stateId, EnumMap<OnlineTaskType, OnlineTaskStatus> st, String time, String detail)
-    {
-        this.stateId=stateId;
-        this.timeHorizon=time;
-        this.status=new HashMap<String, String>();
-                for(OnlineTaskType k :st.keySet())
-                    status.put(k.toString(), st.get(k).toString());
-        this.detail=detail;
+    public WorkStatus(Integer stateId, EnumMap<OnlineTaskType, OnlineTaskStatus> st, String time, String detail) {
+        this.stateId = stateId;
+        this.timeHorizon = time;
+        this.status = new HashMap<String, String>();
+        for (OnlineTaskType k : st.keySet()) {
+            status.put(k.toString(), st.get(k).toString());
+        }
+        this.detail = detail;
     }
 
     public Integer getStateId() {
@@ -81,10 +80,11 @@ public class WorkStatus implements StateProcessingStatus,Serializable {
     }
 
     //new
-    public void setStatus(EnumMap<OnlineTaskType, OnlineTaskStatus> st){
-        this.status=new HashMap<String, String>();
-        for(OnlineTaskType k :st.keySet())
+    public void setStatus(EnumMap<OnlineTaskType, OnlineTaskStatus> st) {
+        this.status = new HashMap<String, String>();
+        for (OnlineTaskType k : st.keySet()) {
             status.put(k.toString(), st.get(k).toString());
+        }
     }
 
 }

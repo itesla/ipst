@@ -91,7 +91,7 @@ public class NetworkDataExtractor {
     }
 
     private static void extractLinesData(Network network, NetworkData networkData) {
-        for(Line line : network.getLines()) {
+        for (Line line : network.getLines()) {
             if ( line.getTerminal1().getVoltageLevel().getNominalV() >= 110) {
                 networkData.addLineData(new LineData(line.getId(),
                                                      (line.getTerminal1().getBusBreakerView().getBus() != null)
@@ -110,7 +110,7 @@ public class NetworkDataExtractor {
     }
 
     private static void extractTfo2WData(Network network, NetworkData networkData) {
-        for(TwoWindingsTransformer tfo : network.getTwoWindingsTransformers()) {
+        for (TwoWindingsTransformer tfo : network.getTwoWindingsTransformers()) {
             networkData.addTfo2WData(new Tfo2WData(tfo.getId(),
                                                    (tfo.getTerminal1().getBusBreakerView().getBus() != null)
                                                            ? tfo.getTerminal1().getBusBreakerView().getBus().getId()
@@ -131,7 +131,7 @@ public class NetworkDataExtractor {
     }
 
     private static void extractTfo3WData(Network network, NetworkData networkData) {
-        for(ThreeWindingsTransformer tfo : network.getThreeWindingsTransformers()) {
+        for (ThreeWindingsTransformer tfo : network.getThreeWindingsTransformers()) {
             networkData.addTfo3WData(new Tfo3WData(tfo.getId(),
                                                    (tfo.getLeg1().getTerminal().getBusBreakerView().getBus() != null)
                                                            ? tfo.getLeg1().getTerminal().getBusBreakerView().getBus().getId()
@@ -156,7 +156,7 @@ public class NetworkDataExtractor {
     }
 
     private static void extractGeneratorsData(Network network, NetworkData networkData) {
-        for(Generator generator : network.getGenerators()) {
+        for (Generator generator : network.getGenerators()) {
             networkData.addGeneratorData(new GeneratorData(generator.getId(),
                                                            (generator.getTerminal().getBusBreakerView().getBus() != null)
                                                                        ? generator.getTerminal().getBusBreakerView().getBus().getId()
@@ -175,7 +175,7 @@ public class NetworkDataExtractor {
     }
 
     private static void extractLoadsData(Network network, NetworkData networkData) {
-        for(Load load : network.getLoads()) {
+        for (Load load : network.getLoads()) {
             networkData.addLoadData(new LoadData(load.getId(),
                                                  (load.getTerminal().getBusBreakerView().getBus() != null)
                                                          ? load.getTerminal().getBusBreakerView().getBus().getId()
@@ -190,37 +190,47 @@ public class NetworkDataExtractor {
 
     private static float apparentPower(Terminal terminal) {
         float apparentPower = Float.NaN;
-        if ( !Float.isNaN(terminal.getP()) && !Float.isNaN(terminal.getQ()) )
+        if (!Float.isNaN(terminal.getP()) && !Float.isNaN(terminal.getQ())) {
             apparentPower = (float) Math.sqrt(Math.pow(terminal.getP(), 2) + Math.pow(terminal.getQ(), 2));
+        }
         return apparentPower;
     }
 
     private static boolean isRegulating(TwoWindingsTransformer tfo) {
-        if ( tfo.getPhaseTapChanger() != null )
+        if (tfo.getPhaseTapChanger() != null) {
             return tfo.getPhaseTapChanger().getRegulationMode() != PhaseTapChanger.RegulationMode.FIXED_TAP
                     && tfo.getPhaseTapChanger().isRegulating();
-        if ( tfo.getRatioTapChanger() != null )
+        }
+        if (tfo.getRatioTapChanger() != null) {
             return tfo.getRatioTapChanger().isRegulating();
+        }
         return false;
     }
 
     private static int correntStepPosition(TwoWindingsTransformer tfo) {
-        if ( tfo.getPhaseTapChanger() != null )
+        if (tfo.getPhaseTapChanger() != null) {
             return tfo.getPhaseTapChanger().getTapPosition();
-        if ( tfo.getRatioTapChanger() != null )
+        }
+        if (tfo.getRatioTapChanger() != null) {
             return tfo.getRatioTapChanger().getTapPosition();
+        }
         return 0;
     }
 
     private static void updateSlackBusData(Bus bus, Integer busIndex, SlackBusData slackBusData) {
-        if ( bus.getGenerators() == null ) return;
+        if (bus.getGenerators() == null) {
+            return;
+        }
         //...slackbus has at least one generator connected
-        for ( Generator generator :  bus.getGenerators() )
-        {
+        for (Generator generator : bus.getGenerators()) {
               //...which has a generator with voltage regulator on
-              if ( !generator.isVoltageRegulatorOn()) continue;
+              if (!generator.isVoltageRegulatorOn()) {
+                  continue;
+              }
               //...assure the generator is the one connected to the bus (and not on the aggregated buses)
-              if ( !generator.getTerminal().getBusBreakerView().getBus().getId().equals(bus.getId()) ) return;
+              if (!generator.getTerminal().getBusBreakerView().getBus().getId().equals(bus.getId()) ) {
+                  return;
+              }
               //...candidate slackbus
               if ( slackBusData.getSlackBusIndex() == -1 ) {
                   slackBusData.setSlackBusIndex(busIndex);

@@ -93,8 +93,9 @@ public class OnlineApplicationResource {
     @Path("currentUser")
     public String getCurrentUser() {
         String user = "";
-        if (securityContext != null && securityContext.getUserPrincipal() != null)
+        if (securityContext != null && securityContext.getUserPrincipal() != null) {
             user = securityContext.getUserPrincipal().getName();
+        }
 
         return user;
     }
@@ -109,11 +110,12 @@ public class OnlineApplicationResource {
         }
 
         HttpSession session = req.getSession();
-        if (session != null)
+        if (session != null) {
             try {
                 session.invalidate();
             } catch (Exception ignored) {
             }
+        }
 
     }
 

@@ -13,7 +13,7 @@ import org.joda.time.DateTime;
 *
 * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
 */
-public class OnlineProcessParameters{
+public class OnlineProcessParameters {
 
     private String caseType;
     private Integer states;
@@ -23,41 +23,41 @@ public class OnlineProcessParameters{
     private DateTime date;
     private String basecasesInterval;
 
-    public OnlineProcessParameters(){
+    public OnlineProcessParameters() {
     }
 
     public void setName(String name) {
-        this.name=name;
+        this.name = name;
 
     }
 
     public void setCaseType(String caseType) {
-        this.caseType=caseType;
+        this.caseType = caseType;
 
     }
 
     public void setStates(Integer states) {
-        this.states=states;
+        this.states = states;
 
     }
 
     public void setBasecasesInterval(String interval) {
-        this.basecasesInterval=interval;
+        this.basecasesInterval = interval;
 
     }
 
     public void setCreationDate(DateTime date) {
-        this.creationDate=date;
+        this.creationDate = date;
 
     }
 
     public void setDate(DateTime date) {
-        this.date=date;
+        this.date = date;
 
     }
 
     public void setOwner(String owner) {
-        this.owner=owner;
+        this.owner = owner;
 
     }
 

@@ -75,10 +75,11 @@ public class DeleteOnlineWorkflowTool implements Tool {
         String workflowId = line.getOptionValue("workflow");
         context.getOutputStream().println("Deleting workflow " + workflowId);
         boolean deleted = onlinedb.deleteWorkflow(workflowId);
-        if ( deleted )
+        if (deleted) {
             context.getOutputStream().println("Workflow " + workflowId + " deleted");
-        else
+        } else {
             context.getOutputStream().println("Cannot delete workflow " + workflowId);
+        }
         onlinedb.close();
     }
 

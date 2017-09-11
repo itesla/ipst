@@ -13,7 +13,7 @@ import java.io.Serializable;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class ActionInfo implements Serializable{
+public class ActionInfo implements Serializable {
 
     /**
      *

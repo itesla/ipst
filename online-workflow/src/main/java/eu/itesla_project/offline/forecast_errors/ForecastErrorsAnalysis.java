@@ -62,7 +62,9 @@ public class ForecastErrorsAnalysis {
         this(cpClient, ForecastErrorsAnalysisConfig.load(), ForecastErrorsAnalysisParameters.load());
     }
 
-    public void start() { runFEA(TimeHorizon.values()); }
+    public void start() {
+        runFEA(TimeHorizon.values());
+    }
 
     public void start(TimeHorizon timehorizon) {
         runFEA(new TimeHorizon[]{timehorizon});
@@ -75,7 +77,7 @@ public class ForecastErrorsAnalysis {
                                           loadFlowFactory, 0, mergeOptimizerFactory, computationManager, false);
 
         logger.info("- Network id: " + network.getId());
-        logger.info("- Network name: "+ network.getName());
+        logger.info("- Network name: " + network.getName());
 
         ForecastErrorsAnalyzer feAnalyzer = forecastErrorsAnalyzerFactory.create(network, computationManager, feDataStorage, histoDbClient);
         feAnalyzer.init(new ForecastErrorsAnalyzerParameters(
@@ -87,7 +89,7 @@ public class ForecastErrorsAnalysis {
 
         // sequential analysis of the different time horizons
         // it could/should be parallelized
-        for(TimeHorizon timeHorizon : timeHorizons) {
+        for (TimeHorizon timeHorizon : timeHorizons) {
             try {
                 logger.info("Performing forecast error analysis on {} time horizon for {} network", timeHorizon.getName(), network.getId());
                 feAnalyzer.run(timeHorizon);

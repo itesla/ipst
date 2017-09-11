@@ -151,8 +151,9 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
     @Override
     public void start(OnlineWorkflowContext oCtx) throws Exception {
         logger.info("{} Online workflow processing, started.", id);
-        for (OnlineApplicationListener l : listeners)
+        for (OnlineApplicationListener l : listeners) {
             l.onWorkflowUpdate(new StatusSynthesis(id, WorkflowStatusEnum.RUNNING));
+        }
 
         Network network = null;
         if (parameters.getCaseFile() != null) {
@@ -181,19 +182,22 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
         oCtx.setResults(new ForecastAnalysisResults(this.getId(), oCtx.getTimeHorizon()));
         oCtx.setSecurityRulesResults(new SecurityRulesApplicationResults(this.getId(), oCtx.getTimeHorizon()));
         oCtx.setWcaResults(new WCAResults(this.getId(), oCtx.getTimeHorizon()));
-        if (parameters.validation())
+        if (parameters.validation()) {
             oCtx.setWcaSecurityRulesResults(new SecurityRulesApplicationResults(this.getId(), oCtx.getTimeHorizon()));
+        }
 
         logger.info(" - WCA processing......");
-        for (OnlineApplicationListener l : listeners)
+        for (OnlineApplicationListener l : listeners) {
             l.onWcaUpdate(new RunningSynthesis(id, true));
+        }
 
         WCAParameters wcaParameters = new WCAParameters(parameters.getHistoInterval(), parameters.getOfflineWorkflowId(), parameters.getSecurityIndexes(), parameters.getRulesPurityThreshold());
         WCA wca = wcaFactory.create(oCtx.getNetwork(), computationManager, histoDbClient, rulesDbClient, uncertaintiesAnalyserFactory, cadbClient, loadFlowFactory);
         WCAResult result = wca.run(wcaParameters);
 
-        for (OnlineApplicationListener l : listeners)
+        for (OnlineApplicationListener l : listeners) {
             l.onWcaUpdate(new RunningSynthesis(id, false));
+        }
 
         // ArrayList<String> stables = new ArrayList<String>();
 
@@ -213,8 +217,9 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
         }
 
         // notify all contingency stable and unstable
-        for (OnlineApplicationListener l : listeners)
+        for (OnlineApplicationListener l : listeners) {
             l.onWcaContingencies(new WcaContingenciesSynthesis(id, oCtx.getWcaResults().getContingenciesWithClusters()));
+        }
 
 
         logger.info("{} Online workflow - Analysis of states, started.", id);
@@ -249,8 +254,9 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
 
         // run states analysis
         int statesNumber = parameters.getStates();
-        if (parameters.isHandleViolationsInN() && parameters.analyseBasecase()) // I already analyzed basecase
+        if (parameters.isHandleViolationsInN() && parameters.analyseBasecase()) { // I already analyzed basecase
             statesNumber--;
+        }
         List<Callable<Void>> tasks = new ArrayList<>(statesNumber);
         for (int i = 0; i < statesNumber; i++) {
             tasks.add(new StateAnalyzer(oCtx, sampler, loadflow, rulesFacade, optimizer, stabilization, impactAnalysis, onlineDb, stateListener,
@@ -267,8 +273,9 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
         logger.info("Security Rules Application Results:\n" + oCtx.getSecurityRulesResults().toString());
         logger.info("Results:\n" + oCtx.getResults().toString());
 
-        for (OnlineApplicationListener l : listeners)
+        for (OnlineApplicationListener l : listeners) {
             l.onWorkflowUpdate(new StatusSynthesis(id, WorkflowStatusEnum.DONE));
+        }
 
         // store workflow parameters
         onlineDb.storeWorkflowParameters(id, parameters);
@@ -280,14 +287,16 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
         onlineDb.storeRulesResults(id, oCtx.getSecurityRulesResults());
         // store workflow wca results
         onlineDb.storeWcaResults(id, oCtx.getWcaResults());
-        if (parameters.validation())
+        if (parameters.validation()) {
             // store workflow wca rules results
             onlineDb.storeWcaRulesResults(id, oCtx.getWcaSecurityRulesResults());
+        }
         onlineDb.close();
 
         //send itesla notification to apogee only if config.xml contains configuration parameters
-        for (OnlineApplicationListener l : listeners)
+        for (OnlineApplicationListener l : listeners) {
             l.onWorkflowEnd(oCtx, onlineDb, cadbClient, parameters);
+        }
 
     }
 
@@ -326,11 +335,13 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
                 ws.setStatus(status);
                 ws.setTimeHorizon(t.toString());
                 statusMap.put(stateId, ws);
-            } else
+            } else {
                 statusMap.put(stateId, new WorkStatus(stateId, status, t.toString()));
+            }
 
-            for (OnlineApplicationListener l : listeners)
+            for (OnlineApplicationListener l : listeners) {
                 l.onWorkflowStateUpdate(work);
+            }
 
         }
 
@@ -338,8 +349,9 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
 
             SecurityRulesApplicationResults rulesApplicationResults = oCtx.getSecurityRulesResults();
             stateWithSecRulesResults.addStateSecurityRuleIndexes(contingencyId, stateId, rulesApplicationResults);
-            for (OnlineApplicationListener l : listeners)
+            for (OnlineApplicationListener l : listeners) {
                 l.onStatesWithSecurityRulesResultsUpdate(stateWithSecRulesResults);
+            }
         }
 
 
@@ -349,20 +361,23 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
                 WorkStatus ws = statusMap.get(stateId);
                 StringBuffer sb = new StringBuffer();
 
-                if (ws.getDetail() != null && !ws.getDetail().equals(""))
+                if (ws.getDetail() != null && !ws.getDetail().equals("")) {
                     sb.append(ws.getDetail()).append("<br>").append(detail);
-                else
+                } else {
                     sb.append(detail);
+                }
 
                 ws.setDetail(sb.toString());
                 ws.setStatus(status);
                 ws.setTimeHorizon(t.toString());
                 statusMap.put(stateId, ws);
-            } else
+            } else {
                 statusMap.put(stateId, new WorkStatus(stateId, status, t.toString(), detail));
+            }
 
-            for (OnlineApplicationListener l : listeners)
+            for (OnlineApplicationListener l : listeners) {
                 l.onWorkflowStateUpdate(work);
+            }
 
         }
 
@@ -385,8 +400,9 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
 
             }
 
-            for (OnlineApplicationListener l : listeners)
+            for (OnlineApplicationListener l : listeners) {
                 l.onStatesWithIndexesUpdate(stindex);
+            }
 
 
         }
@@ -405,15 +421,17 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
                         List<String> actiondIds = res.getActionsIds(c, s);
                         if (actiondIds != null) {
                             ArrayList<ActionInfo> infos = new ArrayList<ActionInfo>();
-                            for (String a : actiondIds)
+                            for (String a : actiondIds) {
                                 infos.add(new ActionInfo(a));
+                            }
                             acts.addStateActions(c, s, infos);
                         }
                     }
                 }
             }
-            for (OnlineApplicationListener l : listeners)
+            for (OnlineApplicationListener l : listeners) {
                 l.onStatesWithActionsUpdate(acts);
+            }
 
 
         }

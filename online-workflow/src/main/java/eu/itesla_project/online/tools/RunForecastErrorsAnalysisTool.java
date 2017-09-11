@@ -198,8 +198,9 @@ public class RunForecastErrorsAnalysisTool implements Tool {
         if ( line.hasOption("time-horizon") ) {
             TimeHorizon timeHorizon = TimeHorizon.fromName(line.getOptionValue("time-horizon"));
             feAnalysis.start(timeHorizon);
-        } else
+        } else {
             feAnalysis.start();
+        }
         context.getOutputStream().println("Forecast Errors Analysis Terminated");
     }
 

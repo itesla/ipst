@@ -92,14 +92,16 @@ public class PrintOnlineWorkflowResultsTool implements Tool {
                         for (String actionId : wfResults.getActionsIds(contingencyId, stateId)) {
                             actionList += actionId + ";";
                         }
-                        if ( actionList.length() > 0 )
-                            actionList = actionList.substring(0, actionList.length()-1);
+                        if (actionList.length() > 0) {
+                            actionList = actionList.substring(0, actionList.length() - 1);
+                        }
                         table.addCell(actionList);
                     }
                 }
                 context.getOutputStream().println(table.render());
-            } else
+            } else {
                 context.getOutputStream().println("\nNo contingencies requiring corrective actions");
+            }
 
             if ( !wfResults.getUnsafeContingencies().isEmpty() ) {
 //                context.getOutputStream().println("\n** Contingencies requiring T-D simulation **");
@@ -121,7 +123,7 @@ public class PrintOnlineWorkflowResultsTool implements Tool {
 //                context.getOutputStream().println(table.render());
 
                 context.getOutputStream().println("\n** Contingencies requiring T-D simulation **");
-                Table table = new Table(SecurityIndexType.values().length+2, BorderStyle.CLASSIC_WIDE);
+                Table table = new Table(SecurityIndexType.values().length + 2, BorderStyle.CLASSIC_WIDE);
                 table.addCell("Contingency", new CellStyle(CellStyle.HorizontalAlign.center));
                 table.addCell("State", new CellStyle(CellStyle.HorizontalAlign.center));
                 for (SecurityIndexType securityIndexType : SecurityIndexType.values()) {
@@ -138,20 +140,23 @@ public class PrintOnlineWorkflowResultsTool implements Tool {
                     }
                 }
                 context.getOutputStream().println(table.render());
-            } else
+            } else {
                 context.getOutputStream().println("\nNo contingencies requiring T-D simulation");
-        } else
+            }
+        } else {
             context.getOutputStream().println("No results for this workflow");
+        }
         onlinedb.close();
     }
 
-    private HashMap<String, String> getIndexesValues(Map<String,Boolean> securityIndexes) {
+    private HashMap<String, String> getIndexesValues(Map<String, Boolean> securityIndexes) {
         HashMap<String, String> indexesValues = new HashMap<String, String>();
         for (SecurityIndexType securityIndexType : SecurityIndexType.values()) {
-            if ( securityIndexes.containsKey(securityIndexType.getLabel()) )
+            if ( securityIndexes.containsKey(securityIndexType.getLabel()) ) {
                 indexesValues.put(securityIndexType.getLabel(), securityIndexes.get(securityIndexType.getLabel()) ? "Safe" : "Unsafe");
-            else
+            } else {
                 indexesValues.put(securityIndexType.getLabel(), "-");
+            }
         }
         return indexesValues;
     }

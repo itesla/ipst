@@ -80,14 +80,16 @@ public class DeleteForecastErrorsAnalysisTool implements Tool {
         String analysisId = line.getOptionValue("analysis");
         TimeHorizon timeHorizon = TimeHorizon.fromName(line.getOptionValue("time-horizon"));
         context.getOutputStream().println("Deleting analysis " + analysisId + " with time horizon " + timeHorizon);
-        if ( feDataStorage.isForecastErrorsDataAvailable(analysisId, timeHorizon)
-             || feDataStorage.areStatisticsAvailable(analysisId, timeHorizon) ) {
-            if ( feDataStorage.deleteAnalysis(analysisId, timeHorizon) )
+        if (feDataStorage.isForecastErrorsDataAvailable(analysisId, timeHorizon)
+                || feDataStorage.areStatisticsAvailable(analysisId, timeHorizon)) {
+            if (feDataStorage.deleteAnalysis(analysisId, timeHorizon)) {
                 context.getOutputStream().println("Analysis " + analysisId + " with time horizon " + timeHorizon + " deleted");
-            else
+            } else {
                 context.getOutputStream().println("Cannot delete analysis " + analysisId + " with time horizon " + timeHorizon);
-        } else
+            }
+        } else {
             context.getOutputStream().println("No analysis " + analysisId + " with time horizon " + timeHorizon);
+        }
     }
 
 }

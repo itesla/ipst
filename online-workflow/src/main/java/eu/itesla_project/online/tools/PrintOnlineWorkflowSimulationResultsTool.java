@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 @AutoService(Tool.class)
 public class PrintOnlineWorkflowSimulationResultsTool implements Tool {
 
-    public static final String SECURITY_INDEXES ="security-indexes";
+    public static final String SECURITY_INDEXES = "security-indexes";
 
     private static Command COMMAND = new Command() {
 
@@ -97,7 +97,7 @@ public class PrintOnlineWorkflowSimulationResultsTool implements Tool {
         if ( wfResults != null ) {
             if ( !wfResults.getUnsafeContingencies().isEmpty() ) {
                 OnlineWorkflowParameters parameters = onlinedb.getWorkflowParameters(workflowId);
-                SecurityIndexType[] securityIndexTypes =null;
+                SecurityIndexType[] securityIndexTypes = null;
                 if (line.hasOption(SECURITY_INDEXES)) {
                     Set<SecurityIndexType> securityIndexesTypeSet = Arrays.stream(line.getOptionValue(SECURITY_INDEXES).split(","))
                             .map(SecurityIndexType::valueOf)
@@ -107,10 +107,10 @@ public class PrintOnlineWorkflowSimulationResultsTool implements Tool {
                     securityIndexTypes = parameters.getSecurityIndexes() == null ? SecurityIndexType.values()
                             : parameters.getSecurityIndexes().toArray(new SecurityIndexType[parameters.getSecurityIndexes().size()]);
                 }
-                Table table = new Table(securityIndexTypes.length+2, BorderStyle.CLASSIC_WIDE);
+                Table table = new Table(securityIndexTypes.length + 2, BorderStyle.CLASSIC_WIDE);
                 StringWriter content = new StringWriter();
                 CsvWriter cvsWriter = new CsvWriter(content, ',');
-                String[] headers = new String[securityIndexTypes.length+2];
+                String[] headers = new String[securityIndexTypes.length + 2];
                 int i = 0;
                 table.addCell("Contingency", new CellStyle(CellStyle.HorizontalAlign.center));
                 headers[i++] = "Contingency";
@@ -123,7 +123,7 @@ public class PrintOnlineWorkflowSimulationResultsTool implements Tool {
                 cvsWriter.writeRecord(headers);
                 for (String contingencyId : wfResults.getUnsafeContingencies()) {
                     for (Integer stateId : wfResults.getUnstableStates(contingencyId)) {
-                        String[] values = new String[securityIndexTypes.length+2];
+                        String[] values = new String[securityIndexTypes.length + 2];
                         i = 0;
                         table.addCell(contingencyId);
                         values[i++] = contingencyId;
@@ -138,25 +138,29 @@ public class PrintOnlineWorkflowSimulationResultsTool implements Tool {
                     }
                 }
                 cvsWriter.flush();
-                if ( line.hasOption("csv"))
+                if (line.hasOption("csv")) {
                     context.getOutputStream().println(content.toString());
-                else
+                } else {
                     context.getOutputStream().println(table.render());
+                }
                 cvsWriter.close();
-            } else
+            } else {
                 context.getOutputStream().println("\nNo contingencies requiring T-D simulation");
-        } else
+            }
+        } else {
             context.getOutputStream().println("No results for this workflow");
+        }
         onlinedb.close();
     }
 
-    private HashMap<String, String> getIndexesValues(Map<String,Boolean> securityIndexes, SecurityIndexType[] securityIndexTypes) {
+    private HashMap<String, String> getIndexesValues(Map<String, Boolean> securityIndexes, SecurityIndexType[] securityIndexTypes) {
         HashMap<String, String> indexesValues = new HashMap<String, String>();
         for (SecurityIndexType securityIndexType : securityIndexTypes) {
-            if ( securityIndexes.containsKey(securityIndexType.getLabel()) )
+            if (securityIndexes.containsKey(securityIndexType.getLabel())) {
                 indexesValues.put(securityIndexType.getLabel(), securityIndexes.get(securityIndexType.getLabel()) ? "Safe" : "Unsafe");
-            else
+            } else {
                 indexesValues.put(securityIndexType.getLabel(), "-");
+            }
         }
         return indexesValues;
     }

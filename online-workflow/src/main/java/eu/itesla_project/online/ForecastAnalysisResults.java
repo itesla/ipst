@@ -51,10 +51,11 @@ public class ForecastAnalysisResults implements OnlineWorkflowResults {
         return timeHorizon;
     }
 
-    public void addStateWithActions(String contingencyId, Integer stateId, boolean actionsFound, CCOFinalStatus status, String cause, String actionPlan, Map<String, Map<String,ActionParameters>> actions) {
+    public void addStateWithActions(String contingencyId, Integer stateId, boolean actionsFound, CCOFinalStatus status, String cause, String actionPlan, Map<String, Map<String, ActionParameters>> actions) {
         Map<Integer, StateWithCCOInfo> statesWithActionInfo = new HashMap<Integer, StateWithCCOInfo>();
-        if ( contingenciesWithActionsInfo.containsKey(contingencyId) )
+        if (contingenciesWithActionsInfo.containsKey(contingencyId)) {
             statesWithActionInfo = contingenciesWithActionsInfo.get(contingencyId);
+        }
         statesWithActionInfo.put(stateId, new StateWithCCOInfo(actionsFound, status, cause, actionPlan));
         contingenciesWithActionsInfo.put(contingencyId, statesWithActionInfo);
 
@@ -96,9 +97,9 @@ public class ForecastAnalysisResults implements OnlineWorkflowResults {
     }
 
     @Override
-    public Map<Integer,Boolean> getUnsafeStatesWithActions(String contingencyId) {
-        if( contingenciesWithActionsInfo.containsKey(contingencyId) ) {
-            Map<Integer,Boolean> unsafeStatesWithActions = new HashMap<Integer, Boolean>();
+    public Map<Integer, Boolean> getUnsafeStatesWithActions(String contingencyId) {
+        if (contingenciesWithActionsInfo.containsKey(contingencyId)) {
+            Map<Integer, Boolean> unsafeStatesWithActions = new HashMap<Integer, Boolean>();
             for (Integer stateId : contingenciesWithActionsInfo.get(contingencyId).keySet()) {
                 unsafeStatesWithActions.put(stateId, contingenciesWithActionsInfo.get(contingencyId).get(stateId).isActionFound());
             }
@@ -109,83 +110,95 @@ public class ForecastAnalysisResults implements OnlineWorkflowResults {
 
     @Override
     public List<Integer> getUnstableStates(String contingencyId) {
-        if ( unsafeContingencies.containsKey(contingencyId) )
+        if (unsafeContingencies.containsKey(contingencyId)) {
             return new ArrayList<Integer>(unsafeContingencies.get(contingencyId).getStates());
+        }
         return null;
     }
 
     @Override
     public CCOFinalStatus getStateStatus(String contingencyId, Integer stateId) {
-        if ( contingenciesWithActionsInfo.containsKey(contingencyId) )
+        if (contingenciesWithActionsInfo.containsKey(contingencyId)) {
             return contingenciesWithActionsInfo.get(contingencyId).get(stateId).getStatus();
+        }
         return null;
     }
 
     @Override
     public String getCause(String contingencyId, Integer stateId) {
-        if ( contingenciesWithActionsInfo.containsKey(contingencyId) )
+        if (contingenciesWithActionsInfo.containsKey(contingencyId)) {
             return contingenciesWithActionsInfo.get(contingencyId).get(stateId).getCause();
+        }
         return null;
     }
 
     @Override
     public String getActionPlan(String contingencyId, Integer stateId) {
-        if ( contingenciesWithActionsInfo.containsKey(contingencyId) )
+        if (contingenciesWithActionsInfo.containsKey(contingencyId)) {
             return contingenciesWithActionsInfo.get(contingencyId).get(stateId).getActionPlan();
+        }
         return null;
     }
 
     @Override
     public List<String> getActionsIds(String contingencyId, Integer stateId) {
-        if( contingenciesWithActions.containsKey(contingencyId) )
+        if (contingenciesWithActions.containsKey(contingencyId)) {
             return contingenciesWithActions.get(contingencyId).getActionsIds(stateId);
+        }
         return null;
     }
 
     public List<SecurityIndex> getIndexes(String contingencyId, Integer stateId) {
-        if( unsafeContingencies.containsKey(contingencyId) )
+        if (unsafeContingencies.containsKey(contingencyId)) {
             return unsafeContingencies.get(contingencyId).getIndexes(stateId);
+        }
         return null;
     }
 
     @Override
     public Map<String, Boolean> getIndexesData(String contingencyId, Integer stateId) {
         List<SecurityIndex> indexes = getIndexes(contingencyId, stateId);
-        Map<String, Boolean> indexesData = new HashMap<String,Boolean>();
-        for (SecurityIndex index : indexes)
+        Map<String, Boolean> indexesData = new HashMap<String, Boolean>();
+        for (SecurityIndex index : indexes) {
             indexesData.put(index.getId().getSecurityIndexType().getLabel(), index.isOk());
+        }
         return indexesData;
     }
 
     @Override
     public List<String> getEquipmentsIds(String contingencyId, Integer stateId, String actionId) {
-        if( contingenciesWithActions.containsKey(contingencyId) )
+        if (contingenciesWithActions.containsKey(contingencyId)) {
             return new ArrayList<String>(contingenciesWithActions.get(contingencyId).getEquipments(stateId, actionId).keySet());
+        }
         return null;
     }
 
     @Override
     public Map<String, ActionParameters> getEquipmentsWithParameters(String contingencyId, Integer stateId, String actionId) {
-        if( contingenciesWithActions.containsKey(contingencyId) )
+        if (contingenciesWithActions.containsKey(contingencyId)) {
             return contingenciesWithActions.get(contingencyId).getEquipments(stateId, actionId);
+        }
         return null;
     }
 
     @Override
     public ActionParameters getParameters(String contingencyId, Integer stateId, String actionId, String equipmentId) {
-        if( contingenciesWithActions.containsKey(contingencyId) && contingenciesWithActions.get(contingencyId).getEquipments(stateId, actionId)!=null )
+        if (contingenciesWithActions.containsKey(contingencyId) && contingenciesWithActions.get(contingencyId).getEquipments(stateId, actionId) != null) {
             return contingenciesWithActions.get(contingencyId).getEquipments(stateId, actionId).get(equipmentId);
+        }
         return null;
     }
 
     public String toString() {
-        String output = "time horizon: "+ timeHorizon.getName();
+        String output = "time horizon: " + timeHorizon.getName();
         output += "\n" + "contingencies with actions: " + getContingenciesWithActions();
-        for(String contingencyId : getContingenciesWithActions() )
+        for (String contingencyId : getContingenciesWithActions()) {
             output += "\n[contingency id = " + contingencyId + ", states = " + getStatesWithActions(contingencyId) + "]";
+        }
         output += "\n" + "unsafe contingencies: " + getUnsafeContingencies();
-        for(String contingencyId : getUnsafeContingencies() )
+        for (String contingencyId : getUnsafeContingencies()) {
             output += "\n[contingency id = " + contingencyId + ", states = " + getStatesWithIndexes(contingencyId) + "]";
+        }
         return output;
     }
 
@@ -193,9 +206,9 @@ public class ForecastAnalysisResults implements OnlineWorkflowResults {
     class StatesWithActions {
 
         // <stateId, <actions, <equipments, parameters>>>
-        Map<Integer,Map<String, Map<String,ActionParameters>>> states = new HashMap<Integer,Map<String, Map<String,ActionParameters>>>();
+        Map<Integer, Map<String, Map<String, ActionParameters>>> states = new HashMap<Integer, Map<String, Map<String, ActionParameters>>>();
 
-        void addState(Integer stateId, Map<String, Map<String,ActionParameters>> actions) {
+        void addState(Integer stateId, Map<String, Map<String, ActionParameters>> actions) {
             states.put(stateId, actions);
         }
 
@@ -204,21 +217,23 @@ public class ForecastAnalysisResults implements OnlineWorkflowResults {
         }
 
         Map<String, ActionParameters> getEquipments(Integer stateId, String actionId) {
-            if( states.containsKey(stateId) )
+            if (states.containsKey(stateId)) {
                 return states.get(stateId).get(actionId);
+            }
             return null;
         }
 
         List<String> getActionsIds(Integer stateId) {
-            if( states.containsKey(stateId) )
+            if (states.containsKey(stateId)) {
                 return new ArrayList<String>(states.get(stateId).keySet());
+            }
             return null;
         }
 
         @Override
         public String toString() {
             String output = "";
-            for(Integer stateId : getStates()) {
+            for (Integer stateId : getStates()) {
                 output += "[stateId " + stateId + ", actions = " + states.get(stateId).toString() + "]";
             }
             return output;
@@ -230,7 +245,7 @@ public class ForecastAnalysisResults implements OnlineWorkflowResults {
     class StatesWithIndexes {
 
         // <stateId, indexes>
-        Map<Integer,List<SecurityIndex>> states = new HashMap<Integer,List<SecurityIndex>>();
+        Map<Integer, List<SecurityIndex>> states = new HashMap<Integer, List<SecurityIndex>>();
 
         void addState(Integer stateId, List<SecurityIndex> indexes) {
             states.put(stateId, indexes);
@@ -247,7 +262,7 @@ public class ForecastAnalysisResults implements OnlineWorkflowResults {
         @Override
         public String toString() {
             String output = "";
-            for(Integer stateId : getStates()) {
+            for (Integer stateId : getStates()) {
                 output += "[stateId " + stateId + ", indexes = " + securityIndexesToString(getIndexes(stateId)) + "]";
             }
             return output;

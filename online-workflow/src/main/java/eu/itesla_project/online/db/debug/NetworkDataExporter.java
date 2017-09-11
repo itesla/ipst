@@ -79,14 +79,16 @@ public class NetworkDataExporter {
         CsvWriter cvsWriter = new CsvWriter(content, ',');
         String[] headers = new String[fields.length];
         int i = 0;
-        for(String field : fields)
+        for (String field : fields) {
             headers[i++] = field;
+        }
         cvsWriter.writeRecord(headers);
-        for(EquipmentData equipmentData : equipments) {
+        for (EquipmentData equipmentData : equipments) {
             i = 0;
             String[] values = new String[fields.length];
-            for(String field : fields)
+            for (String field : fields) {
                 values[i++] = equipmentData.getFieldValue(field);
+            }
             cvsWriter.writeRecord(values);
         }
         cvsWriter.flush();
@@ -94,8 +96,9 @@ public class NetworkDataExporter {
     }
 
     private static Path getCsvFile(Path folder, String fileName) {
-        if ( folder != null )
+        if (folder != null) {
             return Paths.get(folder.toString(), fileName);
+        }
         return Paths.get(fileName);
     }
 

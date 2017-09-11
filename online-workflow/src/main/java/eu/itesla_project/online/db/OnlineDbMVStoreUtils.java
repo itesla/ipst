@@ -111,8 +111,9 @@ public class OnlineDbMVStoreUtils {
         limitViolation.put("Value", Float.toString(violation.getValue()));
         limitViolation.put("Country", violation.getCountry().name());
         limitViolation.put("BaseVoltage", Float.toString(violation.getBaseVoltage()));
-        if (violation.getLimitName() != null)
+        if (violation.getLimitName() != null) {
             limitViolation.put("LimitName", violation.getLimitName());
+        }
         return JSONSerializer.toJSON(limitViolation).toString();
     }
 

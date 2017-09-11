@@ -22,7 +22,7 @@ import java.util.Set;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class ForecastErrorsAnalysisParameters implements Serializable{
+public class ForecastErrorsAnalysisParameters implements Serializable {
 
     /*
      * example of fea-parameters.properties file.
@@ -152,17 +152,29 @@ public class ForecastErrorsAnalysisParameters implements Serializable{
         return method;
     }
 
-    public Integer getConditionalSampling() { return conditionalSampling; }
+    public Integer getConditionalSampling() {
+        return conditionalSampling;
+    }
 
-    public Integer getModalityGaussian() { return modalityGaussian; }
+    public Integer getModalityGaussian() {
+        return modalityGaussian;
+    }
 
-    public Integer getnClusters() { return nClusters; }
+    public Integer getnClusters() {
+        return nClusters;
+    }
 
-    public Integer getOutliers() { return outliers; }
+    public Integer getOutliers() {
+        return outliers;
+    }
 
-    public double getPercentileHistorical() { return percentileHistorical; }
+    public double getPercentileHistorical() {
+        return percentileHistorical;
+    }
 
-    public Integer getnSamples() { return nSamples; }
+    public Integer getnSamples() {
+        return nSamples;
+    }
 
     public Set<Country> getCountries() {
         return countries;

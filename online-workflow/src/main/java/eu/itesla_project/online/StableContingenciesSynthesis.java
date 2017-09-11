@@ -12,7 +12,7 @@ import java.io.Serializable;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class StableContingenciesSynthesis implements Serializable{
+public class StableContingenciesSynthesis implements Serializable {
 
     /**
      *
@@ -21,15 +21,13 @@ public class StableContingenciesSynthesis implements Serializable{
     private String workflowId;
     private String[] contingencies;
 
-    public StableContingenciesSynthesis()
-    {
+    public StableContingenciesSynthesis() {
 
     }
 
-    public StableContingenciesSynthesis(String workflowId, String[] contingencies)
-    {
-        this.workflowId=workflowId;
-        this.contingencies=contingencies;
+    public StableContingenciesSynthesis(String workflowId, String[] contingencies) {
+        this.workflowId = workflowId;
+        this.contingencies = contingencies;
     }
 
     public String getWorkflowId() {

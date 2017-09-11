@@ -84,8 +84,9 @@ public class ExportOnlineWorkflowStatesTool implements Tool {
         if ( !storedStates.isEmpty() ) {
             context.getOutputStream().println("Exporting stored states of workflow " + workflowId + " to file " + file);
             onlinedb.exportStates(workflowId, file);
-        } else
+        } else {
             context.getOutputStream().println("No states stored for workflow " + workflowId);
+        }
         onlinedb.close();
     }
 

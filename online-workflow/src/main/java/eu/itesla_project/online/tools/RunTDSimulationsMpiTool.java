@@ -97,12 +97,15 @@ public class RunTDSimulationsMpiTool implements Tool {
         String host = line.getOptionValue(OnlineWorkflowCommand.HOST);
         String port = line.getOptionValue(OnlineWorkflowCommand.PORT);
         String threads = line.getOptionValue(OnlineWorkflowCommand.THREADS);
-        if (host != null)
+        if (host != null) {
             startconfig.setJmxHost(host);
-        if (port != null)
+        }
+        if (port != null) {
             startconfig.setJmxPort(Integer.valueOf(port));
-        if (threads != null)
+        }
+        if (threads != null) {
             startconfig.setThreads(Integer.valueOf(threads));
+        }
 
 
         String urlString = "service:jmx:rmi:///jndi/rmi://" + startconfig.getJmxHost() + ":" + startconfig.getJmxPort() + "/jmxrmi";

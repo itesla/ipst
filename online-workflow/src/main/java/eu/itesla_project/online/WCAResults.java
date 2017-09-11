@@ -71,10 +71,11 @@ public class WCAResults implements OnlineWorkflowWcaResults {
     }
 
     public  String toString() {
-        String output = "time horizon: "+ timeHorizon.getName();
+        String output = "time horizon: " + timeHorizon.getName();
         output += "\n" + "contingencies with cluster: " + getContingencies();
-        for(String contingencyId : getContingencies() )
+        for (String contingencyId : getContingencies()) {
             output += "\n[contingecy id = " + contingencyId + ", cluster = " + getClusterIndex(contingencyId) + "]";
+        }
         return output;
 
     }

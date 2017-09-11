@@ -35,7 +35,8 @@ public class MontecarloSamplerMock implements MontecarloSampler {
         LOGGER.warn("running sampler mock");
         try {
             Thread.sleep(100);
-        } catch (InterruptedException ignored) {}
+        } catch (InterruptedException ignored) {
+        }
     }
 
     @Override

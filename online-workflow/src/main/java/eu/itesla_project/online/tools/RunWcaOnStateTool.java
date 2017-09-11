@@ -120,14 +120,17 @@ public class RunWcaOnStateTool implements Tool {
         if ( network != null ) {
             OnlineWorkflowParameters parameters = onlinedb.getWorkflowParameters(workflowId);
             String offlineWorkflowId = parameters.getOfflineWorkflowId();
-            if (line.hasOption("offline-workflow"))
+            if (line.hasOption("offline-workflow")) {
                 offlineWorkflowId = line.getOptionValue("offline-workflow");
+            }
             Interval histoInterval = parameters.getHistoInterval();
-            if (line.hasOption("history-interval"))
+            if (line.hasOption("history-interval")) {
                 histoInterval = Interval.parse(line.getOptionValue("history-interval"));
+            }
             double purityThreshold = parameters.getRulesPurityThreshold();
-            if (line.hasOption("purity-threshold"))
+            if (line.hasOption("purity-threshold")) {
                 purityThreshold = Double.parseDouble(line.getOptionValue("purity-threshold"));
+            }
             Set<SecurityIndexType> securityIndexTypes = parameters.getSecurityIndexes();
             if (line.hasOption("security-index-types")) {
                 securityIndexTypes = Arrays.stream(line.getOptionValue("security-index-types").split(","))

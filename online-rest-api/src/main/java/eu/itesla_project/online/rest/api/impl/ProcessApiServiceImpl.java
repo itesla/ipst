@@ -62,12 +62,14 @@ public class ProcessApiServiceImpl implements ProcessApiService {
     @Override
     public Response getProcessById(String processId, SecurityContext securityContext) {
         LOGGER.info("Get process : processId=" + processId);
-        if(processId == null)
+        if (processId == null) {
             return Response.status(Status.BAD_REQUEST).entity("null proceesId parameter").build();
+        }
         try {
             Process entity = utils.getProcess(processId);
-            if (entity == null)
+            if (entity == null) {
                 return Response.status(Status.NOT_FOUND).entity("Process not found").build();
+            }
             String res = objectMapper.writer().writeValueAsString(entity);
             return Response.ok().entity(res).build();
         } catch (Exception e) {
@@ -80,15 +82,18 @@ public class ProcessApiServiceImpl implements ProcessApiService {
     @Override
     public Response getWorkflowResult(String processId, String workflowId, SecurityContext securityContext) {
         LOGGER.info("Get workflow result : processId=" + processId + " ,workflowId=" + workflowId);
-        if(processId == null)
+        if (processId == null) {
             return Response.status(Status.BAD_REQUEST).entity("null proceesId parameter").build();
-        if(workflowId == null)
+        }
+        if (workflowId == null) {
             return Response.status(Status.BAD_REQUEST).entity("null workflowId parameter").build();
+        }
 
         try {
             WorkflowResult entity = utils.getWorkflowResult(processId, workflowId);
-            if (entity == null)
+            if (entity == null) {
                 return Response.status(Status.NOT_FOUND).entity("Workflow not found").build();
+            }
 
             String res = objectMapper.writer().writeValueAsString(entity);
             return Response.ok().entity(res).build();
@@ -101,12 +106,14 @@ public class ProcessApiServiceImpl implements ProcessApiService {
     @Override
     public Response getProcessSynthesis(String processId, SecurityContext securityContext) {
         LOGGER.info("Get process synthesis : processId=" + processId);
-        if(processId == null)
+        if (processId == null) {
             return Response.status(Status.BAD_REQUEST).entity("Null proceesId parameter").build();
-        try{
+        }
+        try {
             ProcessSynthesis entity = utils.getSynthesis(processId);
-            if (entity == null)
+            if (entity == null) {
                 return Response.status(Status.NOT_FOUND).entity("Process not found").build();
+            }
             String res = objectMapper.writer().writeValueAsString(entity);
             return Response.ok().entity(res).build();
         } catch (Exception e) {

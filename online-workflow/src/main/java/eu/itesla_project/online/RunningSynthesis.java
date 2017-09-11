@@ -12,7 +12,7 @@ import java.io.Serializable;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class RunningSynthesis implements Serializable{
+public class RunningSynthesis implements Serializable {
 
     /**
      *
@@ -21,15 +21,13 @@ public class RunningSynthesis implements Serializable{
     private String workflowId;
     private boolean running;
 
-    public RunningSynthesis()
-    {
+    public RunningSynthesis() {
 
     }
 
-    public RunningSynthesis(String workflowId, boolean running)
-    {
-        this.workflowId=workflowId;
-        this.running=running;
+    public RunningSynthesis(String workflowId, boolean running) {
+        this.workflowId = workflowId;
+        this.running = running;
     }
 
     public String getWorkflowId() {

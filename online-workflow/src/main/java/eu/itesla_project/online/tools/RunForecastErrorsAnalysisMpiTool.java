@@ -168,17 +168,20 @@ public class RunForecastErrorsAnalysisMpiTool implements Tool {
     @Override
     public void run(CommandLine line, ToolRunningContext context) throws Exception {
 
-        OnlineWorkflowStartParameters startconfig=OnlineWorkflowStartParameters.loadDefault();
+        OnlineWorkflowStartParameters startconfig = OnlineWorkflowStartParameters.loadDefault();
 
-        String host=line.getOptionValue(OnlineWorkflowCommand.HOST);
-        String port=line.getOptionValue(OnlineWorkflowCommand.PORT);
-        String threads=line.getOptionValue(OnlineWorkflowCommand.THREADS);
-        if(host!=null)
+        String host = line.getOptionValue(OnlineWorkflowCommand.HOST);
+        String port = line.getOptionValue(OnlineWorkflowCommand.PORT);
+        String threads = line.getOptionValue(OnlineWorkflowCommand.THREADS);
+        if (host != null) {
             startconfig.setJmxHost(host);
-        if(port!=null)
+        }
+        if (port != null) {
             startconfig.setJmxPort(Integer.valueOf(port));
-        if(threads!=null)
+        }
+        if (threads != null) {
             startconfig.setThreads(Integer.valueOf(threads));
+        }
 
         String analysisId = line.getOptionValue("analysis");
         DateTime baseCaseDate = line.hasOption("base-case-date")
@@ -226,18 +229,18 @@ public class RunForecastErrorsAnalysisMpiTool implements Tool {
                                                                                            nSamples, countries, caseType);
 
 
-        String urlString = "service:jmx:rmi:///jndi/rmi://"+startconfig.getJmxHost()+":"+startconfig.getJmxPort()+"/jmxrmi";
+        String urlString = "service:jmx:rmi:///jndi/rmi://" + startconfig.getJmxHost() + ":" + startconfig.getJmxPort() + "/jmxrmi";
 
         JMXServiceURL serviceURL = new JMXServiceURL(urlString);
         Map<String, String> jmxEnv = new HashMap<>();
-        JMXConnector connector = JMXConnectorFactory.connect(serviceURL, jmxEnv) ;
+        JMXConnector connector = JMXConnectorFactory.connect(serviceURL, jmxEnv);
         MBeanServerConnection mbsc = connector.getMBeanServerConnection();
 
         ObjectName name = new ObjectName(LocalOnlineApplicationMBean.BEAN_NAME);
         LocalOnlineApplicationMBean application = MBeanServerInvocationHandler.newProxyInstance(mbsc, name, LocalOnlineApplicationMBean.class, false);
-        String timeHorizonS="";
-        if ( line.hasOption("time-horizon") ) {
-            timeHorizonS=line.getOptionValue("time-horizon");
+        String timeHorizonS = "";
+        if (line.hasOption("time-horizon")) {
+            timeHorizonS = line.getOptionValue("time-horizon");
         }
         application.runFeaAnalysis(startconfig, parameters, timeHorizonS);
 

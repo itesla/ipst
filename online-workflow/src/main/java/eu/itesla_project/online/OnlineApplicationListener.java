@@ -34,7 +34,7 @@ public interface OnlineApplicationListener {
     //new
     void onWcaContingencies(WcaContingenciesSynthesis wcaContingencies);
 
-    void onStatesWithSecurityRulesResultsUpdate(IndexSecurityRulesResultsSynthesis indexesResults) ;
+    void onStatesWithSecurityRulesResultsUpdate(IndexSecurityRulesResultsSynthesis indexesResults);
  
     void onDisconnection();
 
