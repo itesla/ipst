@@ -70,7 +70,7 @@ public class SamplerWp41Config {
         Path runtimeHomeDir = config.getPathProperty("runtimeHomeDir");
         Path binariesDir = config.getPathProperty("binariesDir", null);
 
-        Path validationDir=config.getPathProperty("validationDir", null);
+        Path validationDir = config.getPathProperty("validationDir", null);
 
         double ir = config.getDoubleProperty("ir");
         double tflag = config.getDoubleProperty("tflag");
@@ -96,15 +96,15 @@ public class SamplerWp41Config {
             int module3Timeout,
             int par_k,
             boolean debug) {
-        this.binariesDir=binariesDir;
+        this.binariesDir = binariesDir;
         this.runtimeHomeDir = Objects.requireNonNull(runtimeHomeDir, "matlab runtime directory is null");
         this.validationDir = validationDir;
         this.ir = ir;
-        this.tflag=tflag;
+        this.tflag = tflag;
         this.rngSeed = rngSeed;
         this.module3Timeout = module3Timeout;
         this.par_k = par_k;
-        this.debug=debug;
+        this.debug = debug;
     }
 
     public Path getBinariesDir() {
@@ -154,7 +154,7 @@ public class SamplerWp41Config {
                 + ", module3Timeout=" + module3Timeout
                 + ", par_k=" + par_k
                 + ", debug=" + debug;
-        return "SamplerWp41Config ["+retString+"]";
+        return "SamplerWp41Config [" + retString + "]";
     }
 
 

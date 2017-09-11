@@ -15,9 +15,9 @@ import eu.itesla_project.commons.tools.Command;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class DataComparatorCommand implements Command{
+public class DataComparatorCommand implements Command {
 
-    public final static  DataComparatorCommand INSTANCE=new DataComparatorCommand();
+    public final static  DataComparatorCommand INSTANCE = new DataComparatorCommand();
 
     //public final static String DATA_DIR="data-dir";
 

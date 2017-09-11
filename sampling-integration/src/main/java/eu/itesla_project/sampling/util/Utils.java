@@ -44,10 +44,10 @@ public class Utils {
         MLDouble mlDouble = new MLDouble( mName, new int[] {nrows, ncols} );
         CsvReader cvsReader = new CsvReader(inFilePath.toString());
         cvsReader.setDelimiter(delimiter);
-        int i=0;
+        int i = 0;
         while (cvsReader.readRecord()) {
             String[] rows = cvsReader.getValues();
-            int j=0;
+            int j = 0;
             for (String col : rows) {
                 mlDouble.set(new Double(col), i, j);
                 j++;
@@ -57,11 +57,11 @@ public class Utils {
         return mlDouble;
     }
 
-    public static MLDouble matToMLDouble(double[][] dmat, String mName) throws NumberFormatException{
-        if (dmat==null) {
+    public static MLDouble matToMLDouble(double[][] dmat, String mName) throws NumberFormatException {
+        if (dmat == null) {
             throw new NumberFormatException(".. must not be null");
         }
-        MLDouble mlDouble = new MLDouble( mName, new int[] {dmat.length, dmat[0].length} );
+        MLDouble mlDouble = new MLDouble(mName, new int[]{dmat.length, dmat[0].length});
         for (int i = 0; i < dmat.length; i++) {
             for (int j = 0; j < dmat[0].length; j++) {
                 mlDouble.set(new Double(dmat[i][j]), i, j);
@@ -70,8 +70,8 @@ public class Utils {
         return mlDouble;
     }
 
-    public static MLDouble vectToMLDouble(double[] dvect, String mName) throws NumberFormatException{
-        if (dvect==null) {
+    public static MLDouble vectToMLDouble(double[] dvect, String mName) throws NumberFormatException {
+        if (dvect == null) {
             throw new NumberFormatException(".. must not be null");
         }
         MLDouble mlDouble = new MLDouble( mName, new int[] {dvect.length, 1} );
@@ -81,34 +81,36 @@ public class Utils {
         return mlDouble;
     }
 
-    public static MLDouble vectToMLDoubleRow(double[] dvect, String mName) throws NumberFormatException{
-        if (dvect==null) {
+    public static MLDouble vectToMLDoubleRow(double[] dvect, String mName) throws NumberFormatException {
+        if (dvect == null) {
             throw new NumberFormatException(".. must not be null");
         }
-        MLDouble mlDouble = new MLDouble( mName, new int[] {1,dvect.length} );
+        MLDouble mlDouble = new MLDouble(mName, new int[]{1, dvect.length});
         for (int i = 0; i < dvect.length; i++) {
             mlDouble.set(new Double(dvect[i]), 0, i);
         }
         return mlDouble;
     }
 
-    public static double[][] readDoubleMatrixFromCSVFile(Path inFilePath,  int nrows, int ncols, char delimiter) throws NumberFormatException, IOException {
+    public static double[][] readDoubleMatrixFromCSVFile(Path inFilePath, int nrows, int ncols, char delimiter) throws NumberFormatException, IOException {
         double[][] mlDouble = new double[nrows][ncols];
         CsvReader cvsReader = new CsvReader(inFilePath.toString());
         cvsReader.setDelimiter(delimiter);
-        int i=0;
+        int i = 0;
         while (cvsReader.readRecord()) {
             String[] rows = cvsReader.getValues();
-            int j=0;
+            int j = 0;
             for (String col : rows) {
-                mlDouble[i][j]=Double.parseDouble(col);
+                mlDouble[i][j] = Double.parseDouble(col);
                 j++;
-                if (j>=ncols)
+                if (j >= ncols) {
                     break;
+                }
             }
             i++;
-            if (i>=nrows)
+            if (i >= nrows) {
                 break;
+            }
 
         }
         return mlDouble;
@@ -118,15 +120,16 @@ public class Utils {
         double[] mlDouble = new double[nrows];
         CsvReader cvsReader = new CsvReader(inFilePath.toString());
         cvsReader.setDelimiter(delimiter);
-        int i=0;
+        int i = 0;
         while (cvsReader.readRecord()) {
             String[] rows = cvsReader.getValues();
             for (String col : rows) {
-                mlDouble[i]=Double.parseDouble(col);
+                mlDouble[i] = Double.parseDouble(col);
             }
             i++;
-            if (i>=nrows)
+            if (i >= nrows) {
                 break;
+            }
         }
         return mlDouble;
     }
@@ -135,7 +138,8 @@ public class Utils {
         LineNumberReader reader  = new LineNumberReader(new FileReader(path.toFile()));
         int cnt = 0;
         String lineRead = "";
-        while ((lineRead = reader.readLine()) != null) {}
+        while ((lineRead = reader.readLine()) != null) {
+        }
 
         cnt = reader.getLineNumber();
         reader.close();
@@ -145,35 +149,36 @@ public class Utils {
     //first element: names
     //second element:  double matrix
     public static List readHistoDataFromCsv(Path inFilePath, char delimiter) throws NumberFormatException, IOException {
-        ArrayList retList=new ArrayList();
+        ArrayList retList = new ArrayList();
 
-        int numberOfCSVLines=countLines(inFilePath);
-        numberOfCSVLines=numberOfCSVLines-1; //take into account header
+        int numberOfCSVLines = countLines(inFilePath);
+        numberOfCSVLines = numberOfCSVLines - 1; //take into account header
 
         CsvReader cvsReader = new CsvReader(inFilePath.toString());
         cvsReader.setDelimiter(delimiter);
-        int i=0;
+        int i = 0;
         cvsReader.readHeaders();
 
 
-        String[] headers=cvsReader.getHeaders();
+        String[] headers = cvsReader.getHeaders();
         retList.add(headers);
 
         double[][] mlDouble = new double[numberOfCSVLines][headers.length];
 
         while (cvsReader.readRecord()) {
             String[] rows = cvsReader.getValues();
-            int j=0;
+            int j = 0;
             for (String col : rows) {
-                if (j>1) {
+                if (j > 1) {
 
-                    mlDouble[i][j-2]=(col!=null)?Double.parseDouble(col):0.0;
+                    mlDouble[i][j - 2] = (col != null) ? Double.parseDouble(col) : 0.0;
                 }
                 j++;
             }
             i++;
-            if (i>=numberOfCSVLines)
+            if (i >= numberOfCSVLines) {
                 break;
+            }
 
         }
         retList.add(mlDouble);
@@ -181,31 +186,27 @@ public class Utils {
     }
 
 
-
-    public static String MLCharToString(MLChar mlchar)
-    {
+    public static String MLCharToString(MLChar mlchar) {
         StringBuffer sb = new StringBuffer();
-        for ( int m = 0; m < mlchar.getM(); m++ )
-        {
-           for ( int n = 0; n < mlchar.getN(); n++ )
-           {
-               sb.append( mlchar.getChar(m,n) );
-           }
+        for (int m = 0; m < mlchar.getM(); m++) {
+            for (int n = 0; n < mlchar.getN(); n++) {
+                sb.append(mlchar.getChar(m, n));
+            }
         }
         return sb.toString();
     }
 
     public static void writeWP41ContinuousInputMatFile(Path outputfile, double[][] idata, int nsamples, double ir, double k) throws IOException {
 
-        MLDouble dNsample = new MLDouble( "N_Sample", new double[] { nsamples },1 );
-        MLDouble dIR = new MLDouble( "IR", new double[] { ir },1 );
-        MLDouble dK = new MLDouble( "K", new double[] { k },1 );
+        MLDouble dNsample = new MLDouble("N_Sample", new double[]{nsamples}, 1);
+        MLDouble dIR = new MLDouble("IR", new double[]{ir}, 1);
+        MLDouble dK = new MLDouble("K", new double[]{k}, 1);
         MLDouble data = Utils.matToMLDouble(idata, "X");
 
-        List<MLArray> mlarray= new ArrayList<>();
-        mlarray.add((MLArray) dNsample );
-        mlarray.add((MLArray) dIR );
-        mlarray.add((MLArray) dK );
+        List<MLArray> mlarray = new ArrayList<>();
+        mlarray.add((MLArray) dNsample);
+        mlarray.add((MLArray) dIR);
+        mlarray.add((MLArray) dK);
         mlarray.add((MLArray) data );
         MatFileWriter writer = new MatFileWriter();
         writer.write(outputfile.toFile(), mlarray);
@@ -245,7 +246,7 @@ public class Utils {
 //
     public static void writeWP41BinaryIndependentSamplingInputFile(Path outputfile, double[] marginalExpectations) throws IOException {
         MLDouble data = Utils.vectToMLDoubleRow(marginalExpectations, "p");
-        List<MLArray> mlarray= new ArrayList<>();
+        List<MLArray> mlarray = new ArrayList<>();
         mlarray.add((MLArray) data );
         MatFileWriter writer = new MatFileWriter();
         writer.write(outputfile.toFile(), mlarray);
@@ -321,71 +322,71 @@ public class Utils {
 
     }
 
-    public static double[][] histoDataAsDoubleMatrix(ArrayTable<Integer,String,Float> hdTable) {
+    public static double[][] histoDataAsDoubleMatrix(ArrayTable<Integer, String, Float> hdTable) {
 
-        int rowsSize=hdTable.rowKeySet().size();
-        int colsSize=hdTable.columnKeySet().size();
-        double[][] matFinal=new double[rowsSize][colsSize];
+        int rowsSize = hdTable.rowKeySet().size();
+        int colsSize = hdTable.columnKeySet().size();
+        double[][] matFinal = new double[rowsSize][colsSize];
         for (int i = 0; i < rowsSize; i++) {
             for (int j = 0; j < colsSize; j++) {
-                Float v=hdTable.get(i, j);
-                matFinal[i][j]= ((v!=null) && (v.isNaN()==false)) ? v : 0.0f;
+                Float v = hdTable.get(i, j);
+                matFinal[i][j] = ((v != null) && (v.isNaN() == false)) ? v : 0.0f;
             }
         }
         return matFinal;
     }
 
-    public static double[][] histoDataAsDoubleMatrixNew(ArrayTable<Integer,String,Float> hdTable) {
-        int rowsSize=hdTable.rowKeySet().size();
-        int colsSize=hdTable.columnKeySet().size();
-        double[][] matFinal=new double[rowsSize][colsSize];
-        int i=0;
-        for (Integer rowKey: hdTable.rowKeyList()) {
-            int j=0;
-            for (String colkey:hdTable.columnKeyList()) {
-                Float v=hdTable.get(rowKey, colkey);
-                matFinal[i][j]= ((v!=null) && (v.isNaN()==false)) ? v : 0.0f;
-                j=j+1;
+    public static double[][] histoDataAsDoubleMatrixNew(ArrayTable<Integer, String, Float> hdTable) {
+        int rowsSize = hdTable.rowKeySet().size();
+        int colsSize = hdTable.columnKeySet().size();
+        double[][] matFinal = new double[rowsSize][colsSize];
+        int i = 0;
+        for (Integer rowKey : hdTable.rowKeyList()) {
+            int j = 0;
+            for (String colkey : hdTable.columnKeyList()) {
+                Float v = hdTable.get(rowKey, colkey);
+                matFinal[i][j] = ((v != null) && (v.isNaN() == false)) ? v : 0.0f;
+                j = j + 1;
             }
-            i=i+1;
+            i = i + 1;
         }
         return matFinal;
     }
 
     public static float[][] doubleToFloatMatrix(double[][] matrix) {
-        float retMatrix[][]=new float[matrix.length][matrix[0].length];
+        float retMatrix[][] = new float[matrix.length][matrix[0].length];
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[0].length; j++) {
-                retMatrix[i][j]=(float) matrix[i][j];
+                retMatrix[i][j] = (float) matrix[i][j];
             }
         }
         return retMatrix;
     }
 
     public static void dumpDoubleMatrix(double[][] matrix, Logger log) {
-        log.info("Matrix size=" +matrix.length+" x " + matrix[0].length );
+        log.info("Matrix size=" + matrix.length + " x " + matrix[0].length);
         for (double[] fs : matrix) {
-            StringBuffer sb=new StringBuffer();
+            StringBuffer sb = new StringBuffer();
             for (double f : fs) {
-                sb.append(f+", ");
+                sb.append(f + ", ");
             }
             log.info(sb.toString());
         }
     }
 
     public static void dumpWp41HistoData(Wp41HistoData hdata, Logger log) {
-        log.info("Matrix size=" +hdata.getHdTable().rowKeySet().size()+" x " + hdata.getHdTable().columnKeySet().size() );
-        Table<Integer,String,Float> table=hdata.getHdTable();
-        StringBuffer sb=new StringBuffer();
+        log.info("Matrix size=" + hdata.getHdTable().rowKeySet().size() + " x " + hdata.getHdTable().columnKeySet().size());
+        Table<Integer, String, Float> table = hdata.getHdTable();
+        StringBuffer sb = new StringBuffer();
         for (String colName : table.columnKeySet()) {
-            sb.append(colName+", ");
+            sb.append(colName + ", ");
         }
         log.info(sb.toString());
 
-        for (Integer rowName: table.rowKeySet()) {
-            sb=new StringBuffer();
+        for (Integer rowName : table.rowKeySet()) {
+            sb = new StringBuffer();
             for (String colName : table.columnKeySet()) {
-                sb.append(table.get(rowName, colName)+", ");
+                sb.append(table.get(rowName, colName) + ", ");
             }
             log.info(sb.toString());
         }
@@ -446,7 +447,7 @@ public class Utils {
     public static void writeWp41ContModule1Mat(Path outputfile, double matrix[][]) throws IOException {
         LOGGER.debug("writeWp41ContModule1Mat - writing wp41 input X matrix data to file {}", outputfile );
         MLDouble data = Utils.matToMLDouble(matrix, "X");
-        List<MLArray> mlarray= new ArrayList<>();
+        List<MLArray> mlarray = new ArrayList<>();
         mlarray.add((MLArray) data );
         MatFileWriter writer = new MatFileWriter();
         writer.write(outputfile.toFile(), mlarray);
@@ -466,15 +467,15 @@ public class Utils {
                 (int) windGensSize, ',');
 
         //join tables
-        double[][] data=new double[(int)histoSize][(int)loadsSize+(int)windGensSize];
+        double[][] data = new double[(int) histoSize][(int) loadsSize + (int) windGensSize];
         for (int i = 0; i < dataLoads.length; i++) {
             for (int j = 0; j < dataLoads[i].length; j++) {
-                data[i][j]=dataLoads[i][j];
+                data[i][j] = dataLoads[i][j];
             }
         }
         for (int i = 0; i < dataWind.length; i++) {
             for (int j = 0; j < dataWind[i].length; j++) {
-                data[i][j+loadsSize]=dataWind[i][j];
+                data[i][j + loadsSize] = dataWind[i][j];
             }
         }
         return data;
@@ -482,8 +483,9 @@ public class Utils {
     }
 
     public static float[] toFloatArray(double[] farray) {
-        if (farray == null)
+        if (farray == null) {
             return null;
+        }
         int n = farray.length;
         float[] darray = new float[n];
         for (int i = 0; i < n; i++) {

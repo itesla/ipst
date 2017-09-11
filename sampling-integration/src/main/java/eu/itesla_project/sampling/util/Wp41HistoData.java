@@ -23,7 +23,7 @@ public class Wp41HistoData {
     private final List<String> historicalDanglingLinesIds;
 
     //joined table of historical data (renewables data , loads, ..)
-    private final ArrayTable<Integer,String,Float> hdTable;
+    private final ArrayTable<Integer, String, Float> hdTable;
 
     public List<String> getHistoricalGensIds() {
         return historicalGensIds;

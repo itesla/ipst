@@ -35,7 +35,7 @@ public class DataMiningFacadeHistodb implements DataMiningFacade {
     private final HistoDbClient histoClient;
 
     public DataMiningFacadeHistodb(HistoDbClient histoClient) {
-        this.histoClient=histoClient;
+        this.histoClient = histoClient;
     }
 
     @Override
@@ -49,8 +49,8 @@ public class DataMiningFacadeHistodb implements DataMiningFacade {
         return parseData(dmParams);
     }
 
-    private static void parseCsv(InputStream is, Set<HistoDbAttributeId> ids, Table<Integer,String,Float> hdTable, int expectedRowCount) throws IOException {
-        int rowcount=0;
+    private static void parseCsv(InputStream is, Set<HistoDbAttributeId> ids, Table<Integer, String, Float> hdTable, int expectedRowCount) throws IOException {
+        int rowcount = 0;
         try (ICsvMapReader mapReader = new CsvMapReader(new InputStreamReader(is), new CsvPreference.Builder('"', ',', "\r\n").build())) {
 
             final String[] header = mapReader.getHeader(true);
@@ -63,7 +63,7 @@ public class DataMiningFacadeHistodb implements DataMiningFacade {
                 }
             }
             Map<String, Object> componentMap;
-            while( (componentMap = mapReader.read(header, rowProcessors)) != null ) {
+            while ((componentMap = mapReader.read(header, rowProcessors)) != null) {
                 for (HistoDbAttributeId id : ids) {
                     if (id instanceof HistoDbNetworkAttributeId) { // skip meta data attributes
                         String val = (String) componentMap.get(id.toString());
