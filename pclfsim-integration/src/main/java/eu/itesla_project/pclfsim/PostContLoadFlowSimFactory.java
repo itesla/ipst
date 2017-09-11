@@ -33,7 +33,7 @@ public class PostContLoadFlowSimFactory implements SimulatorFactory {
         LOGGER.info(config.toString());
         try {
             loadFlowFactory = config.getLoadFlowFactoryClass().newInstance();
-        } catch (InstantiationException|IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
