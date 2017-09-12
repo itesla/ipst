@@ -20,7 +20,7 @@ public class PsseEngine extends SourceEngine {
      * Machines params between PSSE and Modelica <ModelicaParam>;<PSSEParam>
      */
     private String GENROU = PsseModDefaultTypes.GENROU;
-    private String genrouParams[][] = new String[][] {
+    private String[][] genrouParams = new String[][] {
                                                             {"Tpd0", "Tpd0"},
                                                             {"Tppd0", "Tppd0"},
                                                             {"Tpq0", "Tpq0"},
@@ -38,7 +38,7 @@ public class PsseEngine extends SourceEngine {
                                                             {"S20", "S20"}};
 
     private String GENSAL = PsseModDefaultTypes.GENSAL;
-    private String gensalParams[][] = new String[][] {
+    private String[][] gensalParams = new String[][] {
                                                             {"Tpd0", "Tpd0"},
                                                             {"Tppd0", "Tppd0"},
                                                             {"Tppq0", "Tppq0"},
@@ -54,7 +54,7 @@ public class PsseEngine extends SourceEngine {
                                                             {"S20", "S20"}};
 
     private String GENCLS = PsseModDefaultTypes.GENCLS;
-    private String genclsParams[][] = new String[][] {
+    private String[][] genclsParams = new String[][] {
                                                 {"Tpd0", "Tpd0"},
                                                 {"Tppd0", "Tppd0"},
                                                 {"Tppq0", "Tppq0"},
@@ -70,7 +70,7 @@ public class PsseEngine extends SourceEngine {
                                                 {"S20", "S20"}};
 
     private String WT4G1 = PsseModDefaultTypes.WT4G1;
-    private String wt4g1Params[][] = new String[][] {
+    private String[][] wt4g1Params = new String[][] {
                                                 {"T_IQCmd", "T_IQCmd"},
                                                 {"T_IPCmd", "T_IPCmd"},
                                                 {"V_LVPL1", "V_LVPL1"},

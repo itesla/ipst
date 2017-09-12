@@ -91,7 +91,7 @@ public class Converter {
     private static String idT3W = "T3W_";
 
     // Seasons
-    private static final String seasons[] = {
+    private static final String[] seasons = {
         "Winter", "Winter", "Spring", "Spring", "Summer", "Summer",
         "Summer", "Summer", "Fall", "Fall", "Winter", "Winter"
     };

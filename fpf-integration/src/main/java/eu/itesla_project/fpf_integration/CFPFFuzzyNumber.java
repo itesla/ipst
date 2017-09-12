@@ -14,7 +14,7 @@ package eu.itesla_project.fpf_integration;
 public class CFPFFuzzyNumber {
 
     private int numPoints = 3;
-    private double fuzzyNumber[];
+    private double[] fuzzyNumber;
 
     // Empty constructor
     public CFPFFuzzyNumber() {
