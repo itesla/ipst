@@ -105,7 +105,7 @@ public class Master {
                         .argName("ID")
                         .build());
     }
-    
+
     public Master() {
     }
 

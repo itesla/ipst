@@ -80,7 +80,7 @@ public class OnlineConfig {
                                        Class<? extends OnlineDbFactory> onlineDbFactoryClass,
                                        Class<? extends UncertaintiesAnalyserFactory> uncertaintiesAnalyserFactoryClass,
                                        Class<? extends CorrectiveControlOptimizerFactory> correctiveControlOptimizerFactoryClass,
-                                       Class<? extends SimulatorFactory> simulatorFactoryClass, 
+                                       Class<? extends SimulatorFactory> simulatorFactoryClass,
                                        Class<? extends CaseRepositoryFactory> caseRepositoryFactoryClass,
                                        Class<? extends MontecarloSamplerFactory>  montecarloSamplerFactory,
                                        Class<? extends MergeOptimizerFactory>  mergeOptimizerFactory,
@@ -90,10 +90,10 @@ public class OnlineConfig {
                         "histoDbClientFactoryClass={}, rulesDbClientFactoryClass={}, " +
                         "wcaFactoryClass={}, loadFlowFactoryClass={}, onlineDbFactoryClass={}, " +
                         "uncertaintiesAnalyserFactoryClass={}, correctiveControlOptimizerFactoryClass={}, " +
-                        "simulatorFactoryClass={}, caseRepositoryFactoryClass={}, montecarloSamplerFactory={}, " + 
+                        "simulatorFactoryClass={}, caseRepositoryFactoryClass={}, montecarloSamplerFactory={}, " +
                         "mergeOptimizerFactory={}, rulesFacadeFactory={}",
                 contingencyDbClientFactoryClass.getName(),
-                histoDbClientFactoryClass.getName(), rulesDbClientFactoryClass.getName(), wcaFactoryClass.getName(), 
+                histoDbClientFactoryClass.getName(), rulesDbClientFactoryClass.getName(), wcaFactoryClass.getName(),
                 loadFlowFactoryClass.getName(), onlineDbFactoryClass.getName(), uncertaintiesAnalyserFactoryClass.getName(),
                 correctiveControlOptimizerFactoryClass.getName(), simulatorFactoryClass.getName(), caseRepositoryFactoryClass.getName(),
                 montecarloSamplerFactory.getName(), mergeOptimizerFactory.getName(), rulesFacadeFactory.getName());
@@ -175,22 +175,22 @@ public class OnlineConfig {
         return rulesDbClientFactoryClass;
     }
 
-    public Class<? extends WCAFactory> getWcaFactoryClass() { 
+    public Class<? extends WCAFactory> getWcaFactoryClass() {
         return wcaFactoryClass;
     }
 
-    public Class<? extends LoadFlowFactory> getLoadFlowFactoryClass() { 
+    public Class<? extends LoadFlowFactory> getLoadFlowFactoryClass() {
         return loadFlowFactoryClass;
     }
-    
-    public Class<? extends OnlineDbFactory> getOnlineDbFactoryClass() { 
+
+    public Class<? extends OnlineDbFactory> getOnlineDbFactoryClass() {
         return onlineDbFactoryClass;
     }
 
     public Class<? extends UncertaintiesAnalyserFactory> getUncertaintiesAnalyserFactoryClass() {
         return uncertaintiesAnalyserFactoryClass;
     }
-    
+
     public Class<? extends CorrectiveControlOptimizerFactory> getCorrectiveControlOptimizerFactoryClass() {
         return correctiveControlOptimizerFactoryClass;
     }
@@ -210,7 +210,7 @@ public class OnlineConfig {
     public Class<? extends MergeOptimizerFactory> getMergeOptimizerFactory() {
         return mergeOptimizerFactory;
     }
-    
+
     public Class<? extends RulesFacadeFactory> getRulesFacadeFactory() {
         return rulesFacadeFactory;
     }

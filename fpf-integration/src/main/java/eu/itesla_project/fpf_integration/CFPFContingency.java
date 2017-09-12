@@ -11,7 +11,7 @@ import java.util.Collections;
 
 /**
  * This class defines the contingency data layout necessary to run a power flow
- * 
+ *
  * @author Leonel Carvalho - INESC TEC
  */
 

@@ -75,8 +75,8 @@ public class DefaultParameters implements Serializable {
             throw new RuntimeException("parameter with name " + parameter.name + " already exist in this parameter list");
         }
     }
-    
-    
+
+
     public DefaultParameters(int setNum) {
         super();
         this.setNum = setNum;
@@ -86,5 +86,5 @@ public class DefaultParameters implements Serializable {
         super();
         this.setNum = 0;
     }
-    
+
 }

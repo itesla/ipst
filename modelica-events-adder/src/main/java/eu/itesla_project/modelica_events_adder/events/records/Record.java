@@ -64,7 +64,7 @@ public class Record {
     }
 
 //    public abstract String parseName(String name);
-    
+
     public Map<String, String> getParamsMap() {
         return paramsMap;
     }
@@ -77,9 +77,9 @@ public class Record {
     protected int                currentLinePos;
     private String                modelicaName;
     private String                modelicaType    = null;
-    
+
     public String                modelData        = null;
- 
+
 
     public Map<String, String>    paramsMap        = new HashMap<String, String>();
 

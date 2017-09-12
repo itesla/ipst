@@ -290,7 +290,7 @@ public class StateAnalyzer implements Callable<Void> {
             }
         } catch (Throwable t) {
             status.put(currentStatus, OnlineTaskStatus.FAILED);
-            //TODO  manage string ifo detail 
+            //TODO  manage string ifo detail
             stateListener.onUpdate(stateId, status, context.timeHorizon, currentStatus + " failed ... ");
             logger.error("{}: Error working on state: {}", stateId, t.toString(), t);
         }
@@ -391,7 +391,7 @@ public class StateAnalyzer implements Callable<Void> {
                             if (loadflowConverge) {
                                 logger.info("{}: computing post contingency violations for contingency {}", stateId, contingency.getId());
                                 violations = Security.checkLimits(network, parameters.getLimitReduction());
-                                
+
                                 if (violations == null || violations.isEmpty()) {
                                     logger.info("{}: no post contingency violations for contingency {}", stateId, contingency.getId());
                                     violations = new ArrayList<LimitViolation>();

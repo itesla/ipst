@@ -74,18 +74,18 @@ public abstract class ModelicaRecord {
     public abstract void createModelicaName();
 
     public abstract void createRecord();
-    
+
     public abstract String parseName(String name);
 
     public abstract ModelicaRecord getClassName();
-    
+
     private StringBuilder        data;
     protected int                currentLinePos;
     private String                modelicaName;
     private String                modelicaType    = null;
-    
+
     public String                modelData        = null;
-    
+
     private boolean                isCorrect        = true;
 
     public Map<String, String>    mtcMapper        = new HashMap<String, String>();

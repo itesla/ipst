@@ -42,10 +42,10 @@ public class TableRow implements Serializable {
 //    public void setId(Long id) {
 //        this.id = id;
 //    }
-    
+
     /* if List had been in place, without the OrderColumn annotation, hibernate/JPA implementation would have produced an error
      * ERROR: org.hibernate.LazyInitializationException failed to lazily initialize a collection of role: xxx.entity.core.User.roleSet, no session or session was closed
-     * Apparently, two nested OneToMany relation handling is not supported  
+     * Apparently, two nested OneToMany relation handling is not supported
      * ref http://blog.eyallupu.com/2010/06/hibernate-exception-simultaneously.html
      *     http://en.wikibooks.org/wiki/Java_Persistence/Relationships
      */

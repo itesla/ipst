@@ -8,7 +8,7 @@ package eu.itesla_project.fpf_integration;
 
 /**
  * This class defines the branch data layout
- * 
+ *
  * @author Leonel Carvalho - INESC TEC
  */
 public class CFPFBranch {

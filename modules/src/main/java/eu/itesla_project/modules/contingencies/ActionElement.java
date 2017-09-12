@@ -19,11 +19,11 @@ public interface ActionElement {
     ActionElementType getType();
 
     ModificationTask toTask();
-    
+
     Number getImplementationTime();
-    
+
     Number getAchievmentIndex();
-    
+
     ModificationTask toTask(ActionParameters parameters);
 
 }

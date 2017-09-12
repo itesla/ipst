@@ -30,7 +30,7 @@ public class Connection implements Serializable {
     String conPointName1 = null;
     String conPointName2 = null;
     int conType = 0;  //0 inside, 1 outside
-    
+
     public String getId1() {
         return id1;
     }

@@ -35,7 +35,7 @@ public class ForecastErrorsDataStorageConfig {
 
     public static ForecastErrorsDataStorageConfig load() {
         ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("forecastErrorsStorage");
-        
+
         Path forecastErrorsDir = config.getPathProperty("forecastErrorsDir");
 
         return new ForecastErrorsDataStorageConfig(forecastErrorsDir);

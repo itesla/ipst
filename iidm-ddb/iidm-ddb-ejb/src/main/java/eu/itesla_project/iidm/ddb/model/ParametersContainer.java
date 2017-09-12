@@ -46,11 +46,11 @@ public class ParametersContainer implements Serializable {
 //    public void setId(Long id) {
 //        this.id = id;
 //    }
-    
+
     @Column(nullable = false, unique = true)
     @NotEmpty
     private String ddbId;
-    
+
     public String getDdbId() {
         return ddbId;
     }
@@ -86,7 +86,7 @@ public class ParametersContainer implements Serializable {
     @Override
     // This must return true for another ParametersContainer this method is used to manage <f:selectItems value=""/>
     public boolean equals(Object other) {
-        return other instanceof ParametersContainer ? 
+        return other instanceof ParametersContainer ?
                 ddbId.equals( ( (ParametersContainer) other).getDdbId())  : false;
     }
 }

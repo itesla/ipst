@@ -25,9 +25,9 @@ public class LazyInternalDataModel extends LazyDataModel<Internal> {
 private static final long serialVersionUID = 1L;
 
 private DDBManager pmanager;
-   
 
-   
+
+
 
    public LazyInternalDataModel( DDBManager pmanager) {
        this.pmanager = pmanager;

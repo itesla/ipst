@@ -40,7 +40,7 @@ public class DanglingLineRecord extends ModelicaRecord {
 
         this.setParameters(SNREF);
     }
-    
+
 
     @Override
     public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
@@ -90,7 +90,7 @@ public class DanglingLineRecord extends ModelicaRecord {
             this.addValue(StaticData.COMMENT + " Line " + this.getModelicaName() + " disconnected.");
         }
     }
-    
+
     @Override
     public void createModelicaName(ModExportContext modContext, DDBManager ddbManager, SimulatorInst modelicaSim) {
         String modelicaName = parseName(this.danglingLine.getId());
@@ -98,7 +98,7 @@ public class DanglingLineRecord extends ModelicaRecord {
         modContext.dictionary.add(this.danglingLine, modelicaName);
         super.setModelicaName(modelicaName);
     }
-    
+
     @Override
     public String parseName(String name) {
            String parsedName = name.trim();

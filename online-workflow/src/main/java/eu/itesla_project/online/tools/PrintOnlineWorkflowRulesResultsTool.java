@@ -131,7 +131,7 @@ public class PrintOnlineWorkflowRulesResultsTool implements Tool {
                             table.addCell(NO_RULES_AVAILABLE);
                             values[i++] = NO_RULES_AVAILABLE;
                         }
-                        HashMap<String, String> rulesResults = getRulesResults(wfRulesResults.getStateResults(contingencyId, stateId), securityIndexTypes, 
+                        HashMap<String, String> rulesResults = getRulesResults(wfRulesResults.getStateResults(contingencyId, stateId), securityIndexTypes,
                                 wfRulesResults.getInvalidRules(contingencyId, stateId));
                         for (SecurityIndexType securityIndexType : securityIndexTypes) {
                             table.addCell(rulesResults.get(securityIndexType.getLabel()), new CellStyle(CellStyle.HorizontalAlign.center));

@@ -34,7 +34,7 @@ public class DdbUnloaderTool implements Tool {
         String jbossPort = line.getOptionValue(DdbLoaderCommand.PORT);
         String jbossUser = line.getOptionValue(DdbLoaderCommand.USER);
         String jbossPassword = line.getOptionValue(DdbLoaderCommand.PASSWORD);
-        
+
         DdbConfig ddbConfig = new DdbConfig(jbossHost, jbossPort, jbossUser, jbossPassword);
         DynDataUnloader dn = new DynDataUnloader(
                 ddbConfig.getJbossHost(), ddbConfig.getJbossPort(), ddbConfig.getJbossUser(), ddbConfig.getJbossPassword()

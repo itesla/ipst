@@ -41,7 +41,7 @@ import java.util.*;
 public class DdbDyrLoader {
 
     static Logger log = LoggerFactory.getLogger(DdbDyrLoader.class);
-    
+
     private FileWriter writer;
 
     private static final String MTC_PREFIX_NAME = "MTC_";
@@ -291,7 +291,7 @@ public class DdbDyrLoader {
                 }
 
                 writer.write("Equipment: " + equipmentReg.getModel() + "\n");
-                
+
                 //step b:  process Internals
                 boolean hasHygov = false;
                 boolean hasPss2a = false;
@@ -436,7 +436,7 @@ public class DdbDyrLoader {
                             log.info("----- connection already exist: " + newC);
                         }
                     }
-                    
+
                     if (equipmentReg.pins.contains(eqPin) && regulatorRegister.Model.equalsIgnoreCase("ESDC2A")) {
                         log.info("--* connection eq-int {}-{}  on pins {},{}", equipmentReg.getModel(), regulatorRegister.getModel(), eqPin, regPin);
                         log.info("----*  {} {} {} {} {} {} {}", "inside", "equipment", equipmentId, eqPin, regPin, "internal", regulatorRegister.getId());
@@ -449,7 +449,7 @@ public class DdbDyrLoader {
                             log.info("----- connection already exist: " + newC);
                         }
                     }
-                    
+
                     //This is a rule from PSS/E about how to connect IEEEST.V_S
                     regPin = "V_S";
                     if (regulatorRegister.Model.equalsIgnoreCase("IEEEST")) {
@@ -523,12 +523,12 @@ public class DdbDyrLoader {
                         } else {
                             log.info("-- connection int-int {}-{}  does not exist: no shared pins names", internalsRegs.get(i).getModel(), internalsRegs.get(j).getModel());
                         }
-                        
-                        
+
+
                         //TODO SMF Specific connections in a specific configuration
                         String regPin1 = "V_S1";
                         String regPin2 = "SPEED";
-                        
+
                         writer.write("Internal 1: " + internalsRegs.get(i).getModel() + ". Internal 2: " + internalsRegs.get(j).getModel()  + "\n");
 
                         if (equipmentReg.Model.equals("GENSAL") && hasPss2a && hasHygov) {
@@ -579,7 +579,7 @@ public class DdbDyrLoader {
                             }
                         }
                     }
-                    
+
                     //TODO SMF Perhaps this will happen in several cases as if regpins.contains(VOTHSG VUEL and VOEL) ==> connect these pins
                     String regPin1;
                     String regPin2;
@@ -608,7 +608,7 @@ public class DdbDyrLoader {
                         }
                     }
                 }
-                
+
                 //third create equipment-equipment connections
                 String eqPin1 = "PMECH";
                 String eqPin2 = "PMECH0";
@@ -637,7 +637,7 @@ public class DdbDyrLoader {
                         log.info("----- connection already exist: " + newC);
                     }
                 }
-                
+
                 if (equipmentReg.Model.equals("WT4G1")) {
                         eqPin1 = "I_qcmd";
                         eqPin2 = "I_qcmd0";
@@ -665,7 +665,7 @@ public class DdbDyrLoader {
                             log.info("----- connection already exist: " + newC);
                         }
                  }
-                
+
                 // fourth persist the connection schema
                 if (clist.size() > 0) {
                     cs.setConnections(clist);

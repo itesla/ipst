@@ -47,34 +47,34 @@ public class InternalController {
 
    @EJB
    private DDBManager pmanager;
-   
+
    @Inject
    private Logger log;
 
    private Internal newInternal;
-   
+
    private String nativeId;
-   
+
    private int internalsCount;
-   
-   private LazyInternalDataModel lazyDataModel; 
-   
+
+   private LazyInternalDataModel lazyDataModel;
+
    private String eurostagVersion;
    private String modelicaVersion;
-   
+
    private List<String> modelTemplateContainersValues;
    private String selectedModelTemplateContainer;
-   
+
    private List<String> parametersContainerValues;
    private String selectedParametersContainer;
-   
-   
-   
+
+
+
    @Inject
    private EntityManager em;
-   
-   
-    
+
+
+
    public EntityManager getEm() {
     return em;
    }
@@ -203,14 +203,14 @@ public void setSelectedModelTemplateContainer(
     parametersContainerValues = q2.getResultList();
     log.log(Level.INFO, "DONE query parameterContainer");
     }
-  
+
    public String getNativeId() {
         return nativeId;
     }
 
-   
-   
-  
+
+
+
     public int getInternalsCount() {
     return internalsCount;
     }
@@ -225,7 +225,7 @@ public void setSelectedModelTemplateContainer(
             this.newInternal = pmanager.findInternal(nativeId);
         }
     }
-  
+
    public String create() throws Exception {
         log.log(Level.INFO, " Create new Internal: [nativeId: " + newInternal.getNativeId()
                 + "  Model Container DDBID: " + selectedModelTemplateContainer
@@ -253,8 +253,8 @@ public void setSelectedModelTemplateContainer(
             return "create";
         }
     }
-   
-  
+
+
    public String delete(String nativeId) throws Exception {
        log.log(Level.INFO, " Delete Internal: [nativeId: " + nativeId + "]");
 
@@ -276,7 +276,7 @@ public void setSelectedModelTemplateContainer(
            return "edit";
        }
      }
-    
+
     public String edit(Internal internal) {
         log.log(Level.INFO, " edit enter:: [" + internal.getNativeId() + "]");
         this.nativeId = internal.getNativeId();
@@ -299,7 +299,7 @@ public void setSelectedModelTemplateContainer(
              return "edit";
          }
      }
-    
+
     public String getEurostagVersion() {
         return eurostagVersion;
     }
@@ -339,7 +339,7 @@ public void setSelectedModelTemplateContainer(
             newInternal = pmanager.findInternal(internal.getNativeId());
         }
     }
-   
+
   private String getRootErrorMessage(Exception e) {
         // Default to general error message that registration failed.
         String errorMessage = "Operation failed. See server log for more information";
@@ -359,5 +359,5 @@ public void setSelectedModelTemplateContainer(
         // This is the root cause message
         return errorMessage;
     }
-   
+
 }

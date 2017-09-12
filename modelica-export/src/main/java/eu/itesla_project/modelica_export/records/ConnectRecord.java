@@ -34,7 +34,7 @@ public abstract class ConnectRecord extends ModelicaRecord {
 
         super.setModelicaName(modelicaName);
     }
-    
+
     public String parseName(String name) {
         String parsedName = name.trim();
 
@@ -62,7 +62,7 @@ public abstract class ConnectRecord extends ModelicaRecord {
 
         return parsedName;
     }
-    
+
     protected String            nodeName1;
     protected String            nodeName2;
     protected String            node1;

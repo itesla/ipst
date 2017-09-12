@@ -29,20 +29,20 @@ public class InternalListProducer {
 
     @Inject
     private Logger log;
-    
+
     @EJB
     private DDBManager pmanager;
 
     private List<Internal> internals;
-    
-    
+
+
     // @Named provides access the return value via the EL variable name "members" in the UI (e.g.
     // Facelets or JSP view)
     @Produces
     @Named
     public List<Internal> getInternals() {
         return internals;
-    }    
+    }
 
     @PostConstruct
     public void retrieveAllInternals() {

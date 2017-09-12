@@ -39,7 +39,7 @@ import eu.itesla_project.modules.test.AutomaticContingenciesAndActionsDatabaseCl
 
 /**
  * This class reads a CIM file and creates a file with the input data for the FPF module
- * 
+ *
  * @author Leonel Carvalho - INESC TEC
  */
 

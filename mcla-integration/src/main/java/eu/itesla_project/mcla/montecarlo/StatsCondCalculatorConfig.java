@@ -62,7 +62,7 @@ public class StatsCondCalculatorConfig {
 
     public static StatsCondCalculatorConfig load() {
         ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("statsCondCalculator");
-        
+
         Path binariesDir = config.getPathProperty("binariesDir");
         Path runtimeHomeDir = config.getPathProperty("runtimeHomeDir");
         Path tmpDir = config.getPathProperty("tmpDir");
@@ -85,7 +85,7 @@ public class StatsCondCalculatorConfig {
     }
 
 
-    public Integer getRngSeed() { 
+    public Integer getRngSeed() {
         return rngSeed;
     }
 

@@ -24,15 +24,15 @@ public class ParameterWeb {
     private String type;
     private String name;
     private Object value;
-    
-    
+
+
     public ParameterWeb() {
         this.type = "";
         this.name = "";
         this.value = "";
 
     }
-    
+
     public ParameterWeb(String type, String name, Object value) {
         super();
         this.type = type;
@@ -82,7 +82,7 @@ public class ParameterWeb {
         return "Parameter [ Type: " + this.type + " Name: " + this.name + " Value: " + this.value + "]";
 
     }
-    
-  
-    
+
+
+
 }

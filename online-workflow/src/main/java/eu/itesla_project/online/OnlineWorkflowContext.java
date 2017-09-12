@@ -109,7 +109,7 @@ public class OnlineWorkflowContext {
     public WCAResults getWcaResults() {
         return wcaResults;
     }
-    
+
     public void setWcaSecurityRulesResults(SecurityRulesApplicationResults wcaSecurityRulesResults) {
         this.wcaSecurityRulesResults = wcaSecurityRulesResults;
     }

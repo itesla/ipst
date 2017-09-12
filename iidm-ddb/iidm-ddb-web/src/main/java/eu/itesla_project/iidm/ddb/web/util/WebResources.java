@@ -16,11 +16,11 @@ import javax.faces.context.FacesContext;
  * @author Quinary <itesla@quinary.com>
  */
 public class WebResources {
-   
+
    @Produces
    @RequestScoped
    public FacesContext produceFacesContext() {
       return FacesContext.getCurrentInstance();
    }
-   
+
 }

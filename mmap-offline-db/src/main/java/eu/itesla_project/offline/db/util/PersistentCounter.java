@@ -44,10 +44,10 @@ public class PersistentCounter implements AutoCloseable {
             return buffer.getInt(0);
         }
     }
-    
+
     @Override
     public void close() throws IOException {
         file.close();
     }
-    
+
 }

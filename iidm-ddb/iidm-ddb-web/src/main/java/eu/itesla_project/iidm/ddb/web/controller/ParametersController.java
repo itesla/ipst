@@ -490,10 +490,10 @@ public class ParametersController {
               facesContext.addMessage(null, m);
           }
         return "edit";
-      }  
+      }
 
-    
-    public String reinit() {  
+
+    public String reinit() {
         log.log(Level.INFO, " reint enter::");
         parameterWeb = new ParameterWeb("", "", "");
         return null;

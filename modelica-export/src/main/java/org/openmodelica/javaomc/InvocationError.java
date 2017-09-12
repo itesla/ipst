@@ -46,7 +46,7 @@ package org.openmodelica.javaomc;
  * some command via the 'interactive api' interface. That is when
  * compiler replys 'error' instead of returning the results in a situation
  * where no error are expected.
- * 
+ *
  * @author Elmir Jagudin
  */
 public class InvocationError extends CompilerException {

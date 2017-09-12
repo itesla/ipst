@@ -17,7 +17,7 @@ import eu.itesla_project.modules.histo.HistoDbClient;
  */
 public interface ForecastErrorsAnalyzerFactory {
 
-    ForecastErrorsAnalyzer create(Network network, ComputationManager computationManager, 
+    ForecastErrorsAnalyzer create(Network network, ComputationManager computationManager,
                                   ForecastErrorsDataStorage forecastErrorsDataStorage, HistoDbClient histoDbClient);
 
 }

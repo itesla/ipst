@@ -51,8 +51,8 @@ public class ModelTemplateContainer implements Serializable {
     @Column(name = "ddbid", nullable = false, unique = true)
     @NotEmpty
     private String ddbId;
-    
-    
+
+
     public String getDdbId() {
         return ddbId;
     }
@@ -101,7 +101,7 @@ public class ModelTemplateContainer implements Serializable {
     @Override
     // This must return true for another ModelTemplateContainer this method is used to manage <f:selectItems value=""/>
     public boolean equals(Object other) {
-        return other instanceof ModelTemplateContainer ? 
+        return other instanceof ModelTemplateContainer ?
                 ddbId.equals( ( (ModelTemplateContainer) other).getDdbId())  : false;
     }
 

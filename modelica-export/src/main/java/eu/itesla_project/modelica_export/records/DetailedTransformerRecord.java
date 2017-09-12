@@ -28,12 +28,12 @@ public class DetailedTransformerRecord extends BranchRecord {
         super(transformer);
         this.transformer = transformer;
         super.setDEFAULT_BRANCH_TYPE(DEFAULT_DETAILED_TRAFO_TYPE);
-        
+
         super.setDEFAULT_BRANCH_PREFIX(StaticData.PREF_TRAFO);
-        
+
         this.setParameters(SNREF);
     }
-    
+
     @Override
     public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
         modContext.dictionary.add(this.transformer, this.transformer.getId());
@@ -84,7 +84,7 @@ public class DetailedTransformerRecord extends BranchRecord {
             this.addValue(StaticData.COMMENT + " Detailed transformer " + this.getModelicaName() + " disconnected.");
         }
     }
-    
+
     /**
      * Add IIDM parameters to Detailed Transformer Modelica Model
      */
@@ -93,7 +93,7 @@ public class DetailedTransformerRecord extends BranchRecord {
         //super.iidmbranchParameters = new ArrayList<IIDMParameter>();
 
         float t1NomV = this.transformer.getTerminal1().getVoltageLevel().getNominalV();
-        float t2NomV = this.transformer.getTerminal2().getVoltageLevel().getNominalV(); 
+        float t2NomV = this.transformer.getTerminal2().getVoltageLevel().getNominalV();
         float U1nom = Float.isNaN(t1NomV) == false ? t1NomV : 0;
         float U2nom = Float.isNaN(t2NomV) == false ? t2NomV : 0;
         float V1 = Float.isNaN(this.transformer.getRatedU1()) == false ? this.transformer.getRatedU1() : 0; // [kV]
@@ -101,12 +101,12 @@ public class DetailedTransformerRecord extends BranchRecord {
         float Zbase = (float) Math.pow(U2nom, 2) / SNREF;
         float G = this.transformer.getG() * Zbase; // [p.u.]
         float B = this.transformer.getB() * Zbase; // [p.u.]
-        
+
         RatioTapChanger rtc = this.transformer.getRatioTapChanger();
         PhaseTapChanger ptc = this.transformer.getPhaseTapChanger();
-        
+
         float dx = 0, dr = 0;
-        
+
         if ( rtc != null ) {
             RatioTapChangerStep rtcs = rtc.getCurrentStep();
             V1 /= rtcs.getRho();
@@ -125,11 +125,11 @@ public class DetailedTransformerRecord extends BranchRecord {
 
         double rpu2 = (this.transformer.getR() * (1 + dr / 100) * SNREF) / Math.pow(U2nom, 2); // [p.u.]
         double xpu2 = (this.transformer.getX() * (1 + dx / 100) * SNREF) / Math.pow(U2nom, 2); // [p.u.]
-        
+
         /*
          * El ratio esta calculado de acuerdo al valor obtenido por HELM FLow
          */
-        
+
         float Vend_pu = V1 / U1nom;
         float Vsource_pu = V2 / U2nom;
         float RATIO = Vsource_pu / Vend_pu; // ...transformation ratio [p.u.]

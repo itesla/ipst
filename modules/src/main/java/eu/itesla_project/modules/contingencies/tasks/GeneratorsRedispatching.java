@@ -26,7 +26,7 @@ public class GeneratorsRedispatching implements ModificationTask {
 
     private final List<String> generatorIds;
     private final ActionParameters actionsParameters;
-    
+
 
     public GeneratorsRedispatching(List<String> generatorIds, ActionParameters actionsParameters) {
         this.generatorIds = generatorIds;

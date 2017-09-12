@@ -53,7 +53,7 @@ import java.util.StringTokenizer;
  * The OMCProxy is the glue between the OpenModelica Compiler and MDT.
  * It uses the interactive API of OMC to get information about classes
  * and to load classes into OMC.
- * 
+ *
  * @author Andreas Remar
  * @author Adrian Pop
  */

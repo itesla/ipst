@@ -119,7 +119,7 @@ public class WCAFilteredClusters {
         LOGGER.warn("Network {}, contingency {}: no available flags", networkId, contingencyId);
         return EnumSet.noneOf(WCAClusterOrigin.class);
     }
-    
+
     public void removeAllButCluster(String contingencyId, WCAClusterNum clusterNum, WCAClusterOrigin flag) {
         Objects.requireNonNull(contingencyId, "contingency id is null");
         Objects.requireNonNull(clusterNum, "clustersNums is null");

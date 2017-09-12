@@ -28,7 +28,7 @@ public class LineRecord extends BranchRecord {
     public LineRecord (Line line, float SNREF) {
         super(line);
         this.line = line;
-        
+
         boolean isSendingOpen = line.getTerminal1().isConnected() ? true : false;
         boolean isReceivingOpen = line.getTerminal2().isConnected() ? true : false;
 
@@ -44,7 +44,7 @@ public class LineRecord extends BranchRecord {
         super.setDEFAULT_BRANCH_PREFIX(StaticData.PREF_LINE);
         this.setParameters(SNREF);
     }
-    
+
     @Override
     public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
 
@@ -96,7 +96,7 @@ public class LineRecord extends BranchRecord {
             this.addValue(StaticData.COMMENT + " Line " + this.getModelicaName() + " disconnected.");
         }
     }
-    
+
     /**
      * Add IIDM parameters to Line Modelica Model in p.u
      */

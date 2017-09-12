@@ -22,10 +22,10 @@ import java.util.List;
  * modelName: nombre del modelo (del regulador)
  * nParameters: numero de parametros definidos en el .par
  * parNames: nombre de los parametros definidos en el .par
- * parTypes: hashmap que identifica cada parametro con su tipo. Hay dos tipos: 1) parameter Real 2) parameter Real[:] 
+ * parTypes: hashmap que identifica cada parametro con su tipo. Hay dos tipos: 1) parameter Real 2) parameter Real[:]
  * setIds: lista con los ids de parametros definidos (OJO, es posible que no esten ordenados o que se salten ids)
  * idset: hashmap que indica para cada id la correspondiente columna de parametros
- * linesxBlock: parametro interno necesario para el parseo correcto de los parametros. 
+ * linesxBlock: parametro interno necesario para el parseo correcto de los parametros.
  */
 
 

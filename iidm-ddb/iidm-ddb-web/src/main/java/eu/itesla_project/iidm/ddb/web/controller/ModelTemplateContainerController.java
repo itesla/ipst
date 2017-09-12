@@ -484,8 +484,8 @@ public class ModelTemplateContainerController {
     public void onRowToggle(ToggleEvent event) {
         log.log(Level.INFO, ":: onRowToggle enter");
         FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Row State " + event.getVisibility(), "Model Template :" + ((ModelTemplate) event.getData()).getId());
-        FacesContext.getCurrentInstance().addMessage(null, msg);  
-    }  
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
 
 
     private void buildDefParamTable() {

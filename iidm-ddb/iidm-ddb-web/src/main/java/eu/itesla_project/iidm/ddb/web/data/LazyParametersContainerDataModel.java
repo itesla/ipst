@@ -26,9 +26,9 @@ public class LazyParametersContainerDataModel extends LazyDataModel<ParametersCo
     private static final long serialVersionUID = 1L;
 
     private DDBManager pmanager;
-   
 
-   
+
+
 
    public LazyParametersContainerDataModel( DDBManager pmanager) {
        this.pmanager = pmanager;

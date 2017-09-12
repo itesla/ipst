@@ -25,11 +25,11 @@ import eu.itesla_project.iidm.ddb.model.ModelTemplate;
  * @author Quinary <itesla@quinary.com>
  */
 @Model
-public class FileDownloadController {  
-  
-    private StreamedContent file;  
-      
-    public FileDownloadController() {          
+public class FileDownloadController {
+
+    private StreamedContent file;
+
+    public FileDownloadController() {
         System.out.println("fileDowloadController");
         InputStream stream = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getResourceAsStream("/modelTemplateContainer/test.jpg");
         file = new DefaultStreamedContent(stream, "image/jpg", "test.jpg");
@@ -39,9 +39,9 @@ public class FileDownloadController {
         System.out.println("return file " + file.getName());
         return file;
     }
-    
-    public void setFile(StreamedContent file) {  
-        this.file = file;  
+
+    public void setFile(StreamedContent file) {
+        this.file = file;
     }
 
     public void downLoadFile(ModelTemplate mt, String mapKey) {
@@ -59,5 +59,5 @@ public class FileDownloadController {
 
 
     }
-    
+
 }

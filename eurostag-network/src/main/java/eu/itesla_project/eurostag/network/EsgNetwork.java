@@ -204,11 +204,11 @@ public class EsgNetwork {
         }
         areas.put(area.getName().toString(), area);
     }
-    
+
     public void removeArea(String area) {
         if (!areas.containsKey(area)) {
             throw new IllegalArgumentException("Area '" + area + "' doesn't exists");
-        } 
+        }
         areas.remove(area);
     }
 
@@ -226,7 +226,7 @@ public class EsgNetwork {
         }
         nodes.put(node.getName().toString(), node);
     }
-    
+
     public void removeNode(String node) {
         if (!nodes.containsKey(node)) {
             throw new IllegalArgumentException("Node '" + node + "' doesn't exists");
@@ -248,7 +248,7 @@ public class EsgNetwork {
         }
         lines.put(line.getName().toString(), line);
     }
-    
+
     public void removeLine(String line) {
         if (!lines.containsKey(line)) {
             throw new IllegalArgumentException("Line '" + line + "' doesn't exists");
@@ -270,7 +270,7 @@ public class EsgNetwork {
         }
         detailedTwoWindingTransformers.put(transformer.getName().toString(), transformer);
     }
-    
+
     public void removeDetailedTwoWindingTransformer(String transformer) {
         if (!detailedTwoWindingTransformers.containsKey(transformer)) {
             throw new IllegalArgumentException("Detailed 2 winding transformer '" + transformer + "' doesn't exists");
@@ -292,7 +292,7 @@ public class EsgNetwork {
         }
         dissymmetricalBranches.put(branch.getName().toString(), branch);
     }
-    
+
     public void removeDissymmetricalBranch(String branch) {
         if (!dissymmetricalBranches.containsKey(branch)) {
             throw new IllegalArgumentException("Dissymmetrical branch '" + branch + "' doesn't exists");
@@ -314,7 +314,7 @@ public class EsgNetwork {
         }
         couplingDevices.put(device.getName().toString(), device);
     }
-    
+
     public void removeCouplingDevice(String device) {
         if (!couplingDevices.containsKey(device)) {
             throw new IllegalArgumentException("Coupling device '" + device + "' doesn't exists");
@@ -336,7 +336,7 @@ public class EsgNetwork {
         }
         generators.put(generator.getZnamge().toString(), generator);
     }
-    
+
     public void removeGenerator(String generator) {
         if (!generators.containsKey(generator)) {
             throw new IllegalArgumentException("Generator '" + generator + "' doesn't exists");
@@ -358,7 +358,7 @@ public class EsgNetwork {
         }
         loads.put(load.getZnamlo().toString(), load);
     }
-    
+
     public void removeLoad(String load) {
         if (!loads.containsKey(load)) {
             throw new IllegalArgumentException("Load '" + load + "' doesn't exists");
@@ -380,7 +380,7 @@ public class EsgNetwork {
         }
         capacitorsOrReactorBanks.put(bank.getZnamba().toString(), bank);
     }
-    
+
     public void removeCapacitorsOrReactorBanks(String bank) {
         if (!capacitorsOrReactorBanks.containsKey(bank)) {
             throw new IllegalArgumentException("Capacitor or reactor bank '" + bank + "' doesn't exists");

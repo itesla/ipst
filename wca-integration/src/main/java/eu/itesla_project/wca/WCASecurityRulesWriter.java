@@ -48,10 +48,10 @@ public class WCASecurityRulesWriter implements AmplConstants, WCAConstants {
     private final StringToIntMapper<AmplSubset> mapper;
 
     private final boolean debug;
-    
+
     private final boolean activateFiltering;
 
-    public WCASecurityRulesWriter(Network network, List<SecurityRuleExpression> rules, DataSource dataSource, 
+    public WCASecurityRulesWriter(Network network, List<SecurityRuleExpression> rules, DataSource dataSource,
                                   StringToIntMapper<AmplSubset> mapper, boolean debug, boolean activateFiltering) {
         this.dataSource = Objects.requireNonNull(dataSource);
         this.network = Objects.requireNonNull(network);

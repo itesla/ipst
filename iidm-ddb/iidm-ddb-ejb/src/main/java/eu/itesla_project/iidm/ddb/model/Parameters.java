@@ -34,7 +34,7 @@ public class Parameters implements Serializable {
 //    public void setId(Long id) {
 //        this.id = id;
 //    }
-    
+
     @OneToOne
     private SimulatorInst simulator;
     public SimulatorInst getSimulator() {
@@ -43,7 +43,7 @@ public class Parameters implements Serializable {
     public void setSimulator(SimulatorInst simulator) {
         this.simulator = simulator;
     }
-    
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinTable(name = "PARAMETERS_PARAMETER", joinColumns = {@JoinColumn(name = "PS_ID", referencedColumnName = "id")}, inverseJoinColumns = {@JoinColumn(name = "P_ID", referencedColumnName = "id")})
     @OrderColumn(name = "pindx")

@@ -107,7 +107,7 @@ public class ForecastErrorsAnalysisConfig {
     public String toString() {
         return "ForecastErrorsAnalsysConfig [caseRepositoryFactoryClass=" + caseRepositoryFactoryClass
                 + " forecastErrorsDataStorageFactoryClass=" + forecastErrorsDataStorageFactoryClass
-                + " forecastErrorsAnalyzerFactoryClass=" + forecastErrorsAnalyzerFactoryClass 
+                + " forecastErrorsAnalyzerFactoryClass=" + forecastErrorsAnalyzerFactoryClass
                 + " loadFlowFactoryClass=" + loadFlowFactoryClass
                 + " mergeOtimizerFactoryClass=" + mergeOtimizerFactoryClass
                 + " histoDbClientFactoryClass=" + histoDbClientFactoryClass

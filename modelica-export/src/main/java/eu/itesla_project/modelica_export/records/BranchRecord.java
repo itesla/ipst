@@ -42,20 +42,20 @@ public abstract class BranchRecord extends ModelicaRecord {
 
         bus1 = terminal1Info.getConnectionBus();
         bus2 = terminal2Info.getConnectionBus();
-        
+
         //System.out.println("Trafo: " + this.branch.getId() + ". Terminal 1: " + bus1.getId() + ". Terminal 2: " + bus2.getId());
 
         nodeName1 = parseName(bus1.getId());
         nodeName2 = parseName(bus2.getId());
-        
+
         String branchName = parseName(branch.getId()); //CIM ID
         String modelicaName = DEFAULT_BRANCH_PREFIX + branchName; //CIM ID
         modelicaName = WordUtils.uncapitalize(modelicaName.substring(0, 1)) + modelicaName.substring(1);
-        
+
 //        modelicaName = parseName(modelicaName); //Añadido de cara al conversor de PSSE
         modContext.dictionary.add(branch, modelicaName);
         super.setModelicaName(modelicaName);
-        
+
         ModelTemplate model = null;
         String ddbid = StaticData.MTC_PREFIX_NAME + super.mtcMapper.get(DEFAULT_BRANCH_PREFIX.substring(0, 1).toUpperCase() + DEFAULT_BRANCH_PREFIX);
 
@@ -84,7 +84,7 @@ public abstract class BranchRecord extends ModelicaRecord {
 //            _log.error("MODELICA Model Template Container does not exist in DDB.");
         }
     }
-    
+
     public String getDEFAULT_BRANCH_TYPE() {
         return DEFAULT_BRANCH_TYPE;
     }
@@ -134,10 +134,10 @@ public abstract class BranchRecord extends ModelicaRecord {
     protected Bus                        bus1                        = null;
     protected Bus                         bus2                        = null;
     protected Integer                    parallelIndex                = 1;
-    
+
     protected List<Parameter>            branchParameters            = new ArrayList<Parameter>();
     protected List<IIDMParameter>        iidmbranchParameters        = new ArrayList<IIDMParameter>();
-    
+
     public String                        DEFAULT_BRANCH_TYPE;
     public String                        DEFAULT_BRANCH_PREFIX;
 

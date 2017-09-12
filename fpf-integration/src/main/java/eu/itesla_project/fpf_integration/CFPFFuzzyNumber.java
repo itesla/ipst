@@ -8,7 +8,7 @@ package eu.itesla_project.fpf_integration;
 
 /**
  * This class contains an abstraction of a fuzzy number
- * 
+ *
  * @author Leonel Carvalho - INESC TEC
  */
 public class CFPFFuzzyNumber {

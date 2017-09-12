@@ -49,7 +49,7 @@ import eu.itesla_project.security.LimitViolation;
  * @author Massimo Ferraro <massimo.ferraro@techrain.it>
  */
 public final class WCAUtils {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(WCAUtils.class);
 
     private WCAUtils() {
@@ -64,7 +64,7 @@ public final class WCAUtils {
         DataSource dataSource = new GzFileDataSource(folder, network.getId() + "_" + faultNum + "_" + actionNum);
         Exporters.export("XIIDM", network, parameters, dataSource);
     }
-    
+
     private static Matcher parseOutFile(String prefix, Pattern pattern, Path workingDir) throws IOException {
         Path out = workingDir.resolve(prefix + "_0.out");
         Path outGz = workingDir.resolve(prefix + "_0.out.gz");
@@ -84,7 +84,7 @@ public final class WCAUtils {
         }
         return null;
     }
-    
+
     private static Map<String, Float> parseUncertaintiesFile(String uncertaintiesFile, Path workingDir) throws IOException {
         Map<String, Float> injections = new HashMap<String, Float>();
         Path out = workingDir.resolve(uncertaintiesFile);
@@ -106,7 +106,7 @@ public final class WCAUtils {
         }
         return injections;
     }
-    
+
     private static boolean flowsWithViolations(String flowsFile, Path workingDir) throws IOException {
         Path out = workingDir.resolve(flowsFile);
         Path outGz = workingDir.resolve(flowsFile + ".gz");
@@ -130,9 +130,9 @@ public final class WCAUtils {
         }
         return false;
     }
-    
+
     private static final Pattern DOMAINS_RESULTS_PATTERN = Pattern.compile(" WCA Result : basic_violation (\\d*) rule_violation (\\d*) preventive_action_index (\\d*)");
-    
+
     public static WCADomainsResult readDomainsResult(String domainsPrefix, Path workingDir, String uncertaintiesFile) throws IOException {
         Objects.requireNonNull(domainsPrefix);
         Objects.requireNonNull(workingDir);
@@ -154,9 +154,9 @@ public final class WCAUtils {
         }
         return new WCADomainsResult(foundBasicViolations, rulesViolated, preventiveActionIndex, parseUncertaintiesFile(uncertaintiesFile, workingDir));
     }
-    
+
     private static final Pattern CLUSTER_INDEX_PATTERN = Pattern.compile(" WCA Result : contingency_index (\\d*) contingency_cluster_index (\\d*) curative_action_index (\\d*)");
-    
+
     public static WCAClustersResult readClustersResult(String clustersPrefix, Path workingDir, String flowsFile, String uncertaintiesFile) throws IOException {
         Objects.requireNonNull(clustersPrefix);
         Objects.requireNonNull(workingDir);
@@ -168,10 +168,10 @@ public final class WCAUtils {
             clusterNum = WCAClusterNum.fromInt(Integer.parseInt(matcher.group(2)));
             curativeActionIndex = Integer.parseInt(matcher.group(3));
         }
-        return new WCAClustersResult(clusterNum, flowsWithViolations(flowsFile, workingDir), curativeActionIndex, 
+        return new WCAClustersResult(clusterNum, flowsWithViolations(flowsFile, workingDir), curativeActionIndex,
                                      parseUncertaintiesFile(uncertaintiesFile, workingDir));
     }
-    
+
     public static void writeContingencies(Collection<Contingency> contingencies, DataSource dataSource, StringToIntMapper<AmplSubset> mapper) {
         Objects.requireNonNull(contingencies);
         Objects.requireNonNull(dataSource);
@@ -193,7 +193,7 @@ public final class WCAUtils {
             throw new RuntimeException(e);
         }
     }
-    
+
     public static void writeActions(Collection<String> actionIds, DataSource dataSource, StringToIntMapper<AmplSubset> mapper,
                                      String title, AmplSubset amplSubset) {
         Objects.requireNonNull(actionIds);
@@ -218,7 +218,7 @@ public final class WCAUtils {
             throw new RuntimeException(e);
         }
     }
-    
+
     public static void applyInjections(Network network, String stateId, Map<String, Float> injections) {
         Objects.requireNonNull(network);
         Objects.requireNonNull(stateId);
@@ -229,7 +229,7 @@ public final class WCAUtils {
             Load load = network.getLoad(injection);
             if ( load != null ) {
                 float oldP = load.getTerminal().getP();
-                LOGGER.debug("Network {}, state {}: incrementing P of load {} from {} to {}", 
+                LOGGER.debug("Network {}, state {}: incrementing P of load {} from {} to {}",
                              network.getId(), network.getStateManager().getWorkingStateId(), injection, oldP, oldP + injections.get(injection));
                 load.getTerminal().setP(oldP + injections.get(injection));
                 load.setP0(oldP + injections.get(injection));
@@ -244,18 +244,18 @@ public final class WCAUtils {
                 } else {
                     LOGGER.error("No load or generator with id {} in network {}: cannot apply the injection", injection, network.getId());
                 }
-                
+
             }
         });
         network.getStateManager().setWorkingState(originalStateId);
     }
-    
+
     public static boolean containsViolation(List<LimitViolation> violations, LimitViolation violation) {
         Objects.requireNonNull(violations);
         Objects.requireNonNull(violation);
         Optional<LimitViolation> foundLimitViolation = violations
                 .stream()
-                .filter(limitViolation -> limitViolation.getSubjectId().equals(violation.getSubjectId()) 
+                .filter(limitViolation -> limitViolation.getSubjectId().equals(violation.getSubjectId())
                         && limitViolation.getLimitType().equals(violation.getLimitType()))
                 .findAny();
         return foundLimitViolation.isPresent();

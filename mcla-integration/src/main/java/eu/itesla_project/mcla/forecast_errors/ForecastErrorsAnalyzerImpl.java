@@ -65,7 +65,7 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
     private ArrayList<String> generatorsIds = new ArrayList<String>();
     private ArrayList<String> loadsIds = new ArrayList<String>();
 
-    public ForecastErrorsAnalyzerImpl(Network network, ComputationManager computationManager, 
+    public ForecastErrorsAnalyzerImpl(Network network, ComputationManager computationManager,
                                       ForecastErrorsDataStorage forecastErrorsDataStorage,
                                       HistoDbClient histoDbClient, ForecastErrorsAnalyzerConfig config) {
         this.network = Objects.requireNonNull(network, "network is null");
@@ -76,7 +76,7 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
         LOGGER.info(config.toString());
     }
 
-    public ForecastErrorsAnalyzerImpl(Network network, ComputationManager computationManager, 
+    public ForecastErrorsAnalyzerImpl(Network network, ComputationManager computationManager,
                                       ForecastErrorsDataStorage forecastErrorsDataStorage, HistoDbClient histoDbClient) {
         this(network, computationManager, forecastErrorsDataStorage, histoDbClient, ForecastErrorsAnalyzerConfig.load());
     }
