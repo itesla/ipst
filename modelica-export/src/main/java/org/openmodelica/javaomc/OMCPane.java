@@ -36,7 +36,7 @@ public class OMCPane extends JPanel implements ActionListener, KeyListener {
     public OMCPane() {
         super(new GridLayout(1, 0));
         initialize();
-        this.omc = new OMCProxy();;
+        this.omc = new OMCProxy();
         history.clear();
         history.add(0, "getVersion()");
         history.add(0, "loadModel(Modelica)");

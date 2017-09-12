@@ -81,7 +81,7 @@ public class ConstraintsModifier {
                     margin);
             LimitViolationFilter violationsFilter = new LimitViolationFilter(config.getViolationsTypes(), 0);
             List<LimitViolation> filteredViolations = violationsFilter.apply(violations);
-            String report = Security.printLimitsViolations(violations, violationsFilter);;
+            String report = Security.printLimitsViolations(violations, violationsFilter);
             if (report != null) {
                 LOGGER.debug("Fixing constraints of network {}, state {}, causing the following {} violations:\n{}",
                         network.getId(),

@@ -48,7 +48,6 @@ public class FileDownloadController {
         if (mt != null) {
             System.out.println("mt id  " + mt.getId() + " mt comment " + mt.getComment() + "mapkey " + mapKey);
             byte[] fileMap = mt.getData(mapKey);
-            ;
             ByteArrayInputStream bis = new ByteArrayInputStream(fileMap);
             file = new DefaultStreamedContent(bis, "text/plain", mapKey + ".txt");
 

@@ -46,7 +46,7 @@ public class InitializationRunner {
                 this.genInitValues = new HashMap<String, String>();
                 this.regInitValues = new HashMap<String, Map<String, String>>();
                 regInitVarsFromGen = initData.getRegInitVarsFromGen();
-                regInitVarsFromReg = initData.getRegInitVarsFromReg();;
+                regInitVarsFromReg = initData.getRegInitVarsFromReg();
                 regInitVarsFromOtherRegs = initData.getRegInitVarsFromOtherRegs();
                 regInitOtherVars = initData.getRegInitOtherVars();
 

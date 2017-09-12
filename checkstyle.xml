@@ -21,6 +21,7 @@
         <module name="EmptyCatchBlock">
             <property name="exceptionVariableName" value="ignored"/>
         </module>
+        <module name="EmptyStatement"/>
         <module name="IllegalImport"/>
         <module name="LeftCurly"/>
         <module name="NeedBraces"/>
