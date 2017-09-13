@@ -33,7 +33,7 @@ public class DDBConverter {
     public DDBConverter(String jbHost, String jbPort, String ddbUser, String ddbPassword) throws ConversionException {
         try {
             this.context = EjbClientCtxUtils.createEjbContext(jbHost, Integer.parseInt(jbPort), ddbUser, ddbPassword);
-            this.ddbManager = EjbClientCtxUtils.connectEjb(context, ddbManagerJNDIName);;
+            this.ddbManager = EjbClientCtxUtils.connectEjb(context, ddbManagerJNDIName);
         } catch (Throwable e) {
             Utils.throwConverterException(e.getMessage(), log);
         }

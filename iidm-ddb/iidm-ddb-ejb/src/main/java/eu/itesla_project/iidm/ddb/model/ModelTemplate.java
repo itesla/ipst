@@ -51,8 +51,8 @@ public class ModelTemplate  implements Serializable {
 
     @Column(name = "typename")
     private String typeName = "";
-    
-    
+
+
     public String getTypeName() {
         return typeName;
     }

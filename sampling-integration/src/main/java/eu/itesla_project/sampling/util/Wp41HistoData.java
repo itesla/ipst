@@ -7,7 +7,6 @@
 package eu.itesla_project.sampling.util;
 
 import com.google.common.collect.ArrayTable;
-import com.google.common.collect.Table;
 
 import java.util.List;
 

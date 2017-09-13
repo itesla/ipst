@@ -30,7 +30,7 @@ public class ShuntAction implements ActionElement {
         this.implementationTime = implementationTime;
         this.achievmentIndex = achievmentIndex;
     }
-    
+
     @Override
     public ActionElementType getType() {
 

@@ -16,7 +16,7 @@ import eu.itesla_project.contingency.tasks.ModificationTask;
 public class TransformerOpeningAction implements ActionElement {
 
     private final String equipmentId;
-    
+
     private Number implementationTime;
 
     private Number achievmentIndex;
@@ -26,31 +26,31 @@ public class TransformerOpeningAction implements ActionElement {
     public TransformerOpeningAction(String transformerId) {
         this.equipmentId = transformerId;
     }
-    
+
     @Override
     public String getEquipmentId() {
         return equipmentId;
     }
 
-    
+
     public TransformerOpeningAction(String transformerId, Number implementationTime, Number achievmentIndex ) {
         this.equipmentId = transformerId;
         this.implementationTime = implementationTime;
         this.achievmentIndex = achievmentIndex;
     }
-    
+
     public TransformerOpeningAction(String lineId, String substationId, Number implementationTime, Number achievmentIndex ) {
         this.equipmentId = lineId;
         this.substationId = substationId;
         this.implementationTime = implementationTime;
         this.achievmentIndex = achievmentIndex;
     }
-    
+
     @Override
     public ActionElementType getType() {
         return ActionElementType.TRANSFORMER_OPENING;
     }
-    
+
     @Override
     public ModificationTask toTask() {
         if (substationId != null) {
@@ -58,7 +58,7 @@ public class TransformerOpeningAction implements ActionElement {
         }
         return new BranchTripping(equipmentId);
     }
-    
+
     @Override
     public Number getImplementationTime() {
         return implementationTime;

@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import eu.itesla_project.iidm.ddb.model.Internal;
 import eu.itesla_project.modelica_export.records.RegulatorRecord;
 import eu.itesla_project.modelica_export.util.IIDMParameter;
-import eu.itesla_project.modelica_export.util.StaticData;
 import eu.itesla_project.modelica_export.util.Utils;
 
 /**

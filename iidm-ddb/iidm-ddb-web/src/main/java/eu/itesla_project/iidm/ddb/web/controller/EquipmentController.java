@@ -7,19 +7,14 @@
 package eu.itesla_project.iidm.ddb.web.controller;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.enterprise.inject.Model;
-import javax.enterprise.inject.Produces;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -34,14 +29,11 @@ import org.primefaces.model.DualListModel;
 import eu.itesla_project.iidm.ddb.model.Connection;
 import eu.itesla_project.iidm.ddb.model.ConnectionSchema;
 import eu.itesla_project.iidm.ddb.model.Equipment;
-import eu.itesla_project.iidm.ddb.model.Internal;
-import eu.itesla_project.iidm.ddb.model.ModelTemplate;
 import eu.itesla_project.iidm.ddb.model.ModelTemplateContainer;
 import eu.itesla_project.iidm.ddb.model.ParametersContainer;
 import eu.itesla_project.iidm.ddb.model.SimulatorInst;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
 import eu.itesla_project.iidm.ddb.web.data.LazyEquipmentDataModel;
-import eu.itesla_project.iidm.ddb.web.data.LazyInternalDataModel;
 
 
 // The @Model stereotype is a convenience mechanism to make this a request-scoped bean that has an
@@ -62,40 +54,40 @@ public class EquipmentController {
 
    @Inject
    private Logger log;
-      
+
    @EJB
    private DDBManager pmanager;
 
    private Equipment newEquipment;
-   
+
    private String cimId;
-   
+
    private List<String> modelTemplateContainerDdbids;
 
   // private TreeMap<SimulatorInst,List<Connection>> treeMapConnection ;
-   
+
    private List<Connection> schemaConnections;
-   
+
    private List<SimulatorInst> keySimulatorInst;
-   
+
    private DualListModel<String> internals;
-   
+
    private LazyEquipmentDataModel lazyDataModel;
 
    private int equipmentsCount;
-   
-   
+
+
    private List<String> modelTemplateContainersValues;
    private String selectedModelTemplateContainer;
-   
+
    private List<String> parametersContainerValues;
    private String selectedParametersContainer;
-   
+
    @Inject
    private EntityManager em;
-   
-   
-    
+
+
+
    public EntityManager getEm() {
     return em;
    }
@@ -151,9 +143,9 @@ public class EquipmentController {
            internalsSource.add(internalElem.getNativeId());
        }
        */
-         
-       internals = new DualListModel<String>(internalsSource, internalsTarget);  
-       
+
+       internals = new DualListModel<String>(internalsSource, internalsTarget);
+
        log.log(Level.INFO, " query ModelTemplateContainer");
        Query q = em.createQuery("SELECT m.ddbId FROM ModelTemplateContainer m order by m.ddbId");
        modelTemplateContainersValues = q.getResultList();
@@ -162,11 +154,11 @@ public class EquipmentController {
        Query q2 = em.createQuery("SELECT m.ddbId FROM ParametersContainer m order by m.ddbId");
        parametersContainerValues = q2.getResultList();
        log.log(Level.INFO, "DONE query parameterContainer");
-   }  
-   
-   
-   
-   
+   }
+
+
+
+
    public LazyEquipmentDataModel getLazyDataModel() {
     return lazyDataModel;
 }
@@ -333,8 +325,8 @@ public String getCimId() {
            return "create";
        }
     }
-   
-   
+
+
    public String delete(String cimId) throws Exception {
        FacesContext context = FacesContext.getCurrentInstance();
        ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
@@ -354,7 +346,7 @@ public String getCimId() {
            return "edit";
        }
     }
-   
+
    public String edit(Equipment eq) {
        log.log(Level.INFO, " edit enter:: [" + eq.getCimId() + "]");
        this.cimId = eq.getCimId();
@@ -377,21 +369,21 @@ public String getCimId() {
            return "edit";
        }
     }
-   
 
-   public void onTransfer(TransferEvent event) {  
+
+   public void onTransfer(TransferEvent event) {
        log.log(Level.INFO, "onTransfer:: enter");
        FacesContext context = FacesContext.getCurrentInstance();
        ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
        StringBuilder builder = new StringBuilder();
        for (Object item : event.getItems()) {
            builder.append((String) item).append("<br />");
-       }  
+       }
        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("connection.operation.transf.msg"), bundle.getString("connection.success.msg"));
-       FacesContext.getCurrentInstance().addMessage(null, msg);  
-   }  
-  
-   
+       FacesContext.getCurrentInstance().addMessage(null, msg);
+   }
+
+
    public void addConnectionWithInternal(String paramCimId ) {
        log.log(Level.INFO, "addConnectionWithInternal::  paramCimId: " + paramCimId);
 
@@ -434,9 +426,9 @@ public String getCimId() {
            FacesContext.getCurrentInstance().addMessage(null, msg);
        }
    }
-  
+
   /* This methods has been replaced by new methods that does not contains simulator's references
-   * 
+   *
    private void buildConnectionTable() {
        log.log(Level.INFO," buildConnectionTable enter:: ") ;
        this.treeMapConnection=  new TreeMap<SimulatorInst, List<Connection>>(new Comparator<SimulatorInst>()
@@ -490,7 +482,7 @@ public String getCimId() {
          }
      }
 */
-   
+
    private void buildConnectionTable() {
        log.log(Level.INFO, " buildConnectionTable enter:: ");
        try {
@@ -507,8 +499,8 @@ public String getCimId() {
              log.log(Level.INFO, "  exception " + exc.getMessage());
          }
      }
-   
-   
+
+
    private String getRootErrorMessage(Exception e) {
         // Default to general error message that registration failed.
         String errorMessage = "Operation failed. See server log for more information";
@@ -529,8 +521,8 @@ public String getCimId() {
         return errorMessage;
     }
 
-   
-   
-   
-   
+
+
+
+
 }

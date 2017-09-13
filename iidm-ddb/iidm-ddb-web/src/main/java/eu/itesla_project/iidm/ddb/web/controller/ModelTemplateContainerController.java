@@ -14,13 +14,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.enterprise.inject.Model;
 import javax.enterprise.inject.Produces;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -41,7 +39,6 @@ import eu.itesla_project.iidm.ddb.model.ModelTemplateContainer;
 import eu.itesla_project.iidm.ddb.model.Parameter;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
 import eu.itesla_project.iidm.ddb.web.data.LazyModelTemplateContainerDataModel;
-import eu.itesla_project.iidm.ddb.web.data.LazyParametersContainerDataModel;
 
 
 /**
@@ -276,7 +273,6 @@ public class ModelTemplateContainerController {
             if (mt != null) {
                 System.out.println("mt id  " + mt.getId() + " mt comment " + mt.getComment() + "mapkey " + mapKey);
                 byte[] fileMap = mt.getData(mapKey);
-                ;
                 ByteArrayInputStream bis = new ByteArrayInputStream(fileMap);
                 fileData = new DefaultStreamedContent(bis, "text/plain", mapKey + ".txt");
 
@@ -487,8 +483,8 @@ public class ModelTemplateContainerController {
     public void onRowToggle(ToggleEvent event) {
         log.log(Level.INFO, ":: onRowToggle enter");
         FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Row State " + event.getVisibility(), "Model Template :" + ((ModelTemplate) event.getData()).getId());
-        FacesContext.getCurrentInstance().addMessage(null, msg);  
-    }  
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
 
 
     private void buildDefParamTable() {

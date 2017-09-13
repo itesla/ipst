@@ -45,7 +45,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
     static Logger log = LoggerFactory.getLogger(DdbDtaImpExp.class);
 
 
-    String estg[][] = new String[][] {
+    String[][] estg = new String[][] {
             {"M1U", "Unsaturated generator defined by its internal parameters - full model", },
             {"M1DU", "Unsaturated generator defined by its internal parameters - full model - type Fortescue"},
             {"M2U", "Unsaturated generator defined by its external parameters - full model"},
@@ -242,7 +242,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         }
     }
     private void feedDDBWithEurostagModelTemplates(
-            String keyNamesAndDescriptions[][],
+            String[][] keyNamesAndDescriptions,
             SimulatorInst eurostagSimulator, DDBManager ddbmanager) {
         ModelTemplateContainer mtc = null;
         ModelTemplate mt = null;
@@ -2257,7 +2257,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         }
     }
     private void removeFromDDBEurostagModelTemplates(
-            String keyNamesAndDescriptions[][],
+            String[][] keyNamesAndDescriptions,
             SimulatorInst eurostagSimulator, DDBManager ddbmanager) {
         log.debug("Removing eurostag catalog (Eurostag 5.1.1)");
 

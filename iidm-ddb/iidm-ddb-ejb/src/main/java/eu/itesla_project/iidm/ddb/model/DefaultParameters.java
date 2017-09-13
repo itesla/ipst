@@ -7,12 +7,10 @@
 package eu.itesla_project.iidm.ddb.model;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.*;
 
-import org.hibernate.validator.constraints.NotEmpty;
 
 
 /**
@@ -77,8 +75,8 @@ public class DefaultParameters implements Serializable {
             throw new RuntimeException("parameter with name " + parameter.name + " already exist in this parameter list");
         }
     }
-    
-    
+
+
     public DefaultParameters(int setNum) {
         super();
         this.setNum = setNum;
@@ -88,5 +86,5 @@ public class DefaultParameters implements Serializable {
         super();
         this.setNum = 0;
     }
-    
+
 }

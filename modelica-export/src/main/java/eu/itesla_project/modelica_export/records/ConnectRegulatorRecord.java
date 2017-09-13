@@ -31,15 +31,15 @@ public class ConnectRegulatorRecord extends ModelicaRecord {
     public void createModelicaName(ModExportContext modContext, DDBManager ddbManager, SimulatorInst modelicaSim) {
         nodeName1 = modContext.dictionary.getModelicaName(node1);
         nodeName2 = modContext.dictionary.getModelicaName(node2);
-  
+
         String modelicaName = EurostagFixedData.CONNECT + nodeName1 + ", " + nodeName2 + EurostagFixedData.ANNOT_CONNECT;
-        
+
         modContext.dictionary.add(node1, nodeName1);
         modContext.dictionary.add(node2, nodeName2);
 
         super.setModelicaName(modelicaName);
     }
-    
+
     public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
         this.addValue(EurostagFixedData.CONNECT);
         this.addValue(nodeName1);
@@ -90,7 +90,7 @@ public class ConnectRegulatorRecord extends ModelicaRecord {
     public ConnectRegulatorRecord getClassName() {
         return this;
     }
-    
+
     protected String        nodeName1;
     protected String        nodeName2;
     private String            eqName;

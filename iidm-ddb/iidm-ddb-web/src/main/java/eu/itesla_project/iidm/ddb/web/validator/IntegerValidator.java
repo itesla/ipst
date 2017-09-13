@@ -21,7 +21,7 @@ import javax.faces.validator.ValidatorException;
  */
 @FacesValidator(value = "integerValidator")
 public class IntegerValidator implements Validator {
- 
+
     @Override
     public void validate(FacesContext context, UIComponent component, Object objValue) throws ValidatorException {
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");

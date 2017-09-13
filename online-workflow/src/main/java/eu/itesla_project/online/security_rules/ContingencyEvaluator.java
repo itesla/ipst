@@ -44,7 +44,7 @@ public class ContingencyEvaluator {
     private List<SecurityIndexType> bacecaseInvalidMcRulesIndexes = new ArrayList<SecurityIndexType>();
     private List<SecurityIndexType> bacecaseInvalidWcaRulesIndexes = new ArrayList<SecurityIndexType>();
 
-    public ContingencyEvaluator(Contingency contingency, List<SecurityRule> mcRules, double purityThreshold, Map<SecurityIndexType, 
+    public ContingencyEvaluator(Contingency contingency, List<SecurityRule> mcRules, double purityThreshold, Map<SecurityIndexType,
             List<String>> mcViolatedEquipment, boolean checkRules) {
         Objects.requireNonNull(contingency, "contingency is null");
         Objects.requireNonNull(mcRules, "mc rules is null");

@@ -21,11 +21,11 @@ import javax.faces.validator.ValidatorException;
  */
 @FacesValidator(value = "booleanValidator")
 public class BooleanValidator implements Validator {
- 
+
     @Override
     public void validate(FacesContext context, UIComponent component, Object objValue) throws ValidatorException {
         String objString = objValue.toString().toLowerCase();
-        
+
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
         if (!objString.equals("true") && !objString.equals("false")) {
             FacesMessage message = new FacesMessage( FacesMessage.SEVERITY_ERROR, bundle.getString("invalid.bool.summary.msg"),

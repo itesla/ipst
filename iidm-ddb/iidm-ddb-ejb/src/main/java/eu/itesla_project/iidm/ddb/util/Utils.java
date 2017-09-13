@@ -197,7 +197,7 @@ public class Utils {
     }
 
 
-    static Class jaxbClasses[] = {Equipment.class, Parameter.class,
+    static Class[] jaxbClasses = {Equipment.class, Parameter.class,
             Internal.class, SimulatorInst.class, ModelTemplateContainer.class,
             ParametersContainer.class, ParameterString.class,
             ParameterInteger.class, ParameterFloat.class,

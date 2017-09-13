@@ -6,7 +6,6 @@
  */
 package eu.itesla_project.iidm.ddb.web.controller;
 
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;

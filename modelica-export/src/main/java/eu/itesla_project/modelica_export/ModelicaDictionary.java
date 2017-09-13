@@ -28,31 +28,31 @@ public final class ModelicaDictionary {
         if (dictionary.containsKey(identifiable.getId())) {
             return false;
         }
-        
+
         dictionary.put(identifiable.getId(), modelicaName);
         return true;
     }
-    
+
     public boolean add(Internal internal, String modelicaName) {
 
         if (dictionary.containsKey(internal.getNativeId())) {
             return false;
         }
-        
+
         dictionary.put(internal.getNativeId(), modelicaName);
         return true;
     }
-    
+
     public boolean add(String sourceId, String modelicaName) {
 
         if (dictionary.containsKey(sourceId)) {
             return false;
         }
-        
+
         dictionary.put(sourceId, modelicaName);
         return true;
     }
-    
+
     public void change(Identifiable identifiable, String modelicaName) {
         if (dictionary.containsKey(identifiable.getId())) {
             dictionary.put(dictionary.get(identifiable.getId()), modelicaName);
@@ -69,10 +69,10 @@ public final class ModelicaDictionary {
         } else {
             _log.info("IIDM name: " + identifiable.getName());
         }
-        
+
         return identifiable.getId();
     }
-    
+
     public String getModelicaName(Internal internal) {
         if (dictionary.containsKey(internal.getNativeId())) {
             return dictionary.get(internal.getNativeId());
@@ -81,10 +81,10 @@ public final class ModelicaDictionary {
         if (!dictionary.containsKey(internal.getNativeId())) {
             _log.info("IIDM name: " + internal.getNativeId());
         }
-        
+
         return internal.getNativeId();
     }
-    
+
     public String getModelicaName(String sourceId) {
         if (dictionary.containsKey(sourceId)) {
             return dictionary.get(sourceId);
@@ -93,14 +93,14 @@ public final class ModelicaDictionary {
         if (!dictionary.containsKey(sourceId)) {
             _log.info("IIDM name: " + sourceId);
         }
-        
+
         return sourceId;
     }
 
     public boolean isModelicaNameDefined(String name) {
         return this.dictionary.containsValue(name);
     }
-    
+
     public Map<String, String> getDictionary() {
         return dictionary;
     }

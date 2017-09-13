@@ -21,7 +21,7 @@ import javax.faces.validator.ValidatorException;
  */
 @FacesValidator(value = "floatValidator")
 public class FloatValidator implements Validator {
- 
+
     @Override
     public void validate(FacesContext context, UIComponent component, Object objValue) throws ValidatorException {
         String objString = objValue.toString();

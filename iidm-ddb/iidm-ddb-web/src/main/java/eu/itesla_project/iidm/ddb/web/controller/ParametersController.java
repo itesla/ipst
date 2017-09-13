@@ -17,14 +17,12 @@ import javax.enterprise.inject.Produces;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.RowEditEvent;
 
 import eu.itesla_project.iidm.ddb.model.Parameter;
@@ -492,10 +490,10 @@ public class ParametersController {
               facesContext.addMessage(null, m);
           }
         return "edit";
-      }  
+      }
 
-    
-    public String reinit() {  
+
+    public String reinit() {
         log.log(Level.INFO, " reint enter::");
         parameterWeb = new ParameterWeb("", "", "");
         return null;

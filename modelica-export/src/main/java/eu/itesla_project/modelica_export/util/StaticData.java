@@ -6,8 +6,6 @@
  */
 package eu.itesla_project.modelica_export.util;
 
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author Silvia Machado <machados@aia.es>

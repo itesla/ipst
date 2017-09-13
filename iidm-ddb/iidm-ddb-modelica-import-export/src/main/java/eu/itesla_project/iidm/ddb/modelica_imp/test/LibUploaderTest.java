@@ -59,6 +59,6 @@ public class LibUploaderTest {
     private static String            jbossPassword    = "password";
     private static boolean            isLibrary        = false;
     private static boolean            isRegulator        = false;
- 
+
     private static final Logger _log                = LoggerFactory.getLogger(LibUploaderTest.class);
 }

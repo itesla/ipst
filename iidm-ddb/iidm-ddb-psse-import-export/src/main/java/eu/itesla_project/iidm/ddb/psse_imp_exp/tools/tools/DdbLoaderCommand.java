@@ -7,7 +7,6 @@
 package eu.itesla_project.iidm.ddb.psse_imp_exp.tools.tools;
 
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
 import eu.itesla_project.commons.tools.Command;

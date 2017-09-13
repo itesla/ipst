@@ -56,7 +56,7 @@ public class MCSMatFileReader {
         if (qLoad != null) {
             loadsReactivePower = qLoad.getArray();
         }
-        
+
         SampledData sampledData = new SampledData(generatorsActivePower, loadsActivePower, loadsReactivePower);
         return sampledData;
     }

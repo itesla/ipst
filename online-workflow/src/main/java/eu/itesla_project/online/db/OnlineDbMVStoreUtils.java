@@ -22,7 +22,6 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 import eu.itesla_project.iidm.network.Country;
-import eu.itesla_project.iidm.network.Identifiable;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.modules.contingencies.ActionParameterBooleanValue;
 import eu.itesla_project.modules.contingencies.ActionParameterFloatValue;

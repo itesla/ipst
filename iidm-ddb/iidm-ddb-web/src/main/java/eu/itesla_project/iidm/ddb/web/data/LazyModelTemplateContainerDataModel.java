@@ -26,9 +26,9 @@ public class LazyModelTemplateContainerDataModel extends LazyDataModel<ModelTemp
     private static final long serialVersionUID = 1L;
 
     private DDBManager pmanager;
-   
 
-   
+
+
 
    public LazyModelTemplateContainerDataModel( DDBManager pmanager) {
        this.pmanager = pmanager;

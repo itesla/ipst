@@ -137,9 +137,9 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
         return Collections.emptyList();
     }
 
-    /** 
+    /**
      * @param action's ID, Network
-     * @return eu.itesla_project.modules.contingencies.Action 
+     * @return eu.itesla_project.modules.contingencies.Action
      * */
     public eu.itesla_project.modules.contingencies.Action getAction(String id, Network network) {
         Objects.requireNonNull(id, "action id is null");
@@ -171,11 +171,11 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
                 }
 
             }
-        }        
+        }
         return null;
     }
 
-    /** 
+    /**
      * @param  Network
      * @return List<eu.itesla_project.modules.contingencies.Action>
      * */
@@ -196,7 +196,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
                 String name = ele.getName();
                 List<ActionElement> elements = getActionElements(ele, network);
 
-                List<String> zones = new ArrayList<String>(); 
+                List<String> zones = new ArrayList<String>();
                 Zones eleZones = ele.getZones();
                 if (eleZones != null) {
                     for (BigInteger z : eleZones.getNum()) {
@@ -217,7 +217,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
         return actions;
     }
 
-    /** 
+    /**
      * @param Network
      * @return List<eu.itesla_project.contingency.Contingency>
      * */
@@ -279,7 +279,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
 
     }
 
-    /** 
+    /**
      * @param Contingency's name, Network
      * @return List<eu.itesla_project.contingency.Contingency>
      * */
@@ -341,7 +341,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
 
     }
 
-    // it returns the zone containing at least a voltage level of the network, linking to the zone only the voltage levels of the network 
+    // it returns the zone containing at least a voltage level of the network, linking to the zone only the voltage levels of the network
     @Override
     public Set<eu.itesla_project.modules.contingencies.Zone> getZones(Network network) {
         Objects.requireNonNull(network, "network is null");
@@ -449,7 +449,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
     }
 
     /*
-     * 
+     *
      * @return all action plans defined into xml
      */
     @Override
@@ -675,10 +675,10 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
         return associationList;
     }
 
-    /** 
+    /**
      * @param contingencyId
-     * @return List<String> action 
-     * 
+     * @return List<String> action
+     *
      */
     public List<String> getActionsByContingency(String contingencyId) {
         Objects.requireNonNull(contingencyId, "contingency id is null");
@@ -703,10 +703,10 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
         return actions;
     }
 
-    /** 
-     * @param all network association 
-     * @return List<Association> 
-     * 
+    /**
+     * @param all network association
+     * @return List<Association>
+     *
      */
     @Override
     public List<eu.itesla_project.modules.contingencies.ActionsContingenciesAssociation> getActionsCtgAssociations(Network network) {
@@ -848,7 +848,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
 
         for (SwitchOperation swOp : ele.getSwitchOperation()) {
             String switchId = swOp.getId();
-            Switch sw = network.getSwitch(switchId);             
+            Switch sw = network.getSwitch(switchId);
             if (sw != null) {
                 if (swOp.getAction().equals("opening")) {
                     elements.add(new SwitchOpeningAction(sw.getVoltageLevel().getId(), switchId, swOp.getImplementationTime(), swOp.getAchievmentIndex()));

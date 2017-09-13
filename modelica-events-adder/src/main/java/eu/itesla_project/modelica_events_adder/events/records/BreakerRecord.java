@@ -7,9 +7,7 @@
 package eu.itesla_project.modelica_events_adder.events.records;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import eu.itesla_project.modelica_events_adder.events.EventsStaticData;
 import eu.itesla_project.modelica_events_adder.events.utils.IIDMParameter;

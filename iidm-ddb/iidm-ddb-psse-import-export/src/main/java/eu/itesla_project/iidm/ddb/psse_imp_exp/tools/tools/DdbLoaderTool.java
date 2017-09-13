@@ -41,7 +41,7 @@ public class DdbLoaderTool implements Tool {
         String jbossPassword = line.getOptionValue(DdbLoaderCommand.PASSWORD);
         String psseVersion = line.getOptionValue(DdbLoaderCommand.PSSE_VERSION);
         String optionRemoveData = line.getOptionValue(DdbLoaderCommand.OPTION_REMOVE);
-        
+
         DdbConfig ddbConfig = new DdbConfig(jbossHost, jbossPort, jbossUser, jbossPassword);
         Path dyrPath = Paths.get(dyrPathS);
         Path mappingPath = Paths.get(mappingPathS);

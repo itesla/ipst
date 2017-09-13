@@ -7,7 +7,6 @@
 package eu.itesla_project.iidm.ddb.model;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -24,8 +23,6 @@ import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -49,11 +46,11 @@ public class ParametersContainer implements Serializable {
 //    public void setId(Long id) {
 //        this.id = id;
 //    }
-    
+
     @Column(nullable = false, unique = true)
     @NotEmpty
     private String ddbId;
-    
+
     public String getDdbId() {
         return ddbId;
     }
@@ -89,7 +86,7 @@ public class ParametersContainer implements Serializable {
     @Override
     // This must return true for another ParametersContainer this method is used to manage <f:selectItems value=""/>
     public boolean equals(Object other) {
-        return other instanceof ParametersContainer ? 
+        return other instanceof ParametersContainer ?
                 ddbId.equals( ( (ParametersContainer) other).getDdbId())  : false;
     }
 }

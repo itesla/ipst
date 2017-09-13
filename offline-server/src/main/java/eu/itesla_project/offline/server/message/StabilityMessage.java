@@ -23,7 +23,7 @@ import javax.json.stream.JsonGenerator;
 public class StabilityMessage extends Message {
 
     private final SecurityRuleExpression securityRuleExpression;
-    
+
     public StabilityMessage(SecurityRuleExpression securityRuleExpression) {
         this.securityRuleExpression = Objects.requireNonNull(securityRuleExpression);
     }

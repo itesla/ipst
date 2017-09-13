@@ -54,6 +54,6 @@ public abstract class Parameter implements Serializable {
         super();
         this.name = name;
     }
-   
+
     public abstract Object getValue();
 }

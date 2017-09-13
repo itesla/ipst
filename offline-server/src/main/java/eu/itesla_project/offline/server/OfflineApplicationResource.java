@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 public class OfflineApplicationResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OfflineApplicationResource.class);
-    
+
     @Inject
     private OfflineApplicationBean bean;
 

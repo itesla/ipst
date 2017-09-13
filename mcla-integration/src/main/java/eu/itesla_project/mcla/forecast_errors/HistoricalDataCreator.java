@@ -72,8 +72,8 @@ public class HistoricalDataCreator {
                                                                        ArrayList<StochasticVariable> stochasticVariables) throws IOException {
         ForecastErrorsHistoricalData forecastErrorsHistoricalData = null;
 
-        Integer rowsIndexes[] = getRowsIndexes(historicalDataCsvFile);
-        String columnsIndexes[] = getColumnsIndexes(generatorsIds, loadsIds);
+        Integer[] rowsIndexes = getRowsIndexes(historicalDataCsvFile);
+        String[] columnsIndexes = getColumnsIndexes(generatorsIds, loadsIds);
         ArrayTable<Integer, String, Float> forecastsData = ArrayTable.create(Arrays.asList(rowsIndexes), Arrays.asList(columnsIndexes));
         ArrayTable<Integer, String, Float> snapshotsData = ArrayTable.create(Arrays.asList(rowsIndexes), Arrays.asList(columnsIndexes));
 
@@ -155,7 +155,7 @@ public class HistoricalDataCreator {
     protected Integer[] getRowsIndexes(Path csvFilePath) throws IOException {
         int csvLength = Utils.countLines(csvFilePath);
         int rowsIndex = (csvLength - 1) / 2;
-        Integer rowsIndexes[] = new Integer[rowsIndex];
+        Integer[] rowsIndexes = new Integer[rowsIndex];
         for (int i = 0; i < rowsIndexes.length; i++) {
             rowsIndexes[i] = i;
         }
@@ -164,7 +164,7 @@ public class HistoricalDataCreator {
 
     protected String[] getColumnsIndexes(ArrayList<String> generatorsIds, ArrayList<String> loadsIds) {
         int columnsNumber = 2 + ( ( generatorsIds.size() + loadsIds.size() ) * 2 );
-        String columnsIndexes[] = new String[columnsNumber];
+        String[] columnsIndexes = new String[columnsNumber];
         int count = 0;
         // datetime
         columnsIndexes[count] = "datetime";

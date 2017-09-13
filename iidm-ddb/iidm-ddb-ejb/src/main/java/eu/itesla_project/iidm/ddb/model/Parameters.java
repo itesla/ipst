@@ -7,13 +7,11 @@
 package eu.itesla_project.iidm.ddb.model;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlSeeAlso;
 
 
 /**
@@ -36,7 +34,7 @@ public class Parameters implements Serializable {
 //    public void setId(Long id) {
 //        this.id = id;
 //    }
-    
+
     @OneToOne
     private SimulatorInst simulator;
     public SimulatorInst getSimulator() {
@@ -45,7 +43,7 @@ public class Parameters implements Serializable {
     public void setSimulator(SimulatorInst simulator) {
         this.simulator = simulator;
     }
-    
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinTable(name = "PARAMETERS_PARAMETER", joinColumns = {@JoinColumn(name = "PS_ID", referencedColumnName = "id")}, inverseJoinColumns = {@JoinColumn(name = "P_ID", referencedColumnName = "id")})
     @OrderColumn(name = "pindx")

@@ -32,7 +32,7 @@ class OnlineWorkflowRulesResultsImpl implements OnlineWorkflowRulesResults {
     private Map<String, Map<Integer, Map<String, Boolean>>> contingenciesWithRulesResults = new HashMap<String, Map<Integer, Map<String, Boolean>>>();
     // <contingency, list of <stateId, state status>
     private Map<String, Map<Integer, StateStatus>> contingenciesWithRulesStatus = new HashMap<String, Map<Integer, StateStatus>>();
-    // contingencies, map of <stateId, available rules flag> 
+    // contingencies, map of <stateId, available rules flag>
     private Map<String, Map<Integer, Boolean>> contingenciesWithRules = new HashMap<String, Map<Integer, Boolean>>();
     // contingencies, map of <stateId, list of invalid rules>
     private Map<String, Map<Integer, List<SecurityIndexType>>> contingenciesWithInvalidRules = new HashMap<String, Map<Integer, List<SecurityIndexType>>>();

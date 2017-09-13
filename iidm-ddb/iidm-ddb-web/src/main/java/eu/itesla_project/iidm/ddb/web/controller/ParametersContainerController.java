@@ -7,7 +7,6 @@
 package eu.itesla_project.iidm.ddb.web.controller;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
@@ -18,7 +17,6 @@ import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.enterprise.inject.Model;
 import javax.enterprise.inject.Produces;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -32,7 +30,6 @@ import eu.itesla_project.iidm.ddb.model.Parameters;
 import eu.itesla_project.iidm.ddb.model.ParametersContainer;
 import eu.itesla_project.iidm.ddb.model.SimulatorInst;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
-import eu.itesla_project.iidm.ddb.web.data.LazyEquipmentDataModel;
 import eu.itesla_project.iidm.ddb.web.data.LazyParametersContainerDataModel;
 import eu.itesla_project.iidm.ddb.web.data.ParameterWeb;
 import eu.itesla_project.iidm.ddb.web.util.Sorter;

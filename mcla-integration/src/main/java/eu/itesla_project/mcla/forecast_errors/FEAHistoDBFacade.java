@@ -34,7 +34,7 @@ public final class FEAHistoDBFacade {
     private FEAHistoDBFacade() {
     }
 
-    public static void historicalDataToCsvFile(HistoDbClient histoDbClient, List<String> generatorsIds, List<String> loadsIds, 
+    public static void historicalDataToCsvFile(HistoDbClient histoDbClient, List<String> generatorsIds, List<String> loadsIds,
                                                Interval histoInterval, Path historicalDataCsvFile) throws Exception {
         Set<HistoDbAttributeId> attributeIds = new LinkedHashSet<>();
         attributeIds.add(new HistoDbMetaAttributeId(HistoDbMetaAttributeType.datetime));
@@ -52,7 +52,7 @@ public final class FEAHistoDBFacade {
                                                      attributeIds,
                                                      histoInterval,
                                                      HistoDbHorizon.DACF,
-                                                     false, 
+                                                     false,
                                                      false)) {
             Files.copy(is, historicalDataCsvFile);
         }

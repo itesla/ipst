@@ -43,7 +43,7 @@ public class Violation {
     public float getValue() {
         return value;
     }
-    
+
     public String getId() {
         return subject + "_" + limitType.name();
     }

@@ -155,14 +155,14 @@ public final class ModelConverter {
     public static ConnectLineRecord getModelicaRecord(Bus bus, Line line, ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
         ConnectLineRecord connectLineRecord = new ConnectLineRecord(bus, line);
         connectLineRecord.createModelicaName(modContext, ddbManager, simulator);
-        
+
         return connectLineRecord;
     }
 
     public static ConnectLineRecord getModelicaRecord(Line line, Bus bus, ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
         ConnectLineRecord connectLineRecord = new ConnectLineRecord(line, bus);
         connectLineRecord.createModelicaName(modContext, ddbManager, simulator);
-        
+
         return connectLineRecord;
     }
 
@@ -176,14 +176,14 @@ public final class ModelConverter {
     public static ConnectLineRecord getModelicaRecord(Bus bus, DanglingLine line, ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
         ConnectLineRecord connectLineRecord = new ConnectLineRecord(bus, line);
         connectLineRecord.createModelicaName(modContext, ddbManager, simulator);
-        
+
         return connectLineRecord;
     }
 
     public static ConnectLineRecord getModelicaRecord(DanglingLine line, String busId, ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
         ConnectLineRecord connectLineRecord = new ConnectLineRecord(line, busId);
         connectLineRecord.createModelicaName(modContext, ddbManager, simulator);
-        
+
         return connectLineRecord;
     }
 
@@ -199,7 +199,7 @@ public final class ModelConverter {
     public static ConnectCouplingDevicesRecord getModelicaRecord(Switch switchNode, Bus bus1, Bus bus2, ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
         ConnectCouplingDevicesRecord couplingDeviceRecord = new ConnectCouplingDevicesRecord(switchNode, bus1, bus2);
         couplingDeviceRecord.createModelicaName(modContext, ddbManager, simulator);
-        
+
         return couplingDeviceRecord;
     }
 

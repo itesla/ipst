@@ -20,9 +20,9 @@ public class OfflineWorkflowStatus implements Serializable {
     private final String workflowId;
 
     private final OfflineWorkflowStep step;
-    
+
     private final DateTime startTime;
-    
+
     private final OfflineWorkflowCreationParameters creationParameters;
 
     private final OfflineWorkflowStartParameters startParameters;

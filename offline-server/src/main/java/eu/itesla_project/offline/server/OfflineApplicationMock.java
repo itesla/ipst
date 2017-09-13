@@ -38,7 +38,7 @@ import java.util.logging.Logger;
 public class OfflineApplicationMock implements RemoteOfflineApplication {
 
     private class Notifier implements OfflineApplicationListener {
-        
+
         public final Collection<OfflineApplicationListener> listeners = Collections.synchronizedCollection(new ArrayList<OfflineApplicationListener>());
 
         public void addListener(OfflineApplicationListener l) {
@@ -119,7 +119,7 @@ public class OfflineApplicationMock implements RemoteOfflineApplication {
             }
         }
     };
-    
+
     private final Notifier notify = new Notifier();
 
     private class OfflineWorkflowRandom extends Random {
@@ -134,11 +134,11 @@ public class OfflineApplicationMock implements RemoteOfflineApplication {
         private HistoDbAttr nextHistoDbAttr() {
             return HistoDbAttr.values()[random.nextInt(HistoDbAttr.values().length)];
         }
-        
+
         private HistoDbNetworkAttributeId nextHistoDbNetworkAttributeId() {
             return new HistoDbNetworkAttributeId("equipment-" + nextInt(), nextHistoDbAttr());
         }
-        
+
         private ComparisonOperator.Type nextComparisonOperatorType() {
             return ComparisonOperator.Type.values()[random.nextInt(ComparisonOperator.Type.values().length)];
         }
@@ -149,7 +149,7 @@ public class OfflineApplicationMock implements RemoteOfflineApplication {
     private class OfflineWorkflowMock implements OfflineWorkflow {
 
         private final String id;
-        
+
         private final OfflineWorkflowCreationParameters creationParameters;
 
         private final SecurityIndexSynthesis securityIndexSynthesis = new SecurityIndexSynthesis();
@@ -163,13 +163,13 @@ public class OfflineApplicationMock implements RemoteOfflineApplication {
         private boolean running = false;
 
         private boolean computing = false;
-        
+
         private float computingProgress = 0;
 
         private int sampleIdx = -1;
 
         private int taskIdx = 0;
-        
+
         private OfflineWorkflowMock(String id, OfflineWorkflowCreationParameters creationParameters) {
             this.id = id;
             this.creationParameters = creationParameters;
@@ -358,7 +358,7 @@ public class OfflineApplicationMock implements RemoteOfflineApplication {
                     }
                 }
                 busyCores.addValue(new BusyCoresSeries.Value(value));
-                
+
                 notify.onBusyCoresUpdate(busyCores);
 
                 for (OfflineWorkflowMock workflow : workflows.values()) {

@@ -7,7 +7,6 @@
 package eu.itesla_project.modelica_export.records;
 
 import eu.itesla_project.modelica_export.util.StaticData;
-import eu.itesla_project.modelica_export.util.eurostag.EurostagFixedData;
 
 /**
  * @author Silvia Machado <machados@aia.es>

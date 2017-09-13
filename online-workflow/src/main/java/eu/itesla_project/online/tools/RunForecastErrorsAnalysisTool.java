@@ -151,10 +151,10 @@ public class RunForecastErrorsAnalysisTool implements Tool {
     public void run(CommandLine line, ToolRunningContext context) throws Exception {
         String analysisId = line.getOptionValue("analysis");
         DateTime baseCaseDate = line.hasOption("base-case-date")
-                ? DateTime.parse(line.getOptionValue("base-case-date")) 
+                ? DateTime.parse(line.getOptionValue("base-case-date"))
                 : getDefaultParameters().getBaseCaseDate();
-        Interval histoInterval = line.hasOption("history-interval") 
-                ? Interval.parse(line.getOptionValue("history-interval")) 
+        Interval histoInterval = line.hasOption("history-interval")
+                ? Interval.parse(line.getOptionValue("history-interval"))
                 : getDefaultParameters().getHistoInterval();
         double ir = line.hasOption("ir")
                 ? Double.parseDouble(line.getOptionValue("ir"))

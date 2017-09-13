@@ -1,7 +1,6 @@
 package eu.itesla_project.online.rest.api.util;
 
 import java.util.List;
-import java.util.Map;
 
 import eu.itesla_project.online.rest.api.DateTimeParameter;
 import eu.itesla_project.online.rest.model.Process;

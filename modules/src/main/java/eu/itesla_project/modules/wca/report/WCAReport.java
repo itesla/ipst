@@ -16,13 +16,13 @@ import eu.itesla_project.security.LimitViolation;
  * @author Massimo Ferraro <massimo.ferraro@techrain.it>
  */
 public interface WCAReport {
-    
+
     String getBasecase();
 
     WCALoadflowResult getBaseStateLoadflowResult();
 
     List<LimitViolation> getPreContingencyViolationsWithoutUncertainties();
-    
+
     WCALoadflowResult getBaseStateWithUncertaintiesLoadflowResult();
 
     List<LimitViolation> getPreContingencyViolationsWithUncertainties();

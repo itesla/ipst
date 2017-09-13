@@ -15,7 +15,7 @@ public class IIDMParameter {
         this.name = name;
         this.value = value;
     }
-    
+
     public String getName() {
         return name;
     }
@@ -23,7 +23,7 @@ public class IIDMParameter {
     public void setName(String name) {
         this.name = name;
     }
-   
+
     public Object getValue() {
         return this.value;
     }

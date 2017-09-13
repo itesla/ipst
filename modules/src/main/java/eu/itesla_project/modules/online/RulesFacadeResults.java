@@ -25,7 +25,7 @@ public class RulesFacadeResults {
     private final List<SecurityIndexType> invalidRules;
     private final boolean rulesAvailable;
 
-    public RulesFacadeResults(String stateId, String contingencyId, StateStatus stateStatus, Map<SecurityIndexType, StateStatus> indexesResults, 
+    public RulesFacadeResults(String stateId, String contingencyId, StateStatus stateStatus, Map<SecurityIndexType, StateStatus> indexesResults,
             List<SecurityIndexType> invalidRules, boolean rulesAvailable) {
         this.stateId = stateId;
         this.contingencyId = contingencyId;

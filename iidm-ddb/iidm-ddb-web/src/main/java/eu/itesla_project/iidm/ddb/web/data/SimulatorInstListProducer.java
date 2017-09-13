@@ -31,7 +31,7 @@ public class SimulatorInstListProducer {
 
     @Inject
     private Logger log;
-    
+
     @EJB
     private DDBManager pmanager;
 
@@ -41,16 +41,16 @@ public class SimulatorInstListProducer {
     @Named
     public List<SimulatorInst> getSimulatorsAll() {
         return simulatorsAll;
-    }    
+    }
 
     @PostConstruct
     public void retrieveAllSimulators() {
 
         log.log(Level.INFO, " find All simulators ");
         this.simulatorsAll = pmanager.findSimulatorsAll();
-        
+
     }
-    
+
     @Produces
     @Named
     public List<String> getEurostagVersions() {
@@ -62,7 +62,7 @@ public class SimulatorInstListProducer {
         }
         return eurostagVersions;
     }
-    
+
     @Produces
     @Named
     public List<String> getModelicaVersions() {

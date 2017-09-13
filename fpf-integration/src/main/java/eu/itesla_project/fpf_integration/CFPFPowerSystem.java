@@ -10,7 +10,7 @@ import java.util.Hashtable;
 
 /**
  * This class contains power system data.
- * 
+ *
  * @author Leonel Carvalho - INESC TEC
  */
 public class CFPFPowerSystem {

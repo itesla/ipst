@@ -80,5 +80,5 @@ public class ViolationSynthesis {
     public float getVoltageLevel() {
         return voltageLevel;
     }
-    
+
 }

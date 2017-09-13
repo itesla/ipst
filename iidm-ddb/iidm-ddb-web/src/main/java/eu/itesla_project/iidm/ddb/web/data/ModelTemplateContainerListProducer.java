@@ -29,7 +29,7 @@ public class ModelTemplateContainerListProducer {
 
     @Inject
     private Logger log;
-    
+
     @EJB
     private DDBManager pmanager;
 
@@ -41,7 +41,7 @@ public class ModelTemplateContainerListProducer {
     @Named
     public List<ModelTemplateContainer> getModelTemplateContainers() {
         return modelTemplateContainers;
-    }    
+    }
 
     @PostConstruct
     public void retrieveAllModelTemplateContainer() {

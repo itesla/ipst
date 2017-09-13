@@ -532,7 +532,7 @@ public class OnlineDbMVStore implements OnlineDb {
             MVMap<String, String> storedActionsMap = wfMVStore.openMap(contingencyId + STORED_RESULTS_ACTIONS_MAP_SUFFIX, mapBuilder);
             wfMVStore.removeMap(storedActionsMap);
         }
-        // remove info about unsafe contingencies 
+        // remove info about unsafe contingencies
         Collection<String> unsafeContingencies = OnlineDbMVStoreUtils.jsonToContingenciesIds(
                 storedResultsMap.get(STORED_RESULTS_UNSAFE_CONTINGENCIES_KEY));
         for (String contingencyId : unsafeContingencies) {
@@ -659,7 +659,7 @@ public class OnlineDbMVStore implements OnlineDb {
     private void removeWfRulesResults(String workflowId, MVStore wfMVStore) {
         LOGGER.debug("Removing existing rules results for workflow {}", workflowId);
         MVMap<String, String> storedRulesResultsMap = wfMVStore.openMap(STORED_RULES_RESULTS_MAP_NAME, mapBuilder);
-        // remove rules results 
+        // remove rules results
         Collection<String> rulesContingencies = OnlineDbMVStoreUtils.jsonToContingenciesIds(
                 storedRulesResultsMap.get(STORED_RULES_RESULTS_CONTINGENCIES_WITH_RULES_KEY));
         for (String contingencyId : rulesContingencies) {
@@ -753,7 +753,7 @@ public class OnlineDbMVStore implements OnlineDb {
     private void removeWfWcaResults(String workflowId, MVStore wfMVStore) {
         LOGGER.debug("Removing existing WCA results for workflow {}", workflowId);
         MVMap<String, String> storedWcaResultsMap = wfMVStore.openMap(STORED_WCA_RESULTS_MAP_NAME, mapBuilder);
-        // remove wca results 
+        // remove wca results
         MVMap<String, String> storedClustersMap = wfMVStore.openMap(STORED_WCA_RESULTS_CLUSTERS_MAP_NAME, mapBuilder);
         wfMVStore.removeMap(storedClustersMap);
         MVMap<String, String> storedCausesMap = wfMVStore.openMap(STORED_WCA_RESULTS_CAUSES_MAP_NAME, mapBuilder);
@@ -855,7 +855,7 @@ public class OnlineDbMVStore implements OnlineDb {
     private void removeWfParameters(String workflowId, MVStore wfMVStore) {
         LOGGER.debug("Removing existing parameters for workflow {}", workflowId);
         MVMap<String, String> storedParametersMap = wfMVStore.openMap(STORED_PARAMETERS_MAP_NAME, mapBuilder);
-        // remove parameters 
+        // remove parameters
         wfMVStore.removeMap(storedParametersMap);
         // commit removal
         wfMVStore.commit();
@@ -1829,7 +1829,7 @@ public class OnlineDbMVStore implements OnlineDb {
     private void removeWfWcaRulesResults(String workflowId, MVStore wfMVStore) {
         LOGGER.debug("Removing existing wca rules results for workflow {}", workflowId);
         MVMap<String, String> storedRulesResultsMap = wfMVStore.openMap(STORED_WCA_RULES_RESULTS_MAP_NAME, mapBuilder);
-        // remove rules results 
+        // remove rules results
         Collection<String> rulesContingencies = OnlineDbMVStoreUtils.jsonToContingenciesIds(
                 storedRulesResultsMap.get(STORED_RULES_RESULTS_CONTINGENCIES_WITH_RULES_KEY));
         for (String contingencyId : rulesContingencies) {
@@ -1980,8 +1980,8 @@ public class OnlineDbMVStore implements OnlineDb {
     }
 
     /*
-     *  support methods                          
-     *  to inspect the content of the online db 
+     *  support methods
+     *  to inspect the content of the online db
      */
 
     public List<String> getStoredMaps(String workflowId) {

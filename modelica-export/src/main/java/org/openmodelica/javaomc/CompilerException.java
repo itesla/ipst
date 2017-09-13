@@ -45,7 +45,7 @@ package org.openmodelica.javaomc;
 /**
  * Supertype of all exceptions that can be encountered while communicating
  * with the modelica compiler.
- *  
+ *
  * @author Andreas Remar
  */
 abstract public class CompilerException extends Exception {
