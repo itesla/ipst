@@ -12,28 +12,28 @@ package eu.itesla_project.sampling;
  */
 public class MatlabException extends RuntimeException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public MatlabException() {
-		super();
-	}
+    public MatlabException() {
+        super();
+    }
 
-	public MatlabException(String message, Throwable cause,
-			boolean enableSuppression, boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
+    public MatlabException(String message, Throwable cause,
+            boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 
-	public MatlabException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public MatlabException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public MatlabException(String message) {
-		super(message);
-	}
+    public MatlabException(String message) {
+        super(message);
+    }
 
-	public MatlabException(Throwable cause) {
-		super(cause);
-	}
-	
+    public MatlabException(Throwable cause) {
+        super(cause);
+    }
+
 
 }

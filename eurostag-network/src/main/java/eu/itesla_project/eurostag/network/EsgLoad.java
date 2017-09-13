@@ -15,8 +15,8 @@ public class EsgLoad {
 
     private final Esg8charName znamlo; // load name
     private final EsgConnectionStatus iloadst; // Status
-                                                        //    ‘ ‘	: connected
-                                                        //    ‘-’	: not connected
+                                                        //    ‘ ‘    : connected
+                                                        //    ‘-’    : not connected
     private final Esg8charName znodlo; // connection node name
     private final float pldsti; // active load [MW]
     private final float pldstz; // active load [MW]

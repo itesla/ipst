@@ -28,48 +28,49 @@ public class PsseDyrParser {
 
     public static List<PsseRegister> parseFile(File file) throws IOException {
         List<PsseRegister> list = new ArrayList<>();
-        int lastLineRead=0;
-        try (LineNumberReader lineNumberReader = new LineNumberReader(new FileReader(file)))  {
+        int lastLineRead = 0;
+        try (LineNumberReader lineNumberReader = new LineNumberReader(new FileReader(file))) {
             lineNumberReader.setLineNumber(0);
             String line = null;
-            int innerCount=0;
-            List<String> aList=new ArrayList<>();
-            while ((line = lineNumberReader.readLine()) != null)
-            {
-                lastLineRead= lineNumberReader.getLineNumber();
-				
-				// Ignore lines beginning with "/"
-				// It is an official (although undocumented) way of putting comments in PSS/E files
-				// Found "/ PORTUGAL" line as a comment in a REN Case
-				// REN confirmed that it was provided as a solution by PSS/E to some of their requests
-				if (line.startsWith("/")) continue;
-				
+            int innerCount = 0;
+            List<String> aList = new ArrayList<>();
+            while ((line = lineNumberReader.readLine()) != null) {
+                lastLineRead = lineNumberReader.getLineNumber();
+
+                // Ignore lines beginning with "/"
+                // It is an official (although undocumented) way of putting comments in PSS/E files
+                // Found "/ PORTUGAL" line as a comment in a REN Case
+                // REN confirmed that it was provided as a solution by PSS/E to some of their requests
+                if (line.startsWith("/")) {
+                    continue;
+                }
+
                 Matcher m = Pattern.compile("([^\']\\S*|\'.+?\')\\s*").matcher(line);
                 while (m.find()) {
-                    String entry=m.group(1);
+                    String entry = m.group(1);
                     if (!("".equals(entry.trim()))) {
                         if (entry.endsWith("/")) {
-                            if (entry.length()>1) {
-                                aList.add(entry.substring(0,entry.length()-1));
+                            if (entry.length() > 1) {
+                                aList.add(entry.substring(0, entry.length() - 1));
                             }
-                            List<Float> parameters= new ArrayList<>();
-                            for (int count =3;  count < aList.size(); count=count+1) {
-                                    Float parValue=Float.parseFloat(aList.get(count));
-                                    parameters.add(parValue);
+                            List<Float> parameters = new ArrayList<>();
+                            for (int count = 3; count < aList.size(); count = count + 1) {
+                                Float parValue = Float.parseFloat(aList.get(count));
+                                parameters.add(parValue);
                             }
                             // The PsseRegister will check model's params against dictionary
-							String busNum = aList.get(0);
-							// Remove single quotes from model name
-							String modelName = aList.get(1).replaceAll("'", "");
-							// Remove single quotes from equipment id
-							String id = aList.get(2).replaceAll("'","");
-                            PsseRegister psseReg=PsseRegisterFactory.createRegister(busNum, modelName, id, parameters);
-                            if (psseReg!=null) {
+                            String busNum = aList.get(0);
+                            // Remove single quotes from model name
+                            String modelName = aList.get(1).replaceAll("'", "");
+                            // Remove single quotes from equipment id
+                            String id = aList.get(2).replaceAll("'", "");
+                            PsseRegister psseReg = PsseRegisterFactory.createRegister(busNum, modelName, id, parameters);
+                            if (psseReg != null) {
                                 list.add(psseReg);
                             }
-                            aList=new ArrayList<>();
-                            innerCount=0;
-                        } else  {
+                            aList = new ArrayList<>();
+                            innerCount = 0;
+                        } else {
                             aList.add(entry);
                             innerCount = innerCount + 1;
                         }

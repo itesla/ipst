@@ -19,40 +19,37 @@ import eu.itesla_project.modules.contingencies.ActionPlanOption;
  */
 public class OptionImpl implements ActionPlanOption {
 
-	private BigInteger priority;
-	
-	private LogicalExpression logicalExpression;
-	
-	//[key= num value= actionId]
-	private Map<BigInteger, String> actions = new HashMap<BigInteger,String>();
-	
-	
-	
-	public OptionImpl(BigInteger _priority, LogicalExpression _logicalExpression, Map<BigInteger, String> actions) 
-	{
-		this.priority=			_priority;
-		this.logicalExpression= _logicalExpression;
-		this.actions= 	actions;
-	}
+    private BigInteger priority;
 
-	@Override
-	public BigInteger getPriority() 
-	{
-		return this.priority;
-	}
+    private LogicalExpression logicalExpression;
 
-	@Override
-	public Map<BigInteger, String> getActions() 
-	{
-			return this.actions;
-			
-	}
+    //[key= num value= actionId]
+    private Map<BigInteger, String> actions = new HashMap<BigInteger, String>();
 
-	@Override
-	public LogicalExpression getLogicalExpression() {
-		
-		return this.logicalExpression;
-	}
+
+
+    public OptionImpl(BigInteger _priority, LogicalExpression _logicalExpression, Map<BigInteger, String> actions) {
+        this.priority =            _priority;
+        this.logicalExpression = _logicalExpression;
+        this.actions =     actions;
+    }
+
+    @Override
+    public BigInteger getPriority() {
+        return this.priority;
+    }
+
+    @Override
+    public Map<BigInteger, String> getActions() {
+            return this.actions;
+
+    }
+
+    @Override
+    public LogicalExpression getLogicalExpression() {
+
+        return this.logicalExpression;
+    }
 
 
 }

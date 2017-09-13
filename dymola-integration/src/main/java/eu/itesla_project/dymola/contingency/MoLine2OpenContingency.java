@@ -25,13 +25,18 @@ public class MoLine2OpenContingency extends MoContingency {
         return MoContingencyElementType.MO_LINE_2_OPEN;
     }
 
-    //TODO
+    // TODO
     @Override
     public AbstractTrippingTask toTask() {
         return null;
     }
 
-    public double getT1() {return Double.parseDouble(getEventParameters().get("time_1"));}
-    public double getT2() {return Double.parseDouble(getEventParameters().get("time_2"));}
+    public double getT1() {
+        return Double.parseDouble(getEventParameters().get("time_1"));
+    }
+
+    public double getT2() {
+        return Double.parseDouble(getEventParameters().get("time_2"));
+    }
 
 }

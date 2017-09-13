@@ -114,7 +114,7 @@ public class HistoDbPrintAttributesTool implements Tool {
                 table.addCell(cell);
             }
             List<String> row;
-            while( (row = reader.read()) != null ) {
+            while ((row = reader.read()) != null) {
                 for (int i = 0; i < row.size(); i++) {
                     String cell = row.get(i);
                     if (header[i].equals(HistoDbMetaAttributeId.datetime.toString())) {

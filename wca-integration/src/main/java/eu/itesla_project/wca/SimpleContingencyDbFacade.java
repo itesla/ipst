@@ -94,7 +94,7 @@ public class SimpleContingencyDbFacade implements ContingencyDbFacade {
                             }
                         }
                     } else {
-                        LOGGER.error("Network {}: action {} not found for contingency {}", network.getId(), actionId , contingency.getId());
+                        LOGGER.error("Network {}: action {} not found for contingency {}", network.getId(), actionId, contingency.getId());
                     }
                 }
             }
@@ -109,7 +109,7 @@ public class SimpleContingencyDbFacade implements ContingencyDbFacade {
         LOGGER.info("Network {}: getting preventive actions for {} violation on equipment {}", 
                     network.getId(), limitViolation.getLimitType(), limitViolation.getSubjectId());
         List<List<Action>> preventiveActions = new ArrayList<>();
-        if( !limitViolation.getLimitType().equals(LimitViolationType.CURRENT) ) { // just branch overload is handled, so far
+        if (!limitViolation.getLimitType().equals(LimitViolationType.CURRENT)) { // just branch overload is handled, so far
             LOGGER.warn("Network {}: no preventive actions found for {} violation on equipment {}, as just branch overload is handled, so far", 
                         network.getId(), limitViolation.getLimitType(), limitViolation.getSubjectId());
             return preventiveActions;
@@ -136,7 +136,7 @@ public class SimpleContingencyDbFacade implements ContingencyDbFacade {
                         }
                     } else {
                         LOGGER.error("Network {}: action {} not found for {} violation on equipment {}", 
-                                     network.getId(), actionId , limitViolation.getLimitType(), limitViolation.getSubjectId());
+                                     network.getId(), actionId, limitViolation.getLimitType(), limitViolation.getSubjectId());
                     }
                 }
             }

@@ -26,24 +26,24 @@ public interface OnlineApplicationListener {
 
     void onStatesWithIndexesUpdate(ContingencyStatesIndexesSynthesis stindex);
 
-	void onWorkflowStateUpdate(WorkSynthesis work);
+    void onWorkflowStateUpdate(WorkSynthesis work);
 
-	//stable and unstable contingencies where merged into wcaContingencies
-	//void onStableContingencies(StableContingenciesSynthesis stableContingencies);	
-	//void onUnstableContingencies(UnstableContingenciesSynthesis unstableContingencies);
-	//new 
-	void onWcaContingencies(WcaContingenciesSynthesis wcaContingencies);
-	
-	void onStatesWithSecurityRulesResultsUpdate(IndexSecurityRulesResultsSynthesis indexesResults) ;
+    //stable and unstable contingencies where merged into wcaContingencies
+    //void onStableContingencies(StableContingenciesSynthesis stableContingencies);
+    //void onUnstableContingencies(UnstableContingenciesSynthesis unstableContingencies);
+    //new
+    void onWcaContingencies(WcaContingenciesSynthesis wcaContingencies);
+
+    void onStatesWithSecurityRulesResultsUpdate(IndexSecurityRulesResultsSynthesis indexesResults);
  
-	void onDisconnection();
-	
-	void onConnection();
+    void onDisconnection();
 
-	//void onWorkflowEnd(OnlineWorkflowContext context, OnlineDb onlineDb, OnlineWorkflowParameters parameters);
+    void onConnection();
 
-	void onWorkflowEnd(OnlineWorkflowContext context, OnlineDb onlineDb,
-			ContingenciesAndActionsDatabaseClient cadbClient, OnlineWorkflowParameters parameters);
+    //void onWorkflowEnd(OnlineWorkflowContext context, OnlineDb onlineDb, OnlineWorkflowParameters parameters);
+
+    void onWorkflowEnd(OnlineWorkflowContext context, OnlineDb onlineDb,
+            ContingenciesAndActionsDatabaseClient cadbClient, OnlineWorkflowParameters parameters);
 
 
 

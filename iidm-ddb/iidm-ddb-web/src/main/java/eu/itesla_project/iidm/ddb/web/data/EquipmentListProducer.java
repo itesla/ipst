@@ -28,10 +28,10 @@ import eu.itesla_project.iidm.ddb.service.DDBManager;
 public class EquipmentListProducer {
 
     @Inject
-	private Logger log;
+    private Logger log;
     
-	@EJB
-	private DDBManager pmanager;
+    @EJB
+    private DDBManager pmanager;
 
     private List<Equipment> equipments;
 
@@ -45,7 +45,7 @@ public class EquipmentListProducer {
 
     @PostConstruct
     public void retrieveAllEquipments() {
-    	log.log(Level.INFO," produces equipments list ");
-    	this.equipments= pmanager.findEquipmentsAll();
+        log.log(Level.INFO, " produces equipments list ");
+        this.equipments = pmanager.findEquipmentsAll();
     }
 }

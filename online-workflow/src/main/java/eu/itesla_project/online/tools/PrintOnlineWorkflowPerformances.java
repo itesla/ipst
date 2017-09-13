@@ -106,11 +106,11 @@ public class PrintOnlineWorkflowPerformances implements Tool {
         OnlineConfig config = OnlineConfig.load();
         try (OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create()) {
             List<String> workflowsIds = new ArrayList<>();
-            if (line.hasOption("workflow"))
+            if (line.hasOption("workflow")) {
                 workflowsIds.add(line.getOptionValue("workflow"));
-            else if (line.hasOption("workflows"))
+            } else if (line.hasOption("workflows")) {
                 workflowsIds = Arrays.asList(line.getOptionValue("workflows").split(","));
-            else if (line.hasOption("basecase")) {
+            } else if (line.hasOption("basecase")) {
                 DateTime basecaseDate = DateTime.parse(line.getOptionValue("basecase"));
                 workflowsIds = onlinedb.listWorkflows(basecaseDate).stream().map(OnlineWorkflowDetails::getWorkflowId).collect(Collectors.toList());
             } else if (line.hasOption("basecases-interval")) {
@@ -230,10 +230,11 @@ public class PrintOnlineWorkflowPerformances implements Tool {
                                         || (!contingencyWCASecure.get(contingencyId) && contingencyMCLASecure.get(contingencyId)));
 
                                 // compute data for performances
-                                if (contingencySecure.get(contingencyId))
+                                if (contingencySecure.get(contingencyId)) {
                                     secureContingencies++;
-                                else
+                                } else {
                                     unsecureContingencies++;
+                                }
 
                                 if (!contingencySecure.get(contingencyId) && contingencyWCASecure.get(contingencyId)) {
                                     wcaMissedAlarmsList.add(contingencyId);

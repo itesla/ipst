@@ -23,47 +23,47 @@ import javax.servlet.http.HttpSession;
 @SessionScoped
 @ManagedBean
 public class UserMB {
-	String user;
-	
-	public String getUser(){
-		if(user == null){
-			ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-			String user = context.getUserPrincipal().getName();
-		}
-		
-		return user;
-	}
-	
-	public boolean isUserAdmin(){
-		return getRequest().isUserInRole("ADMIN");
-	}
-	
-	public String logOut_old(){
-		getRequest().getSession().invalidate();
-		//return "logout";
-		//return "/index.xhtml";
-		try {
-			FacesContext.getCurrentInstance().getExternalContext().redirect("/index.jsf");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	public void logOut() throws IOException {
-	    ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-	    ec.invalidateSession();	    
-	    ec.redirect(ec.getRequestContextPath()+"/index.jsf");
-	}
+    String user;
 
-	private HttpServletRequest getRequest() {
-		return (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-	}
-	
-	
-//	public String logout() {
-//	       ((HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false)).invalidate();
-//	        return "/index.xhtml";
-//	}
+    public String getUser() {
+        if (user == null) {
+            ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+            String user = context.getUserPrincipal().getName();
+        }
+
+        return user;
+    }
+
+    public boolean isUserAdmin() {
+        return getRequest().isUserInRole("ADMIN");
+    }
+
+    public String logOut_old() {
+        getRequest().getSession().invalidate();
+        //return "logout";
+        //return "/index.xhtml";
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/index.jsf");
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void logOut() throws IOException {
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        ec.invalidateSession();
+        ec.redirect(ec.getRequestContextPath() + "/index.jsf");
+    }
+
+    private HttpServletRequest getRequest() {
+        return (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+    }
+
+
+//    public String logout() {
+//           ((HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false)).invalidate();
+//            return "/index.xhtml";
+//    }
 }

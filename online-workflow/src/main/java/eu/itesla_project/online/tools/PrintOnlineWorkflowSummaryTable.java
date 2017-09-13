@@ -108,11 +108,11 @@ public class PrintOnlineWorkflowSummaryTable implements Tool {
         OnlineConfig config = OnlineConfig.load();
         try (OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create()) {
             List<String> workflowsIds = new ArrayList<String>();
-            if (line.hasOption("workflow"))
+            if (line.hasOption("workflow")) {
                 workflowsIds.add(line.getOptionValue("workflow"));
-            else if (line.hasOption("workflows"))
+            } else if (line.hasOption("workflows")) {
                 workflowsIds = Arrays.asList(line.getOptionValue("workflows").split(","));
-            else if (line.hasOption("basecase")) {
+            } else if (line.hasOption("basecase")) {
                 DateTime basecaseDate = DateTime.parse(line.getOptionValue("basecase"));
                 workflowsIds = onlinedb.listWorkflows(basecaseDate).stream().map(OnlineWorkflowDetails::getWorkflowId).collect(Collectors.toList());
             } else if (line.hasOption("basecases-interval")) {
@@ -227,8 +227,9 @@ public class PrintOnlineWorkflowSummaryTable implements Tool {
         Map<Integer, Map<String, Boolean>> loadflowConvergence = onlinedb.getPostContingencyLoadflowConvergence(workflowId);
         List<String> contingencies = new ArrayList<>();
         OnlineWorkflowWcaResults wcaResults = onlinedb.getWcaResults(workflowId);
-        if (wcaResults != null && wcaResults.getContingencies() != null)
+        if (wcaResults != null && wcaResults.getContingencies() != null) {
             contingencies.addAll(wcaResults.getContingencies());
+        }
         contingencies.stream().sorted((x, y) -> x.compareTo(y)).forEach(contingency -> {
             for (int stateId = 0; stateId < states; stateId++) {
                 printFailures(loadflowConvergence, workflowId, basecaseId, contingency, stateId, formatter);

@@ -130,8 +130,9 @@ public class WCAReportImpl implements WCAReport {
         try {
             if ( !Files.exists(folder) ) {
                 Files.createDirectories(folder);
-            } else if ( !Files.isDirectory(folder) )
+            } else if ( !Files.isDirectory(folder) ) {
                 throw new RuntimeException(folder + " is a file, not a folder");
+            }
             exportPreContingencyViolationsWithoutUncertainties(folder);
             exportPreContingencyViolationsWithUncertainties(folder);
             exportPreventiveActionsApplication(folder);
@@ -169,8 +170,9 @@ public class WCAReportImpl implements WCAReport {
     
     public void setPreventiveActionAsApplied(String actionId) {
         Objects.requireNonNull(actionId);
-        if ( preventiveActionsApplication.containsKey(actionId))
-            preventiveActionsApplication.get(actionId).setActionApplied(true);;
+        if (preventiveActionsApplication.containsKey(actionId)) {
+            preventiveActionsApplication.get(actionId).setActionApplied(true);
+        }
     }
 
     public void setPostPreventiveActionsViolationsWithUncertainties(List<LimitViolation> postPreventiveActionsViolations) {
@@ -183,7 +185,7 @@ public class WCAReportImpl implements WCAReport {
 
     public void addSecurityRulesApplication(WCASecurityRuleApplication securityRuleApplication) {
         Objects.requireNonNull(securityRuleApplication);
-        securityRulesApplication.add(securityRuleApplication) ;
+        securityRulesApplication.add(securityRuleApplication);
     }
 
     public void addPostContingencyStatus(WCAPostContingencyStatus postContingencyStatus) {
@@ -392,13 +394,13 @@ public class WCAReportImpl implements WCAReport {
                     basecase, folder + File.separator + POST_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_FILE);
         Path violationsPath1 = folder.resolve(POST_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_FILE);
         Path violationsPath2 = folder.resolve(POST_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_FILE);
-        Column[] COLUMNS = { 
+        Column[] COLUMNS = {
                 new Column("Basecase"),
                 new Column("Contingency"),
                 new Column("FailureStep"),
-                new Column("FailureDescription"), 
+                new Column("FailureDescription"),
                 new Column("ViolationType"),
-                new Column("Equipment"), 
+                new Column("Equipment"),
                 new Column("Value"),
                 new Column("Limit"),
                 new Column("Country"),

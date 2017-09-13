@@ -91,8 +91,9 @@ public class RunTDSimulation implements Tool {
     }
 
     private Path getFile(Path folder, String filename) {
-        if (folder != null)
+        if (folder != null) {
             return Paths.get(folder.toString(), filename);
+        }
         return Paths.get(filename);
     }
 
@@ -117,8 +118,9 @@ public class RunTDSimulation implements Tool {
                 }
                 cvsWriter.flush();
             } finally {
-                if (cvsWriter != null)
+                if (cvsWriter != null) {
                     cvsWriter.close();
+                }
             }
         }
     }
@@ -137,8 +139,9 @@ public class RunTDSimulation implements Tool {
                 String[] headers = new String[indexIds.length + 1];
                 headers[0] = "Basecase";
                 int i = 1;
-                for (String securityIndexId : indexIds)
+                for (String securityIndexId : indexIds) {
                     headers[i++] = securityIndexId;
+                }
                 cvsWriter.writeRecord(headers);
                 for (String caseBasename : tdSimulationsResults.keySet()) {
                     String[] values = new String[indexIds.length + 1];
@@ -146,16 +149,18 @@ public class RunTDSimulation implements Tool {
                     i = 1;
                     for (String securityIndexId : indexIds) {
                         String result = "NA";
-                        if (tdSimulationsResults.get(caseBasename).containsKey(securityIndexId))
+                        if (tdSimulationsResults.get(caseBasename).containsKey(securityIndexId)) {
                             result = tdSimulationsResults.get(caseBasename).get(securityIndexId) ? "OK" : "KO";
+                        }
                         values[i++] = result;
                     }
                     cvsWriter.writeRecord(values);
                 }
                 cvsWriter.flush();
             } finally {
-                if (cvsWriter != null)
+                if (cvsWriter != null) {
                     cvsWriter.close();
+                }
             }
         }
     }

@@ -19,56 +19,56 @@ import eu.itesla_project.modelica_export.util.eurostag.EurostagFixedData;
  */
 public class ConnectConstantRecord extends ModelicaRecord {
 
-	public ConnectConstantRecord(String regName, String constantName, String pinName1, String constantPin) {
+    public ConnectConstantRecord(String regName, String constantName, String pinName1, String constantPin) {
         this.regName = regName;
         this.constantName = constantName;
         this.node1Pin = pinName1;
         this.constantPin = constantPin;
-	}
+    }
 
-	@Override
-	public void createModelicaName(ModExportContext modContext, DDBManager ddbManager, SimulatorInst modelicaSim) {
-	   	  
+    @Override
+    public void createModelicaName(ModExportContext modContext, DDBManager ddbManager, SimulatorInst modelicaSim) {
+
         String modelicaName = StaticData.CONNECT + regName + ", " + constantName + StaticData.ANNOT_CONNECT;
 
         super.setModelicaName(modelicaName);
-	}
-	
-	@Override
-	public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
-		this.addValue(StaticData.CONNECT);
-		this.addValue(regName);
-		
-		this.addValue(".");
-		this.addValue(node1Pin);
-		
-		this.addValue(", ");
-		
-		this.addValue(constantName);
-		
-		this.addValue(".");
-		this.addValue(constantPin);
-		
-		this.addValue(StaticData.ANNOT_CONNECT);
-	}
+    }
+
+    @Override
+    public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
+        this.addValue(StaticData.CONNECT);
+        this.addValue(regName);
+
+        this.addValue(".");
+        this.addValue(node1Pin);
+
+        this.addValue(", ");
+
+        this.addValue(constantName);
+
+        this.addValue(".");
+        this.addValue(constantPin);
+
+        this.addValue(StaticData.ANNOT_CONNECT);
+    }
 
 
 
-	@Override
-	public String parseName(String name) {
-		return null;
-	}
-	
-	@Override
-	public ConnectConstantRecord getClassName() {
-		return this;
-	}
-	
-    protected String		regName;
-    protected String		constantName;
-	protected Internal		node			= null;
-	
-	private String			node1Pin;
-	private String			constantPin;
+    @Override
+    public String parseName(String name) {
+        return null;
+    }
+
+    @Override
+    public ConnectConstantRecord getClassName() {
+        return this;
+    }
+
+    protected String        regName;
+    protected String        constantName;
+    protected Internal        node            = null;
+
+    private String            node1Pin;
+    private String            constantPin;
 
 }

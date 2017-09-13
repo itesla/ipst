@@ -13,8 +13,8 @@ import eu.itesla_project.contingency.tasks.ModificationTask;
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
 public interface ActionElement {
-	
-	String getEquipmentId();
+
+    String getEquipmentId();
 
     ActionElementType getType();
 

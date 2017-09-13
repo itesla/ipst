@@ -12,9 +12,9 @@ package eu.itesla_project.modules.contingencies;
  */
 public interface Constraint {
 
-	String getEquipment();
-	
-	Number getValue();
-	
-	ConstraintType getType();
+    String getEquipment();
+
+    Number getValue();
+
+    ConstraintType getType();
 }

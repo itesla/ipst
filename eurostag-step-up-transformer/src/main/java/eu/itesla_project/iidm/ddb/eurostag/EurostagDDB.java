@@ -34,7 +34,7 @@ class EurostagDDB {
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     if (Files.isRegularFile(file) && file.toString().endsWith(".tg")) {
                         String fileName = file.getFileName().toString();
-                        generators.put(fileName.substring(0, fileName.length()-3), file);
+                        generators.put(fileName.substring(0, fileName.length() - 3), file);
                     }
                     return super.visitFile(file, attrs);
                 }

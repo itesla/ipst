@@ -39,7 +39,7 @@ public class OfflineApplicationPrinter implements OfflineApplicationListener {
     @Override
     public void onWorkflowListChange(Collection<OfflineWorkflowStatus> statuses) {
         System.out.println("onWorkflowListChange");
-        for(OfflineWorkflowStatus offlineWorkflowStatus : statuses) {
+        for (OfflineWorkflowStatus offlineWorkflowStatus : statuses) {
             System.out.println(offlineWorkflowStatus);
         }
     }

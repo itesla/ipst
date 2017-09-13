@@ -13,24 +13,24 @@ import org.joda.time.DateTime;
  * @author Quinary <itesla@quinary.com>
  */
 public class OnlineWorkflowDetails {
-	
-	final String workflowId;
-	DateTime workflowDate;
-	
-	public OnlineWorkflowDetails(String workflowId) {
-		this.workflowId = workflowId;
-	}
-	
-	public DateTime getWorkflowDate() {
-		return workflowDate;
-	}
 
-	public void setWorkflowDate(DateTime workflowDate) {
-		this.workflowDate = workflowDate;
-	}
+    final String workflowId;
+    DateTime workflowDate;
 
-	public String getWorkflowId() {
-		return workflowId;
-	}
+    public OnlineWorkflowDetails(String workflowId) {
+        this.workflowId = workflowId;
+    }
+
+    public DateTime getWorkflowDate() {
+        return workflowDate;
+    }
+
+    public void setWorkflowDate(DateTime workflowDate) {
+        this.workflowDate = workflowDate;
+    }
+
+    public String getWorkflowId() {
+        return workflowId;
+    }
 
 }

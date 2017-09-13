@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class GeneratorsRedispatching implements ModificationTask {
 
-	private final List<String> generatorIds;
+    private final List<String> generatorIds;
     private final ActionParameters actionsParameters;
     
 
@@ -35,20 +35,20 @@ public class GeneratorsRedispatching implements ModificationTask {
 
     @Override
     public void modify(Network network, ComputationManager computationManager) {
-    	Float deltaP = (Float) actionsParameters.getValue(ActionParameters.REDISPATCHING_DELTAP_PARAMETER);
-    	if ( deltaP == null ) {
-            throw new ITeslaException("Missing delta P parameter for redispatching of generators "+generatorIds);
+        Float deltaP = (Float) actionsParameters.getValue(ActionParameters.REDISPATCHING_DELTAP_PARAMETER);
+        if ( deltaP == null ) {
+            throw new ITeslaException("Missing delta P parameter for redispatching of generators " + generatorIds);
         }
-    	for(String generatorId : generatorIds) {
-    		Generator g = network.getGenerator(generatorId);
+        for (String generatorId : generatorIds) {
+            Generator g = network.getGenerator(generatorId);
             if (g == null) {
                 throw new ITeslaException("Generator '" + generatorId + "' not found");
             }
-    	}
-    	Redispatcher redispatcher = new RedispatcherFactoryImpl().create(network);
-		RedispatchingParameters parameters = new RedispatchingParameters(deltaP);
-		parameters.setGeneratorsToUse(generatorIds.toArray(new String[generatorIds.size()]));
-		redispatcher.redispatch(parameters);
+        }
+        Redispatcher redispatcher = new RedispatcherFactoryImpl().create(network);
+        RedispatchingParameters parameters = new RedispatchingParameters(deltaP);
+        parameters.setGeneratorsToUse(generatorIds.toArray(new String[generatorIds.size()]));
+        redispatcher.redispatch(parameters);
     }
 
 }

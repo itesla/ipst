@@ -14,39 +14,39 @@ import javax.persistence.*;
  * @author Quinary <itesla@quinary.com>
  */
 @Entity
-@Table(name="PARAMETERFLOAT")
+@Table(name = "PARAMETERFLOAT")
 @DiscriminatorValue("float")
 public class ParameterFloat extends Parameter implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private Float value;
-	
-	protected ParameterFloat() {
-		super();
-	}
-	public ParameterFloat(String name, Float value) {
-		super();
-		this.name=name;
-		this.value=value;
-	}
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    private Float value;
 
-	public ParameterFloat(String name, float value) {
-		super();
-		this.name=name;
-		this.value=Float.valueOf(value);
-	}
-	
-	
-	public Float getValue() {
-		return value;
-	}
-	public void setValue(Float value) {
-		this.value = value;
-	}
-	
-	
+    protected ParameterFloat() {
+        super();
+    }
+    public ParameterFloat(String name, Float value) {
+        super();
+        this.name = name;
+        this.value = value;
+    }
+
+    public ParameterFloat(String name, float value) {
+        super();
+        this.name = name;
+        this.value = Float.valueOf(value);
+    }
+
+
+    public Float getValue() {
+        return value;
+    }
+    public void setValue(Float value) {
+        this.value = value;
+    }
+
+
    
 }

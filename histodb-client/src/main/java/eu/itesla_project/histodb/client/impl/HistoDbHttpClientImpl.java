@@ -88,7 +88,7 @@ public class HistoDbHttpClientImpl implements HistoDbHttpClient {
                     @Override
                     public void checkServerTrusted(X509Certificate[] certs, String authType) {
                     }
-                }};
+                } };
                 SSLContext sslContext = SSLContext.getInstance("SSL");
                 sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
                 LayeredConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext);
@@ -112,7 +112,7 @@ public class HistoDbHttpClientImpl implements HistoDbHttpClient {
                 }
                 httpClient = httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
                         .build();
-            } catch (KeyManagementException|NoSuchAlgorithmException e) {
+            } catch (KeyManagementException | NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
             }
         }

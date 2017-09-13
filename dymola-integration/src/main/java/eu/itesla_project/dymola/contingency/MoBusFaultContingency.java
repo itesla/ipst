@@ -25,13 +25,18 @@ public class MoBusFaultContingency extends MoContingency {
         return MoContingencyElementType.MO_BUS_FAULT;
     }
 
-    //TODO
+    // TODO
     @Override
     public AbstractTrippingTask toTask() {
         return null;
     }
 
-    public double getT1() {return Double.parseDouble(getEventParameters().get("t1"));}
-    public double getT2() {return Double.parseDouble(getEventParameters().get("t2"));}
+    public double getT1() {
+        return Double.parseDouble(getEventParameters().get("t1"));
+    }
+
+    public double getT2() {
+        return Double.parseDouble(getEventParameters().get("t2"));
+    }
 
 }

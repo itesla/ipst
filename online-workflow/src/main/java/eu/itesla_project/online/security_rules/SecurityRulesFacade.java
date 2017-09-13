@@ -63,13 +63,14 @@ public class SecurityRulesFacade implements OnlineRulesFacade {
                     wcaViolatedEquipmentForContingency.put(securityIndexType, new ArrayList<String>()); // so far we do not have the violated components for a rule/index
                 }
             }
-            if ( parameters.wcaRules() ) // store wca rules for validation
-                evaluators.put(contingency.getId(), new ContingencyEvaluator(contingency, mcRules, wcaRules, parameters.getPurityThreshold(), 
+            if ( parameters.wcaRules() ) { // store wca rules for validation
+                evaluators.put(contingency.getId(), new ContingencyEvaluator(contingency, mcRules, wcaRules, parameters.getPurityThreshold(),
                         mcViolatedEquipmentForContingency, wcaViolatedEquipmentForContingency,
                         parameters.isCheckRules()));
-            else
-                evaluators.put(contingency.getId(), new ContingencyEvaluator(contingency, mcRules, parameters.getPurityThreshold(), 
+            } else {
+                evaluators.put(contingency.getId(), new ContingencyEvaluator(contingency, mcRules, parameters.getPurityThreshold(),
                         mcViolatedEquipmentForContingency, parameters.isCheckRules()));
+            }
         }
     }
 

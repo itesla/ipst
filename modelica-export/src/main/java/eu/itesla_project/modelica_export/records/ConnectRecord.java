@@ -20,16 +20,16 @@ import eu.itesla_project.modelica_export.util.StaticData;
  */
 public abstract class ConnectRecord extends ModelicaRecord {
 
-	public ConnectRecord(String node1, String node2) {
-		this.node1 = node1;
-		this.node2 = node2;
-	}
+    public ConnectRecord(String node1, String node2) {
+        this.node1 = node1;
+        this.node2 = node2;
+    }
 
     @Override
     public void createModelicaName(ModExportContext modContext, DDBManager ddbManager, SimulatorInst modelicaSim) {
-    	nodeName1 = modContext.dictionary.getModelicaName(node1);
-    	nodeName2 = modContext.dictionary.getModelicaName(node2);
- 	
+        nodeName1 = modContext.dictionary.getModelicaName(node1);
+        nodeName2 = modContext.dictionary.getModelicaName(node2);
+
         String modelicaName = StaticData.CONNECT + nodeName1 + ", " + nodeName2 + StaticData.ANNOT_CONNECT;
         modContext.dictionary.add(node1, nodeName1);
         modContext.dictionary.add(node2, nodeName2);
@@ -38,33 +38,35 @@ public abstract class ConnectRecord extends ModelicaRecord {
     }
     
     public String parseName(String name) {
-    	String parsedName = name.trim();
+        String parsedName = name.trim();
 
-    	if(parsedName.contains("-")) {
-        	if(!parsedName.startsWith("_")) {
-            	parsedName = "_" + parsedName;    		
-        	}
-        	parsedName = parsedName.replaceAll("-", "_");
-    	}
+        if (parsedName.contains("-")) {
+            if (!parsedName.startsWith("_")) {
+                parsedName = "_" + parsedName;
+            }
+            parsedName = parsedName.replaceAll("-", "_");
+        }
 
         int posi = parsedName.indexOf('_');
         int pose = parsedName.lastIndexOf('_');
         if (pose > posi) {
-        	parsedName = parsedName.substring(posi+1, pose);
+            parsedName = parsedName.substring(posi + 1, pose);
         }
-       	parsedName = parsedName.replaceAll("\\s", "_");
-       	
-       	if(parsedName.substring(0, 1).matches("[0-9]")) {
-        	parsedName = "b_" + parsedName;
-       	}
-       	
-       	while(parsedName.endsWith("_")) parsedName = parsedName.substring(0, parsedName.length()-1);
-       	
+        parsedName = parsedName.replaceAll("\\s", "_");
+
+        if (parsedName.substring(0, 1).matches("[0-9]")) {
+            parsedName = "b_" + parsedName;
+        }
+
+        while (parsedName.endsWith("_")) {
+            parsedName = parsedName.substring(0, parsedName.length() - 1);
+        }
+
         return parsedName;
     }
     
-    protected String			nodeName1;
-    protected String			nodeName2;
-    protected String			node1;
-    protected String			node2;
+    protected String            nodeName1;
+    protected String            nodeName2;
+    protected String            node1;
+    protected String            node2;
 }

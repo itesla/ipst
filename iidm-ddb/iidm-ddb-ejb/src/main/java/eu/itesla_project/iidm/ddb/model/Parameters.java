@@ -21,12 +21,12 @@ import javax.xml.bind.annotation.XmlSeeAlso;
  * @author Quinary <itesla@quinary.com>
  */
 @Entity
-@Table(name="PARAMETERS")
+@Table(name = "PARAMETERS")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Parameters implements Serializable {
-	private static final long serialVersionUID = 1L;
-	
-	//The synthetic id of the object.
+    private static final long serialVersionUID = 1L;
+
+    //The synthetic id of the object.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
@@ -38,60 +38,62 @@ public class Parameters implements Serializable {
 //    }
     
     @OneToOne
-	private SimulatorInst simulator;
-	public SimulatorInst getSimulator() {
-		return simulator;
-	}
-	public void setSimulator(SimulatorInst simulator) {
-		this.simulator = simulator;
-	}
+    private SimulatorInst simulator;
+    public SimulatorInst getSimulator() {
+        return simulator;
+    }
+    public void setSimulator(SimulatorInst simulator) {
+        this.simulator = simulator;
+    }
     
-    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER, orphanRemoval=true)   
-    @JoinTable(name="PARAMETERS_PARAMETER", joinColumns={@JoinColumn(name="PS_ID", referencedColumnName="id")}, inverseJoinColumns={@JoinColumn(name="P_ID", referencedColumnName="id")})
-    @OrderColumn(name="pindx")
-	private List<Parameter> pars =new ArrayList<Parameter>();
-	public List<Parameter> getParameters() {
-		return pars;
-	}
-	public void setParameters(List<Parameter> parameters) {
-		this.pars = parameters;
-	}
-	
-	public boolean containsParameterWithName(String name) {
-		boolean found=false;
-		for (Parameter p : getParameters()) {
-			if (p.name.equals(name)) {
-				found=true;
-				break;
-			}
-		}
-		return found;
-	}
-	
-	public void addParameter(Parameter parameter) {
-		if (!containsParameterWithName(parameter.name)) {
-			getParameters().add(parameter);
-        } else {
-        	throw new RuntimeException("parameter with name "+parameter.name+" already exist in this parameter list");
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinTable(name = "PARAMETERS_PARAMETER", joinColumns = {@JoinColumn(name = "PS_ID", referencedColumnName = "id")}, inverseJoinColumns = {@JoinColumn(name = "P_ID", referencedColumnName = "id")})
+    @OrderColumn(name = "pindx")
+    private List<Parameter> pars = new ArrayList<Parameter>();
+
+    public List<Parameter> getParameters() {
+        return pars;
+    }
+
+    public void setParameters(List<Parameter> parameters) {
+        this.pars = parameters;
+    }
+
+    public boolean containsParameterWithName(String name) {
+        boolean found = false;
+        for (Parameter p : getParameters()) {
+            if (p.name.equals(name)) {
+                found = true;
+                break;
+            }
         }
-	}
+        return found;
+    }
 
-	private int defParamSetNum;
-	public int getDefParamSetNum() {
-		return defParamSetNum;
-	}
-	public void setDefParamSetNum(int defParamSetNum) {
-		this.defParamSetNum = defParamSetNum;
-	}
-	
-	public Parameters() {
-		super();
-	}
-	
-	public Parameters(SimulatorInst simulatorInst) {
-		super();
-		this.setSimulator(simulatorInst);
-	}
+    public void addParameter(Parameter parameter) {
+        if (!containsParameterWithName(parameter.name)) {
+            getParameters().add(parameter);
+        } else {
+            throw new RuntimeException("parameter with name " + parameter.name + " already exist in this parameter list");
+        }
+    }
 
-	
+    private int defParamSetNum;
+    public int getDefParamSetNum() {
+        return defParamSetNum;
+    }
+    public void setDefParamSetNum(int defParamSetNum) {
+        this.defParamSetNum = defParamSetNum;
+    }
+
+    public Parameters() {
+        super();
+    }
+
+    public Parameters(SimulatorInst simulatorInst) {
+        super();
+        this.setSimulator(simulatorInst);
+    }
+
+
 }

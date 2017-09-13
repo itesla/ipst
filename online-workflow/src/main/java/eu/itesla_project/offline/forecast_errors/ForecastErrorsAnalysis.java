@@ -32,72 +32,74 @@ import eu.itesla_project.modules.online.TimeHorizon;
  */
 public class ForecastErrorsAnalysis {
 
-	final Logger logger = LoggerFactory.getLogger(ForecastErrorsAnalysis.class);
+    final Logger logger = LoggerFactory.getLogger(ForecastErrorsAnalysis.class);
 
-	private final ComputationManager computationManager;
-	private final ForecastErrorsAnalysisParameters parameters;
+    private final ComputationManager computationManager;
+    private final ForecastErrorsAnalysisParameters parameters;
     private final CaseRepository caseRepository;
-	private final ForecastErrorsDataStorage feDataStorage;
+    private final ForecastErrorsDataStorage feDataStorage;
     private final ForecastErrorsAnalyzerFactory forecastErrorsAnalyzerFactory;
-	private final LoadFlowFactory loadFlowFactory;
-	private final MergeOptimizerFactory mergeOptimizerFactory;
-	private final HistoDbClient histoDbClient;
+    private final LoadFlowFactory loadFlowFactory;
+    private final MergeOptimizerFactory mergeOptimizerFactory;
+    private final HistoDbClient histoDbClient;
 
     public ForecastErrorsAnalysis(ComputationManager computationManager,
-	                              ForecastErrorsAnalysisConfig config,
-	                              ForecastErrorsAnalysisParameters parameters) throws InstantiationException, IllegalAccessException {
+                                  ForecastErrorsAnalysisConfig config,
+                                  ForecastErrorsAnalysisParameters parameters) throws InstantiationException, IllegalAccessException {
         Objects.requireNonNull(config);
         this.computationManager = Objects.requireNonNull(computationManager);
         this.parameters = Objects.requireNonNull(parameters);
-		this.caseRepository = config.getCaseRepositoryFactoryClass().newInstance().create(computationManager);
-		this.feDataStorage = config.getForecastErrorsDataStorageFactoryClass().newInstance().create();
-		this.forecastErrorsAnalyzerFactory = config.getForecastErrorsAnalyzerFactoryClass().newInstance();
-		this.loadFlowFactory = config.getLoadFlowFactoryClass().newInstance();
-		this.mergeOptimizerFactory = config.getMergeOtimizerFactoryClass().newInstance();
+        this.caseRepository = config.getCaseRepositoryFactoryClass().newInstance().create(computationManager);
+        this.feDataStorage = config.getForecastErrorsDataStorageFactoryClass().newInstance().create();
+        this.forecastErrorsAnalyzerFactory = config.getForecastErrorsAnalyzerFactoryClass().newInstance();
+        this.loadFlowFactory = config.getLoadFlowFactoryClass().newInstance();
+        this.mergeOptimizerFactory = config.getMergeOtimizerFactoryClass().newInstance();
         this.histoDbClient = config.getHistoDbClientFactoryClass().newInstance().create();
-		logger.info(config.toString());
-	}
+        logger.info(config.toString());
+    }
 
-	public ForecastErrorsAnalysis(ComputationManager cpClient) throws InstantiationException, IllegalAccessException {
-		this(cpClient, ForecastErrorsAnalysisConfig.load(), ForecastErrorsAnalysisParameters.load());
-	}
+    public ForecastErrorsAnalysis(ComputationManager cpClient) throws InstantiationException, IllegalAccessException {
+        this(cpClient, ForecastErrorsAnalysisConfig.load(), ForecastErrorsAnalysisParameters.load());
+    }
 
-	public void start() { runFEA(TimeHorizon.values()); }
-	
-	public void start(TimeHorizon timehorizon) {
-		runFEA(new TimeHorizon[]{timehorizon});
-	}
-	
-	private void runFEA(TimeHorizon[] timeHorizons) {
-		logger.info("Forecast errors analysis, started.");
+    public void start() {
+        runFEA(TimeHorizon.values());
+    }
 
-		Network network = MergeUtil.merge(caseRepository, parameters.getBaseCaseDate(), parameters.getCaseType(), parameters.getCountries(),
-										  loadFlowFactory, 0, mergeOptimizerFactory, computationManager, false);
+    public void start(TimeHorizon timehorizon) {
+        runFEA(new TimeHorizon[]{timehorizon});
+    }
+
+    private void runFEA(TimeHorizon[] timeHorizons) {
+        logger.info("Forecast errors analysis, started.");
+
+        Network network = MergeUtil.merge(caseRepository, parameters.getBaseCaseDate(), parameters.getCaseType(), parameters.getCountries(),
+                                          loadFlowFactory, 0, mergeOptimizerFactory, computationManager, false);
 
         logger.info("- Network id: " + network.getId());
-        logger.info("- Network name: "+ network.getName());
+        logger.info("- Network name: " + network.getName());
 
-		ForecastErrorsAnalyzer feAnalyzer = forecastErrorsAnalyzerFactory.create(network, computationManager, feDataStorage, histoDbClient);
-		feAnalyzer.init(new ForecastErrorsAnalyzerParameters(
-				parameters.getHistoInterval(), parameters.getFeAnalysisId(),
-				parameters.getIr(), parameters.getFlagPQ(), parameters.getMethod(),
-				parameters.getnClusters(), parameters.getPercentileHistorical(),
-				parameters.getModalityGaussian(), parameters.getOutliers(),
-				parameters.getConditionalSampling(), parameters.getnSamples()));
+        ForecastErrorsAnalyzer feAnalyzer = forecastErrorsAnalyzerFactory.create(network, computationManager, feDataStorage, histoDbClient);
+        feAnalyzer.init(new ForecastErrorsAnalyzerParameters(
+                parameters.getHistoInterval(), parameters.getFeAnalysisId(),
+                parameters.getIr(), parameters.getFlagPQ(), parameters.getMethod(),
+                parameters.getnClusters(), parameters.getPercentileHistorical(),
+                parameters.getModalityGaussian(), parameters.getOutliers(),
+                parameters.getConditionalSampling(), parameters.getnSamples()));
 
-		// sequential analysis of the different time horizons
-		// it could/should be parallelized
-		for(TimeHorizon timeHorizon : timeHorizons) {
-			try {
-				logger.info("Performing forecast error analysis on {} time horizon for {} network", timeHorizon.getName(), network.getId());
-				feAnalyzer.run(timeHorizon);
-			} catch (Exception e) {
-				logger.error("Error analysing {} time horizon for {} network: {}", timeHorizon.getName(), network.getId(), e.getMessage());
-			}
+        // sequential analysis of the different time horizons
+        // it could/should be parallelized
+        for (TimeHorizon timeHorizon : timeHorizons) {
+            try {
+                logger.info("Performing forecast error analysis on {} time horizon for {} network", timeHorizon.getName(), network.getId());
+                feAnalyzer.run(timeHorizon);
+            } catch (Exception e) {
+                logger.error("Error analysing {} time horizon for {} network: {}", timeHorizon.getName(), network.getId(), e.getMessage());
+            }
 
-		}
+        }
 
-		logger.info("Forecast errors analysis, terminated.");
-	}
+        logger.info("Forecast errors analysis, terminated.");
+    }
 
 }

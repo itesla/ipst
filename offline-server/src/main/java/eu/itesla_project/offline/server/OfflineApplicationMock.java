@@ -198,7 +198,7 @@ public class OfflineApplicationMock implements RemoteOfflineApplication {
                 notifySecurityIndexesSynthesisChange();
                 notifyStatusChange = true;
             }
-            if(computing) {
+            if (computing) {
                 if (computingProgress >= 1) {
                     computing = false;
                     notify.onSecurityRulesChange(id, securityRules.keySet());
@@ -209,7 +209,9 @@ public class OfflineApplicationMock implements RemoteOfflineApplication {
                 notify.onSecurityRulesProgress(id, computingProgress);
                 notifyStatusChange = true;
             }
-            if (notifyStatusChange) notify.onWorkflowStatusChange(this.getStatus());
+            if (notifyStatusChange) {
+                notify.onWorkflowStatusChange(this.getStatus());
+            }
         }
 
         private void notifySampleSynthesisChange() {
@@ -250,7 +252,7 @@ public class OfflineApplicationMock implements RemoteOfflineApplication {
 
         @Override
         public OfflineWorkflowStatus getStatus() {
-            if(running) {
+            if (running) {
                 return new OfflineWorkflowStatus(id, OfflineWorkflowStep.SAMPLING, creationParameters, startParameters);
             } else if (computing) {
                 return new OfflineWorkflowStatus(id, OfflineWorkflowStep.SECURITY_RULES_COMPUTATION, creationParameters);
@@ -347,7 +349,7 @@ public class OfflineApplicationMock implements RemoteOfflineApplication {
                     value = 0;
                 } else {
                     int inc = (int) (random.nextDouble() * 10) - 5;
-                    value = busyCores.getValues().get(busyCores.getValues().size()-1).getBusyCores() + inc;
+                    value = busyCores.getValues().get(busyCores.getValues().size() - 1).getBusyCores() + inc;
                     if (value < 0) {
                         value = 0;
                     }

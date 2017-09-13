@@ -57,7 +57,7 @@ public class ConstraintsModifier {
             looseConstraints(stateId, violations, margin, applyToBaseCase);
             network.getStateManager().setWorkingState(workingStateId);
         } else {
-            throw new RuntimeException("No "+stateId+" in network "+network.getId()+": cannot loose constraints");
+            throw new RuntimeException("No " + stateId + " in network " + network.getId() + ": cannot loose constraints");
         }
     }
 
@@ -107,7 +107,7 @@ public class ConstraintsModifier {
             }
             network.getStateManager().setWorkingState(workingStateId);
         } else {
-            throw new RuntimeException("No "+stateId+" in network "+network.getId()+": cannot loose constraints");
+            throw new RuntimeException("No " + stateId + " in network " + network.getId() + ": cannot loose constraints");
         }
     }
 
@@ -220,16 +220,16 @@ public class ConstraintsModifier {
 
     private float getNewUpperLimit(LimitViolation violation, float margin) {
         float newLimit = 9999;
-        if ( config.isInAreaOfInterest(violation, network) ) {
-            newLimit = violation.getValue() * (1.0f + margin/100.0f);
+        if ( config.isInAreaOfInterest(violation, network)) {
+            newLimit = violation.getValue() * (1.0f + margin / 100.0f);
         }
         return newLimit;
     }
 
     private float getNewLowerLimit(LimitViolation violation, float margin) {
         float newLimit = -9999;
-        if ( config.isInAreaOfInterest(violation, network) ) {
-            newLimit = violation.getValue() * (1.0f - margin/100.0f);
+        if (config.isInAreaOfInterest(violation, network)) {
+            newLimit = violation.getValue() * (1.0f - margin / 100.0f);
         }
         return newLimit;
     }

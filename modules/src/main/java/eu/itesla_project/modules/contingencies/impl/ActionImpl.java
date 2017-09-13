@@ -85,36 +85,36 @@ public class ActionImpl implements Action {
     }
 
     @Override
-    public Collection<String> getZones() 
-    {
-    	return zones;
+    public Collection<String> getZones() {
+        return zones;
     }
  
     @Override
     public ModificationTask toTask() {
         List<ModificationTask> subTasks = new ArrayList<>(elements.size());
         for (ActionElement element : elements) {
-        	if ( element instanceof GenerationRedispatching)
-        		subTasks.add(element.toTask(parameters));
-        	else
-        		subTasks.add(element.toTask());
+            if (element instanceof GenerationRedispatching) {
+                subTasks.add(element.toTask(parameters));
+            } else {
+                subTasks.add(element.toTask());
+            }
         }
         return new CompoundModificationTask(subTasks);
     }
 
-	@Override
-	public Number getStartTime() {
-		return startTime;
-	}
+    @Override
+    public Number getStartTime() {
+        return startTime;
+    }
 
-	@Override
-	public void setParameters(ActionParameters parameters) {
-		this.parameters = parameters;
-	}
+    @Override
+    public void setParameters(ActionParameters parameters) {
+        this.parameters = parameters;
+    }
 
-	@Override
-	public ActionParameters getParameters() {
-		return parameters;
-	}
+    @Override
+    public ActionParameters getParameters() {
+        return parameters;
+    }
 
 }

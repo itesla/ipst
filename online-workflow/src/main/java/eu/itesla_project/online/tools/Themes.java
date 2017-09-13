@@ -12,7 +12,7 @@ package eu.itesla_project.online.tools;
  */
 public interface Themes {
 
-	public static String ONLINE_WORKFLOW = "Online workflow";
-	public static String MCLA = "MonteCarlo-like Approach";
-	public static String ONLINE_PROCESS = "Online process";
+    public static String ONLINE_WORKFLOW = "Online workflow";
+    public static String MCLA = "MonteCarlo-like Approach";
+    public static String ONLINE_PROCESS = "Online process";
 }

@@ -22,52 +22,51 @@ import eu.itesla_project.iidm.ddb.service.DDBManager;
  */
 public class LazyModelTemplateContainerDataModel extends LazyDataModel<ModelTemplateContainer> {
 
-	
-	private static final long serialVersionUID = 1L;
-		
-	private DDBManager pmanager;
+
+    private static final long serialVersionUID = 1L;
+
+    private DDBManager pmanager;
    
 
    
-	
-   public LazyModelTemplateContainerDataModel( DDBManager pmanager)
-   {
-	   this.pmanager=pmanager;
-	   setPageSize(10);
-	   setRowCount(pmanager.findModelTemplateContainerAllCount());
+
+   public LazyModelTemplateContainerDataModel( DDBManager pmanager) {
+       this.pmanager = pmanager;
+       setPageSize(10);
+       setRowCount(pmanager.findModelTemplateContainerAllCount());
    }
-	
-	@Override
-	public int getRowCount() {
-		return pmanager.findModelTemplateContainerAllCount();
-	}
 
-	@Override
-	public ModelTemplateContainer getRowData(String id) {
-		return pmanager.findModelTemplateContainer(id);
-	}
+    @Override
+    public int getRowCount() {
+        return pmanager.findModelTemplateContainerAllCount();
+    }
 
-	@Override
-	public Object getRowKey(ModelTemplateContainer object) {
-		return object.getDdbId();
-	}
-	
-	
-	
+    @Override
+    public ModelTemplateContainer getRowData(String id) {
+        return pmanager.findModelTemplateContainer(id);
+    }
 
-	@Override
-	public List<ModelTemplateContainer> load(int first, int pageSize,
-			List<SortMeta> multiSortMeta, Map<String, String> filters) {
-		return pmanager.findModelTemplateContainerAllMaxResults(first, pageSize);
-	}
+    @Override
+    public Object getRowKey(ModelTemplateContainer object) {
+        return object.getDdbId();
+    }
 
-	@Override
-	public List<ModelTemplateContainer> load(int first, int pageSize, String sortField,
-			SortOrder sortOrder, Map<String, String> filters) {
-		List<ModelTemplateContainer> res = pmanager.findModelTemplateContainerAllMaxResults(first, pageSize);
-		return res;
-	}
 
-	
-	
+
+
+    @Override
+    public List<ModelTemplateContainer> load(int first, int pageSize,
+            List<SortMeta> multiSortMeta, Map<String, String> filters) {
+        return pmanager.findModelTemplateContainerAllMaxResults(first, pageSize);
+    }
+
+    @Override
+    public List<ModelTemplateContainer> load(int first, int pageSize, String sortField,
+            SortOrder sortOrder, Map<String, String> filters) {
+        List<ModelTemplateContainer> res = pmanager.findModelTemplateContainerAllMaxResults(first, pageSize);
+        return res;
+    }
+
+
+
 }

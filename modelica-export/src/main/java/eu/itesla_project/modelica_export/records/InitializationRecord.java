@@ -16,31 +16,32 @@ import eu.itesla_project.modelica_export.util.StaticData;
  * @author Silvia Machado <machados@aia.es>
  */
 public class InitializationRecord extends ModelicaRecord {
-	
-	public InitializationRecord(GlobalVariable var) {
-		this.globalVar = var;		
-	}
 
-	@Override
-	public void createModelicaName(ModExportContext modContext, DDBManager ddbManager, SimulatorInst modelicaSim) {
-		
-	}
+    public InitializationRecord(GlobalVariable var) {
+        this.globalVar = var;
+    }
 
-	@Override
-	public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
-		if(globalVar != null)
-			this.addValue(globalVar.getName() + " = " + globalVar.getValue() + StaticData.SEMICOLON);
-	}
+    @Override
+    public void createModelicaName(ModExportContext modContext, DDBManager ddbManager, SimulatorInst modelicaSim) {
 
-	@Override
-	public String parseName(String name) {
-		return null;
-	}
-	
-	@Override
-	public InitializationRecord getClassName() {
-		return this;
-	}
-	
-	private GlobalVariable globalVar;
+    }
+
+    @Override
+    public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
+        if (globalVar != null) {
+            this.addValue(globalVar.getName() + " = " + globalVar.getValue() + StaticData.SEMICOLON);
+        }
+    }
+
+    @Override
+    public String parseName(String name) {
+        return null;
+    }
+
+    @Override
+    public InitializationRecord getClassName() {
+        return this;
+    }
+
+    private GlobalVariable globalVar;
 }

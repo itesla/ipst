@@ -18,19 +18,19 @@ import eu.itesla_project.modelica_export.util.eurostag.EurostagFixedData;
  * @author Silvia Machado <machados@aia.es>
  */
 public class ConnectRegulatorRecord extends ModelicaRecord {
-	
-	public ConnectRegulatorRecord(Internal node1, Generator node2, String pinName1, String pinName2) {
+
+    public ConnectRegulatorRecord(Internal node1, Generator node2, String pinName1, String pinName2) {
         this.node1 = node1;
         this.node2 = node2;
         this.eqName = node2.getId();
         this.node1Pin = pinName1;
         this.node2Pin = pinName2;
     }
-	
+
     @Override
-    public void createModelicaName(ModExportContext modContext, DDBManager ddbManager, SimulatorInst modelicaSim) {  	
-    	nodeName1 = modContext.dictionary.getModelicaName(node1);
-    	nodeName2 = modContext.dictionary.getModelicaName(node2);
+    public void createModelicaName(ModExportContext modContext, DDBManager ddbManager, SimulatorInst modelicaSim) {
+        nodeName1 = modContext.dictionary.getModelicaName(node1);
+        nodeName2 = modContext.dictionary.getModelicaName(node2);
   
         String modelicaName = EurostagFixedData.CONNECT + nodeName1 + ", " + nodeName2 + EurostagFixedData.ANNOT_CONNECT;
         
@@ -40,56 +40,63 @@ public class ConnectRegulatorRecord extends ModelicaRecord {
         super.setModelicaName(modelicaName);
     }
     
-	public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
-		this.addValue(EurostagFixedData.CONNECT);
-		this.addValue(nodeName1);
-		
-		this.addValue(".");
-		this.addValue(node1Pin);
-		
-		this.addValue(", ");
-		
-		this.addValue(nodeName2);
-		
-		this.addValue(".");
-		this.addValue(node2Pin);
-		
-		this.addValue(EurostagFixedData.ANNOT_CONNECT);
-	}
-	
-	
-	/**
-	 * In Regulator's case convert Regulator DDB nativeId to Modelica name
-	 */
-	@Override
-	public String parseName(String name) { //example: flr flr_BLAYAI1
-		String parsedName = name.trim();
+    public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
+        this.addValue(EurostagFixedData.CONNECT);
+        this.addValue(nodeName1);
 
-		if(name.length() > eqName.length()) parsedName = name.substring(eqName.length());
-		else if(eqName.length() > name.length()) parsedName = eqName.substring(name.length());
-		 
-		if(parsedName.trim().startsWith("_")) parsedName = parsedName.trim().replaceFirst("_","").toLowerCase();
-		
-		if(eqName.startsWith("_")) eqName = eqName.replaceFirst("_", "");
-		
-		eqName = eqName.substring(0, eqName.indexOf("_"));
-		
-		parsedName = parsedName + "_" + eqName;
+        this.addValue(".");
+        this.addValue(node1Pin);
 
-		return parsedName;
-	}
-	
-	@Override
-	public ConnectRegulatorRecord getClassName() {
-		return this;
-	}
+        this.addValue(", ");
+
+        this.addValue(nodeName2);
+
+        this.addValue(".");
+        this.addValue(node2Pin);
+
+        this.addValue(EurostagFixedData.ANNOT_CONNECT);
+    }
+
+
+    /**
+     * In Regulator's case convert Regulator DDB nativeId to Modelica name
+     */
+    @Override
+    public String parseName(String name) { //example: flr flr_BLAYAI1
+        String parsedName = name.trim();
+
+        if (name.length() > eqName.length()) {
+            parsedName = name.substring(eqName.length());
+        } else if (eqName.length() > name.length()) {
+            parsedName = eqName.substring(name.length());
+        }
+
+        if (parsedName.trim().startsWith("_")) {
+            parsedName = parsedName.trim().replaceFirst("_", "").toLowerCase();
+        }
+
+        if (eqName.startsWith("_")) {
+            eqName = eqName.replaceFirst("_", "");
+        }
+
+        eqName = eqName.substring(0, eqName.indexOf("_"));
+
+        parsedName = parsedName + "_" + eqName;
+
+        return parsedName;
+    }
+
+    @Override
+    public ConnectRegulatorRecord getClassName() {
+        return this;
+    }
     
-    protected String		nodeName1;
-    protected String		nodeName2;
-    private String			eqName;
-	protected Internal		node1			= null;
-	protected Generator		node2			= null;
-	
-	private String			node1Pin;
-	private String			node2Pin;
+    protected String        nodeName1;
+    protected String        nodeName2;
+    private String            eqName;
+    protected Internal        node1            = null;
+    protected Generator        node2            = null;
+
+    private String            node1Pin;
+    private String            node2Pin;
 }

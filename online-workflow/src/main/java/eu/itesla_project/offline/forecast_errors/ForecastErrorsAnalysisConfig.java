@@ -32,9 +32,9 @@ public class ForecastErrorsAnalysisConfig {
      * example of forecastErrorsAnalysis.properties file.
      *
 
-	caseRepositoryFactoryClass=eu.itesla_project.cases.EntsoeCaseRepositoryFactory
-	forecastErrorsDataStorageFactoryClass=eu.itesla_project.matlab.mcla.ForecastErrorsDataStorageFactoryImpl
-	forecastErrorsAnalyzerFactoryClass=eu.itesla_project.matlab.mcla.forecast_errors.ForecastErrorsAnalyzerFactoryImpl
+    caseRepositoryFactoryClass=eu.itesla_project.cases.EntsoeCaseRepositoryFactory
+    forecastErrorsDataStorageFactoryClass=eu.itesla_project.matlab.mcla.ForecastErrorsDataStorageFactoryImpl
+    forecastErrorsAnalyzerFactoryClass=eu.itesla_project.matlab.mcla.forecast_errors.ForecastErrorsAnalyzerFactoryImpl
 
      */
 

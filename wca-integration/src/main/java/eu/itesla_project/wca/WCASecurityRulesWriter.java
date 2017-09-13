@@ -175,10 +175,11 @@ public class WCASecurityRulesWriter implements AmplConstants, WCAConstants {
                 final int attributeSetNum = attributeSet.ordinal();
 
                 if (rule.getStatus() == SecurityRuleStatus.ALWAYS_UNSECURE) {
-                    if ( activateFiltering )
+                    if ( activateFiltering ) {
                         throw new RuntimeException("Always unsecure rule " + ruleId);
-                    else
+                    } else {
                         continue;
+                    }
                 }
                 if (rule.getStatus() == SecurityRuleStatus.ALWAYS_SECURE) {
                     continue;

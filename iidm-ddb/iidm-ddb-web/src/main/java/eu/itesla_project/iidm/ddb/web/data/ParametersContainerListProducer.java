@@ -29,10 +29,10 @@ import eu.itesla_project.iidm.ddb.service.DDBManager;
 public class ParametersContainerListProducer {
 
     @Inject
-	private Logger log;
+    private Logger log;
     
-	@EJB
-	private DDBManager pmanager;
+    @EJB
+    private DDBManager pmanager;
 
     private List<ParametersContainer> parametersContainerAll;
     
@@ -50,19 +50,19 @@ public class ParametersContainerListProducer {
     
     @PostConstruct
     public void retrieveAllParametersContainer() {
-    	log.log(Level.INFO," create parametersContainerAll  list ");
-    	
-    	this.parametersContainerAll= pmanager.findParametersContainerAll();
-    	log.log(Level.INFO," DONE create parametersContainerAll  list ");
-    /*	this.parametersContainerDdbids  = new ArrayList<String>();
-    	
-    	for (ParametersContainer pc :parametersContainerAll) {
-    		parametersContainerDdbids.add(pc.getDdbId());
-    	}*/    	
+        log.log(Level.INFO, " create parametersContainerAll  list ");
+
+        this.parametersContainerAll = pmanager.findParametersContainerAll();
+        log.log(Level.INFO, " DONE create parametersContainerAll  list ");
+    /*    this.parametersContainerDdbids  = new ArrayList<String>();
+
+        for (ParametersContainer pc :parametersContainerAll) {
+            parametersContainerDdbids.add(pc.getDdbId());
+        }*/
     }
     
    /* public List<String> geetParametersContainerDdbids(){
-    	return this.parametersContainerDdbids; 
+        return this.parametersContainerDdbids;
     }*/
     
 }

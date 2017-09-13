@@ -22,20 +22,20 @@ import eu.itesla_project.iidm.network.Network;
  */
 public interface ContingenciesAndActionsDatabaseClient extends ContingenciesProvider {
 
-	/**
-	 * Get a contingency of a network
-	 * @param id the id of the contingency
-	 * @param network the network
-	 * @return the contingency
-	 */
-	Contingency getContingency(String id, Network network);
+    /**
+     * Get a contingency of a network
+     * @param id the id of the contingency
+     * @param network the network
+     * @return the contingency
+     */
+    Contingency getContingency(String id, Network network);
 
-	/**
-	 * Get the contingencies of a network
-	 * @param network the network
-	 * @return the list of contingencies
-	 */
-	List<Contingency> getContingencies(Network network);
+    /**
+     * Get the contingencies of a network
+     * @param network the network
+     * @return the list of contingencies
+     */
+    List<Contingency> getContingencies(Network network);
     
     /**
      * Get the actions of a network

@@ -18,50 +18,50 @@ import eu.itesla_project.modelica_export.util.StaticData;
  * @author Silvia Machado <machados@aia.es>
  */
 public class HeaderRecord extends ModelicaRecord {
-	
-	public HeaderRecord(String networkName, List<GlobalVariable> globalVars) {
-		this.networkName = networkName;
-		this.globalVars = globalVars;
-	}
 
-	@Override
-	public void createModelicaName(ModExportContext modContext, DDBManager ddbManager, SimulatorInst modelicaSim) {
-		
-	}
+    public HeaderRecord(String networkName, List<GlobalVariable> globalVars) {
+        this.networkName = networkName;
+        this.globalVars = globalVars;
+    }
 
-	@Override
-	public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
-		this.deleteInicialWhiteSpaces(2);
-		this.addValue(StaticData.WITHIN);
+    @Override
+    public void createModelicaName(ModExportContext modContext, DDBManager ddbManager, SimulatorInst modelicaSim) {
+
+    }
+
+    @Override
+    public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
+        this.deleteInicialWhiteSpaces(2);
+        this.addValue(StaticData.WITHIN);
         this.newLine();
         this.addValue(StaticData.MODEL + parseName(this.networkName));
         this.newLine();
-        
-        for(GlobalVariable var : globalVars) { 
-        	this.addValue(var.toString());
-        	this.newLine();
-        }
-	}
 
-	@Override
-	public String parseName(String name) {
-		String parsedName = name.trim();
-		if(parsedName.substring(0, 1).matches("[0-9]")) {
-			parsedName = "M_" + parsedName;
-		}
-		parsedName = parsedName.replaceAll("\\s", "_");
-       	parsedName = parsedName.replaceAll("\\.", "_");
-       	parsedName = parsedName.replaceAll("\\-", "_");
-       	parsedName = parsedName.replaceAll("/", "_");
-       	parsedName = parsedName.replaceAll("\\+", "_");
+        for (GlobalVariable var : globalVars) {
+            this.addValue(var.toString());
+            this.newLine();
+        }
+    }
+
+    @Override
+    public String parseName(String name) {
+        String parsedName = name.trim();
+        if (parsedName.substring(0, 1).matches("[0-9]")) {
+            parsedName = "M_" + parsedName;
+        }
+        parsedName = parsedName.replaceAll("\\s", "_");
+           parsedName = parsedName.replaceAll("\\.", "_");
+           parsedName = parsedName.replaceAll("\\-", "_");
+           parsedName = parsedName.replaceAll("/", "_");
+           parsedName = parsedName.replaceAll("\\+", "_");
         return parsedName;
-	}
-	
-	@Override
-	public HeaderRecord getClassName() {
-		return this;
-	}
-	
-	private String networkName;
-	private List<GlobalVariable> globalVars;
+    }
+
+    @Override
+    public HeaderRecord getClassName() {
+        return this;
+    }
+
+    private String networkName;
+    private List<GlobalVariable> globalVars;
 }

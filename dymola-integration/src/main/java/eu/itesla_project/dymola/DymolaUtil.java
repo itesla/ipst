@@ -34,10 +34,10 @@ public class DymolaUtil {
     static final String PRODUCT_NAME = "Dymola";
     static final String VERSION = "2016";
 
-    static final String DYMOLAINPUTZIPFILENAMEPREFIX ="dymolainput";
-    static final String DYMOLAOUTPUTZIPFILENAMEPREFIX ="dymolaoutput";
-    static final String DYMOLA_SIM_MODEL_INPUT_PREFIX ="network";
-    static final String DYMOLA_SIM_MAT_OUTPUT_PREFIX ="dymolasim";
+    static final String DYMOLAINPUTZIPFILENAMEPREFIX = "dymolainput";
+    static final String DYMOLAOUTPUTZIPFILENAMEPREFIX = "dymolaoutput";
+    static final String DYMOLA_SIM_MODEL_INPUT_PREFIX = "network";
+    static final String DYMOLA_SIM_MAT_OUTPUT_PREFIX = "dymolasim";
 
 
     private DymolaUtil() {
@@ -63,7 +63,7 @@ public class DymolaUtil {
 
     static void putBadExitCode(ExecutionReport report, Map<String, String> metrics) {
         if (report.getErrors().size() > 0) {
-            ExecutionError lastError = report.getErrors().get(report.getErrors().size()-1);
+            ExecutionError lastError = report.getErrors().get(report.getErrors().size() - 1);
             metrics.put("badExitCode", Integer.toString(lastError.getExitCode()));
         }
     }

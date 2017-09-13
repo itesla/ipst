@@ -11,27 +11,27 @@ package eu.itesla_project.mcla.montecarlo.data;
  * @author Quinary <itesla@quinary.com>
  */
 public class SampleData {
-	
-	private float[] generatorsActivePower;
-	private float[] loadsActivePower;
-	private float[] loadsReactivePower;
-	
-	public SampleData(float[] generatorsActivePower, float[] loadsActivePower, float[] loadsReactivePower) {
-		this.generatorsActivePower = generatorsActivePower;
-		this.loadsActivePower = loadsActivePower;
-		this.loadsReactivePower = loadsReactivePower;
-	}
-	
-	public float[] getGeneratorsActivePower() {
-		return generatorsActivePower;
-	}
 
-	public float[] getLoadsActivePower() {
-		return loadsActivePower;
-	}
+    private float[] generatorsActivePower;
+    private float[] loadsActivePower;
+    private float[] loadsReactivePower;
 
-	public float[] getLoadsReactivePower() {
-		return loadsReactivePower;
-	}
+    public SampleData(float[] generatorsActivePower, float[] loadsActivePower, float[] loadsReactivePower) {
+        this.generatorsActivePower = generatorsActivePower;
+        this.loadsActivePower = loadsActivePower;
+        this.loadsReactivePower = loadsReactivePower;
+    }
+
+    public float[] getGeneratorsActivePower() {
+        return generatorsActivePower;
+    }
+
+    public float[] getLoadsActivePower() {
+        return loadsActivePower;
+    }
+
+    public float[] getLoadsReactivePower() {
+        return loadsReactivePower;
+    }
 
 }

@@ -13,27 +13,27 @@ import java.util.Objects;
  * @author Quinary <itesla@quinary.com>
  */
 public class ForecastErrorsStatistics {
-	
-	private String[] injectionsIds;
-	private float[] means;
-	private float[] standardDeviations;
-	
-	public ForecastErrorsStatistics(String[] injectionsIds, float[] means, float[] standardDeviations) {
-		Objects.requireNonNull(injectionsIds, "injection ids array is null");
-		this.injectionsIds = injectionsIds;
-		this.means = means;
-		this.standardDeviations = standardDeviations;
-	}
 
-	public String[] getInjectionsIds() {
-		return injectionsIds;
-	}
+    private String[] injectionsIds;
+    private float[] means;
+    private float[] standardDeviations;
 
-	public float[] getMeans() {
-		return means;
-	}
+    public ForecastErrorsStatistics(String[] injectionsIds, float[] means, float[] standardDeviations) {
+        Objects.requireNonNull(injectionsIds, "injection ids array is null");
+        this.injectionsIds = injectionsIds;
+        this.means = means;
+        this.standardDeviations = standardDeviations;
+    }
 
-	public float[] getStandardDeviations() {
-		return standardDeviations;
-	}
+    public String[] getInjectionsIds() {
+        return injectionsIds;
+    }
+
+    public float[] getMeans() {
+        return means;
+    }
+
+    public float[] getStandardDeviations() {
+        return standardDeviations;
+    }
 }

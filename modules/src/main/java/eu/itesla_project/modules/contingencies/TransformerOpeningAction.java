@@ -18,10 +18,10 @@ public class TransformerOpeningAction implements ActionElement {
     private final String equipmentId;
     
     private Number implementationTime;
-	
-	private Number achievmentIndex;
-	
-	private String substationId = null;
+
+    private Number achievmentIndex;
+
+    private String substationId = null;
 
     public TransformerOpeningAction(String transformerId) {
         this.equipmentId = transformerId;
@@ -34,43 +34,44 @@ public class TransformerOpeningAction implements ActionElement {
 
     
     public TransformerOpeningAction(String transformerId, Number implementationTime, Number achievmentIndex ) {
-		this.equipmentId=transformerId;
-		this.implementationTime=implementationTime;
-		this.achievmentIndex=achievmentIndex;
-	}
+        this.equipmentId = transformerId;
+        this.implementationTime = implementationTime;
+        this.achievmentIndex = achievmentIndex;
+    }
     
     public TransformerOpeningAction(String lineId, String substationId, Number implementationTime, Number achievmentIndex ) {
-		this.equipmentId=lineId;
-		this.substationId = substationId;
-		this.implementationTime=implementationTime;
-		this.achievmentIndex=achievmentIndex;
-	}
+        this.equipmentId = lineId;
+        this.substationId = substationId;
+        this.implementationTime = implementationTime;
+        this.achievmentIndex = achievmentIndex;
+    }
     
     @Override
     public ActionElementType getType() {
-    	return ActionElementType.TRANSFORMER_OPENING;
+        return ActionElementType.TRANSFORMER_OPENING;
     }
     
     @Override
     public ModificationTask toTask() {
-    	if ( substationId != null )
-    		return new BranchTripping(equipmentId, substationId);
+        if (substationId != null) {
+            return new BranchTripping(equipmentId, substationId);
+        }
         return new BranchTripping(equipmentId);
     }
     
     @Override
-	public Number getImplementationTime() {
-		return implementationTime;
-	}
+    public Number getImplementationTime() {
+        return implementationTime;
+    }
 
-	@Override
-	public Number getAchievmentIndex() {
-		return achievmentIndex;
-	}
-	
-	@Override
-	public ModificationTask toTask(ActionParameters parameters) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public Number getAchievmentIndex() {
+        return achievmentIndex;
+    }
+
+    @Override
+    public ModificationTask toTask(ActionParameters parameters) {
+        throw new UnsupportedOperationException();
+    }
 
 }

@@ -19,31 +19,34 @@ import eu.itesla_project.modelica_export.util.eurostag.EurostagFixedData;
  */
 public class ConnectDetailedTransformerRecord extends ConnectRecord {
 
-	public ConnectDetailedTransformerRecord(Identifiable node1, Identifiable node2) {
-		super(node1.getId(), node2.getId());
-		this.node1 = node1;
-		this.node2 = node2;
-	}
-	
-	@Override
-	public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
-		this.addValue(StaticData.CONNECT);
-		this.addValue(super.nodeName1);
-		
-		if(this.node1 instanceof Bus) this.addValue("." + StaticData.POSITIVE_PIN + ", ");
-		else this.addValue("." + StaticData.NEGATIVE_PIN + ", ");
-		
-		this.addValue(super.nodeName2);
-		this.addValue("." + StaticData.POSITIVE_PIN);
-		this.addValue(StaticData.ANNOT_CONNECT);
-	}
-	
-	@Override
-	public ConnectDetailedTransformerRecord getClassName() {
-		return this;
-	}
-	
-	private Identifiable	node1	=	null;
-	private Identifiable	node2	= 	null;
-	private boolean			isConnected = true;
+    public ConnectDetailedTransformerRecord(Identifiable node1, Identifiable node2) {
+        super(node1.getId(), node2.getId());
+        this.node1 = node1;
+        this.node2 = node2;
+    }
+
+    @Override
+    public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
+        this.addValue(StaticData.CONNECT);
+        this.addValue(super.nodeName1);
+
+        if (this.node1 instanceof Bus) {
+            this.addValue("." + StaticData.POSITIVE_PIN + ", ");
+        } else {
+            this.addValue("." + StaticData.NEGATIVE_PIN + ", ");
+        }
+
+        this.addValue(super.nodeName2);
+        this.addValue("." + StaticData.POSITIVE_PIN);
+        this.addValue(StaticData.ANNOT_CONNECT);
+    }
+
+    @Override
+    public ConnectDetailedTransformerRecord getClassName() {
+        return this;
+    }
+
+    private Identifiable    node1    =    null;
+    private Identifiable    node2    =     null;
+    private boolean            isConnected = true;
 }

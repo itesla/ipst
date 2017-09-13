@@ -168,7 +168,7 @@ public class LocalOfflineApplication extends NotificationBroadcasterSupport impl
         workflowsLock.lock();
         try {
             Collection<OfflineWorkflowStatus> workflowStatus = new ArrayList<>();
-            for(OfflineWorkflow workflow : workflows.values()) {
+            for (OfflineWorkflow workflow : workflows.values()) {
                 workflowStatus.add(workflow.getStatus());
             }
             notifyWorkflowListChange(workflowStatus);
@@ -441,8 +441,7 @@ public class LocalOfflineApplication extends NotificationBroadcasterSupport impl
             metricsDb.create(workflowId2);
 
             return workflowId2;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
             workflowsLock.unlock();

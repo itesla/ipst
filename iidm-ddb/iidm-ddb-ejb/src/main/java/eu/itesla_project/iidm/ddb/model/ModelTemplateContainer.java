@@ -34,14 +34,14 @@ import org.hibernate.validator.constraints.NotEmpty;
  * @author Quinary <itesla@quinary.com>
  */
 @Entity
-@Table(name="MODELTEMPLATECONTAINER")
+@Table(name = "MODELTEMPLATECONTAINER")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ModelTemplateContainer  implements Serializable{
+public class ModelTemplateContainer implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
-	//The synthetic id of the object.
-	@Id
+    private static final long serialVersionUID = 1L;
+
+    //The synthetic id of the object.
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     public Long getId() {
@@ -50,62 +50,62 @@ public class ModelTemplateContainer  implements Serializable{
 //    public void setId(Long id) {
 //        this.id = id;
 //    }
-    
-    @Column(name="ddbid", nullable=false, unique=true)
+
+    @Column(name = "ddbid", nullable = false, unique = true)
     @NotEmpty
     private String ddbId;
     
     
-	public String getDdbId() {
-		return ddbId;
-	}
-	public void setDdbId(String ddbId) {
-		this.ddbId = ddbId;
-	}
-	
-	private String comment;
-	public String getComment() {
-		return comment;
-	}
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
-	
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,fetch=FetchType.EAGER)
-	@JoinTable(name="MODELTEMPLATECONTAINER_MODELTEMPLATE", joinColumns={@JoinColumn(name="MTC_ID", referencedColumnName="id")}, inverseJoinColumns={@JoinColumn(name="MT_ID", referencedColumnName="id")})
-	@OrderColumn(name="mtcindx")
-	private List<ModelTemplate> modelTemplates= new ArrayList<ModelTemplate>();
-	public List<ModelTemplate> getModelTemplates() {
-		return modelTemplates;
-	}
-	public void setModelTemplates(List<ModelTemplate> modelTemplates) {
-		this.modelTemplates = modelTemplates;
-	}
-	
-	
-	protected ModelTemplateContainer() {
-	}
-	
-	public ModelTemplateContainer(String ddbId) {
-		setDdbId(ddbId);
-	}
-	
-	public ModelTemplateContainer(String ddbId, String comment) {
-		setDdbId(ddbId);
-		setComment(comment);
-	}
-	
-	// add form L.P 
-	@Override
-	public String toString() {
-		return this.getDdbId();
-	}
-	
-	@Override
-	// This must return true for another ModelTemplateContainer this method is used to manage <f:selectItems value=""/> 
+    public String getDdbId() {
+        return ddbId;
+    }
+    public void setDdbId(String ddbId) {
+        this.ddbId = ddbId;
+    }
+
+    private String comment;
+    public String getComment() {
+        return comment;
+    }
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinTable(name = "MODELTEMPLATECONTAINER_MODELTEMPLATE", joinColumns = {@JoinColumn(name = "MTC_ID", referencedColumnName = "id")}, inverseJoinColumns = {@JoinColumn(name = "MT_ID", referencedColumnName = "id")})
+    @OrderColumn(name = "mtcindx")
+    private List<ModelTemplate> modelTemplates = new ArrayList<ModelTemplate>();
+    public List<ModelTemplate> getModelTemplates() {
+        return modelTemplates;
+    }
+    public void setModelTemplates(List<ModelTemplate> modelTemplates) {
+        this.modelTemplates = modelTemplates;
+    }
+
+
+    protected ModelTemplateContainer() {
+    }
+
+    public ModelTemplateContainer(String ddbId) {
+        setDdbId(ddbId);
+    }
+
+    public ModelTemplateContainer(String ddbId, String comment) {
+        setDdbId(ddbId);
+        setComment(comment);
+    }
+
+    // add form L.P
+    @Override
+    public String toString() {
+        return this.getDdbId();
+    }
+
+    @Override
+    // This must return true for another ModelTemplateContainer this method is used to manage <f:selectItems value=""/>
     public boolean equals(Object other) {
         return other instanceof ModelTemplateContainer ? 
-        		ddbId.equals( ( (ModelTemplateContainer) other).getDdbId())  : false;
+                ddbId.equals( ( (ModelTemplateContainer) other).getDdbId())  : false;
     }
 
 }

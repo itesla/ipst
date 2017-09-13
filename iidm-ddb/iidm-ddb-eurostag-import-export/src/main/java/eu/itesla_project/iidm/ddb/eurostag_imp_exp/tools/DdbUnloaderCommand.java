@@ -15,71 +15,71 @@ import eu.itesla_project.commons.tools.Command;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class DdbUnloaderCommand implements Command{
-	
-	public final static  DdbUnloaderCommand INSTANCE=new DdbUnloaderCommand();
+public class DdbUnloaderCommand implements Command {
 
-	public final static String HOST="host";
-	public final static String PORT="port";
-	public final static String USER="user";
-	public final static String PASSWORD="password";
-	
-	@Override
-	public String getName() {
-		return "ddb-unload";
-	}
+    public final static  DdbUnloaderCommand INSTANCE = new DdbUnloaderCommand();
 
-	@Override
-	public String getTheme() {
-		return "Dynamic Database";
-	}
+    public final static String HOST = "host";
+    public final static String PORT = "port";
+    public final static String USER = "user";
+    public final static String PASSWORD = "password";
 
-	@Override
-	public String getDescription() {
-		return "unload dynamic database";
-	}
+    @Override
+    public String getName() {
+        return "ddb-unload";
+    }
 
-	@Override
-	 @SuppressWarnings("static-access")
-	public Options getOptions() {		
-		Options opts = new Options();
+    @Override
+    public String getTheme() {
+        return "Dynamic Database";
+    }
 
-		
-		opts.addOption(Option.builder().longOpt(HOST)
+    @Override
+    public String getDescription() {
+        return "unload dynamic database";
+    }
+
+    @Override
+     @SuppressWarnings("static-access")
+    public Options getOptions() {
+        Options opts = new Options();
+
+
+        opts.addOption(Option.builder().longOpt(HOST)
                 .desc("jboss host")
                 .hasArg()
                 .argName("HOST")
                 .required()
                 .build());
-		
-		opts.addOption(Option.builder().longOpt(PORT)
+
+        opts.addOption(Option.builder().longOpt(PORT)
                 .desc("jboss port")
                 .hasArg()
                 .argName("PORT")
                 .required()
                 .build());
-		
-		opts.addOption(Option.builder().longOpt(USER)
+
+        opts.addOption(Option.builder().longOpt(USER)
                 .desc("jboss username")
                 .hasArg()
                 .argName("USER")
                 .required()
                 .build());
-		
-		opts.addOption(Option.builder().longOpt(PASSWORD)
+
+        opts.addOption(Option.builder().longOpt(PASSWORD)
                 .desc("jboss password")
                 .hasArg()
                 .argName("PASSWORD")
                 .required()
                 .build());
-		
-		return opts;
-	}
 
-	@Override
-	public String getUsageFooter() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+        return opts;
+    }
+
+    @Override
+    public String getUsageFooter() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

@@ -536,7 +536,7 @@ public class MMapOfflineDb implements OfflineDb {
             }
 
             Map<SecurityIndexId, Boolean> securityIndexesOk = new LinkedHashMap<>(); // to keep right order !!!
-            for (int i = 0 ; i < context.getTable().getDescription().getSecurityIndexesCount(); i++) {
+            for (int i = 0; i < context.getTable().getDescription().getSecurityIndexesCount(); i++) {
                 SecurityIndexId securityIndexId = context.getTable().getDescription().getSecurityIndexId(i);
                 securityIndexesOk.put(securityIndexId, null);
             }

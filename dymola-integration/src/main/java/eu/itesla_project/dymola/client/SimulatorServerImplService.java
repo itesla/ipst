@@ -25,8 +25,7 @@ import javax.xml.ws.WebServiceFeature;
  */
 @WebServiceClient(name = "SimulatorServerImplService", targetNamespace = "http://service.dymola.itesla_project.eu/", wsdlLocation = "http://localhost:8888/dymservice?wsdl")
 public class SimulatorServerImplService
-    extends Service
-{
+    extends Service {
 
     private final static URL SIMULATORSERVERIMPLSERVICE_WSDL_LOCATION;
     private final static WebServiceException SIMULATORSERVERIMPLSERVICE_EXCEPTION;
@@ -91,7 +90,7 @@ public class SimulatorServerImplService
     }
 
     private static URL __getWsdlLocation() {
-        if (SIMULATORSERVERIMPLSERVICE_EXCEPTION!= null) {
+        if (SIMULATORSERVERIMPLSERVICE_EXCEPTION != null) {
             throw SIMULATORSERVERIMPLSERVICE_EXCEPTION;
         }
         return SIMULATORSERVERIMPLSERVICE_WSDL_LOCATION;

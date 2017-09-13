@@ -104,7 +104,7 @@ public class EsgNetwork {
         }
         for (EsgStaticVarCompensator svc : getStaticVarCompensators()) {
             if (getNode(svc.getZnodsvc().toString()) == null) {
-                throw new RuntimeException("Static VAR compensator '" + svc.getZnamsvc() +"' reference an unknown connection node '"
+                throw new RuntimeException("Static VAR compensator '" + svc.getZnamsvc() + "' reference an unknown connection node '"
                         + svc.getZnodsvc() + "'");
             }
         }
@@ -207,7 +207,7 @@ public class EsgNetwork {
     
     public void removeArea(String area) {
         if (!areas.containsKey(area)) {
-        	throw new IllegalArgumentException("Area '" + area + "' doesn't exists");
+            throw new IllegalArgumentException("Area '" + area + "' doesn't exists");
         } 
         areas.remove(area);
     }

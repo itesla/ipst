@@ -11,8 +11,8 @@ package eu.itesla_project.online;
  * @author Quinary <itesla@quinary.com>
  */
 public enum OnlineTaskStatus {
-	IDLE,
-	RUNNING,
-	SUCCESS,
-	FAILED
+    IDLE,
+    RUNNING,
+    SUCCESS,
+    FAILED
 }

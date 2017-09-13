@@ -11,7 +11,7 @@ package eu.itesla_project.iidm.ddb.model;
  * @author Quinary <itesla@quinary.com>
  */
 public enum Simulator {
-	EUROSTAG,
-	MODELICA,
-	PSSE
+    EUROSTAG,
+    MODELICA,
+    PSSE
 }

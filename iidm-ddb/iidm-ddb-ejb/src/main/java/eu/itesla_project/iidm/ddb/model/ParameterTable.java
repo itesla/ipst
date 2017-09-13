@@ -21,34 +21,34 @@ import org.apache.commons.lang3.SerializationUtils;
  * @author Quinary <itesla@quinary.com>
  */
 @Entity
-@Table(name="PARAMETERTABLE")
+@Table(name = "PARAMETERTABLE")
 @DiscriminatorValue("ptable")
 public class ParameterTable extends Parameter implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	protected ParameterTable() {
-		super();
-	}
+    protected ParameterTable() {
+        super();
+    }
 
-	public ParameterTable(String name) {
-		super();
-		this.name=name;
-	}
+    public ParameterTable(String name) {
+        super();
+        this.name = name;
+    }
 
-	
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.EAGER)
-	@JoinColumn(name="TABLE_ID", referencedColumnName="ID")
-	@OrderColumn(name="ptindx")
-	private List<TableRow> value = new ArrayList<TableRow>();
-	
-	public List<TableRow> getValue() {
-		return value;
-	}
-	public void setValue(List<TableRow> value) {
-		this.value = value;
-	}
-	
-	public void addRow(TableRow row) {
-		this.getValue().add(row);
-	}
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "TABLE_ID", referencedColumnName = "ID")
+    @OrderColumn(name = "ptindx")
+    private List<TableRow> value = new ArrayList<TableRow>();
+
+    public List<TableRow> getValue() {
+        return value;
+    }
+    public void setValue(List<TableRow> value) {
+        this.value = value;
+    }
+
+    public void addRow(TableRow row) {
+        this.getValue().add(row);
+    }
 }

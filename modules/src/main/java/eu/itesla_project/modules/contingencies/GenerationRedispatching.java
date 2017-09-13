@@ -57,8 +57,8 @@ public class GenerationRedispatching implements ActionElement {
         return implementationTime;
     }
 
-	@Override
-	public ModificationTask toTask(ActionParameters parameters) {
-		return new GeneratorsRedispatching(generatorIds, parameters);
-	}
+    @Override
+    public ModificationTask toTask(ActionParameters parameters) {
+        return new GeneratorsRedispatching(generatorIds, parameters);
+    }
 }

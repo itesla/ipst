@@ -21,11 +21,11 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 public class TopologyChoice {
 
-    @XmlAttribute(name="num")
+    @XmlAttribute(name = "num")
     private Integer num;
 
     /* Cluster ID is kept for further reference by DataMiningPlatformClient to update probabilities */
-    @XmlAttribute(name="clusterId")
+    @XmlAttribute(name = "clusterId")
     private String clusterId;
 
     // for JAXB
@@ -41,7 +41,7 @@ public class TopologyChoice {
         this.clusterId = clusterId;
     }
 
-    @XmlElement(name="possibleTopology")
+    @XmlElement(name = "possibleTopology")
     private final List<PossibleTopology> possibleTopologies = new ArrayList<>();
 
     @XmlTransient

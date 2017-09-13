@@ -29,7 +29,7 @@ class T4X {
     public final List<Integer> iplo;
     public final List<Float> uno1;
     public final List<Float> uno2;
-    public final List<Float> ucc ;
+    public final List<Float> ucc;
     public final List<Float> dephas;
 
     T4X(String name1, String name2, float rate, float pcu,

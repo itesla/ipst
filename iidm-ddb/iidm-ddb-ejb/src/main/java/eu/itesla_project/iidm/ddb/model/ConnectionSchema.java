@@ -40,16 +40,16 @@ import org.hibernate.validator.constraints.NotEmpty;
  */
 @Entity
 @Table(
-		name = "CONNECTIONSCHEMA",  
-		uniqueConstraints={
-			   @UniqueConstraint (columnNames={"cimId","simulator_id"})
-		}
-	)
+        name = "CONNECTIONSCHEMA",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"cimId", "simulator_id"})
+        }
+)
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ConnectionSchema implements Serializable{
-	private static final long serialVersionUID = 1L;
-	
-	//The synthetic id of the object.
+public class ConnectionSchema implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    //The synthetic id of the object.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -59,50 +59,50 @@ public class ConnectionSchema implements Serializable{
 //    public void setId(Long id) {
 //        this.id = id;
 //    }
-    
-    @Column(nullable=false,unique=false)
+
+    @Column(nullable = false, unique = false)
     @NotEmpty
     private String cimId;
-	public String getCimId() {
-		return cimId;
-	}
-	public void setCimId(String cimId) {
-		this.cimId = cimId;
-	}
-	
-	@ElementCollection(fetch=FetchType.EAGER)
-	@CollectionTable(name="CONNECTION")
-	private List<Connection> connections = new ArrayList<Connection>();
+    public String getCimId() {
+        return cimId;
+    }
+    public void setCimId(String cimId) {
+        this.cimId = cimId;
+    }
 
-	public List<Connection> getConnections() {
-		return connections;
-	}
-	public void setConnections(List<Connection> connections) {
-		this.connections = connections;
-	}
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "CONNECTION")
+    private List<Connection> connections = new ArrayList<Connection>();
 
-	
-	@OneToOne()
-	private SimulatorInst simulator;
+    public List<Connection> getConnections() {
+        return connections;
+    }
+    public void setConnections(List<Connection> connections) {
+        this.connections = connections;
+    }
 
-	
-	public SimulatorInst getSimulator() {
-		return simulator;
-	}
-	public void setSimulator(SimulatorInst simulator) {
-		this.simulator = simulator;
-	}
-	protected ConnectionSchema() {
-	}
 
-	public ConnectionSchema(String cimId,SimulatorInst sim) {
-		this.cimId = cimId;
-		this.simulator=sim;
-	}
-	
-	public ConnectionSchema(String cimId) {
-		this.cimId = cimId;
-		this.simulator=null;
-	}
-	
+    @OneToOne()
+    private SimulatorInst simulator;
+
+
+    public SimulatorInst getSimulator() {
+        return simulator;
+    }
+    public void setSimulator(SimulatorInst simulator) {
+        this.simulator = simulator;
+    }
+    protected ConnectionSchema() {
+    }
+
+    public ConnectionSchema(String cimId, SimulatorInst sim) {
+        this.cimId = cimId;
+        this.simulator = sim;
+    }
+
+    public ConnectionSchema(String cimId) {
+        this.cimId = cimId;
+        this.simulator = null;
+    }
+
 }

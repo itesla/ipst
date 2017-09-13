@@ -44,7 +44,7 @@ public class DymolaAdaptersMatParamsWriter {
         if (configuration == null) {
             throw new RuntimeException("null config");
         }
-        this.configuration=configuration;
+        this.configuration = configuration;
         //this below will simply log parameters ..
         for (String section : configuration.getSections()) {
             SubnodeConfiguration node = configuration.getSection(section);
@@ -55,7 +55,7 @@ public class DymolaAdaptersMatParamsWriter {
         }
     }
 
-    List<MLArray> overloadMLArray(Double p, Double d){
+    List<MLArray> overloadMLArray(Double p, Double d) {
         MLDouble mP = new MLDouble("p", new double[]{p}, 1);
         MLDouble mD = new MLDouble("d", new double[]{d}, 1);
 
@@ -63,7 +63,7 @@ public class DymolaAdaptersMatParamsWriter {
         return mlarray;
     }
 
-    public List<MLArray> underovervoltageMLArray(Double p, Double d){
+    public List<MLArray> underovervoltageMLArray(Double p, Double d) {
         MLDouble mP = new MLDouble("p", new double[]{p}, 1);
         MLDouble mD = new MLDouble("d", new double[]{d}, 1);
 
@@ -77,8 +77,8 @@ public class DymolaAdaptersMatParamsWriter {
         MLDouble mF = new MLDouble("f", new double[]{f1, f2}, 1);
         MLDouble mD = new MLDouble("d", new double[]{d1, d2, d3}, 1);
         MLDouble mNm = new MLDouble("Nm", new double[]{nm}, 1);
-        MLDouble mFInstant = new MLDouble("f_instant", new double[]{ fInstant }, 1);
-        MLDouble mFDuration = new MLDouble("f_duration", new double[]{ fDuration }, 1);
+        MLDouble mFInstant = new MLDouble("f_instant", new double[] {fInstant}, 1);
+        MLDouble mFDuration = new MLDouble("f_duration", new double[] {fDuration}, 1);
 
         List<MLArray> mlarray = Arrays.asList(mStepMin, mVarMin, mF, mD, mNm, mFInstant, mFDuration);
         return mlarray;
@@ -87,7 +87,7 @@ public class DymolaAdaptersMatParamsWriter {
     public List<MLArray> transientMLArray() {
         //currently, this index does not require any parameters ..
         //let's create a DUMMY one
-        MLDouble mP = new MLDouble("DUMMY", new double[]{ 0.0 }, 1);
+        MLDouble mP = new MLDouble("DUMMY", new double[] {0.0}, 1);
 
         List<MLArray> mlarray = Arrays.asList(mP);
         return mlarray;
@@ -96,35 +96,35 @@ public class DymolaAdaptersMatParamsWriter {
     private void writeMLArrayToPath(Path fPath, List<MLArray> mlarray) throws IOException {
         try (OutputStream w = Files.newOutputStream(fPath)) {
             //using Writable channel to make it work both for 'standard' and shrinkwrap based filesystems
-            ByteArrayOutputStream baos=new ByteArrayOutputStream();
-            WritableByteChannel wbc= Channels.newChannel(baos);
-            new MatFileWriter(wbc,mlarray);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            WritableByteChannel wbc = Channels.newChannel(baos);
+            new MatFileWriter(wbc, mlarray);
             w.write(baos.toByteArray());
         }
     }
 
     public void write(String indexName, Path outputMatFile) {
         LOGGER.info("writing input parameters for index '{}' to file  {}", indexName, outputMatFile);
-        List<MLArray> mlarray=null;
+        List<MLArray> mlarray = null;
         switch (indexName) {
             case OVERLOAD: {
                 SubnodeConfiguration sc = configuration.getSection(OVERLOAD);
-                mlarray=overloadMLArray(sc.getDouble("p"), sc.getDouble("d"));
+                mlarray = overloadMLArray(sc.getDouble("p"), sc.getDouble("d"));
                 break;
             }
             case UNDEROVERVOLTAGE: {
                 SubnodeConfiguration sc = configuration.getSection(UNDEROVERVOLTAGE);
-                mlarray=underovervoltageMLArray(sc.getDouble("p"), sc.getDouble("d"));
+                mlarray = underovervoltageMLArray(sc.getDouble("p"), sc.getDouble("d"));
                 break;
             }
             case SMALLSIGNAL: {
                 SubnodeConfiguration sc = configuration.getSection(SMALLSIGNAL);
-                mlarray=smallsignalMLArray(sc.getDouble("step_min"), sc.getDouble("var_min"), sc.getDouble("f_1"), sc.getDouble("f_2"), sc.getDouble("d_1"), sc.getDouble("d_2"), sc.getDouble("d_3"), sc.getDouble("nm"), sc.getDouble("f_instant"), sc.getDouble("f_duration"));
+                mlarray = smallsignalMLArray(sc.getDouble("step_min"), sc.getDouble("var_min"), sc.getDouble("f_1"), sc.getDouble("f_2"), sc.getDouble("d_1"), sc.getDouble("d_2"), sc.getDouble("d_3"), sc.getDouble("nm"), sc.getDouble("f_instant"), sc.getDouble("f_duration"));
                 break;
             }
             case TRANSIENT: {
                 SubnodeConfiguration sc = configuration.getSection(TRANSIENT);
-                mlarray=transientMLArray();
+                mlarray = transientMLArray();
                 break;
             }
             default:

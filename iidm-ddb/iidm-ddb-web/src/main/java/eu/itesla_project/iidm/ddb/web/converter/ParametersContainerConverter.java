@@ -19,30 +19,30 @@ import eu.itesla_project.iidm.ddb.service.DDBManager;
  *
  * @author Quinary <itesla@quinary.com>
  */
-@FacesConverter(forClass=ParametersContainer.class,value="parametersContainerConverter")
+@FacesConverter(forClass = ParametersContainer.class, value = "parametersContainerConverter")
 @ManagedBean
-public class ParametersContainerConverter implements Converter{
-		   
-	@EJB
-	private DDBManager dbManager;
-	
-	    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-	    	// Convert the unique String representation of SimulatorInst to the actual SimulatorInst object.	    
-	    	System.out.println("getAsObject :"+value);
-	    	ParametersContainer pc=dbManager.findParametersContainer(value);
-	    	return pc;
-	    }
+public class ParametersContainerConverter implements Converter {
 
-	    public String getAsString(FacesContext context, UIComponent component, Object value) {
-	        // Convert the SimulatorInt object to its unique String representation.
-	    	
-	    	System.out.println("getAsString :"+value);
-	    	
-	    	ParametersContainer pc = (ParametersContainer) value;
-	        return pc.toString();
+    @EJB
+    private DDBManager dbManager;
 
-	    }
+        public Object getAsObject(FacesContext context, UIComponent component, String value) {
+            // Convert the unique String representation of SimulatorInst to the actual SimulatorInst object.
+            System.out.println("getAsObject :" + value);
+            ParametersContainer pc = dbManager.findParametersContainer(value);
+            return pc;
+        }
 
-	}
+        public String getAsString(FacesContext context, UIComponent component, Object value) {
+            // Convert the SimulatorInt object to its unique String representation.
+
+            System.out.println("getAsString :" + value);
+
+            ParametersContainer pc = (ParametersContainer) value;
+            return pc.toString();
+
+        }
+
+    }
 
 

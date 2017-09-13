@@ -24,18 +24,18 @@ public class IntegerValidator implements Validator {
  
     @Override
     public void validate(FacesContext context, UIComponent component, Object objValue) throws ValidatorException {
-    	ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
+        ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
         String objString = objValue.toString();
          boolean valid = true;
         try {
-        	Integer valueInt=Integer.valueOf(objString);
-        }catch(NumberFormatException nEx){
-        	valid=false;
-        	
+            Integer valueInt = Integer.valueOf(objString);
+        } catch (NumberFormatException nEx) {
+            valid = false;
+
         }
         if (!valid) {
-            FacesMessage message = new FacesMessage( FacesMessage.SEVERITY_ERROR,bundle.getString("invalid.integer.summary.msg"),
-            		bundle.getString("invalid.integer.detail.msg"));
+            FacesMessage message = new FacesMessage( FacesMessage.SEVERITY_ERROR, bundle.getString("invalid.integer.summary.msg"),
+                    bundle.getString("invalid.integer.detail.msg"));
             throw new ValidatorException(message);
         }
     }

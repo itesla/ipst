@@ -185,8 +185,9 @@ public class OnlineDBUtils implements ProcessDBUtils {
                             }
                             SimulationResult sr = srMap.containsKey(state) ? srMap.get(state)
                                     : new SimulationResult(state);
-                            if (!srMap.containsKey(state))
+                            if (!srMap.containsKey(state)) {
                                 srMap.put(state, sr);
+                            }
 
                             contViols.forEach(lv -> {
                                 sr.addViolation(new Violation(lv.getCountry().toString(), lv.getSubjectId(),
@@ -231,8 +232,7 @@ public class OnlineDBUtils implements ProcessDBUtils {
         Objects.requireNonNull(processId);
         try (OnlineDb onlinedb = fact.create()) {
             OnlineProcess p = onlinedb.getProcess(processId);
-            if(p != null)
-            {
+            if (p != null) {
                 ProcessSynthesis result = new ProcessSynthesis(processId);
                 Map<Integer, StateSynthesis> statesMap = new HashMap<Integer, StateSynthesis>();
     
@@ -240,8 +240,7 @@ public class OnlineDBUtils implements ProcessDBUtils {
                     DateTime dateTime = fmt.parseDateTime(basecase);
                     Map<Integer, List<LimitViolation>> previolsMap = onlinedb.getViolations(workflowId, OnlineStep.LOAD_FLOW);
     
-                    if(previolsMap != null)
-                    {
+                    if (previolsMap != null) {
                         previolsMap.forEach( (state, limitList) -> {               
                             StateSynthesis statesynt = statesMap.get(state);
                             if (statesynt == null) {
@@ -286,8 +285,8 @@ public class OnlineDBUtils implements ProcessDBUtils {
         return null;
     }
 
-    private void fillViolationSynthesis( DateTime dateTime, List<ViolationSynthesis> violationList , List<LimitViolation> limitList ){
-        limitList.forEach( lv ->{
+    private void fillViolationSynthesis( DateTime dateTime, List<ViolationSynthesis> violationList, List<LimitViolation> limitList )  {
+        limitList.forEach( lv -> {
             LimitViolationType violationType = lv.getLimitType();
             String equipment = lv.getSubjectId();
             float limit = lv.getLimit();
@@ -296,9 +295,9 @@ public class OnlineDBUtils implements ProcessDBUtils {
             Optional<ViolationSynthesis> search_synt = violationList.stream()
                     .filter(v -> v.getEquipment().equals(equipment))
                     .filter(v -> v.getType().equals(violationType)).findFirst();
-            if (search_synt.isPresent())
+            if (search_synt.isPresent()) {
                 synt = search_synt.get();
-            else {
+            } else {
                 synt = new ViolationSynthesis(equipment, lv.getBaseVoltage(), violationType, limit, lv.getLimitName());
                 violationList.add(synt);
             }

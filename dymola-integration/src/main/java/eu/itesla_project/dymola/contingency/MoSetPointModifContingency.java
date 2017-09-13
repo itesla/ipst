@@ -31,5 +31,7 @@ public class MoSetPointModifContingency extends MoContingency {
         return null;
     }
 
-    public double getT1() {return Double.parseDouble(getEventParameters().get("t1"));}
+    public double getT1() {
+        return Double.parseDouble(getEventParameters().get("t1"));
+    }
 }
