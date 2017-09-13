@@ -23,6 +23,9 @@ import org.slf4j.LoggerFactory;
 public class EjbClientCtxUtils {
     static Logger LOGGER = LoggerFactory.getLogger(EjbClientCtxUtils.class.getName());
 
+    private EjbClientCtxUtils() {
+    }
+
     /*
     public static Context createEjbContext(String host, int port, String userName, String userPassword)
             throws NamingException {

@@ -25,6 +25,8 @@ import eu.itesla_project.modelica_export.util.eurostag.EurostagModDefaultTypes;
  */
 public class Utils {
 
+    private Utils() {
+    }
 
     public static String cleanModel(String modelicaModel) {
         String cleanedModel = new String();

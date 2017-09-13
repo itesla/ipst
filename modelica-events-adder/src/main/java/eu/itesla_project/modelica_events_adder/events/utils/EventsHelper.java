@@ -18,6 +18,9 @@ import org.slf4j.LoggerFactory;
  */
 public class EventsHelper {
 
+    private EventsHelper() {
+    }
+
     public static String parseBusName() {
         return null;
     }

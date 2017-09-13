@@ -39,6 +39,9 @@ import javax.xml.bind.Unmarshaller;
  */
 public class Utils {
 
+    private Utils() {
+    }
+
     public static List<String> getEquipmentData(Equipment eq) {
         List<String> ret = new ArrayList<String>();
         ret.add("Equipment id:" + eq.getId() + ", cimId:" + eq.getCimId());

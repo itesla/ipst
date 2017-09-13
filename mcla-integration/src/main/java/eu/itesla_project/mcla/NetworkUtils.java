@@ -22,6 +22,9 @@ import eu.itesla_project.iidm.network.Terminal;
  */
 public class NetworkUtils {
 
+    private NetworkUtils() {
+    }
+
     public static ArrayList<String> getRenewableGeneratorsIds(Network network) {
         Objects.requireNonNull(network, "network is null");
         ArrayList<String> generatorsIds = new ArrayList<String>();

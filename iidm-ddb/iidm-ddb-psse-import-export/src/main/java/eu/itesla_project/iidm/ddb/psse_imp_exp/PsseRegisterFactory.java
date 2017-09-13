@@ -123,6 +123,9 @@ public class PsseRegisterFactory {
         checkConsistency(modelsParsDict);
     }
 
+    private PsseRegisterFactory() {
+    }
+
     private static boolean checkConsistency(Map<String, String[]> modelParametersDictionary) {
         boolean isConsistent = true;
         for (String s : modelParametersDictionary.keySet()) {

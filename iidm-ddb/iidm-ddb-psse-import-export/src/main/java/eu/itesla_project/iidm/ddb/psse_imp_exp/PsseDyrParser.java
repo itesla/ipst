@@ -26,6 +26,9 @@ public class PsseDyrParser {
 
     static Logger log = LoggerFactory.getLogger(PsseDyrParser.class);
 
+    private PsseDyrParser() {
+    }
+
     public static List<PsseRegister> parseFile(File file) throws IOException {
         List<PsseRegister> list = new ArrayList<>();
         int lastLineRead = 0;

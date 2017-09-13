@@ -17,6 +17,10 @@ import java.util.regex.Pattern;
  * @author Silvia Machado <machados@aia.es>
  */
 public class ModelicaGrammar {
+
+    private ModelicaGrammar() {
+    }
+
     public static CommentScanner newCommentScanner(CommentScannerEventHandler e) {
         CommentScanner s = new CommentScanner(e);
         s.setQuote(ModelicaGrammar.QUOTE_REGEX);

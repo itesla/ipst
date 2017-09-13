@@ -21,6 +21,9 @@ import java.util.Map;
  */
 public final class ModelConverter {
 
+    private ModelConverter() {
+    }
+
     /**Convert PSSE regulator-constant connection to Modelica connect regulator
      *
      */

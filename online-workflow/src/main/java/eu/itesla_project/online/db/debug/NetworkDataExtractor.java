@@ -22,6 +22,9 @@ public class NetworkDataExtractor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NetworkDataExtractor.class);
 
+    private NetworkDataExtractor() {
+    }
+
     public static NetworkData extract(Network network) {
         Objects.requireNonNull(network, "network is null");
         LOGGER.info("Extracting data of network {}", network.getId());

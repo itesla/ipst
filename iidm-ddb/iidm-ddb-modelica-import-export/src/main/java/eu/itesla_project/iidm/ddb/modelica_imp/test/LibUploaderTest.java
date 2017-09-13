@@ -19,6 +19,9 @@ import org.slf4j.LoggerFactory;
  */
 public class LibUploaderTest {
 
+    private LibUploaderTest() {
+    }
+
     public static void main(String[] args) {
         if (args.length > 0) {
             libFilePath = Paths.get(args[0]);

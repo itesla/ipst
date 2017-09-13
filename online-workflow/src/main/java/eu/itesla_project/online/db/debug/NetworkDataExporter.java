@@ -33,6 +33,9 @@ public class NetworkDataExporter {
     private static String generatorsFile = "generators.csv";
     private static String loadsFile = "loads.csv";
 
+    private NetworkDataExporter() {
+    }
+
     public static void export(NetworkData networkData, Path folder) {
         Objects.requireNonNull(networkData, "network data is null");
         LOGGER.info("Exporting data of network {} to folder {}", networkData.getNetworkId(), folder);

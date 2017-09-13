@@ -34,7 +34,7 @@ public class DtaParser {
 
 
 
-    public DtaParser(final String name) {
+    private DtaParser(final String name) {
     }
 
     static HashMap<String, String[]> componentsVariablesNames = new HashMap<String, String[]>();

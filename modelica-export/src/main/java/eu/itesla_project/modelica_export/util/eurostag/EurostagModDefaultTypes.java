@@ -48,4 +48,7 @@ public class EurostagModDefaultTypes {
 
     public final static String M1S_MACHINES                        = "iPSL.Electrical.Machines.Eurostag.PwGeneratorM1S";
     public final static String M2S_MACHINES                        = "iPSL.Electrical.Machines.Eurostag.PwGeneratorM2S";
+
+    private EurostagModDefaultTypes() {
+    }
 }

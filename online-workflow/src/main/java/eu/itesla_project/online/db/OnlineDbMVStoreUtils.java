@@ -39,6 +39,9 @@ import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
  */
 public class OnlineDbMVStoreUtils {
 
+    private OnlineDbMVStoreUtils() {
+    }
+
     public static String contingenciesIdsToJson(Collection<String> contingenciesIds) {
         return JSONSerializer.toJSON(contingenciesIds).toString();
     }

@@ -34,6 +34,9 @@ public class XmlActionsContingenciesUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlActionsContingenciesUtils.class);
 
+    private XmlActionsContingenciesUtils() {
+    }
+
     /**
      *
      * @return Zone by number

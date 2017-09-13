@@ -25,6 +25,9 @@ public class Utils {
 
     private static final String EMPTY_CONTINGENCY_ID = "Empty-Contingency";
 
+    private Utils() {
+    }
+
     public static String actionsToJson(OnlineWorkflowResults wfResults, String contingencyId, Integer stateId) {
         Map<String, Object> actionInfo = new HashMap<>();
         actionInfo.put("actions_found", wfResults.getUnsafeStatesWithActions(contingencyId).get(stateId));

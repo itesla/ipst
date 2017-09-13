@@ -172,4 +172,7 @@ public class EurostagFixedData {
 
     public final static String OPENR            = "OpenR_end";
 
+    private EurostagFixedData() {
+    }
+
 }

@@ -22,6 +22,9 @@ import org.slf4j.Logger;
  */
 public class Utils {
 
+    private Utils() {
+    }
+
     public static String workingDirectory() {
         return System.getProperty("java.io.tmpdir");
     }

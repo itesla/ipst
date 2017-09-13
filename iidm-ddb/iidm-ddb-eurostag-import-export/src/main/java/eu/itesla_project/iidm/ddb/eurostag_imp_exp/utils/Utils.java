@@ -24,6 +24,9 @@ public class Utils {
 
     static Logger log = LoggerFactory.getLogger(Utils.class.getName());
 
+    private Utils() {
+    }
+
     public static byte[] stringAsByteArrayUTF8(String par) {
         try {
             return par.getBytes("UTF-8");
