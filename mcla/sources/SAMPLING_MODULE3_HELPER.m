@@ -91,4 +91,4 @@ catch err
     disp(getReport(err,'extended'));
     exitcode=-1;
 end
-save(ofile, '-struct', 'totmoutput');
+save(ofile, '-struct', 'totmoutput','-v7.3');

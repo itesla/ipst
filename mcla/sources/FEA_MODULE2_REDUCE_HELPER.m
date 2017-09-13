@@ -108,6 +108,6 @@ catch err
     exitcode=-1;
 end
 
-save(ofile, '-struct', 'totmoutput');
+save(ofile, '-struct', 'totmoutput','-v7.3');
 % exit(exitcode);
 end
