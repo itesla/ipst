@@ -83,6 +83,7 @@
         <form method="POST" action="./itesla" enctype="application/x-www-form-urlencoded" onsubmit="this.action = PEPITE.DATASERVER.urlParts.restRelativeUrl+'/'+$('#dbPath').val()+'/itesla'">
             DB: <input id="dbPath" size="100" value="/DB/Table/Collection"><br/>
             Dir: <input name="dir" size="100"><br/>
+            Proc: <select name="parallel"><option value="true" selected>parallel</option><option value="false">sequential</option></select><br/>
             <input type="submit"/>
         </form>
 
