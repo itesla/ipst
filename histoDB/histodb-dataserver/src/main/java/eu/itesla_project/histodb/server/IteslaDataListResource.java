@@ -26,32 +26,32 @@ import java.util.Map;
  * Time: 16:19
  * To change this template use File | Settings | File Templates.
  */
-public class IteslaDataListResource
-    extends DataListResource
-{
+public class IteslaDataListResource extends DataListResource {
 
     @Post("form:html")
     public Object postCimDirectory(Form queryForm) throws IOException {
 
-        if (queryForm == null) queryForm = getRequest().getOriginalRef().getQueryAsForm();
+        if (queryForm == null)
+            queryForm = getRequest().getOriginalRef().getQueryAsForm();
 
         if (dataId == null || storeId == null) {
             throw new IllegalArgumentException("Missing datasource or store id");
         } else {
 
-            ITeslaDatastore store = (ITeslaDatastore)getApplication().getDataService().getDataStore(storeId);
+            ITeslaDatastore store = (ITeslaDatastore) getApplication().getDataService().getDataStore(storeId);
             if (store == null) {
                 getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
-                return "Datastore does not exist: "+storeId;
+                return "Datastore does not exist: " + storeId;
             }
 
             ITeslaDatasource ds = store.getDataSource(dataId);
             if (ds == null) {
                 ds = store.createDataSource(dataId);
             }
-
+            boolean parallel = queryForm.getFirstValue("parallel") != null
+                    ? Boolean.valueOf(queryForm.getFirstValue("parallel")) : true;
             CimHistoImporter importer = new CimHistoImporter(ds);
-            importer.addCim(new File(queryForm.getFirstValue("dir")));
+            importer.addCim(new File(queryForm.getFirstValue("dir")), parallel);
 
             ds.persistState();
         }
@@ -62,20 +62,23 @@ public class IteslaDataListResource
     @Override
     protected void insertRecord(DataSource ds, String[] headers, String[] csvValues) {
 
-        if (((ITeslaDatasource)ds).getLatestNetwork() != null) {
+        if (((ITeslaDatasource) ds).getLatestNetwork() != null) {
             // if a reference network is available, use it as template
 
             // assume the networkReference contains only one set of Values
             LinkedHashMap<String, Object> valueMap = new LinkedHashMap<String, Object>();
-            for (Map.Entry<HistoDbAttributeId, Object> entry : IIDM2DB.extractCimValues(((ITeslaDatasource) ds).getLatestNetwork(), new IIDM2DB.Config(null, true)).getSingleValueMap().entrySet()) {
+            for (Map.Entry<HistoDbAttributeId, Object> entry : IIDM2DB
+                    .extractCimValues(((ITeslaDatasource) ds).getLatestNetwork(), new IIDM2DB.Config(null, true))
+                    .getSingleValueMap().entrySet()) {
                 valueMap.put(entry.getKey().toString(), entry.getValue());
             }
-            
+
             Object[] newValues = parseCsvRecord(ds, headers, csvValues);
 
-            for (int i=0;i<headers.length;i++) valueMap.put(headers[i], newValues[i]);
+            for (int i = 0; i < headers.length; i++)
+                valueMap.put(headers[i], newValues[i]);
 
-            ds.putData(valueMap.keySet().toArray(new String[]{}), valueMap.values().toArray());
+            ds.putData(valueMap.keySet().toArray(new String[] {}), valueMap.values().toArray());
         } else
             super.insertRecord(ds, headers, csvValues);
     }
