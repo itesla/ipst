@@ -22,7 +22,7 @@ import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.jws.WebMethod; 
+import javax.jws.WebMethod;
 import org.apache.cxf.annotations.EndpointProperties;
 import org.apache.cxf.annotations.EndpointProperty;
 import org.apache.cxf.interceptor.InInterceptors;
@@ -66,7 +66,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
       "org.apache.cxf.interceptor.security.SimpleAuthorizingInterceptor"}
 )
 @OutInterceptors(interceptors = "org.apache.cxf.interceptor.LoggingOutInterceptor")
-@XmlSeeAlso({ 
+@XmlSeeAlso({
     eu.itesla_project.iidm.ddb.model.ParameterBoolean.class,
     eu.itesla_project.iidm.ddb.model.ParameterString.class,
     eu.itesla_project.iidm.ddb.model.ParameterInteger.class,

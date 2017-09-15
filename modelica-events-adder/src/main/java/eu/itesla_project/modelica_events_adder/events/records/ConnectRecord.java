@@ -40,7 +40,7 @@ public class ConnectRecord {
 
         return connectedElem;
     }
-        
+
     public String getNodeF() {
         return nodeF;
     }

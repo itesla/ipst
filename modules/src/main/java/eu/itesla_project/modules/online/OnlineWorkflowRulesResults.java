@@ -47,7 +47,7 @@ public interface OnlineWorkflowRulesResults {
     List<Integer> getStatesWithSecurityRulesResults(String contingencyId);
 
     /**
-     * Get the status (SAFE, SAFE_WITH_CORRECTIVE_ACTIONS, UNSAFE) of a state for a specific contingency 
+     * Get the status (SAFE, SAFE_WITH_CORRECTIVE_ACTIONS, UNSAFE) of a state for a specific contingency
      * @param contingencyId  the id of the contingency
      * @param stateId  the id of the state
      * @return the status (SAFE, SAFE_WITH_CORRECTIVE_ACTIONS, UNSAFE) of the state
@@ -58,7 +58,7 @@ public interface OnlineWorkflowRulesResults {
      * Get the results of the application of the security rules to a state for a contingency
      * @param contingencyId  the id of the contingency
      * @param stateId  the id of the state
-     * @return the map of [index, security flag] pair, output of the application of the security rules  on a state for a contingency 
+     * @return the map of [index, security flag] pair, output of the application of the security rules  on a state for a contingency
      */
     Map<String, Boolean> getStateResults(String contingencyId, Integer stateId);
 

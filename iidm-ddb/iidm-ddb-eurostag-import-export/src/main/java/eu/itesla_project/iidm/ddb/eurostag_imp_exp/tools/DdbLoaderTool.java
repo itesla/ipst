@@ -39,7 +39,7 @@ public class DdbLoaderTool implements Tool {
         String jbossUser = line.getOptionValue(DdbLoaderCommand.USER);
         String jbossPassword = line.getOptionValue(DdbLoaderCommand.PASSWORD);
         String eurostagVersion = line.getOptionValue(DdbLoaderCommand.EUROSTAG_VERSION);
-        
+
         DdbConfig ddbConfig = new DdbConfig(jbossHost, jbossPort, jbossUser, jbossPassword);
         Path ddData = Paths.get(dataDir);
         Path ddPath = ddData.resolve("gene");

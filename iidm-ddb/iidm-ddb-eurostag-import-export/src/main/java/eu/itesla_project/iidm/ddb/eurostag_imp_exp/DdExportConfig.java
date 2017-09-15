@@ -119,47 +119,47 @@ public class DdExportConfig {
     public boolean getAutomatonA12() {
         return automatonA12;
     }
-    
+
     public boolean getAutomatonA14() {
         return automatonA14;
     }
-    
+
     public boolean getExportRST() {
         return importExportRST;
     }
-    
+
     public boolean getExportACMC() {
         return importExportACMC;
     }
-    
+
     public boolean getLVLoadModeling() {
         return LVLoadModeling;
     }
-    
+
     public boolean getImportRST() {
         return importExportRST;
     }
-    
+
     public boolean getImportACMC() {
         return importExportACMC;
     }
-    
+
     public String getRSTRegulInjector() {
         return RSTRegulInjector;
     }
-    
+
     public String getRSTRegulGenerator() {
         return RSTRegulGenerator;
     }
-    
+
     public String getRSTRegulGeneratorDelete() {
         return RSTRegulGeneratorDelete;
     }
-    
+
     public String getACMCRegul() {
         return ACMCRegul;
     }
-    
+
     public String getRSTPilotGenerators() {
         return RSTPilotGenerators;
     }
@@ -183,39 +183,39 @@ public class DdExportConfig {
     public void setAutomatonA12(Boolean automatonA12) {
         this.automatonA12 = automatonA12;
     }
-    
+
     public void setAutomatonA14(Boolean automatonA14) {
         this.automatonA14 = automatonA14;
     }
-    
+
     public void setImportExportRST(Boolean importExportRST) {
         this.importExportRST = importExportRST;
     }
-    
+
     public void setLVLoadModeling(Boolean LVLoadModeling) {
         this.LVLoadModeling = LVLoadModeling;
     }
-    
+
     public void setImportExportACMC(Boolean importExportACMC) {
         this.importExportACMC = importExportACMC;
     }
-    
+
     public void setRSTRegulInjector(String RSTRegulInjector) {
         this.RSTRegulInjector = RSTRegulInjector;
     }
-    
+
     public void setRSTRegulGenerator(String RSTRegulGenerator) {
         this.RSTRegulGenerator = RSTRegulGenerator;
     }
-    
+
     public void setRSTRegulGeneratorDelete(String RSTRegulGeneratorDelete) {
         this.RSTRegulGeneratorDelete = RSTRegulGeneratorDelete;
     }
-    
+
     public void setACMCRegul(String ACMCRegul) {
         this.ACMCRegul = ACMCRegul;
     }
-    
+
     public void setRSTPilotGenerators(String RSTPilotGenerators) {
         this.RSTPilotGenerators = RSTPilotGenerators;
     }

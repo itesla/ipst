@@ -80,7 +80,7 @@ public class MontecarloSamplerConfig {
 
     public static MontecarloSamplerConfig load() {
         ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("montecarloSampler");
-        
+
         Path binariesDir = config.getPathProperty("binariesDir");
         Path runtimeHomeDir = config.getPathProperty("runtimeHomeDir");
         Path tmpDir = config.getPathProperty("tmpDir");
@@ -103,7 +103,7 @@ public class MontecarloSamplerConfig {
         return tmpDir;
     }
 
-    public Integer getOptionSign() { 
+    public Integer getOptionSign() {
         return optionSign;
     }
 

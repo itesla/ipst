@@ -31,7 +31,7 @@ public class RedispatcherConfig {
 
     public static RedispatcherConfig load() {
         ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("redispatcher");
-        
+
         float redispatchLimitsPercentage = config.getFloatProperty("redispatchLimitsPercentage");
 
         return new RedispatcherConfig(redispatchLimitsPercentage);

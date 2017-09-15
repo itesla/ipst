@@ -41,21 +41,19 @@
 
 package org.openmodelica.javaomc;
 
+import org.omg.CORBA.ORB;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
-import org.openmodelica.javaomc.OmcCommunication;
-import org.openmodelica.javaomc.OmcCommunicationHelper;
-import org.omg.CORBA.ORB;
-
 /**
  * The OMCProxy is the glue between the OpenModelica Compiler and MDT.
  * It uses the interactive API of OMC to get information about classes
  * and to load classes into OMC.
- * 
+ *
  * @author Andreas Remar
  * @author Adrian Pop
  */
@@ -237,7 +235,7 @@ public class OMCProxy {
      * Start a new OMC server.
      */
     private static void startServer() throws ConnectException {
-        File tmp[] = getOmcBinaryPaths();
+        File[] tmp = getOmcBinaryPaths();
 
         File omcBinary = tmp[0];
         File workingDirectory = new File(".");
@@ -259,7 +257,7 @@ public class OMCProxy {
             logOMCStatus("OMC object reference file is already on disk, but is old, start a new server.");
         }
 
-        String command[] = {omcBinary.getAbsolutePath(), "+c=" + corbaSessionName, "+d=interactiveCorba"};
+        String[] command = {omcBinary.getAbsolutePath(), "+c=" + corbaSessionName, "+d=interactiveCorba"};
         try {
             logOMCStatus("Running command " + command[0] + " " + command[1] + " " + command[2]);
             logOMCStatus("Setting working directory to " + workingDirectory.getAbsolutePath());
@@ -305,7 +303,7 @@ public class OMCProxy {
      */
     private static void setupOmcc(String stringifiedObjectReference) {
         /* Can't remember why this is needed. But it is. */
-        String args[] = {null};
+        String[] args = {null};
 
         ORB orb;
         orb = ORB.init(args, null);

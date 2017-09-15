@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
 public class WCATool implements Tool {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WCATool.class);
-    
+
     private static final double DEFAULT_PURITY_THRESHOLD = 0.95;
 
     private static final char CSV_SEPARATOR = ';';

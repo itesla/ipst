@@ -34,14 +34,14 @@ public class Connect2GeneratorsRecord extends ModelicaRecord {
     @Override
     public void createModelicaName(ModExportContext modContext, DDBManager ddbManager, SimulatorInst modelicaSim) {
         nodeName = modContext.dictionary.getModelicaName(gen);
-  
+
         String modelicaName = EurostagFixedData.CONNECT + nodeName + ", " + nodeName + EurostagFixedData.ANNOT_CONNECT;
-        
+
         modContext.dictionary.add(gen, nodeName);
 
         super.setModelicaName(modelicaName);
     }
-    
+
     public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
         this.addValue(EurostagFixedData.CONNECT);
         this.addValue(nodeName);
@@ -75,7 +75,7 @@ public class Connect2GeneratorsRecord extends ModelicaRecord {
     public Connect2GeneratorsRecord getClassName() {
         return this;
     }
-    
+
     protected String        nodeName;
     protected Generator        gen            = null;
 

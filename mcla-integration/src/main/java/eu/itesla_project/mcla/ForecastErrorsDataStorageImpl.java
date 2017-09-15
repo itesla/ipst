@@ -426,5 +426,5 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
     private String parametersFileName(TimeHorizon timeHorizon) {
         return PARAMETERS_FILENAME_PREFIX + timeHorizon.getLabel() + ".properties";
     }
- 
+
 }

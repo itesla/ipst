@@ -17,7 +17,7 @@ import eu.itesla_project.modules.online.OnlineWorkflowParameters;
 public interface OnlineApplicationListener {
 
     void onBusyCoresUpdate(int[] busyCores);
-    
+
     void onWorkflowUpdate(StatusSynthesis status);
 
     void onWcaUpdate(RunningSynthesis wcaRunning);
@@ -35,7 +35,7 @@ public interface OnlineApplicationListener {
     void onWcaContingencies(WcaContingenciesSynthesis wcaContingencies);
 
     void onStatesWithSecurityRulesResultsUpdate(IndexSecurityRulesResultsSynthesis indexesResults);
- 
+
     void onDisconnection();
 
     void onConnection();

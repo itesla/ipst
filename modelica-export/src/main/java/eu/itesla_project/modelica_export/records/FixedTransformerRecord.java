@@ -12,14 +12,12 @@ import eu.itesla_project.iidm.network.Bus;
 import eu.itesla_project.iidm.network.Equipments;
 import eu.itesla_project.iidm.network.TwoWindingsTransformer;
 import eu.itesla_project.modelica_export.ModExportContext;
-import eu.itesla_project.modelica_export.util.IIDMParameter;
 import eu.itesla_project.modelica_export.util.StaticData;
 import eu.itesla_project.modelica_export.util.eurostag.EurostagFixedData;
 import eu.itesla_project.modelica_export.util.eurostag.EurostagModDefaultTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 
 /**
  * Create a Modelica Fixed Transformer Record from IIDM Transformer

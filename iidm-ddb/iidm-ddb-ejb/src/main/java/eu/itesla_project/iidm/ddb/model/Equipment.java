@@ -44,7 +44,7 @@ public class Equipment implements Serializable {
 //        this.id = id;
 //    }
 
-    //TBD: unique=true to be matched with versions&co 
+    //TBD: unique=true to be matched with versions&co
     @Column(nullable = false, unique = true)
     @NotEmpty
     private String cimId;
@@ -54,12 +54,12 @@ public class Equipment implements Serializable {
     public void setCimId(String cimId) {
         this.cimId = cimId;
     }
-    
+
     //@OneToOne(cascade = CascadeType.PERSIST, fetch=FetchType.EAGER)
     //@OneToOne(fetch=FetchType.EAGER)
     @ManyToOne(fetch = FetchType.EAGER)
     ModelTemplateContainer modelContainer;
-    
+
     //@OneToOne(cascade = CascadeType.PERSIST, fetch=FetchType.EAGER)
     @ManyToOne(fetch = FetchType.EAGER)
     ParametersContainer parametersContainer;
@@ -75,7 +75,7 @@ public class Equipment implements Serializable {
     public void setParametersContainer(ParametersContainer parametersContainer) {
         this.parametersContainer = parametersContainer;
     }
-    
+
     protected Equipment() {
     }
 

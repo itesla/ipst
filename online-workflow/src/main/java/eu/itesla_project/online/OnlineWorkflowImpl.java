@@ -136,7 +136,7 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
         this.id = DateTimeFormat.forPattern("yyyyMMdd_HHmm_").print(this.parameters.getBaseCaseDate()) + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
         logger.info(this.parameters.toString());
     }
-    
+
     /* (non-Javadoc)
      * @see eu.itesla_project.online.OnlineWorkflowInterface#getId()
      */

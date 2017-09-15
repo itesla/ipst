@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.text.AbstractDocument.BranchElement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -335,7 +334,7 @@ public class ModEventsExport {
         breakerConnect = breakerConnect + StaticData.NEW_LINE;
 
         //Creating the connect to the other side
-        breakerConnect = breakerConnect + StaticData.CONNECT;;
+        breakerConnect = breakerConnect + StaticData.CONNECT;
         nodeName1 = eventRecord.getModelicaName().concat(".").concat(StaticData.BREAKER_S_PIN);
         nodeName2 = otherSideRecord.getModelicaName().concat(".").concat(StaticData.POSITIVE_PIN);
         breakerConnect = breakerConnect + nodeName1 + ", " + nodeName2 + StaticData.ANNOT_CONNECT;

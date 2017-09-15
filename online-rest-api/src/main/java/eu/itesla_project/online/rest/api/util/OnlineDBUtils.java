@@ -60,7 +60,7 @@ public class OnlineDBUtils implements ProcessDBUtils {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * eu.itesla_project.online.rest.api.util.ProcessDBUtils#getProcessList(
      * java. lang.String, java.lang.String, java.lang.String,
@@ -92,7 +92,7 @@ public class OnlineDBUtils implements ProcessDBUtils {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * eu.itesla_project.online.rest.api.util.ProcessDBUtils#getProcess(java.
      * lang.String)
@@ -115,7 +115,7 @@ public class OnlineDBUtils implements ProcessDBUtils {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * eu.itesla_project.online.rest.api.util.ProcessDBUtils#getWorkflowResult(
      * java.lang.String, java.lang.String)
@@ -235,25 +235,25 @@ public class OnlineDBUtils implements ProcessDBUtils {
             if (p != null) {
                 ProcessSynthesis result = new ProcessSynthesis(processId);
                 Map<Integer, StateSynthesis> statesMap = new HashMap<Integer, StateSynthesis>();
-    
+
                 p.getWorkflowsMap().forEach((basecase, workflowId) -> {
                     DateTime dateTime = fmt.parseDateTime(basecase);
                     Map<Integer, List<LimitViolation>> previolsMap = onlinedb.getViolations(workflowId, OnlineStep.LOAD_FLOW);
-    
+
                     if (previolsMap != null) {
-                        previolsMap.forEach( (state, limitList) -> {               
+                        previolsMap.forEach( (state, limitList) -> {
                             StateSynthesis statesynt = statesMap.get(state);
                             if (statesynt == null) {
                                 statesynt = new StateSynthesis(state);
                                 statesMap.put(state, statesynt);
-                            }                  
+                            }
                             fillViolationSynthesis(dateTime, statesynt.getPreContingencyViolations(), limitList);
                         });
                     }
-    
+
                     Map<Integer, Map<String, List<LimitViolation>>> violsMap = onlinedb
                             .getPostContingencyViolations(workflowId);
-    
+
                     if (violsMap != null) {
                         violsMap.forEach((state, contingencyViolationMap) -> {
                             StateSynthesis statesynt = statesMap.get(state);
@@ -261,9 +261,9 @@ public class OnlineDBUtils implements ProcessDBUtils {
                                 statesynt = new StateSynthesis(state);
                                 statesMap.put(state, statesynt);
                             }
-    
+
                             Map<String, List<ViolationSynthesis>> contingencyMap = statesynt.getPostContingencyViolations();
-    
+
                             contingencyViolationMap.forEach( (cont, limitList) -> {
                                 List<ViolationSynthesis> violationList = contingencyMap.get(cont);
                                 if (violationList == null) {

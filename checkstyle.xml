@@ -9,16 +9,28 @@
         <property name="lineSeparator" value="lf_cr_crlf"/>
     </module>
 
+    <module name="RegexpSingleline">
+        <property name="format" value="\s+$"/>
+        <property name="minimum" value="0"/>
+        <property name="maximum" value="0"/>
+        <property name="message" value="Line has trailing spaces."/>
+    </module>
+
     <module name="TreeWalker">
+        <module name="ArrayTypeStyle"/>
         <module name="EmptyCatchBlock">
             <property name="exceptionVariableName" value="ignored"/>
         </module>
+        <module name="EmptyStatement"/>
+        <module name="IllegalImport"/>
         <module name="LeftCurly"/>
         <module name="NeedBraces"/>
         <module name="NoWhitespaceAfter"/>
         <module name="NoWhitespaceBefore"/>
+        <module name="RedundantImport"/>
         <module name="RightCurly"/>
         <module name="WhitespaceAfter"/>
         <module name="WhitespaceAround"/>
+        <module name="UnusedImports"/>
     </module>
 </module>

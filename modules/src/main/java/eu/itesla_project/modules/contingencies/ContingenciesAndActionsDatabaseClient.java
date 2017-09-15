@@ -36,14 +36,14 @@ public interface ContingenciesAndActionsDatabaseClient extends ContingenciesProv
      * @return the list of contingencies
      */
     List<Contingency> getContingencies(Network network);
-    
+
     /**
      * Get the actions of a network
      * @param network the network
      * @return the list of actions
      */
     Collection<Action> getActions(Network network);
-    
+
     /**
      * Get an action of a network
      * @param id the id of the action
@@ -51,61 +51,61 @@ public interface ContingenciesAndActionsDatabaseClient extends ContingenciesProv
      * @return the action
      */
     Action getAction(String id, Network network);
-    
+
     /**
      * Get the zones
      * @return the zones
      */
-    Collection<Zone> getZones();    
-    
+    Collection<Zone> getZones();
+
     /**
      * Get the zones of a network
      * @param network the network
      * @return the list of zones
      */
     Collection<Zone> getZones(Network network);
-    
+
     /**
      * Get a zone
      * @param id the id of the zone
      * @return the zone
      */
     Zone getZone(String id);
-    
+
     /**
      * Get the action plans
      * @return the list of action plans
      */
     Collection<ActionPlan> getActionPlans();
-    
+
     /**
      * Get an action plan
      * @param id the id of the action plan
      * @return the action plan
      */
     ActionPlan getActionPlan(String id);
-    
+
     /**
      * Get the action plans of a network
      * @param network the network
      * @return the list of action plans
      */
-    Collection<ActionPlan> getActionPlans(Network network);    
-    
+    Collection<ActionPlan> getActionPlans(Network network);
+
     /**
      * Get the associations, that include a specific contingency, between actions, contingencies and constraints
      * @param contingencyId the id of the contingency
      * @return the list of associations
      */
     Collection<ActionsContingenciesAssociation> getActionsCtgAssociationsByContingency(String contingencyId);
-    
+
     /**
      * Get the associations between actions, contingencies and constraints of a network
      * @param network the network
      * @return the list of associations
      */
     List<ActionsContingenciesAssociation> getActionsCtgAssociations(Network network);
-    
+
     /**
      * Get the associations between actions, contingencies and constraints
      * @return the list of associations

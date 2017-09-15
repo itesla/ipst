@@ -20,8 +20,8 @@
  *   distribution.
  *
  * * Neither the name of Institute of High Performance Computing
- *   nor the names of its contributors may be used to endorse or 
- *   promote products derived from this software without specific 
+ *   nor the names of its contributors may be used to endorse or
+ *   promote products derived from this software without specific
  *   prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS

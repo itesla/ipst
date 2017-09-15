@@ -29,7 +29,7 @@ public class EquipmentListProducer {
 
     @Inject
     private Logger log;
-    
+
     @EJB
     private DDBManager pmanager;
 
@@ -41,7 +41,7 @@ public class EquipmentListProducer {
     @Named
     public List<Equipment> getEquipments() {
         return equipments;
-    }    
+    }
 
     @PostConstruct
     public void retrieveAllEquipments() {

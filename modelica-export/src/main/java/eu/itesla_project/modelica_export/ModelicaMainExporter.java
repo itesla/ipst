@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.naming.NamingException;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;

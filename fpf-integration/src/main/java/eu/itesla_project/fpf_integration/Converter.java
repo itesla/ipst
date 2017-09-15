@@ -39,7 +39,7 @@ import eu.itesla_project.modules.test.AutomaticContingenciesAndActionsDatabaseCl
 
 /**
  * This class reads a CIM file and creates a file with the input data for the FPF module
- * 
+ *
  * @author Leonel Carvalho - INESC TEC
  */
 
@@ -91,7 +91,7 @@ public class Converter {
     private static String idT3W = "T3W_";
 
     // Seasons
-    private static final String seasons[] = {
+    private static final String[] seasons = {
         "Winter", "Winter", "Spring", "Spring", "Summer", "Summer",
         "Summer", "Summer", "Fall", "Fall", "Winter", "Winter"
     };

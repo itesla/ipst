@@ -16,7 +16,7 @@ import javax.json.stream.JsonGenerator;
 public class CountriesMessage extends Message {
 
     private final Country[] countries;
-    
+
     public CountriesMessage(Country[] countries) {
         this.countries = countries;
     }

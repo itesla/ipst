@@ -23,7 +23,6 @@ import eu.itesla_project.modelica_export.util.eurostag.EurostagFixedData;
 import eu.itesla_project.modelica_export.util.eurostag.EurostagModDefaultTypes;
 import eu.itesla_project.modelica_export.util.psse.PsseFixedData;
 import eu.itesla_project.modelica_export.util.psse.PsseModDefaultTypes;
-import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -37,7 +37,7 @@ public class InitializationData {
     //Regulator's and generator's variables initialized
     private Map<String, String> genInitializedValues = new HashMap<String, String>();
     private Map<String, Map<String, String>> regInitializedValues = new HashMap<String, Map<String, String>>();
- 
+
 
     public InitializationData(Generator generator, GeneratorRecord generatorRecord, Map<Internal, RegulatorRecord> regulatorRecordsMap) {
         this.generator = generator;

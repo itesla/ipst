@@ -310,8 +310,8 @@ public class DtaParser {
     }
 
     public static String getVarFType(String componentName, String varName) {
-        String varNames[] = componentsVariablesNames.get(componentName);
-        String varTypes[] = componentsDescriptors.get(componentName);
+        String[] varNames = componentsVariablesNames.get(componentName);
+        String[] varTypes = componentsDescriptors.get(componentName);
         if ((varNames == null) || (varTypes == null)) {
             return null;
         }

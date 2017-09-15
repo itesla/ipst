@@ -28,11 +28,11 @@ public class ActionImpl implements Action {
     private final boolean curative;
 
     private final List<ActionElement> elements;
-    
-    private Set<String> zones; 
-    
+
+    private Set<String> zones;
+
     private Number startTime;
-    
+
     private ActionParameters parameters;
 
     public ActionImpl(String id, boolean preventive, boolean curative, ActionElement... elements) {
@@ -45,7 +45,7 @@ public class ActionImpl implements Action {
         this.curative = curative;
         this.elements = elements;
     }
-    
+
     public ActionImpl(String id, boolean preventive, boolean curative, List<ActionElement> elements,  List<String> zones) {
         this.id = id;
         this.preventive = preventive;
@@ -53,7 +53,7 @@ public class ActionImpl implements Action {
         this.elements = elements;
         this.zones = new HashSet<String>(zones);
     }
-    
+
     public ActionImpl(String id, boolean preventive, boolean curative, List<ActionElement> elements,  List<String> zones, Number startTime) {
         this.id = id;
         this.preventive = preventive;
@@ -62,7 +62,7 @@ public class ActionImpl implements Action {
         this.zones = new HashSet<String>(zones);
         this.startTime = startTime;
     }
-   
+
 
     @Override
     public String getId() {
@@ -88,7 +88,7 @@ public class ActionImpl implements Action {
     public Collection<String> getZones() {
         return zones;
     }
- 
+
     @Override
     public ModificationTask toTask() {
         List<ModificationTask> subTasks = new ArrayList<>(elements.size());

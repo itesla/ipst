@@ -13,5 +13,5 @@ package eu.itesla_project.modules.topo;
 public interface TopologyMinerFactory {
 
     TopologyMiner create();
-    
+
 }

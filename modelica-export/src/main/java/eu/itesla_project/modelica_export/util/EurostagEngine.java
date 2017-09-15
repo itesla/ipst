@@ -18,7 +18,7 @@ public class EurostagEngine extends SourceEngine {
      * Machines params between Eurostag and Modelica <ModelicaParam>;<EurostagParam>
      */
     private String pwGeneratorM1S = "iPSL.Electrical.Machines.Eurostag.PwGeneratorM1S";
-    private String m1sParams[][] = new String[][] {
+    private String[][] m1sParams = new String[][] {
                                                             {"rRotIn", "RF"},
                                                             {"mD0Pu", "WLMQ"},
                                                             {"mq", "RMQ"},
@@ -52,7 +52,7 @@ public class EurostagEngine extends SourceEngine {
 
 
     private String pwGeneratorM2S = "iPSL.Electrical.Machines.Eurostag.PwGeneratorM2S";
-    private String m2sParams[][] = new String[][] {
+    private String[][] m2sParams = new String[][] {
                                                             {"SNREF", ""},
                                                             {"SN", "SN"},
                                                             {"PN", "PN"},

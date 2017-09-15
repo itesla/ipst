@@ -7,7 +7,6 @@
 package eu.itesla_project.online.server.message.encoder;
 
 import eu.itesla_project.online.server.message.StableContingenciesMessage;
-import eu.itesla_project.online.server.message.WorkStatusMessage;
 
 import javax.websocket.EncodeException;
 import javax.websocket.Encoder;

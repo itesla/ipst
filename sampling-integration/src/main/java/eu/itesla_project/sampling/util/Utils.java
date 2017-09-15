@@ -354,7 +354,7 @@ public class Utils {
     }
 
     public static float[][] doubleToFloatMatrix(double[][] matrix) {
-        float retMatrix[][] = new float[matrix.length][matrix[0].length];
+        float[][] retMatrix = new float[matrix.length][matrix[0].length];
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[0].length; j++) {
                 retMatrix[i][j] = (float) matrix[i][j];
@@ -444,7 +444,7 @@ public class Utils {
         writer.write(outputfile.toFile(), mlarray);
     }
 */
-    public static void writeWp41ContModule1Mat(Path outputfile, double matrix[][]) throws IOException {
+    public static void writeWp41ContModule1Mat(Path outputfile, double[][] matrix) throws IOException {
         LOGGER.debug("writeWp41ContModule1Mat - writing wp41 input X matrix data to file {}", outputfile );
         MLDouble data = Utils.matToMLDouble(matrix, "X");
         List<MLArray> mlarray = new ArrayList<>();

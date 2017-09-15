@@ -16,7 +16,7 @@ import eu.itesla_project.contingency.tasks.ModificationTask;
 public class LineTrippingAction implements ActionElement {
 
     private final String equipmentId;
-    
+
     private Number implementationTime;
 
     private Number achievmentIndex;
@@ -26,31 +26,31 @@ public class LineTrippingAction implements ActionElement {
     public LineTrippingAction(String lineId) {
         this.equipmentId = lineId;
     }
-    
+
     @Override
     public String getEquipmentId() {
         return equipmentId;
     }
 
-    
+
     public LineTrippingAction(String lineId, Number implementationTime, Number achievmentIndex ) {
         this.equipmentId = lineId;
         this.implementationTime = implementationTime;
         this.achievmentIndex = achievmentIndex;
     }
-    
+
     public LineTrippingAction(String lineId, String substationId, Number implementationTime, Number achievmentIndex ) {
         this.equipmentId = lineId;
         this.substationId = substationId;
         this.implementationTime = implementationTime;
         this.achievmentIndex = achievmentIndex;
     }
-    
+
     @Override
     public ActionElementType getType() {
         return ActionElementType.LINE_TRIPPING;
     }
-    
+
     @Override
     public ModificationTask toTask() {
         if (substationId != null) {
@@ -58,7 +58,7 @@ public class LineTrippingAction implements ActionElement {
         }
         return new BranchTripping(equipmentId);
     }
-    
+
     @Override
     public Number getImplementationTime() {
         return implementationTime;

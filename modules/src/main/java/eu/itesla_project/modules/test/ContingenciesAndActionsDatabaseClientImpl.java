@@ -36,8 +36,8 @@ public class ContingenciesAndActionsDatabaseClientImpl implements ContingenciesA
     private final Map<String, Zone> zones = new HashMap<>();
     private final Map<String, ActionPlan> actionPlans = new HashMap<>();
     private final List<ActionsContingenciesAssociation> associations = new ArrayList<>();
-    
-    
+
+
     public ContingenciesAndActionsDatabaseClientImpl() {
     }
 
@@ -49,7 +49,7 @@ public class ContingenciesAndActionsDatabaseClientImpl implements ContingenciesA
     public List<Contingency> getContingencies(Network network) {
         return new ArrayList<Contingency>(contingencies.values());
     }
-    
+
     @Override
     public Contingency getContingency(String id, Network network) {
         return contingencies.get(id);
@@ -63,7 +63,7 @@ public class ContingenciesAndActionsDatabaseClientImpl implements ContingenciesA
     public Collection<Action> getActions(Network network) {
         return new ArrayList<Action>(actions.values());
     }
-       
+
 
     @Override
     public Action getAction(String id, Network network) {
@@ -78,7 +78,7 @@ public class ContingenciesAndActionsDatabaseClientImpl implements ContingenciesA
     public List<Scenario> getScenarios() {
         return scenarios;
     }
-    
+
     public void addZone(Zone zone) {
         zones.put(zone.getName(), zone);
     }
@@ -87,12 +87,12 @@ public class ContingenciesAndActionsDatabaseClientImpl implements ContingenciesA
     public Collection<Zone> getZones() {
         return zones.values();
     }
-    
+
     @Override
     public Collection<Zone> getZones(Network network) {
         return zones.values();
     }
-    
+
     @Override
     public Zone getZone(String id) {
         return zones.get(id);

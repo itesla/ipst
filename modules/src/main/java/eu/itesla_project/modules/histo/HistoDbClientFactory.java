@@ -17,5 +17,5 @@ public interface HistoDbClientFactory {
     }
 
     HistoDbClient create(boolean cache);
-    
+
 }

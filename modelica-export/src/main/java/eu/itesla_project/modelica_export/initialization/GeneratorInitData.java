@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.itesla_project.iidm.network.Generator;
-import eu.itesla_project.modelica_export.ModelicaRecord;
 import eu.itesla_project.modelica_export.records.GeneratorRecord;
 import eu.itesla_project.modelica_export.util.IIDMParameter;
 import eu.itesla_project.modelica_export.util.StaticData;

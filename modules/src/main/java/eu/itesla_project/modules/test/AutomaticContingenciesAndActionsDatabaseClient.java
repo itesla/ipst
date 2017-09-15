@@ -51,7 +51,7 @@ public class AutomaticContingenciesAndActionsDatabaseClient implements Contingen
         return contingencies;
     }
 
-    
+
 
     @Override
     public List<Scenario> getScenarios() {

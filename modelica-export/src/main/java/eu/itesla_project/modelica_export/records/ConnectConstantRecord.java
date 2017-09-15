@@ -12,7 +12,6 @@ import eu.itesla_project.iidm.ddb.service.DDBManager;
 import eu.itesla_project.modelica_export.ModExportContext;
 import eu.itesla_project.modelica_export.ModelicaRecord;
 import eu.itesla_project.modelica_export.util.StaticData;
-import eu.itesla_project.modelica_export.util.eurostag.EurostagFixedData;
 
 /**
  * @author Silvia Machado <machados@aia.es>

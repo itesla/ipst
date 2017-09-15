@@ -19,7 +19,6 @@ import java.util.Map;
 import org.openmodelica.javaomc.JavaOMCAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.Scanner;
 
 import eu.itesla_project.modelica_export.util.StaticData;
 import eu.itesla_project.modelica_export.util.eurostag.EurostagFixedData;
@@ -47,7 +46,7 @@ public class InitializationRunner {
                 this.genInitValues = new HashMap<String, String>();
                 this.regInitValues = new HashMap<String, Map<String, String>>();
                 regInitVarsFromGen = initData.getRegInitVarsFromGen();
-                regInitVarsFromReg = initData.getRegInitVarsFromReg();;
+                regInitVarsFromReg = initData.getRegInitVarsFromReg();
                 regInitVarsFromOtherRegs = initData.getRegInitVarsFromOtherRegs();
                 regInitOtherVars = initData.getRegInitOtherVars();
 

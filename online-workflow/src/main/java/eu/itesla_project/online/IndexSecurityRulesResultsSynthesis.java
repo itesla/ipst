@@ -24,19 +24,19 @@ public class IndexSecurityRulesResultsSynthesis implements Serializable {
 
 
    private static final long serialVersionUID = 1L;
-   
+
    private String workflowId;
 
-   
+
    private final  Map<String, Map<Integer, StateInfo>> contingencySecurityRulesMap = new HashMap<String, Map<Integer, StateInfo>>();
 
 
     public IndexSecurityRulesResultsSynthesis(String workflowId) {
         this.workflowId = workflowId;
     }
-   
-   
-   
+
+
+
   /* public IndexSecurityRulesResultsSynthesis(String workflowId, SecurityRulesApplicationResults results)
    {
        this.workflowId=workflowId;
@@ -65,14 +65,14 @@ public class IndexSecurityRulesResultsSynthesis implements Serializable {
    public String getWorkflowId() {
         return workflowId;
    }
-   
+
    public void setWorkflowId(String workflowId) {
         this.workflowId = workflowId;
    }
 
-   
-   
-   
+
+
+
    public void addStateSecurityRuleIndexes(String contingencyId, Integer stateId, SecurityRulesApplicationResults rulesApplicationResults) {
        Map<SecurityIndexType, StateStatus> indexStatus = rulesApplicationResults.getSecurityRulesResults(contingencyId, stateId);
        StateStatus stateStatus    = rulesApplicationResults.getStateStatus(contingencyId, stateId);
@@ -89,7 +89,7 @@ public class IndexSecurityRulesResultsSynthesis implements Serializable {
        }
 
     }
-    
+
     /*
    public void addStateSecurityRuleIndexes(String contingencyId, StateInfo stateInfo, List<SecurityRulesResults> results)
    {
@@ -121,12 +121,12 @@ public class IndexSecurityRulesResultsSynthesis implements Serializable {
         //Map<String, StateInfo> statesIndexesSecurityRules = contingencySecurityRulesMap.get(contingencyId)
 
     }*/
-    
-  
 
-   
-   
-    
+
+
+
+
+
     public class SecurityRulesResults implements Serializable {
 
         String type;
@@ -169,15 +169,15 @@ public class IndexSecurityRulesResultsSynthesis implements Serializable {
         }
 
     }
-    
-    
+
+
     public class StateInfo implements Serializable  {
 
         Integer stateId;
         StateStatus status;
         String statusCode;
 
-    
+
 
         Map<SecurityIndexType, SecurityRulesResults> indexTypeSecurityRulesResults;
 

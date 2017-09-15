@@ -8,11 +8,7 @@ package eu.itesla_project.iidm.ddb.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.FetchType;
-import javax.persistence.Lob;
 
 /**
  *
@@ -34,7 +30,7 @@ public class Connection implements Serializable {
     String conPointName1 = null;
     String conPointName2 = null;
     int conType = 0;  //0 inside, 1 outside
-    
+
     public String getId1() {
         return id1;
     }

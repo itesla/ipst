@@ -27,7 +27,7 @@ public class ListOfflineWorkflowsCommand implements Command {
     public String getTheme() {
         return OFFLINE_APPLICATION_REMOTE_CONTROL;
     }
-    
+
     @Override
     public String getDescription() {
         return "list offline workflows and their status (running or not)";

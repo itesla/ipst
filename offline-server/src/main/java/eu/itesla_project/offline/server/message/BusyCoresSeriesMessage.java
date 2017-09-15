@@ -18,7 +18,7 @@ import org.joda.time.format.DateTimeFormatter;
 public class BusyCoresSeriesMessage extends Message {
 
     private final BusyCoresSeries busyCoresSeries;
-    
+
     public BusyCoresSeriesMessage(BusyCoresSeries busyCoresSeries) {
         this.busyCoresSeries = busyCoresSeries;
     }
