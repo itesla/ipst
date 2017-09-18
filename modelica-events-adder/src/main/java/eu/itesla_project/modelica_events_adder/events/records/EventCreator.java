@@ -15,6 +15,9 @@ import java.util.Map;
  */
 public final class EventCreator {
 
+    private EventCreator() {
+    }
+
     public static BusFaultRecord getBusEventRecord(Record busRecord, Event event) {
         BusFaultRecord busFaultRecord = new BusFaultRecord(busRecord, event);
         busFaultRecord.createModelicaName();

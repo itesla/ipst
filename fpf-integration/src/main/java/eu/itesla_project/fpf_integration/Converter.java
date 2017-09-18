@@ -45,6 +45,9 @@ import eu.itesla_project.modules.test.AutomaticContingenciesAndActionsDatabaseCl
 
 public class Converter {
 
+    private Converter() {
+    }
+
     // Power System object
     private static CFPFPowerSystem powerSystem = new CFPFPowerSystem();
 

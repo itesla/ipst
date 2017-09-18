@@ -30,6 +30,9 @@ public class IIDM2DB {
 
     private static Logger log = LoggerFactory.getLogger(IIDM2DB.class);
 
+    private IIDM2DB() {
+    }
+
     public static class HorizonKey {
         public final int forecastDistance;
         public final String horizon;

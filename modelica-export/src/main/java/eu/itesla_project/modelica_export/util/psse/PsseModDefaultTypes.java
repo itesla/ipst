@@ -86,4 +86,7 @@ public class PsseModDefaultTypes {
     public final static String CONSTANT_TYPE                    = "Modelica.Blocks.Sources.Constant";
 
 
+    private PsseModDefaultTypes() {
+    }
+
 }

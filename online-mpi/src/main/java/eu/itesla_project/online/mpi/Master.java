@@ -64,7 +64,7 @@ public class Master {
         OPTIONS.addOption(stdOutArchiveOpt);
     }
 
-    public Master() {
+    private Master() {
     }
 
     public static void main(String[] args) throws Exception {

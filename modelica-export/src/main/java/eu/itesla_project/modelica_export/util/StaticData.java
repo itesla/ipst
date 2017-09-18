@@ -92,4 +92,8 @@ public class StaticData {
 
 
     public final static String        CON_OTHERS            = "// Connecting OTHERS";
+
+    private StaticData() {
+    }
+
 }

@@ -17,6 +17,10 @@ import java.io.UnsupportedEncodingException;
  * @author Silvia Machado <machados@aia.es>
  */
 public class Utils {
+
+    private Utils() {
+    }
+
     public static byte[] stringAsByteArrayUTF8(String par) {
         try {
             return par.getBytes("UTF-8");

@@ -14,6 +14,9 @@ import java.util.List;
  */
 public class EventsStaticData {
 
+    private EventsStaticData() {
+    }
+
     public final static String    LINE_MODEL            = "iPSL.Electrical.Events.PwLineFault";
     public final static String    BUS_MODEL            = "iPSL.Electrical.Events.PwFault";
     public final static String    BREAKER_MODEL        = "iPSL.Electrical.Events.Breaker";

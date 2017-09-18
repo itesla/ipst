@@ -26,6 +26,9 @@ import eu.itesla_project.modules.mcla.ForecastErrorsStatistics;
  */
 public class Utils {
 
+    private Utils() {
+    }
+
     private static float[] getFloats(String[] strings) {
         float[] floats = new float[strings.length];
         for (int i = 0; i < strings.length; i++) {

@@ -39,7 +39,12 @@ import com.jmatio.types.MLDouble;
  * @author Quinary <itesla@quinary.com>
  */
 public class Utils {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
+
+    private Utils() {
+    }
+
     public static MLDouble readMDoubleFromCSVFile(Path inFilePath, String mName, int nrows, int ncols, char delimiter) throws NumberFormatException, IOException {
         MLDouble mlDouble = new MLDouble( mName, new int[] {nrows, ncols} );
         CsvReader cvsReader = new CsvReader(inFilePath.toString());

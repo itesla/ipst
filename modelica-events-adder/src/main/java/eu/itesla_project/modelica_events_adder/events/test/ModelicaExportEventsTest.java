@@ -15,6 +15,10 @@ import eu.itesla_project.modelica_events_adder.events.ModEventsExport;
  * @author Silvia Machado <machados@aia.es>
  */
 public class ModelicaExportEventsTest {
+
+    private ModelicaExportEventsTest() {
+    }
+
     public static void main(String[] args) {
 
          if (args == null || args.length == 0) {

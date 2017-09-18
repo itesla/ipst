@@ -21,6 +21,9 @@ import eu.itesla_project.iidm.ddb.model.SimulatorInst;
  */
 public class Sorter {
 
+    private Sorter() {
+    }
+
     public static Comparator<Parameters> compareParamSetNum = new Comparator<Parameters>() {
             // This is where the sorting happens.
                 public int compare(Parameters p1, Parameters p2) {

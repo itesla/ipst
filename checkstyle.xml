@@ -22,6 +22,7 @@
             <property name="exceptionVariableName" value="ignored"/>
         </module>
         <module name="EmptyStatement"/>
+        <module name="HideUtilityClassConstructor"/>
         <module name="IllegalImport"/>
         <module name="LeftCurly"/>
         <module name="NeedBraces"/>
@@ -32,5 +33,9 @@
         <module name="WhitespaceAfter"/>
         <module name="WhitespaceAround"/>
         <module name="UnusedImports"/>
+    </module>
+
+    <module name="SuppressionFilter">
+        <property name="file" value="suppressions.xml"/>
     </module>
 </module>

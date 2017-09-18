@@ -18,6 +18,9 @@ import java.util.*;
  */
 public class RedispatchUtils {
 
+    private RedispatchUtils() {
+    }
+
     public static Map<String, Float> getParticipationFactor(Network network) {
         Map<String, Float> partecipationFactor = new HashMap<String, Float>();
         for (Generator generator : network.getGenerators()) {

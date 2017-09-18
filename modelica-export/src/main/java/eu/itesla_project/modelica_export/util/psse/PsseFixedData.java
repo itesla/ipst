@@ -67,4 +67,7 @@ public class PsseFixedData {
                                                                                 PsseModDefaultTypes.SEXS,
                                                                                 PsseModDefaultTypes.IEEET2});
 
+    private PsseFixedData() {
+    }
+
 }

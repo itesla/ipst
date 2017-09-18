@@ -22,6 +22,9 @@ import eu.itesla_project.mcla.forecast_errors.data.StochasticVariable;
  */
 public class FEANetworkUtils {
 
+    private FEANetworkUtils() {
+    }
+
     public static ArrayList<StochasticVariable> getStochasticVariables(Network network) {
         return getStochasticVariables(network, NetworkUtils.getGeneratorsIds(network), NetworkUtils.getLoadsIds(network));
     }

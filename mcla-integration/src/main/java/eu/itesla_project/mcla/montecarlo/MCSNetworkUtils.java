@@ -19,6 +19,9 @@ import eu.itesla_project.mcla.montecarlo.data.GeneratorData;
  */
 public class MCSNetworkUtils {
 
+    private MCSNetworkUtils() {
+    }
+
     public static int getBusType(Bus bus) {
         Objects.requireNonNull(bus, "bus is null");
         int type = BusData.BUS_TYPE_PQ; // a connection bus is PQ
