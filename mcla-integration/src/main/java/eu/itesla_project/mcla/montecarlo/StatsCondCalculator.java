@@ -24,109 +24,108 @@ import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 public class StatsCondCalculator {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(StatsCondCalculator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StatsCondCalculator.class);
 
-	private static final String WORKING_DIR_PREFIX = "itesla_mcla_fpf_stats_";
-	private static final String MCSINPUTFILEPREFIX = "mcsamplerinput_";
-	private static final String MCSOUTPUTFILENAME = "mcsampleroutput.mat";
-	private static final String FPFFORECASTERRORSFILENAME = "fea_stats_cond_for_FPF.mat";
-	private static final String WP5_FPF = "fpf";
+    private static final String WORKING_DIR_PREFIX = "itesla_mcla_fpf_stats_";
+    private static final String MCSINPUTFILEPREFIX = "mcsamplerinput_";
+    private static final String MCSOUTPUTFILENAME = "mcsampleroutput.mat";
+    private static final String FPFFORECASTERRORSFILENAME = "fea_stats_cond_for_FPF.mat";
+    private static final String WP5_FPF = "fpf";
 
-	private final ComputationManager computationManager;
-	private final ForecastErrorsDataStorage forecastErrorsDataStorage;
+    private final ComputationManager computationManager;
+    private final ForecastErrorsDataStorage forecastErrorsDataStorage;
 
-	private Network network;
-	private StatsCondCalculatorConfig config = null;
+    private Network network;
+    private StatsCondCalculatorConfig config = null;
 
-	private TimeHorizon timeHorizon;
-	private String feAnalysisId;
-	private ArrayList<String> generatorsIds = new ArrayList<String>();
-	private ArrayList<String> loadsIds = new ArrayList<String>();
-	private ArrayList<String> connectedGeneratorsIds = new ArrayList<String>();
-	private ArrayList<String> connectedLoadsIds = new ArrayList<String>();
-	private SamplingNetworkData samplingNetworkData;
-	private Path networkDataMatFile = null;
+    private TimeHorizon timeHorizon;
+    private String feAnalysisId;
+    private ArrayList<String> generatorsIds = new ArrayList<String>();
+    private ArrayList<String> loadsIds = new ArrayList<String>();
+    private ArrayList<String> connectedGeneratorsIds = new ArrayList<String>();
+    private ArrayList<String> connectedLoadsIds = new ArrayList<String>();
+    private SamplingNetworkData samplingNetworkData;
+    private Path networkDataMatFile = null;
 
-	public StatsCondCalculator(Network network, ComputationManager computationManager, ForecastErrorsDataStorage forecastErrorsDataStorage, StatsCondCalculatorConfig config) {
+    public StatsCondCalculator(Network network, ComputationManager computationManager, ForecastErrorsDataStorage forecastErrorsDataStorage, StatsCondCalculatorConfig config) {
         Objects.requireNonNull(network, "network is null");
         Objects.requireNonNull(computationManager, "computationManager is null");
         Objects.requireNonNull(forecastErrorsDataStorage, "forecast errors data storage is null");
         Objects.requireNonNull(config, "config is null");
-		LOGGER.info(config.toString());
-		this.network = network;
-		this.computationManager = computationManager;
-		this.forecastErrorsDataStorage = forecastErrorsDataStorage;
-		this.config = config;
-	}
+        LOGGER.info(config.toString());
+        this.network = network;
+        this.computationManager = computationManager;
+        this.forecastErrorsDataStorage = forecastErrorsDataStorage;
+        this.config = config;
+    }
 
-	public StatsCondCalculator(Network network, ComputationManager client, ForecastErrorsDataStorage forecastErrorsDataStorage) {
-		this(network, client, forecastErrorsDataStorage, StatsCondCalculatorConfig.load());
-	}
+    public StatsCondCalculator(Network network, ComputationManager client, ForecastErrorsDataStorage forecastErrorsDataStorage) {
+        this(network, client, forecastErrorsDataStorage, StatsCondCalculatorConfig.load());
+    }
 
-	public String getName() {
-		return "RSE FEA Conditional stats calculator";
-	}
+    public String getName() {
+        return "RSE FEA Conditional stats calculator";
+    }
 
-	public String getVersion() {
-		return null;
-	}
+    public String getVersion() {
+        return null;
+    }
 
-	public void init(MontecarloSamplerParameters parameters) throws Exception {
-		Objects.requireNonNull(parameters, "montecarlo sampler parameters value is null");
-		this.timeHorizon = parameters.getTimeHorizon();
-		this.feAnalysisId = parameters.getFeAnalysisId();
-		// check if forecast error data file for this time horizon exists
-		if ( !forecastErrorsDataStorage.isForecastErrorsDataAvailable(feAnalysisId, timeHorizon) ) {
-			LOGGER.error("No forecast errors data for {} network, {} time horizon.", network.getId(), timeHorizon.getName());
-			throw new Exception("Montecarlo sampler not ready to be used: No forecast errors data for " + network.getId() + " network, " + timeHorizon.getName() + " time horizon.");
-		}
-		// I put the generators and loads in a specific order, the same used when producing the matrix of historical data,
-		// for the forecast errors analysis
-		generatorsIds = NetworkUtils.getGeneratorsIds(network);
-		connectedGeneratorsIds = NetworkUtils.getConnectedGeneratorsIds(network);
-		loadsIds = NetworkUtils.getLoadsIds(network);
-		connectedLoadsIds = NetworkUtils.getConnectedLoadsIds(network);
-		// create the sampling network data
-		LOGGER.info("Preparing sampling network data for {} network", network.getId());
-		samplingNetworkData = new SamplingDataCreator(network, generatorsIds, loadsIds).createSamplingNetworkData();
-		// write mat network data file 
-		// TODO use common file transfer feature
-		networkDataMatFile = Files.createTempFile(config.getTmpDir(), MCSINPUTFILEPREFIX + network.getId() + "_" + timeHorizon.getLabel() + "_", ".mat"); 
-		LOGGER.info("Writing sampling network data for {} network into mat file {}", network.getId(), networkDataMatFile);
-		new MCSMatFileWriter(networkDataMatFile).writeSamplingNetworkData(samplingNetworkData);
-	}
-
-
-	public void run(Path destPath) throws Exception {
-		try (CommandExecutor executor = computationManager.newCommandExecutor(
-				createEnv(), WORKING_DIR_PREFIX, config.isDebug())) {
-
-			final Path workingDir = executor.getWorkingDir();
-			// put mat files in working dir
-			Path localForecastErrorsDataFile = Paths.get(workingDir.toString(), MCSINPUTFILEPREFIX + "forecast_errors_" + timeHorizon.getLabel() + ".mat");
-			forecastErrorsDataStorage.getForecastErrorsFile(feAnalysisId, timeHorizon, localForecastErrorsDataFile);
-			Path localNetworkDataMatFile = Paths.get(workingDir.toString(), MCSINPUTFILEPREFIX + network.getId() + ".mat");
-			Files.copy(networkDataMatFile, localNetworkDataMatFile);
-
-			LOGGER.info("Preparing FPF input data for {} network", network.getId());
-			Command cmd = createFPFCommand(localForecastErrorsDataFile, localNetworkDataMatFile);
-			ExecutionReport report = executor.start(new CommandExecution(cmd, 1, Integer.MAX_VALUE));
-			report.log();
-
-			LOGGER.debug("Retrieving FPF file {}", FPFFORECASTERRORSFILENAME + ".csv");
-			Files.copy(Paths.get(workingDir.toString(), FPFFORECASTERRORSFILENAME+".csv"), destPath, StandardCopyOption.REPLACE_EXISTING);
-		}
-	}
+    public void init(MontecarloSamplerParameters parameters) throws Exception {
+        Objects.requireNonNull(parameters, "montecarlo sampler parameters value is null");
+        this.timeHorizon = parameters.getTimeHorizon();
+        this.feAnalysisId = parameters.getFeAnalysisId();
+        // check if forecast error data file for this time horizon exists
+        if (!forecastErrorsDataStorage.isForecastErrorsDataAvailable(feAnalysisId, timeHorizon)) {
+            LOGGER.error("No forecast errors data for {} network, {} time horizon.", network.getId(), timeHorizon.getName());
+            throw new Exception("Montecarlo sampler not ready to be used: No forecast errors data for " + network.getId() + " network, " + timeHorizon.getName() + " time horizon.");
+        }
+        // I put the generators and loads in a specific order, the same used when producing the matrix of historical data,
+        // for the forecast errors analysis
+        generatorsIds = NetworkUtils.getGeneratorsIds(network);
+        connectedGeneratorsIds = NetworkUtils.getConnectedGeneratorsIds(network);
+        loadsIds = NetworkUtils.getLoadsIds(network);
+        connectedLoadsIds = NetworkUtils.getConnectedLoadsIds(network);
+        // create the sampling network data
+        LOGGER.info("Preparing sampling network data for {} network", network.getId());
+        samplingNetworkData = new SamplingDataCreator(network, generatorsIds, loadsIds).createSamplingNetworkData();
+        // write mat network data file
+        // TODO use common file transfer feature
+        networkDataMatFile = Files.createTempFile(config.getTmpDir(), MCSINPUTFILEPREFIX + network.getId() + "_" + timeHorizon.getLabel() + "_", ".mat");
+        LOGGER.info("Writing sampling network data for {} network into mat file {}", network.getId(), networkDataMatFile);
+        new MCSMatFileWriter(networkDataMatFile).writeSamplingNetworkData(samplingNetworkData);
+    }
 
 
-	private Map<String, String> createEnv() {
+    public void run(Path destPath) throws Exception {
+        try (CommandExecutor executor = computationManager.newCommandExecutor(
+                createEnv(), WORKING_DIR_PREFIX, config.isDebug())) {
+
+            final Path workingDir = executor.getWorkingDir();
+            // put mat files in working dir
+            Path localForecastErrorsDataFile = Paths.get(workingDir.toString(), MCSINPUTFILEPREFIX + "forecast_errors_" + timeHorizon.getLabel() + ".mat");
+            forecastErrorsDataStorage.getForecastErrorsFile(feAnalysisId, timeHorizon, localForecastErrorsDataFile);
+            Path localNetworkDataMatFile = Paths.get(workingDir.toString(), MCSINPUTFILEPREFIX + network.getId() + ".mat");
+            Files.copy(networkDataMatFile, localNetworkDataMatFile);
+
+            LOGGER.info("Preparing FPF input data for {} network", network.getId());
+            Command cmd = createFPFCommand(localForecastErrorsDataFile, localNetworkDataMatFile);
+            ExecutionReport report = executor.start(new CommandExecution(cmd, 1, Integer.MAX_VALUE));
+            report.log();
+
+            LOGGER.debug("Retrieving FPF file {}", FPFFORECASTERRORSFILENAME + ".csv");
+            Files.copy(Paths.get(workingDir.toString(), FPFFORECASTERRORSFILENAME + ".csv"), destPath, StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+
+
+    private Map<String, String> createEnv() {
         Map<String, String> env = new HashMap<>();
-		env.put("MCRROOT", config.getRuntimeHomeDir().toString());
+        env.put("MCRROOT", config.getRuntimeHomeDir().toString());
         env.put("LD_LIBRARY_PATH", config.getRuntimeHomeDir().resolve("runtime").resolve("glnxa64").toString()
                 + ":" + config.getRuntimeHomeDir().resolve("bin").resolve("glnxa64").toString()
                 + ":" + config.getRuntimeHomeDir().resolve("sys").resolve("os").resolve("glnxa64").toString());
@@ -134,27 +133,26 @@ public class StatsCondCalculator {
     }
 
 
-	private Command createFPFCommand(Path localForecastErrorsDataFile, Path localNetworkDataMatFile) {
-		List<String> args1 = new ArrayList<>();
-		args1.add(localForecastErrorsDataFile.toAbsolutePath().toString());
-		args1.add(localNetworkDataMatFile.toAbsolutePath().toString());
-		args1.add(FPFFORECASTERRORSFILENAME);
-		args1.add(""+config.getIsdeterministic()); //added in v1.8.1
-		args1.add(""+config.getIsuniform()); //added in v1.8.1
-		if (config.getRngSeed() != null) {
-			args1.add(Integer.toString(config.getRngSeed()));
-		}
+    private Command createFPFCommand(Path localForecastErrorsDataFile, Path localNetworkDataMatFile) {
+        List<String> args1 = new ArrayList<>();
+        args1.add(localForecastErrorsDataFile.toAbsolutePath().toString());
+        args1.add(localNetworkDataMatFile.toAbsolutePath().toString());
+        args1.add(FPFFORECASTERRORSFILENAME);
+        args1.add("" + config.getIsdeterministic()); //added in v1.8.1
+        args1.add("" + config.getIsuniform()); //added in v1.8.1
+        if (config.getRngSeed() != null) {
+            args1.add(Integer.toString(config.getRngSeed()));
+        }
 
-		return new SimpleCommandBuilder()
-				.id("matfpf")
-				.program(config.getBinariesDir().resolve(WP5_FPF).toAbsolutePath().toString())
-				.args(args1)
-				.inputFiles(new InputFile(localForecastErrorsDataFile.getFileName().toString()),
-						new InputFile(localNetworkDataMatFile.getFileName().toString()))
-				.outputFiles(new OutputFile(MCSOUTPUTFILENAME), new OutputFile(MCSOUTPUTFILENAME+".csv"))
-				.build();
-	}
-
+        return new SimpleCommandBuilder()
+                .id("matfpf")
+                .program(config.getBinariesDir().resolve(WP5_FPF).toAbsolutePath().toString())
+                .args(args1)
+                .inputFiles(new InputFile(localForecastErrorsDataFile.getFileName().toString()),
+                        new InputFile(localNetworkDataMatFile.getFileName().toString()))
+                .outputFiles(new OutputFile(MCSOUTPUTFILENAME), new OutputFile(MCSOUTPUTFILENAME + ".csv"))
+                .build();
+    }
 
 
 }

@@ -16,17 +16,17 @@ import java.util.Objects;
 /*
    MCLA code 1.8
 */
+
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 public class ForecastErrorsAnalyzerConfig {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ForecastErrorsAnalyzerConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ForecastErrorsAnalyzerConfig.class);
 
-	private Path binariesDir;
-	private Path runtimeHomeDir;
-	private final boolean debug;
+    private Path binariesDir;
+    private Path runtimeHomeDir;
+    private final boolean debug;
     private final Integer rngSeed;
     private final Integer checkModule0;
     private final double percpuGaussLoad;
@@ -61,8 +61,8 @@ public class ForecastErrorsAnalyzerConfig {
 
 
     public ForecastErrorsAnalyzerConfig(
-			Path binariesDir,
-			Path runtimeHomeDir,
+            Path binariesDir,
+            Path runtimeHomeDir,
             Integer checkModule0,
             double percpuGaussLoad,
             double percpuGaussRes,
@@ -81,36 +81,36 @@ public class ForecastErrorsAnalyzerConfig {
             double histo_estremeQ,
             double thresGUI,
             String nats,
-			double nnz,
-			Integer unimod,
-			Integer modo_inv,
-			Integer isdeterministic,
-			Integer isuniform,
-			Integer opt_GUI,
-			double Pload_deterministic,
+            double nnz,
+            Integer unimod,
+            Integer modo_inv,
+            Integer isdeterministic,
+            Integer isuniform,
+            Integer opt_GUI,
+            double Pload_deterministic,
             double Qload_deterministic,
-			double band_uniformPL,
+            double band_uniformPL,
             double band_uniformQL,
             double band_uniformPGEN,
             Integer correlation_fict_uniform,
-			Integer rngSeed,
-			boolean debug
-			) {
-		Objects.requireNonNull(binariesDir,"sampler compiled binaries directory is null");
-		Objects.requireNonNull(runtimeHomeDir,"matlab runtime directory is null");
+            Integer rngSeed,
+            boolean debug
+    ) {
+        Objects.requireNonNull(binariesDir, "sampler compiled binaries directory is null");
+        Objects.requireNonNull(runtimeHomeDir, "matlab runtime directory is null");
 
-		this.binariesDir=binariesDir;
-		this.runtimeHomeDir = runtimeHomeDir;
+        this.binariesDir = binariesDir;
+        this.runtimeHomeDir = runtimeHomeDir;
         this.rngSeed = rngSeed;
-        this.checkModule0=checkModule0;
-        this.percpuGaussLoad=percpuGaussLoad;
-        this.percpuGaussRes=percpuGaussRes;
-        this.correlationGauss=correlationGauss;
-        this.tolVar=tolVar;
-        this.nMinObsFract=nMinObsFract;
-        this.nMinObsInterv=nMinObsInterv;
-        this.imputationMeth=imputationMeth;
-        this.nGaussians=nGaussians;
+        this.checkModule0 = checkModule0;
+        this.percpuGaussLoad = percpuGaussLoad;
+        this.percpuGaussRes = percpuGaussRes;
+        this.correlationGauss = correlationGauss;
+        this.tolVar = tolVar;
+        this.nMinObsFract = nMinObsFract;
+        this.nMinObsInterv = nMinObsInterv;
+        this.imputationMeth = imputationMeth;
+        this.nGaussians = nGaussians;
         this.kOutlier = kOutlier;
         this.tolerance = tolerance;
         this.iterations = iterations;
@@ -120,22 +120,22 @@ public class ForecastErrorsAnalyzerConfig {
         this.histo_estremeQ = histo_estremeQ;
         this.thresGUI = thresGUI;
         this.nats = nats;
-		this.debug = debug;
-		this.nnz = nnz;
-		this.unimod = unimod;
-		this.modo_inv = modo_inv;
-		this.isdeterministic = isdeterministic;
-		this.isuniform = isuniform;
-		this.opt_GUI = opt_GUI;
-		this.Pload_deterministic = Pload_deterministic;
-		this.Qload_deterministic = Qload_deterministic;
-		this.band_uniformPL = band_uniformPL;
-		this.band_uniformQL = band_uniformQL;
-		this.band_uniformPGEN = band_uniformPGEN;
+        this.debug = debug;
+        this.nnz = nnz;
+        this.unimod = unimod;
+        this.modo_inv = modo_inv;
+        this.isdeterministic = isdeterministic;
+        this.isuniform = isuniform;
+        this.opt_GUI = opt_GUI;
+        this.Pload_deterministic = Pload_deterministic;
+        this.Qload_deterministic = Qload_deterministic;
+        this.band_uniformPL = band_uniformPL;
+        this.band_uniformQL = band_uniformQL;
+        this.band_uniformPGEN = band_uniformPGEN;
         this.correlation_fict_uniform = correlation_fict_uniform;
-	}
+    }
 
-	public static ForecastErrorsAnalyzerConfig load() {
+    public static ForecastErrorsAnalyzerConfig load() {
         ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("forecastErrorsAnalyzer");
 
         Path binariesDir = config.getPathProperty("binariesDir");
@@ -145,8 +145,8 @@ public class ForecastErrorsAnalyzerConfig {
         double percpuGaussLoad = config.getDoubleProperty("percpuGaussLoad");
         double percpuGaussRes = config.getDoubleProperty("percpuGaussRes");
         double correlationGauss = config.getDoubleProperty("correlationGauss");
-        double tolVar= config.getDoubleProperty("tolvar");
-        double nMinObsFract= config.getDoubleProperty("Nmin_obs_fract");
+        double tolVar = config.getDoubleProperty("tolvar");
+        double nMinObsFract = config.getDoubleProperty("Nmin_obs_fract");
         Integer nMinObsInterv = config.getOptionalIntegerProperty("Nmin_obs_interv").orElse(null);
         Integer imputationMeth = config.getOptionalIntegerProperty("imputation_meth").orElse(null);
         Integer nGaussians = config.getOptionalIntegerProperty("Ngaussians").orElse(null);
@@ -159,7 +159,7 @@ public class ForecastErrorsAnalyzerConfig {
         Integer tFlags = config.getOptionalIntegerProperty("tFlags").orElse(null);
         double histo_estremeQ = config.getDoubleProperty("histo_estremeQ");
         double thresGUI = config.getDoubleProperty("thresGUI");
-        String nats = config.getStringProperty("nats","All");
+        String nats = config.getStringProperty("nats", "All");
         double nnz = config.getDoubleProperty("nnz");
         Integer unimod = config.getOptionalIntegerProperty("unimod").orElse(null);
         Integer modo_inv = config.getOptionalIntegerProperty("modo_inv").orElse(null);
@@ -180,18 +180,18 @@ public class ForecastErrorsAnalyzerConfig {
                 nnz, unimod, modo_inv, isdeterministic, isuniform, opt_GUI,
                 Pload_deterministic, Qload_deterministic, band_uniformPL, band_uniformQL, band_uniformPGEN, correlation_fict_uniform,
                 rngSeed, debug);
-	}
+    }
 
-	public Path getBinariesDir() {
-		return binariesDir;
-	}
+    public Path getBinariesDir() {
+        return binariesDir;
+    }
 
-	public Path getRuntimeHomeDir() {
-		return runtimeHomeDir;
-	}
+    public Path getRuntimeHomeDir() {
+        return runtimeHomeDir;
+    }
 
     public Integer getCheckModule0() {
-    	return checkModule0; 
+        return checkModule0;
     }
 
     public double getPercpuGaussLoad() {
@@ -226,35 +226,53 @@ public class ForecastErrorsAnalyzerConfig {
         return nGaussians;
     }
 
-    public Integer getkOutlier() { return kOutlier; }
+    public Integer getkOutlier() {
+        return kOutlier;
+    }
 
-    public double getTolerance() { return tolerance; }
+    public double getTolerance() {
+        return tolerance;
+    }
 
-    public Integer getIterations() { return iterations;}
+    public Integer getIterations() {
+        return iterations;
+    }
 
-    public double getEpsilo() { return epsilo; }
+    public double getEpsilo() {
+        return epsilo;
+    }
 
-    public Integer getConditionalSampling() { return conditionalSampling; }
+    public Integer getConditionalSampling() {
+        return conditionalSampling;
+    }
 
-    public Integer gettFlags() { return tFlags; }
+    public Integer gettFlags() {
+        return tFlags;
+    }
 
-    public double getHisto_estremeQ() { return histo_estremeQ; }
+    public double getHisto_estremeQ() {
+        return histo_estremeQ;
+    }
 
-    public double getThresGUI() { return thresGUI; }
+    public double getThresGUI() {
+        return thresGUI;
+    }
 
-    public String getNats() { return nats; }
+    public String getNats() {
+        return nats;
+    }
 
     public Integer getRngSeed() {
-		return rngSeed;
-	}
+        return rngSeed;
+    }
 
-	public static Logger getLogger() {
-		return LOGGER;
-	}
+    public static Logger getLogger() {
+        return LOGGER;
+    }
 
-	public boolean isDebug() {
-	        return debug;
-	}
+    public boolean isDebug() {
+        return debug;
+    }
 
     public double getNnz() {
         return nnz;
@@ -305,8 +323,8 @@ public class ForecastErrorsAnalyzerConfig {
     }
 
     @Override
-	public String toString() {
-		return "ForecastErrorsAnalyzerConfig [binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir
+    public String toString() {
+        return "ForecastErrorsAnalyzerConfig [binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir
                 + ", check module0=" + checkModule0
                 + ", per cpu gauss load=" + percpuGaussLoad
                 + ", per cpu gauss res=" + percpuGaussRes
@@ -337,7 +355,7 @@ public class ForecastErrorsAnalyzerConfig {
                 + ", band_uniformQLs=" + band_uniformQL
                 + ", band_uniformPGENs=" + band_uniformPGEN
                 + ", correlation_fict_uniforms=" + correlation_fict_uniform
-				+ ", debug=" + debug + "]";
-	}
+                + ", debug=" + debug + "]";
+    }
 
 }

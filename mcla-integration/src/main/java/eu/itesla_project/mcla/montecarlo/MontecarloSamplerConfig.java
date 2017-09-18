@@ -8,18 +8,17 @@ package eu.itesla_project.mcla.montecarlo;
 
 import eu.itesla_project.commons.config.ModuleConfig;
 import eu.itesla_project.commons.config.PlatformConfig;
-import java.nio.file.Path;
-import java.util.Objects;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Path;
+import java.util.Objects;
+
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 public class MontecarloSamplerConfig {
-	
+
 	/*
 	 *  required fea matlab code modules version v1.7.1 (offline sampling)
 	 *
@@ -48,95 +47,97 @@ public class MontecarloSamplerConfig {
 	debug=true
 
 	*/
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(MontecarloSamplerConfig.class);
-	
-	private Path binariesDir;
-	private Path runtimeHomeDir;
-	private Path tmpDir;
-    private Integer optionSign;
-	private Integer centering;
-	private final boolean debug;
-	private final Integer isdeterministic;
-	private final Integer full_dependence;
-	
-	public MontecarloSamplerConfig(
-			Path binariesDir,
-			Path runtimeHomeDir,
-			Path tmpDir,
-            int optionSign,
-			int centering,
-			int isdeterministic,
-			int full_dependence,
-			boolean debug
-			) {
-		Objects.requireNonNull(binariesDir,"sampler compiled binaries directory is null");
-		Objects.requireNonNull(runtimeHomeDir,"matlab runtime directory is null");
-		Objects.requireNonNull(tmpDir,"tmp directory is null");
 
-		this.binariesDir = binariesDir;
-		this.runtimeHomeDir = runtimeHomeDir;
-		this.tmpDir = tmpDir;
+    private static final Logger LOGGER = LoggerFactory.getLogger(MontecarloSamplerConfig.class);
+
+    private Path binariesDir;
+    private Path runtimeHomeDir;
+    private Path tmpDir;
+    private Integer optionSign;
+    private Integer centering;
+    private final boolean debug;
+    private final Integer isdeterministic;
+    private final Integer full_dependence;
+
+    public MontecarloSamplerConfig(
+            Path binariesDir,
+            Path runtimeHomeDir,
+            Path tmpDir,
+            int optionSign,
+            int centering,
+            int isdeterministic,
+            int full_dependence,
+            boolean debug
+    ) {
+        Objects.requireNonNull(binariesDir, "sampler compiled binaries directory is null");
+        Objects.requireNonNull(runtimeHomeDir, "matlab runtime directory is null");
+        Objects.requireNonNull(tmpDir, "tmp directory is null");
+
+        this.binariesDir = binariesDir;
+        this.runtimeHomeDir = runtimeHomeDir;
+        this.tmpDir = tmpDir;
         this.optionSign = optionSign;
-		this.centering = centering;
-		this.isdeterministic = isdeterministic;
-		this.full_dependence = full_dependence;
-		this.debug = debug;
-	}
-	
-	public static MontecarloSamplerConfig load() {
+        this.centering = centering;
+        this.isdeterministic = isdeterministic;
+        this.full_dependence = full_dependence;
+        this.debug = debug;
+    }
+
+    public static MontecarloSamplerConfig load() {
         ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("montecarloSampler");
-        
+
         Path binariesDir = config.getPathProperty("binariesDir");
         Path runtimeHomeDir = config.getPathProperty("runtimeHomeDir");
         Path tmpDir = config.getPathProperty("tmpDir");
         int optionSign = config.getIntProperty("optionSign");
-		int centering = config.getIntProperty("centering");
-		Integer isdeterministic = config.getOptionalIntegerProperty("isdeterministic").orElse(null);
-		Integer full_dependence = config.getOptionalIntegerProperty("full_dependence").orElse(null);
+        int centering = config.getIntProperty("centering");
+        Integer isdeterministic = config.getOptionalIntegerProperty("isdeterministic").orElse(null);
+        Integer full_dependence = config.getOptionalIntegerProperty("full_dependence").orElse(null);
         boolean debug = config.getBooleanProperty("debug", false);
 
         return new MontecarloSamplerConfig(binariesDir, runtimeHomeDir, tmpDir, optionSign, centering, isdeterministic, full_dependence, debug);
-	}
-	
-	public Path getBinariesDir() {
-		return binariesDir;
-	}
-
-	public Path getRuntimeHomeDir() {
-		return runtimeHomeDir;
-	}
-	
-	public Path getTmpDir() {
-		return tmpDir;
-	}
-
-    public Integer getOptionSign() { 
-    	return optionSign; 
     }
 
-	public Integer getCentering() { return centering; }
+    public Path getBinariesDir() {
+        return binariesDir;
+    }
 
-	public Integer getIsdeterministic() {
-		return isdeterministic;
-	}
+    public Path getRuntimeHomeDir() {
+        return runtimeHomeDir;
+    }
 
-	public Integer getFull_dependence() {
-		return full_dependence;
-	}
+    public Path getTmpDir() {
+        return tmpDir;
+    }
 
-	public boolean isDebug() {
+    public Integer getOptionSign() {
+        return optionSign;
+    }
+
+    public Integer getCentering() {
+        return centering;
+    }
+
+    public Integer getIsdeterministic() {
+        return isdeterministic;
+    }
+
+    public Integer getFull_dependence() {
+        return full_dependence;
+    }
+
+    public boolean isDebug() {
         return debug;
-	}
-	
-	public static Logger getLogger() {
-		return LOGGER;
-	}
-	
-	@Override
-	public String toString() {
-		return "MontecarloSamplerConfig ["+ ", binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir + ", tmpDir=" + tmpDir
+    }
+
+    public static Logger getLogger() {
+        return LOGGER;
+    }
+
+    @Override
+    public String toString() {
+        return "MontecarloSamplerConfig [" + ", binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir + ", tmpDir=" + tmpDir
                 + ", optionSign=" + optionSign + ", centering=" + centering + ", isdeterministic=" + isdeterministic + ", full_dependence=" + full_dependence + ", debug=" + debug + "]";
-	}
-	
+    }
+
 }

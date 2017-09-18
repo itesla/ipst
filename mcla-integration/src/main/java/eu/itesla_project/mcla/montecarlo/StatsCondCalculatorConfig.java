@@ -29,97 +29,97 @@ debug=true
 
 
  */
+
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 public class StatsCondCalculatorConfig {
-	private static final Logger LOGGER = LoggerFactory.getLogger(StatsCondCalculatorConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StatsCondCalculatorConfig.class);
 
-	private Path binariesDir;
-	private Path runtimeHomeDir;
-	private Path tmpDir;
+    private Path binariesDir;
+    private Path runtimeHomeDir;
+    private Path tmpDir;
     private final Integer rngSeed;
-	private final boolean debug;
-	private final Integer isdeterministic;
-	private final Integer isuniform;
+    private final boolean debug;
+    private final Integer isdeterministic;
+    private final Integer isuniform;
 
 
-	public StatsCondCalculatorConfig(
-			Path binariesDir,
-			Path runtimeHomeDir,
-			Path tmpDir,
-			Integer isdeterministic,
-			Integer isuniform,
-			Integer rngSeed,
-			boolean debug
-	) {
-		Objects.requireNonNull(binariesDir,"sampler compiled binaries directory is null");
-		Objects.requireNonNull(runtimeHomeDir,"matlab runtime directory is null");
-		Objects.requireNonNull(tmpDir,"tmp directory is null");
+    public StatsCondCalculatorConfig(
+            Path binariesDir,
+            Path runtimeHomeDir,
+            Path tmpDir,
+            Integer isdeterministic,
+            Integer isuniform,
+            Integer rngSeed,
+            boolean debug
+    ) {
+        Objects.requireNonNull(binariesDir, "sampler compiled binaries directory is null");
+        Objects.requireNonNull(runtimeHomeDir, "matlab runtime directory is null");
+        Objects.requireNonNull(tmpDir, "tmp directory is null");
 
-		this.binariesDir = binariesDir;
-		this.runtimeHomeDir = runtimeHomeDir;
-		this.tmpDir = tmpDir;
+        this.binariesDir = binariesDir;
+        this.runtimeHomeDir = runtimeHomeDir;
+        this.tmpDir = tmpDir;
         this.rngSeed = rngSeed;
-		this.debug = debug;
-		this.isdeterministic = isdeterministic;
-		this.isuniform = isuniform;
-	}
-	
-	public static StatsCondCalculatorConfig load() {
+        this.debug = debug;
+        this.isdeterministic = isdeterministic;
+        this.isuniform = isuniform;
+    }
+
+    public static StatsCondCalculatorConfig load() {
         ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("statsCondCalculator");
-        
+
         Path binariesDir = config.getPathProperty("binariesDir");
         Path runtimeHomeDir = config.getPathProperty("runtimeHomeDir");
         Path tmpDir = config.getPathProperty("tmpDir");
         Integer rngSeed = config.getOptionalIntegerProperty("rngSeed").orElse(null);
         boolean debug = config.getBooleanProperty("debug", false);
-		Integer isdeterministic = config.getOptionalIntegerProperty("isdeterministic").orElse(null);
-		Integer isuniform = config.getOptionalIntegerProperty("isuniform").orElse(null);
+        Integer isdeterministic = config.getOptionalIntegerProperty("isdeterministic").orElse(null);
+        Integer isuniform = config.getOptionalIntegerProperty("isuniform").orElse(null);
 
-		return new StatsCondCalculatorConfig(binariesDir, runtimeHomeDir, tmpDir, isdeterministic, isuniform, rngSeed, debug);
-	}
-	
-	public Path getBinariesDir() {
-		return binariesDir;
-	}
-
-	public Path getRuntimeHomeDir() {
-		return runtimeHomeDir;
-	}
-	
-	public Path getTmpDir() {
-		return tmpDir;
-	}
-
-
-    public Integer getRngSeed() { 
-    	return rngSeed; 
+        return new StatsCondCalculatorConfig(binariesDir, runtimeHomeDir, tmpDir, isdeterministic, isuniform, rngSeed, debug);
     }
 
-	public boolean isDebug() {
+    public Path getBinariesDir() {
+        return binariesDir;
+    }
+
+    public Path getRuntimeHomeDir() {
+        return runtimeHomeDir;
+    }
+
+    public Path getTmpDir() {
+        return tmpDir;
+    }
+
+
+    public Integer getRngSeed() {
+        return rngSeed;
+    }
+
+    public boolean isDebug() {
         return debug;
-	}
-	
-	public static Logger getLogger() {
-		return LOGGER;
-	}
+    }
 
-	public Integer getIsdeterministic() {
-		return isdeterministic;
-	}
+    public static Logger getLogger() {
+        return LOGGER;
+    }
 
-	public Integer getIsuniform() {
-		return isuniform;
-	}
+    public Integer getIsdeterministic() {
+        return isdeterministic;
+    }
 
-	@Override
-	public String toString() {
-		return "StatsCondCalculatorConfig ["+ ", binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir + ", tmpDir=" + tmpDir
-				+ ", isdeterministic=" + isdeterministic
-				+ ", isuniform=" + isuniform
-                + ", rngSeed=" + rngSeed +", debug=" + debug + "]";
-	}
-	
+    public Integer getIsuniform() {
+        return isuniform;
+    }
+
+    @Override
+    public String toString() {
+        return "StatsCondCalculatorConfig [" + ", binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir + ", tmpDir=" + tmpDir
+                + ", isdeterministic=" + isdeterministic
+                + ", isuniform=" + isuniform
+                + ", rngSeed=" + rngSeed + ", debug=" + debug + "]";
+    }
+
 }
