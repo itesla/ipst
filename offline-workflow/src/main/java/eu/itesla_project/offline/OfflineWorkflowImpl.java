@@ -794,7 +794,7 @@ public class OfflineWorkflowImpl extends AbstractOfflineWorkflow {
     @Override
     protected void notifyRuleStorage(String workflowId, RuleId ruleId, boolean ok, float percentComplete) {
         LOGGER.info("Rule {} for workflow {}: {}", ruleId, workflowId, ok ? "success" : "failure");
-        for(OfflineWorkflowListener listener : listeners) {
+        for (OfflineWorkflowListener listener : listeners) {
             listener.onSecurityRuleStorage(workflowId, ruleId, ok, percentComplete);
         }
     }

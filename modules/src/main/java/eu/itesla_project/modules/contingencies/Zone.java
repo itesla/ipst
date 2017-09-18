@@ -14,13 +14,13 @@ import java.util.Collection;
  * @author Quinary <itesla@quinary.com>
  */
 public interface Zone {
-	
-	 String getName();
-	 
-	 BigInteger getNumber();
-		
-	 Collection<VoltageLevel> getVoltageLevels();
-	 
-	 String getDescription();
+
+     String getName();
+
+     BigInteger getNumber();
+
+     Collection<VoltageLevel> getVoltageLevels();
+
+     String getDescription();
 
 }

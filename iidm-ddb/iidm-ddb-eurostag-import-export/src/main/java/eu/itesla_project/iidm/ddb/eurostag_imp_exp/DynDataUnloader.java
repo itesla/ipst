@@ -15,36 +15,36 @@ import org.slf4j.LoggerFactory;
  * @author Quinary <itesla@quinary.com>
  */
 public class DynDataUnloader {
-	static Logger log = LoggerFactory.getLogger(DynDataUnloader.class.getName());
+    static Logger log = LoggerFactory.getLogger(DynDataUnloader.class.getName());
 
-    String jbossHost="127.0.0.1";
-    String jbossPort="4447";
-    String jbossUser="user";
-    String jbossPassword="password";
-
-
-
-	/**
-	 * @param dicoPath   mapping csv file (cimid, eurostagid)
-	 * @param ddPath     file path or dir path to process (.dd and .dta files are considered)
-	 * @param regsPath   dir path containing regulators
-	 * @param eurostagVersion  i.e 5.1.1
-	 * @param jbossHost
-	 * @param jbossPort
-	 * @param jbossUser
-	 * @param jbossPassword
-	 */
-	public DynDataUnloader(String jbossHost, String jbossPort, String jbossUser, String jbossPassword) {;
-		this.jbossHost=jbossHost;
-		this.jbossPort=jbossPort;
-		this.jbossUser=jbossUser;
-		this.jbossPassword=jbossPassword;
-	}
+    String jbossHost = "127.0.0.1";
+    String jbossPort = "4447";
+    String jbossUser = "user";
+    String jbossPassword = "password";
 
 
-	public void unloadDynData() throws Exception {
-		DdbDtaImpExp ddbImpExp = new DdbDtaImpExp(new DdbConfig(jbossHost, jbossPort, jbossUser, jbossPassword));
-		ddbImpExp.unloadEurostagData();
-	}
+
+    /**
+     * @param dicoPath   mapping csv file (cimid, eurostagid)
+     * @param ddPath     file path or dir path to process (.dd and .dta files are considered)
+     * @param regsPath   dir path containing regulators
+     * @param eurostagVersion  i.e 5.1.1
+     * @param jbossHost
+     * @param jbossPort
+     * @param jbossUser
+     * @param jbossPassword
+     */
+    public DynDataUnloader(String jbossHost, String jbossPort, String jbossUser, String jbossPassword) {
+        this.jbossHost = jbossHost;
+        this.jbossPort = jbossPort;
+        this.jbossUser = jbossUser;
+        this.jbossPassword = jbossPassword;
+    }
+
+
+    public void unloadDynData() throws Exception {
+        DdbDtaImpExp ddbImpExp = new DdbDtaImpExp(new DdbConfig(jbossHost, jbossPort, jbossUser, jbossPassword));
+        ddbImpExp.unloadEurostagData();
+    }
 
 }

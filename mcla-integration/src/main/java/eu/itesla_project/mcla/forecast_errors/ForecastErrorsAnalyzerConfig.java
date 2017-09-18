@@ -14,10 +14,10 @@ import org.slf4j.LoggerFactory;
 import java.nio.file.Path;
 import java.util.Objects;
 /*
-   MCLA code 1.8
+   MCLA code 1.8.1
 */
-
 /**
+ *
  * @author Quinary <itesla@quinary.com>
  */
 public class ForecastErrorsAnalyzerConfig {
@@ -95,7 +95,7 @@ public class ForecastErrorsAnalyzerConfig {
             Integer correlation_fict_uniform,
             Integer rngSeed,
             boolean debug
-    ) {
+            ) {
         Objects.requireNonNull(binariesDir, "sampler compiled binaries directory is null");
         Objects.requireNonNull(runtimeHomeDir, "matlab runtime directory is null");
 
@@ -172,7 +172,6 @@ public class ForecastErrorsAnalyzerConfig {
         double band_uniformQL = config.getDoubleProperty("band_uniformQL");
         double band_uniformPGEN = config.getDoubleProperty("band_uniformPGEN");
         Integer correlation_fict_uniform = config.getOptionalIntegerProperty("correlation_fict_uniform").orElse(null);
-
 
         return new ForecastErrorsAnalyzerConfig(binariesDir, runtimeHomeDir, checkModule0, percpuGaussLoad, percpuGaussRes,
                 correlationGauss, tolVar, nMinObsFract, nMinObsInterv, imputationMeth, nGaussians, kOutlier, tolerance,

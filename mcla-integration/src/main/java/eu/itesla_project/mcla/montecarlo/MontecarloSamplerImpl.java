@@ -13,12 +13,12 @@ import eu.itesla_project.mcla.NetworkUtils;
 import eu.itesla_project.mcla.montecarlo.data.SampleData;
 import eu.itesla_project.mcla.montecarlo.data.SampledData;
 import eu.itesla_project.mcla.montecarlo.data.SamplingNetworkData;
+import eu.itesla_project.sampling.util.Utils;
 import eu.itesla_project.modules.mcla.ForecastErrorsAnalyzerParameters;
 import eu.itesla_project.modules.mcla.ForecastErrorsDataStorage;
 import eu.itesla_project.modules.mcla.MontecarloSampler;
 import eu.itesla_project.modules.mcla.MontecarloSamplerParameters;
 import eu.itesla_project.modules.online.TimeHorizon;
-import eu.itesla_project.sampling.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +28,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /**
+ *
  * @author Quinary <itesla@quinary.com>
  */
 public class MontecarloSamplerImpl implements MontecarloSampler {
@@ -139,14 +140,17 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
         }
         LOGGER.debug(" -> current sample index: " + currentSampleIndex);
         float[] generatorsActivePower = null;
-        if (sampledData.getGeneratorsActivePower() != null)
+        if (sampledData.getGeneratorsActivePower() != null) {
             generatorsActivePower = Utils.toFloatArray(sampledData.getGeneratorsActivePower()[currentSampleIndex]);
+        }
         float[] loadsActivePower = null;
-        if (sampledData.getLoadsActivePower() != null)
+        if (sampledData.getLoadsActivePower() != null) {
             loadsActivePower = Utils.toFloatArray(sampledData.getLoadsActivePower()[currentSampleIndex]);
+        }
         float[] loadsReactivePower = null;
-        if (sampledData.getLoadsReactivePower() != null)
+        if (sampledData.getLoadsReactivePower() != null) {
             loadsReactivePower = Utils.toFloatArray(sampledData.getLoadsReactivePower()[currentSampleIndex]);
+        }
         SampleData sampleData = new SampleData(generatorsActivePower, loadsActivePower, loadsReactivePower);
         return sampleData;
     }
@@ -225,17 +229,20 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
                 LOGGER.debug("{}: generator {} - P:{} -> P:{} - limits[{},{}]",
                         network.getStateManager().getWorkingStateId(), generatorId, oldActivePower, newActivePower,
                         network.getGenerator(generatorId).getMinP(), network.getGenerator(generatorId).getMaxP());
-                if (network.getGenerator(generatorId).getMaxP() < -newActivePower)
+                if (network.getGenerator(generatorId).getMaxP() < -newActivePower) {
                     LOGGER.warn("{}: generator {} - new P ({}) > max P ({})",
                             network.getStateManager().getWorkingStateId(), generatorId, -newActivePower, network.getGenerator(generatorId).getMaxP());
-                if (network.getGenerator(generatorId).getMinP() > -newActivePower)
+                }
+                if (network.getGenerator(generatorId).getMinP() > -newActivePower) {
                     LOGGER.warn("{}: generator {} - new P ({}) < min P ({})",
                             network.getStateManager().getWorkingStateId(), generatorId, -newActivePower, network.getGenerator(generatorId).getMinP());
+                }
                 if (!Float.isNaN(newActivePower)) {
                     network.getGenerator(generatorId).setTargetP(-newActivePower);
                     network.getGenerator(generatorId).getTerminal().setP(newActivePower);
-                } else
+                } else {
                     LOGGER.debug("{}: new sampled P for generator {} is NaN: skipping assignment", network.getStateManager().getWorkingStateId(), generatorId);
+                }
             }
         }
         LOGGER.debug("connected network loads = " + connectedLoadsIds.size() + " - sampled loads = [" + sample.getLoadsActivePower().length + "," + sample.getLoadsReactivePower().length + "]");
@@ -252,8 +259,9 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
                     if (!Float.isNaN(newActivePower)) {
                         network.getLoad(loadId).setP0(newActivePower);
                         network.getLoad(loadId).getTerminal().setP(newActivePower);
-                    } else
+                    } else {
                         LOGGER.debug("{}: new sampled P for load {} is NaN: skipping assignment", network.getStateManager().getWorkingStateId(), loadId);
+                    }
                 }
                 if (sample.getLoadsReactivePower() != null) {
                     float newReactivePower = sample.getLoadsReactivePower()[i];
@@ -268,8 +276,9 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
                         if (!Float.isNaN(newReactivePower)) {
                             network.getLoad(loadId).setQ0(newReactivePower);
                             network.getLoad(loadId).getTerminal().setQ(newReactivePower);
-                        } else
+                        } else {
                             LOGGER.debug("{}: new sampled Q for load {} is NaN: skipping assignment", network.getStateManager().getWorkingStateId(), loadId);
+                        }
                     } else {
                         totalQLoadAS += oldReactivePower;
                         LOGGER.warn("{}: load {} - |new Q({})| > {}: skipping assignment and keeping old Q({})",

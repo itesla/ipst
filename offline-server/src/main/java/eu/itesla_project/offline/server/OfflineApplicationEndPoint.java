@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
-@ServerEndpoint(value="/messages/offline", encoders={
+@ServerEndpoint(value = "/messages/offline", encoders = {
     BusyCoresSeriesMessageEncoder.class,
     LoginMessageEncoder.class,
     SamplesSynthesisMessageEncoder.class,
@@ -74,7 +74,7 @@ public class OfflineApplicationEndPoint {
                 // confirm login to the client
                 try {
                     session.getBasicRemote().sendObject(new LoginMessage());
-                } catch (IOException|EncodeException e) {
+                } catch (IOException | EncodeException e) {
                     LOGGER.error(e.toString(), e);
                 }
 

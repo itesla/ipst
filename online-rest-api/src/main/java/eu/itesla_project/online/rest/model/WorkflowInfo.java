@@ -78,6 +78,6 @@ public class WorkflowInfo {
         if (o == null) {
             return "null";
         }
-        return o.toString().replace(System.lineSeparator(), System.lineSeparator()+"    ");
+        return o.toString().replace(System.lineSeparator(), System.lineSeparator() + "    ");
     }
 }

@@ -59,7 +59,7 @@ public class RemoteOnlineApplication implements OnlineApplication, NotificationL
                     try {
                         notifyDisconnection();
                         connect();
-                    } catch (Throwable t) {
+                    } catch (Throwable ignored) {
                     }
                 }
             }

@@ -29,8 +29,8 @@ debug=true
 
 
  */
-
 /**
+ *
  * @author Quinary <itesla@quinary.com>
  */
 public class StatsCondCalculatorConfig {

@@ -93,8 +93,9 @@ public class OnlineApplicationResource {
     @Path("currentUser")
     public String getCurrentUser() {
         String user = "";
-        if (securityContext != null && securityContext.getUserPrincipal() != null)
+        if (securityContext != null && securityContext.getUserPrincipal() != null) {
             user = securityContext.getUserPrincipal().getName();
+        }
 
         return user;
     }
@@ -109,11 +110,12 @@ public class OnlineApplicationResource {
         }
 
         HttpSession session = req.getSession();
-        if (session != null)
+        if (session != null) {
             try {
                 session.invalidate();
-            } catch (Exception ex) {
+            } catch (Exception ignored) {
             }
+        }
 
     }
 
@@ -124,7 +126,7 @@ public class OnlineApplicationResource {
         boolean res = false;
         try {
             res = bean.isJmxConnected();
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         return res;
     }
@@ -136,7 +138,7 @@ public class OnlineApplicationResource {
         boolean res = false;
         try {
             res = bean.isWcaRunning(workflowId);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         return res;
     }
@@ -149,7 +151,7 @@ public class OnlineApplicationResource {
         try {
 
             res = bean.isWorkflowRunning(workflowId);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
 
         return res;
@@ -179,7 +181,7 @@ public class OnlineApplicationResource {
                 WorkStatusMessage msg = new WorkStatusMessage(new WorkSynthesis(workflowId, ws));
                 res = msg.toJson();
             }
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
 
         return res;
@@ -196,7 +198,7 @@ public class OnlineApplicationResource {
                 StatesWithActionsSynthesisMessage msg = new StatesWithActionsSynthesisMessage(ws);
                 res = msg.toJson();
             }
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
 
         return res;
@@ -213,7 +215,7 @@ public class OnlineApplicationResource {
                 StatesWithIndexesSynthesisMessage msg = new StatesWithIndexesSynthesisMessage(ws);
                 res = msg.toJson();
             }
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
 
         return res;
@@ -231,7 +233,7 @@ public class OnlineApplicationResource {
                         sria);
                 res = msg.toJson();
             }
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
 
         return res;
@@ -248,7 +250,7 @@ public class OnlineApplicationResource {
                 WorkFlowIdsMessage msg = new WorkFlowIdsMessage(ids);
                 res = msg.toJson();
             }
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
 
         return res;
@@ -265,7 +267,7 @@ public class OnlineApplicationResource {
                 WorkflowListMessage msg = new WorkflowListMessage(workflows);
                 res = msg.toJson();
             }
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
 
         return res;
@@ -284,7 +286,7 @@ public class OnlineApplicationResource {
                 SelectedWorkFlowInfoMessage msg = new SelectedWorkFlowInfoMessage(onlineWorkflowInfo);
                 res = msg.toJson();
             }
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
 
         return res;
@@ -298,7 +300,7 @@ public class OnlineApplicationResource {
         try {
 
             res = bean.isWorkflowRunning(workflowId);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         return res;
     }
@@ -314,7 +316,7 @@ public class OnlineApplicationResource {
                 WcaContingenciesMessage msg = new WcaContingenciesMessage(wcaCtgs);
                 res = msg.toJson();
             }
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
 
         return res;

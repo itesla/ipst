@@ -19,52 +19,47 @@ import eu.itesla_project.modules.contingencies.ActionPlanOption;
  * @author Quinary <itesla@quinary.com>
  */
 public class ActionPlanImpl implements ActionPlan {
-	
-	private String name;
-	
-	private String description;
-	
-	private  List<String> zones = new ArrayList<String>();
-	
-	private  Map<BigInteger, ActionPlanOption> priorityOption= new HashMap<BigInteger,ActionPlanOption>();
-	
-	
-	
-	public ActionPlanImpl(String _name, String _description, List<String> _zones, Map<BigInteger, ActionPlanOption> _priorityOptions) 
-	{
-		this.name				=		_name;
-		this.description 		= 		_description;
-		this.zones 				=		_zones;
-		this.priorityOption		=		_priorityOptions;
-	}
-	
-	
 
-	@Override
-	public String getName()
-	{
-		return this.name;
-	}
+    private String name;
 
-	@Override
-	public String getDescription() 
-	{
-		return this.description;
-	}
+    private String description;
 
-	@Override
-	public List<String> getZones() 
-	{
-		return this.zones;
-		
-	}
+    private  List<String> zones = new ArrayList<String>();
 
-	@Override
-	public Map<BigInteger, ActionPlanOption> getPriorityOption() 
-	{
-		return this.priorityOption;
-	}
+    private  Map<BigInteger, ActionPlanOption> priorityOption = new HashMap<BigInteger, ActionPlanOption>();
 
-	
+
+
+    public ActionPlanImpl(String _name, String _description, List<String> _zones, Map<BigInteger, ActionPlanOption> _priorityOptions) {
+        this.name                =          _name;
+        this.description         =          _description;
+        this.zones               =          _zones;
+        this.priorityOption      =          _priorityOptions;
+    }
+
+
+
+    @Override
+    public String getName() {
+        return this.name;
+    }
+
+    @Override
+    public String getDescription() {
+        return this.description;
+    }
+
+    @Override
+    public List<String> getZones() {
+        return this.zones;
+
+    }
+
+    @Override
+    public Map<BigInteger, ActionPlanOption> getPriorityOption() {
+        return this.priorityOption;
+    }
+
+
 }
 

@@ -24,38 +24,41 @@ import eu.itesla_project.sampling.util.Utils;
  * @author Quinary <itesla@quinary.com>
  */
 public class MCSMatFileReader {
-	
-	private Map<String, MLArray> matFileContent;
-	
-	public MCSMatFileReader(Path matFile) throws Exception {
-		Objects.requireNonNull(matFile, "mat file is null");
-		MatFileReader sampledDataFileReader = new MatFileReader();
+
+    private Map<String, MLArray> matFileContent;
+
+    public MCSMatFileReader(Path matFile) throws Exception {
+        Objects.requireNonNull(matFile, "mat file is null");
+        MatFileReader sampledDataFileReader = new MatFileReader();
         matFileContent = sampledDataFileReader.read(matFile.toFile());
         String errorMessage = Utils.MLCharToString((MLChar) matFileContent.get("errmsg"));
         if ( !("Ok".equalsIgnoreCase(errorMessage)) ) {
             throw new MatlabException(errorMessage);
         }
-	}
-	
-	public SampledData getSampledData() {
-		// get generators active power
+    }
+
+    public SampledData getSampledData() {
+        // get generators active power
         MLDouble pGen = (MLDouble) matFileContent.get("PGEN");
         double[][] generatorsActivePower = null;
-        if ( pGen != null )
-        	generatorsActivePower = pGen.getArray();
+        if (pGen != null) {
+            generatorsActivePower = pGen.getArray();
+        }
         // get loads active power
         MLDouble pLoad = (MLDouble) matFileContent.get("PLOAD");
         double[][] loadsActivePower = null;
-        if ( pLoad != null )
-        	loadsActivePower = pLoad.getArray();
+        if (pLoad != null) {
+            loadsActivePower = pLoad.getArray();
+        }
         // get loads reactive power
         MLDouble qLoad = (MLDouble) matFileContent.get("QLOAD");
         double[][] loadsReactivePower = null;
-        if ( qLoad != null )
-        	loadsReactivePower = qLoad.getArray();
-        
+        if (qLoad != null) {
+            loadsReactivePower = qLoad.getArray();
+        }
+
         SampledData sampledData = new SampledData(generatorsActivePower, loadsActivePower, loadsReactivePower);
         return sampledData;
-	}
+    }
 
 }

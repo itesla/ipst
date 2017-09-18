@@ -19,14 +19,14 @@ import org.hibernate.validator.constraints.NotEmpty;
  * @author Quinary <itesla@quinary.com>
  */
 @Entity
-@Table(name="PARAMETER")
-@Inheritance(strategy=InheritanceType.JOINED)
-@DiscriminatorColumn(name="PAR_TYPE", discriminatorType=DiscriminatorType.STRING)
+@Table(name = "PARAMETER")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "PAR_TYPE", discriminatorType = DiscriminatorType.STRING)
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class Parameter implements Serializable {
-	private static final long serialVersionUID = 1L;
-	
-	//The synthetic id of the object.
+    private static final long serialVersionUID = 1L;
+
+    //The synthetic id of the object.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
@@ -37,23 +37,23 @@ public abstract class Parameter implements Serializable {
 //        this.id = id;
 //    }
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     @NotEmpty
     protected String name;
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	protected Parameter() {
-		super();
-	}
-	public Parameter(String name) {
-		super();
-		this.name=name;
-	}
-   
-	public abstract Object getValue();
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    protected Parameter() {
+        super();
+    }
+    public Parameter(String name) {
+        super();
+        this.name = name;
+    }
+
+    public abstract Object getValue();
 }

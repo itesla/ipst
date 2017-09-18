@@ -17,7 +17,6 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import eu.itesla_project.iidm.ddb.model.Equipment;
 import eu.itesla_project.iidm.ddb.model.Internal;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
 
@@ -29,26 +28,26 @@ import eu.itesla_project.iidm.ddb.service.DDBManager;
 public class InternalListProducer {
 
     @Inject
-	private Logger log;
-    
-	@EJB
-	private DDBManager pmanager;
+    private Logger log;
+
+    @EJB
+    private DDBManager pmanager;
 
     private List<Internal> internals;
-    
-    
+
+
     // @Named provides access the return value via the EL variable name "members" in the UI (e.g.
     // Facelets or JSP view)
     @Produces
     @Named
     public List<Internal> getInternals() {
         return internals;
-    }    
+    }
 
     @PostConstruct
     public void retrieveAllInternals() {
-    	log.log(Level.INFO," produces internals list ");
-    	this.internals= pmanager.findInternalsAll();
-    	log.log(Level.INFO," produced internals list size "+internals.size());
+        log.log(Level.INFO, " produces internals list ");
+        this.internals = pmanager.findInternalsAll();
+        log.log(Level.INFO, " produced internals list size " + internals.size());
     }
 }

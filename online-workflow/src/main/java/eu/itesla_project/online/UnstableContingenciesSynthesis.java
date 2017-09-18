@@ -19,43 +19,46 @@ import eu.itesla_project.modules.wca.WCAClusterNum;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class UnstableContingenciesSynthesis implements Serializable{
-	
-	
-	private static final long serialVersionUID = 1L;
-	
-	private String workflowId;
-	
-	private Map<String, Integer> contingenciesCluster= new Hashtable<String, Integer>();
-	
-	
+public class UnstableContingenciesSynthesis implements Serializable {
 
-	public UnstableContingenciesSynthesis( String workflowId, Map<String, WCACluster> contingenciesWithClusters ){
-		this.workflowId=workflowId;
-		Set<Entry<String,WCACluster>> contingencyWithCluster=contingenciesWithClusters.entrySet();
-		
-		for (Entry<String,WCACluster> cc: contingencyWithCluster)
-			if( cc.getValue().getNum() != WCAClusterNum.ONE )	contingenciesCluster.put(cc.getKey(), new Integer(cc.getValue().getNum().toIntValue()));
-		
-	}
-	
-	public String getWorkflowId() {
-		return workflowId;
-	}
-	public void setWorkflowId(String workflowId) {
-		this.workflowId = workflowId;
-	}
 
-	
-	
-	public Map<String, Integer> getContingenciesCluster() {
-		return contingenciesCluster;
-	}
+    private static final long serialVersionUID = 1L;
 
-	public void setContingenciesCluster(Map<String, Integer> contingenciesCluster) {
-		this.contingenciesCluster = contingenciesCluster;
-	}
+    private String workflowId;
 
-	
+    private Map<String, Integer> contingenciesCluster = new Hashtable<String, Integer>();
+
+
+
+    public UnstableContingenciesSynthesis(String workflowId, Map<String, WCACluster> contingenciesWithClusters) {
+        this.workflowId = workflowId;
+        Set<Entry<String, WCACluster>> contingencyWithCluster = contingenciesWithClusters.entrySet();
+
+        for (Entry<String, WCACluster> cc : contingencyWithCluster) {
+            if (cc.getValue().getNum() != WCAClusterNum.ONE) {
+                contingenciesCluster.put(cc.getKey(), new Integer(cc.getValue().getNum().toIntValue()));
+            }
+        }
+
+    }
+
+    public String getWorkflowId() {
+        return workflowId;
+    }
+    public void setWorkflowId(String workflowId) {
+        this.workflowId = workflowId;
+    }
+
+
+
+    public Map<String, Integer> getContingenciesCluster() {
+        return contingenciesCluster;
+    }
+
+    public void setContingenciesCluster(Map<String, Integer> contingenciesCluster) {
+        this.contingenciesCluster = contingenciesCluster;
+    }
+
+
 
 }

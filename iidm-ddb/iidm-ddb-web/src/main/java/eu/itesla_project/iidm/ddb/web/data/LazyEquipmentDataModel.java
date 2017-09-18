@@ -21,53 +21,52 @@ import eu.itesla_project.iidm.ddb.service.DDBManager;
  */
 public class LazyEquipmentDataModel extends LazyDataModel<Equipment> {
 
-	
-	private static final long serialVersionUID = 1L;
-		
-	private DDBManager pmanager;
-   
 
-   
-	
-   public LazyEquipmentDataModel( DDBManager pmanager)
-   {
-	   this.pmanager=pmanager;
-	   setPageSize(10);
-	   setRowCount(pmanager.findEquipmentAllCount());
+    private static final long serialVersionUID = 1L;
+
+    private DDBManager pmanager;
+
+
+
+
+   public LazyEquipmentDataModel( DDBManager pmanager) {
+       this.pmanager = pmanager;
+       setPageSize(10);
+       setRowCount(pmanager.findEquipmentAllCount());
    }
-	
-	@Override
-	public int getRowCount() {
-		// TODO Auto-generated method stub
-		return pmanager.findEquipmentAllCount();
-	}
 
-	@Override
-	public Equipment getRowData(String nativeId) {
-		return pmanager.findEquipment(nativeId);
-	}
+    @Override
+    public int getRowCount() {
+        // TODO Auto-generated method stub
+        return pmanager.findEquipmentAllCount();
+    }
 
-	@Override
-	public Object getRowKey(Equipment object) {
-		return object.getCimId();
-	}
-	
-	
-	
+    @Override
+    public Equipment getRowData(String nativeId) {
+        return pmanager.findEquipment(nativeId);
+    }
 
-	@Override
-	public List<Equipment> load(int first, int pageSize,
-			List<SortMeta> multiSortMeta, Map<String, String> filters) {
-		return pmanager.findEquipmentsAllMaxResults(first, pageSize);
-	}
+    @Override
+    public Object getRowKey(Equipment object) {
+        return object.getCimId();
+    }
 
-	@Override
-	public List<Equipment> load(int first, int pageSize, String sortField,
-			SortOrder sortOrder, Map<String, String> filters) {
-		List<Equipment> res = pmanager.findEquipmentsAllMaxResults(first, pageSize);
-		return res;
-	}
 
-	
-	
+
+
+    @Override
+    public List<Equipment> load(int first, int pageSize,
+            List<SortMeta> multiSortMeta, Map<String, String> filters) {
+        return pmanager.findEquipmentsAllMaxResults(first, pageSize);
+    }
+
+    @Override
+    public List<Equipment> load(int first, int pageSize, String sortField,
+            SortOrder sortOrder, Map<String, String> filters) {
+        List<Equipment> res = pmanager.findEquipmentsAllMaxResults(first, pageSize);
+        return res;
+    }
+
+
+
 }

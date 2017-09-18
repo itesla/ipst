@@ -28,10 +28,10 @@ import eu.itesla_project.iidm.ddb.service.DDBManager;
 public class ModelTemplateContainerListProducer {
 
     @Inject
-	private Logger log;
-    
-	@EJB
-	private DDBManager pmanager;
+    private Logger log;
+
+    @EJB
+    private DDBManager pmanager;
 
     private List<ModelTemplateContainer> modelTemplateContainers;
 
@@ -41,12 +41,12 @@ public class ModelTemplateContainerListProducer {
     @Named
     public List<ModelTemplateContainer> getModelTemplateContainers() {
         return modelTemplateContainers;
-    }    
+    }
 
     @PostConstruct
     public void retrieveAllModelTemplateContainer() {
-    	log.log(Level.INFO," produces list ");
-    	this.modelTemplateContainers= pmanager.findModelTemplateContainerAll();
-    	log.log(Level.INFO,"DONE produced list ");
+        log.log(Level.INFO, " produces list ");
+        this.modelTemplateContainers = pmanager.findModelTemplateContainerAll();
+        log.log(Level.INFO, "DONE produced list ");
     }
 }

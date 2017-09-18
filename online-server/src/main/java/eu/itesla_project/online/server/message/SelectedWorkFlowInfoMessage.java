@@ -6,7 +6,6 @@
  */
 package eu.itesla_project.online.server.message;
 
-import java.util.HashMap;
 
 import javax.json.stream.JsonGenerator;
 

@@ -24,6 +24,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 /**
+ *
  * @author Quinary <itesla@quinary.com>
  */
 public class StatsCondCalculator {

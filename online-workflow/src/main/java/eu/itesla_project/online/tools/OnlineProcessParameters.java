@@ -13,87 +13,87 @@ import org.joda.time.DateTime;
 *
 * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
 */
-public class OnlineProcessParameters{
+public class OnlineProcessParameters {
 
-	private String caseType;
-	private Integer states;
-	private String name;
-	private String owner;
-	private DateTime creationDate;
-	private DateTime date;
-	private String basecasesInterval;
+    private String caseType;
+    private Integer states;
+    private String name;
+    private String owner;
+    private DateTime creationDate;
+    private DateTime date;
+    private String basecasesInterval;
 
-	public OnlineProcessParameters(){
-	}
+    public OnlineProcessParameters() {
+    }
 
-	public void setName(String name) {
-		this.name=name;
-		
-	}
+    public void setName(String name) {
+        this.name = name;
 
-	public void setCaseType(String caseType) {
-		this.caseType=caseType;
-		
-	}
+    }
 
-	public void setStates(Integer states) {
-		this.states=states;
-		
-	}
+    public void setCaseType(String caseType) {
+        this.caseType = caseType;
 
-	public void setBasecasesInterval(String interval) {
-		this.basecasesInterval=interval;
-		
-	}
+    }
 
-	public void setCreationDate(DateTime date) {
-		this.creationDate=date;
-		
-	}
+    public void setStates(Integer states) {
+        this.states = states;
 
-	public void setDate(DateTime date) {
-		this.date=date;
-		
-	}
+    }
 
-	public void setOwner(String owner) {
-		this.owner=owner;
-		
-	}
+    public void setBasecasesInterval(String interval) {
+        this.basecasesInterval = interval;
 
-	public String getName() {
-		return name;
-	}
+    }
 
-	public String getOwner() {
-		return owner;
-	}
+    public void setCreationDate(DateTime date) {
+        this.creationDate = date;
 
-	public DateTime getCreationDate() {
-		return creationDate;
-	}
+    }
 
-	public DateTime getDate() {
-		return date;
-	}
+    public void setDate(DateTime date) {
+        this.date = date;
 
-	public String getBasecasesInterval() {
-		return basecasesInterval;
-	}
+    }
 
-	public String getCaseType() {
-		return caseType;
-	}
+    public void setOwner(String owner) {
+        this.owner = owner;
 
-	public Integer getStates() {
-		return states;
-	}
+    }
 
-	@Override
-	public String toString() {
-		return "OnlineProcessParameters [caseType=" + caseType + ", states=" + states + ", name=" + name + ", owner="
-				+ owner + ", creationDate=" + creationDate + ", date=" + date + ", basecasesInterval=" + basecasesInterval + "]";
-	}
-	
-	
+    public String getName() {
+        return name;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public DateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public DateTime getDate() {
+        return date;
+    }
+
+    public String getBasecasesInterval() {
+        return basecasesInterval;
+    }
+
+    public String getCaseType() {
+        return caseType;
+    }
+
+    public Integer getStates() {
+        return states;
+    }
+
+    @Override
+    public String toString() {
+        return "OnlineProcessParameters [caseType=" + caseType + ", states=" + states + ", name=" + name + ", owner="
+                + owner + ", creationDate=" + creationDate + ", date=" + date + ", basecasesInterval=" + basecasesInterval + "]";
+    }
+
+
 }

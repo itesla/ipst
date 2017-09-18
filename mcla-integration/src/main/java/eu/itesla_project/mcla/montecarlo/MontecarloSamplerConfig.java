@@ -8,45 +8,46 @@ package eu.itesla_project.mcla.montecarlo;
 
 import eu.itesla_project.commons.config.ModuleConfig;
 import eu.itesla_project.commons.config.PlatformConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.nio.file.Path;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
+ *
  * @author Quinary <itesla@quinary.com>
  */
 public class MontecarloSamplerConfig {
 
-	/*
-	 *  required fea matlab code modules version v1.7.1 (offline sampling)
-	 *
-	 *  v1.7.1 : adds 'centering' parameter
-	 *  v1.7.0 : offline samples
-	 *
-	 * example of montecarloSampler.properties file.
-	 * note that required matlab binaries and MCR are expected to be available at the specified path
-	 * on each computation node
-	 *
-	#path to the directory containing the compiled matlab binaries (chmod +x all the binaries)
-	binariesDir=/shared/allrw/montecarlosampler/bin
+    /*
+     *  required fea matlab code modules version v1.7.1 (offline sampling)
+     *
+     *  v1.7.1 : adds 'centering' parameter
+     *  v1.7.0 : offline samples
+     *
+     * example of montecarloSampler.properties file.
+     * note that required matlab binaries and MCR are expected to be available at the specified path
+     * on each computation node
+     *
+    #path to the directory containing the compiled matlab binaries (chmod +x all the binaries)
+    binariesDir=/shared/allrw/montecarlosampler/bin
 
-	#path to the MCR installation
-	runtimeHomeDir=/usr/local/MATLAB/MATLAB_Compiler_Runtime/v81
-	
-	#path to the tmp folder
-	tmpDir=/home/itesla/itesla_wp5/tmp
+    #path to the MCR installation
+    runtimeHomeDir=/usr/local/MATLAB/MATLAB_Compiler_Runtime/v81
 
-	#optionSign  if 1, when value of extracted sample has a different sign wrt forecast the sampled value is put to 0. if 0, the sampled value is assumed as valid sample.
-	optionSign=0
+    #path to the tmp folder
+    tmpDir=/home/itesla/itesla_wp5/tmp
 
-	#centering   if centering = 1, conditional samples are centered on DACF (used only if FEA conditional_sampling =1 )
-	centering=1
+    #optionSign  if 1, when value of extracted sample has a different sign wrt forecast the sampled value is put to 0. if 0, the sampled value is assumed as valid sample.
+    optionSign=0
 
-	debug=true
+    #centering   if centering = 1, conditional samples are centered on DACF (used only if FEA conditional_sampling =1 )
+    centering=1
 
-	*/
+    debug=true
+
+    */
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MontecarloSamplerConfig.class);
 
@@ -68,7 +69,7 @@ public class MontecarloSamplerConfig {
             int isdeterministic,
             int full_dependence,
             boolean debug
-    ) {
+            ) {
         Objects.requireNonNull(binariesDir, "sampler compiled binaries directory is null");
         Objects.requireNonNull(runtimeHomeDir, "matlab runtime directory is null");
         Objects.requireNonNull(tmpDir, "tmp directory is null");

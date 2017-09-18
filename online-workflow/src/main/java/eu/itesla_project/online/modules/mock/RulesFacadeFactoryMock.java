@@ -16,9 +16,9 @@ import eu.itesla_project.modules.rules.RulesDbClient;
 */
 public class RulesFacadeFactoryMock implements RulesFacadeFactory {
 
-	@Override
-	public OnlineRulesFacade create(RulesDbClient rulesDbClient) {
-		return new RulesFacadeMock();
-	}
+    @Override
+    public OnlineRulesFacade create(RulesDbClient rulesDbClient) {
+        return new RulesFacadeMock();
+    }
 
 }

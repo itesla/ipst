@@ -48,29 +48,29 @@ public class SamplerWp41Config {
 
     private static final int MODULE3_DEFAULT_TIMEOUT = 10 * 60;
 
-	private final Path binariesDir;
+    private final Path binariesDir;
 
     private final Path runtimeHomeDir;
 
     private final Path validationDir;
 
-	private final double ir;
+    private final double ir;
     private final Integer rngSeed;
 
     private final int module3Timeout;
-	private final double tflag;
+    private final double tflag;
 
-	private final int par_k;
+    private final int par_k;
 
-	private final boolean debug;
+    private final boolean debug;
 
-	public static SamplerWp41Config load() {
+    public static SamplerWp41Config load() {
         ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("samplerwp41");
 
         Path runtimeHomeDir = config.getPathProperty("runtimeHomeDir");
         Path binariesDir = config.getPathProperty("binariesDir", null);
 
-        Path validationDir=config.getPathProperty("validationDir", null);
+        Path validationDir = config.getPathProperty("validationDir", null);
 
         double ir = config.getDoubleProperty("ir");
         double tflag = config.getDoubleProperty("tflag");
@@ -79,53 +79,53 @@ public class SamplerWp41Config {
 
         int module3Timeout = config.getIntProperty("module3Timeout", MODULE3_DEFAULT_TIMEOUT);
 
-		int par_k = config.getIntProperty("par_k", -1);
+        int par_k = config.getIntProperty("par_k", -1);
 
         boolean debug = config.getBooleanProperty("debug", false);
 
         return new SamplerWp41Config(binariesDir, runtimeHomeDir, validationDir, ir, tflag, rngSeed, module3Timeout, par_k, debug);
-	}
+    }
 
-	public SamplerWp41Config(
-			Path binariesDir,
-			Path runtimeHomeDir,
+    public SamplerWp41Config(
+            Path binariesDir,
+            Path runtimeHomeDir,
             Path validationDir,
-			double ir,
-			double tflag,
+            double ir,
+            double tflag,
             Integer rngSeed,
             int module3Timeout,
-			int par_k,
-			boolean debug) {
-		this.binariesDir=binariesDir;
-		this.runtimeHomeDir = Objects.requireNonNull(runtimeHomeDir, "matlab runtime directory is null");
+            int par_k,
+            boolean debug) {
+        this.binariesDir = binariesDir;
+        this.runtimeHomeDir = Objects.requireNonNull(runtimeHomeDir, "matlab runtime directory is null");
         this.validationDir = validationDir;
-		this.ir = ir;
-		this.tflag=tflag;
+        this.ir = ir;
+        this.tflag = tflag;
         this.rngSeed = rngSeed;
         this.module3Timeout = module3Timeout;
-		this.par_k = par_k;
-		this.debug=debug;
-	}
+        this.par_k = par_k;
+        this.debug = debug;
+    }
 
-	public Path getBinariesDir() {
-		return binariesDir;
-	}
+    public Path getBinariesDir() {
+        return binariesDir;
+    }
 
-	public Path getRuntimeHomeDir() {
-		return runtimeHomeDir;
-	}
+    public Path getRuntimeHomeDir() {
+        return runtimeHomeDir;
+    }
 
     public Path getValidationDir() {
         return validationDir;
     }
 
-	public double getIr() {
-		return ir;
-	}
+    public double getIr() {
+        return ir;
+    }
 
-	public double getTflag() {
-		return tflag;
-	}
+    public double getTflag() {
+        return tflag;
+    }
 
     public Integer getRngSeed() {
         return rngSeed;
@@ -135,27 +135,27 @@ public class SamplerWp41Config {
         return module3Timeout;
     }
 
-	public int getPar_k() {
-		return par_k;
-	}
+    public int getPar_k() {
+        return par_k;
+    }
 
-	public boolean isDebug() {
-	        return debug;
-	}
+    public boolean isDebug() {
+            return debug;
+    }
 
-	@Override
-	public String toString() {
-		String retString = "binariesDir=" + binariesDir
-				+ ", runtimeHomeDir=" + runtimeHomeDir
+    @Override
+    public String toString() {
+        String retString = "binariesDir=" + binariesDir
+                + ", runtimeHomeDir=" + runtimeHomeDir
                 + ", validationDir=" + validationDir
-				+ ", ir=" + ir
-				+ ", tflag=" + tflag
-				+ ", rngSeed=" + rngSeed
-		        + ", module3Timeout=" + module3Timeout
-		        + ", par_k=" + par_k
-				+ ", debug=" + debug;
-		return "SamplerWp41Config ["+retString+"]";
-	}
+                + ", ir=" + ir
+                + ", tflag=" + tflag
+                + ", rngSeed=" + rngSeed
+                + ", module3Timeout=" + module3Timeout
+                + ", par_k=" + par_k
+                + ", debug=" + debug;
+        return "SamplerWp41Config [" + retString + "]";
+    }
 
 
 

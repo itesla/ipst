@@ -32,13 +32,21 @@ public class TopoBus {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         TopoBus topoBus = (TopoBus) o;
 
-        if (!equipments.equals(topoBus.equipments)) return false;
-        if (!substation.equals(topoBus.substation)) return false;
+        if (!equipments.equals(topoBus.equipments)) {
+            return false;
+        }
+        if (!substation.equals(topoBus.substation)) {
+            return false;
+        }
 
         return true;
     }

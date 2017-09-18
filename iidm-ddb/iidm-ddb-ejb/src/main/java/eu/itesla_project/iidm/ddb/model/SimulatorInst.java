@@ -18,27 +18,27 @@ import javax.persistence.*;
  */
 @Entity
 @Table(
-		name = "SIMULATORINST",  
-		uniqueConstraints={
-			   @UniqueConstraint (columnNames={"version","simulator"})
-		}
-	)
+        name = "SIMULATORINST",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"version", "simulator"})
+        }
+    )
 public class SimulatorInst implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public SimulatorInst() {
-		super();
-	}
-	
-	public SimulatorInst(Simulator simulator, String version) {
-		super();
-		this.simulator=simulator;
-		this.version=version;
-	}
-	
+    public SimulatorInst() {
+        super();
+    }
 
-	//The synthetic id of the object.
+    public SimulatorInst(Simulator simulator, String version) {
+        super();
+        this.simulator = simulator;
+        this.version = version;
+    }
+
+
+    //The synthetic id of the object.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -51,37 +51,37 @@ public class SimulatorInst implements Serializable {
 
     //@Enumerated(EnumType.STRING)
     @Enumerated
-    @Column(nullable=false)
+    @Column(nullable = false)
     private Simulator  simulator;
 
-	public Simulator getSimulator() {
-		return simulator;
-	}
-	public void setSimulator(Simulator simulator) {
-		this.simulator = simulator;
-	}
-	
-    @Column(nullable=false)
-	private String version;
-
-	public String getVersion() {
-		return version;
-	}
-	public void setVersion(String version) {
-		this.version = version;
-	}
-	@Override
-	public String toString() {
-		return "SimulatorInst [simulator=" + simulator + ", version=" + version+ "]";
-	}
-	
-	@Override
-	// This must return true for another SimulatortInst object as the same key/id.
-    public boolean equals(Object other) {
-        return other instanceof SimulatorInst && (simulator != null && version != null) ? 
-        		simulator.equals( ( (SimulatorInst) other).getSimulator()) && version.equals( ( (SimulatorInst) other).getVersion())  : (other == this);
+    public Simulator getSimulator() {
+        return simulator;
     }
-	
-	
-    
+    public void setSimulator(Simulator simulator) {
+        this.simulator = simulator;
+    }
+
+    @Column(nullable = false)
+    private String version;
+
+    public String getVersion() {
+        return version;
+    }
+    public void setVersion(String version) {
+        this.version = version;
+    }
+    @Override
+    public String toString() {
+        return "SimulatorInst [simulator=" + simulator + ", version=" + version + "]";
+    }
+
+    @Override
+    // This must return true for another SimulatortInst object as the same key/id.
+    public boolean equals(Object other) {
+        return other instanceof SimulatorInst && (simulator != null && version != null) ?
+                simulator.equals( ( (SimulatorInst) other).getSimulator()) && version.equals( ( (SimulatorInst) other).getVersion())  : (other == this);
+    }
+
+
+
 }

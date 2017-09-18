@@ -21,7 +21,7 @@ import java.util.Set;
 public class SecurityIndexSynthesis implements Serializable {
 
     public static class SecurityBalance implements Serializable {
-        
+
         private int stableCount;
 
         private int unstableCount;
@@ -44,22 +44,22 @@ public class SecurityIndexSynthesis implements Serializable {
         }
 
     }
-    
+
     private static final SecurityBalance ZERO = new SecurityBalance();
-    
+
     private final Table<String, SecurityIndexType, SecurityBalance> table = HashBasedTable.create();
-    
+
     public SecurityIndexSynthesis() {
     }
 
     public Set<String> getContingencyIds() {
         return table.rowKeySet();
     }
-    
+
     public Set<SecurityIndexType> getSecurityIndexTypes() {
         return table.columnKeySet();
     }
-    
+
     public void addSecurityIndex(SecurityIndexId securityIndexId, boolean stable) {
         SecurityBalance balance = table.get(securityIndexId.getContingencyId(), securityIndexId.getSecurityIndexType());
         if (balance == null) {
@@ -72,11 +72,11 @@ public class SecurityIndexSynthesis implements Serializable {
             balance.unstableCount++;
         }
     }
-    
+
     public void addSecurityIndex(SecurityIndex securityIndex) {
         addSecurityIndex(securityIndex.getId(), securityIndex.isOk());
     }
-    
+
     public SecurityBalance getSecurityBalance(String contingencyId, SecurityIndexType securityIndexType) {
         SecurityBalance balance = table.get(contingencyId, securityIndexType);
         if (balance == null) {

@@ -14,27 +14,27 @@ import java.util.Objects;
  * @author Quinary <itesla@quinary.com>
  */
 public class SamplingNetworkData {
-	
-	ArrayList<BusData> busesData = null;
-	ArrayList<GeneratorData> generatorsData = null;
-	ArrayList<LoadData> loadsData = null;
-	
-	public SamplingNetworkData(ArrayList<BusData> busesData, ArrayList<GeneratorData> generatorsData, ArrayList<LoadData> loadsData) {
-		Objects.requireNonNull(busesData, "buses data is null");
-		Objects.requireNonNull(generatorsData, "generators data is null");
-		Objects.requireNonNull(loadsData, "loads data is null");
-		this.busesData = busesData;
-		this.generatorsData = generatorsData;
-		this.loadsData = loadsData;
-	}
-	
-	public ArrayList<BusData> getBusesData() {
-		return busesData;
-	}
-	public ArrayList<GeneratorData> getGeneratorsData() {
-		return generatorsData;
-	}
-	public ArrayList<LoadData> getLoadsData() {
-		return loadsData;
-	}
+
+    ArrayList<BusData> busesData = null;
+    ArrayList<GeneratorData> generatorsData = null;
+    ArrayList<LoadData> loadsData = null;
+
+    public SamplingNetworkData(ArrayList<BusData> busesData, ArrayList<GeneratorData> generatorsData, ArrayList<LoadData> loadsData) {
+        Objects.requireNonNull(busesData, "buses data is null");
+        Objects.requireNonNull(generatorsData, "generators data is null");
+        Objects.requireNonNull(loadsData, "loads data is null");
+        this.busesData = busesData;
+        this.generatorsData = generatorsData;
+        this.loadsData = loadsData;
+    }
+
+    public ArrayList<BusData> getBusesData() {
+        return busesData;
+    }
+    public ArrayList<GeneratorData> getGeneratorsData() {
+        return generatorsData;
+    }
+    public ArrayList<LoadData> getLoadsData() {
+        return loadsData;
+    }
 }

@@ -16,15 +16,15 @@ import java.util.Map;
  */
 public interface ActionPlan {
 
-	String getName();
-	
-	String getDescription();
-	
-	//Collection of zone's Id
-	//Collection<BigInteger> getZones();
-	Collection<String> getZones();
-	
-	//<key,value> : <priority ,option>
-	Map<BigInteger, eu.itesla_project.modules.contingencies.ActionPlanOption> getPriorityOption();
-	
+    String getName();
+
+    String getDescription();
+
+    //Collection of zone's Id
+    //Collection<BigInteger> getZones();
+    Collection<String> getZones();
+
+    //<key,value> : <priority ,option>
+    Map<BigInteger, eu.itesla_project.modules.contingencies.ActionPlanOption> getPriorityOption();
+
 }

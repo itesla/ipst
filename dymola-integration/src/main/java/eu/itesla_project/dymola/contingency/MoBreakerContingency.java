@@ -31,7 +31,12 @@ public class MoBreakerContingency extends MoContingency {
         return null;
     }
 
-    public double getT1() {return Double.parseDouble(getEventParameters().get("t_o"));}
-    public double getT2() {return Double.parseDouble(getEventParameters().get("t_rc"));}
+    public double getT1() {
+        return Double.parseDouble(getEventParameters().get("t_o"));
+    }
+
+    public double getT2() {
+        return Double.parseDouble(getEventParameters().get("t_rc"));
+    }
 
 }

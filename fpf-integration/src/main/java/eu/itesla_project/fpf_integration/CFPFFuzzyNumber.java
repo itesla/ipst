@@ -8,66 +8,66 @@ package eu.itesla_project.fpf_integration;
 
 /**
  * This class contains an abstraction of a fuzzy number
- * 
+ *
  * @author Leonel Carvalho - INESC TEC
  */
 public class CFPFFuzzyNumber {
-	
-	private int numPoints = 3;
-	private double fuzzyNumber[];
 
-	// Empty constructor
-	public CFPFFuzzyNumber() {
-		this.fuzzyNumber = new double[ numPoints ];
-	}
+    private int numPoints = 3;
+    private double[] fuzzyNumber;
 
-	// Main constructor
-	public CFPFFuzzyNumber( double[] fuzzyNumber ) {
-		this.fuzzyNumber = fuzzyNumber.clone();
-	}
-	
-	// Visualize triangular Fuzzy number
-	public String toString() {
-		return super.toString() + "[ " + fuzzyNumber[ 0 ] + ", " + fuzzyNumber[ 1 ] + ", " + fuzzyNumber[ 2 ] + " ]";
-	}
+    // Empty constructor
+    public CFPFFuzzyNumber() {
+        this.fuzzyNumber = new double[ numPoints ];
+    }
 
-	public int getNumPoints() {
-		return this.numPoints;	
-	}
+    // Main constructor
+    public CFPFFuzzyNumber( double[] fuzzyNumber ) {
+        this.fuzzyNumber = fuzzyNumber.clone();
+    }
 
-	public double getFuzzyNumber( int point ){
-		return fuzzyNumber[ point ];
-	}
+    // Visualize triangular Fuzzy number
+    public String toString() {
+        return super.toString() + "[ " + fuzzyNumber[ 0 ] + ", " + fuzzyNumber[ 1 ] + ", " + fuzzyNumber[ 2 ] + " ]";
+    }
 
-	public double[] getFuzzyNumber() {
-		return fuzzyNumber;
-	}
+    public int getNumPoints() {
+        return this.numPoints;
+    }
 
-	public void setFuzzyNumber(double[] fuzzyNumber) {
-		this.fuzzyNumber = fuzzyNumber;
-	}
+    public double getFuzzyNumber(int point) {
+        return fuzzyNumber[point];
+    }
 
-	public double getCentralValue() {
-		return fuzzyNumber[ 1 ];
-	}
+    public double[] getFuzzyNumber() {
+        return fuzzyNumber;
+    }
 
-	public void setCentralValue( double val ) {
-		fuzzyNumber[ 1 ] = val;
-	}
+    public void setFuzzyNumber(double[] fuzzyNumber) {
+        this.fuzzyNumber = fuzzyNumber;
+    }
 
-	public double getMinimumValue() {
-		return fuzzyNumber[ 0 ];
-	}
+    public double getCentralValue() {
+        return fuzzyNumber[ 1 ];
+    }
 
-	public void setMinimumValue( double val ) {
-		fuzzyNumber[ 0 ] = val;
-	}
+    public void setCentralValue( double val ) {
+        fuzzyNumber[ 1 ] = val;
+    }
 
-	public double getMaximumValue() {
-		return fuzzyNumber[ numPoints - 1 ];
-	}
+    public double getMinimumValue() {
+        return fuzzyNumber[ 0 ];
+    }
 
-	public void setMaximumValue( double val ) {
-		fuzzyNumber[ numPoints - 1 ] =  val;
-	}
+    public void setMinimumValue( double val ) {
+        fuzzyNumber[ 0 ] = val;
+    }
+
+    public double getMaximumValue() {
+        return fuzzyNumber[ numPoints - 1 ];
+    }
+
+    public void setMaximumValue( double val ) {
+        fuzzyNumber[ numPoints - 1 ] =  val;
+    }
 }

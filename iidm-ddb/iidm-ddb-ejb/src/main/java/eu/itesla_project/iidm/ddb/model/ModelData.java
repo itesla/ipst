@@ -20,26 +20,26 @@ import javax.persistence.Lob;
  */
 @Embeddable
 public class ModelData implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Lob
-	@Column(name = "BDATA")
-	@Basic(fetch = FetchType.LAZY)
-	private byte[] data;
+    @Lob
+    @Column(name = "BDATA")
+    @Basic(fetch = FetchType.LAZY)
+    private byte[] data;
 
-	public byte[] getData() {
-		return data;
-	}
+    public byte[] getData() {
+        return data;
+    }
 
-	public void setData(byte[] data) {
-		this.data = data;
-	}
+    public void setData(byte[] data) {
+        this.data = data;
+    }
 
-	public ModelData() {
-	}
+    public ModelData() {
+    }
 
-	public ModelData(byte[] data) {
-		setData(data);
-	}
+    public ModelData(byte[] data) {
+        setData(data);
+    }
 
 }

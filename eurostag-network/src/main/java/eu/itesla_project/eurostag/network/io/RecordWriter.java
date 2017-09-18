@@ -38,87 +38,75 @@ public class RecordWriter {
                      //...null value will be replaced by "0."
                      aValue == 0.f       ? "0." :
                      //...23.0000 will be replaced by "23."
-                     aValue % 1 == 0.f   ? String.format(LOCALE, "%d.", (int)aValue)
+                     aValue % 1 == 0.f   ? String.format(LOCALE, "%d.", (int) aValue)
                      //...format float on n digit (right justification)
-                     : String.format(LOCALE, "%-" + digit + "f",aValue);
+                     : String.format(LOCALE, "%-" + digit + "f", aValue);
 
         //...truncate the string if the length is greater than digit+1
-        if ( val.length() > digit + 1 ) {
+        if (val.length() > digit + 1) {
             val = val.substring(0, digit + 1);
         }
 
-        if ( val.contains(".")) {
-            while( val.endsWith("0")) {
-                val = val.substring(0, val.length()-1);
+        if (val.contains(".")) {
+            while (val.endsWith("0")) {
+                val = val.substring(0, val.length() - 1);
             }
         }
 
         return val;
     }
 
-    public void addValue( float aValue, int aColStart, int aColEnd) throws IOException
-    {
+    public void addValue(float aValue, int aColStart, int aColEnd) throws IOException {
         String key = format(aValue, aColEnd - aColStart);
-        this.addValue( key, aColStart, aColEnd, Justification.Right);
+        this.addValue(key, aColStart, aColEnd, Justification.Right);
     }
 
-    public void addValue( int aValue, int aColStart, int aColEnd) throws IOException
-    {
+    public void addValue(int aValue, int aColStart, int aColEnd) throws IOException {
         String key = Integer.toString(aValue);
-        this.addValue( key, aColStart, aColEnd, Justification.Right);
+        this.addValue(key, aColStart, aColEnd, Justification.Right);
     }
 
-    public void addValue( String aKey, int aColStart, int aColEnd) throws IOException
-    {
+    public void addValue(String aKey, int aColStart, int aColEnd) throws IOException {
         this.addValue(aKey, aColStart, aColEnd, Justification.Left);
     }
 
-    public void addValue( char aKey, int aColStart) throws IOException
-    {
+    public void addValue(char aKey, int aColStart) throws IOException {
         this.addValue(Character.toString(aKey), aColStart, aColStart, Justification.Left);
     }
 
-    public void addValue( char aKey, int aColStart, int aColEnd) throws IOException
-    {
+    public void addValue(char aKey, int aColStart, int aColEnd) throws IOException {
         this.addValue(Character.toString(aKey), aColStart, aColEnd, Justification.Left);
     }
 
-    public void addValue( String aKey, int aColStart) throws IOException
-    {
-        this.addValue(aKey, aColStart, aColStart + aKey.length()-1);
+    public void addValue(String aKey, int aColStart) throws IOException {
+        this.addValue(aKey, aColStart, aColStart + aKey.length() - 1);
     }
 
-    public void addValue( String aKey, int aColStart, int aColEnd, Justification aJust) throws IOException
-    {
-        if ( aColEnd < aColStart ) {
+    public void addValue(String aKey, int aColStart, int aColEnd, Justification aJust) throws IOException {
+        if (aColEnd < aColStart) {
             throw new RuntimeException("Bad record encoding for " + aKey);
         }
         int size = 1 + aColEnd - aColStart;
 
         //...add blank before the next value
-        if (aColStart > mCurrentLinePos )
-        {
+        if (aColStart > mCurrentLinePos) {
             int blanknumber = aColStart - mCurrentLinePos;
             writer.append(String.format(LOCALE, "%" + blanknumber + "s", ""));
             mCurrentLinePos = aColStart;
         }
         mCurrentLinePos += size;
 
-        if ( aJust == Justification.Left )
-        {
-            writer.append(String.format(LOCALE, "%-" + size + "s" , aKey));
-        }
-        else
-        {
-            writer.append(String.format(LOCALE, "%" + size + "s" , aKey));
+        if (aJust == Justification.Left) {
+            writer.append(String.format(LOCALE, "%-" + size + "s", aKey));
+        } else {
+            writer.append(String.format(LOCALE, "%" + size + "s", aKey));
         }
     }
 
     /**
      * Add anew line at the end of the current record line
      */
-    public void newLine() throws IOException
-    {
+    public void newLine() throws IOException {
         mCurrentLinePos = 1;
         writer.append(NEWLINE);
     }

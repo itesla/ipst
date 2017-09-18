@@ -66,7 +66,7 @@ public class FPFAnalysis {
         bos.close();
     }
     private void extractFPFOutputs(String analysysId, Path fpfZipOutputFile, Path mappingFile, Path outDir) throws IOException {
-        String outPrefix=analysysId+"_"+new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
+        String outPrefix = analysysId + "_" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
         File destDir = outDir.toFile();
         if (!destDir.exists()) {
             destDir.mkdir();
@@ -79,13 +79,13 @@ public class FPFAnalysis {
             if (!entry.isDirectory()) {
                 // if the entry is a file, extracts it
                 if (entry.getName().endsWith(".txt")) {
-                    String path0=entry.getName();
+                    String path0 = entry.getName();
                     if (path0.lastIndexOf("\\") != -1) {
-                        path0=path0.substring(path0.lastIndexOf("\\")+1);
+                        path0 = path0.substring(path0.lastIndexOf("\\") + 1);
                     }
-                    String filePath = outDir + File.separator + outPrefix+"_"+path0;
+                    String filePath = outDir + File.separator + outPrefix + "_" + path0;
                     extractFile(zipIn, filePath);
-                    Files.copy(mappingFile, outDir.resolve(outPrefix+"_mapping.txt"), StandardCopyOption.REPLACE_EXISTING);
+                    Files.copy(mappingFile, outDir.resolve(outPrefix + "_mapping.txt"), StandardCopyOption.REPLACE_EXISTING);
                 }
             } else {
                 // if the entry is a directory, make the directory
@@ -124,12 +124,12 @@ public class FPFAnalysis {
 
             LOGGER.info(" - preparing FPFClassic input file");
             //convert to, and put FPFClassic input file in the working dir
-            Converter.convert(network, lc, fes, fpfInputFile,fpfInputFileContMapping);
+            Converter.convert(network, lc, fes, fpfInputFile, fpfInputFileContMapping);
 
             Command cmd = createFPFClassicCommand(destPath, fpfInputFile);
             ExecutionReport report = executor.start(new CommandExecution(cmd, 1, Integer.MAX_VALUE));
             report.log();
-            if (report.getErrors().size()==0) {
+            if (report.getErrors().size() == 0) {
                 LOGGER.info(" -- output files, here: {}", destPath.toFile().getAbsolutePath());
                 //Files.copy(workingDir.resolve("fpfclassic_output.zip"), destPath.resolve("fpfclassic_output.zip"), StandardCopyOption.REPLACE_EXISTING);
                 extractFPFOutputs(analysysId, workingDir.resolve(FPFCLASSIC_OUTPUT_FILE_ZIP), fpfInputFileContMapping, destPath);

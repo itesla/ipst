@@ -14,6 +14,6 @@ import eu.itesla_project.iidm.network.Network;
  */
 public interface RedispatcherFactory {
 
-	Redispatcher create(Network network);
-	
+    Redispatcher create(Network network);
+
 }

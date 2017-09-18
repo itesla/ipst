@@ -64,7 +64,7 @@ public class Master {
         OPTIONS.addOption(stdOutArchiveOpt);
     }
 
-    public Master() {
+    private Master() {
     }
 
     public static void main(String[] args) throws Exception {
@@ -95,11 +95,11 @@ public class Master {
                                 System.out.println("Waiting till shutdown");
                                 // indefinitely wait for JMX commands
                                 //TimeUnit.DAYS.sleep(Integer.MAX_VALUE);
-                                synchronized(application)
-                                {
-                                    try{
+                                synchronized (application) {
+                                    try {
                                         application.wait();
-                                    }catch(InterruptedException ex){}
+                                    } catch (InterruptedException ignored) {
+                                    }
 
                                 }
                                 break;

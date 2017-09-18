@@ -45,18 +45,18 @@ class TG {
     void print() {
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace("{}", "\n"
-                    +fileName + "\n"
+                    + fileName + "\n"
                     + "\t" + f1 + "\n"
                     + "\t" + f2 + "\n"
                     + "\t" + t4x
-                    + (lh != null ? "\n" + "\t" + lh: ""));
+                    + (lh != null ? "\n" + "\t" + lh : ""));
         }
     }
 
     static TG parse(Path path) throws IOException {
         String fileNameWithExt = path.getFileName().toString();
         try (BufferedReader reader = Files.newBufferedReader(path, Charset.forName("iso-8859-1"))) {
-            return parse(fileNameWithExt.substring(0, fileNameWithExt.length()-3), reader);
+            return parse(fileNameWithExt.substring(0, fileNameWithExt.length() - 3), reader);
         }
     }
 
