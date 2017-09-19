@@ -7,54 +7,56 @@
 package eu.itesla_project.modelica_export.records;
 
 import eu.itesla_project.modelica_export.util.StaticData;
-import eu.itesla_project.modelica_export.util.eurostag.EurostagFixedData;
 
 /**
  * @author Silvia Machado <machados@aia.es>
  */
 public class GlobalVariable {
-	
-	private String	type			= null;
-	private String	name			= null;
-	private Object	value			= null;
 
-	public GlobalVariable(String type, String name, Object value) {
-		this.type	= type;
-		this.name	= name;
-		this.value	= value;
-	}
-	
-	public GlobalVariable(String type, String name) {
-		this(type, name, null);
-	}
-	
-	public String getType() {
-		return type;
-	}
+    private String    type            = null;
+    private String    name            = null;
+    private Object    value            = null;
 
-	@Override
-	public String toString() {
-		if(value != null) return "  " + type + StaticData.WHITE_SPACE + name + " = " + value + StaticData.SEMICOLON;
-		else return "  " + type + StaticData.WHITE_SPACE + name + StaticData.SEMICOLON;
-	}
+    public GlobalVariable(String type, String name, Object value) {
+        this.type    = type;
+        this.name    = name;
+        this.value    = value;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public GlobalVariable(String type, String name) {
+        this(type, name, null);
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @Override
+    public String toString() {
+        if (value != null) {
+            return "  " + type + StaticData.WHITE_SPACE + name + " = " + value + StaticData.SEMICOLON;
+        } else {
+            return "  " + type + StaticData.WHITE_SPACE + name + StaticData.SEMICOLON;
+        }
+    }
 
-	public Object getValue() {
-		return value;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public void setValue(Object value) {
-		this.value = value;
-	}
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Object getValue() {
+        return value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
+    }
 }

@@ -23,13 +23,13 @@ public class BranchParallelIndexes {
 
     public static BranchParallelIndexes build(Network network, EurostagEchExportConfig config, EurostagFakeNodes fakeNodes) {
         Multimap<String, Identifiable> map = HashMultimap.create();
-        for (TwoTerminalsConnectable ttc : Iterables.concat(network.getLines(), network.getTwoWindingsTransformers())) {
-            ConnectionBus bus1 = ConnectionBus.fromTerminal(ttc.getTerminal1(), config, fakeNodes);
-            ConnectionBus bus2 = ConnectionBus.fromTerminal(ttc.getTerminal2(), config, fakeNodes);
+        for (Branch branch : Iterables.concat(network.getLines(), network.getTwoWindingsTransformers())) {
+            ConnectionBus bus1 = ConnectionBus.fromTerminal(branch.getTerminal1(), config, fakeNodes);
+            ConnectionBus bus2 = ConnectionBus.fromTerminal(branch.getTerminal2(), config, fakeNodes);
             if (bus1.getId().compareTo(bus2.getId()) < 0) {
-                map.put(bus1.getId() + bus2.getId(), ttc);
+                map.put(bus1.getId() + bus2.getId(), branch);
             } else {
-                map.put(bus2.getId() + bus1.getId(), ttc);
+                map.put(bus2.getId() + bus1.getId(), branch);
             }
         }
         for (VoltageLevel vl : network.getVoltageLevels()) {

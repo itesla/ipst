@@ -16,8 +16,8 @@ import eu.itesla_project.modules.rules.RulesDbClient;
 */
 public class SecurityRulesFacadeFactory implements RulesFacadeFactory {
 
-	@Override
-	public OnlineRulesFacade create(RulesDbClient rulesDbClient) {
-		return new SecurityRulesFacade(rulesDbClient);
-	}
+    @Override
+    public OnlineRulesFacade create(RulesDbClient rulesDbClient) {
+        return new SecurityRulesFacade(rulesDbClient);
+    }
 }

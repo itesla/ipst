@@ -66,7 +66,7 @@ public class ConstraintsModifierConfig {
 
     @Override
     public String toString() {
-        return "ConstraintsModifierConfig[country="+countries+",violation types="+violationsTypes.toString()+"]";
+        return "ConstraintsModifierConfig[country=" + countries + ",violation types=" + violationsTypes.toString() + "]";
     }
 
 }

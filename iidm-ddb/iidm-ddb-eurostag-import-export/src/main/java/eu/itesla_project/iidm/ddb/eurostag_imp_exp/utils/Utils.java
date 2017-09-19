@@ -22,29 +22,32 @@ import eu.itesla_project.iidm.ddb.model.Parameters;
  */
 public class Utils {
 
-	static Logger log = LoggerFactory.getLogger(Utils.class.getName());
+    static Logger log = LoggerFactory.getLogger(Utils.class.getName());
 
-	public static byte[] stringAsByteArrayUTF8(String par) {
-		try {
-			return par.getBytes("UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			log.error(e.getMessage(), e);
-			return new byte[] {};
-		}
-	}
-	
-	public static HashMap<String, Object> getHashMapFromParameters(Parameters pars) {
-		HashMap<String, Object> hm=new HashMap<String,Object>();
-		if (pars != null) {
-			List<Parameter> parList=pars.getParameters();
-			for (Parameter parameter : parList) {
-				String varName=parameter.getName();
-				Object varValue=parameter.getValue();
-				hm.put(varName, varValue);
-			}
-		}
-		return hm;
-	}
-	
+    private Utils() {
+    }
+
+    public static byte[] stringAsByteArrayUTF8(String par) {
+        try {
+            return par.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            log.error(e.getMessage(), e);
+            return new byte[] {};
+        }
+    }
+
+    public static HashMap<String, Object> getHashMapFromParameters(Parameters pars) {
+        HashMap<String, Object> hm = new HashMap<String, Object>();
+        if (pars != null) {
+            List<Parameter> parList = pars.getParameters();
+            for (Parameter parameter : parList) {
+                String varName = parameter.getName();
+                Object varValue = parameter.getValue();
+                hm.put(varName, varValue);
+            }
+        }
+        return hm;
+    }
+
 
 }

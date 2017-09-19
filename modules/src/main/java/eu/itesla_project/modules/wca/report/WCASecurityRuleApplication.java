@@ -22,7 +22,7 @@ public class WCASecurityRuleApplication {
     private final WCARuleViolationType ruleViolationType;
     private final String cause;
 
-    public WCASecurityRuleApplication(String contingencyId, SecurityRule securityRule, boolean isRuleViolated, 
+    public WCASecurityRuleApplication(String contingencyId, SecurityRule securityRule, boolean isRuleViolated,
             WCARuleViolationType ruleViolationType, String cause) {
         this.contingencyId = Objects.requireNonNull(contingencyId);
         this.securityRule = securityRule;

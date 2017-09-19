@@ -28,7 +28,7 @@ import eu.itesla_project.cases.CaseType;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClientFactory;
 import eu.itesla_project.contingency.Contingency;
-import eu.itesla_project.contingency.LineContingency;
+import eu.itesla_project.contingency.BranchContingency;
 import eu.itesla_project.contingency.ContingencyImpl;
 import eu.itesla_project.modules.histo.*;
 import eu.itesla_project.modules.offline.MetricsDb;
@@ -144,7 +144,7 @@ public class OfflineWorkflowTest {
 
             // contingencies db mock
             ContingenciesAndActionsDatabaseClient cadbClient = Mockito.mock(ContingenciesAndActionsDatabaseClient.class);
-            ContingencyImpl contingency = new ContingencyImpl("line", new LineContingency("line"));
+            ContingencyImpl contingency = new ContingencyImpl("line", new BranchContingency("line"));
             List<Contingency> contingencies = Arrays.asList(contingency);
             Mockito.when(cadbClient.getContingencies(network))
                     .thenReturn(contingencies);

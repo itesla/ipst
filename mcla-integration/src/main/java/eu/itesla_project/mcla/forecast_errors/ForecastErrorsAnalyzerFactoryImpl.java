@@ -21,7 +21,7 @@ import eu.itesla_project.modules.mcla.ForecastErrorsDataStorage;
 public class ForecastErrorsAnalyzerFactoryImpl implements ForecastErrorsAnalyzerFactory {
 
     @Override
-    public ForecastErrorsAnalyzer create(Network network, ComputationManager computationManager, 
+    public ForecastErrorsAnalyzer create(Network network, ComputationManager computationManager,
                                          ForecastErrorsDataStorage forecastErrorsDataStorage, HistoDbClient histoDbClient) {
         return new ForecastErrorsAnalyzerImpl(network, computationManager, forecastErrorsDataStorage, histoDbClient);
     }

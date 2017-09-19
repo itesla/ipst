@@ -46,7 +46,7 @@ public class WCAPostContingencyStatus {
     public void setPostContingencyViolationsWithoutUncertainties(List<LimitViolation> postContingencyViolations) {
         this.postContingencyViolationsWithoutUncertainties = Objects.requireNonNull(postContingencyViolations);
     }
-    
+
     public WCALoadflowResult getPostContingencyWithUncertaintiesLoadflowResult() {
         return postContingencyWithUncertaintiesLoadflowResult;
     }
@@ -54,7 +54,7 @@ public class WCAPostContingencyStatus {
     public void setPostContingencyWithUncertaintiesLoadflowResult(WCALoadflowResult postContingencyLoadflowResult) {
         this.postContingencyWithUncertaintiesLoadflowResult = Objects.requireNonNull(postContingencyLoadflowResult);
     }
-    
+
     public List<LimitViolation> getPostContingencyViolationsWithUncertainties() {
         return postContingencyViolationsWithUncertainties;
     }

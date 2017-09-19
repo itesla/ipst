@@ -11,10 +11,10 @@ import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2013-02-18T12:24:12.978+0100")
+@Generated(value = "Dali", date = "2013-02-18T12:24:12.978+0100")
 @StaticMetamodel(DefaultParameters.class)
 public class DefaultParameters_ {
-	public static volatile SingularAttribute<DefaultParameters, Long> id;
-	public static volatile SingularAttribute<DefaultParameters, Integer> setNum;
-	public static volatile ListAttribute<DefaultParameters, Parameter> dpars;
+    public static volatile SingularAttribute<DefaultParameters, Long> id;
+    public static volatile SingularAttribute<DefaultParameters, Integer> setNum;
+    public static volatile ListAttribute<DefaultParameters, Parameter> dpars;
 }

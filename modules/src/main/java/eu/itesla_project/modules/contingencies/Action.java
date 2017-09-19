@@ -23,15 +23,15 @@ public interface Action {
     boolean isCurative();
 
     Collection<String> getZones();
-    
+
     Collection<ActionElement> getElements();
 
     ModificationTask toTask();
-    
+
     Number getStartTime();
-    
+
     void setParameters(ActionParameters parameters);
-    
+
     ActionParameters getParameters();
 
 }

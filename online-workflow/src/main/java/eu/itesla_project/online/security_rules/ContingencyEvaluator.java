@@ -44,7 +44,7 @@ public class ContingencyEvaluator {
     private List<SecurityIndexType> bacecaseInvalidMcRulesIndexes = new ArrayList<SecurityIndexType>();
     private List<SecurityIndexType> bacecaseInvalidWcaRulesIndexes = new ArrayList<SecurityIndexType>();
 
-    public ContingencyEvaluator(Contingency contingency, List<SecurityRule> mcRules, double purityThreshold, Map<SecurityIndexType, 
+    public ContingencyEvaluator(Contingency contingency, List<SecurityRule> mcRules, double purityThreshold, Map<SecurityIndexType,
             List<String>> mcViolatedEquipment, boolean checkRules) {
         Objects.requireNonNull(contingency, "contingency is null");
         Objects.requireNonNull(mcRules, "mc rules is null");
@@ -106,8 +106,9 @@ public class ContingencyEvaluator {
         boolean dynamicIndexUnsafe = false;
         if ( checkRules ) {
             checkRules(rules, invalidRulesIndexes, bacecaseInvalidRulesIndexes);
-            if ( "0".equals(stateId) )
+            if ( "0".equals(stateId) ) {
                 bacecaseInvalidRulesIndexes = invalidRulesIndexes; // keep for samples evaluation -> rules invalid on basecase are invalid for all samples
+            }
         }
         Map<SecurityIndexType, StateStatus> indexesResults = new EnumMap<>(SecurityIndexType.class);
         for (SecurityRule rule : rules) {

@@ -34,8 +34,8 @@ public class WorkflowContext {
 
     private final LoadFlowParameters loadFlowParameters;
 
-    public WorkflowContext(Network network, Sampler sampler, Optimizer optimizer, LoadFlow loadflow, 
-                           Stabilization stabilization, ImpactAnalysis impactAnalysis, 
+    public WorkflowContext(Network network, Sampler sampler, Optimizer optimizer, LoadFlow loadflow,
+                           Stabilization stabilization, ImpactAnalysis impactAnalysis,
                            LoadFlowParameters loadFlowParameters) {
         this.network = network;
         this.sampler = sampler;

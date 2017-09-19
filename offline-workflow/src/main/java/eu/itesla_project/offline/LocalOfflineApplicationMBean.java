@@ -25,7 +25,7 @@ public interface LocalOfflineApplicationMBean extends OfflineApplication {
         SECURITY_RULES_PROGRESS,    // security rules computation progress
         SECURITY_RULE_DESCRIPTION;  // security rule details
     }
-    
+
     void ping();
 
 }

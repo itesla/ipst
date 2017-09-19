@@ -33,7 +33,7 @@ public class AmplDatTableFormatter extends CsvTableFormatter {
               .append("#");
         for (int i = 0; i < columns.length; i++) {
             writer.append("\"").append(columns[i].getName()).append("\"");
-            if (i < columns.length-1) {
+            if (i < columns.length - 1) {
                 writer.append(separator);
             }
         }

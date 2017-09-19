@@ -511,7 +511,7 @@ public class EurostagStepUpTransformerInserter {
                 List<TwoWindingsTransformer> twtLs = new ArrayList<>();
                 List<Generator> genLs = new ArrayList<>();
 
-                lvBus.visitConnectedOrConnectableEquipments(new AbstractTopologyVisitor() {
+                lvBus.visitConnectedOrConnectableEquipments(new DefaultTopologyVisitor() {
                     @Override
                     public void visitLoad(Load load) {
                         auxLs.add(load);

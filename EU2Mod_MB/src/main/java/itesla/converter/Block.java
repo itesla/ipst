@@ -15,23 +15,23 @@ import java.util.List;
  * @author Raul Viruez <viruezr@aia.es>
  */
 public class Block {
-	public String[] param = new String[8];
-	public String[] entries = new String[5];
-	public String output;
-	public Integer GraphicalNumber;
-	public Integer idEu;
-	public Integer count;
-	public List<Boolean> UsedInputPins = new ArrayList<Boolean>();
-	
-	public Block (String[] param, String[] entries, String output, Integer GraphicalNumber, Integer idEu, Integer cont, Integer nInputPins){
-		this.param = param;
-		this.entries = entries;
-		this.output = output;
-		this.GraphicalNumber = GraphicalNumber;
-		this.idEu = idEu;
-		this.count = cont;
-		for (int i=0; i<nInputPins; i++){
-			UsedInputPins.add(false);
-		}		
-	}
+    public String[] param = new String[8];
+    public String[] entries = new String[5];
+    public String output;
+    public Integer GraphicalNumber;
+    public Integer idEu;
+    public Integer count;
+    public List<Boolean> UsedInputPins = new ArrayList<Boolean>();
+
+    public Block (String[] param, String[] entries, String output, Integer GraphicalNumber, Integer idEu, Integer cont, Integer nInputPins) {
+        this.param = param;
+        this.entries = entries;
+        this.output = output;
+        this.GraphicalNumber = GraphicalNumber;
+        this.idEu = idEu;
+        this.count = cont;
+        for (int i = 0; i < nInputPins; i++) {
+            UsedInputPins.add(false);
+        }
+    }
 }

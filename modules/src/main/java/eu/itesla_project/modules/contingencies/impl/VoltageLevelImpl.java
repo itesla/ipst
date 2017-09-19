@@ -15,23 +15,23 @@ import eu.itesla_project.modules.contingencies.VoltageLevel;
  * @author Quinary <itesla@quinary.com>
  */
 public class VoltageLevelImpl implements VoltageLevel {
-	
-	private String id;
-	private  BigInteger level;
-	
-	public VoltageLevelImpl(String id, BigInteger level){
-		this.id=id;
-		this.level=level;
-	}
 
-	@Override
-	public String getId() {
-		return id;
-	}
+    private String id;
+    private  BigInteger level;
 
-	@Override
-	public BigInteger getLevel() {
-		return level;
-	}
+    public VoltageLevelImpl(String id, BigInteger level) {
+        this.id = id;
+        this.level = level;
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public BigInteger getLevel() {
+        return level;
+    }
 
 }

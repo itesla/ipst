@@ -17,62 +17,62 @@ import org.joda.time.Interval;
  */
 public class DataMiningFacadeParams {
 
-	private final List<String> gensIds;
-	private final List<String> loadsIds;
-	private final List<String> danglingLinesIds;
-	private final Interval interval;
-	private final Set<Country> countries;
+    private final List<String> gensIds;
+    private final List<String> loadsIds;
+    private final List<String> danglingLinesIds;
+    private final Interval interval;
+    private final Set<Country> countries;
 
-	public DataMiningFacadeParams(Network network, boolean generationSampled, boolean boundariesSampled, Interval interval) {
+    public DataMiningFacadeParams(Network network, boolean generationSampled, boolean boundariesSampled, Interval interval) {
 
-		gensIds = new ArrayList<>();
-		if (generationSampled) {
-			for (Generator gen : network.getGenerators()) {
-				if (gen.getEnergySource().isIntermittent()) {
-					gensIds.add(gen.getId());
-				}
-			}
-		}
-		// it seems that elements order in iidm model is not the same
-		// after two subsequent network initialization from file
-		Collections.sort(gensIds);
+        gensIds = new ArrayList<>();
+        if (generationSampled) {
+            for (Generator gen : network.getGenerators()) {
+                if (gen.getEnergySource().isIntermittent()) {
+                    gensIds.add(gen.getId());
+                }
+            }
+        }
+        // it seems that elements order in iidm model is not the same
+        // after two subsequent network initialization from file
+        Collections.sort(gensIds);
 
-		loadsIds = new ArrayList<>();
-	    for (Load load : network.getLoads()) {
-			loadsIds.add(load.getId());
-		}
-	    Collections.sort(loadsIds);
+        loadsIds = new ArrayList<>();
+        for (Load load : network.getLoads()) {
+            loadsIds.add(load.getId());
+        }
+        Collections.sort(loadsIds);
 
-		danglingLinesIds = new ArrayList<>();
-		if (boundariesSampled) {
-			for (DanglingLine dl : network.getDanglingLines()) {
-				danglingLinesIds.add(dl.getId());
-			}
-		}
-		Collections.sort(danglingLinesIds);
+        danglingLinesIds = new ArrayList<>();
+        if (boundariesSampled) {
+            for (DanglingLine dl : network.getDanglingLines()) {
+                danglingLinesIds.add(dl.getId());
+            }
+        }
+        Collections.sort(danglingLinesIds);
 
-		countries = EnumSet.copyOf(network.getCountries());
+        countries = EnumSet.copyOf(network.getCountries());
 
-	    this.interval = interval;
-	}
+        this.interval = interval;
+    }
 
-	public List<String> getGensIds() {
-		return gensIds;
-	}
+    public List<String> getGensIds() {
+        return gensIds;
+    }
 
-	public List<String> getLoadsIds() {
-		return loadsIds;
-	}
+    public List<String> getLoadsIds() {
+        return loadsIds;
+    }
 
-	public List<String> getDanglingLinesIds() {
-		return danglingLinesIds;
-	}
+    public List<String> getDanglingLinesIds() {
+        return danglingLinesIds;
+    }
 
-	public Set<Country> getCountries() {
-		return countries;
-	}
+    public Set<Country> getCountries() {
+        return countries;
+    }
 
-	public Interval getInterval() {
+    public Interval getInterval() {
         return interval;
     }
 

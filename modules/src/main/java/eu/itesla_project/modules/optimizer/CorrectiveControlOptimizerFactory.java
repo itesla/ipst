@@ -15,6 +15,6 @@ import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseCl
  */
 public interface CorrectiveControlOptimizerFactory {
 
-	CorrectiveControlOptimizer create(ContingenciesAndActionsDatabaseClient cadbClient, ComputationManager computationManager);
-	
+    CorrectiveControlOptimizer create(ContingenciesAndActionsDatabaseClient cadbClient, ComputationManager computationManager);
+
 }

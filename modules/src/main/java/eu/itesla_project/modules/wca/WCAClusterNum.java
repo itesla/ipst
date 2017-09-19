@@ -22,7 +22,7 @@ public enum WCAClusterNum {
     FOUR(4);
 
     private final int intValue;
-    
+
     static Map<Integer, WCAClusterNum> mapping = new HashMap<>();
     static {
         Arrays.stream(values()).forEach(clusterNum -> mapping.put(clusterNum.intValue, clusterNum));
@@ -35,7 +35,7 @@ public enum WCAClusterNum {
     public int toIntValue() {
         return intValue;
     }
-    
+
     public static WCAClusterNum fromInt(int intNum) {
         if ( mapping.containsKey(intNum) ) {
             return mapping.get(intNum);

@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 public class CreateOfflineWorkflowTool implements Tool {
 
     private OfflineWorkflowCreationParameters defaultParameters;
-    
+
     @Override
     public Command getCommand() {
         return CreateOfflineWorkflowCommand.INSTANCE;
@@ -42,7 +42,7 @@ public class CreateOfflineWorkflowTool implements Tool {
         }
         return defaultParameters;
     }
-    
+
     @Override
     public void run(CommandLine line, ToolRunningContext context) throws Exception {
         String workflowId = line.getOptionValue("workflow");

@@ -20,49 +20,49 @@ import java.util.Map;
  */
 class OnlineWorkflowWcaResultsImpl implements OnlineWorkflowWcaResults {
 
-	// the id of the workflow where the rules have been applied
-	private final String workflowId;
-	// the time horizon used for the workflow where the rules have been applied
-	private final TimeHorizon timeHorizon;
-	// <contingency, cluster>
-	private Map<String, Integer> contingenciesWithClusters = new HashMap<String, Integer>();
-	// <contingency, cause>
-	private Map<String, List<String>> contingenciesWithCauses = new HashMap<>();
-	
-	OnlineWorkflowWcaResultsImpl(String workflowId, TimeHorizon timeHorizon) {
-		this.workflowId = workflowId;
-		this.timeHorizon = timeHorizon;
-	}
-	
-	@Override
-	public String getWorkflowId() {
-		return workflowId;
-	}
+    // the id of the workflow where the rules have been applied
+    private final String workflowId;
+    // the time horizon used for the workflow where the rules have been applied
+    private final TimeHorizon timeHorizon;
+    // <contingency, cluster>
+    private Map<String, Integer> contingenciesWithClusters = new HashMap<String, Integer>();
+    // <contingency, cause>
+    private Map<String, List<String>> contingenciesWithCauses = new HashMap<>();
 
-	@Override
-	public TimeHorizon getTimeHorizon() {
-		return timeHorizon;
-	}
+    OnlineWorkflowWcaResultsImpl(String workflowId, TimeHorizon timeHorizon) {
+        this.workflowId = workflowId;
+        this.timeHorizon = timeHorizon;
+    }
 
-	@Override
-	public Collection<String> getContingencies() {
-		return contingenciesWithClusters.keySet();
-	}
+    @Override
+    public String getWorkflowId() {
+        return workflowId;
+    }
 
-	@Override
-	public int getClusterIndex(String contingencyId) {
-		return contingenciesWithClusters.get(contingencyId).intValue();
-	}
+    @Override
+    public TimeHorizon getTimeHorizon() {
+        return timeHorizon;
+    }
 
-	@Override
-	public List<String> getCauses(String contingencyId) {
-		return contingenciesWithCauses.get(contingencyId);
-	}
-	
-	void addContingencyWithCluster(String contingencyId, int cluster, List<String> causes) {
-		contingenciesWithClusters.put(contingencyId, Integer.valueOf(cluster));
-		contingenciesWithCauses.put(contingencyId, causes);
-	}
+    @Override
+    public Collection<String> getContingencies() {
+        return contingenciesWithClusters.keySet();
+    }
+
+    @Override
+    public int getClusterIndex(String contingencyId) {
+        return contingenciesWithClusters.get(contingencyId).intValue();
+    }
+
+    @Override
+    public List<String> getCauses(String contingencyId) {
+        return contingenciesWithCauses.get(contingencyId);
+    }
+
+    void addContingencyWithCluster(String contingencyId, int cluster, List<String> causes) {
+        contingenciesWithClusters.put(contingencyId, Integer.valueOf(cluster));
+        contingenciesWithCauses.put(contingencyId, causes);
+    }
 
 
 

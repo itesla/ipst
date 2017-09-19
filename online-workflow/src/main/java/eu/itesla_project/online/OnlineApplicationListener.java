@@ -17,7 +17,7 @@ import eu.itesla_project.modules.online.OnlineWorkflowParameters;
 public interface OnlineApplicationListener {
 
     void onBusyCoresUpdate(int[] busyCores);
-    
+
     void onWorkflowUpdate(StatusSynthesis status);
 
     void onWcaUpdate(RunningSynthesis wcaRunning);
@@ -26,24 +26,24 @@ public interface OnlineApplicationListener {
 
     void onStatesWithIndexesUpdate(ContingencyStatesIndexesSynthesis stindex);
 
-	void onWorkflowStateUpdate(WorkSynthesis work);
+    void onWorkflowStateUpdate(WorkSynthesis work);
 
-	//stable and unstable contingencies where merged into wcaContingencies
-	//void onStableContingencies(StableContingenciesSynthesis stableContingencies);	
-	//void onUnstableContingencies(UnstableContingenciesSynthesis unstableContingencies);
-	//new 
-	void onWcaContingencies(WcaContingenciesSynthesis wcaContingencies);
-	
-	void onStatesWithSecurityRulesResultsUpdate(IndexSecurityRulesResultsSynthesis indexesResults) ;
- 
-	void onDisconnection();
-	
-	void onConnection();
+    //stable and unstable contingencies where merged into wcaContingencies
+    //void onStableContingencies(StableContingenciesSynthesis stableContingencies);
+    //void onUnstableContingencies(UnstableContingenciesSynthesis unstableContingencies);
+    //new
+    void onWcaContingencies(WcaContingenciesSynthesis wcaContingencies);
 
-	//void onWorkflowEnd(OnlineWorkflowContext context, OnlineDb onlineDb, OnlineWorkflowParameters parameters);
+    void onStatesWithSecurityRulesResultsUpdate(IndexSecurityRulesResultsSynthesis indexesResults);
 
-	void onWorkflowEnd(OnlineWorkflowContext context, OnlineDb onlineDb,
-			ContingenciesAndActionsDatabaseClient cadbClient, OnlineWorkflowParameters parameters);
+    void onDisconnection();
+
+    void onConnection();
+
+    //void onWorkflowEnd(OnlineWorkflowContext context, OnlineDb onlineDb, OnlineWorkflowParameters parameters);
+
+    void onWorkflowEnd(OnlineWorkflowContext context, OnlineDb onlineDb,
+            ContingenciesAndActionsDatabaseClient cadbClient, OnlineWorkflowParameters parameters);
 
 
 

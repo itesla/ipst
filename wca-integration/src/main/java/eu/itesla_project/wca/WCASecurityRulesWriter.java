@@ -48,10 +48,10 @@ public class WCASecurityRulesWriter implements AmplConstants, WCAConstants {
     private final StringToIntMapper<AmplSubset> mapper;
 
     private final boolean debug;
-    
+
     private final boolean activateFiltering;
 
-    public WCASecurityRulesWriter(Network network, List<SecurityRuleExpression> rules, DataSource dataSource, 
+    public WCASecurityRulesWriter(Network network, List<SecurityRuleExpression> rules, DataSource dataSource,
                                   StringToIntMapper<AmplSubset> mapper, boolean debug, boolean activateFiltering) {
         this.dataSource = Objects.requireNonNull(dataSource);
         this.network = Objects.requireNonNull(network);
@@ -80,10 +80,7 @@ public class WCASecurityRulesWriter implements AmplConstants, WCAConstants {
         int entityNum;
         int sideNum = 0;
         float nomV;
-        TwoTerminalsConnectable branch = network.getLine(attrId.getEquipmentId());
-        if (branch == null) {
-            branch = network.getTwoWindingsTransformer(attrId.getEquipmentId());
-        }
+        Branch branch = network.getBranch(attrId.getEquipmentId());
         if (branch != null) {
             entityType = 1;
             entityNum = mapper.getInt(AmplSubset.BRANCH, attrId.getEquipmentId());
@@ -178,10 +175,11 @@ public class WCASecurityRulesWriter implements AmplConstants, WCAConstants {
                 final int attributeSetNum = attributeSet.ordinal();
 
                 if (rule.getStatus() == SecurityRuleStatus.ALWAYS_UNSECURE) {
-                    if ( activateFiltering )
+                    if ( activateFiltering ) {
                         throw new RuntimeException("Always unsecure rule " + ruleId);
-                    else
+                    } else {
                         continue;
+                    }
                 }
                 if (rule.getStatus() == SecurityRuleStatus.ALWAYS_SECURE) {
                     continue;

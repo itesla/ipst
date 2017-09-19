@@ -11,16 +11,16 @@ package eu.itesla_project.modules.contingencies;
  * @author Quinary <itesla@quinary.com>
  */
 public class ActionParameterBooleanValue implements ActionParameterValue {
-	
-	Boolean value;
-	
-	public ActionParameterBooleanValue(Boolean value) {
-		this.value = value;
-	}
-	
-	@Override
-	public Boolean getValue() {
-		return value;
-	}
+
+    Boolean value;
+
+    public ActionParameterBooleanValue(Boolean value) {
+        this.value = value;
+    }
+
+    @Override
+    public Boolean getValue() {
+        return value;
+    }
 
 }

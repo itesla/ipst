@@ -17,14 +17,13 @@ public enum UnitEnum {
 
     private final String value;
 
-    UnitEnum(String value)
-    {
+    UnitEnum(String value) {
         this.value = value;
     }
 
     @Override
     @JsonValue
-    public String toString(){
+    public String toString() {
         return value;
     }
 

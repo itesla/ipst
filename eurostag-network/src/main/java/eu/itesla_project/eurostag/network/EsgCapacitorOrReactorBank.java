@@ -24,7 +24,7 @@ public class EsgCapacitorOrReactorBank {
     private final float rcapba; // reactive power of each step [Mvar] positive for capacitors negative for reactors
     private final int imaxba; // maximum number of steps
     private final RegulatingMode xregba; // regulating mode
-                                         // ‘N‘ 	: not regulating
+                                         // ‘N‘     : not regulating
 
     public EsgCapacitorOrReactorBank(Esg8charName znamba, Esg8charName znodba, int ieleba, float plosba, float rcapba, int imaxba, RegulatingMode xregba) {
         this.znamba = Objects.requireNonNull(znamba);

@@ -37,53 +37,53 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
  */
 public class SamplerWp41 implements Sampler {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(SamplerWp41.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamplerWp41.class);
 
-	private static final String WP41_CACHEDIR_NAME = "wp41_v67";
-	private static final String MODULE1_PREFIX = "mod1_";
-	private static final String MODULE2_PREFIX = "mod2_";
+    private static final String WP41_CACHEDIR_NAME = "wp41_v67";
+    private static final String MODULE1_PREFIX = "mod1_";
+    private static final String MODULE2_PREFIX = "mod2_";
 
-	private static final String WP41B_IS = "wp41b_is";
-	private static final String WP41C_M3 = "wp41c_v67_m3";
-	private static final String WP41C_M3PRE = "wp41c_v67_m3pre";
-	private static final String WP41C_M3_REDUCE = "wp41c_v67_aggregator";
-	private static final String WP41C_M2 = "wp41c_v67_m2";
-	private static final String WP41C_M1 = "wp41c_v67_m1";
+    private static final String WP41B_IS = "wp41b_is";
+    private static final String WP41C_M3 = "wp41c_v67_m3";
+    private static final String WP41C_M3PRE = "wp41c_v67_m3pre";
+    private static final String WP41C_M3_REDUCE = "wp41c_v67_aggregator";
+    private static final String WP41C_M2 = "wp41c_v67_m2";
+    private static final String WP41C_M1 = "wp41c_v67_m1";
 
-	private static final String M1INPUTFILENAME="m1input.mat";
-	private static final String M3OUTPUTFILENAME= "m3output.mat";
-	private static final String M1STATVARSFILENAME = "MOD1_statvars.mat";
-	private static final String M3NSAMCFILENAME = "MOD3_nsamc.mat";
-	private static final String B1INPUTFILENAME= "b1input.mat";
-	private static final String B1OUTPUTFILENAME= "b1output.mat";
+    private static final String M1INPUTFILENAME = "m1input.mat";
+    private static final String M3OUTPUTFILENAME = "m3output.mat";
+    private static final String M1STATVARSFILENAME = "MOD1_statvars.mat";
+    private static final String M3NSAMCFILENAME = "MOD3_nsamc.mat";
+    private static final String B1INPUTFILENAME = "b1input.mat";
+    private static final String B1OUTPUTFILENAME = "b1output.mat";
     private static final String WORKING_DIR_PREFIX = "itesla_sampler_";
 
-	private final ComputationManager computationManager;
+    private final ComputationManager computationManager;
 
     private final int priority;
 
-	private final HistoDbClient histoClient;
+    private final HistoDbClient histoClient;
 
-	private final SamplerWp41Config config;
+    private final SamplerWp41Config config;
 
     private final Network network;
 
     private DataMiningFacadeParams dmParams;
 
-	private int nClusters=0;
+    private int nClusters = 0;
 
-	public SamplerWp41(Network network , ComputationManager computationManager, int priority, HistoDbClient histoClient, SamplerWp41Config config) {
-		this.config = Objects.requireNonNull(config);
-		this.network = Objects.requireNonNull(network);
-		this.computationManager = Objects.requireNonNull(computationManager);
+    public SamplerWp41(Network network, ComputationManager computationManager, int priority, HistoDbClient histoClient, SamplerWp41Config config) {
+        this.config = Objects.requireNonNull(config);
+        this.network = Objects.requireNonNull(network);
+        this.computationManager = Objects.requireNonNull(computationManager);
         this.priority = priority;
-		this.histoClient = Objects.requireNonNull(histoClient);
+        this.histoClient = Objects.requireNonNull(histoClient);
         LOGGER.info(config.toString());
-	}
+    }
 
-	public SamplerWp41(Network network , ComputationManager computationManager, int priority, HistoDbClient histoClient) {
-		this(network, computationManager, priority, histoClient, SamplerWp41Config.load());
-	}
+    public SamplerWp41(Network network, ComputationManager computationManager, int priority, HistoDbClient histoClient) {
+        this(network, computationManager, priority, histoClient, SamplerWp41Config.load());
+    }
 
     @Override
     public String getName() {
@@ -98,9 +98,9 @@ public class SamplerWp41 implements Sampler {
                                      .toString();
     }
 
-	public SamplerWp41Config getConfig() {
-		return config;
-	}
+    public SamplerWp41Config getConfig() {
+        return config;
+    }
 
     private Path getCacheDir(DataMiningFacadeParams dmParams) throws IOException {
         return PlatformConfig.defaultCacheManager().newCacheEntry(WP41_CACHEDIR_NAME)
@@ -116,8 +116,8 @@ public class SamplerWp41 implements Sampler {
                 .create();
     }
 
-	private static int countFiles(Path dir, String pattern) {
-    	int count = 0;
+    private static int countFiles(Path dir, String pattern) {
+        int count = 0;
         try (DirectoryStream<Path> ds = Files.newDirectoryStream(dir, pattern)) {
             for (@SuppressWarnings("unused") Path path : ds) {
                 count++;
@@ -125,7 +125,7 @@ public class SamplerWp41 implements Sampler {
         } catch (IOException ex) {
             LOGGER.error(ex.toString(), ex);
         }
-		return count;
+        return count;
     }
 
     /*
@@ -133,39 +133,39 @@ public class SamplerWp41 implements Sampler {
      */
     @Override
     public void init(SamplerParameters parameters) throws Exception {
-    	Objects.requireNonNull(parameters, "sampler parameter is null");
+        Objects.requireNonNull(parameters, "sampler parameter is null");
 
-		dmParams = new DataMiningFacadeParams(network, parameters.isGenerationSampled(), parameters.isBoundariesSampled(), parameters.getHistoInterval());
+        dmParams = new DataMiningFacadeParams(network, parameters.isGenerationSampled(), parameters.isBoundariesSampled(), parameters.getHistoInterval());
 
         Path cacheDir = getCacheDir(dmParams);
 
-		if (!(Files.exists(cacheDir.resolve("MOD1_0.mat")) && Files.exists(cacheDir.resolve("MOD2_0.mat")))) {
-			computeMod1AndMod2(dmParams, cacheDir);
-		} else {
-			LOGGER.info("Cache found in {}, skipping module1 and module2 computation" , cacheDir);
-		}
+        if (!(Files.exists(cacheDir.resolve("MOD1_0.mat")) && Files.exists(cacheDir.resolve("MOD2_0.mat")))) {
+            computeMod1AndMod2(dmParams, cacheDir);
+        } else {
+            LOGGER.info("Cache found in {}, skipping module1 and module2 computation", cacheDir);
+        }
 
         if (config.getValidationDir() != null) {
                 Files.createDirectories(config.getValidationDir());
         }
 
-		//infer the number of clusters from number module2 output files ....
-		//tbd: find a more appropriate way to retrieve this number (store it in .mat, or in a csv, ...    at the end of module1&module2 execution)
-		nClusters = countFiles(cacheDir, "MOD2_*.mat");
-		for (int i = 0; i < nClusters; i++) {
-			Path mod1FilePath = cacheDir.resolve("MOD1_"+i+".mat");
-			Path mod2FilePath = cacheDir.resolve("MOD2_"+i+".mat");
-			try (OutputStream os = computationManager.newCommonFile(mod1FilePath.getFileName().toString())) {
-			    Files.copy(mod1FilePath, os);
-			}
-			try (OutputStream os = computationManager.newCommonFile(mod2FilePath.getFileName().toString())) {
-			    Files.copy(mod2FilePath, os);
-			}
-		}
-		Path mod1StatVarsFilePath = cacheDir.resolve(M1STATVARSFILENAME);
-		try (OutputStream os = computationManager.newCommonFile(mod1StatVarsFilePath.getFileName().toString())) {
-		    Files.copy(mod1StatVarsFilePath, os);
-		}
+        //infer the number of clusters from number module2 output files ....
+        //tbd: find a more appropriate way to retrieve this number (store it in .mat, or in a csv, ...    at the end of module1&module2 execution)
+        nClusters = countFiles(cacheDir, "MOD2_*.mat");
+        for (int i = 0; i < nClusters; i++) {
+            Path mod1FilePath = cacheDir.resolve("MOD1_" + i + ".mat");
+            Path mod2FilePath = cacheDir.resolve("MOD2_" + i + ".mat");
+            try (OutputStream os = computationManager.newCommonFile(mod1FilePath.getFileName().toString())) {
+                Files.copy(mod1FilePath, os);
+            }
+            try (OutputStream os = computationManager.newCommonFile(mod2FilePath.getFileName().toString())) {
+                Files.copy(mod2FilePath, os);
+            }
+        }
+        Path mod1StatVarsFilePath = cacheDir.resolve(M1STATVARSFILENAME);
+        try (OutputStream os = computationManager.newCommonFile(mod1StatVarsFilePath.getFileName().toString())) {
+            Files.copy(mod1StatVarsFilePath, os);
+        }
     }
 
     @Override
@@ -188,7 +188,7 @@ public class SamplerWp41 implements Sampler {
                         s.addGenerator(genId, newP, newQ);
                     }
                     // 2nd step: loads
-                    int offsetGens=dmParams.getGensIds().size()*2;
+                    int offsetGens = dmParams.getGensIds().size() * 2;
                     for (int i = 0; i < dmParams.getLoadsIds().size(); i++) {
                         int loadInd = offsetGens + i * 2;
                         String loadId = dmParams.getLoadsIds().get(i);
@@ -197,7 +197,7 @@ public class SamplerWp41 implements Sampler {
                         s.addLoad(loadId, newP0, newQ0);
                     }
                     // 3rd step : dangling lines
-                    int offsetLoads = offsetGens + dmParams.getLoadsIds().size()*2;
+                    int offsetLoads = offsetGens + dmParams.getLoadsIds().size() * 2;
                     for (int i = 0; i < dmParams.getDanglingLinesIds().size(); i++) {
                         int dlInd = offsetLoads + i * 2;
                         String dlId = dmParams.getDanglingLinesIds().get(i);
@@ -213,29 +213,29 @@ public class SamplerWp41 implements Sampler {
             LOGGER.error(e.toString(), e);
         }
         return new SamplerResultImpl(ok, ss);
-	}
-
-    private DataMiningFacade getDataMiningFacade(){
-    	return new DataMiningFacadeHistodb(histoClient);
     }
 
-	public Wp41HistoData getHistoDBData(DataMiningFacadeParams dmParams, Path workingDir) throws Exception {
-		Wp41HistoData hdata=null;
-		try {
-			DataMiningFacade dmf=getDataMiningFacade();
-			hdata=dmf.getDataFromHistoDatabase(dmParams);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			throw new Exception(
-					"could not get historical data from histodb service: "
-							+ t.getMessage());
-		}
-		if ((hdata==null) || ((hdata.getHdTable().columnKeySet().size() + hdata.getHdTable().rowKeySet().size()) == 0)) {
-			throw new RuntimeException(
-					"could not find any data in the historical database");
-		}
-		return hdata;
-	}
+    private DataMiningFacade getDataMiningFacade() {
+        return new DataMiningFacadeHistodb(histoClient);
+    }
+
+    public Wp41HistoData getHistoDBData(DataMiningFacadeParams dmParams, Path workingDir) throws Exception {
+        Wp41HistoData hdata = null;
+        try {
+            DataMiningFacade dmf = getDataMiningFacade();
+            hdata = dmf.getDataFromHistoDatabase(dmParams);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new Exception(
+                    "could not get historical data from histodb service: "
+                            + t.getMessage());
+        }
+        if ((hdata == null) || ((hdata.getHdTable().columnKeySet().size() + hdata.getHdTable().rowKeySet().size()) == 0)) {
+            throw new RuntimeException(
+                    "could not find any data in the historical database");
+        }
+        return hdata;
+    }
 
     private Map<String, String> createEnv() {
         Map<String, String> env = new HashMap<>();
@@ -253,19 +253,19 @@ public class SamplerWp41 implements Sampler {
         if (config.getRngSeed() != null) {
             args1.add(Integer.toString(config.getRngSeed()));
         } else {
-        	args1.add(Integer.toString(0));
+            args1.add(Integer.toString(0));
         }
 
-		String wp41c_m1;
+        String wp41c_m1;
         if (config.getBinariesDir() != null) {
             wp41c_m1 = config.getBinariesDir().resolve(WP41C_M1).toAbsolutePath().toString();
         } else {
             wp41c_m1 = WP41C_M1;
         }
 
-        List<OutputFile> m1OutputFilesList=new ArrayList<>();
-        for(int i=0; i< clustNums; i++) {
-        	m1OutputFilesList.add(new OutputFile("MOD1_"+i+".mat"));
+        List<OutputFile> m1OutputFilesList = new ArrayList<>();
+        for (int i = 0; i < clustNums; i++) {
+            m1OutputFilesList.add(new OutputFile("MOD1_" + i + ".mat"));
 
         }
         m1OutputFilesList.add(new OutputFile(M1STATVARSFILENAME));
@@ -290,10 +290,10 @@ public class SamplerWp41 implements Sampler {
         .id(WP41C_M2)
         .program(wp41c_m2)
         .args("MOD1_${EXEC_NUM}.mat",
-        		"MOD2_${EXEC_NUM}.mat",
-        		Command.EXECUTION_NUMBER_PATTERN,
-        		""+config.getIr(),
-        		""+config.getTflag())
+                "MOD2_${EXEC_NUM}.mat",
+                Command.EXECUTION_NUMBER_PATTERN,
+                "" + config.getIr(),
+                "" + config.getTflag())
         .inputFiles(new InputFile("MOD1_${EXEC_NUM}.mat"))
         .outputFiles(new OutputFile("MOD2_${EXEC_NUM}.mat"))
         .build();
@@ -303,27 +303,27 @@ public class SamplerWp41 implements Sampler {
 
 
     private void computeMod1AndMod2(DataMiningFacadeParams dmParams, Path cacheDir) throws Exception {
-		try (CommandExecutor executor = computationManager.newCommandExecutor(createEnv(), WORKING_DIR_PREFIX, config.isDebug())) {
+        try (CommandExecutor executor = computationManager.newCommandExecutor(createEnv(), WORKING_DIR_PREFIX, config.isDebug())) {
             Path workingDir = executor.getWorkingDir();
-            LOGGER.info("Retrieving historical data for network {}",network.getId());
-			Wp41HistoData histoData=getHistoDBData(dmParams, workingDir);
+            LOGGER.info("Retrieving historical data for network {}", network.getId());
+            Wp41HistoData histoData = getHistoDBData(dmParams, workingDir);
             int par_k = config.getPar_k() == -1 ? (int) Math.round(Math.sqrt(histoData.getHdTable().rowKeyList().size() / 2))
-                                                : config.getPar_k();
-            LOGGER.info(" IR: {}, tflag: {}, number of clusters: {} ", config.getIr(), config.getTflag(), par_k );
+                    : config.getPar_k();
+            LOGGER.info(" IR: {}, tflag: {}, number of clusters: {} ", config.getIr(), config.getTflag(), par_k);
             double[][] dataMatrix = Utils.histoDataAsDoubleMatrixNew(histoData.getHdTable());
-			Utils.writeWp41ContModule1Mat(workingDir.resolve(M1INPUTFILENAME), dataMatrix);
+            Utils.writeWp41ContModule1Mat(workingDir.resolve(M1INPUTFILENAME), dataMatrix);
 
-            if (config.getValidationDir()!=null) {
+            if (config.getValidationDir() != null) {
                 // store input file, for validation purposes
                 try {
                     Files.copy(workingDir.resolve(M1INPUTFILENAME), config.getValidationDir().resolve(M1INPUTFILENAME), REPLACE_EXISTING);
                     Utils.dumpWp41HistoDataColumns(histoData, config.getValidationDir());
                 } catch (Throwable t) {
-                    LOGGER.error(t.getMessage(),t);
+                    LOGGER.error(t.getMessage(), t);
                 }
             }
 
-            LOGGER.info("Executing wp41 module1(once) module2 ({} times)",par_k);
+            LOGGER.info("Executing wp41 module1(once) module2 ({} times)", par_k);
 
             ExecutionReport report = executor.start(new CommandExecution(createMatm1Cmd(par_k), 1, priority));
             report.log();
@@ -332,8 +332,8 @@ public class SamplerWp41 implements Sampler {
             }
             //1 brings all module1 output files (one per cluster plus the statvar file) back to the cache
             for (int i = 0; i < par_k; i++) {
-                Path srcPath=workingDir.resolve("MOD1_"+i+".mat");
-                Path destPath=cacheDir.resolve("MOD1_"+i+".mat");
+                Path srcPath = workingDir.resolve("MOD1_" + i + ".mat");
+                Path destPath = cacheDir.resolve("MOD1_" + i + ".mat");
                 Files.copy(srcPath, destPath, REPLACE_EXISTING);
             }
             Files.copy(workingDir.resolve(M1STATVARSFILENAME), cacheDir.resolve(M1STATVARSFILENAME), REPLACE_EXISTING);
@@ -345,11 +345,11 @@ public class SamplerWp41 implements Sampler {
                 throw new RuntimeException("Module 2 failed");
             }
             for (int i = 0; i < par_k; i++) {
-                Path srcPath=workingDir.resolve("MOD2_"+i+".mat");
-                Path destPath=cacheDir.resolve("MOD2_"+i+".mat");
+                Path srcPath = workingDir.resolve("MOD2_" + i + ".mat");
+                Path destPath = cacheDir.resolve("MOD2_" + i + ".mat");
                 Files.copy(srcPath, destPath, REPLACE_EXISTING);
             }
-		}
+        }
     }
 
     private Command createMatm3PreCmd(int clustNums, int samplesSize) {
@@ -361,14 +361,14 @@ public class SamplerWp41 implements Sampler {
         if (config.getRngSeed() != null) {
             args1.add(Integer.toString(config.getRngSeed()));
         } else {
-        	args1.add(Integer.toString(0));
+            args1.add(Integer.toString(0));
         }
 
-		String wp41c_m3pre;
+        String wp41c_m3pre;
         if (config.getBinariesDir() != null) {
-        	wp41c_m3pre = config.getBinariesDir().resolve(WP41C_M3PRE).toAbsolutePath().toString();
+            wp41c_m3pre = config.getBinariesDir().resolve(WP41C_M3PRE).toAbsolutePath().toString();
         } else {
-        	wp41c_m3pre = WP41C_M3PRE;
+            wp41c_m3pre = WP41C_M3PRE;
         }
 
         return new SimpleCommandBuilder()
@@ -426,17 +426,17 @@ public class SamplerWp41 implements Sampler {
         } else {
             wp41c_m3_reduce = WP41C_M3_REDUCE;
         }
-        List<InputFile> m3partsfiles=new ArrayList<>(clustNums);
-		for (int i = 0; i < clustNums; i++) {
-			m3partsfiles.add(new InputFile("MOD3_"+i+".mat"));
-		}
-		m3partsfiles.add(new InputFile(M1STATVARSFILENAME));
-		return new SimpleCommandBuilder()
+        List<InputFile> m3partsfiles = new ArrayList<>(clustNums);
+        for (int i = 0; i < clustNums; i++) {
+            m3partsfiles.add(new InputFile("MOD3_" + i + ".mat"));
+        }
+        m3partsfiles.add(new InputFile(M1STATVARSFILENAME));
+        return new SimpleCommandBuilder()
                 .id(WP41C_M3_REDUCE)
                 .program(wp41c_m3_reduce)
                 .args("./",
                       M1STATVARSFILENAME,
-                      ""+clustNums,
+                      "" + clustNums,
                       M3OUTPUTFILENAME)
                 .inputFiles(m3partsfiles)
                 .outputFiles(new OutputFile(M3OUTPUTFILENAME))
@@ -471,12 +471,12 @@ public class SamplerWp41 implements Sampler {
                     MLDouble mld = (MLDouble) xNew;
                     double[][] xNewMat = mld.getArray();
 
-                    if (config.getValidationDir()!=null){
+                    if (config.getValidationDir() != null) {
                         // store output file with the samples, for validation purposes
                         try {
                             Files.copy(workingDir.resolve(M3OUTPUTFILENAME), config.getValidationDir().resolve("MOD3_" + System.currentTimeMillis() + "_" + Thread.currentThread().getId() + ".mat"));
                         } catch (Throwable t) {
-                            LOGGER.error(t.getMessage(),t);
+                            LOGGER.error(t.getMessage(), t);
                         }
                     }
 
@@ -489,38 +489,38 @@ public class SamplerWp41 implements Sampler {
     }
 
 
-	private Command createBinSamplerCmd(Path iFilePath, int nSamples) {
-		String wp41b_is;
+    private Command createBinSamplerCmd(Path iFilePath, int nSamples) {
+        String wp41b_is;
         if (config.getBinariesDir() != null) {
-        	wp41b_is = config.getBinariesDir().resolve(WP41B_IS).toAbsolutePath().toString();
+            wp41b_is = config.getBinariesDir().resolve(WP41B_IS).toAbsolutePath().toString();
         } else {
-        	wp41b_is = WP41B_IS;
+            wp41b_is = WP41B_IS;
         }
         return new SimpleCommandBuilder()
                 .id(WP41B_IS)
-				.program(wp41b_is)
-				.args(iFilePath.toAbsolutePath().toString(),
+                .program(wp41b_is)
+                .args(iFilePath.toAbsolutePath().toString(),
                       B1OUTPUTFILENAME,
                       "" + nSamples)
                 .inputFiles(new InputFile(iFilePath.getFileName().toString()))
                 .outputFiles(new OutputFile(B1OUTPUTFILENAME))
                 .build();
-	}
+    }
 
     public double[][] computeBinSampling(double[] marginalExpectations, int nSamples) throws Exception {
-    	Objects.requireNonNull(marginalExpectations);
-		if (marginalExpectations.length == 0) {
-			throw new IllegalArgumentException("empty marginalExpectations array");
-		}
-		if (nSamples <= 0) {
-			throw new IllegalArgumentException("number of samples must be positive");
-		}
-		try (CommandExecutor executor = computationManager.newCommandExecutor(createEnv(), WORKING_DIR_PREFIX, config.isDebug())) {
+        Objects.requireNonNull(marginalExpectations);
+        if (marginalExpectations.length == 0) {
+            throw new IllegalArgumentException("empty marginalExpectations array");
+        }
+        if (nSamples <= 0) {
+            throw new IllegalArgumentException("number of samples must be positive");
+        }
+        try (CommandExecutor executor = computationManager.newCommandExecutor(createEnv(), WORKING_DIR_PREFIX, config.isDebug())) {
 
-			Path workingDir = executor.getWorkingDir();
-			Utils.writeWP41BinaryIndependentSamplingInputFile(workingDir.resolve(B1INPUTFILENAME), marginalExpectations);
+            Path workingDir = executor.getWorkingDir();
+            Utils.writeWP41BinaryIndependentSamplingInputFile(workingDir.resolve(B1INPUTFILENAME), marginalExpectations);
 
-            LOGGER.info("binsampler, asking for {} samples",nSamples);
+            LOGGER.info("binsampler, asking for {} samples", nSamples);
 
             Command cmd = createBinSamplerCmd(workingDir.resolve(B1INPUTFILENAME), nSamples);
             ExecutionReport report = executor.start(new CommandExecution(cmd, 1, priority));
@@ -528,13 +528,13 @@ public class SamplerWp41 implements Sampler {
 
             LOGGER.debug("Retrieving binsampler results from file {}", B1OUTPUTFILENAME);
             MatFileReader mfr = new MatFileReader();
-			Map<String, MLArray> content;
+            Map<String, MLArray> content;
             content = mfr.read(workingDir.resolve(B1OUTPUTFILENAME).toFile());
-            String errMsg=Utils.MLCharToString((MLChar) content.get("errmsg"));
+            String errMsg = Utils.MLCharToString((MLChar) content.get("errmsg"));
             if (!("Ok".equalsIgnoreCase(errMsg))) {
                 throw new MatlabException(errMsg);
             }
-            MLArray xNew=content.get("STATUS");
+            MLArray xNew = content.get("STATUS");
             Objects.requireNonNull(xNew);
             MLDouble mld = (MLDouble) xNew;
             double[][] retMat = mld.getArray();

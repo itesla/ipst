@@ -35,7 +35,7 @@ public class TimeValue {
 
     public void putIndicator(Indicator indicator) {
         Objects.requireNonNull(indicator);
-        this.indicators.put(indicator.getId(),indicator);
+        this.indicators.put(indicator.getId(), indicator);
     }
 
 }

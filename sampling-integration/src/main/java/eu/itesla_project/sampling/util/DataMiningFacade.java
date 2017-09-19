@@ -12,6 +12,6 @@ package eu.itesla_project.sampling.util;
  */
 public interface DataMiningFacade {
 
-	Wp41HistoData getDataFromHistoDatabase(DataMiningFacadeParams dmParams) throws Throwable;
+    Wp41HistoData getDataFromHistoDatabase(DataMiningFacadeParams dmParams) throws Throwable;
 
 }

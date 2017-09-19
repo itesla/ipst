@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.print.attribute.HashAttributeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,84 +26,83 @@ import eu.itesla_project.modelica_events_adder.events.records.Event;
  * @author Silvia Machado <machados@aia.es>
  */
 public class EventsParser {
-	
-	public EventsParser(File eventsFile) {
-		this.eventsFile = eventsFile;
-	}
 
-	public void parse() {
-		BufferedReader reader;
-		try {
-			reader = new BufferedReader(new FileReader(this.eventsFile));
-			String line = null;
-		
-			while((line = reader.readLine()) != null) {
-				if(line.startsWith("#")) { //Commented events
-					continue;
-				}
-				Event event;
-				
-				List<String> data = new ArrayList<String>(Arrays.asList(line.split(";")));
-				int fileId = Integer.parseInt(data.get(0));
-				data.remove(0);
-				int id = Integer.parseInt(data.get(0));
-				data.remove(0);
-				String eventType = data.get(0);
-				data.remove(0);
-				String device = data.get(0);
-				data.remove(0);
-				
-				event = new Event(fileId, id, eventType, device, data);
-				
-				//
-				if(eventsMap.containsKey(fileId)) {
-					eventsMap.get(fileId).add(event);
-				}
-				else {
-					List<Event> evList = new ArrayList<Event>();
-					evList.add(event);
-					eventsMap.put(fileId, evList);
-				}
-				
-				//
-				eventsList.add(event);
-				eventsDevices.add(device);
-			}
-		} catch (IOException e) {
-			_log.error(e.getMessage(), e);
-		}
-	}
-	
-	public List<Event> getEventsList() {
-		return eventsList;
-	}
+    public EventsParser(File eventsFile) {
+        this.eventsFile = eventsFile;
+    }
 
-	public void setEventsList(List<Event> eventsList) {
-		this.eventsList = eventsList;
-	}
+    public void parse() {
+        BufferedReader reader;
+        try {
+            reader = new BufferedReader(new FileReader(this.eventsFile));
+            String line = null;
 
-	public List<String> getEventsDevices() {
-		return eventsDevices;
-	}
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("#")) { //Commented events
+                    continue;
+                }
+                Event event;
 
-	public void setEventsDevices(List<String> eventsDevices) {
-		this.eventsDevices = eventsDevices;
-	}
+                List<String> data = new ArrayList<String>(Arrays.asList(line.split(";")));
+                int fileId = Integer.parseInt(data.get(0));
+                data.remove(0);
+                int id = Integer.parseInt(data.get(0));
+                data.remove(0);
+                String eventType = data.get(0);
+                data.remove(0);
+                String device = data.get(0);
+                data.remove(0);
 
-	public Map<Integer, List<Event>> getEventsMap() {
-		return eventsMap;
-	}
+                event = new Event(fileId, id, eventType, device, data);
 
-	public void setEventsMap(Map<Integer, List<Event>> eventsMap) {
-		this.eventsMap = eventsMap;
-	}
+                //
+                if (eventsMap.containsKey(fileId)) {
+                    eventsMap.get(fileId).add(event);
+                } else {
+                    List<Event> evList = new ArrayList<Event>();
+                    evList.add(event);
+                    eventsMap.put(fileId, evList);
+                }
 
+                //
+                eventsList.add(event);
+                eventsDevices.add(device);
+            }
+        } catch (IOException e) {
+            _log.error(e.getMessage(), e);
+        }
+    }
+
+    public List<Event> getEventsList() {
+        return eventsList;
+    }
+
+    public void setEventsList(List<Event> eventsList) {
+        this.eventsList = eventsList;
+    }
+
+    public List<String> getEventsDevices() {
+        return eventsDevices;
+    }
+
+    public void setEventsDevices(List<String> eventsDevices) {
+        this.eventsDevices = eventsDevices;
+    }
+
+    public Map<Integer, List<Event>> getEventsMap() {
+        return eventsMap;
+    }
+
+    public void setEventsMap(Map<Integer, List<Event>> eventsMap) {
+        this.eventsMap = eventsMap;
+    }
 
 
-	private Map<Integer, List<Event>> eventsMap = new HashMap<Integer, List<Event>>();
-	private List<Event> eventsList = new ArrayList<Event>();
-	private List<String> eventsDevices = new ArrayList<String>();
-	private File eventsFile;
-	
-	private static final Logger _log = LoggerFactory.getLogger(EventsParser.class);
+
+    private Map<Integer, List<Event>> eventsMap = new HashMap<Integer, List<Event>>();
+    private List<Event> eventsList = new ArrayList<Event>();
+    private List<String> eventsDevices = new ArrayList<String>();
+    private File eventsFile;
+
+    private static final Logger _log = LoggerFactory.getLogger(EventsParser.class);
 }

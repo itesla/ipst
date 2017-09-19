@@ -26,30 +26,30 @@ import eu.itesla_project.iidm.ddb.psse_imp_exp.DdbConfig;
 @AutoService(Tool.class)
 public class DdbLoaderTool implements Tool {
 
-	@Override
-	public Command getCommand() {
-		return DdbLoaderCommand.INSTANCE;
-	}
+    @Override
+    public Command getCommand() {
+        return DdbLoaderCommand.INSTANCE;
+    }
 
-	@Override
-	public void run(CommandLine line, ToolRunningContext context) throws Exception {
-		String dyrPathS  = line.getOptionValue(DdbLoaderCommand.PSSE_DYRFILEPATH);
-		String mappingPathS  = line.getOptionValue(DdbLoaderCommand.PSSE_MAPPINGFILEPATH);
-		String jbossHost = line.getOptionValue(DdbLoaderCommand.HOST);
+    @Override
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
+        String dyrPathS  = line.getOptionValue(DdbLoaderCommand.PSSE_DYRFILEPATH);
+        String mappingPathS  = line.getOptionValue(DdbLoaderCommand.PSSE_MAPPINGFILEPATH);
+        String jbossHost = line.getOptionValue(DdbLoaderCommand.HOST);
         String jbossPort = line.getOptionValue(DdbLoaderCommand.PORT);
         String jbossUser = line.getOptionValue(DdbLoaderCommand.USER);
         String jbossPassword = line.getOptionValue(DdbLoaderCommand.PASSWORD);
         String psseVersion = line.getOptionValue(DdbLoaderCommand.PSSE_VERSION);
-		String optionRemoveData = line.getOptionValue(DdbLoaderCommand.OPTION_REMOVE);
-        
+        String optionRemoveData = line.getOptionValue(DdbLoaderCommand.OPTION_REMOVE);
+
         DdbConfig ddbConfig = new DdbConfig(jbossHost, jbossPort, jbossUser, jbossPassword);
-        Path dyrPath=Paths.get(dyrPathS);
-		Path mappingPath=Paths.get(mappingPathS);
-		DdbDyrLoader dyrLoader = new DdbDyrLoader();
+        Path dyrPath = Paths.get(dyrPathS);
+        Path mappingPath = Paths.get(mappingPathS);
+        DdbDyrLoader dyrLoader = new DdbDyrLoader();
 
-		boolean removeDataAfterHavingLoadedIt=Boolean.parseBoolean(optionRemoveData);
+        boolean removeDataAfterHavingLoadedIt = Boolean.parseBoolean(optionRemoveData);
 
-		dyrLoader.load(dyrPath, mappingPath, psseVersion, ddbConfig, removeDataAfterHavingLoadedIt);
-	}
+        dyrLoader.load(dyrPath, mappingPath, psseVersion, ddbConfig, removeDataAfterHavingLoadedIt);
+    }
 
 }

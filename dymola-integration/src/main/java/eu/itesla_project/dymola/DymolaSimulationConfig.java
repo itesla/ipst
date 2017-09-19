@@ -28,7 +28,7 @@ public class DymolaSimulationConfig {
     tolerance=0.0001
     fixedStepSize=0.0
 
-	*/
+    */
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DymolaSimulationConfig.class);
@@ -60,11 +60,11 @@ public class DymolaSimulationConfig {
 
     public DymolaSimulationConfig(int numberOfIntervals,
                                   double outputInterval, String method, double tolerance, double outputFixedstepSize) {
-        this.numberOfIntervals =numberOfIntervals;
-        this.outputInterval =outputInterval;
-        this.method =method;
-        this.tolerance =tolerance;
-        this.outputFixedstepSize =outputFixedstepSize;
+        this.numberOfIntervals = numberOfIntervals;
+        this.outputInterval = outputInterval;
+        this.method = method;
+        this.tolerance = tolerance;
+        this.outputFixedstepSize = outputFixedstepSize;
     }
 
     public String getMethod() {

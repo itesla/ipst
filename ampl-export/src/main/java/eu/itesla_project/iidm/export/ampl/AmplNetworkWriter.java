@@ -1398,7 +1398,7 @@ public class AmplNetworkWriter implements AmplConstants {
         writeSubstations(context);
         writeHVDCLines(context);
     }
-    
+
     private void writeHVDCLines(AmplExportContext context) throws IOException {
         try (TableFormatter formatter = new AmplDatTableFormatter(
                 new OutputStreamWriter(dataSource.newOutputStream("_network_hvdc", "txt", append), StandardCharsets.UTF_8),

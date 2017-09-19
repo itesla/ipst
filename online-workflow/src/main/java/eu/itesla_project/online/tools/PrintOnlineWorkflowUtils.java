@@ -37,6 +37,9 @@ public class PrintOnlineWorkflowUtils {
         }
     }
 
+    private PrintOnlineWorkflowUtils() {
+    }
+
     public static String availableTableFormatterFormats() {
         return Arrays.stream(TableFormatterFactorySupplier.values()).map(x -> x.name()).collect(Collectors.joining(", "));
     }

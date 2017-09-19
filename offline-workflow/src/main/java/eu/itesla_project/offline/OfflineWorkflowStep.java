@@ -15,13 +15,13 @@ public enum OfflineWorkflowStep {
     INITIALIZATION(true),
     SAMPLING(true),
     SECURITY_RULES_COMPUTATION(true);
-    
+
     private final boolean running;
 
     private OfflineWorkflowStep(boolean running) {
         this.running = running;
     }
-    
+
     public boolean isRunning() {
         return running;
     }

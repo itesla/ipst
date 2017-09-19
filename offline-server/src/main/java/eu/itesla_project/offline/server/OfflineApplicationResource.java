@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 public class OfflineApplicationResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OfflineApplicationResource.class);
-    
+
     @Inject
     private OfflineApplicationBean bean;
 
@@ -69,7 +69,7 @@ public class OfflineApplicationResource {
         DateTime histoIntervalEnd = DateTime.parse(paramsObj.getJsonObject("histoInterval").getJsonString("end").getString());
         List<JsonString> countryCodes = paramsObj.getJsonArray("countries").getValuesAs(JsonString.class);
         Set<Country> countries = new HashSet<>(countryCodes.size());
-        for(JsonString countryCode : countryCodes) {
+        for (JsonString countryCode : countryCodes) {
             countries.add(Country.valueOf(countryCode.getString()));
         }
         OfflineWorkflowCreationParameters parameters = new OfflineWorkflowCreationParameters(
@@ -80,7 +80,7 @@ public class OfflineApplicationResource {
                 false);
         try {
             return Response.status(200).entity(bean.getApplication().createWorkflow(workflowId, parameters)).build();
-        } catch(Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.toString(), e);
             return Response.status(500).entity(e.getMessage()).build();
         }

@@ -8,7 +8,7 @@ package eu.itesla_project.dymola.contingency;
 
 import eu.itesla_project.contingency.ContingencyElement;
 import eu.itesla_project.contingency.ContingencyElementType;
-import eu.itesla_project.contingency.tasks.TrippingTask;
+import eu.itesla_project.contingency.tasks.AbstractTrippingTask;
 
 import java.util.Map;
 
@@ -52,7 +52,7 @@ public abstract class MoContingency implements ContingencyElement {
 
 
     @Override
-    public abstract TrippingTask toTask();
+    public abstract AbstractTrippingTask toTask();
 
 
     @Override

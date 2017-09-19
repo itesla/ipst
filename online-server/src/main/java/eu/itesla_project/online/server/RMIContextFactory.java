@@ -20,7 +20,7 @@ public class RMIContextFactory implements InitialContextFactory {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.naming.spi.InitialContextFactory#getInitialContext(java.util.
      * Hashtable)
      */

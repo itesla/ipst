@@ -39,12 +39,15 @@ public class ViolationSynthesis {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         ViolationSynthesis other = (ViolationSynthesis) obj;
         return (equipment.equals(other.equipment) && type.equals(other.type));
     }
@@ -65,17 +68,17 @@ public class ViolationSynthesis {
         return timeValues;
     }
 
-    public void addTimeValue(TimeValue val){
+    public void addTimeValue(TimeValue val) {
         Objects.requireNonNull(val);
         timeValues.add(val);
     }
 
-	public String getLimitName() {
-		return limitName;
-	}
+    public String getLimitName() {
+        return limitName;
+    }
 
-	public float getVoltageLevel() {
-		return voltageLevel;
-	}
-    
+    public float getVoltageLevel() {
+        return voltageLevel;
+    }
+
 }

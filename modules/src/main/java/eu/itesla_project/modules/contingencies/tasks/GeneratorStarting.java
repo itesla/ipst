@@ -7,6 +7,7 @@
 package eu.itesla_project.modules.contingencies.tasks;
 
 import eu.itesla_project.commons.ITeslaException;
+import eu.itesla_project.computation.ComputationManager;
 import eu.itesla_project.contingency.tasks.ModificationTask;
 import eu.itesla_project.iidm.network.Generator;
 import eu.itesla_project.iidm.network.Network;
@@ -25,7 +26,7 @@ public class GeneratorStarting implements ModificationTask {
     }
 
     @Override
-    public void modify(Network network) {
+    public void modify(Network network, ComputationManager computationManager) {
         Generator g = network.getGenerator(generatorId);
         if (g == null) {
             throw new ITeslaException("Generator '" + generatorId + "' not found");

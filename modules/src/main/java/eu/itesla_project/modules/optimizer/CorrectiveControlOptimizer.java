@@ -11,9 +11,9 @@ package eu.itesla_project.modules.optimizer;
  * @author Quinary <itesla@quinary.com>
  */
 public interface CorrectiveControlOptimizer extends AutoCloseable {
-	
-	void init(CorrectiveControlOptimizerParameters parameters);
-	
-	CorrectiveControlOptimizerResult run(PostContingencyState postContingencyState) throws Exception;
+
+    void init(CorrectiveControlOptimizerParameters parameters);
+
+    CorrectiveControlOptimizerResult run(PostContingencyState postContingencyState) throws Exception;
 
 }

@@ -26,7 +26,7 @@ public class RulesFacadeParameters {
     private final boolean wcaRules;
     private final boolean checkRules;
 
-    public RulesFacadeParameters(String offlineWorkflowId, List<Contingency> contingencies, double purityThreshold, 
+    public RulesFacadeParameters(String offlineWorkflowId, List<Contingency> contingencies, double purityThreshold,
             Set<SecurityIndexType> securityIndexTypes, boolean wcaRules, boolean checkRules) {
         this.offlineWorkflowId = offlineWorkflowId;
         this.contingencies = contingencies;

@@ -10,25 +10,25 @@ package eu.itesla_project.modelica_events_adder.events.utils;
  * @author Silvia Machado <machados@aia.es>
  */
 public class IIDMParameter {
-	
-	public IIDMParameter(String name, Object value) {
-		this.name = name;
-		this.value = value;
-	}
-    
-	public String getName() {
-		return name;
-	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-   
-	public Object getValue() {
-		return this.value;
-	}
-	
-	protected String name;
-	protected Object value;
-	
+    public IIDMParameter(String name, Object value) {
+        this.name = name;
+        this.value = value;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Object getValue() {
+        return this.value;
+    }
+
+    protected String name;
+    protected Object value;
+
 }

@@ -18,17 +18,17 @@ public class AmplExportConfig {
         ONLY_MAIN_CC_AND_CONNECTABLE_GENERATORS_AND_SHUNTS,
         ONLY_MAIN_CC_AND_CONNECTABLE_GENERATORS_AND_SHUNTS_AND_ALL_LOADS,
     }
-    
+
     public enum ExportActionType {
         CURATIVE("curative"),
         PREVENTIVE("preventive");
-        
+
         private final String label;
-        
+
         private ExportActionType(String label) {
             this.label = label;
         }
-        
+
         public String getLabel() {
             return label;
         }

@@ -12,6 +12,6 @@ package eu.itesla_project.wca;
  * @author Massimo Ferraro <massimo.ferraro@techrain.it>
  */
 public enum WCAPreventiveActionsFilter {
-    LF, 
+    LF,
     DOMAINS
 }

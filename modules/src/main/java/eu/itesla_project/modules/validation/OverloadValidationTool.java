@@ -17,6 +17,7 @@ import eu.itesla_project.loadflow.api.LoadFlowFactory;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
 import eu.itesla_project.modules.offline.OfflineConfig;
 import eu.itesla_project.modules.rules.*;
+import eu.itesla_project.security.LimitViolationsResult;
 import eu.itesla_project.security.PostContingencyResult;
 import eu.itesla_project.security.SecurityAnalysis;
 import eu.itesla_project.security.SecurityAnalysisImpl;
@@ -248,8 +249,9 @@ public class OverloadValidationTool implements Tool {
 
                     for (PostContingencyResult postContingencyResult : securityAnalysisResult.getPostContingencyResults()) {
                         Contingency contingency = postContingencyResult.getContingency();
-                        boolean lfOk = postContingencyResult.isComputationOk()
-                                && postContingencyResult.getLimitViolations().isEmpty();
+                        LimitViolationsResult limitViolationsResult = postContingencyResult.getLimitViolationsResult();
+                        boolean lfOk = limitViolationsResult.isComputationOk()
+                                && limitViolationsResult.getLimitViolations().isEmpty();
                         Map<SecurityIndexType, SecurityRuleCheckStatus> offlineRuleCheck = offlineRuleCheckPerContingency.get(contingency.getId());
                         boolean offlineRuleOk = offlineRuleCheck != null && offlineRuleCheck.get(SecurityIndexType.TSO_OVERLOAD) == SecurityRuleCheckStatus.OK;
                         statusPerContingency.put(contingency.getId(), new OverloadStatus(offlineRuleOk, lfOk));

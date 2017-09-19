@@ -227,7 +227,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
         }
     }
 
-    private static void dumpLimits(EurostagDictionary dictionary, BufferedWriter writer, TwoTerminalsConnectable branch) throws IOException {
+    private static void dumpLimits(EurostagDictionary dictionary, BufferedWriter writer, Branch branch) throws IOException {
         dumpLimits(dictionary, writer, branch.getId(),
                 branch.getCurrentLimits1(),
                 branch.getCurrentLimits2(),
@@ -318,6 +318,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
         switch (element.getType()) {
             case GENERATOR:
                 return parameters.getGeneratorFaultShortCircuitDuration(contingency.getId(), element.getId());
+            case BRANCH:
             case LINE:
                 return parameters.getBranchFaultShortCircuitDuration(contingency.getId(), element.getId());
             default:
@@ -326,7 +327,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
     }
 
     private void writeWp43Configs(List<Contingency> contingencies, Path workingDir) throws IOException, ConfigurationException {
-        Path baseWp43ConfigFile = PlatformConfig.CONFIG_DIR.resolve(WP43_CONFIGS_FILE_NAME);
+        Path baseWp43ConfigFile = PlatformConfig.defaultConfig().getConfigDir().resolve(WP43_CONFIGS_FILE_NAME);
 
         // generate one variant of the base config for all the contingency
         // this allow to add extra variables for some indexes
@@ -537,7 +538,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
         checkState(state);
 
         return computationManager.execute(new ExecutionEnvironment(EurostagUtil.createEnv(config), WORKING_DIR_PREFIX, config.isDebug()),
-                new DefaultExecutionHandler<ImpactAnalysisResult>() {
+                new AbstractExecutionHandler<ImpactAnalysisResult>() {
 
                     private final List<Contingency> contingencies = new ArrayList<>();
 

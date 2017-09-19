@@ -133,7 +133,7 @@ public class EurostagUtil {
                         }
                         if (in) {
                             String line = lines.get(0);
-                            if (line.length() > 0 && line.charAt(line.length()-1) == '*') {
+                            if (line.length() > 0 && line.charAt(line.length() - 1) == '*') {
                                 InitialValueError error = new InitialValueError();
                                 error.machine = line.substring(8, 16).trim();
                                 error.macrobloc = line.substring(24, 32).trim();
@@ -240,7 +240,7 @@ public class EurostagUtil {
 
     static void putBadExitCode(ExecutionReport report, Map<String, String> metrics) {
         if (report.getErrors().size() > 0) {
-            ExecutionError lastError = report.getErrors().get(report.getErrors().size()-1);
+            ExecutionError lastError = report.getErrors().get(report.getErrors().size() - 1);
             metrics.put("badExitCode", Integer.toString(lastError.getExitCode()));
         }
     }

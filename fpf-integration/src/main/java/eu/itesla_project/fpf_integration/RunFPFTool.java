@@ -97,8 +97,8 @@ public class RunFPFTool implements Tool {
     @Override
     public void run(CommandLine line, ToolRunningContext context) throws Exception {
 
-        OnlineWorkflowParameters parameters=OnlineWorkflowParameters.loadDefault();
-        OnlineConfig onlineConfig=OnlineConfig.load();
+        OnlineWorkflowParameters parameters = OnlineWorkflowParameters.loadDefault();
+        OnlineConfig onlineConfig = OnlineConfig.load();
 
         String analysisId = line.hasOption("analysis")
                 ? line.getOptionValue("analysis")
@@ -124,10 +124,10 @@ public class RunFPFTool implements Tool {
         context.getOutputStream().println("- Network name: " + network.getName());
 
         ContingenciesAndActionsDatabaseClient contingenciesDb = onlineConfig.getContingencyDbClientFactoryClass().newInstance().create();
-        List<Contingency> contingencyList=contingenciesDb.getContingencies(network);
+        List<Contingency> contingencyList = contingenciesDb.getContingencies(network);
 
-        FPFAnalysis fpfce=new FPFAnalysis();
-        fpfce.init(network,context.getComputationManager(),feDataStorage);
+        FPFAnalysis fpfce = new FPFAnalysis();
+        fpfce.init(network, context.getComputationManager(), feDataStorage);
         fpfce.run(analysisId, timeHorizon, contingencyList, Paths.get(outputDir));
     }
 }

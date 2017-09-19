@@ -70,7 +70,7 @@ public class UncertaintiesAmplWriter implements WCAConstants {
                     if (coeff != 0) {
                         formatter.writeCell(inj.getType().toChar())
                                  .writeCell(getNum(inj, mapper))
-                                 .writeCell(varNum+1)
+                                 .writeCell(varNum + 1)
                                  .writeCell(coeff);
                     }
                 }
@@ -89,7 +89,7 @@ public class UncertaintiesAmplWriter implements WCAConstants {
                     new Column("min"),
                     new Column("max"))) {
             for (int varNum = 0; varNum < uncertainties.min.length; varNum++) {
-                formatter.writeCell(varNum+1)
+                formatter.writeCell(varNum + 1)
                         .writeCell(uncertainties.min[varNum])
                         .writeCell(uncertainties.max[varNum]);
             }

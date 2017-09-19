@@ -8,21 +8,15 @@ package eu.itesla_project.dymola;
 
 import eu.itesla_project.computation.ExecutionError;
 import eu.itesla_project.computation.ExecutionReport;
-import eu.itesla_project.iidm.network.Line;
 import eu.itesla_project.iidm.network.Network;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.GZIPInputStream;
 
 /**
  *
@@ -34,10 +28,10 @@ public class DymolaUtil {
     static final String PRODUCT_NAME = "Dymola";
     static final String VERSION = "2016";
 
-    static final String DYMOLAINPUTZIPFILENAMEPREFIX ="dymolainput";
-    static final String DYMOLAOUTPUTZIPFILENAMEPREFIX ="dymolaoutput";
-    static final String DYMOLA_SIM_MODEL_INPUT_PREFIX ="network";
-    static final String DYMOLA_SIM_MAT_OUTPUT_PREFIX ="dymolasim";
+    static final String DYMOLAINPUTZIPFILENAMEPREFIX = "dymolainput";
+    static final String DYMOLAOUTPUTZIPFILENAMEPREFIX = "dymolaoutput";
+    static final String DYMOLA_SIM_MODEL_INPUT_PREFIX = "network";
+    static final String DYMOLA_SIM_MAT_OUTPUT_PREFIX = "dymolasim";
 
 
     private DymolaUtil() {
@@ -63,7 +57,7 @@ public class DymolaUtil {
 
     static void putBadExitCode(ExecutionReport report, Map<String, String> metrics) {
         if (report.getErrors().size() > 0) {
-            ExecutionError lastError = report.getErrors().get(report.getErrors().size()-1);
+            ExecutionError lastError = report.getErrors().get(report.getErrors().size() - 1);
             metrics.put("badExitCode", Integer.toString(lastError.getExitCode()));
         }
     }

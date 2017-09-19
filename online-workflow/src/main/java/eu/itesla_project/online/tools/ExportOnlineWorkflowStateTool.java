@@ -27,75 +27,77 @@ import java.util.List;
 @AutoService(Tool.class)
 public class ExportOnlineWorkflowStateTool implements Tool {
 
-	private static Command COMMAND = new Command() {
-		
-		@Override
-		public String getName() {
-			return "export-online-workflow-state";
-		}
+    private static Command COMMAND = new Command() {
 
-		@Override
-		public String getTheme() {
-			return Themes.ONLINE_WORKFLOW;
-		}
+        @Override
+        public String getName() {
+            return "export-online-workflow-state";
+        }
 
-		@Override
-		public String getDescription() {
-			return "Export network data of a stored state of an online workflow";
-		}
+        @Override
+        public String getTheme() {
+            return Themes.ONLINE_WORKFLOW;
+        }
 
-		@Override
-		public Options getOptions() {
-			Options options = new Options();
-			options.addOption(Option.builder().longOpt("workflow")
-	                .desc("the workflow id")
-	                .hasArg()
-	                .required()
-	                .argName("ID")
-	                .build());
-			options.addOption(Option.builder().longOpt("state")
-	                .desc("the state id")
-	                .hasArg()
-	                .required()
-	                .argName("STATE")
-	                .build());
-			options.addOption(Option.builder().longOpt("folder")
-	                .desc("the folder where to export the network data")
-	                .hasArg()
-	                .argName("FOLDER")
-	                .build());
-			return options;
-		}
+        @Override
+        public String getDescription() {
+            return "Export network data of a stored state of an online workflow";
+        }
 
-		@Override
-		public String getUsageFooter() {
-			return null;
-		}
-		
-	};
-	
-	@Override
-	public Command getCommand() {
-		return COMMAND;
-	}
+        @Override
+        public Options getOptions() {
+            Options options = new Options();
+            options.addOption(Option.builder().longOpt("workflow")
+                    .desc("the workflow id")
+                    .hasArg()
+                    .required()
+                    .argName("ID")
+                    .build());
+            options.addOption(Option.builder().longOpt("state")
+                    .desc("the state id")
+                    .hasArg()
+                    .required()
+                    .argName("STATE")
+                    .build());
+            options.addOption(Option.builder().longOpt("folder")
+                    .desc("the folder where to export the network data")
+                    .hasArg()
+                    .argName("FOLDER")
+                    .build());
+            return options;
+        }
 
-	@Override
-	public void run(CommandLine line, ToolRunningContext context) throws Exception {
-		OnlineConfig config = OnlineConfig.load();
-		OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
-		String workflowId = line.getOptionValue("workflow");
-		Integer stateId = Integer.valueOf(line.getOptionValue("state"));
-		Path folder =  line.hasOption("folder") ? Paths.get(line.getOptionValue("folder")) : null;
-		List<Integer> storedStates = onlinedb.listStoredStates(workflowId);
-		if ( storedStates.contains(stateId) ) {
-			if ( folder != null )
-				context.getOutputStream().println("Exporting stored state " + stateId + " of workflow " + workflowId + " to folder " + folder);
-			else
-				context.getOutputStream().println("Exporting stored state " + stateId + " of workflow " + workflowId + " to current folder");
-			onlinedb.exportState(workflowId, stateId, folder);
-		} else
-			context.getOutputStream().println("No state " + stateId + " stored for workflow " + workflowId);
-		onlinedb.close();
-	}
-	
+        @Override
+        public String getUsageFooter() {
+            return null;
+        }
+
+    };
+
+    @Override
+    public Command getCommand() {
+        return COMMAND;
+    }
+
+    @Override
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
+        OnlineConfig config = OnlineConfig.load();
+        OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
+        String workflowId = line.getOptionValue("workflow");
+        Integer stateId = Integer.valueOf(line.getOptionValue("state"));
+        Path folder =  line.hasOption("folder") ? Paths.get(line.getOptionValue("folder")) : null;
+        List<Integer> storedStates = onlinedb.listStoredStates(workflowId);
+        if (storedStates.contains(stateId)) {
+            if (folder != null) {
+                context.getOutputStream().println("Exporting stored state " + stateId + " of workflow " + workflowId + " to folder " + folder);
+            } else {
+                context.getOutputStream().println("Exporting stored state " + stateId + " of workflow " + workflowId + " to current folder");
+            }
+            onlinedb.exportState(workflowId, stateId, folder);
+        } else {
+            context.getOutputStream().println("No state " + stateId + " stored for workflow " + workflowId);
+        }
+        onlinedb.close();
+    }
+
 }

@@ -105,8 +105,8 @@ public class Master {
                         .argName("ID")
                         .build());
     }
-    
-    public Master() {
+
+    private Master() {
     }
 
     public static void main(String[] args) throws Exception {

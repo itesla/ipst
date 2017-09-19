@@ -168,7 +168,7 @@ public class CheckSecurityTool implements Tool {
                 } else {
                     writeCsv(checkStatusPerContingency, securityIndexTypes, outputCsvFile);
                 }
-            } else if (Files.isDirectory(caseFile)){
+            } else if (Files.isDirectory(caseFile)) {
                 if (outputCsvFile == null) {
                     throw new RuntimeException("In case of multiple impact security checks, only output to csv file is supported");
                 }

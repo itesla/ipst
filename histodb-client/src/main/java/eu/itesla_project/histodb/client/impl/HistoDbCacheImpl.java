@@ -83,7 +83,7 @@ public class HistoDbCacheImpl implements HistoDbCache {
 
     @Override
     public List<String> listUrls() throws IOException {
-        Path dir = PlatformConfig.CACHE_DIR.resolve(cacheName);
+        Path dir = PlatformConfig.defaultConfig().getCacheDir().resolve(cacheName);
         if (Files.exists(dir)) {
             try (Stream<Path> stream = Files.list(dir)) {
                 return stream

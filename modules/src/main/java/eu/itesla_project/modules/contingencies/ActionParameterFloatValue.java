@@ -11,16 +11,16 @@ package eu.itesla_project.modules.contingencies;
  * @author Quinary <itesla@quinary.com>
  */
 public class ActionParameterFloatValue implements ActionParameterValue {
-	
-	Float value;
-	
-	public ActionParameterFloatValue(Float value) {
-		this.value = value;
-	}
-	
-	@Override
-	public Float getValue() {
-		return value;
-	}
+
+    Float value;
+
+    public ActionParameterFloatValue(Float value) {
+        this.value = value;
+    }
+
+    @Override
+    public Float getValue() {
+        return value;
+    }
 
 }

@@ -41,8 +41,9 @@ public final class OnlineUtils {
     public static boolean isSafe(Collection<SecurityIndex> securityIndexes) {
         Objects.requireNonNull(securityIndexes, "security indexes collection is null");
         for (SecurityIndex index : securityIndexes) {
-            if (!index.isOk())
+            if (!index.isOk()) {
                 return false;
+            }
         }
         return true;
     }

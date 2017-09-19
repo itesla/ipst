@@ -15,9 +15,9 @@ import eu.itesla_project.modules.online.OnlineDbFactory;
  */
 public class OnlineDbMVStoreFactory implements OnlineDbFactory {
 
-	@Override
-	public OnlineDb create() {
-		return new OnlineDbMVStore();
-	}
+    @Override
+    public OnlineDb create() {
+        return new OnlineDbMVStore();
+    }
 
 }

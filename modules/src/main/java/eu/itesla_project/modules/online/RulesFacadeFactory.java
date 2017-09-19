@@ -13,7 +13,7 @@ import eu.itesla_project.modules.rules.RulesDbClient;
 * @author Quinary <itesla@quinary.com>
 */
 public interface RulesFacadeFactory {
-	
-	 OnlineRulesFacade create(RulesDbClient rulesDbClient);
+
+     OnlineRulesFacade create(RulesDbClient rulesDbClient);
 
 }
