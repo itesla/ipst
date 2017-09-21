@@ -20,7 +20,7 @@ if (NOT INTEL_HOME AND NOT $ENV{INTEL_ROOT} STREQUAL "")
 endif()
 
 if (NOT INTEL_HOME)
-    message(FATAL_ERROR "Intel Fortran libraries not found. The variable INTEL_HOME is NOT set or is NOT a valid directory")
+    message(WARNING  "Intel Fortran libraries path not found. The variable INTEL_HOME is NOT set or is NOT a valid directory.")
 endif()
 
 include(FindPackageHandleStandardArgs)
