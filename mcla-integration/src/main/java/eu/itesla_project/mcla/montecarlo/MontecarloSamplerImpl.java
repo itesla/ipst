@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
- * Copyright (c) 2016, RTE (http://www.rte-france.com)
+ * Copyright (c) 2016-2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -160,14 +160,19 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
                 createEnv(), WORKING_DIR_PREFIX, config.isDebug())) {
 
             final Path workingDir = executor.getWorkingDir();
-            // put mat files in working dir
-            Path localForecastOfflineSamplesDataFile = Paths.get(workingDir.toString(), MCSINPUTFILEPREFIX + "forecast_offline_samples_" + timeHorizon.getLabel() + ".mat");
-            forecastErrorsDataStorage.getForecastOfflineSamplesFile(feAnalysisId, timeHorizon, localForecastOfflineSamplesDataFile);
+            // put mat file(s) in working dir
+            Path forecastOfflineSamplesDataFile = null;
+            if (config.isCopyFEFile()) {
+                forecastOfflineSamplesDataFile = Paths.get(workingDir.toString(), MCSINPUTFILEPREFIX + "forecast_offline_samples_" + timeHorizon.getLabel() + ".mat");
+                forecastErrorsDataStorage.getForecastOfflineSamplesFile(feAnalysisId, timeHorizon, forecastOfflineSamplesDataFile);
+            } else {
+                forecastOfflineSamplesDataFile = forecastErrorsDataStorage.getForecastOfflineSamplesFilePath(feAnalysisId, timeHorizon);
+            }
             Path localNetworkDataMatFile = Paths.get(workingDir.toString(), MCSINPUTFILEPREFIX + network.getId().replaceAll(" ", "_") + ".mat");
             Files.copy(networkDataMatFile, localNetworkDataMatFile);
 
             LOGGER.info("Running montecarlo sampler on {} network, asking for {} samples", network.getId(), nSamples);
-            Command cmd = createCommand(localForecastOfflineSamplesDataFile, localNetworkDataMatFile);
+            Command cmd = createCommand(forecastOfflineSamplesDataFile, localNetworkDataMatFile);
             ExecutionReport report = executor.start(new CommandExecution(cmd, 1, Integer.MAX_VALUE));
             report.log();
 
@@ -187,10 +192,10 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
     }
 
 
-    private Command createCommand(Path localForecastErrorsDataFile, Path localNetworkDataMatFile) {
+    private Command createCommand(Path forecastErrorsDataFile, Path localNetworkDataMatFile) {
         List<String> args1 = new ArrayList<>();
-        args1.add(localNetworkDataMatFile.toAbsolutePath().toString());
-        args1.add(localForecastErrorsDataFile.toAbsolutePath().toString());
+        args1.add(localNetworkDataMatFile.getFileName().toString());
+        args1.add(config.isCopyFEFile() ? forecastErrorsDataFile.getFileName().toString() : forecastErrorsDataFile.toAbsolutePath().toString());
         args1.add(MCSOUTPUTFILENAME);
         args1.add("" + nSamples);
         args1.add("" + config.getOptionSign());
@@ -198,14 +203,24 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
         args1.add("" + config.getIsdeterministic()); //added in v1.8.1
         args1.add("" + config.getFull_dependence()); //added in v1.8.1
 
-        return new SimpleCommandBuilder()
-                .id("matmcs")
-                .program(config.getBinariesDir().resolve(MCLA).toAbsolutePath().toString())
-                .args(args1)
-                .inputFiles(new InputFile(localNetworkDataMatFile.getFileName().toString()),
-                        new InputFile(localForecastErrorsDataFile.getFileName().toString()))
-                .outputFiles(new OutputFile(MCSOUTPUTFILENAME), new OutputFile(MCS_CSV_OUTPUTFILENAME))
-                .build();
+        if (config.isCopyFEFile()) {
+            return new SimpleCommandBuilder()
+                    .id("matmcs")
+                    .program(config.getBinariesDir().resolve(MCLA).toAbsolutePath().toString())
+                    .args(args1)
+                    .inputFiles(new InputFile(localNetworkDataMatFile.getFileName().toString()),
+                                new InputFile(forecastErrorsDataFile.getFileName().toString()))
+                    .outputFiles(new OutputFile(MCSOUTPUTFILENAME), new OutputFile(MCS_CSV_OUTPUTFILENAME))
+                    .build();
+        } else {
+            return new SimpleCommandBuilder()
+                    .id("matmcs")
+                    .program(config.getBinariesDir().resolve(MCLA).toAbsolutePath().toString())
+                    .args(args1)
+                    .inputFiles(new InputFile(localNetworkDataMatFile.getFileName().toString()))
+                    .outputFiles(new OutputFile(MCSOUTPUTFILENAME), new OutputFile(MCS_CSV_OUTPUTFILENAME))
+                    .build();
+        }
     }
 
     private void putSampleDataIntoNetwork(SampleData sample) {

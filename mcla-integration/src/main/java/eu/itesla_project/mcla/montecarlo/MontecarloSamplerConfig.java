@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -59,6 +60,7 @@ public class MontecarloSamplerConfig {
     private final boolean debug;
     private final Integer isdeterministic;
     private final Integer full_dependence;
+    private final boolean copyFEFile;
 
     public MontecarloSamplerConfig(
             Path binariesDir,
@@ -68,6 +70,7 @@ public class MontecarloSamplerConfig {
             int centering,
             int isdeterministic,
             int full_dependence,
+            boolean copyFEFile,
             boolean debug
             ) {
         Objects.requireNonNull(binariesDir, "sampler compiled binaries directory is null");
@@ -81,6 +84,7 @@ public class MontecarloSamplerConfig {
         this.centering = centering;
         this.isdeterministic = isdeterministic;
         this.full_dependence = full_dependence;
+        this.copyFEFile = copyFEFile;
         this.debug = debug;
     }
 
@@ -94,9 +98,10 @@ public class MontecarloSamplerConfig {
         int centering = config.getIntProperty("centering");
         Integer isdeterministic = config.getOptionalIntegerProperty("isdeterministic").orElse(null);
         Integer full_dependence = config.getOptionalIntegerProperty("full_dependence").orElse(null);
+        boolean copyFEFile = config.getBooleanProperty("copyFEFile", true);
         boolean debug = config.getBooleanProperty("debug", false);
 
-        return new MontecarloSamplerConfig(binariesDir, runtimeHomeDir, tmpDir, optionSign, centering, isdeterministic, full_dependence, debug);
+        return new MontecarloSamplerConfig(binariesDir, runtimeHomeDir, tmpDir, optionSign, centering, isdeterministic, full_dependence, copyFEFile, debug);
     }
 
     public Path getBinariesDir() {
@@ -127,6 +132,10 @@ public class MontecarloSamplerConfig {
         return full_dependence;
     }
 
+    public boolean isCopyFEFile() {
+        return copyFEFile;
+    }
+
     public boolean isDebug() {
         return debug;
     }
@@ -138,7 +147,8 @@ public class MontecarloSamplerConfig {
     @Override
     public String toString() {
         return "MontecarloSamplerConfig [" + ", binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir + ", tmpDir=" + tmpDir
-                + ", optionSign=" + optionSign + ", centering=" + centering + ", isdeterministic=" + isdeterministic + ", full_dependence=" + full_dependence + ", debug=" + debug + "]";
+                + ", optionSign=" + optionSign + ", centering=" + centering + ", isdeterministic=" + isdeterministic + ", full_dependence=" + full_dependence
+                + ", copyFEFile=" + copyFEFile + ", debug=" + debug + "]";
     }
 
 }
