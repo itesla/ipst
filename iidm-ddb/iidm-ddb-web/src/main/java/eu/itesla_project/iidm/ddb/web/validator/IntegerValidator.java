@@ -26,7 +26,7 @@ public class IntegerValidator implements Validator {
     public void validate(FacesContext context, UIComponent component, Object objValue) throws ValidatorException {
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
         String objString = objValue.toString();
-         boolean valid = true;
+        boolean valid = true;
         try {
             Integer valueInt = Integer.valueOf(objString);
         } catch (NumberFormatException nEx) {

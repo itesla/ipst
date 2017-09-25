@@ -152,7 +152,7 @@ public class RunImpactAnalysisOnStateTool implements Tool {
                 }
                 context.getOutputStream().println(table.render());
             } else {
-                    context.getOutputStream().println("Error running stabilization -  metrics = " + sr.getMetrics());
+                context.getOutputStream().println("Error running stabilization -  metrics = " + sr.getMetrics());
             }
         } else {
             context.getOutputStream().println("no state " + stateId + " of workflow " + workflowId + " stored in the online db");

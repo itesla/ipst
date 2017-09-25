@@ -63,7 +63,7 @@ public class ParametersContainerController {
     @Named
     private Parameters newParameters;
 
-          @EJB
+    @EJB
     private DDBManager pmanager;
 
     private LazyParametersContainerDataModel lazyDataModel;

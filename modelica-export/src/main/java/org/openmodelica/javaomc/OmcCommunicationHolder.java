@@ -12,25 +12,25 @@ package org.openmodelica.javaomc;
 
 // As simple as can be omc communication, sending and recieving of strings.
 public final class OmcCommunicationHolder implements org.omg.CORBA.portable.Streamable {
-  public OmcCommunication value = null;
+    public OmcCommunication value = null;
 
-  public OmcCommunicationHolder () {
-  }
+    public OmcCommunicationHolder() {
+    }
 
-  public OmcCommunicationHolder(OmcCommunication initialValue) {
-    value = initialValue;
-  }
+    public OmcCommunicationHolder(OmcCommunication initialValue) {
+        value = initialValue;
+    }
 
-  public void _read(org.omg.CORBA.portable.InputStream i) {
-    value = OmcCommunicationHelper.read(i);
-  }
+    public void _read(org.omg.CORBA.portable.InputStream i) {
+        value = OmcCommunicationHelper.read(i);
+    }
 
-  public void _write(org.omg.CORBA.portable.OutputStream o) {
-    OmcCommunicationHelper.write(o, value);
-  }
+    public void _write(org.omg.CORBA.portable.OutputStream o) {
+        OmcCommunicationHelper.write(o, value);
+    }
 
-  public org.omg.CORBA.TypeCode _type() {
-    return OmcCommunicationHelper.type();
-  }
+    public org.omg.CORBA.TypeCode _type() {
+        return OmcCommunicationHelper.type();
+    }
 
 }

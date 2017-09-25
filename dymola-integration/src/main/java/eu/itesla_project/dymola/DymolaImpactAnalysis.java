@@ -431,27 +431,27 @@ public class DymolaImpactAnalysis implements ImpactAnalysis {
         // TODO here it is assumed that contingencies ids in csv file start from 0 (i.e. 0 is the first contingency); id should be decoupled from the implementation
         try (final Stream<Path> pathStream = Files.walk(dymolaExportPath)) {
             pathStream.filter((p) -> !p.toFile().isDirectory() && p.toFile().getAbsolutePath().contains("events_") && p.toFile().getAbsolutePath().endsWith(".mo")).
-                    forEach(p -> {
-                        GenericArchive archive = ShrinkWrap.createDomain().getArchiveFactory().create(GenericArchive.class);
-                        try (FileSystem fileSystem = ShrinkWrapFileSystems.newFileSystem(archive)) {
-                            Path rootDir = fileSystem.getPath("/");
-                            Files.copy(modelicaPowerSystemLibraryPath, rootDir.resolve(modelicaPowerSystemLibraryPath.getFileName()));
-                            Files.copy(Paths.get(p.toString()), rootDir.resolve(DymolaUtil.DYMOLA_SIM_MODEL_INPUT_PREFIX + ".mo"));
+                forEach(p -> {
+                    GenericArchive archive = ShrinkWrap.createDomain().getArchiveFactory().create(GenericArchive.class);
+                    try (FileSystem fileSystem = ShrinkWrapFileSystems.newFileSystem(archive)) {
+                        Path rootDir = fileSystem.getPath("/");
+                        Files.copy(modelicaPowerSystemLibraryPath, rootDir.resolve(modelicaPowerSystemLibraryPath.getFileName()));
+                        Files.copy(Paths.get(p.toString()), rootDir.resolve(DymolaUtil.DYMOLA_SIM_MODEL_INPUT_PREFIX + ".mo"));
 
-                            String[] c = p.getFileName().toString().replace(".mo", "").split("_");
-                            try (OutputStream os = Files.newOutputStream(dymolaExportPath.getParent().resolve(DymolaUtil.DYMOLAINPUTZIPFILENAMEPREFIX + "_" + c[c.length - 1] + ".zip"))) {
-                                archive.as(ZipExporter.class).exportTo(os);
-                                retList.add(new String( c[c.length - 1]));
-                            } catch (IOException e) {
-                                //e.printStackTrace();
-                                throw new RuntimeException(e);
-                            }
-
+                        String[] c = p.getFileName().toString().replace(".mo", "").split("_");
+                        try (OutputStream os = Files.newOutputStream(dymolaExportPath.getParent().resolve(DymolaUtil.DYMOLAINPUTZIPFILENAMEPREFIX + "_" + c[c.length - 1] + ".zip"))) {
+                            archive.as(ZipExporter.class).exportTo(os);
+                            retList.add(new String(c[c.length - 1]));
                         } catch (IOException e) {
+                            //e.printStackTrace();
                             throw new RuntimeException(e);
                         }
 
-                    });
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                });
         }
         retList.sort(Comparator.<String>naturalOrder());
 

@@ -46,10 +46,10 @@ public class XmlActionsContingenciesUtils {
         Zones zones = actionContingencies.getZones();
 
         for (Zone z : zones.getZone()) {
-                BigInteger zoneNumber = z.getNumber();
-                if (zoneNumber.equals(number)) {
-                    return z;
-                }
+            BigInteger zoneNumber = z.getNumber();
+            if (zoneNumber.equals(number)) {
+                return z;
+            }
         }
 
         return null;

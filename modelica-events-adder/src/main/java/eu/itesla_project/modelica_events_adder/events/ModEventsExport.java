@@ -341,7 +341,7 @@ public class ModEventsExport {
 
         return breakerConnect;
     }
-        public String parseName(String name) {
+    public String parseName(String name) {
         String parsedName;
 
         //Remove the bus prefix = "bus_"

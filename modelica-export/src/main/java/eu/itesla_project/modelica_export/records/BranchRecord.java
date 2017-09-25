@@ -103,7 +103,7 @@ public abstract class BranchRecord extends ModelicaRecord {
 
     @Override
     public String parseName(String name) {
-           String parsedName = name.trim();
+        String parsedName = name.trim();
 
         if (parsedName.contains("-")) {
             if (!parsedName.startsWith("_")) {
@@ -111,8 +111,8 @@ public abstract class BranchRecord extends ModelicaRecord {
             }
             parsedName = parsedName.replaceAll("-", "_");
         }
-           parsedName = parsedName.replaceAll("\\s", "_");
-           parsedName = parsedName.replaceAll(StaticData.DOT, "_");
+        parsedName = parsedName.replaceAll("\\s", "_");
+        parsedName = parsedName.replaceAll(StaticData.DOT, "_");
 
         if (parsedName.substring(0, 1).matches("[0-9]")) {
             parsedName = "l_" + parsedName;

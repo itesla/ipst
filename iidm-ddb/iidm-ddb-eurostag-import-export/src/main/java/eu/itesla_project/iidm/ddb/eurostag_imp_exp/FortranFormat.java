@@ -883,16 +883,16 @@ public class FortranFormat {
             for (int i = open + 1; i < withParen.length(); i++) {
                 final char c = withParen.charAt(i);
                 switch (c) {
-                case ')':
-                    if (s.isEmpty()) {
-                        return i;
-                    } else {
-                        s.pop();
-                    }
-                    break;
-                case '(':
-                    s.push(i);
-                    break;
+                    case ')':
+                        if (s.isEmpty()) {
+                            return i;
+                        } else {
+                            s.pop();
+                        }
+                        break;
+                    case '(':
+                        s.push(i);
+                        break;
                 }
             }
             throw new ParseException("Missing a close parenthesis.", open);
@@ -1320,15 +1320,15 @@ public class FortranFormat {
                     save.replace(place - 1, place - 1 + sb.length(), sb.toString());
                 }
                 switch (u.type) {
-                case POSITIONING_TAB:
-                    place = u.length;
-                    break;
-                case POSITIONING_TAB_LEFT:
-                    place -= u.length - sb.length();
-                    break;
-                case POSITIONING_TAB_RIGHT:
-                    place += u.length + sb.length();
-                    break;
+                    case POSITIONING_TAB:
+                        place = u.length;
+                        break;
+                    case POSITIONING_TAB_LEFT:
+                        place -= u.length - sb.length();
+                        break;
+                    case POSITIONING_TAB_RIGHT:
+                        place += u.length + sb.length();
+                        break;
                 }
                 sb = new StringBuilder();
             } else {

@@ -46,53 +46,53 @@ public class Tfo3WData implements EquipmentData {
 
     public static String[] getFields() {
         return new String[]{
-                    "id",
-                    "bus 1 id",
-                    "bus 2 id",
-                    "bus 3 id",
-                    "apparent power 1",
-                    "apparent power 2",
-                    "apparent power 3",
-                    "nominal voltage 1",
-                    "nominal voltage 2",
-                    "nominal voltage 3",
-                    "current limit 1",
-                    "current limit 2",
-                    "current limit 3"
-                };
+            "id",
+            "bus 1 id",
+            "bus 2 id",
+            "bus 3 id",
+            "apparent power 1",
+            "apparent power 2",
+            "apparent power 3",
+            "nominal voltage 1",
+            "nominal voltage 2",
+            "nominal voltage 3",
+            "current limit 1",
+            "current limit 2",
+            "current limit 3"
+        };
     }
 
     @Override
     public String getFieldValue(String fieldName) {
         switch (fieldName) {
-        case "id":
-            return tfoId;
-        case "bus 1 id":
-            return bus1Id;
-        case "bus 2 id":
-            return bus2Id;
-        case "bus 3 id":
-            return bus3Id;
-        case "apparent power 1":
-            return Float.toString(apparentPower1);
-        case "apparent power 2":
-            return Float.toString(apparentPower2);
-        case "apparent power 3":
-            return Float.toString(apparentPower3);
-        case "nominal voltage 1":
-            return Float.toString(nominalVoltage1);
-        case "nominal voltage 2":
-            return Float.toString(nominalVoltage2);
-        case "nominal voltage 3":
-            return Float.toString(nominalVoltage3);
-        case "current limit 1":
-            return Float.toString(currentLimit1);
-        case "current limit 2":
-            return Float.toString(currentLimit2);
-        case "current limit 3":
-            return Float.toString(currentLimit3);
-        default:
-            throw new RuntimeException("no " + fieldName + " available in tfo data");
+            case "id":
+                return tfoId;
+            case "bus 1 id":
+                return bus1Id;
+            case "bus 2 id":
+                return bus2Id;
+            case "bus 3 id":
+                return bus3Id;
+            case "apparent power 1":
+                return Float.toString(apparentPower1);
+            case "apparent power 2":
+                return Float.toString(apparentPower2);
+            case "apparent power 3":
+                return Float.toString(apparentPower3);
+            case "nominal voltage 1":
+                return Float.toString(nominalVoltage1);
+            case "nominal voltage 2":
+                return Float.toString(nominalVoltage2);
+            case "nominal voltage 3":
+                return Float.toString(nominalVoltage3);
+            case "current limit 1":
+                return Float.toString(currentLimit1);
+            case "current limit 2":
+                return Float.toString(currentLimit2);
+            case "current limit 3":
+                return Float.toString(currentLimit3);
+            default:
+                throw new RuntimeException("no " + fieldName + " available in tfo data");
         }
     }
 

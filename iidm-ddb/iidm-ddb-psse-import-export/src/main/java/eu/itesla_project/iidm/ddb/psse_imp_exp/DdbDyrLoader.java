@@ -209,12 +209,13 @@ public class DdbDyrLoader {
                 List<PsseRegister> internalsRegs = groupByBusByType.get("internal");
 
                 //logs some info about this group machine-regulators
-                List<String> modelsNamesList = FluentIterable.from(internalsRegs).transform(new Function<PsseRegister, String>() {
-                    public String apply(PsseRegister f) {
-                        String rName = f.getModel();
-                        return rName;
-                    }
-                }).toList();
+                List<String> modelsNamesList = FluentIterable.from(internalsRegs)
+                        .transform(new Function<PsseRegister, String>() {
+                            public String apply(PsseRegister f) {
+                                String rName = f.getModel();
+                                return rName;
+                            }
+                        }).toList();
                 log.info("bus_id:{}, generator model: {}; regulators models: {}", dyrId, equipmentReg.getModel(), modelsNamesList);
 
 
@@ -538,44 +539,44 @@ public class DdbDyrLoader {
                                 Connection newC = new Connection(internalsRegs.get(i).getId(), Connection.INTERNAL_TYPE, internalsRegs.get(j).getId(), Connection.INTERNAL_TYPE, regPin1, regPin2, Connection.INSIDE_CONNECTION);
                                 if (!(clist.contains(newC))) {
                                     log.info("---- creating connection: " + newC);
-                                     clist.add(newC);
-                                 } else {
-                                     log.info("---- connection already exists: " + newC);
-                                 }
+                                    clist.add(newC);
+                                } else {
+                                    log.info("---- connection already exists: " + newC);
+                                }
                             } else if (internalsRegs.get(i).Model.equals("HYGOV") && internalsRegs.get(j).Model.equals("PSS2A")) {
-                                 log.info("-- connection int-int {}-{}  on pins {},{}", internalsRegs.get(i).getModel(), internalsRegs.get(j).getModel(), regPin2, regPin1);
-                                 log.info("----  {} {} {} {} {} {} {}", "inside", "internal", internalsRegs.get(i).getId(), regPin2, regPin1, "internal", internalsRegs.get(j).getId());
-                                 Connection newC = new Connection(internalsRegs.get(i).getId(), Connection.INTERNAL_TYPE, internalsRegs.get(j).getId(), Connection.INTERNAL_TYPE, regPin2, regPin1, Connection.INSIDE_CONNECTION);
-                                 if (!(clist.contains(newC))) {
-                                     log.info("---- creating connection: " + newC);
-                                     clist.add(newC);
-                                 } else {
-                                     log.info("---- connection already exists: " + newC);
-                                 }
+                                log.info("-- connection int-int {}-{}  on pins {},{}", internalsRegs.get(i).getModel(), internalsRegs.get(j).getModel(), regPin2, regPin1);
+                                log.info("----  {} {} {} {} {} {} {}", "inside", "internal", internalsRegs.get(i).getId(), regPin2, regPin1, "internal", internalsRegs.get(j).getId());
+                                Connection newC = new Connection(internalsRegs.get(i).getId(), Connection.INTERNAL_TYPE, internalsRegs.get(j).getId(), Connection.INTERNAL_TYPE, regPin2, regPin1, Connection.INSIDE_CONNECTION);
+                                if (!(clist.contains(newC))) {
+                                    log.info("---- creating connection: " + newC);
+                                    clist.add(newC);
+                                } else {
+                                    log.info("---- connection already exists: " + newC);
+                                }
                             }
                         }
                         if (equipmentReg.Model.equals("GENROU") && hasPss2a && hasTgov1) {
                             if (internalsRegs.get(i).Model.equals("PSS2A") && internalsRegs.get(j).Model.equals("TGOV1")) {
 
-                                 log.info("-- connection int-int {}-{}  on pins {},{}", internalsRegs.get(i).getModel(), internalsRegs.get(j).getModel(), regPin1, regPin2);
-                                 log.info("----  {} {} {} {} {} {} {}", "inside", "internal", internalsRegs.get(i).getId(), regPin1, regPin2, "internal", internalsRegs.get(j).getId());
-                                 Connection newC = new Connection(internalsRegs.get(i).getId(), Connection.INTERNAL_TYPE, internalsRegs.get(j).getId(), Connection.INTERNAL_TYPE, regPin1, regPin2, Connection.INSIDE_CONNECTION);
-                                 if (!(clist.contains(newC))) {
-                                     log.info("---- creating connection: " + newC);
-                                     clist.add(newC);
-                                 } else {
-                                     log.info("---- connection already exists: " + newC);
-                                 }
-                            } else if ( internalsRegs.get(i).Model.equals("TGOV1") && internalsRegs.get(j).Model.equals("PSS2A")) {
-                                 log.info("-- connection int-int {}-{}  on pins {},{}", internalsRegs.get(i).getModel(), internalsRegs.get(j).getModel(), regPin2, regPin1);
-                                 log.info("----  {} {} {} {} {} {} {}", "inside", "internal", internalsRegs.get(i).getId(), regPin2, regPin1, "internal", internalsRegs.get(j).getId());
-                                 Connection newC = new Connection(internalsRegs.get(i).getId(), Connection.INTERNAL_TYPE, internalsRegs.get(j).getId(), Connection.INTERNAL_TYPE, regPin2, regPin1, Connection.INSIDE_CONNECTION);
-                                 if (!(clist.contains(newC))) {
-                                     log.info("---- creating connection: " + newC);
-                                     clist.add(newC);
-                                 } else {
-                                     log.info("---- connection already exists: " + newC);
-                                 }
+                                log.info("-- connection int-int {}-{}  on pins {},{}", internalsRegs.get(i).getModel(), internalsRegs.get(j).getModel(), regPin1, regPin2);
+                                log.info("----  {} {} {} {} {} {} {}", "inside", "internal", internalsRegs.get(i).getId(), regPin1, regPin2, "internal", internalsRegs.get(j).getId());
+                                Connection newC = new Connection(internalsRegs.get(i).getId(), Connection.INTERNAL_TYPE, internalsRegs.get(j).getId(), Connection.INTERNAL_TYPE, regPin1, regPin2, Connection.INSIDE_CONNECTION);
+                                if (!(clist.contains(newC))) {
+                                    log.info("---- creating connection: " + newC);
+                                    clist.add(newC);
+                                } else {
+                                    log.info("---- connection already exists: " + newC);
+                                }
+                            } else if (internalsRegs.get(i).Model.equals("TGOV1") && internalsRegs.get(j).Model.equals("PSS2A")) {
+                                log.info("-- connection int-int {}-{}  on pins {},{}", internalsRegs.get(i).getModel(), internalsRegs.get(j).getModel(), regPin2, regPin1);
+                                log.info("----  {} {} {} {} {} {} {}", "inside", "internal", internalsRegs.get(i).getId(), regPin2, regPin1, "internal", internalsRegs.get(j).getId());
+                                Connection newC = new Connection(internalsRegs.get(i).getId(), Connection.INTERNAL_TYPE, internalsRegs.get(j).getId(), Connection.INTERNAL_TYPE, regPin2, regPin1, Connection.INSIDE_CONNECTION);
+                                if (!(clist.contains(newC))) {
+                                    log.info("---- creating connection: " + newC);
+                                    clist.add(newC);
+                                } else {
+                                    log.info("---- connection already exists: " + newC);
+                                }
                             }
                         }
                     }
@@ -639,32 +640,32 @@ public class DdbDyrLoader {
                 }
 
                 if (equipmentReg.Model.equals("WT4G1")) {
-                        eqPin1 = "I_qcmd";
-                        eqPin2 = "I_qcmd0";
-                        log.info("--* connection eq-eq {}-{}  on pins {},{}", equipmentReg.getModel(), equipmentReg.getModel(), eqPin1, eqPin2);
-                        log.info("----*  {} {} {} {} {} {} {}", "inside", "equipment", equipmentId, eqPin1, eqPin2, "equipment", equipmentId);
-                        Connection newC = new Connection(equipmentId, Connection.EQUIPMENT_TYPE, equipmentId, Connection.EQUIPMENT_TYPE, eqPin1, eqPin2, Connection.INSIDE_CONNECTION);
-                        if (!(clist.contains(newC))) {
-                            log.info("----- creating connection " + newC);
-                            log.info("------- clist size" + clist.size());
-                            clist.add(newC);
-                        } else {
-                            log.info("----- connection already exist: " + newC);
-                        }
+                    eqPin1 = "I_qcmd";
+                    eqPin2 = "I_qcmd0";
+                    log.info("--* connection eq-eq {}-{}  on pins {},{}", equipmentReg.getModel(), equipmentReg.getModel(), eqPin1, eqPin2);
+                    log.info("----*  {} {} {} {} {} {} {}", "inside", "equipment", equipmentId, eqPin1, eqPin2, "equipment", equipmentId);
+                    Connection newC = new Connection(equipmentId, Connection.EQUIPMENT_TYPE, equipmentId, Connection.EQUIPMENT_TYPE, eqPin1, eqPin2, Connection.INSIDE_CONNECTION);
+                    if (!(clist.contains(newC))) {
+                        log.info("----- creating connection " + newC);
+                        log.info("------- clist size" + clist.size());
+                        clist.add(newC);
+                    } else {
+                        log.info("----- connection already exist: " + newC);
+                    }
 
-                        eqPin1 = "I_pcmd";
-                        eqPin2 = "I_pcmd0";
-                        log.info("--* connection eq-eq {}-{}  on pins {},{}", equipmentReg.getModel(), equipmentReg.getModel(), eqPin1, eqPin2);
-                        log.info("----*  {} {} {} {} {} {} {}", "inside", "equipment", equipmentId, eqPin1, eqPin2, "equipment", equipmentId);
-                        newC = new Connection(equipmentId, Connection.EQUIPMENT_TYPE, equipmentId, Connection.EQUIPMENT_TYPE, eqPin1, eqPin2, Connection.INSIDE_CONNECTION);
-                        if (!(clist.contains(newC))) {
-                            log.info("----- creating connection " + newC);
-                            log.info("------- clist size" + clist.size());
-                            clist.add(newC);
-                        } else {
-                            log.info("----- connection already exist: " + newC);
-                        }
-                 }
+                    eqPin1 = "I_pcmd";
+                    eqPin2 = "I_pcmd0";
+                    log.info("--* connection eq-eq {}-{}  on pins {},{}", equipmentReg.getModel(), equipmentReg.getModel(), eqPin1, eqPin2);
+                    log.info("----*  {} {} {} {} {} {} {}", "inside", "equipment", equipmentId, eqPin1, eqPin2, "equipment", equipmentId);
+                    newC = new Connection(equipmentId, Connection.EQUIPMENT_TYPE, equipmentId, Connection.EQUIPMENT_TYPE, eqPin1, eqPin2, Connection.INSIDE_CONNECTION);
+                    if (!(clist.contains(newC))) {
+                        log.info("----- creating connection " + newC);
+                        log.info("------- clist size" + clist.size());
+                        clist.add(newC);
+                    } else {
+                        log.info("----- connection already exist: " + newC);
+                    }
+                }
 
                 // fourth persist the connection schema
                 if (clist.size() > 0) {

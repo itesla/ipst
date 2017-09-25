@@ -38,41 +38,41 @@ public class GeneratorData implements EquipmentData {
 
     public static String[] getFields() {
         return new String[]{
-                    "id",
-                    "bus id",
-                    "connected",
-                    "apparent power",
-                    "active power",
-                    "reactive power",
-                    "nominal power",
-                    "max q",
-                    "min q"
-                };
+            "id",
+            "bus id",
+            "connected",
+            "apparent power",
+            "active power",
+            "reactive power",
+            "nominal power",
+            "max q",
+            "min q"
+        };
     }
 
     @Override
     public String getFieldValue(String fieldName) {
         switch (fieldName) {
-        case "id":
-            return generatorId;
-        case "bus id":
-            return busId;
-        case "connected":
-            return Boolean.toString(isConnected);
-        case "apparent power":
-            return Float.toString(apparentPower);
-        case "active power":
-            return Float.toString(activePower);
-        case "reactive power":
-            return Float.toString(reactivePower);
-        case "nominal power":
-            return Float.toString(nominalPower);
-        case "max q":
-            return Float.toString(maxReactivePower);
-        case "min q":
-            return Float.toString(minReactivePower);
-        default:
-            throw new RuntimeException("no " + fieldName + " available in generator data");
+            case "id":
+                return generatorId;
+            case "bus id":
+                return busId;
+            case "connected":
+                return Boolean.toString(isConnected);
+            case "apparent power":
+                return Float.toString(apparentPower);
+            case "active power":
+                return Float.toString(activePower);
+            case "reactive power":
+                return Float.toString(reactivePower);
+            case "nominal power":
+                return Float.toString(nominalPower);
+            case "max q":
+                return Float.toString(maxReactivePower);
+            case "min q":
+                return Float.toString(minReactivePower);
+            default:
+                throw new RuntimeException("no " + fieldName + " available in generator data");
         }
     }
 

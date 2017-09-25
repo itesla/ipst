@@ -139,39 +139,39 @@ public class Utils {
 
         ModelTemplateContainer mtc1 = eq.getModelContainer();
         if (mtc1 != null) {
-        log.info(" Model template container " + mtc1.getDdbId() + ", "
-                + mtc1.getComment());
-        List<ModelTemplate> mlist = mtc1.getModelTemplates();
-        for (ModelTemplate modelTemplate : mlist) {
-            log.info("  Model template - " + modelTemplate.getComment() + ", "
-                    + modelTemplate.getSimulator());
-            List<DefaultParameters> dparams = modelTemplate.getDefaultParameters();
-            int defsetindex = 1;
-            for (DefaultParameters defaultParameters : dparams) {
-                log.info("   defaultparameters - " + defsetindex);
-                List<Parameter> dparams2 = defaultParameters.getParameters();
-                for (Parameter parameter : dparams2) {
-                    log.info("     param - " + parameter.getName() + ", "
-                            + parameter.getValue());
+            log.info(" Model template container " + mtc1.getDdbId() + ", "
+                    + mtc1.getComment());
+            List<ModelTemplate> mlist = mtc1.getModelTemplates();
+            for (ModelTemplate modelTemplate : mlist) {
+                log.info("  Model template - " + modelTemplate.getComment() + ", "
+                        + modelTemplate.getSimulator());
+                List<DefaultParameters> dparams = modelTemplate.getDefaultParameters();
+                int defsetindex = 1;
+                for (DefaultParameters defaultParameters : dparams) {
+                    log.info("   defaultparameters - " + defsetindex);
+                    List<Parameter> dparams2 = defaultParameters.getParameters();
+                    for (Parameter parameter : dparams2) {
+                        log.info("     param - " + parameter.getName() + ", "
+                                + parameter.getValue());
 
+                    }
+                    defsetindex = defsetindex + 1;
                 }
-                defsetindex = defsetindex + 1;
             }
-        }
 
         }
         ParametersContainer pc1 = eq.getParametersContainer();
         if (pc1 != null) {
-        log.info(" Parameter  container " + pc1.getDdbId());
-        List<Parameters> plist = pc1.getParameters();
-        for (Parameters parameters : plist) {
-            log.info("  Parameters - " + parameters.getSimulator());
-            List<Parameter> plistp = parameters.getParameters();
-            for (Parameter parameter : plistp) {
-                log.info("   Parameter - " + parameter.getName() + ", "
-                        + parameter.getValue());
+            log.info(" Parameter  container " + pc1.getDdbId());
+            List<Parameters> plist = pc1.getParameters();
+            for (Parameters parameters : plist) {
+                log.info("  Parameters - " + parameters.getSimulator());
+                List<Parameter> plistp = parameters.getParameters();
+                for (Parameter parameter : plistp) {
+                    log.info("   Parameter - " + parameter.getName() + ", "
+                            + parameter.getValue());
+                }
             }
-        }
         }
         //log.info("-------------------------------------------");
     }
@@ -201,10 +201,10 @@ public class Utils {
 
 
     static Class[] jaxbClasses = {Equipment.class, Parameter.class,
-            Internal.class, SimulatorInst.class, ModelTemplateContainer.class,
-            ParametersContainer.class, ParameterString.class,
-            ParameterInteger.class, ParameterFloat.class,
-            ParameterBoolean.class, ParameterTable.class, TableRow.class };
+        Internal.class, SimulatorInst.class, ModelTemplateContainer.class,
+        ParametersContainer.class, ParameterString.class,
+        ParameterInteger.class, ParameterFloat.class,
+        ParameterBoolean.class, ParameterTable.class, TableRow.class};
 
     public static <T> T unserialize(InputStream file) throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(jaxbClasses);

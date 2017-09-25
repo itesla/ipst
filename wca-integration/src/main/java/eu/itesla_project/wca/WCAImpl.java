@@ -98,27 +98,27 @@ public class WCAImpl implements WCA, WCAConstants {
     private static final String REQUIRED_FILE_NAME = "required";
 
     private static final String[] COMMON_INPUT_FILE_NAMES = {
-            MEANS_FILE_SUFFIX + "." + TXT_EXT,
-            TRUST_INTERVAL_FILE_SUFFIX + "." + TXT_EXT,
-            REDUCTION_MATRIX_FILE_SUFFIX + "." + TXT_EXT,
-            HISTO_LOADS_FILE_SUFFIX + "." + TXT_EXT,
-            HISTO_GENERATORS_FILE_SUFFIX + "." + TXT_EXT
+        MEANS_FILE_SUFFIX + "." + TXT_EXT,
+        TRUST_INTERVAL_FILE_SUFFIX + "." + TXT_EXT,
+        REDUCTION_MATRIX_FILE_SUFFIX + "." + TXT_EXT,
+        HISTO_LOADS_FILE_SUFFIX + "." + TXT_EXT,
+        HISTO_GENERATORS_FILE_SUFFIX + "." + TXT_EXT
     };
 
     private static final String[] INPUT_FILE_NAMES = {
-            FAULTS_FILE_SUFFIX + "." + TXT_EXT,
-            ACTIONS_FILE_SUFFIX + "." + TXT_EXT,
-            SECURITY_RULES_FILE_SUFFIX + "." + TXT_EXT,
-            "_network_generators.txt",
-            "_network_ptc.txt",
-            "_network_substations.txt",
-            "_network_branches.txt",
-            "_network_limits.txt",
-            "_network_rtc.txt",
-            "_network_tct.txt",
-            "_network_buses.txt",
-            "_network_loads.txt",
-            "_network_shunts.txt",
+        FAULTS_FILE_SUFFIX + "." + TXT_EXT,
+        ACTIONS_FILE_SUFFIX + "." + TXT_EXT,
+        SECURITY_RULES_FILE_SUFFIX + "." + TXT_EXT,
+        "_network_generators.txt",
+        "_network_ptc.txt",
+        "_network_substations.txt",
+        "_network_branches.txt",
+        "_network_limits.txt",
+        "_network_rtc.txt",
+        "_network_tct.txt",
+        "_network_buses.txt",
+        "_network_loads.txt",
+        "_network_shunts.txt",
     };
 
     private static final int THREADS = 1;
@@ -465,14 +465,14 @@ public class WCAImpl implements WCA, WCAConstants {
 
         return CompletableFuture
                 .runAsync(() -> {
-                        LOGGER.info("Network {}, contingency {}: computing post contingency state", network.getId(), contingency.getId());
-                        contingencyStateId[0] = baseStateId + "_" + contingency.getId();
-                        network.getStateManager().cloneState(baseStateId, contingencyStateId[0]);
-                        network.getStateManager().setWorkingState(contingencyStateId[0]);
+                    LOGGER.info("Network {}, contingency {}: computing post contingency state", network.getId(), contingency.getId());
+                    contingencyStateId[0] = baseStateId + "_" + contingency.getId();
+                    network.getStateManager().cloneState(baseStateId, contingencyStateId[0]);
+                    network.getStateManager().setWorkingState(contingencyStateId[0]);
 
-                        contingency.toTask().modify(network, computationManager);
+                    contingency.toTask().modify(network, computationManager);
 
-                    }, computationManager.getExecutor())
+                }, computationManager.getExecutor())
                 .thenCompose(aVoid -> loadFlow.runAsync(contingencyStateId[0], LOAD_FLOW_PARAMETERS))
                 .thenCompose(loadFlowResult -> {
                     if (!loadFlowResult.isOk()) {
@@ -637,7 +637,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                                             postContingencyStatus.setPostContingencyWithUncertaintiesLoadflowResult(
                                                                     new WCALoadflowResult(false,
                                                                                           "load flow on post contingency state with 'clusters' uncertainties diverged: metrics = " + loadFlowResult.getMetrics())
-                                                                    );
+                                                            );
                                                         } else {
                                                             postContingencyStatus.setPostContingencyWithUncertaintiesLoadflowResult(new WCALoadflowResult(true, null));
                                                             List<LimitViolation> clustersLimitViolations = violationsFilter.apply(Security.checkLimits(network));
@@ -978,10 +978,10 @@ public class WCAImpl implements WCA, WCAConstants {
                                         }
                                         return null;
                                     })
-                                    .join();
+                                        .join();
                                 }
                                 if ( contingencies.stream().allMatch(
-                                        contingency -> ( filteredClusters.getClusters(contingency.getId()).size() == 1
+                                    contingency -> ( filteredClusters.getClusters(contingency.getId()).size() == 1
                                                          && WCAClusterNum.FOUR.equals(filteredClusters.getCluster(contingency.getId())) )
                                         ) || config.loosenConstraints() ) {
                                     wcaReport.setPostPreventiveActionsViolationsWithUncertainties(wcaReport.getBaseStateRemainingViolations());
@@ -1120,7 +1120,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                                                                                                 filteredClusters.getFlags(contingency.getId()),
                                                                                                                 Collections.emptyList()));
                                                 });
-                                        }, computationManager.getExecutor()));
+                                    }, computationManager.getExecutor()));
                         }
                     }
 

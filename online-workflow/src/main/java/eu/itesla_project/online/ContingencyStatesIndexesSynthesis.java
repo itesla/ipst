@@ -23,9 +23,9 @@ import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
 public class ContingencyStatesIndexesSynthesis implements Serializable {
 
 
-   private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-   private final  Map<String, Map> contingencyMap = new HashMap<String, Map>();
+    private final  Map<String, Map> contingencyMap = new HashMap<String, Map>();
 
     private String workflowId;
 

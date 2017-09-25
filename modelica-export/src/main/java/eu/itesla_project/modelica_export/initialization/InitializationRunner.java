@@ -28,7 +28,7 @@ import eu.itesla_project.modelica_export.util.eurostag.EurostagFixedData;
  * @author Silvia Machado <machados@aia.es>
  */
 public class InitializationRunner {
-        public InitializationRunner(JavaOMCAPI omc, File filename, List<InitializationData> initializationDataList) {
+    public InitializationRunner(JavaOMCAPI omc, File filename, List<InitializationData> initializationDataList) {
         this.omc = omc;
         this.fileName = filename;
         this.initializationDataList = initializationDataList;

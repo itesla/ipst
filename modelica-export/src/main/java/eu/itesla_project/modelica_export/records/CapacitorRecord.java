@@ -123,10 +123,10 @@ public class CapacitorRecord extends ModelicaRecord {
     public String parseName(String name) {
         String parsedName = name.trim();
         parsedName = parsedName.replaceAll("\\s", "_");
-           parsedName = parsedName.replaceAll("\\.", "_");
-           parsedName = parsedName.replaceAll("\\-", "_");
-           parsedName = parsedName.replaceAll("/", "_");
-           parsedName = parsedName.replaceAll("\\+", "_");
+        parsedName = parsedName.replaceAll("\\.", "_");
+        parsedName = parsedName.replaceAll("\\-", "_");
+        parsedName = parsedName.replaceAll("/", "_");
+        parsedName = parsedName.replaceAll("\\+", "_");
         return parsedName;
     }
 

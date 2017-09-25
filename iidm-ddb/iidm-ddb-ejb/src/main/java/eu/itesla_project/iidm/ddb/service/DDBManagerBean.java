@@ -57,22 +57,24 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 @Remote(DDBManager.class)
 @WebService
 @EndpointProperties(value = {
-        @EndpointProperty(key =  "ws-security.validate.token", value = "false")
+        @EndpointProperty(key = "ws-security.validate.token", value = "false")
 })
 @InInterceptors(interceptors = {
       "org.apache.cxf.interceptor.LoggingInInterceptor",
       "eu.itesla_project.iidm.ddb.util.WsSecurityInterceptor",
       "org.jboss.wsf.stack.cxf.security.authentication.SubjectCreatingPolicyInterceptor",
-      "org.apache.cxf.interceptor.security.SimpleAuthorizingInterceptor"}
-)
+      "org.apache.cxf.interceptor.security.SimpleAuthorizingInterceptor"
+})
 @OutInterceptors(interceptors = "org.apache.cxf.interceptor.LoggingOutInterceptor")
 @XmlSeeAlso({
     eu.itesla_project.iidm.ddb.model.ParameterBoolean.class,
     eu.itesla_project.iidm.ddb.model.ParameterString.class,
     eu.itesla_project.iidm.ddb.model.ParameterInteger.class,
     eu.itesla_project.iidm.ddb.model.ParameterFloat.class,
-    eu.itesla_project.iidm.ddb.model.ParameterTable.class })
+    eu.itesla_project.iidm.ddb.model.ParameterTable.class
+})
 @RolesAllowed({"user"})
+@SuppressWarnings("checkstyle:indentation")
 public class DDBManagerBean implements DDBManager {
     @Inject
     private Logger log;
@@ -95,7 +97,7 @@ public class DDBManagerBean implements DDBManager {
 //      System.out.println("                     Principal name: " + sctxLookup.getCallerPrincipal().getName());
         Principal cPrincipal = sctxLookup.getCallerPrincipal();
         return cPrincipal;
-}
+    }
 
     @WebMethod(operationName = "saveModelTemplateContainer")
     public ModelTemplateContainer save(ModelTemplateContainer p) {
@@ -412,9 +414,9 @@ public class DDBManagerBean implements DDBManager {
     @WebMethod(operationName = "saveSimulator")
     public SimulatorInst save(SimulatorInst p) {
         Principal cPrincipal = getCallerPrincipal();
-         if (p == null) {
-             throw new RuntimeException("SimulatorInst must be not null");
-         }
+        if (p == null) {
+            throw new RuntimeException("SimulatorInst must be not null");
+        }
         log.log(Level.FINE, "Persisting SimulatorInst" + p);
         if (p.getId() == null) {
             em.persist(p);
@@ -422,8 +424,8 @@ public class DDBManagerBean implements DDBManager {
             em.merge(p);
         }
          // parameterEventSrc.fire(parameter);
-         return p;
-     }
+        return p;
+    }
 
     @WebMethod(operationName = "deleteSimulator")
     public void delete(SimulatorInst simInst) {
@@ -436,7 +438,7 @@ public class DDBManagerBean implements DDBManager {
         SimulatorInst simInst2 = em.merge(simInst);
         em.remove(simInst2);
         // parameterEventSrc.fire(parameter);
-     }
+    }
 
 
     /*

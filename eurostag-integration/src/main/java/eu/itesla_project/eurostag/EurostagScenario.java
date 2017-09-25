@@ -192,7 +192,7 @@ public class EurostagScenario {
                             .append(" R          1                           0.");
                     writer.newLine();
                 }
-                break;
+                    break;
 
                 case GENERATOR: {
                     Generator g = network.getGenerator(element.getId());
@@ -224,7 +224,7 @@ public class EurostagScenario {
                             .append("                                                   0.                   0.");
                     writer.newLine();
                 }
-                break;
+                    break;
 
                 default:
                     throw new AssertionError();

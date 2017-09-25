@@ -306,7 +306,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
 
     private void writeScenarios(Domain domain, List<Contingency> contingencies, OutputStream os) throws IOException {
         GenericArchive archive = new EurostagScenario(parameters, config).writeFaultSeqArchive(domain, contingencies, network, dictionary,
-                faultNum -> FAULT_SEQ_FILE_NAME.replace(Command.EXECUTION_NUMBER_PATTERN, Integer.toString(faultNum)));
+            faultNum -> FAULT_SEQ_FILE_NAME.replace(Command.EXECUTION_NUMBER_PATTERN, Integer.toString(faultNum)));
         archive.as(ZipExporter.class).exportTo(os);
     }
 

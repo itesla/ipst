@@ -81,14 +81,14 @@ public class SecurityRulesApplicationResults implements OnlineWorkflowRulesResul
         Map<String, Boolean> stateResults = new HashMap<String, Boolean>();
         for (SecurityIndexType index : securityRulesResults.keySet()) {
             switch (securityRulesResults.get(index)) {
-            case SAFE:
-                stateResults.put(index.getLabel(), true);
-                break;
-            case UNSAFE:
-                stateResults.put(index.getLabel(), false);
-                break;
-            default:
-                break;
+                case SAFE:
+                    stateResults.put(index.getLabel(), true);
+                    break;
+                case UNSAFE:
+                    stateResults.put(index.getLabel(), false);
+                    break;
+                default:
+                    break;
             }
         }
         return stateResults;
