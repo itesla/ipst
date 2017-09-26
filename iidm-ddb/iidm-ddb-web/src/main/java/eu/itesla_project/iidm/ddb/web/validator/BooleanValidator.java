@@ -28,7 +28,7 @@ public class BooleanValidator implements Validator {
 
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
         if (!objString.equals("true") && !objString.equals("false")) {
-            FacesMessage message = new FacesMessage( FacesMessage.SEVERITY_ERROR, bundle.getString("invalid.bool.summary.msg"),
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, bundle.getString("invalid.bool.summary.msg"),
                     bundle.getString("invalid.bool.detail.msg"));
             throw new ValidatorException(message);
         }

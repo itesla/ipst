@@ -32,7 +32,7 @@ import eu.itesla_project.modelica_export.util.eurostag.EurostagModDefaultTypes;
 public class DanglingLineRecord extends ModelicaRecord {
 
 
-    public DanglingLineRecord (DanglingLine danglingLine, String danglingBusName, String danglingLoadName, float SNREF) {
+    public DanglingLineRecord(DanglingLine danglingLine, String danglingBusName, String danglingLoadName, float SNREF) {
         this.danglingLine = danglingLine;
         this.danglingBusName = danglingBusName;
         this.danglingLoadName = danglingLoadName;

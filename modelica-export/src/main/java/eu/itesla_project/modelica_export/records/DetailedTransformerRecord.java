@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DetailedTransformerRecord extends BranchRecord {
 
-    public DetailedTransformerRecord (TwoWindingsTransformer transformer, float SNREF) {
+    public DetailedTransformerRecord(TwoWindingsTransformer transformer, float SNREF) {
         super(transformer);
         this.transformer = transformer;
         super.setDEFAULT_BRANCH_TYPE(DEFAULT_DETAILED_TRAFO_TYPE);
@@ -107,7 +107,7 @@ public class DetailedTransformerRecord extends BranchRecord {
 
         float dx = 0, dr = 0;
 
-        if ( rtc != null ) {
+        if (rtc != null) {
             RatioTapChangerStep rtcs = rtc.getCurrentStep();
             V1 /= rtcs.getRho();
             dr += rtcs.getR();
@@ -115,7 +115,7 @@ public class DetailedTransformerRecord extends BranchRecord {
         }
 
         PhaseTapChangerStep ptcs = null;
-        if ( ptc != null ) {
+        if (ptc != null) {
             ptcs = ptc.getCurrentStep();
             V1 /= ptcs.getRho();
             dr += ptcs.getR();

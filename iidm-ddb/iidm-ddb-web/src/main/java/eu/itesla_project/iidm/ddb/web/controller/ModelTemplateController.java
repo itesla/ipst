@@ -237,8 +237,8 @@ public class ModelTemplateController {
             if (pwList != null && pwList.size() > 0) {
                 log.log(Level.INFO, " put in map:  setNum:" + setNum    + " parameters list of size= " + pwList.size());
                 dbDefParams.put(new Integer(setNum), pwList);
-                this.keydbDefParams = new ArrayList<Integer>(    dbDefParams.keySet());
-                log.log(Level.INFO,    "  keydbDefParams :" + keydbDefParams.toString());
+                this.keydbDefParams = new ArrayList<Integer>(dbDefParams.keySet());
+                log.log(Level.INFO, "  keydbDefParams :" + keydbDefParams.toString());
             }
         }
 
@@ -396,7 +396,7 @@ public class ModelTemplateController {
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
         try {
-            updateModelTemplates( );
+            updateModelTemplates();
             FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, this.modelTemplate.getComment() + "  " + bundle.getString("update.operation.msg"), bundle.getString("update.success.msg"));
             FacesContext.getCurrentInstance().addMessage(null, msg);
 
@@ -472,7 +472,7 @@ public class ModelTemplateController {
                     } else {
                         log.log(Level.WARNING, " parameterAdded has a NULL value will be rejected!");
                     }
-                } catch (  RuntimeException ex) {
+                } catch (RuntimeException ex) {
                     log.log(Level.WARNING,    "Throw Exception :" + ex.getMessage());
                     throw new Exception(ex);
                 }

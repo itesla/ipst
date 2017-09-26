@@ -124,7 +124,7 @@ public class PrintOnlineWorkflowRulesResultsTool implements Tool {
                         values[i++] = contingencyId;
                         table.addCell(stateId.toString(), new CellStyle(CellStyle.HorizontalAlign.right));
                         values[i++] = stateId.toString();
-                        if ( wfRulesResults.areValidRulesAvailable(contingencyId, stateId) ) {
+                        if (wfRulesResults.areValidRulesAvailable(contingencyId, stateId)) {
                             table.addCell(wfRulesResults.getStateStatus(contingencyId, stateId).name());
                             values[i++] = wfRulesResults.getStateStatus(contingencyId, stateId).name();
                         } else {

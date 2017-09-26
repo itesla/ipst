@@ -47,7 +47,7 @@ public class NetworkDataExtractor {
             List<Float> generatorsActivePower = new ArrayList<Float>();
             List<Float> generatorsReactivePower = new ArrayList<Float>();
             //bus.getGenerators().forEach( (generator) -> generators.add(generator.getId()) );
-            bus.getGenerators().forEach( (generator) -> {
+            bus.getGenerators().forEach((generator) -> {
                 generators.add(generator.getId());
                 generatorsActivePower.add(generator.getTerminal().getP());
                 generatorsReactivePower.add(generator.getTerminal().getQ());
@@ -59,7 +59,7 @@ public class NetworkDataExtractor {
             List<Float> loadsActivePower = new ArrayList<Float>();
             List<Float> loadsReactivePower = new ArrayList<Float>();
             //bus.getLoads().forEach( (load) -> loads.add(load.getId()) );
-            bus.getLoads().forEach( (load) -> {
+            bus.getLoads().forEach((load) -> {
                 loads.add(load.getId());
                 loadsActivePower.add(load.getTerminal().getP());
                 loadsReactivePower.add(load.getTerminal().getQ());
@@ -87,7 +87,7 @@ public class NetworkDataExtractor {
 
             busIndex++;
         }
-        if ( slackBusData.getSlackBusIndex() != -1) {
+        if (slackBusData.getSlackBusIndex() != -1) {
             BusData busData = networkData.getBusesData().get(slackBusData.getSlackBusIndex());
             busData.setSlack(true); // slack bus
         }
@@ -95,7 +95,7 @@ public class NetworkDataExtractor {
 
     private static void extractLinesData(Network network, NetworkData networkData) {
         for (Line line : network.getLines()) {
-            if ( line.getTerminal1().getVoltageLevel().getNominalV() >= 110) {
+            if (line.getTerminal1().getVoltageLevel().getNominalV() >= 110) {
                 networkData.addLineData(new LineData(line.getId(),
                                                      (line.getTerminal1().getBusBreakerView().getBus() != null)
                                                          ? line.getTerminal1().getBusBreakerView().getBus().getId()

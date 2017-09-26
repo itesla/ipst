@@ -128,9 +128,9 @@ public class WCAReportImpl implements WCAReport {
     public boolean exportCsv(Path folder) {
         Objects.requireNonNull(folder);
         try {
-            if ( !Files.exists(folder) ) {
+            if (!Files.exists(folder)) {
                 Files.createDirectories(folder);
-            } else if ( !Files.isDirectory(folder) ) {
+            } else if (!Files.isDirectory(folder)) {
                 throw new RuntimeException(folder + " is a file, not a folder");
             }
             exportPreContingencyViolationsWithoutUncertainties(folder);
@@ -198,7 +198,7 @@ public class WCAReportImpl implements WCAReport {
         if (loadflowResult != null && !loadflowResult.loadflowConverged()) {
             try {
                 formatter.writeCell(basecase);
-                if ( contingencyId != null ) {
+                if (contingencyId != null) {
                     formatter.writeCell(contingencyId);
                 }
                 formatter.writeCell(LOADFLOW_STEP)
@@ -212,11 +212,11 @@ public class WCAReportImpl implements WCAReport {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        } else if ( !violations.isEmpty() ) {
+        } else if (!violations.isEmpty()) {
             violations.forEach(violation -> {
                 try {
                     formatter.writeCell(basecase);
-                    if ( contingencyId != null ) {
+                    if (contingencyId != null) {
                         formatter.writeCell(contingencyId);
                     }
                     formatter.writeEmptyCell()
@@ -276,22 +276,22 @@ public class WCAReportImpl implements WCAReport {
 
     private void writeActionsApplications(TableFormatter formatter, String contingencyId,
                                           List<WCAActionApplication> actionsApplication) {
-        if ( !actionsApplication.isEmpty() ) {
-            actionsApplication.forEach( actionApplication -> {
+        if (!actionsApplication.isEmpty()) {
+            actionsApplication.forEach(actionApplication -> {
                 try {
                     formatter.writeCell(basecase);
-                    if ( contingencyId != null ) {
+                    if (contingencyId != null) {
                         formatter.writeCell(contingencyId);
                     }
                     formatter.writeCell(actionApplication.getActionId());
-                    if ( actionApplication.getViolation() != null ) {
+                    if (actionApplication.getViolation() != null) {
                         formatter.writeCell(actionApplication.getViolation().getSubjectId())
                                  .writeCell(actionApplication.getViolation().getLimitType().name());
                     } else {
                         formatter.writeEmptyCell()
                                  .writeEmptyCell();
                     }
-                    if ( !actionApplication.getLoadflowResult().loadflowConverged() ) {
+                    if (!actionApplication.getLoadflowResult().loadflowConverged()) {
                         formatter.writeCell(LOADFLOW_STEP)
                                  .writeCell(actionApplication.getLoadflowResult().getComment());
                     } else {
@@ -300,7 +300,7 @@ public class WCAReportImpl implements WCAReport {
                     }
                     formatter.writeCell(actionApplication.areViolationsRemoved())
                              .writeCell(actionApplication.isActionApplied());
-                    if ( actionApplication.getComment() != null ) {
+                    if (actionApplication.getComment() != null) {
                         formatter.writeCell(actionApplication.getComment());
                     } else {
                         formatter.writeEmptyCell();
@@ -360,12 +360,12 @@ public class WCAReportImpl implements WCAReport {
         CsvTableFormatterFactory factory = new CsvTableFormatterFactory();
         try (Writer writer = Files.newBufferedWriter(violationsPath, StandardCharsets.UTF_8);
              TableFormatter formatter = factory.create(writer, SECURITY_RULES_VIOLATIONS_WITHOUT_UNCERTAINTIES_TITLE, TABLE_FORMATTER_CONFIG, COLUMNS)) {
-            if ( !securityRulesApplication.isEmpty() ) {
-                securityRulesApplication.forEach( ruleApplication -> {
+            if (!securityRulesApplication.isEmpty()) {
+                securityRulesApplication.forEach(ruleApplication -> {
                     try {
                         formatter.writeCell(basecase)
                                  .writeCell(ruleApplication.getContingencyId());
-                        if ( ruleApplication.getSecurityRule() != null ) {
+                        if (ruleApplication.getSecurityRule() != null) {
                             formatter.writeCell(ruleApplication.getSecurityRule().getId().toString())
                                      .writeCell(ruleApplication.getSecurityRule().getWorkflowId());
                         } else {
@@ -374,7 +374,7 @@ public class WCAReportImpl implements WCAReport {
                         }
                         formatter.writeCell(ruleApplication.isRuleViolated())
                                  .writeCell(ruleApplication.getRuleViolationType().name());
-                        if ( ruleApplication.getCause() != null ) {
+                        if (ruleApplication.getCause() != null) {
                             formatter.writeCell(ruleApplication.getCause());
                         } else {
                             formatter.writeEmptyCell();
@@ -411,8 +411,8 @@ public class WCAReportImpl implements WCAReport {
              TableFormatter formatter1 = factory.create(writer1, POST_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_TITLE, TABLE_FORMATTER_CONFIG, COLUMNS);
              Writer writer2 = Files.newBufferedWriter(violationsPath2, StandardCharsets.UTF_8);
              TableFormatter formatter2 = factory.create(writer2, POST_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_TITLE, TABLE_FORMATTER_CONFIG, COLUMNS)) {
-            if ( !postContingenciesStatus.isEmpty() ) {
-                postContingenciesStatus.forEach( postContingencyStatus -> {
+            if (!postContingenciesStatus.isEmpty()) {
+                postContingenciesStatus.forEach(postContingencyStatus -> {
                     // post-contingency violations without uncertainties
                     writeViolations(formatter1,
                                     postContingencyStatus.getContingencyId(),
@@ -447,8 +447,8 @@ public class WCAReportImpl implements WCAReport {
         CsvTableFormatterFactory factory = new CsvTableFormatterFactory();
         try (Writer writer = Files.newBufferedWriter(violationsPath, StandardCharsets.UTF_8);
              TableFormatter formatter = factory.create(writer, POST_CURATIVE_ACTIONS_TITLE, TABLE_FORMATTER_CONFIG, COLUMNS)) {
-            if ( !postContingenciesStatus.isEmpty() ) {
-                postContingenciesStatus.forEach( postContingencyStatus -> {
+            if (!postContingenciesStatus.isEmpty()) {
+                postContingenciesStatus.forEach(postContingencyStatus -> {
                     writeActionsApplications(formatter,
                                              postContingencyStatus.getContingencyId(),
                                              postContingencyStatus.getCurativeActionsApplication());

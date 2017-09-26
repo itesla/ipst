@@ -18,17 +18,17 @@ public class CFPFFuzzyNumber {
 
     // Empty constructor
     public CFPFFuzzyNumber() {
-        this.fuzzyNumber = new double[ numPoints ];
+        this.fuzzyNumber = new double[numPoints];
     }
 
     // Main constructor
-    public CFPFFuzzyNumber( double[] fuzzyNumber ) {
+    public CFPFFuzzyNumber(double[] fuzzyNumber) {
         this.fuzzyNumber = fuzzyNumber.clone();
     }
 
     // Visualize triangular Fuzzy number
     public String toString() {
-        return super.toString() + "[ " + fuzzyNumber[ 0 ] + ", " + fuzzyNumber[ 1 ] + ", " + fuzzyNumber[ 2 ] + " ]";
+        return super.toString() + "[ " + fuzzyNumber[0] + ", " + fuzzyNumber[1] + ", " + fuzzyNumber[2] + " ]";
     }
 
     public int getNumPoints() {
@@ -48,26 +48,26 @@ public class CFPFFuzzyNumber {
     }
 
     public double getCentralValue() {
-        return fuzzyNumber[ 1 ];
+        return fuzzyNumber[1];
     }
 
-    public void setCentralValue( double val ) {
-        fuzzyNumber[ 1 ] = val;
+    public void setCentralValue(double val) {
+        fuzzyNumber[1] = val;
     }
 
     public double getMinimumValue() {
-        return fuzzyNumber[ 0 ];
+        return fuzzyNumber[0];
     }
 
-    public void setMinimumValue( double val ) {
-        fuzzyNumber[ 0 ] = val;
+    public void setMinimumValue(double val) {
+        fuzzyNumber[0] = val;
     }
 
     public double getMaximumValue() {
-        return fuzzyNumber[ numPoints - 1 ];
+        return fuzzyNumber[numPoints - 1];
     }
 
-    public void setMaximumValue( double val ) {
-        fuzzyNumber[ numPoints - 1 ] =  val;
+    public void setMaximumValue(double val) {
+        fuzzyNumber[numPoints - 1] =  val;
     }
 }

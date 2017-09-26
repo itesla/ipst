@@ -203,7 +203,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
                         zones.add(zonesMapping.get(z));
                     }
                 }
-                if ( elements.size() > 0 ) {
+                if (elements.size() > 0) {
                     LOGGER.info("Adding {} action to list for network {}", name, network.getId());
                     actions.add(new ActionImpl(name, ele.isPreventiveType(), ele.isCurativeType(), elements, zones, ele.getStartTime()));
                 }
@@ -225,7 +225,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
     public List<eu.itesla_project.contingency.Contingency> getContingencies(Network network) {
         Objects.requireNonNull(network, "network is null");
         LOGGER.info("Getting contingencies for network {}", network.getId());
-        if ( zonesMapping.isEmpty() ) {
+        if (zonesMapping.isEmpty()) {
             getZones();
         }
         List<eu.itesla_project.contingency.Contingency> contingencies = new ArrayList<>();
@@ -261,8 +261,8 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
                 }
                 List<String> zones = new ArrayList<String>();
                 Zones contZones = cont.getZones();
-                if ( contZones != null ) {
-                    for ( BigInteger z: contZones.getNum()) {
+                if (contZones != null) {
+                    for (BigInteger z: contZones.getNum()) {
                         zones.add(zonesMapping.get(z));
                     }
                 }
@@ -369,7 +369,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
     }
 
     @Override
-    public Set<eu.itesla_project.modules.contingencies.ActionPlan> getActionPlans( Network network) {
+    public Set<eu.itesla_project.modules.contingencies.ActionPlan> getActionPlans(Network network) {
         Objects.requireNonNull(network, "network is null");
         LOGGER.info("Getting action plans for network {}", network.getId());
         Set<eu.itesla_project.modules.contingencies.ActionPlan> netActionPlans = new HashSet<eu.itesla_project.modules.contingencies.ActionPlan>();
@@ -435,8 +435,8 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
 
                     List<String> zonesName = new ArrayList<String>();
                     Zones planZones = plan.getZones();
-                    if ( planZones != null ) {
-                        for ( BigInteger z: planZones.getNum()) {
+                    if (planZones != null) {
+                        for (BigInteger z: planZones.getNum()) {
                             zonesName.add(zonesMapping.get(z));
                         }
                     }
@@ -667,7 +667,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
 
                     }
 
-                    associationList.add(new ActionsContingenciesAssociationImpl(ctgIds, constraints, actionIds) );
+                    associationList.add(new ActionsContingenciesAssociationImpl(ctgIds, constraints, actionIds));
                 }
             }
         }
@@ -743,7 +743,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
                         if (ctg.getName().equals(c.getId())) {
                             found = true;
                             if (ctg.getEquipments() != null) {
-                                for ( Equipment eq:ctg.getEquipments().getEquipment()) {
+                                for (Equipment eq:ctg.getEquipments().getEquipment()) {
                                     if (network.getIdentifiable(eq.getId()) != null) {
                                         ctgIds.add(c.getId());
                                         break;
@@ -778,7 +778,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
                 for (Action a: xmlActions) {
                     boolean found = false;
                     for (eu.itesla_project.modules.contingencies.Action action : networkActions) {
-                        if ( action.getId().equals(a.getId())) {
+                        if (action.getId().equals(a.getId())) {
                             found = true;
                             actionIds.add(a.getId());
                             break;
@@ -796,7 +796,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
                     }
                 }
 
-                associationList.add(new ActionsContingenciesAssociationImpl(ctgIds, constraints, actionIds) );
+                associationList.add(new ActionsContingenciesAssociationImpl(ctgIds, constraints, actionIds));
 
             }
 

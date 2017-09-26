@@ -72,7 +72,7 @@ public class Converter {
         Utils.checkNull(workingDirectory, "Working directory", log);
 
         File workingDir = new File(workingDirectory);
-        if ( !workingDir.exists() ) {
+        if (!workingDir.exists()) {
             log.debug("Creating working directory " + workingDir.getAbsolutePath());
             try {
                 workingDir.mkdirs();
@@ -118,7 +118,7 @@ public class Converter {
             // get the model template for eurostag
             ModelTemplate modelTemplateEurostag = ddbManager.findModelTemplate(internal, eurostagSimulator);
             // check if it does exist
-            if ( modelTemplateEurostag == null ) {
+            if (modelTemplateEurostag == null) {
                 Utils.throwConverterException("No Eurostag v. " + eurostagSimulator.getVersion() + " ModelTemplate for Internal " + nativeId + " in the DDB", log);
             }
             log.debug("Found Eurostag ModelTemplate " + modelTemplateEurostag.getId() + " for Internal " + nativeId);
@@ -126,7 +126,7 @@ public class Converter {
             // get the macroblock name parameter
             String macroblockName = ddbManager.getStringParameter(internal, eurostagSimulator, "macroblock.name");
             // check if it does exist
-            if ( macroblockName == null ) {
+            if (macroblockName == null) {
                 Utils.throwConverterException("No macroblock name in Eurostag v. " + eurostagSimulator.getVersion() + " Parameters for Internal " + nativeId + " in the DDB", log);
             }
             log.debug("Found Macroblock " + macroblockName  + " among Eurostag parameters of Internal " + nativeId);
@@ -195,7 +195,7 @@ public class Converter {
             if (saveInitFile) {
                 modelTemplateModelica.setData("init_mo", modelicaInitData);
             }
-            if ( saveParametersSets ) {
+            if (saveParametersSets) {
                 List<DefaultParameters> defaultParametersList = getDefaultParametersList(allParameterSets);
                 modelTemplateModelica.setDefaultParameters(defaultParametersList);
             }
@@ -205,7 +205,7 @@ public class Converter {
 
             ParametersContainer parametersContainer = internal.getParametersContainer();
             Parameters parametersModelica = ddbManager.findParameters(internal, modelicaSimulator);
-            if ( parametersModelica == null ) {
+            if (parametersModelica == null) {
                 parametersModelica = new Parameters(modelicaSimulator);
             } else {
                 List<Parameters> parametersList = parametersContainer.getParameters();
@@ -218,7 +218,7 @@ public class Converter {
                 parametersList.remove(parametersToRemove);
                 parametersContainer.setParameters(parametersList);
             }
-            if ( saveDefaultParameterSet ) {
+            if (saveDefaultParameterSet) {
                 Parameters parametersEurostag = ddbManager.findParameters(internal, eurostagSimulator);
                 int defaultParameterSetNum = parametersEurostag.getDefParamSetNum();
                 parametersModelica.setDefParamSetNum(defaultParameterSetNum);
@@ -231,35 +231,35 @@ public class Converter {
             throw e;
         } finally {
             // remove temporary files
-            if ( frmFile != null) {
+            if (frmFile != null) {
                 try {
                     Utils.deleteFile(frmFile);
                 } catch (IOException e) {
                     log.error("Error deleting temporary frm file " + frmFile + ": " + e.getMessage());
                 }
             }
-            if ( friFile != null) {
+            if (friFile != null) {
                 try {
                     Utils.deleteFile(friFile);
                 } catch (IOException e) {
                     log.error("Error deleting temporary fri file " + friFile + ": " + e.getMessage());
                 }
             }
-            if ( parFile != null) {
+            if (parFile != null) {
                 try {
                     Utils.deleteFile(parFile);
                 } catch (IOException e) {
                     log.error("Error deleting temporary par file " + parFile + ": " + e.getMessage());
                 }
             }
-            if ( modelicaFileName != null) {
+            if (modelicaFileName != null) {
                 try {
                     Utils.deleteFile(workingDirectory, modelicaFileName);
                 } catch (Throwable e) {
                     log.error("Error deleting temporary mo file " + modelicaFileName + ": " + e.getMessage());
                 }
             }
-            if ( modelicaInitFileName != null) {
+            if (modelicaInitFileName != null) {
                 try {
                     Utils.deleteFile(workingDirectory, modelicaInitFileName);
                 } catch (Throwable e) {
@@ -271,7 +271,7 @@ public class Converter {
 
     private List<DefaultParameters> getDefaultParametersList(HashMap<Integer, HashMap<String, String>> allParameterSets) {
         List<DefaultParameters> defaultParametersList = new ArrayList<DefaultParameters>();
-        if ( allParameterSets != null ) {
+        if (allParameterSets != null) {
             for (Integer parameterSetNum : allParameterSets.keySet()) {
                 DefaultParameters defaultParametersSet = new DefaultParameters(parameterSetNum.intValue());
                 for (String parameterName : allParameterSets.get(parameterSetNum).keySet()) {
@@ -300,7 +300,7 @@ public class Converter {
         // add modelica parameter to the internal
         ParametersContainer parametersContainer = internal.getParametersContainer();
         Parameters parametersModelica = ddbManager.findParameters(internal, modelicaSimulator);
-        if ( parametersModelica == null ) {
+        if (parametersModelica == null) {
             parametersModelica = new Parameters(modelicaSimulator);
         } else {
             List<Parameters> parametersList = parametersContainer.getParameters();
@@ -313,7 +313,7 @@ public class Converter {
             parametersList.remove(parametersToRemove);
             parametersContainer.setParameters(parametersList);
         }
-        if ( saveDefaultParameterSet ) {
+        if (saveDefaultParameterSet) {
             Parameters parametersEurostag = ddbManager.findParameters(internal, eurostagSimulator);
             int defaultParameterSetNum = parametersEurostag.getDefParamSetNum();
             parametersModelica.setDefParamSetNum(defaultParameterSetNum);

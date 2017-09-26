@@ -24,7 +24,7 @@ public class ViolationSynthesis {
     private final float voltageLevel;
     private final List<TimeValue> timeValues = new ArrayList<TimeValue>();
 
-    public ViolationSynthesis(String equipment, float voltageLevel, LimitViolationType type, float limit, String limitName ) {
+    public ViolationSynthesis(String equipment, float voltageLevel, LimitViolationType type, float limit, String limitName) {
         this.equipment = Objects.requireNonNull(equipment);
         this.type = Objects.requireNonNull(type);
         this.limit = limit;

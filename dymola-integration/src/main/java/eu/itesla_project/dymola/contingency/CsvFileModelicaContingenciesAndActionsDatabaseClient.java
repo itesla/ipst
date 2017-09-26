@@ -103,7 +103,7 @@ public class CsvFileModelicaContingenciesAndActionsDatabaseClient implements Con
                     }
 
                     Contingency contingency = contingenciesMap.get(contingencyId);
-                    if ( contingency == null ) {
+                    if (contingency == null) {
                         List<ContingencyElement> elements = new ArrayList<>();
                         elements.add(newElement);
                         contingency = new ContingencyImpl(contingencyId, elements);

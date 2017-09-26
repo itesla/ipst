@@ -30,7 +30,7 @@ public class LazyParametersContainerDataModel extends LazyDataModel<ParametersCo
 
 
 
-    public LazyParametersContainerDataModel( DDBManager pmanager) {
+    public LazyParametersContainerDataModel(DDBManager pmanager) {
         this.pmanager = pmanager;
         setPageSize(10);
         setRowCount(pmanager.findParametersContainerAllCount());

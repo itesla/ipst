@@ -114,7 +114,7 @@ public class Converter {
         // ********************************** Initializations ********************************** //
 
         // Sets the locale as US
-        Locale.setDefault( Locale.US );
+        Locale.setDefault(Locale.US);
 
         System.out.println("CIM model '" + n.getId() + "' loaded");
 
@@ -206,15 +206,15 @@ public class Converter {
         // ********************************** Data Reading ********************************** //
 
         // Reads basic power system data
-        String date = String.format( "%02d", n.getCaseDate().dayOfMonth().get() ) + "/"
-                + String.format( "%02d", n.getCaseDate().getMonthOfYear() ) + "/"
-                + String.format( "%02d", n.getCaseDate().getYearOfCentury() );
+        String date = String.format("%02d", n.getCaseDate().dayOfMonth().get()) + "/"
+                + String.format("%02d", n.getCaseDate().getMonthOfYear()) + "/"
+                + String.format("%02d", n.getCaseDate().getYearOfCentury());
         String originatorName = n.getSourceFormat();
         double baseMVA = defaultBaseMVA;
         int year = n.getCaseDate().getYear();
-        String season = getSeason( n.getCaseDate().getMonthOfYear() );
+        String season = getSeason(n.getCaseDate().getMonthOfYear());
         String caseId = n.getId();
-        powerSystem = new CFPFPowerSystem( date, originatorName, baseMVA, year, season, caseId );
+        powerSystem = new CFPFPowerSystem(date, originatorName, baseMVA, year, season, caseId);
 
 //        // Reads uncertainty data -> For now, the data is read from an external file
 //        TimeHorizon timeHorizon = TimeHorizon.DACF;

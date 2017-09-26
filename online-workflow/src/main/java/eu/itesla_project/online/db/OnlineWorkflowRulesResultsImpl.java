@@ -79,7 +79,7 @@ class OnlineWorkflowRulesResultsImpl implements OnlineWorkflowRulesResults {
             boolean rulesAvailable, List<SecurityIndexType> invalidRules) {
         // save state results
         Map<Integer, Map<String, Boolean>> statesWithRulesResults = new HashMap<Integer, Map<String, Boolean>>();
-        if ( contingenciesWithRulesResults.containsKey(contingencyId) ) {
+        if (contingenciesWithRulesResults.containsKey(contingencyId)) {
             statesWithRulesResults = contingenciesWithRulesResults.get(contingencyId);
         }
         statesWithRulesResults.put(stateId, stateResults);
@@ -87,21 +87,21 @@ class OnlineWorkflowRulesResultsImpl implements OnlineWorkflowRulesResults {
 
         // save state status
         Map<Integer, StateStatus> statesWithRulesStatus = new HashMap<Integer, StateStatus>();
-        if ( contingenciesWithRulesStatus.containsKey(contingencyId) ) {
+        if (contingenciesWithRulesStatus.containsKey(contingencyId)) {
             statesWithRulesStatus = contingenciesWithRulesStatus.get(contingencyId);
         }
         statesWithRulesStatus.put(stateId, stateStatus);
         contingenciesWithRulesStatus.put(contingencyId, statesWithRulesStatus);
 
         Map<Integer, Boolean> statesWithRules = new HashMap<Integer, Boolean>();
-        if ( contingenciesWithRules.containsKey(contingencyId) ) {
+        if (contingenciesWithRules.containsKey(contingencyId)) {
             statesWithRules = contingenciesWithRules.get(contingencyId);
         }
         statesWithRules.put(stateId, rulesAvailable);
         contingenciesWithRules.put(contingencyId, statesWithRules);
 
         Map<Integer, List<SecurityIndexType>> statesWithInvalidRules = new HashMap<Integer, List<SecurityIndexType>>();
-        if ( contingenciesWithInvalidRules.containsKey(contingencyId) ) {
+        if (contingenciesWithInvalidRules.containsKey(contingencyId)) {
             statesWithInvalidRules = contingenciesWithInvalidRules.get(contingencyId);
         }
         statesWithInvalidRules.put(stateId, invalidRules);

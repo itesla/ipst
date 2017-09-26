@@ -278,7 +278,7 @@ public class OMCProxy {
          * 5 seconds, abort. (Very arbitrary 5 seconds..)
          */
         int ticks = 0;
-        while (!f.exists() || (f.exists() && lastModified == f.lastModified()) ) {
+        while (!f.exists() || (f.exists() && lastModified == f.lastModified())) {
             try {
                 logOMCStatus("Waiting for OMC CORBA object reference to appear on disk ... for " + (ticks + 1) + " seconds");
                 Thread.sleep(100);
