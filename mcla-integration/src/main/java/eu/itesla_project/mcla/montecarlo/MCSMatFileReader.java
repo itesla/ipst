@@ -32,7 +32,7 @@ public class MCSMatFileReader {
         MatFileReader sampledDataFileReader = new MatFileReader();
         matFileContent = sampledDataFileReader.read(matFile.toFile());
         String errorMessage = Utils.MLCharToString((MLChar) matFileContent.get("errmsg"));
-        if ( !("Ok".equalsIgnoreCase(errorMessage)) ) {
+        if (!("Ok".equalsIgnoreCase(errorMessage))) {
             throw new MatlabException(errorMessage);
         }
     }

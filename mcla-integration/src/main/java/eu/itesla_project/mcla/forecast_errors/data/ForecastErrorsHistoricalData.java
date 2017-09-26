@@ -54,7 +54,7 @@ public class ForecastErrorsHistoricalData {
     public String toString() {
         // generators ids
         String forecastErrorsHistoricalData = "genIds[";
-        for ( String generatorId : getGeneratorsIds() ) {
+        for (String generatorId : getGeneratorsIds()) {
             forecastErrorsHistoricalData += generatorId + ",";
         }
         if (getGeneratorsIds().size() > 0) {
@@ -63,7 +63,7 @@ public class ForecastErrorsHistoricalData {
         forecastErrorsHistoricalData += "]";
         // loads ids
         forecastErrorsHistoricalData += "\nloadIds[";
-        for ( String loadId : getLoadsIds() ) {
+        for (String loadId : getLoadsIds()) {
             forecastErrorsHistoricalData += loadId + ",";
         }
         if (getLoadsIds().size() > 0) {
@@ -72,7 +72,7 @@ public class ForecastErrorsHistoricalData {
         forecastErrorsHistoricalData += "]";
         // stochastic variables
         forecastErrorsHistoricalData += "\nstochVars[";
-        for ( StochasticVariable stocasticVariable : getStochasticVariables() ) {
+        for (StochasticVariable stocasticVariable : getStochasticVariables()) {
             forecastErrorsHistoricalData += stocasticVariable + ",";
         }
         if (getStochasticVariables().size() > 0) {
@@ -81,18 +81,18 @@ public class ForecastErrorsHistoricalData {
         forecastErrorsHistoricalData += "]";
         // forecasts data
         forecastErrorsHistoricalData += "\nforecastData[\n";
-        if ( getForecastsData() != null) {
+        if (getForecastsData() != null) {
             forecastErrorsHistoricalData += "[";
-            for ( String columnName : getForecastsData().columnKeyList() ) {
+            for (String columnName : getForecastsData().columnKeyList()) {
                 forecastErrorsHistoricalData += columnName + ",";
             }
             if (getForecastsData().columnKeyList().size() > 0) {
                 forecastErrorsHistoricalData = forecastErrorsHistoricalData.substring(0, forecastErrorsHistoricalData.length() - 1);
             }
             forecastErrorsHistoricalData += "]";
-            for ( Integer rowName : getForecastsData().rowKeyList() ) {
+            for (Integer rowName : getForecastsData().rowKeyList()) {
                 forecastErrorsHistoricalData += "\n[";
-                for ( String columnName : getForecastsData().columnKeyList() ) {
+                for (String columnName : getForecastsData().columnKeyList()) {
                     forecastErrorsHistoricalData += getForecastsData().get(rowName, columnName) + ",";
                 }
                 if (getForecastsData().columnKeyList().size() > 0) {
@@ -104,18 +104,18 @@ public class ForecastErrorsHistoricalData {
         forecastErrorsHistoricalData += "]";
         // snapshots data
         forecastErrorsHistoricalData += "\nsnapshotData[\n";
-        if ( getForecastsData() != null) {
+        if (getForecastsData() != null) {
             forecastErrorsHistoricalData += "[";
-            for ( String columnName : getSnapshotsData().columnKeyList() ) {
+            for (String columnName : getSnapshotsData().columnKeyList()) {
                 forecastErrorsHistoricalData += columnName + ",";
             }
             if (getSnapshotsData().columnKeyList().size() > 0) {
                 forecastErrorsHistoricalData = forecastErrorsHistoricalData.substring(0, forecastErrorsHistoricalData.length() - 1);
             }
             forecastErrorsHistoricalData += "]";
-            for ( Integer rowName : getSnapshotsData().rowKeyList() ) {
+            for (Integer rowName : getSnapshotsData().rowKeyList()) {
                 forecastErrorsHistoricalData += "\n[";
-                for ( String columnName : getSnapshotsData().columnKeyList() ) {
+                for (String columnName : getSnapshotsData().columnKeyList()) {
                     forecastErrorsHistoricalData += getSnapshotsData().get(rowName, columnName) + ",";
                 }
                 if (getSnapshotsData().columnKeyList().size() > 0) {

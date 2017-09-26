@@ -195,7 +195,7 @@ public class RunForecastErrorsAnalysisTool implements Tool {
                                                                                            nSamples, countries, caseType);
         ForecastErrorsAnalysis feAnalysis = new ForecastErrorsAnalysis(context.getComputationManager(), ForecastErrorsAnalysisConfig.load(), parameters);
         context.getOutputStream().println("Starting Forecast Errors Analysis");
-        if ( line.hasOption("time-horizon") ) {
+        if (line.hasOption("time-horizon")) {
             TimeHorizon timeHorizon = TimeHorizon.fromName(line.getOptionValue("time-horizon"));
             feAnalysis.start(timeHorizon);
         } else {

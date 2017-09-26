@@ -130,7 +130,7 @@ public class ForecastErrorsAnalyzerParameters {
                     Integer.parseInt(properties.getProperty("modalityGaussian")),
                     Integer.parseInt(properties.getProperty("outliers")),
                     Integer.parseInt(properties.getProperty("conditionalSampling")),
-                    Integer.parseInt( (properties.getProperty("nSamples") != null) ? properties.getProperty("nSamples") : "-1")
+                    Integer.parseInt((properties.getProperty("nSamples") != null) ? properties.getProperty("nSamples") : "-1")
             );
         }
     }

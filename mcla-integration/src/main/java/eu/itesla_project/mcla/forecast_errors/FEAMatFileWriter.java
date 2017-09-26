@@ -56,10 +56,10 @@ public class FEAMatFileWriter {
         LOGGER.debug("Saving mat data into " + matFile.toString());
         List<MLArray> mlarray = new ArrayList<>();
 //        mlarray.add((MLArray) stochasticVariables );
-        mlarray.add((MLArray) injections );
-        mlarray.add((MLArray) forecastsData );
-        mlarray.add((MLArray) snapshotsData );
-        mlarray.add((MLArray) injectionsCountries );
+        mlarray.add((MLArray) injections);
+        mlarray.add((MLArray) forecastsData);
+        mlarray.add((MLArray) snapshotsData);
+        mlarray.add((MLArray) injectionsCountries);
         MatFileWriter writer = new MatFileWriter();
         writer.write(matFile.toFile(), mlarray);
     }
@@ -68,8 +68,8 @@ public class FEAMatFileWriter {
         int colsSize = histoDataHeaders.size() - 2;
         MLCell injections = new MLCell("inj_ID", new int[]{1, colsSize});
         int i = 0;
-        for ( String colkey : histoDataHeaders ) {
-            if ( colkey.equals("forecastTime") || colkey.equals("datetime")) {
+        for (String colkey : histoDataHeaders) {
+            if (colkey.equals("forecastTime") || colkey.equals("datetime")) {
                 continue;
             }
             injections.set(new MLChar("", colkey), 0, i);
@@ -103,7 +103,7 @@ public class FEAMatFileWriter {
         int colsSize = stochasticVariables.size() * 2;
         MLCell injectionsCountries = new MLCell("nat_ID", new int[]{1, colsSize});
         int i = 0;
-        for ( StochasticVariable injection : stochasticVariables ) {
+        for (StochasticVariable injection : stochasticVariables) {
             injectionsCountries.set(new MLChar("", injection.getCountry().name()), 0, i);
             i++;
             injectionsCountries.set(new MLChar("", injection.getCountry().name()), 0, i); // twice, for P and Q
@@ -115,11 +115,11 @@ public class FEAMatFileWriter {
     private MLDouble histoDataAsMLDouble(String name, ArrayTable<Integer, String, Float> histoData) {
         int rowsSize = histoData.rowKeySet().size();
         int colsSize = histoData.columnKeySet().size();
-        MLDouble mlDouble = new MLDouble( name, new int[] {rowsSize, colsSize} );
+        MLDouble mlDouble = new MLDouble(name, new int[] {rowsSize, colsSize});
         int i = 0;
-        for ( Integer rowKey : histoData.rowKeyList() ) {
+        for (Integer rowKey : histoData.rowKeyList()) {
             int j = 0;
-            for ( String colkey : histoData.columnKeyList() ) {
+            for (String colkey : histoData.columnKeyList()) {
                 Float v = histoData.get(rowKey, colkey);
                 mlDouble.set(new Double(v), i, j);
                 j++;

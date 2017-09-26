@@ -32,43 +32,43 @@ public class CFPFBranch {
     public CFPFBranch() {
     }
 
-    public CFPFBranch( int number, String name, int tapBusNumber, int zBusNumber, int loadFlowArea, int type, double resistanceR,
+    public CFPFBranch(int number, String name, int tapBusNumber, int zBusNumber, int loadFlowArea, int type, double resistanceR,
             double reactanceX, double lineChargingG, double lineChargingB, double ratingA, double ratingB, double ratingC,
-            double transformerTurnsRatio, double transformerAngle ) {
-        setNumber( number );
-        setName( name );
-        setTapBusNumber( tapBusNumber );
-        setZBusNumber( zBusNumber );
-        setLoadFlowArea( loadFlowArea );
-        setType( type );
-        setResistanceR( resistanceR );
-        setReactanceX( reactanceX );
-        setLineChargingG( lineChargingG );
-        setLineChargingB( lineChargingB );
-        setRatingA( ratingA );
-        setRatingB( ratingB );
-        setRatingC( ratingC );
-        setTransformerTurnsRatio( transformerTurnsRatio );
-        setTransformerAngle( transformerAngle );
+            double transformerTurnsRatio, double transformerAngle) {
+        setNumber(number);
+        setName(name);
+        setTapBusNumber(tapBusNumber);
+        setZBusNumber(zBusNumber);
+        setLoadFlowArea(loadFlowArea);
+        setType(type);
+        setResistanceR(resistanceR);
+        setReactanceX(reactanceX);
+        setLineChargingG(lineChargingG);
+        setLineChargingB(lineChargingB);
+        setRatingA(ratingA);
+        setRatingB(ratingB);
+        setRatingC(ratingC);
+        setTransformerTurnsRatio(transformerTurnsRatio);
+        setTransformerAngle(transformerAngle);
     }
 
     public String printCFPFBranch() {
         String ch = ",";
-        String out = String.format( "%d", getNumber() ) + ch +
-                String.format( "%s", getName() ) + ch +
-                String.format( "%d", getTapBusNumber() ) + ch +
-                String.format( "%d", getZBusNumber() ) + ch +
-                String.format( "%d", getLoadFlowArea() ) + ch +
-                String.format( "%d", getType() ) + ch +
-                String.format( "%.8f", getResistanceR() + 0.0f ) + ch +
-                String.format( "%.8f", getReactanceX() + 0.0f ) + ch +
-                String.format( "%.8f", getLineChargingG() + 0.0f ) + ch +
-                String.format( "%.8f", getLineChargingB() + 0.0f ) + ch +
-                String.format( "%.2f", getRatingA() + 0.0f ) + ch +
-                String.format( "%.2f", getRatingB() + 0.0f  ) + ch +
-                String.format( "%.2f", getRatingC() + 0.0f ) + ch +
-                String.format( "%.3f", getTransformerTurnsRatio() + 0.0f ) + ch +
-                String.format( "%.3f", getTransformerAngle() + 0.0f );
+        String out = String.format("%d", getNumber()) + ch +
+                String.format("%s", getName()) + ch +
+                String.format("%d", getTapBusNumber()) + ch +
+                String.format("%d", getZBusNumber()) + ch +
+                String.format("%d", getLoadFlowArea()) + ch +
+                String.format("%d", getType()) + ch +
+                String.format("%.8f", getResistanceR() + 0.0f) + ch +
+                String.format("%.8f", getReactanceX() + 0.0f) + ch +
+                String.format("%.8f", getLineChargingG() + 0.0f) + ch +
+                String.format("%.8f", getLineChargingB() + 0.0f) + ch +
+                String.format("%.2f", getRatingA() + 0.0f) + ch +
+                String.format("%.2f", getRatingB() + 0.0f) + ch +
+                String.format("%.2f", getRatingC() + 0.0f) + ch +
+                String.format("%.3f", getTransformerTurnsRatio() + 0.0f) + ch +
+                String.format("%.3f", getTransformerAngle() + 0.0f);
         return out;
     }
 

@@ -159,7 +159,7 @@ public class NetworkInfo {
     }
 
 
-    public Double getP( String equipment) {
+    public Double getP(String equipment) {
 
 
         logger.debug("  network " + network.getName()  + " equipment: " + equipment);
@@ -195,7 +195,7 @@ public class NetworkInfo {
     }
 
 
-    public Double getQ( String equipment) {
+    public Double getQ(String equipment) {
 
         logger.debug("  network " + network.getName() + " equipment: " + equipment);
 
@@ -226,7 +226,7 @@ public class NetworkInfo {
             logger.debug(" RETURN Q: " + returnValue + " for Network: " + network.getName() + " Equipment: " + equipment);
         }
 
-        return  (returnValue != null) ? new Double (returnValue) : null;
+        return  (returnValue != null) ? new Double(returnValue) : null;
     }
 
 }

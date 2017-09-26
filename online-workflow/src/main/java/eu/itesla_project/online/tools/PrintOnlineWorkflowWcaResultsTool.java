@@ -81,8 +81,8 @@ public class PrintOnlineWorkflowWcaResultsTool implements Tool {
         OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
         String workflowId = line.getOptionValue("workflow");
         OnlineWorkflowWcaResults wfWcaResults = onlinedb.getWcaResults(workflowId);
-        if ( wfWcaResults != null ) {
-            if ( !wfWcaResults.getContingencies().isEmpty() ) {
+        if (wfWcaResults != null) {
+            if (!wfWcaResults.getContingencies().isEmpty()) {
                 Table table = new Table(7, BorderStyle.CLASSIC_WIDE);
                 StringWriter content = new StringWriter();
                 CsvWriter cvsWriter = new CsvWriter(content, ',');
@@ -110,7 +110,7 @@ public class PrintOnlineWorkflowWcaResultsTool implements Tool {
                     values[i++] = contingencyId;
                     int[] clusterIndexes = new int[]{1, 2, 3, 4, -1};
                     for (int k = 0; k < clusterIndexes.length; k++) {
-                        if ( clusterIndexes[k] == wfWcaResults.getClusterIndex(contingencyId) ) {
+                        if (clusterIndexes[k] == wfWcaResults.getClusterIndex(contingencyId)) {
                             table.addCell("X", new CellStyle(CellStyle.HorizontalAlign.center));
                             values[i++] = "X";
                         } else {

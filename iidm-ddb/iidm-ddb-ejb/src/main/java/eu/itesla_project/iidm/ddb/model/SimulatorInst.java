@@ -79,7 +79,7 @@ public class SimulatorInst implements Serializable {
     // This must return true for another SimulatortInst object as the same key/id.
     public boolean equals(Object other) {
         return other instanceof SimulatorInst && (simulator != null && version != null) ?
-                simulator.equals( ( (SimulatorInst) other).getSimulator()) && version.equals( ( (SimulatorInst) other).getVersion())  : (other == this);
+                simulator.equals(((SimulatorInst) other).getSimulator()) && version.equals(((SimulatorInst) other).getVersion())  : (other == this);
     }
 
 

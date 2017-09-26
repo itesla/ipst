@@ -237,7 +237,7 @@ public class ModelTemplateContainerController {
         return this.modelTemplateContainer;
     }
 
-    public void setModelTemplateContainer(    ModelTemplateContainer _modelTemplateContainer) {
+    public void setModelTemplateContainer(ModelTemplateContainer _modelTemplateContainer) {
         this.modelTemplateContainer = _modelTemplateContainer;
     }
 
@@ -245,7 +245,7 @@ public class ModelTemplateContainerController {
         return this.modelTemplate;
     }
 
-    public void setModelTemplate(    ModelTemplate _modelTemplate) {
+    public void setModelTemplate(ModelTemplate _modelTemplate) {
         this.modelTemplate = _modelTemplate;
     }
 
@@ -412,7 +412,7 @@ public class ModelTemplateContainerController {
 
             for (ModelTemplate mt : modelTemplates) {
                 if (mt.getSimulator().equals(modelTemplate.getSimulator())) {
-                    throw new Exception ("Model Template is already present!");
+                    throw new Exception("Model Template is already present!");
                 }
             }
 

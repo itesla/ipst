@@ -101,7 +101,7 @@ public class RunImpactAnalysisOnStateTool implements Tool {
         OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
         // load the network
         Network network = onlinedb.getState(workflowId, stateId);
-        if ( network != null ) {
+        if (network != null) {
             ContingenciesAndActionsDatabaseClient contingencyDb = config.getContingencyDbClientFactoryClass().newInstance().create();
             SimulatorFactory simulatorFactory = config.getSimulatorFactoryClass().newInstance();
             Stabilization stabilization = simulatorFactory.createStabilization(network, context.getComputationManager(), 0);

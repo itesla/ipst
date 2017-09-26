@@ -26,12 +26,15 @@
         <module name="IllegalImport"/>
         <module name="Indentation"/>
         <module name="LeftCurly"/>
+        <module name="MethodParamPad"/>
         <module name="NeedBraces"/>
         <module name="NoWhitespaceAfter"/>
         <module name="NoWhitespaceBefore"/>
+        <module name="ParenPad"/>
         <module name="RedundantImport"/>
         <module name="RightCurly"/>
         <module name="SuppressWarningsHolder"/>
+        <module name="TypecastParenPad"/>
         <module name="WhitespaceAfter"/>
         <module name="WhitespaceAround"/>
         <module name="UnusedImports"/>

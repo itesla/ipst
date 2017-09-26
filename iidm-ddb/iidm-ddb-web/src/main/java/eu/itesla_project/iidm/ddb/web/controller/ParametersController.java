@@ -421,7 +421,7 @@ public class ParametersController {
                         facesContext.addMessage(null, m);
                     }
                 } else {
-                    log.log(Level.WARNING, "There aren't any paramater to update:" );
+                    log.log(Level.WARNING, "There aren't any paramater to update:");
                 }
             }
         } catch (Exception e) {

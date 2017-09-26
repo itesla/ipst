@@ -28,8 +28,8 @@ public class NetworkUtils {
     public static ArrayList<String> getRenewableGeneratorsIds(Network network) {
         Objects.requireNonNull(network, "network is null");
         ArrayList<String> generatorsIds = new ArrayList<String>();
-        for ( Generator generator : network.getGenerators() ) {
-            if ( generator.getEnergySource().isIntermittent() ) {
+        for (Generator generator : network.getGenerators()) {
+            if (generator.getEnergySource().isIntermittent()) {
                 generatorsIds.add(generator.getId());
             }
         }
@@ -40,7 +40,7 @@ public class NetworkUtils {
     public static ArrayList<String> getGeneratorsIds(Network network) {
         Objects.requireNonNull(network, "network is null");
         ArrayList<String> generatorsIds = new ArrayList<String>();
-        for ( Generator generator : network.getGenerators() ) {
+        for (Generator generator : network.getGenerators()) {
             generatorsIds.add(generator.getId());
         }
         Collections.sort(generatorsIds);
@@ -50,7 +50,7 @@ public class NetworkUtils {
     public static ArrayList<String> getConnectedGeneratorsIds(Network network) {
         Objects.requireNonNull(network, "network is null");
         ArrayList<String> generatorsIds = new ArrayList<String>();
-        for ( Generator generator : network.getGenerators() ) {
+        for (Generator generator : network.getGenerators()) {
             if (isConnected(generator)) {
                 generatorsIds.add(generator.getId());
             }
@@ -72,7 +72,7 @@ public class NetworkUtils {
     public static ArrayList<String> getLoadsIds(Network network) {
         Objects.requireNonNull(network, "network is null");
         ArrayList<String> loadsIds = new ArrayList<String>();
-        for ( Load load : network.getLoads() ) {
+        for (Load load : network.getLoads()) {
             loadsIds.add(load.getId());
         }
         Collections.sort(loadsIds);

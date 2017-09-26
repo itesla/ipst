@@ -119,7 +119,7 @@ public final class WCAUtils {
                         continue;
                     }
                     String[] tokens = line.split(";");
-                    if ( Math.abs(Float.parseFloat(tokens[1])) > Math.abs(Float.parseFloat(tokens[2])) ) {
+                    if (Math.abs(Float.parseFloat(tokens[1])) > Math.abs(Float.parseFloat(tokens[2]))) {
                         LOGGER.info("Folder {}: found flow violation on branch {}", workingDir, tokens[0]);
                         return true;
                     }
@@ -227,7 +227,7 @@ public final class WCAUtils {
         network.getStateManager().setWorkingState(stateId);
         injections.keySet().forEach(injection -> {
             Load load = network.getLoad(injection);
-            if ( load != null ) {
+            if (load != null) {
                 float oldP = load.getTerminal().getP();
                 LOGGER.debug("Network {}, state {}: incrementing P of load {} from {} to {}",
                              network.getId(), network.getStateManager().getWorkingStateId(), injection, oldP, oldP + injections.get(injection));
@@ -235,7 +235,7 @@ public final class WCAUtils {
                 load.setP0(oldP + injections.get(injection));
             } else {
                 Generator generator = network.getGenerator(injection);
-                if ( generator != null ) {
+                if (generator != null) {
                     float oldP = generator.getTerminal().getP();
                     LOGGER.debug("Network {}, state {}: incrementing P of generator {} from {} to {}",
                                  network.getId(), network.getStateManager().getWorkingStateId(), injection, oldP, oldP + injections.get(injection));

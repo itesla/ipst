@@ -192,7 +192,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                     final DDBManager ddbmanagerF = ddbmanager;
 
                     Files.walkFileTree(dtaFile,
-                            new SimpleFileVisitor<Path> () {
+                            new SimpleFileVisitor<Path>() {
                             @Override
                             public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
                                 if (attr.isRegularFile()) {
@@ -1301,7 +1301,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
         }
         if (zoneTypeName == null) {
-            throw new RuntimeException(" not supported typeName " + mtc.getTypeName() );
+            throw new RuntimeException(" not supported typeName " + mtc.getTypeName());
         }
 
         log.trace(" model template typename: " + mtc.getTypeName());
@@ -1496,7 +1496,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             zm.put("coupling.par8", null);
             zm.put("coupling.par9", null);
             if (log.isDebugEnabled()) {
-                log.trace(" coupling.par(s) mapped to empty string" );
+                log.trace(" coupling.par(s) mapped to empty string");
             }
         }
 

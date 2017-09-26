@@ -109,7 +109,7 @@ public class RunSecurityRulesOnStateTool implements Tool {
         OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
         // load the network
         Network network = onlinedb.getState(workflowId, stateId);
-        if ( network != null ) {
+        if (network != null) {
             OnlineWorkflowParameters parameters = onlinedb.getWorkflowParameters(workflowId);
             String offlineWorkflowId = parameters.getOfflineWorkflowId();
             if (line.hasOption("offline-workflow")) {
@@ -118,7 +118,7 @@ public class RunSecurityRulesOnStateTool implements Tool {
             context.getOutputStream().println("checking state " + stateId + " of workflow " + workflowId + " against rules of offline workflow " + offlineWorkflowId + " ...");
             RulesDbClient rulesDb = config.getRulesDbClientFactoryClass().newInstance().create("rulesdb");
             RuleAttributeSet attributeSet = RuleAttributeSet.MONTE_CARLO;
-            if ( line.hasOption("wca")) {
+            if (line.hasOption("wca")) {
                 attributeSet = RuleAttributeSet.WORST_CASE;
             }
             double purityThreshold = parameters.getRulesPurityThreshold();

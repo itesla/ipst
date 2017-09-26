@@ -35,17 +35,17 @@ public class PsseRegisterFactory {
         modelsTypesDict.put("SEXS", PsseRegisterType.EXCITATION_SYSTEM);
         modelsTypesDict.put("STAB2A", PsseRegisterType.STABILIZER);
 
-        modelsTypesDict.put("TGOV1", PsseRegisterType.TURBINE_GOVERNOR );
-        modelsTypesDict.put("ESST1A", PsseRegisterType.EXCITATION_SYSTEM );
-        modelsTypesDict.put("PSS2A", PsseRegisterType.STABILIZER );
-        modelsTypesDict.put("IEEEST", PsseRegisterType.STABILIZER );
-        modelsTypesDict.put("ESDC1A", PsseRegisterType.EXCITATION_SYSTEM );
-        modelsTypesDict.put("ESDC2A", PsseRegisterType.EXCITATION_SYSTEM );
-        modelsTypesDict.put("ESAC1A", PsseRegisterType.EXCITATION_SYSTEM );
-        modelsTypesDict.put("IEEEX1", PsseRegisterType.EXCITATION_SYSTEM );
-        modelsTypesDict.put("GAST", PsseRegisterType.TURBINE_GOVERNOR );
+        modelsTypesDict.put("TGOV1", PsseRegisterType.TURBINE_GOVERNOR);
+        modelsTypesDict.put("ESST1A", PsseRegisterType.EXCITATION_SYSTEM);
+        modelsTypesDict.put("PSS2A", PsseRegisterType.STABILIZER);
+        modelsTypesDict.put("IEEEST", PsseRegisterType.STABILIZER);
+        modelsTypesDict.put("ESDC1A", PsseRegisterType.EXCITATION_SYSTEM);
+        modelsTypesDict.put("ESDC2A", PsseRegisterType.EXCITATION_SYSTEM);
+        modelsTypesDict.put("ESAC1A", PsseRegisterType.EXCITATION_SYSTEM);
+        modelsTypesDict.put("IEEEX1", PsseRegisterType.EXCITATION_SYSTEM);
+        modelsTypesDict.put("GAST", PsseRegisterType.TURBINE_GOVERNOR);
         //PENDING
-        modelsTypesDict.put("WT4G1", PsseRegisterType.GENERIC_WIND_GENERATOR );
+        modelsTypesDict.put("WT4G1", PsseRegisterType.GENERIC_WIND_GENERATOR);
 
         //TODO to be verified
         /*

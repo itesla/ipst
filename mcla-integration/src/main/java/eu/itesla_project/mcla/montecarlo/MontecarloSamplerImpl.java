@@ -94,7 +94,7 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
         this.feAnalysisId = parameters.getFeAnalysisId();
         this.nSamples = parameters.getnSamples();
         // check if forecast offline samples data file for this time horizon exists
-        if ( !forecastErrorsDataStorage.isForecastOfflineSamplesDataAvailable(feAnalysisId, timeHorizon) ) {
+        if (!forecastErrorsDataStorage.isForecastOfflineSamplesDataAvailable(feAnalysisId, timeHorizon)) {
             LOGGER.error("No forecast offline samples data available, for {} network, {} time horizon.", network.getId(), timeHorizon.getName());
             throw new Exception("Montecarlo sampler not ready to be used: No forecast offline samples data available, for " + network.getId() + " network, " + timeHorizon.getName() + " time horizon.");
         }
@@ -134,7 +134,7 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
             sampledData = runMontecarloSampler();
         }
         currentSampleIndex++;
-        if ( currentSampleIndex >= nSamples ) {
+        if (currentSampleIndex >= nSamples) {
             LOGGER.error("reached max number of samples: {} - FEA id: {}", feaParams.getnSamples(), feaParams.getFeAnalysisId());
             throw new Exception("reached max number of samples: " + feaParams.getnSamples() + " - FEA id: " + feaParams.getFeAnalysisId());
         }
@@ -216,8 +216,8 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
         float totalPLoadAS = 0;
         float totalQLoadBS = 0;
         float totalQLoadAS = 0;
-        if ( sample.getGeneratorsActivePower() != null ) {
-            for ( int i = 0; i < connectedGeneratorsIds.size(); i++ ) {
+        if (sample.getGeneratorsActivePower() != null) {
+            for (int i = 0; i < connectedGeneratorsIds.size(); i++) {
                 String generatorId = connectedGeneratorsIds.get(i);
                 float newActivePower = sample.getGeneratorsActivePower()[i];
                 //float oldActivePower = network.getGenerator(generatorId).getTargetP();
@@ -244,34 +244,34 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
             }
         }
         LOGGER.debug("connected network loads = " + connectedLoadsIds.size() + " - sampled loads = [" + sample.getLoadsActivePower().length + "," + sample.getLoadsReactivePower().length + "]");
-        if ( sample.getLoadsActivePower() != null || sample.getLoadsReactivePower() != null ) {
-            for ( int i = 0; i < connectedLoadsIds.size(); i++ ) {
+        if (sample.getLoadsActivePower() != null || sample.getLoadsReactivePower() != null) {
+            for (int i = 0; i < connectedLoadsIds.size(); i++) {
                 String loadId = connectedLoadsIds.get(i);
-                if ( sample.getLoadsActivePower() != null ) {
+                if (sample.getLoadsActivePower() != null) {
                     float newActivePower = sample.getLoadsActivePower()[i];
                     //float oldActivePower = network.getLoad(loadId).getP0();
                     float oldActivePower = network.getLoad(loadId).getTerminal().getP();
                     totalPLoadBS += oldActivePower;
                     totalPLoadAS += newActivePower;
                     LOGGER.debug("{}: load {} - P:{} -> P:{} ", network.getStateManager().getWorkingStateId(), loadId, oldActivePower, newActivePower);
-                    if ( !Float.isNaN(newActivePower) ) {
+                    if (!Float.isNaN(newActivePower)) {
                         network.getLoad(loadId).setP0(newActivePower);
                         network.getLoad(loadId).getTerminal().setP(newActivePower);
                     } else {
                         LOGGER.debug("{}: new sampled P for load {} is NaN: skipping assignment", network.getStateManager().getWorkingStateId(), loadId);
                     }
                 }
-                if ( sample.getLoadsReactivePower() != null ) {
+                if (sample.getLoadsReactivePower() != null) {
                     float newReactivePower = sample.getLoadsReactivePower()[i];
                     //float oldReactivePower = network.getLoad(loadId).getQ0();
                     float oldReactivePower = network.getLoad(loadId).getTerminal().getQ();
                     totalQLoadBS += oldReactivePower;
                     // filter suggested by RSE: skip assignment if the new value is greater than a certain threshold (e.g. 1000 MVar)
                     // it is necessary to have consistent data (to make the load flow converge) when Q is computed based on P
-                    if ( Math.abs(newReactivePower) <= qThreshold ) {
+                    if (Math.abs(newReactivePower) <= qThreshold) {
                         totalQLoadAS += newReactivePower;
                         LOGGER.debug("{}: load {} - Q:{} -> Q:{} ", network.getStateManager().getWorkingStateId(), loadId, oldReactivePower, newReactivePower);
-                        if ( !Float.isNaN(newReactivePower) ) {
+                        if (!Float.isNaN(newReactivePower)) {
                             network.getLoad(loadId).setQ0(newReactivePower);
                             network.getLoad(loadId).getTerminal().setQ(newReactivePower);
                         } else {

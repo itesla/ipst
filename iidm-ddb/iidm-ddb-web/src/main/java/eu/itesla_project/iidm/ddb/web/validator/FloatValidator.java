@@ -34,7 +34,7 @@ public class FloatValidator implements Validator {
 
         }
         if (!valid) {
-            FacesMessage message = new FacesMessage( FacesMessage.SEVERITY_ERROR, bundle.getString("invalid.float.summary.msg"),
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, bundle.getString("invalid.float.summary.msg"),
                     bundle.getString("invalid.float.detail.msg"));
 
             throw new ValidatorException(message);

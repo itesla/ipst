@@ -25,9 +25,9 @@ public class MCSNetworkUtils {
     public static int getBusType(Bus bus) {
         Objects.requireNonNull(bus, "bus is null");
         int type = BusData.BUS_TYPE_PQ; // a connection bus is PQ
-        if ( bus.getGenerators() != null ) {
+        if (bus.getGenerators() != null) {
             for (Generator generator : bus.getGenerators()) {
-                if ( generator.isVoltageRegulatorOn() ) {
+                if (generator.isVoltageRegulatorOn()) {
                     type = BusData.BUS_TYPE_PV; // a bus with attached a generator with voltage regulator on is PV
                     break;
                 }

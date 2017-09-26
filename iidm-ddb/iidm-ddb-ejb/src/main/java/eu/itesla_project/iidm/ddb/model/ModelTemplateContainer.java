@@ -102,7 +102,7 @@ public class ModelTemplateContainer implements Serializable {
     // This must return true for another ModelTemplateContainer this method is used to manage <f:selectItems value=""/>
     public boolean equals(Object other) {
         return other instanceof ModelTemplateContainer ?
-                ddbId.equals( ( (ModelTemplateContainer) other).getDdbId())  : false;
+                ddbId.equals(((ModelTemplateContainer) other).getDdbId())  : false;
     }
 
 }

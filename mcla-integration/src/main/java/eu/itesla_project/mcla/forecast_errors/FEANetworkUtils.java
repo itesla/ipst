@@ -57,7 +57,7 @@ public class FEANetworkUtils {
         }
         for (String loadId : loadsIds) {
             Load load = network.getLoad(loadId);
-            if ( load != null ) {
+            if (load != null) {
                 Country country = load.getTerminal().getVoltageLevel().getSubstation().getCountry();
                 StochasticVariable stochasticVariable = new StochasticVariable(loadId, StochasticVariable.TYPE_LOAD, country);
                 stochasticVariables.add(stochasticVariable);

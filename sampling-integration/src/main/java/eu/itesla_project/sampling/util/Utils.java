@@ -46,7 +46,7 @@ public class Utils {
     }
 
     public static MLDouble readMDoubleFromCSVFile(Path inFilePath, String mName, int nrows, int ncols, char delimiter) throws NumberFormatException, IOException {
-        MLDouble mlDouble = new MLDouble( mName, new int[] {nrows, ncols} );
+        MLDouble mlDouble = new MLDouble(mName, new int[] {nrows, ncols});
         CsvReader cvsReader = new CsvReader(inFilePath.toString());
         cvsReader.setDelimiter(delimiter);
         int i = 0;
@@ -79,7 +79,7 @@ public class Utils {
         if (dvect == null) {
             throw new NumberFormatException(".. must not be null");
         }
-        MLDouble mlDouble = new MLDouble( mName, new int[] {dvect.length, 1} );
+        MLDouble mlDouble = new MLDouble(mName, new int[] {dvect.length, 1});
         for (int i = 0; i < dvect.length; i++) {
             mlDouble.set(new Double(dvect[i]), i, 0);
         }
@@ -212,7 +212,7 @@ public class Utils {
         mlarray.add((MLArray) dNsample);
         mlarray.add((MLArray) dIR);
         mlarray.add((MLArray) dK);
-        mlarray.add((MLArray) data );
+        mlarray.add((MLArray) data);
         MatFileWriter writer = new MatFileWriter();
         writer.write(outputfile.toFile(), mlarray);
     }
@@ -252,7 +252,7 @@ public class Utils {
     public static void writeWP41BinaryIndependentSamplingInputFile(Path outputfile, double[] marginalExpectations) throws IOException {
         MLDouble data = Utils.vectToMLDoubleRow(marginalExpectations, "p");
         List<MLArray> mlarray = new ArrayList<>();
-        mlarray.add((MLArray) data );
+        mlarray.add((MLArray) data);
         MatFileWriter writer = new MatFileWriter();
         writer.write(outputfile.toFile(), mlarray);
     }
@@ -450,13 +450,13 @@ public class Utils {
     }
 */
     public static void writeWp41ContModule1Mat(Path outputfile, double[][] matrix) throws IOException {
-        LOGGER.debug("writeWp41ContModule1Mat - writing wp41 input X matrix data to file {}", outputfile );
+        LOGGER.debug("writeWp41ContModule1Mat - writing wp41 input X matrix data to file {}", outputfile);
         MLDouble data = Utils.matToMLDouble(matrix, "X");
         List<MLArray> mlarray = new ArrayList<>();
-        mlarray.add((MLArray) data );
+        mlarray.add((MLArray) data);
         MatFileWriter writer = new MatFileWriter();
         writer.write(outputfile.toFile(), mlarray);
-        LOGGER.debug("writeWp41ContModule1Mat - X matrix data, written." );
+        LOGGER.debug("writeWp41ContModule1Mat - X matrix data, written.");
     }
 
     public static double[][] joinDoubleMatrix(Path path1, Path path2, int rows, int cols1, int cols2) throws NumberFormatException, IOException {

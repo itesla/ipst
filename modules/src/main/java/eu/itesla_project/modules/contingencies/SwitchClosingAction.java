@@ -28,7 +28,7 @@ public class SwitchClosingAction implements ActionElement {
         this.equipmentId = switchId;
     }
 
-    public SwitchClosingAction(String vlId, String switchId, Number implementationTime, Number achievmentIndex ) {
+    public SwitchClosingAction(String vlId, String switchId, Number implementationTime, Number achievmentIndex) {
         this.voltageLevelId = vlId;
         this.equipmentId = switchId;
         this.implementationTime = implementationTime;

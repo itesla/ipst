@@ -34,7 +34,7 @@ public class IntegerValidator implements Validator {
 
         }
         if (!valid) {
-            FacesMessage message = new FacesMessage( FacesMessage.SEVERITY_ERROR, bundle.getString("invalid.integer.summary.msg"),
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, bundle.getString("invalid.integer.summary.msg"),
                     bundle.getString("invalid.integer.detail.msg"));
             throw new ValidatorException(message);
         }
