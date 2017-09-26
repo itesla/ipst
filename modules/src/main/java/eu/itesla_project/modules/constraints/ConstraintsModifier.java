@@ -94,15 +94,15 @@ public class ConstraintsModifier {
                         violation.getLimitType(),
                         violation.getSubjectId());
                 switch (violation.getLimitType()) {
-                case CURRENT:
-                    setNewCurrentLimit(stateId, violation, margin, applyToBaseCase);
-                    break;
-                case HIGH_VOLTAGE:
-                    setNewHighVoltageLimit(stateId, violation, margin, applyToBaseCase);
-                    break;
-                case LOW_VOLTAGE:
-                    setNewLowVoltageLimit(stateId, violation, margin, applyToBaseCase);
-                    break;
+                    case CURRENT:
+                        setNewCurrentLimit(stateId, violation, margin, applyToBaseCase);
+                        break;
+                    case HIGH_VOLTAGE:
+                        setNewHighVoltageLimit(stateId, violation, margin, applyToBaseCase);
+                        break;
+                    case LOW_VOLTAGE:
+                        setNewLowVoltageLimit(stateId, violation, margin, applyToBaseCase);
+                        break;
                 }
             }
             network.getStateManager().setWorkingState(workingStateId);

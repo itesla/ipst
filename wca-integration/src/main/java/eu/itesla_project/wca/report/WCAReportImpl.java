@@ -238,15 +238,15 @@ public class WCAReportImpl implements WCAReport {
                                   List<LimitViolation> violations) throws IOException {
         Path violationsPath = folder.resolve(file);
         Column[] COLUMNS = {
-                new Column("Basecase"),
-                new Column("FailureStep"),
-                new Column("FailureDescription"),
-                new Column("ViolationType"),
-                new Column("Equipment"),
-                new Column("Value"),
-                new Column("Limit"),
-                new Column("Country"),
-                new Column("BaseVoltage")
+            new Column("Basecase"),
+            new Column("FailureStep"),
+            new Column("FailureDescription"),
+            new Column("ViolationType"),
+            new Column("Equipment"),
+            new Column("Value"),
+            new Column("Limit"),
+            new Column("Country"),
+            new Column("BaseVoltage")
         };
         CsvTableFormatterFactory factory = new CsvTableFormatterFactory();
         try (Writer writer = Files.newBufferedWriter(violationsPath, StandardCharsets.UTF_8);
@@ -317,15 +317,15 @@ public class WCAReportImpl implements WCAReport {
                     basecase, folder + File.separator + POST_PREVENTIVE_ACTIONS_FILE);
         Path violationsPath = folder.resolve(POST_PREVENTIVE_ACTIONS_FILE);
         Column[] COLUMNS = {
-                new Column("Basecase"),
-                new Column("ActionId"),
-                new Column("ViolatedEquipment"),
-                new Column("ViolationType"),
-                new Column("FailureStep"),
-                new Column("FailureDescription"),
-                new Column("ViolationRemoved"),
-                new Column("ActionApplied"),
-                new Column("Comment")
+            new Column("Basecase"),
+            new Column("ActionId"),
+            new Column("ViolatedEquipment"),
+            new Column("ViolationType"),
+            new Column("FailureStep"),
+            new Column("FailureDescription"),
+            new Column("ViolationRemoved"),
+            new Column("ActionApplied"),
+            new Column("Comment")
         };
         CsvTableFormatterFactory factory = new CsvTableFormatterFactory();
         try (Writer writer = Files.newBufferedWriter(violationsPath, StandardCharsets.UTF_8);
@@ -349,13 +349,13 @@ public class WCAReportImpl implements WCAReport {
                     basecase, folder + File.separator + SECURITY_RULES_VIOLATIONS_WITHOUT_UNCERTAINTIES_FILE);
         Path violationsPath = folder.resolve(SECURITY_RULES_VIOLATIONS_WITHOUT_UNCERTAINTIES_FILE);
         Column[] COLUMNS = {
-                new Column("Basecase"),
-                new Column("ContingencyId"),
-                new Column("SecurityRule"),
-                new Column("WorkflowId"),
-                new Column("RuleViolated"),
-                new Column("ViolationType"),
-                new Column("Cause")
+            new Column("Basecase"),
+            new Column("ContingencyId"),
+            new Column("SecurityRule"),
+            new Column("WorkflowId"),
+            new Column("RuleViolated"),
+            new Column("ViolationType"),
+            new Column("Cause")
         };
         CsvTableFormatterFactory factory = new CsvTableFormatterFactory();
         try (Writer writer = Files.newBufferedWriter(violationsPath, StandardCharsets.UTF_8);
@@ -395,16 +395,16 @@ public class WCAReportImpl implements WCAReport {
         Path violationsPath1 = folder.resolve(POST_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_FILE);
         Path violationsPath2 = folder.resolve(POST_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_FILE);
         Column[] COLUMNS = {
-                new Column("Basecase"),
-                new Column("Contingency"),
-                new Column("FailureStep"),
-                new Column("FailureDescription"),
-                new Column("ViolationType"),
-                new Column("Equipment"),
-                new Column("Value"),
-                new Column("Limit"),
-                new Column("Country"),
-                new Column("BaseVoltage")
+            new Column("Basecase"),
+            new Column("Contingency"),
+            new Column("FailureStep"),
+            new Column("FailureDescription"),
+            new Column("ViolationType"),
+            new Column("Equipment"),
+            new Column("Value"),
+            new Column("Limit"),
+            new Column("Country"),
+            new Column("BaseVoltage")
         };
         CsvTableFormatterFactory factory = new CsvTableFormatterFactory();
         try (Writer writer1 = Files.newBufferedWriter(violationsPath1, StandardCharsets.UTF_8);
@@ -433,16 +433,16 @@ public class WCAReportImpl implements WCAReport {
                     basecase, folder + File.separator + POST_CURATIVE_ACTIONS_FILE);
         Path violationsPath = folder.resolve(POST_CURATIVE_ACTIONS_FILE);
         Column[] COLUMNS = {
-                new Column("Basecase"),
-                new Column("Contingency"),
-                new Column("ActionId"),
-                new Column("ViolatedEquipment"),
-                new Column("ViolationType"),
-                new Column("FailureStep"),
-                new Column("FailureDescription"),
-                new Column("ViolationRemoved"),
-                new Column("ActionApplied"),
-                new Column("Comment")
+            new Column("Basecase"),
+            new Column("Contingency"),
+            new Column("ActionId"),
+            new Column("ViolatedEquipment"),
+            new Column("ViolationType"),
+            new Column("FailureStep"),
+            new Column("FailureDescription"),
+            new Column("ViolationRemoved"),
+            new Column("ActionApplied"),
+            new Column("Comment")
         };
         CsvTableFormatterFactory factory = new CsvTableFormatterFactory();
         try (Writer writer = Files.newBufferedWriter(violationsPath, StandardCharsets.UTF_8);

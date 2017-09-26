@@ -14,7 +14,6 @@ import eu.itesla_project.modules.contingencies.LogicalExpression;
 import eu.itesla_project.modules.contingencies.ActionPlanOption;
 
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 public class OptionImpl implements ActionPlanOption {
@@ -27,11 +26,10 @@ public class OptionImpl implements ActionPlanOption {
     private Map<BigInteger, String> actions = new HashMap<BigInteger, String>();
 
 
-
     public OptionImpl(BigInteger _priority, LogicalExpression _logicalExpression, Map<BigInteger, String> actions) {
-        this.priority =            _priority;
+        this.priority = _priority;
         this.logicalExpression = _logicalExpression;
-        this.actions =     actions;
+        this.actions = actions;
     }
 
     @Override
@@ -41,7 +39,7 @@ public class OptionImpl implements ActionPlanOption {
 
     @Override
     public Map<BigInteger, String> getActions() {
-            return this.actions;
+        return this.actions;
 
     }
 

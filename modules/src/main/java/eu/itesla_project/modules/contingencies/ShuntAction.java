@@ -9,7 +9,6 @@ package eu.itesla_project.modules.contingencies;
 import eu.itesla_project.contingency.tasks.ModificationTask;
 
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 public class ShuntAction implements ActionElement {
@@ -25,7 +24,7 @@ public class ShuntAction implements ActionElement {
         this.equipmentId = elementId;
     }
 
-    public ShuntAction(String elementId, Number implementationTime, Number achievmentIndex ) {
+    public ShuntAction(String elementId, Number implementationTime, Number achievmentIndex) {
         this.equipmentId = elementId;
         this.implementationTime = implementationTime;
         this.achievmentIndex = achievmentIndex;
@@ -34,7 +33,7 @@ public class ShuntAction implements ActionElement {
     @Override
     public ActionElementType getType() {
 
-         return ActionElementType.SHUNT;
+        return ActionElementType.SHUNT;
     }
 
     @Override
@@ -55,7 +54,7 @@ public class ShuntAction implements ActionElement {
 
     @Override
     public Number getAchievmentIndex() {
-        return      achievmentIndex;
+        return achievmentIndex;
     }
 
     @Override

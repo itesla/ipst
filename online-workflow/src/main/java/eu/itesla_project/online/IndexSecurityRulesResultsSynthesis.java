@@ -23,12 +23,12 @@ import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
 public class IndexSecurityRulesResultsSynthesis implements Serializable {
 
 
-   private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-   private String workflowId;
+    private String workflowId;
 
 
-   private final  Map<String, Map<Integer, StateInfo>> contingencySecurityRulesMap = new HashMap<String, Map<Integer, StateInfo>>();
+    private final Map<String, Map<Integer, StateInfo>> contingencySecurityRulesMap = new HashMap<String, Map<Integer, StateInfo>>();
 
 
     public IndexSecurityRulesResultsSynthesis(String workflowId) {
@@ -62,31 +62,29 @@ public class IndexSecurityRulesResultsSynthesis implements Serializable {
 
    }*/
 
-   public String getWorkflowId() {
+    public String getWorkflowId() {
         return workflowId;
-   }
+    }
 
-   public void setWorkflowId(String workflowId) {
+    public void setWorkflowId(String workflowId) {
         this.workflowId = workflowId;
-   }
+    }
 
 
+    public void addStateSecurityRuleIndexes(String contingencyId, Integer stateId, SecurityRulesApplicationResults rulesApplicationResults) {
+        Map<SecurityIndexType, StateStatus> indexStatus = rulesApplicationResults.getSecurityRulesResults(contingencyId, stateId);
+        StateStatus stateStatus = rulesApplicationResults.getStateStatus(contingencyId, stateId);
+        StateInfo stateInfo = new StateInfo(stateId, stateStatus, indexStatus);
 
-
-   public void addStateSecurityRuleIndexes(String contingencyId, Integer stateId, SecurityRulesApplicationResults rulesApplicationResults) {
-       Map<SecurityIndexType, StateStatus> indexStatus = rulesApplicationResults.getSecurityRulesResults(contingencyId, stateId);
-       StateStatus stateStatus    = rulesApplicationResults.getStateStatus(contingencyId, stateId);
-       StateInfo stateInfo         = new StateInfo (stateId, stateStatus, indexStatus);
-
-       if (contingencySecurityRulesMap.containsKey(contingencyId)) {
-           Map<Integer, StateInfo> stateIndexInfo = contingencySecurityRulesMap.get(contingencyId);
-           stateIndexInfo.put(stateId, stateInfo);
-           this.contingencySecurityRulesMap.put(contingencyId, stateIndexInfo);
-       } else {
-           Map<Integer, StateInfo> stateIndexStatus = new Hashtable<Integer, StateInfo>();
-           stateIndexStatus.put(stateId, stateInfo);
-           this.contingencySecurityRulesMap.put(contingencyId, stateIndexStatus);
-       }
+        if (contingencySecurityRulesMap.containsKey(contingencyId)) {
+            Map<Integer, StateInfo> stateIndexInfo = contingencySecurityRulesMap.get(contingencyId);
+            stateIndexInfo.put(stateId, stateInfo);
+            this.contingencySecurityRulesMap.put(contingencyId, stateIndexInfo);
+        } else {
+            Map<Integer, StateInfo> stateIndexStatus = new Hashtable<Integer, StateInfo>();
+            stateIndexStatus.put(stateId, stateInfo);
+            this.contingencySecurityRulesMap.put(contingencyId, stateIndexStatus);
+        }
 
     }
 
@@ -142,7 +140,7 @@ public class IndexSecurityRulesResultsSynthesis implements Serializable {
         }
 
         public SecurityRulesResults() {
-                this.description  = "";
+            this.description  = "";
         }
 
         public String getDescription() {
@@ -197,19 +195,19 @@ public class IndexSecurityRulesResultsSynthesis implements Serializable {
             this.stateId = stateId;
 
             switch (stateStatus) {
-            case SAFE:
-                this.statusCode = "S";
-                break;
+                case SAFE:
+                    this.statusCode = "S";
+                    break;
 
-            case UNSAFE:
-                this.statusCode = "U";
-                break;
-            case SAFE_WITH_CORRECTIVE_ACTIONS:
-                this.statusCode = "SWCA";
-                break;
-            default:
-                this.statusCode = "";
-                break;
+                case UNSAFE:
+                    this.statusCode = "U";
+                    break;
+                case SAFE_WITH_CORRECTIVE_ACTIONS:
+                    this.statusCode = "SWCA";
+                    break;
+                default:
+                    this.statusCode = "";
+                    break;
             }
 
 

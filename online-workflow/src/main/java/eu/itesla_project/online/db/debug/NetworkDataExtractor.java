@@ -226,25 +226,25 @@ public class NetworkDataExtractor {
         }
         //...slackbus has at least one generator connected
         for (Generator generator : bus.getGenerators()) {
-              //...which has a generator with voltage regulator on
-              if (!generator.isVoltageRegulatorOn()) {
-                  continue;
-              }
-              //...assure the generator is the one connected to the bus (and not on the aggregated buses)
-              if (!generator.getTerminal().getBusBreakerView().getBus().getId().equals(bus.getId()) ) {
-                  return;
-              }
-              //...candidate slackbus
-              if ( slackBusData.getSlackBusIndex() == -1 ) {
-                  slackBusData.setSlackBusIndex(busIndex);
-                  slackBusData.setSlackBusGenerator(generator);
-                  return;
-              }
-              //...choice the generator with the largest TargetP
-              if ( generator.getTargetP() > slackBusData.getSlackBusGenerator().getTargetP() ) {
-                  slackBusData.setSlackBusIndex(busIndex);
-                  slackBusData.setSlackBusGenerator(generator);
-              }
+            //...which has a generator with voltage regulator on
+            if (!generator.isVoltageRegulatorOn()) {
+                continue;
+            }
+            //...assure the generator is the one connected to the bus (and not on the aggregated buses)
+            if (!generator.getTerminal().getBusBreakerView().getBus().getId().equals(bus.getId())) {
+                return;
+            }
+            //...candidate slackbus
+            if (slackBusData.getSlackBusIndex() == -1) {
+                slackBusData.setSlackBusIndex(busIndex);
+                slackBusData.setSlackBusGenerator(generator);
+                return;
+            }
+            //...choice the generator with the largest TargetP
+            if (generator.getTargetP() > slackBusData.getSlackBusGenerator().getTargetP()) {
+                slackBusData.setSlackBusIndex(busIndex);
+                slackBusData.setSlackBusGenerator(generator);
+            }
         }
     }
 

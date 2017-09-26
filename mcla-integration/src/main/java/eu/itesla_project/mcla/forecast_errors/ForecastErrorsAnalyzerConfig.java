@@ -16,8 +16,8 @@ import java.util.Objects;
 /*
    MCLA code 1.8
 */
+
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 public class ForecastErrorsAnalyzerConfig {
@@ -70,7 +70,7 @@ public class ForecastErrorsAnalyzerConfig {
             String nats,
             Integer rngSeed,
             boolean debug
-            ) {
+    ) {
         Objects.requireNonNull(binariesDir, "sampler compiled binaries directory is null");
         Objects.requireNonNull(runtimeHomeDir, "matlab runtime directory is null");
 
@@ -216,7 +216,7 @@ public class ForecastErrorsAnalyzerConfig {
     }
 
     public boolean isDebug() {
-            return debug;
+        return debug;
     }
 
     @Override

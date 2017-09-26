@@ -101,7 +101,7 @@ public class DanglingLineRecord extends ModelicaRecord {
 
     @Override
     public String parseName(String name) {
-           String parsedName = name.trim();
+        String parsedName = name.trim();
 
            //Lines contains "-"
         if (parsedName.contains("-")) {
@@ -120,8 +120,8 @@ public class DanglingLineRecord extends ModelicaRecord {
             parsedName = parsedName.substring(0, parsedName.length() - 1);
         }
 
-           parsedName = parsedName.replaceAll(StaticData.WHITE_SPACE, "_");
-           parsedName = parsedName.replaceAll(StaticData.DOT, "_");
+        parsedName = parsedName.replaceAll(StaticData.WHITE_SPACE, "_");
+        parsedName = parsedName.replaceAll(StaticData.DOT, "_");
 
         return parsedName;
     }

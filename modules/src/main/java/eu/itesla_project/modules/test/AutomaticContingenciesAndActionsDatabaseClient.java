@@ -32,6 +32,7 @@ import java.util.Set;
 /**
  * Contingencies and actions database, that automatically generates N-1 line
  * contingencies for the first n lines of the network.
+ *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
 public class AutomaticContingenciesAndActionsDatabaseClient implements ContingenciesAndActionsDatabaseClient {
@@ -52,7 +53,6 @@ public class AutomaticContingenciesAndActionsDatabaseClient implements Contingen
     }
 
 
-
     @Override
     public List<Scenario> getScenarios() {
         return Collections.emptyList();
@@ -60,39 +60,38 @@ public class AutomaticContingenciesAndActionsDatabaseClient implements Contingen
 
     @Override
     public Set<Zone> getZones() {
-         throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Zone getZone(String id) {
-         throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Collection<ActionPlan> getActionPlans() {
-         throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public ActionPlan getActionPlan(String id) {
-         throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Collection<ActionsContingenciesAssociation> getActionsCtgAssociations() {
-         throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Collection<ActionsContingenciesAssociation> getActionsCtgAssociationsByContingency(String contingencyId) {
-         throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Contingency getContingency(String name, Network network) {
         throw new UnsupportedOperationException();
     }
-
 
 
     @Override

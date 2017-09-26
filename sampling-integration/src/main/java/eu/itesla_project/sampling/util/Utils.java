@@ -309,7 +309,7 @@ public class Utils {
                     targetDir.resolve(fileName));
 
             try {
-             Set<PosixFilePermission> perms = new HashSet<PosixFilePermission>();
+                Set<PosixFilePermission> perms = new HashSet<PosixFilePermission>();
                 perms.add(PosixFilePermission.OWNER_READ);
                 perms.add(PosixFilePermission.OWNER_WRITE);
                 perms.add(PosixFilePermission.OWNER_EXECUTE);

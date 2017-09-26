@@ -76,7 +76,7 @@ public class WCAFilteredClusters {
                 if ( contingencyFlags.containsKey(contingencyId) ) {
                     flags = contingencyFlags.get(contingencyId);
                 }
-                    flags.add(flag);
+                flags.add(flag);
                 contingencyFlags.put(contingencyId, flags);
             }
         } else {

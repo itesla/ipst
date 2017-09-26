@@ -30,32 +30,32 @@ public class LoadData implements EquipmentData {
 
     public static String[] getFields() {
         return new String[]{
-                    "id",
-                    "bus id",
-                    "connected",
-                    "nominal voltage",
-                    "active power",
-                    "reactive power"
-                };
+            "id",
+            "bus id",
+            "connected",
+            "nominal voltage",
+            "active power",
+            "reactive power"
+        };
     }
 
     @Override
     public String getFieldValue(String fieldName) {
         switch (fieldName) {
-        case "id":
-            return loadId;
-        case "bus id":
-            return busId;
-        case "connected":
-            return Boolean.toString(isConnected);
-        case "nominal voltage":
-            return Float.toString(nominalVoltage);
-        case "active power":
-            return Float.toString(activePower);
-        case "reactive power":
-            return Float.toString(reactivePower);
-        default:
-            throw new RuntimeException("no " + fieldName + " available in load data");
+            case "id":
+                return loadId;
+            case "bus id":
+                return busId;
+            case "connected":
+                return Boolean.toString(isConnected);
+            case "nominal voltage":
+                return Float.toString(nominalVoltage);
+            case "active power":
+                return Float.toString(activePower);
+            case "reactive power":
+                return Float.toString(reactivePower);
+            default:
+                throw new RuntimeException("no " + fieldName + " available in load data");
         }
     }
 

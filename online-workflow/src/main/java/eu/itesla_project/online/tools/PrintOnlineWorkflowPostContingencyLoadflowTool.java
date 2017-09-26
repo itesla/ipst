@@ -97,9 +97,9 @@ public class PrintOnlineWorkflowPostContingencyLoadflowTool implements Tool {
     public void run(CommandLine line, ToolRunningContext context) throws Exception {
         OnlineConfig config = OnlineConfig.load();
         Column[] tableColumns = {
-                new Column("State"),
-                new Column("Contingency"),
-                new Column("Loadflow Convergence")
+            new Column("State"),
+            new Column("Contingency"),
+            new Column("Loadflow Convergence")
         };
         String workflowId = line.getOptionValue("workflow");
         TableFormatterConfig tableFormatterConfig = TableFormatterConfig.load();

@@ -10,7 +10,6 @@ import eu.itesla_project.modules.contingencies.tasks.BreakerOpening;
 import eu.itesla_project.contingency.tasks.ModificationTask;
 
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 public class SwitchOpeningAction implements ActionElement {
@@ -28,7 +27,7 @@ public class SwitchOpeningAction implements ActionElement {
         this.equipmentId = switchId;
     }
 
-    public SwitchOpeningAction(String vlId, String switchId, Number implementationTime, Number achievmentIndex ) {
+    public SwitchOpeningAction(String vlId, String switchId, Number implementationTime, Number achievmentIndex) {
         this.voltageLevelId = vlId;
         this.equipmentId = switchId;
         this.implementationTime = implementationTime;
@@ -37,7 +36,7 @@ public class SwitchOpeningAction implements ActionElement {
 
     @Override
     public ActionElementType getType() {
-         return ActionElementType.SWITCH_OPEN;
+        return ActionElementType.SWITCH_OPEN;
     }
 
     public String getVoltageLevelId() {
@@ -62,7 +61,7 @@ public class SwitchOpeningAction implements ActionElement {
 
     @Override
     public Number getAchievmentIndex() {
-        return      achievmentIndex;
+        return achievmentIndex;
     }
 
     @Override

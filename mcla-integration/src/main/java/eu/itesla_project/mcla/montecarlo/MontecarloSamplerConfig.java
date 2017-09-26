@@ -65,7 +65,7 @@ public class MontecarloSamplerConfig {
             int optionSign,
             int centering,
             boolean debug
-            ) {
+    ) {
         Objects.requireNonNull(binariesDir, "sampler compiled binaries directory is null");
         Objects.requireNonNull(runtimeHomeDir, "matlab runtime directory is null");
         Objects.requireNonNull(tmpDir, "tmp directory is null");

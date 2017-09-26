@@ -37,6 +37,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 )
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
+@SuppressWarnings("checkstyle:indentation")
 public class Internal  implements Serializable {
     private static final long serialVersionUID = 1L;
 

@@ -153,7 +153,7 @@ public class EchUtil {
     }
 
     private static Bus selectSlackbusCriteria1(Network network, EurostagEchExportConfig config, Set<String> busesToAvoid) {
-         return StreamSupport.stream(EchUtil.getBuses(network, config).spliterator(), false)
+        return StreamSupport.stream(EchUtil.getBuses(network, config).spliterator(), false)
                 .sorted((b1, b2) -> b1.getId().compareTo(b2.getId()))
                 .filter(b -> !busesToAvoid.contains(b.getId())
                         && b.getConnectedComponent() != null && b.getConnectedComponent().getNum() == Component.MAIN_NUM)
