@@ -164,7 +164,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
                         new InputFile(wp43ConfigsZipFileName, ARCHIVE_UNZIP),
                         new InputFile(DDB_DICT_GENS_CSV))
                 .subCommand()
-                .program(EUSTAG_CPT)
+                .program(config.getEurostagCptCommandName())
                 .args("-s", FAULT_SEQ_FILE_NAME, PRE_FAULT_SAC_FILE_NAME)
                 .timeout(config.getSimTimeout())
                 .add()
