@@ -173,7 +173,7 @@ public class InitializationRunner {
         File[] initFiles = dirPath.toFile().listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                return (name.startsWith(modelName) && (!name.endsWith(".mat")));
+                return name.startsWith(modelName) && (!name.endsWith(".mat"));
             }
         });
         for (File f : initFiles) {

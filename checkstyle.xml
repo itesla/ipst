@@ -37,6 +37,7 @@
         <module name="TypecastParenPad"/>
         <module name="WhitespaceAfter"/>
         <module name="WhitespaceAround"/>
+        <module name="UnnecessaryParentheses"/>
         <module name="UnusedImports"/>
     </module>
 

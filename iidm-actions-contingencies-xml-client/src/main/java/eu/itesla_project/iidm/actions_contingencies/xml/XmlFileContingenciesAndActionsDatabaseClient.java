@@ -544,7 +544,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
     }
 
     private boolean isConstant(Operand op) {
-        return (getFilteredContent(op).size() == 1 && getFilteredContent(op).get(0) instanceof String);
+        return getFilteredContent(op).size() == 1 && getFilteredContent(op).get(0) instanceof String;
 
     }
 

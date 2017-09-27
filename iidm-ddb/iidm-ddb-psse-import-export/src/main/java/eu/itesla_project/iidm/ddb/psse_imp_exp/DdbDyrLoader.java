@@ -196,7 +196,7 @@ public class DdbDyrLoader {
                 ListMultimap<String, PsseRegister> groupByBusByType = Multimaps.index(groupsByBus.get(dyrId), new Function<PsseRegister, String>() {
                     @Override
                     public String apply(final PsseRegister s) {
-                        return ((PsseRegisterType.isEquipment(s) == true) ? "equipment" : "internal");
+                        return (PsseRegisterType.isEquipment(s) == true) ? "equipment" : "internal";
                     }
                 });
                 // check the assumption that for a given dyrId there must be just one machine: if not , ERROR
@@ -397,7 +397,7 @@ public class DdbDyrLoader {
                     //There is also the case ETERM (equipment) and V_CT (IEEEST)
                     String eqPin = "ETERM";
                     String regPin = "ECOMP";
-                    if ((equipmentReg.pins.contains(eqPin) && (regulatorRegister.pins.contains(regPin)))) {
+                    if (equipmentReg.pins.contains(eqPin) && (regulatorRegister.pins.contains(regPin))) {
                         log.info("--* connection eq-int {}-{}  on pins {},{}", equipmentReg.getModel(), regulatorRegister.getModel(), eqPin, regPin);
                         log.info("----*  {} {} {} {} {} {} {}", "inside", "equipment", equipmentId, eqPin, regPin, "internal", regulatorRegister.getId());
                         Connection newC = new Connection(equipmentId, Connection.EQUIPMENT_TYPE, regulatorRegister.getId(), Connection.INTERNAL_TYPE, eqPin, regPin, Connection.INSIDE_CONNECTION);
@@ -411,7 +411,7 @@ public class DdbDyrLoader {
                     }
 
                     regPin = "V_CT";
-                    if ((equipmentReg.pins.contains(eqPin) && (regulatorRegister.getModel().equalsIgnoreCase("IEEEST")))) {
+                    if (equipmentReg.pins.contains(eqPin) && (regulatorRegister.getModel().equalsIgnoreCase("IEEEST"))) {
                         log.info("--* connection eq-int {}-{}  on pins {},{}", equipmentReg.getModel(), regulatorRegister.getModel(), eqPin, regPin);
                         log.info("----*  {} {} {} {} {} {} {}", "inside", "equipment", equipmentId, eqPin, regPin, "internal", regulatorRegister.getId());
                         Connection newC = new Connection(equipmentId, Connection.EQUIPMENT_TYPE, regulatorRegister.getId(), Connection.INTERNAL_TYPE, eqPin, regPin, Connection.INSIDE_CONNECTION);

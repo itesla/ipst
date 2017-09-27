@@ -243,7 +243,7 @@ public class DDBManagerBean implements DDBManager {
                 Equipment.class);
         query.setParameter("arg1", cimId);
         List<Equipment> res = query.getResultList();
-        return (res.size() > 0 ? res.get(0) : null);
+        return res.size() > 0 ? res.get(0) : null;
     }
 
     public List<Internal> findInternalsAll() {
@@ -271,7 +271,7 @@ public class DDBManagerBean implements DDBManager {
 
     public Internal findInternal(String nativeId) {
         Principal cPrincipal = getCallerPrincipal();
-        if ((nativeId == null)) {
+        if (nativeId == null) {
             throw new RuntimeException("nativeId must be not null");
         }
         TypedQuery<Internal> query = em.createQuery(
@@ -279,7 +279,7 @@ public class DDBManagerBean implements DDBManager {
                 Internal.class);
         query.setParameter("arg1", nativeId);
         List<Internal> res = query.getResultList();
-        return (res.size() > 0 ? res.get(0) : null);
+        return res.size() > 0 ? res.get(0) : null;
     }
 
     public List<ModelTemplateContainer> findModelTemplateContainerAll() {
@@ -314,7 +314,7 @@ public class DDBManagerBean implements DDBManager {
                 ModelTemplateContainer.class);
         query.setParameter("arg1", ddbId);
         List<ModelTemplateContainer> res = query.getResultList();
-        return (res.size() > 0 ? res.get(0) : null);
+        return res.size() > 0 ? res.get(0) : null;
     }
 
     public ParametersContainer findParametersContainer(String ddbId) {
@@ -324,7 +324,7 @@ public class DDBManagerBean implements DDBManager {
                 ParametersContainer.class);
         query.setParameter("arg1", ddbId);
         List<ParametersContainer> res = query.getResultList();
-        return (res.size() > 0 ? res.get(0) : null);
+        return res.size() > 0 ? res.get(0) : null;
     }
 
     public List<ParametersContainer> findParametersContainerAll() {
@@ -391,7 +391,7 @@ public class DDBManagerBean implements DDBManager {
         query.setParameter("arg1", version);
         query.setParameter("arg2", sim);
         List<SimulatorInst> res = query.getResultList();
-        return ((res.size() == 0) ? null : res.get(0));
+        return (res.size() == 0) ? null : res.get(0);
     }
 
     public List<SimulatorInst> findSimulatorsAll() {
@@ -468,7 +468,7 @@ public class DDBManagerBean implements DDBManager {
             throw new RuntimeException("Equipment and SimulatorInst must be not null");
         }
         Principal cPrincipal = getCallerPrincipal();
-        return ((equipment == null) ? null : this.findModelTemplate(equipment.getModelContainer(), simulator));
+        return (equipment == null) ? null : this.findModelTemplate(equipment.getModelContainer(), simulator);
     }
 
 
@@ -538,7 +538,7 @@ public class DDBManagerBean implements DDBManager {
         ParameterFloat par = getParameterOrDefaultByNameAndType(equipment, simulator,
                 name,
                 ParameterFloat.class);
-        return ((par != null) ? (par.getValue()) : null);
+        return (par != null) ? (par.getValue()) : null;
     }
 
     @WebMethod(operationName = "getStringParameterEquipment")
@@ -547,7 +547,7 @@ public class DDBManagerBean implements DDBManager {
         ParameterString par = getParameterOrDefaultByNameAndType(equipment, simulator,
                 name,
                 ParameterString.class);
-        return ((par != null) ? (par.getValue()) : null);
+        return (par != null) ? (par.getValue()) : null;
     }
 
     @WebMethod(operationName = "getIntegerParameterEquipment")
@@ -556,7 +556,7 @@ public class DDBManagerBean implements DDBManager {
         ParameterInteger par = getParameterOrDefaultByNameAndType(equipment, simulator,
                 name,
                 ParameterInteger.class);
-        return ((par != null) ? (par.getValue()) : null);
+        return (par != null) ? (par.getValue()) : null;
     }
 
     @WebMethod(operationName = "getBooleanParameterEquipment")
@@ -565,7 +565,7 @@ public class DDBManagerBean implements DDBManager {
         ParameterBoolean par = getParameterOrDefaultByNameAndType(equipment, simulator,
                 name,
                 ParameterBoolean.class);
-        return ((par != null) ? (par.getValue()) : null);
+        return (par != null) ? (par.getValue()) : null;
     }
 
     @WebMethod(operationName = "getTableParameterEquipment")
@@ -575,7 +575,7 @@ public class DDBManagerBean implements DDBManager {
         ParameterTable par = getParameterOrDefaultByNameAndType(equipment, simulator,
                 name,
                 ParameterTable.class);
-        return ((par != null) ? (par) : null);
+        return (par != null) ? par : null;
     }
 
 
@@ -647,7 +647,7 @@ public class DDBManagerBean implements DDBManager {
                 simulator,
                 name,
                 ParameterFloat.class);
-        return ((par != null) ? (par.getValue()) : null);
+        return (par != null) ? (par.getValue()) : null;
     }
 
     @WebMethod(operationName = "getStringParameterInternal")
@@ -658,7 +658,7 @@ public class DDBManagerBean implements DDBManager {
                 simulator,
                 name,
                 ParameterString.class);
-        return ((par != null) ? (par.getValue()) : null);
+        return (par != null) ? (par.getValue()) : null;
     }
 
     @WebMethod(operationName = "getIntegerParameterInternal")
@@ -669,7 +669,7 @@ public class DDBManagerBean implements DDBManager {
                 simulator,
                 name,
                 ParameterInteger.class);
-        return ((par != null) ? (par.getValue()) : null);
+        return (par != null) ? (par.getValue()) : null;
     }
 
     @WebMethod(operationName = "getBooleanParameterInternal")
@@ -680,7 +680,7 @@ public class DDBManagerBean implements DDBManager {
                 simulator,
                 name,
                 ParameterBoolean.class);
-        return ((par != null) ? (par.getValue()) : null);
+        return (par != null) ? (par.getValue()) : null;
     }
 
     @WebMethod(operationName = "getTableParameterInternal")
@@ -690,7 +690,7 @@ public class DDBManagerBean implements DDBManager {
                 simulator,
                 name,
                 ParameterTable.class);
-        return ((par != null) ? (par) : null);
+        return (par != null) ? par : null;
     }
 
 
@@ -782,7 +782,7 @@ public class DDBManagerBean implements DDBManager {
         ParameterFloat par = getParameterByNameAndType(parametersContainer, simulator,
                 name,
                 ParameterFloat.class);
-        return ((par != null) ? (par.getValue()) : null);
+        return (par != null) ? (par.getValue()) : null;
     }
 
     @WebMethod(operationName = "getStringParameterParametersContainer")
@@ -791,7 +791,7 @@ public class DDBManagerBean implements DDBManager {
         ParameterString par = getParameterByNameAndType(parametersContainer, simulator,
                 name,
                 ParameterString.class);
-        return ((par != null) ? (par.getValue()) : null);
+        return (par != null) ? (par.getValue()) : null;
     }
 
     @WebMethod(operationName = "getIntegerParameterParametersContainer")
@@ -800,7 +800,7 @@ public class DDBManagerBean implements DDBManager {
         ParameterInteger par = getParameterByNameAndType(parametersContainer, simulator,
                 name,
                 ParameterInteger.class);
-        return ((par != null) ? (par.getValue()) : null);
+        return (par != null) ? (par.getValue()) : null;
     }
 
     @WebMethod(operationName = "getBooleanParameterParametersContainer")
@@ -809,7 +809,7 @@ public class DDBManagerBean implements DDBManager {
         ParameterBoolean par = getParameterByNameAndType(parametersContainer, simulator,
                 name,
                 ParameterBoolean.class);
-        return ((par != null) ? (par.getValue()) : null);
+        return (par != null) ? (par.getValue()) : null;
     }
 
     @WebMethod(operationName = "getTableParameterParametersContainer")
@@ -819,7 +819,7 @@ public class DDBManagerBean implements DDBManager {
         ParameterTable par = getParameterByNameAndType(parametersContainer, simulator,
                 name,
                 ParameterTable.class);
-        return ((par != null) ? (par) : null);
+        return (par != null) ? par : null;
     }
 
     @WebMethod(operationName = "saveConnectionSchema")
@@ -851,7 +851,7 @@ public class DDBManagerBean implements DDBManager {
             query.setParameter("arg2", simulator);
         }
         List<ConnectionSchema> res = query.getResultList();
-        return (res.size() > 0 ? res.get(0) : null);
+        return res.size() > 0 ? res.get(0) : null;
     }
 
     @Override
