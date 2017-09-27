@@ -538,7 +538,7 @@ public class DDBManagerBean implements DDBManager {
         ParameterFloat par = getParameterOrDefaultByNameAndType(equipment, simulator,
                 name,
                 ParameterFloat.class);
-        return (par != null) ? (par.getValue()) : null;
+        return (par != null) ? par.getValue() : null;
     }
 
     @WebMethod(operationName = "getStringParameterEquipment")
@@ -547,7 +547,7 @@ public class DDBManagerBean implements DDBManager {
         ParameterString par = getParameterOrDefaultByNameAndType(equipment, simulator,
                 name,
                 ParameterString.class);
-        return (par != null) ? (par.getValue()) : null;
+        return (par != null) ? par.getValue() : null;
     }
 
     @WebMethod(operationName = "getIntegerParameterEquipment")
@@ -556,7 +556,7 @@ public class DDBManagerBean implements DDBManager {
         ParameterInteger par = getParameterOrDefaultByNameAndType(equipment, simulator,
                 name,
                 ParameterInteger.class);
-        return (par != null) ? (par.getValue()) : null;
+        return (par != null) ? par.getValue() : null;
     }
 
     @WebMethod(operationName = "getBooleanParameterEquipment")
@@ -565,7 +565,7 @@ public class DDBManagerBean implements DDBManager {
         ParameterBoolean par = getParameterOrDefaultByNameAndType(equipment, simulator,
                 name,
                 ParameterBoolean.class);
-        return (par != null) ? (par.getValue()) : null;
+        return (par != null) ? par.getValue() : null;
     }
 
     @WebMethod(operationName = "getTableParameterEquipment")
