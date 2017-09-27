@@ -42,9 +42,9 @@ public class DataComparatorTool implements Tool {
     private static final String DATA_COMPARATOR_OUT_FIG = "dataComparatorOut.fig";
 
     @Override
-	public Command getCommand() {
-		return DataComparatorCommand.INSTANCE;
-	}
+    public Command getCommand() {
+        return DataComparatorCommand.INSTANCE;
+    }
 
     private Map<String, String> createEnv(SamplerWp41Config config) {
         Map<String, String> env = new HashMap<>();
@@ -61,7 +61,7 @@ public class DataComparatorTool implements Tool {
 
     private eu.itesla_project.computation.Command createConcatMatFilesCmd(Path dataPath, String pattern, Path outFile, SamplerWp41Config config) throws IOException {
         List<String> args1 = new ArrayList<>();
-        args1.add(dataPath.toFile().getAbsolutePath()+"/");
+        args1.add(dataPath.toFile().getAbsolutePath() + "/");
         args1.add(pattern);
         args1.add(outFile.toFile().getAbsolutePath());
 
@@ -85,7 +85,7 @@ public class DataComparatorTool implements Tool {
         List<String> args1 = new ArrayList<>();
         args1.add(file1);
         args1.add(file2);
-        if (!"".equals(set1+set2)) {
+        if (!"".equals(set1 + set2)) {
             args1.add(set1);
             args1.add(set2);
         }
@@ -97,7 +97,7 @@ public class DataComparatorTool implements Tool {
             wp41DataComparator = WP41_DATACOMPARATOR;
         }
 
-        List<OutputFile> lout=new ArrayList<>();
+        List<OutputFile> lout = new ArrayList<>();
         lout.add(new OutputFile(DATA_COMPARATOR_OUT_PNG));
         lout.add(new OutputFile(DATA_COMPARATOR_OUT_FIG));
 

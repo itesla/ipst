@@ -11,16 +11,16 @@ package eu.itesla_project.modules.contingencies;
  * @author Quinary <itesla@quinary.com>
  */
 public class ActionParameterIntegerValue implements ActionParameterValue {
-	
-	Integer value;
-	
-	public ActionParameterIntegerValue(Integer value) {
-		this.value = value;
-	}
-	
-	@Override
-	public Integer getValue() {
-		return value;
-	}
+
+    Integer value;
+
+    public ActionParameterIntegerValue(Integer value) {
+        this.value = value;
+    }
+
+    @Override
+    public Integer getValue() {
+        return value;
+    }
 
 }

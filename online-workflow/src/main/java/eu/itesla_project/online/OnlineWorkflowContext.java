@@ -22,35 +22,35 @@ public class OnlineWorkflowContext {
 
     private String offlineWorkflowId;
 
-	// workflow id
+    // workflow id
     String workflowId;
     // network under analysis
-	Network network;
-	// time horizon of the analysis
-	TimeHorizon timeHorizon;
-	// contingencies that need to be analyzed, result of the WSA step
-	List<Contingency> contingenciesToAnalyze = new ArrayList<>();
-	// counter for the states
-	private final AtomicInteger stateCounter = new AtomicInteger(0);
-	// analysis results
-	ForecastAnalysisResults results;
-	// security rules application results
-	SecurityRulesApplicationResults securityRulesResults;
-	// wca results
-	WCAResults wcaResults;
-	// wca security rules application results
-	SecurityRulesApplicationResults wcaSecurityRulesResults;
+    Network network;
+    // time horizon of the analysis
+    TimeHorizon timeHorizon;
+    // contingencies that need to be analyzed, result of the WSA step
+    List<Contingency> contingenciesToAnalyze = new ArrayList<>();
+    // counter for the states
+    private final AtomicInteger stateCounter = new AtomicInteger(0);
+    // analysis results
+    ForecastAnalysisResults results;
+    // security rules application results
+    SecurityRulesApplicationResults securityRulesResults;
+    // wca results
+    WCAResults wcaResults;
+    // wca security rules application results
+    SecurityRulesApplicationResults wcaSecurityRulesResults;
 
-	
-	public String getWorkflowId() {
+
+    public String getWorkflowId() {
         return workflowId;
     }
 
     public void setWorkflowId(String workflowId) {
         this.workflowId = workflowId;
     }
-	
-	public String getOfflineWorkflowId() {
+
+    public String getOfflineWorkflowId() {
         return offlineWorkflowId;
     }
 
@@ -58,64 +58,64 @@ public class OnlineWorkflowContext {
         this.offlineWorkflowId = offlineWorkflowId;
     }
 
-	public List<Contingency> getContingenciesToAnalyze() {
-		return contingenciesToAnalyze;
-	}
+    public List<Contingency> getContingenciesToAnalyze() {
+        return contingenciesToAnalyze;
+    }
 
-	public void setContingenciesToAnalyze(List<Contingency> contingenciesToAnalyze) {
-		this.contingenciesToAnalyze = contingenciesToAnalyze;
-	}
+    public void setContingenciesToAnalyze(List<Contingency> contingenciesToAnalyze) {
+        this.contingenciesToAnalyze = contingenciesToAnalyze;
+    }
 
-	public TimeHorizon getTimeHorizon() {
-		return timeHorizon;
-	}
+    public TimeHorizon getTimeHorizon() {
+        return timeHorizon;
+    }
 
-	public void setTimeHorizon(TimeHorizon timeHorizon) {
-		this.timeHorizon = timeHorizon;
-	}
+    public void setTimeHorizon(TimeHorizon timeHorizon) {
+        this.timeHorizon = timeHorizon;
+    }
 
-	public Network getNetwork() {
-		return network;
-	}
+    public Network getNetwork() {
+        return network;
+    }
 
-	public void setNetwork(Network network) {
-		this.network=network;
-	}
+    public void setNetwork(Network network) {
+        this.network = network;
+    }
 
-	public int incrementStateCounter() {
+    public int incrementStateCounter() {
         return stateCounter.getAndIncrement();
     }
 
-	public void setResults(ForecastAnalysisResults forecastAnalysisResults) {
-		results = forecastAnalysisResults;
-	}
+    public void setResults(ForecastAnalysisResults forecastAnalysisResults) {
+        results = forecastAnalysisResults;
+    }
 
-	public ForecastAnalysisResults getResults() {
-		return results;
-	}
-	
-	public void setSecurityRulesResults(SecurityRulesApplicationResults securityRulesResults) {
-		this.securityRulesResults = securityRulesResults;
-	}
+    public ForecastAnalysisResults getResults() {
+        return results;
+    }
 
-	public SecurityRulesApplicationResults getSecurityRulesResults() {
-		return securityRulesResults;
-	}
-	
-	public void setWcaResults(WCAResults wcaResults) {
-		this.wcaResults = wcaResults;
-	}
-	
+    public void setSecurityRulesResults(SecurityRulesApplicationResults securityRulesResults) {
+        this.securityRulesResults = securityRulesResults;
+    }
+
+    public SecurityRulesApplicationResults getSecurityRulesResults() {
+        return securityRulesResults;
+    }
+
+    public void setWcaResults(WCAResults wcaResults) {
+        this.wcaResults = wcaResults;
+    }
+
     public WCAResults getWcaResults() {
-		return wcaResults;
-	}
-    
-    public void setWcaSecurityRulesResults(SecurityRulesApplicationResults wcaSecurityRulesResults) {
-		this.wcaSecurityRulesResults = wcaSecurityRulesResults;
-	}
+        return wcaResults;
+    }
 
-	public SecurityRulesApplicationResults getWcaSecurityRulesResults() {
-		return wcaSecurityRulesResults;
-	}
+    public void setWcaSecurityRulesResults(SecurityRulesApplicationResults wcaSecurityRulesResults) {
+        this.wcaSecurityRulesResults = wcaSecurityRulesResults;
+    }
+
+    public SecurityRulesApplicationResults getWcaSecurityRulesResults() {
+        return wcaSecurityRulesResults;
+    }
 }
 

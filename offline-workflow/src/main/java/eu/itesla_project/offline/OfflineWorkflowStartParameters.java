@@ -87,7 +87,7 @@ public class OfflineWorkflowStartParameters implements Serializable {
         out.println("state queue size: " + stateQueueSize);
         out.println("max processed samples: " + maxProcessedSamples);
     }
-    
+
     @Override
     public String toString() {
         return "{sampleQueueSize=" + sampleQueueSize + ", samplingThreads=" + samplingThreads

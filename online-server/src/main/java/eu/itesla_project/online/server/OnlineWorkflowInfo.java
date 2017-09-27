@@ -12,7 +12,6 @@ import java.util.Objects;
 import eu.itesla_project.online.ContingencyStatesActionsSynthesis;
 import eu.itesla_project.online.ContingencyStatesIndexesSynthesis;
 import eu.itesla_project.online.IndexSecurityRulesResultsSynthesis;
-import eu.itesla_project.online.StatusSynthesis;
 import eu.itesla_project.online.WcaContingenciesSynthesis;
 import eu.itesla_project.online.WorkStatus;
 import eu.itesla_project.online.WorkflowStatusEnum;

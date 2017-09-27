@@ -20,65 +20,65 @@ import eu.itesla_project.modelica_export.util.eurostag.EurostagFixedData;
  * @author Silvia Machado <machados@aia.es>
  */
 public class ConnectCouplingDevicesRecord extends ModelicaRecord {
-	
-	public ConnectCouplingDevicesRecord(Switch switchNode, Bus bus1, Bus bus2) {
-		this.switchNode = switchNode;
-		this.bus1 = bus1;
-		this.bus2 = bus2;
-	}
-	
-	@Override
-	public void createModelicaName(ModExportContext modContext, DDBManager ddbManager, SimulatorInst modelicaSim) {
+
+    public ConnectCouplingDevicesRecord(Switch switchNode, Bus bus1, Bus bus2) {
+        this.switchNode = switchNode;
+        this.bus1 = bus1;
+        this.bus2 = bus2;
+    }
+
+    @Override
+    public void createModelicaName(ModExportContext modContext, DDBManager ddbManager, SimulatorInst modelicaSim) {
         nodeName1 = modContext.dictionary.getModelicaName(bus1);
         nodeName2 = modContext.dictionary.getModelicaName(bus2);
 
         String modelicaname = nodeName1 + "-" + nodeName2;
         modContext.dictionary.add(switchNode, modelicaname);
         super.setModelicaName(modelicaname);
-	}
-	
-	@Override
-	public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
-		this.addValue(EurostagFixedData.CONNECT);
-		this.addValue(this.nodeName1);
-		this.addValue("." + StaticData.POSITIVE_PIN + ", ");
-		this.addValue(this.nodeName2);
-		this.addValue("." + StaticData.POSITIVE_PIN);
-		this.addValue(EurostagFixedData.ANNOT_CONNECT);
-	}
+    }
 
-	@Override
-	public String parseName(String name) {
-    	String parsedName = name.trim();
+    @Override
+    public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
+        this.addValue(EurostagFixedData.CONNECT);
+        this.addValue(this.nodeName1);
+        this.addValue("." + StaticData.POSITIVE_PIN + ", ");
+        this.addValue(this.nodeName2);
+        this.addValue("." + StaticData.POSITIVE_PIN);
+        this.addValue(EurostagFixedData.ANNOT_CONNECT);
+    }
 
-    	if(parsedName.contains("-")) {
-        	if(!parsedName.startsWith("_")) {
-            	parsedName = "_" + parsedName;    		
-        	}
-        	parsedName = parsedName.replaceAll("-", "_");
-    	}
+    @Override
+    public String parseName(String name) {
+        String parsedName = name.trim();
+
+        if (parsedName.contains("-")) {
+            if (!parsedName.startsWith("_")) {
+                parsedName = "_" + parsedName;
+            }
+            parsedName = parsedName.replaceAll("-", "_");
+        }
 
         int posi = parsedName.indexOf('_');
         int pose = parsedName.lastIndexOf('_');
         if (pose > posi) {
-        	parsedName = parsedName.substring(posi+1, pose);
+            parsedName = parsedName.substring(posi + 1, pose);
         }
-       	parsedName = parsedName.replaceAll("\\s", "_");
+        parsedName = parsedName.replaceAll("\\s", "_");
 
-       	if(parsedName.substring(0, 1).matches("[0-9]")) {
-        	parsedName = "b_" + parsedName;
-       	}
+        if (parsedName.substring(0, 1).matches("[0-9]")) {
+            parsedName = "b_" + parsedName;
+        }
         return parsedName;
-	}
-	
-	@Override
-	public ConnectCouplingDevicesRecord getClassName() {
-		return this;
-	}
-	
-	private Switch		switchNode;
-	protected Bus		bus1 = null;
-	protected Bus		bus2 = null;
-	protected String	nodeName1;	
-	protected String	nodeName2;
+    }
+
+    @Override
+    public ConnectCouplingDevicesRecord getClassName() {
+        return this;
+    }
+
+    private Switch        switchNode;
+    protected Bus        bus1 = null;
+    protected Bus        bus2 = null;
+    protected String    nodeName1;
+    protected String    nodeName2;
 }

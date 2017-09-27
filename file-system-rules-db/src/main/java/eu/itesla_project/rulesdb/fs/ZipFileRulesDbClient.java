@@ -30,7 +30,7 @@ public class ZipFileRulesDbClient extends FileSystemRulesDbClient {
         private FileSystem zipFs;
 
         public RuleZipFS(Path zipFile) throws IOException {
-            this.zipFs = FileSystems.newFileSystem(URI.create("jar:file:" + zipFile.toAbsolutePath().toString()), ZIP_FS_ENV);;
+            this.zipFs = FileSystems.newFileSystem(URI.create("jar:file:" + zipFile.toAbsolutePath().toString()), ZIP_FS_ENV);
         }
 
         @Override

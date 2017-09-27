@@ -49,28 +49,29 @@ public class DynamicDatabaseCacheClient implements DynamicDatabaseClient {
         return delegate.getVersion();
     }
 
-	private boolean filteredGenerator(Generator g, boolean isFiltered) {
-		if (isFiltered) {
-	  		if  (!Float.isNaN(g.getTerminal().getP()) && ((-g.getTerminal().getP() > g.getMaxP()) || (-g.getTerminal().getP() < g.getMinP())) ) {
-	  			return true;
-	  		}
-		}
-		return false;
-	}
+    private boolean filteredGenerator(Generator g, boolean isFiltered) {
+        if (isFiltered) {
+            if (!Float.isNaN(g.getTerminal().getP()) && ((-g.getTerminal().getP() > g.getMaxP()) || (-g.getTerminal().getP() < g.getMinP()))) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     private List<Generator> filterGenerators(Network network, boolean isFiltered) {
-    	List<Generator> filtGens=new ArrayList<>();
-		for (Generator g : Identifiables.sort(network.getGenerators())) {
-			if ( !filteredGenerator(g,isFiltered) )
-				filtGens.add(g);
-		}
-		return filtGens;
-	}
+        List<Generator> filtGens = new ArrayList<>();
+        for (Generator g : Identifiables.sort(network.getGenerators())) {
+            if (!filteredGenerator(g, isFiltered)) {
+                filtGens.add(g);
+            }
+        }
+        return filtGens;
+    }
 
 
     @Override
     public void dumpDtaFile(Path workingDir, String fileName, Network network, Map<String, Character> parallelIndexes, String eurostagVersion, Map<String, String> iidm2eurostagId) {
-    	boolean isFiltered = DdExportConfig.load().getGensPQfilter();
+        boolean isFiltered = DdExportConfig.load().getGensPQfilter();
 
         CacheManager.CacheEntry cacheEntry = PlatformConfig.defaultCacheManager().newCacheEntry("ddb")
                 .withKey(fileName)

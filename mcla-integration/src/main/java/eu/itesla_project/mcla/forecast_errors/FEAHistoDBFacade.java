@@ -34,19 +34,17 @@ public final class FEAHistoDBFacade {
     private FEAHistoDBFacade() {
     }
 
-    public static void historicalDataToCsvFile(HistoDbClient histoDbClient, List<String> generatorsIds, List<String> loadsIds, 
+    public static void historicalDataToCsvFile(HistoDbClient histoDbClient, List<String> generatorsIds, List<String> loadsIds,
                                                Interval histoInterval, Path historicalDataCsvFile) throws Exception {
         Set<HistoDbAttributeId> attributeIds = new LinkedHashSet<>();
         attributeIds.add(new HistoDbMetaAttributeId(HistoDbMetaAttributeType.datetime));
         attributeIds.add(new HistoDbMetaAttributeId(HistoDbMetaAttributeType.horizon));
         attributeIds.add(new HistoDbMetaAttributeId(HistoDbMetaAttributeType.forecastTime));
-        generatorsIds.forEach( generatorId -> 
-        {
+        generatorsIds.forEach(generatorId -> {
             attributeIds.add(new HistoDbNetworkAttributeId(generatorId, HistoDbAttr.P));
             attributeIds.add(new HistoDbNetworkAttributeId(generatorId, HistoDbAttr.Q));
         });
-        loadsIds.forEach( loadId -> 
-        {
+        loadsIds.forEach(loadId -> {
             attributeIds.add(new HistoDbNetworkAttributeId(loadId, HistoDbAttr.P));
             attributeIds.add(new HistoDbNetworkAttributeId(loadId, HistoDbAttr.Q));
         });
@@ -54,7 +52,7 @@ public final class FEAHistoDBFacade {
                                                      attributeIds,
                                                      histoInterval,
                                                      HistoDbHorizon.DACF,
-                                                     false, 
+                                                     false,
                                                      false)) {
             Files.copy(is, historicalDataCsvFile);
         }

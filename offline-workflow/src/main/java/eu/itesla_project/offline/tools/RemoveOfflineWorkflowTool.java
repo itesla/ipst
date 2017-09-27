@@ -28,7 +28,7 @@ public class RemoveOfflineWorkflowTool implements Tool {
 
     @Override
     public void run(CommandLine line, ToolRunningContext context) throws Exception {
-        String workflowId = line.getOptionValue("workflow");        
+        String workflowId = line.getOptionValue("workflow");
         try (OfflineApplication app = new RemoteOfflineApplicationImpl()) {
             app.removeWorkflow(workflowId);
         }

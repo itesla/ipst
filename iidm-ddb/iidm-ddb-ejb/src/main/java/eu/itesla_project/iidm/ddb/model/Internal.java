@@ -30,74 +30,75 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(
-	name = "INTERNAL",  
-	uniqueConstraints={
-		   @UniqueConstraint (columnNames={"nativeId"})
-	}
+    name = "INTERNAL",
+    uniqueConstraints = {
+            @UniqueConstraint(columnNames = {"nativeId"})
+    }
 )
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
-public class Internal  implements Serializable{
-	private static final long serialVersionUID = 1L;
+@SuppressWarnings("checkstyle:indentation")
+public class Internal  implements Serializable {
+    private static final long serialVersionUID = 1L;
 
-	// The synthetic id of the object.
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    // The synthetic id of the object.
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	public Long getId() {
-		return id;
-	}
-//	public void setId(Long id) {
-//		this.id = id;
-//	}
+    public Long getId() {
+        return id;
+    }
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
 
-	//TBD: unique=true to be matched with versions&co 
-	@Column(nullable=false)
-	@NotEmpty
-	private String nativeId;
-	public String getNativeId() {
-		return nativeId;
-	}
-	
-	//LP if thie method is not defined, it's impossible to create a new Internal from interface (internals/create.jsf)
-	public void setNativeId(String nativeId) {
-		this.nativeId = nativeId;
-	}
+    //TBD: unique=true to be matched with versions&co
+    @Column(nullable = false)
+    @NotEmpty
+    private String nativeId;
+    public String getNativeId() {
+        return nativeId;
+    }
 
-	
-	
-	public ModelTemplateContainer getModelContainer() {
-		return modelContainer;
-	}
-
-	public void setModelContainer(ModelTemplateContainer modelContainer) {
-		this.modelContainer = modelContainer;
-	}
-
-	public ParametersContainer getParametersContainer() {
-		return parametersContainer;
-	}
-
-	public void setParametersContainer(ParametersContainer parametersContainer) {
-		this.parametersContainer = parametersContainer;
-	}
+    //LP if thie method is not defined, it's impossible to create a new Internal from interface (internals/create.jsf)
+    public void setNativeId(String nativeId) {
+        this.nativeId = nativeId;
+    }
 
 
 
-	//@OneToOne(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
-	@ManyToOne(fetch=FetchType.EAGER)
-	ModelTemplateContainer modelContainer;
+    public ModelTemplateContainer getModelContainer() {
+        return modelContainer;
+    }
 
-	//@OneToOne(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
-	@ManyToOne(fetch=FetchType.EAGER)
-	ParametersContainer parametersContainer;
-	
-	protected Internal() {
-	}
-	
-	public Internal(String nativeId) {
-		this.nativeId=nativeId;
-	}
-	
+    public void setModelContainer(ModelTemplateContainer modelContainer) {
+        this.modelContainer = modelContainer;
+    }
+
+    public ParametersContainer getParametersContainer() {
+        return parametersContainer;
+    }
+
+    public void setParametersContainer(ParametersContainer parametersContainer) {
+        this.parametersContainer = parametersContainer;
+    }
+
+
+
+    //@OneToOne(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
+    ModelTemplateContainer modelContainer;
+
+    //@OneToOne(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
+    ParametersContainer parametersContainer;
+
+    protected Internal() {
+    }
+
+    public Internal(String nativeId) {
+        this.nativeId = nativeId;
+    }
+
 }

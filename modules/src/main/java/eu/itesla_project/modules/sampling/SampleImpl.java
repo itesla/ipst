@@ -80,9 +80,9 @@ public class SampleImpl implements Sample {
                 float oldQ = g.getTargetQ();
                 LOGGER.trace(" gen {} - P:{}, Q:{} -> P:{}, Q:{} ", g.getId(), oldP, oldQ, gs.p, gs.q);
                 g.setTargetP(-gs.p)
-                 .setTargetQ(-gs.q);
+                        .setTargetQ(-gs.q);
                 g.getTerminal().setP(gs.p)
-                               .setQ(gs.q);
+                        .setQ(gs.q);
             }
         }
         for (InjectionSample ls : loads) {

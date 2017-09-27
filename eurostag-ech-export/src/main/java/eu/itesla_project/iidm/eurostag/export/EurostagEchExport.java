@@ -138,8 +138,8 @@ public class EurostagEchExport {
                 Bus bus2 = EchUtil.getBus2(vl, sw.getId(), config);
                 esgNetwork.addCouplingDevice(new EsgCouplingDevice(new EsgBranchName(new Esg8charName(dictionary.getEsgId(bus1.getId())),
                         new Esg8charName(dictionary.getEsgId(bus2.getId())),
-                        parallelIndexes.getParallelIndex(sw.getId()))
-                        , sw.isOpen() ? EsgCouplingDevice.ConnectionStatus.OPEN : EsgCouplingDevice.ConnectionStatus.CLOSED));
+                        parallelIndexes.getParallelIndex(sw.getId())),
+                        sw.isOpen() ? EsgCouplingDevice.ConnectionStatus.OPEN : EsgCouplingDevice.ConnectionStatus.CLOSED));
             }
         }
     }

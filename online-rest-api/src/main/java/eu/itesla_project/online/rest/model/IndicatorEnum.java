@@ -11,5 +11,5 @@ package eu.itesla_project.online.rest.model;
 * @author Giovanni Ferrari <giovanni.ferrari@techrain.it>
 */
 public enum IndicatorEnum {
-	RELATIVE, ABSOLUTE
+    RELATIVE, ABSOLUTE
 }

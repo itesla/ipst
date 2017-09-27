@@ -14,22 +14,22 @@ import java.util.Map;
  */
 public abstract class SourceEngine {
 
-	private String name;
-	private String version;
-	
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getVersion() {
-		return version;
-	}
-	public void setVersion(String version) {
-		this.version = version;
-	}
-	
-	public abstract HashMap<String, Map<String, String>> createGenParamsDictionary();
-	
+    private String name;
+    private String version;
+
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public String getVersion() {
+        return version;
+    }
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public abstract HashMap<String, Map<String, String>> createGenParamsDictionary();
+
 }

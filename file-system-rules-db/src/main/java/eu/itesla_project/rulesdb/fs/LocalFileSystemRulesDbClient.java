@@ -50,5 +50,5 @@ public class LocalFileSystemRulesDbClient extends FileSystemRulesDbClient {
     protected RulesFS createRulesFS() throws IOException {
         return new RuleLocalFS(dir);
     }
-    
+
 }

@@ -91,7 +91,7 @@ public class EurostagStepUpTransformerPostProcessor implements ImportPostProcess
                 throw new RuntimeException("Auxiliary dictionary is empty");
             }
             EurostagStepUpTransformerInserter.insert(network, config.get().getLoadFlowFactoryClass().newInstance(), computationManager, ddbPath, genDict, auxDict, statorVoltageLevels, config.get());
-        } catch (IllegalAccessException|InstantiationException e) {
+        } catch (IllegalAccessException | InstantiationException e) {
             throw new RuntimeException(e);
         } finally {
             for (FileSystem zipFs : zipFsLs) {

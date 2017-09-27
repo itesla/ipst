@@ -20,15 +20,15 @@ public class DdbConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(DdbConfig.class);
 
     // remote jboss IP and port
-	private static final String DEFAULT_HOST = "127.0.0.1";
+    private static final String DEFAULT_HOST = "127.0.0.1";
 
     //remote credentials (user must be defined in jboss security domain, ApplicationRealm; cfr. readme.txt)
-	private static final String DEFAULT_USER = "user";
+    private static final String DEFAULT_USER = "user";
 
     private static final String DEFAULT_PASSWORD = "password";
 
     //remote port, default is 4447
-	private static final String DEFAULT_REMOTING_PORT = "4447";
+    private static final String DEFAULT_REMOTING_PORT = "4447";
 
     private String jbossHost;
 

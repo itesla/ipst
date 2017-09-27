@@ -117,17 +117,20 @@ public class RunWcaOnStateTool implements Tool {
         OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
         // load the network
         Network network = onlinedb.getState(workflowId, stateId);
-        if ( network != null ) {
+        if (network != null) {
             OnlineWorkflowParameters parameters = onlinedb.getWorkflowParameters(workflowId);
             String offlineWorkflowId = parameters.getOfflineWorkflowId();
-            if (line.hasOption("offline-workflow"))
+            if (line.hasOption("offline-workflow")) {
                 offlineWorkflowId = line.getOptionValue("offline-workflow");
+            }
             Interval histoInterval = parameters.getHistoInterval();
-            if (line.hasOption("history-interval"))
+            if (line.hasOption("history-interval")) {
                 histoInterval = Interval.parse(line.getOptionValue("history-interval"));
+            }
             double purityThreshold = parameters.getRulesPurityThreshold();
-            if (line.hasOption("purity-threshold"))
+            if (line.hasOption("purity-threshold")) {
                 purityThreshold = Double.parseDouble(line.getOptionValue("purity-threshold"));
+            }
             Set<SecurityIndexType> securityIndexTypes = parameters.getSecurityIndexes();
             if (line.hasOption("security-index-types")) {
                 securityIndexTypes = Arrays.stream(line.getOptionValue("security-index-types").split(","))
@@ -155,7 +158,7 @@ public class RunWcaOnStateTool implements Tool {
                     table.addCell(cluster.getContingency().getId());
                     int[] clusterIndexes = new int[]{1, 2, 3, 4, -1};
                     for (int k = 0; k < clusterIndexes.length; k++) {
-                        if ( clusterIndexes[k] == cluster.getNum().toIntValue() ) {
+                        if (clusterIndexes[k] == cluster.getNum().toIntValue()) {
                             table.addCell("X", new CellStyle(CellStyle.HorizontalAlign.center));
                         } else {
                             table.addCell("-", new CellStyle(CellStyle.HorizontalAlign.center));

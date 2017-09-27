@@ -7,7 +7,6 @@
 package eu.itesla_project.modules.histo;
 
 import eu.itesla_project.iidm.network.Country;
-import eu.itesla_project.iidm.network.Identifiable;
 import eu.itesla_project.modules.histo.cache.HistoDbCache;
 import org.joda.time.Interval;
 

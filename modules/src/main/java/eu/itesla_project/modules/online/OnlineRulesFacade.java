@@ -14,11 +14,11 @@ import eu.itesla_project.contingency.Contingency;
 * @author Quinary <itesla@quinary.com>
 */
 public interface OnlineRulesFacade {
-	
-	void init(RulesFacadeParameters parameters) throws Exception;
-	
-	RulesFacadeResults evaluate(Contingency contingency, Network network);
-	
-	RulesFacadeResults wcaEvaluate(Contingency contingency, Network network);
+
+    void init(RulesFacadeParameters parameters) throws Exception;
+
+    RulesFacadeResults evaluate(Contingency contingency, Network network);
+
+    RulesFacadeResults wcaEvaluate(Contingency contingency, Network network);
 
 }

@@ -136,7 +136,7 @@ public class SimplifiedOfflineWorkflow extends AbstractOfflineWorkflow {
 
                     LOGGER.debug("Workflow {}, case {}: stabilization started", id, caseNum);
                 }, executorService)
-                .thenComposeAsync(aVoid -> context.stabilization.runAsync(getCaseId(caseNum)),executorService)
+                .thenComposeAsync(aVoid -> context.stabilization.runAsync(getCaseId(caseNum)), executorService)
                 .thenApplyAsync(stabilizationResult -> {
 
                     LOGGER.debug("Workflow {}, case {}: stabilization terminated (status={})",

@@ -59,21 +59,21 @@ public class TopologyHistory {
                 try (Reader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
                     return (TopologyHistory) m.unmarshal(reader);
                 }
-            } catch (JAXBException|IOException e) {
+            } catch (JAXBException | IOException e) {
                 throw new RuntimeException(e);
             }
         }
         return null;
     }
 
-    @XmlAttribute(required=true)
-    @XmlJavaTypeAdapter(type=Interval.class, value=IntervalAdapter.class)
+    @XmlAttribute(required = true)
+    @XmlJavaTypeAdapter(type = Interval.class, value = IntervalAdapter.class)
     private final Interval histoInterval;
 
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     private double threshold;
 
-    @XmlElement(name="topologyChoice")
+    @XmlElement(name = "topologyChoice")
     private final List<TopologyChoice> topologyChoices = new ArrayList<>();
 
     public TopologyHistory(Interval histoInterval, double threshold) {
@@ -325,7 +325,7 @@ public class TopologyHistory {
             String branchId = entry.getKey();
             if (entry.getValue().size() == 1) {
                 String substationId = entry.getValue().iterator().next();
-                TwoTerminalsConnectable branch = network.getBranch(branchId);
+                Branch branch = network.getBranch(branchId);
                 if (branch == null) {
                     throw new RuntimeException();
                 }
@@ -408,7 +408,7 @@ public class TopologyHistory {
     }
 
     private boolean removeDuplicatedPossibleTopologies(int iteration, Set<String> excludedTopoIds) {
-        Map<String, Integer> duplicateTopoCount= new HashMap<>();
+        Map<String, Integer> duplicateTopoCount = new HashMap<>();
         Map<String, Integer> initialTopoCount = new HashMap<>();
         for (TopologyChoice topologyChoice : topologyChoices) {
             if (topologyChoice.getPossibleTopologies().size() > 0) {

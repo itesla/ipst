@@ -15,26 +15,26 @@ import javax.inject.Inject;
  * @author Quinary <itesla@quinary.com>
  */
 public class DefaultParameterWeb extends ParameterWeb {
-	 @Inject
-		private Logger log;
+    @Inject
+    private Logger log;
 
-	    private int setNum;;
-	    	    
-	    
-	    public DefaultParameterWeb() {
-	    	super("","","");
-			
-		}
-	
+    private int setNum;
 
-	public int getSetNum() {
-		return setNum;
-	}
 
-	public void setSetNum(int setNum) {
-		this.setNum = setNum;
-	}
-	
-	
+    public DefaultParameterWeb() {
+        super("", "", "");
+
+    }
+
+
+    public int getSetNum() {
+        return setNum;
+    }
+
+    public void setSetNum(int setNum) {
+        this.setNum = setNum;
+    }
+
+
 
 }

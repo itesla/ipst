@@ -66,10 +66,10 @@ public class ACXmlClientTest {
         // List<Contingency> getContingencies(Network network);
         List<Contingency> contingencies = cadbClient.getContingencies(network);
         assertEquals(1, contingencies.size());
-        checkContingency(contingencies.iterator().next(), "N-1_Contingency", 1, "LINE1_ACLS", ContingencyElementType.LINE);
+        checkContingency(contingencies.iterator().next(), "N-1_Contingency", 1, "LINE1_ACLS", ContingencyElementType.BRANCH);
         // Contingency getContingency(String id, Network network);
         Contingency contingency = cadbClient.getContingency("N-1_Contingency", network);
-        checkContingency(contingency, "N-1_Contingency", 1, "LINE1_ACLS", ContingencyElementType.LINE);
+        checkContingency(contingency, "N-1_Contingency", 1, "LINE1_ACLS", ContingencyElementType.BRANCH);
 
         // Collection<Action> getActions(Network network);
         Collection<Action> actions = cadbClient.getActions(network);

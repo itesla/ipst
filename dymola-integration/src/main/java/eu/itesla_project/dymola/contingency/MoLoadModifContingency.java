@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.dymola.contingency;
 
-import eu.itesla_project.contingency.tasks.TrippingTask;
+import eu.itesla_project.contingency.tasks.AbstractTrippingTask;
 
 import java.util.Map;
 
@@ -27,10 +27,12 @@ public class MoLoadModifContingency extends MoContingency {
     }
 
     //TODO
-     @Override
-    public TrippingTask toTask() {
+    @Override
+    public AbstractTrippingTask toTask() {
         return null;
     }
 
-    public double getT1() {return Double.parseDouble(getEventParameters().get("t1"));}
+    public double getT1() {
+        return Double.parseDouble(getEventParameters().get("t1"));
+    }
 }

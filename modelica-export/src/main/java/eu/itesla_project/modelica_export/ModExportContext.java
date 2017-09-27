@@ -10,11 +10,11 @@ package eu.itesla_project.modelica_export;
  * @author Silvia Machado <machados@aia.es>
  */
 public class ModExportContext {
-	
-	ModExportContext(ModelicaDictionary dictionary) {
+
+    ModExportContext(ModelicaDictionary dictionary) {
         this.dictionary = dictionary;
     }
-	
-	public ModelicaDictionary	dictionary;
+
+    public ModelicaDictionary    dictionary;
 
 }

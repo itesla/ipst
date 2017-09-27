@@ -12,14 +12,14 @@ import javax.persistence.metamodel.MapAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2013-01-29T15:19:18.288+0100")
+@Generated(value = "Dali", date = "2013-01-29T15:19:18.288+0100")
 @StaticMetamodel(ModelTemplate.class)
 public class ModelTemplate_ {
-	public static volatile SingularAttribute<ModelTemplate, Long> id;
-	public static volatile SingularAttribute<ModelTemplate, byte[]> data;
-	public static volatile SingularAttribute<ModelTemplate, String> comment;
-	public static volatile SingularAttribute<ModelTemplate, SimulatorInst> simulator;
-	public static volatile ListAttribute<ModelTemplate, DefaultParameters> defaultParameters;
-	public static volatile MapAttribute<ModelTemplate, String, ModelData> modelDataMap;
-	public static volatile SingularAttribute<ModelTemplate, String> typeName;
+    public static volatile SingularAttribute<ModelTemplate, Long> id;
+    public static volatile SingularAttribute<ModelTemplate, byte[]> data;
+    public static volatile SingularAttribute<ModelTemplate, String> comment;
+    public static volatile SingularAttribute<ModelTemplate, SimulatorInst> simulator;
+    public static volatile ListAttribute<ModelTemplate, DefaultParameters> defaultParameters;
+    public static volatile MapAttribute<ModelTemplate, String, ModelData> modelDataMap;
+    public static volatile SingularAttribute<ModelTemplate, String> typeName;
 }

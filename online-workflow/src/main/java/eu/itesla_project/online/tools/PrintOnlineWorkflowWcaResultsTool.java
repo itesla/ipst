@@ -31,108 +31,111 @@ import java.util.Objects;
 @AutoService(Tool.class)
 public class PrintOnlineWorkflowWcaResultsTool implements Tool {
 
-	private static Command COMMAND = new Command() {
-		
-		@Override
-		public String getName() {
-			return "print-online-workflow-wca-results";
-		}
-	
-		@Override
-		public String getTheme() {
-			return Themes.ONLINE_WORKFLOW;
-		}
-	
-		@Override
-		public String getDescription() {
-			return "Print stored results of Worst Case Approach for an online workflow";
-		}
-	
-		@Override
-		public Options getOptions() {
-			Options options = new Options();
-			options.addOption(Option.builder().longOpt("workflow")
-	                .desc("the workflow id")
-	                .hasArg()
-	                .required()
-	                .argName("ID")
-	                .build());
-			options.addOption(Option.builder().longOpt("csv")
-	                .desc("export in csv format")
-	                .build());
-			return options;
-		}
-	
-		@Override
-		public String getUsageFooter() {
-			return null;
-		}
-		
-	};
+    private static Command COMMAND = new Command() {
 
-	@Override
-	public Command getCommand() {
-		return COMMAND;
-	}
+        @Override
+        public String getName() {
+            return "print-online-workflow-wca-results";
+        }
 
-	@Override
-	public void run(CommandLine line, ToolRunningContext context) throws Exception {
-		OnlineConfig config = OnlineConfig.load();
-		OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
-		String workflowId = line.getOptionValue("workflow");
-		OnlineWorkflowWcaResults wfWcaResults = onlinedb.getWcaResults(workflowId);
-		if ( wfWcaResults != null ) {
-			if ( !wfWcaResults.getContingencies().isEmpty() ) {
-				Table table = new Table(7, BorderStyle.CLASSIC_WIDE);
-				StringWriter content = new StringWriter();
-				CsvWriter cvsWriter = new CsvWriter(content, ',');
-				String[] headers = new String[7];
-				int i = 0;
-		        table.addCell("Contingency", new CellStyle(CellStyle.HorizontalAlign.center));
-		        headers[i++] = "Contingency";
-		        table.addCell("Cluster 1", new CellStyle(CellStyle.HorizontalAlign.center));
-		        headers[i++] = "Cluster 1";
-		        table.addCell("Cluster 2", new CellStyle(CellStyle.HorizontalAlign.center));
-		        headers[i++] = "Cluster 2";
-		        table.addCell("Cluster 3", new CellStyle(CellStyle.HorizontalAlign.center));
-		        headers[i++] = "Cluster 3";
-		        table.addCell("Cluster 4", new CellStyle(CellStyle.HorizontalAlign.center));
-		        headers[i++] = "Cluster 4";
-		        table.addCell("Undefined", new CellStyle(CellStyle.HorizontalAlign.center));
-		        headers[i++] = "Undefined";
-		        table.addCell("Cause", new CellStyle(CellStyle.HorizontalAlign.center));
-		        headers[i++] = "Cause";
-		        cvsWriter.writeRecord(headers);
-				for (String contingencyId : wfWcaResults.getContingencies()) {
-					String[] values = new String[7];
-					i = 0;
-					table.addCell(contingencyId);
-					values[i++] = contingencyId;
-					int[] clusterIndexes = new int[]{1, 2, 3, 4, -1};
-					for (int k = 0; k < clusterIndexes.length; k++) {
-						if ( clusterIndexes[k] == wfWcaResults.getClusterIndex(contingencyId) ) {
-							table.addCell("X", new CellStyle(CellStyle.HorizontalAlign.center));
-							values[i++] = "X";
-						} else {
-							table.addCell("-", new CellStyle(CellStyle.HorizontalAlign.center));
-							values[i++] = "-";
-						}
-					}
-					table.addCell(Objects.toString(wfWcaResults.getCauses(contingencyId), " "), new CellStyle(CellStyle.HorizontalAlign.center));
-					values[i++] = Objects.toString(wfWcaResults.getCauses(contingencyId), " ");
-					cvsWriter.writeRecord(values);
-				}
-				cvsWriter.flush();
-				if ( line.hasOption("csv"))
-					context.getOutputStream().println(content.toString());
-				else
-					context.getOutputStream().println(table.render());
-				cvsWriter.close();
-			} else
-				context.getOutputStream().println("\nNo results of security rules applications for this workflow");
-		} else
-			context.getOutputStream().println("No results for this workflow");
-		onlinedb.close();
-	}
-	
+        @Override
+        public String getTheme() {
+            return Themes.ONLINE_WORKFLOW;
+        }
+
+        @Override
+        public String getDescription() {
+            return "Print stored results of Worst Case Approach for an online workflow";
+        }
+
+        @Override
+        public Options getOptions() {
+            Options options = new Options();
+            options.addOption(Option.builder().longOpt("workflow")
+                    .desc("the workflow id")
+                    .hasArg()
+                    .required()
+                    .argName("ID")
+                    .build());
+            options.addOption(Option.builder().longOpt("csv")
+                    .desc("export in csv format")
+                    .build());
+            return options;
+        }
+
+        @Override
+        public String getUsageFooter() {
+            return null;
+        }
+
+    };
+
+    @Override
+    public Command getCommand() {
+        return COMMAND;
+    }
+
+    @Override
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
+        OnlineConfig config = OnlineConfig.load();
+        OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
+        String workflowId = line.getOptionValue("workflow");
+        OnlineWorkflowWcaResults wfWcaResults = onlinedb.getWcaResults(workflowId);
+        if (wfWcaResults != null) {
+            if (!wfWcaResults.getContingencies().isEmpty()) {
+                Table table = new Table(7, BorderStyle.CLASSIC_WIDE);
+                StringWriter content = new StringWriter();
+                CsvWriter cvsWriter = new CsvWriter(content, ',');
+                String[] headers = new String[7];
+                int i = 0;
+                table.addCell("Contingency", new CellStyle(CellStyle.HorizontalAlign.center));
+                headers[i++] = "Contingency";
+                table.addCell("Cluster 1", new CellStyle(CellStyle.HorizontalAlign.center));
+                headers[i++] = "Cluster 1";
+                table.addCell("Cluster 2", new CellStyle(CellStyle.HorizontalAlign.center));
+                headers[i++] = "Cluster 2";
+                table.addCell("Cluster 3", new CellStyle(CellStyle.HorizontalAlign.center));
+                headers[i++] = "Cluster 3";
+                table.addCell("Cluster 4", new CellStyle(CellStyle.HorizontalAlign.center));
+                headers[i++] = "Cluster 4";
+                table.addCell("Undefined", new CellStyle(CellStyle.HorizontalAlign.center));
+                headers[i++] = "Undefined";
+                table.addCell("Cause", new CellStyle(CellStyle.HorizontalAlign.center));
+                headers[i++] = "Cause";
+                cvsWriter.writeRecord(headers);
+                for (String contingencyId : wfWcaResults.getContingencies()) {
+                    String[] values = new String[7];
+                    i = 0;
+                    table.addCell(contingencyId);
+                    values[i++] = contingencyId;
+                    int[] clusterIndexes = new int[]{1, 2, 3, 4, -1};
+                    for (int k = 0; k < clusterIndexes.length; k++) {
+                        if (clusterIndexes[k] == wfWcaResults.getClusterIndex(contingencyId)) {
+                            table.addCell("X", new CellStyle(CellStyle.HorizontalAlign.center));
+                            values[i++] = "X";
+                        } else {
+                            table.addCell("-", new CellStyle(CellStyle.HorizontalAlign.center));
+                            values[i++] = "-";
+                        }
+                    }
+                    table.addCell(Objects.toString(wfWcaResults.getCauses(contingencyId), " "), new CellStyle(CellStyle.HorizontalAlign.center));
+                    values[i++] = Objects.toString(wfWcaResults.getCauses(contingencyId), " ");
+                    cvsWriter.writeRecord(values);
+                }
+                cvsWriter.flush();
+                if (line.hasOption("csv")) {
+                    context.getOutputStream().println(content.toString());
+                } else {
+                    context.getOutputStream().println(table.render());
+                }
+                cvsWriter.close();
+            } else {
+                context.getOutputStream().println("\nNo results of security rules applications for this workflow");
+            }
+        } else {
+            context.getOutputStream().println("No results for this workflow");
+        }
+        onlinedb.close();
+    }
+
 }

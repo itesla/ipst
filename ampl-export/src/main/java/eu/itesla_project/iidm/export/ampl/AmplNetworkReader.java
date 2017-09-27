@@ -154,7 +154,7 @@ public class AmplNetworkReader implements AmplConstants {
                 int tap = Integer.valueOf(tokens[1]);
                 String id = mapper.getId(AmplSubset.RATIO_TAP_CHANGER, num);
                 if (id.endsWith("_leg2") || id.endsWith("_leg3")) {
-                    ThreeWindingsTransformer twt = network.getThreeWindingsTransformer(id.substring(0, id.length()-3));
+                    ThreeWindingsTransformer twt = network.getThreeWindingsTransformer(id.substring(0, id.length() - 3));
                     if (twt == null) {
                         throw new RuntimeException("Invalid three windings transformer id '" + id + "'");
                     }

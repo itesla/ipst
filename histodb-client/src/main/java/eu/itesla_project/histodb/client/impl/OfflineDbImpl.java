@@ -40,7 +40,7 @@ public class OfflineDbImpl implements OfflineDb {
 
     private static final String SIMULATIONS_PREFIX = "simulations/workflow-";
 
-    private static final String STATE_ID_PREFIX = "";// "sample-" does not work, with updates
+    private static final String STATE_ID_PREFIX = ""; // "sample-" does not work, with updates
 
     private static final Map<String, String> SAMPLE_FILTER = ImmutableMap.of("filters", "TASK_IMPACT_ANALYSIS:OK");
 
@@ -133,7 +133,7 @@ public class OfflineDbImpl implements OfflineDb {
                 return Integer.parseInt(newId);
             }
         } catch (Exception e) {
-            throw new RuntimeException("Failed to create record for workflow "+workflowId, e);
+            throw new RuntimeException("Failed to create record for workflow " + workflowId, e);
         }
     }
 
@@ -153,7 +153,7 @@ public class OfflineDbImpl implements OfflineDb {
         String status = OfflineTaskStatus.SUCCEED == taskStatus ? "OK" : "NOK";
         try {
             try (HistoDbClientImpl histoClient = getHistoClient(workflowId)) {
-                histoClient.updateRecord(STATE_ID_PREFIX + sampleId, new String[] {"TASK_"+taskType.name()}, new String[] {status});
+                histoClient.updateRecord(STATE_ID_PREFIX + sampleId, new String[] {"TASK_" + taskType.name()}, new String[] {status});
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to store status", e);
@@ -178,7 +178,7 @@ public class OfflineDbImpl implements OfflineDb {
 
         try {
             try (HistoDbClientImpl histoClient = getHistoClient(workflowId)) {
-                histoClient.updateRecord(STATE_ID_PREFIX+ sampleId, indexKeys.toArray(new String[]{}), indexValues.toArray());
+                histoClient.updateRecord(STATE_ID_PREFIX + sampleId, indexKeys.toArray(new String[]{}), indexValues.toArray());
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to store indexes", e);
@@ -248,7 +248,7 @@ public class OfflineDbImpl implements OfflineDb {
             try (Reader reader = getHistoClient(workflowId).openDataStream(query, config.getDelimiter())) {
                 IOUtils.copy(reader, writer);
             }
-        } catch (IOException|InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException("Failed to extract CSV data", e);
         }
     }

@@ -17,7 +17,8 @@ import eu.itesla_project.modules.mcla.MontecarloSamplerFactory;
  * @author Quinary <itesla@quinary.com>
  */
 public class MontecarloSamplerFactoryImpl implements MontecarloSamplerFactory {
-	@Override
-	public MontecarloSampler create(Network network, ComputationManager computationManager, ForecastErrorsDataStorage feDataStorage) {
-		return new MontecarloSamplerImpl(network, computationManager, feDataStorage);	}
+    @Override
+    public MontecarloSampler create(Network network, ComputationManager computationManager, ForecastErrorsDataStorage feDataStorage) {
+        return new MontecarloSamplerImpl(network, computationManager, feDataStorage);
+    }
 }

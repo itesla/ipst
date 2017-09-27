@@ -21,15 +21,15 @@ public interface OfflineWorkflow {
     String getId();
 
     void start(OfflineWorkflowStartParameters startParameters) throws Exception;
-    
+
     void stop();
 
     void computeSecurityRules() throws Exception;
-            
+
     OfflineWorkflowStatus getStatus();
 
     OfflineWorkflowCreationParameters getCreationParameters();
-    
+
     void addListener(OfflineWorkflowListener listener);
 
     void removeListener(OfflineWorkflowListener listener);

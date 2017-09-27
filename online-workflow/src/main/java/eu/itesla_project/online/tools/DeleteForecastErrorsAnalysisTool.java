@@ -25,69 +25,71 @@ import eu.itesla_project.offline.forecast_errors.ForecastErrorsAnalysisConfig;
  */
 @AutoService(Tool.class)
 public class DeleteForecastErrorsAnalysisTool implements Tool {
-	
-	private static Command COMMAND = new Command() {
-		
-		@Override
-		public String getName() {
-			return "delete-forecast-errors-analysis";
-		}
 
-		@Override
-		public String getTheme() {
-			return Themes.MCLA;
-		}
+    private static Command COMMAND = new Command() {
 
-		@Override
-		public String getDescription() {
-			return "delete stored forecast errors analysis";
-		}
+        @Override
+        public String getName() {
+            return "delete-forecast-errors-analysis";
+        }
 
-		@Override
-		public Options getOptions() {
-			Options options = new Options();
-			options.addOption(Option.builder().longOpt("analysis")
-	                .desc("analysis id")
-	                .hasArg()
-	                .required()
-	                .argName("ID")
-	                .build());
-			options.addOption(Option.builder().longOpt("time-horizon")
-	                .desc("time horizon (example DACF)")
-	                .hasArg()
-	                .required()
-	                .argName("TH")
-	                .build());
-			return options;
-		}
+        @Override
+        public String getTheme() {
+            return Themes.MCLA;
+        }
 
-		@Override
-		public String getUsageFooter() {
-			return null;
-		}
-		
-	};
+        @Override
+        public String getDescription() {
+            return "delete stored forecast errors analysis";
+        }
 
-	@Override
-	public Command getCommand() {
-		return COMMAND;
-	}
+        @Override
+        public Options getOptions() {
+            Options options = new Options();
+            options.addOption(Option.builder().longOpt("analysis")
+                    .desc("analysis id")
+                    .hasArg()
+                    .required()
+                    .argName("ID")
+                    .build());
+            options.addOption(Option.builder().longOpt("time-horizon")
+                    .desc("time horizon (example DACF)")
+                    .hasArg()
+                    .required()
+                    .argName("TH")
+                    .build());
+            return options;
+        }
 
-	@Override
-	public void run(CommandLine line, ToolRunningContext context) throws Exception {
-		ForecastErrorsAnalysisConfig config = ForecastErrorsAnalysisConfig.load();
-		ForecastErrorsDataStorage feDataStorage = config.getForecastErrorsDataStorageFactoryClass().newInstance().create(); 
-		String analysisId = line.getOptionValue("analysis");
-		TimeHorizon timeHorizon = TimeHorizon.fromName(line.getOptionValue("time-horizon"));
-		context.getOutputStream().println("Deleting analysis " + analysisId + " with time horizon " + timeHorizon);
-		if ( feDataStorage.isForecastErrorsDataAvailable(analysisId, timeHorizon)
-			 || feDataStorage.areStatisticsAvailable(analysisId, timeHorizon) ) {
-			if ( feDataStorage.deleteAnalysis(analysisId, timeHorizon) )
-				context.getOutputStream().println("Analysis " + analysisId + " with time horizon " + timeHorizon + " deleted");
-			else
-				context.getOutputStream().println("Cannot delete analysis " + analysisId + " with time horizon " + timeHorizon);
-		} else
-			context.getOutputStream().println("No analysis " + analysisId + " with time horizon " + timeHorizon);
-	}
+        @Override
+        public String getUsageFooter() {
+            return null;
+        }
+
+    };
+
+    @Override
+    public Command getCommand() {
+        return COMMAND;
+    }
+
+    @Override
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
+        ForecastErrorsAnalysisConfig config = ForecastErrorsAnalysisConfig.load();
+        ForecastErrorsDataStorage feDataStorage = config.getForecastErrorsDataStorageFactoryClass().newInstance().create();
+        String analysisId = line.getOptionValue("analysis");
+        TimeHorizon timeHorizon = TimeHorizon.fromName(line.getOptionValue("time-horizon"));
+        context.getOutputStream().println("Deleting analysis " + analysisId + " with time horizon " + timeHorizon);
+        if (feDataStorage.isForecastErrorsDataAvailable(analysisId, timeHorizon)
+                || feDataStorage.areStatisticsAvailable(analysisId, timeHorizon)) {
+            if (feDataStorage.deleteAnalysis(analysisId, timeHorizon)) {
+                context.getOutputStream().println("Analysis " + analysisId + " with time horizon " + timeHorizon + " deleted");
+            } else {
+                context.getOutputStream().println("Cannot delete analysis " + analysisId + " with time horizon " + timeHorizon);
+            }
+        } else {
+            context.getOutputStream().println("No analysis " + analysisId + " with time horizon " + timeHorizon);
+        }
+    }
 
 }

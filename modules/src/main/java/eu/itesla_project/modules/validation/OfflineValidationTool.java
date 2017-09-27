@@ -365,7 +365,7 @@ public class OfflineValidationTool implements Tool {
             ExecutorService executorService = Executors.newFixedThreadPool(cores);
             try {
                 List<Future<?>> tasks = new ArrayList<>(cores);
-                for (int i = 0 ; i < cores; i++) {
+                for (int i = 0; i < cores; i++) {
                     tasks.add(executorService.submit((Runnable) () -> {
                         while (dates.size() > 0) {
                             DateTime date = dates.poll();

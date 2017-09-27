@@ -33,7 +33,7 @@ public class SecurityRulesChangeMessage extends Message {
     public void toJson(JsonGenerator generator) {
         generator.write("workflowId", workflowId);
         generator.writeStartArray("ruleIds");
-        for(RuleId ruleId : ruleIds) {
+        for (RuleId ruleId : ruleIds) {
             generator.writeStartObject();
             generator.write("attributeSet", ruleId.getAttributeSet().toString());
             generator.writeStartObject("securityIndexId");

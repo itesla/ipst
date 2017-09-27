@@ -8,7 +8,6 @@ package eu.itesla_project.modelica_export.records;
 
 import eu.itesla_project.iidm.ddb.model.SimulatorInst;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
-import eu.itesla_project.iidm.network.Equipments.ConnectionInfo;
 import eu.itesla_project.iidm.network.Load;
 import eu.itesla_project.modelica_export.ModExportContext;
 import eu.itesla_project.modelica_export.util.StaticData;
@@ -18,36 +17,36 @@ import eu.itesla_project.modelica_export.util.StaticData;
  * @author Silvia Machado <machados@aia.es>
  */
 public class ConnectLoadRecord extends ConnectRecord {
-	
-	public ConnectLoadRecord(ConnectBusInfo busInfo, Load load) {
-		super(busInfo.getBus().getId(), load.getId());
-	}
 
-	public ConnectLoadRecord(String busName, String loadName) {
-		super(busName, loadName);
-	}
-	
-	@Override
-	public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
-//		if(!busInfo.isConnected()) this.addValue(StaticData.COMMENT);
-		
-//		if(Float.isNaN(busInfo.getBus().getV())) this.addValue(StaticData.COMMENT);
-//		else if (!busInfo.isConnected()) this.addValue(StaticData.COMMENT);
-		
-		this.addValue(StaticData.CONNECT);
-		this.addValue(super.nodeName1);
-		
-		this.addValue("." + StaticData.POSITIVE_PIN + ", ");
-		
-		this.addValue(super.nodeName2);
-		
-		this.addValue("." + StaticData.POSITIVE_PIN);
-		
-		this.addValue(StaticData.ANNOT_CONNECT);
-	}
-	
-	@Override
-	public ConnectLoadRecord getClassName() {
-		return this;
-	}
+    public ConnectLoadRecord(ConnectBusInfo busInfo, Load load) {
+        super(busInfo.getBus().getId(), load.getId());
+    }
+
+    public ConnectLoadRecord(String busName, String loadName) {
+        super(busName, loadName);
+    }
+
+    @Override
+    public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
+//        if(!busInfo.isConnected()) this.addValue(StaticData.COMMENT);
+
+//        if(Float.isNaN(busInfo.getBus().getV())) this.addValue(StaticData.COMMENT);
+//        else if (!busInfo.isConnected()) this.addValue(StaticData.COMMENT);
+
+        this.addValue(StaticData.CONNECT);
+        this.addValue(super.nodeName1);
+
+        this.addValue("." + StaticData.POSITIVE_PIN + ", ");
+
+        this.addValue(super.nodeName2);
+
+        this.addValue("." + StaticData.POSITIVE_PIN);
+
+        this.addValue(StaticData.ANNOT_CONNECT);
+    }
+
+    @Override
+    public ConnectLoadRecord getClassName() {
+        return this;
+    }
 }

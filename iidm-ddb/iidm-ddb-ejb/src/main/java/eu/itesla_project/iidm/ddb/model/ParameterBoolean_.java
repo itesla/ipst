@@ -10,8 +10,8 @@ import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2012-12-12T15:51:57.709+0100")
+@Generated(value = "Dali", date = "2012-12-12T15:51:57.709+0100")
 @StaticMetamodel(ParameterBoolean.class)
 public class ParameterBoolean_ extends Parameter_ {
-	public static volatile SingularAttribute<ParameterBoolean, Boolean> value;
+    public static volatile SingularAttribute<ParameterBoolean, Boolean> value;
 }

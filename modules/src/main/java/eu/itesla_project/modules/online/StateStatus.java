@@ -11,7 +11,7 @@ package eu.itesla_project.modules.online;
  * @author Quinary <itesla@quinary.com>
  */
 public enum StateStatus {
-	SAFE,
-	SAFE_WITH_CORRECTIVE_ACTIONS,
-	UNSAFE
+    SAFE,
+    SAFE_WITH_CORRECTIVE_ACTIONS,
+    UNSAFE
 }

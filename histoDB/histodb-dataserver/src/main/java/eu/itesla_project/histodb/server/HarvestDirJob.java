@@ -16,9 +16,7 @@ import java.io.IOException;
  * Time: 15:18
  * To change this template use File | Settings | File Templates.
  */
-public class HarvestDirJob
-    extends AbstractDatasourceJob
-{
+public class HarvestDirJob extends AbstractDatasourceJob {
 
     File harvestedDir;
 
@@ -31,7 +29,7 @@ public class HarvestDirJob
         CimHistoImporter importer = new CimHistoImporter(datasource);
 
         try {
-            importer.addCim(harvestedDir);
+            importer.addCim(harvestedDir, true);
             datasource.persistState();
         } catch (IOException e) {
             throw new RuntimeException("Harvest job ended unexpectedly");

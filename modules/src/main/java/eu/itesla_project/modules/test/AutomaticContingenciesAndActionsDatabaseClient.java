@@ -15,9 +15,9 @@ import eu.itesla_project.modules.contingencies.ActionPlan;
 import eu.itesla_project.modules.contingencies.ActionsContingenciesAssociation;
 import eu.itesla_project.modules.contingencies.ConstraintType;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
+import eu.itesla_project.contingency.BranchContingency;
 import eu.itesla_project.contingency.Contingency;
 import eu.itesla_project.contingency.ContingencyElement;
-import eu.itesla_project.contingency.LineContingency;
 import eu.itesla_project.contingency.ContingencyImpl;
 import eu.itesla_project.modules.contingencies.Scenario;
 import eu.itesla_project.modules.contingencies.Zone;
@@ -32,6 +32,7 @@ import java.util.Set;
 /**
  * Contingencies and actions database, that automatically generates N-1 line
  * contingencies for the first n lines of the network.
+ *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
 public class AutomaticContingenciesAndActionsDatabaseClient implements ContingenciesAndActionsDatabaseClient {
@@ -46,84 +47,79 @@ public class AutomaticContingenciesAndActionsDatabaseClient implements Contingen
     public List<Contingency> getContingencies(Network network) {
         List<Contingency> contingencies = new ArrayList<>(lineContigencyCount);
         for (Line l : Iterables.limit(network.getLines(), lineContigencyCount)) {
-            contingencies.add(new ContingencyImpl(l.getId(), Arrays.<ContingencyElement>asList(new LineContingency(l.getId()))));
+            contingencies.add(new ContingencyImpl(l.getId(), Arrays.<ContingencyElement>asList(new BranchContingency(l.getId()))));
         }
         return contingencies;
     }
 
-    
 
     @Override
     public List<Scenario> getScenarios() {
         return Collections.emptyList();
     }
 
-	@Override
-	public Set<Zone> getZones() {
-		 throw new UnsupportedOperationException();
-	}
+    @Override
+    public Set<Zone> getZones() {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public Zone getZone(String id) {
-		 throw new UnsupportedOperationException();
-	}
+    @Override
+    public Zone getZone(String id) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public Collection<ActionPlan> getActionPlans() {
-		 throw new UnsupportedOperationException();
-	}
+    @Override
+    public Collection<ActionPlan> getActionPlans() {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public ActionPlan getActionPlan(String id) {
-		 throw new UnsupportedOperationException();
-	}
+    @Override
+    public ActionPlan getActionPlan(String id) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public Collection<ActionsContingenciesAssociation> getActionsCtgAssociations() {
-		 throw new UnsupportedOperationException();
-	}
+    @Override
+    public Collection<ActionsContingenciesAssociation> getActionsCtgAssociations() {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public Collection<ActionsContingenciesAssociation> getActionsCtgAssociationsByContingency(String contingencyId) {
-		 throw new UnsupportedOperationException();
-	}
+    @Override
+    public Collection<ActionsContingenciesAssociation> getActionsCtgAssociationsByContingency(String contingencyId) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public Contingency getContingency(String name, Network network) 
-	{
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public Contingency getContingency(String name, Network network) {
+        throw new UnsupportedOperationException();
+    }
 
-	
 
-	@Override
-	public Collection<Action> getActions(Network network) 
-	{
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public Collection<Action> getActions(Network network) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public Action getAction(String id, Network network)
-	{
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public Action getAction(String id, Network network) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public Collection<Zone> getZones(Network network) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public Collection<Zone> getZones(Network network) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public Collection<ActionPlan> getActionPlans(Network network) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public Collection<ActionPlan> getActionPlans(Network network) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public List<ActionsContingenciesAssociation> getActionsCtgAssociations(
-			Network network) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public List<ActionsContingenciesAssociation> getActionsCtgAssociations(
+            Network network) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
     @Override
     public Collection<ActionsContingenciesAssociation> getActionsCtgAssociationsByConstraint(

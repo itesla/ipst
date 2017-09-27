@@ -36,8 +36,8 @@ public class ContingenciesAndActionsDatabaseClientImpl implements ContingenciesA
     private final Map<String, Zone> zones = new HashMap<>();
     private final Map<String, ActionPlan> actionPlans = new HashMap<>();
     private final List<ActionsContingenciesAssociation> associations = new ArrayList<>();
-    
-    
+
+
     public ContingenciesAndActionsDatabaseClientImpl() {
     }
 
@@ -47,28 +47,28 @@ public class ContingenciesAndActionsDatabaseClientImpl implements ContingenciesA
 
     @Override
     public List<Contingency> getContingencies(Network network) {
-    	return new ArrayList<Contingency>(contingencies.values());
+        return new ArrayList<Contingency>(contingencies.values());
     }
-    
+
     @Override
-	public Contingency getContingency(String id, Network network) {
-		return contingencies.get(id);
-	}
+    public Contingency getContingency(String id, Network network) {
+        return contingencies.get(id);
+    }
 
     public void addAction(Action action) {
         actions.put(action.getId(), action);
     }
 
     @Override
-	public Collection<Action> getActions(Network network) {
-		return new ArrayList<Action>(actions.values());
-	}
-       
+    public Collection<Action> getActions(Network network) {
+        return new ArrayList<Action>(actions.values());
+    }
 
-	@Override
-	public Action getAction(String id, Network network) {
-		return actions.get(id);
-	}
+
+    @Override
+    public Action getAction(String id, Network network) {
+        return actions.get(id);
+    }
 
     public void addScenario(Scenario scenario) {
         scenarios.add(scenario);
@@ -78,84 +78,87 @@ public class ContingenciesAndActionsDatabaseClientImpl implements ContingenciesA
     public List<Scenario> getScenarios() {
         return scenarios;
     }
-    
+
     public void addZone(Zone zone) {
-    	zones.put(zone.getName(), zone);
+        zones.put(zone.getName(), zone);
     }
 
     @Override
-	public Collection<Zone> getZones() {
-		return zones.values();
-	}
-    
+    public Collection<Zone> getZones() {
+        return zones.values();
+    }
+
     @Override
-	public Collection<Zone> getZones(Network network) {
-    	return zones.values();
-	}
-    
-	@Override
-	public Zone getZone(String id) {
-		return zones.get(id);
-	}
-	
-	public void addActionPlan(ActionPlan actionPlan) {
-		actionPlans.put(actionPlan.getName(), actionPlan);
-	}
-	
-	@Override
-	public Collection<ActionPlan> getActionPlans() {
-		return actionPlans.values();
-	}
-	
-	@Override
-	public Collection<ActionPlan> getActionPlans(Network network) {
-		return actionPlans.values();
-	}
+    public Collection<Zone> getZones(Network network) {
+        return zones.values();
+    }
 
-	@Override
-	public ActionPlan getActionPlan(String id) {
-		return actionPlans.get(id);
-	}	
+    @Override
+    public Zone getZone(String id) {
+        return zones.get(id);
+    }
 
-	public void addActionsCtgAssociations(ActionsContingenciesAssociation association) {
-		associations.add(association);
-	}
-	
-	@Override
-	public Collection<ActionsContingenciesAssociation> getActionsCtgAssociations() {
-		return associations;
-	}
+    public void addActionPlan(ActionPlan actionPlan) {
+        actionPlans.put(actionPlan.getName(), actionPlan);
+    }
 
-	@Override
-	public List<ActionsContingenciesAssociation> getActionsCtgAssociations(Network network) {
-		return associations;
-	}
+    @Override
+    public Collection<ActionPlan> getActionPlans() {
+        return actionPlans.values();
+    }
 
-	@Override
-	public Collection<ActionsContingenciesAssociation> getActionsCtgAssociationsByContingency(String contingencyId) {
-		List<ActionsContingenciesAssociation> associationForContingency = new ArrayList<ActionsContingenciesAssociation>();
-		for (ActionsContingenciesAssociation association : associations) {
-			if ( association.getContingenciesId().contains(contingencyId))
-				associationForContingency.add(association);
-		}
-		return associationForContingency;
-	}
+    @Override
+    public Collection<ActionPlan> getActionPlans(Network network) {
+        return actionPlans.values();
+    }
+
+    @Override
+    public ActionPlan getActionPlan(String id) {
+        return actionPlans.get(id);
+    }
+
+    public void addActionsCtgAssociations(ActionsContingenciesAssociation association) {
+        associations.add(association);
+    }
+
+    @Override
+    public Collection<ActionsContingenciesAssociation> getActionsCtgAssociations() {
+        return associations;
+    }
+
+    @Override
+    public List<ActionsContingenciesAssociation> getActionsCtgAssociations(Network network) {
+        return associations;
+    }
+
+    @Override
+    public Collection<ActionsContingenciesAssociation> getActionsCtgAssociationsByContingency(String contingencyId) {
+        List<ActionsContingenciesAssociation> associationForContingency = new ArrayList<ActionsContingenciesAssociation>();
+        for (ActionsContingenciesAssociation association : associations) {
+            if (association.getContingenciesId().contains(contingencyId)) {
+                associationForContingency.add(association);
+            }
+        }
+        return associationForContingency;
+    }
 
     @Override
     public Collection<ActionsContingenciesAssociation> getActionsCtgAssociationsByConstraint(
             String equipmentId, ConstraintType constraintType) {
         List<ActionsContingenciesAssociation> associationForContingency = new ArrayList<ActionsContingenciesAssociation>();
         for (ActionsContingenciesAssociation association : associations) {
-            if ( constraintOnEquipment(association.getConstraints(), equipmentId, constraintType) )
+            if (constraintOnEquipment(association.getConstraints(), equipmentId, constraintType)) {
                 associationForContingency.add(association);
+            }
         }
         return associationForContingency;
     }
 
     private boolean constraintOnEquipment(Collection<Constraint> constraints, String equipmentId, ConstraintType constraintType) {
-        for(Constraint constraint : constraints) {
-            if ( equipmentId.equals(constraint.getEquipment()) && constraintType.equals(constraint.getType()) )
+        for (Constraint constraint : constraints) {
+            if (equipmentId.equals(constraint.getEquipment()) && constraintType.equals(constraint.getType())) {
                 return true;
+            }
         }
         return false;
     }

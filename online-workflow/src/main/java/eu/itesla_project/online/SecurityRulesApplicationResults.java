@@ -51,7 +51,7 @@ public class SecurityRulesApplicationResults implements OnlineWorkflowRulesResul
     public void addStateWithSecurityRulesResults(String contingencyId, Integer stateId, StateStatus stateStatus, Map<SecurityIndexType, StateStatus> securityRulesResults,
             boolean rulesAvailable, List<SecurityIndexType> invalidRules) {
         StatesWithSecurityRulesResults statesWithSecurityRulesResults = new StatesWithSecurityRulesResults();
-        if ( contingenciesWithSecurityRulesResults.containsKey(contingencyId) ) {
+        if (contingenciesWithSecurityRulesResults.containsKey(contingencyId)) {
             statesWithSecurityRulesResults = contingenciesWithSecurityRulesResults.get(contingencyId);
         }
         statesWithSecurityRulesResults.addState(stateId, stateStatus, securityRulesResults, rulesAvailable, invalidRules);
@@ -65,7 +65,7 @@ public class SecurityRulesApplicationResults implements OnlineWorkflowRulesResul
 
     public List<Integer> getStatesWithSecurityRulesResults(String contingencyId) {
         List<Integer> statesWithSecurityRulesResults = new ArrayList<Integer>();
-        for(Integer stateId : contingenciesWithSecurityRulesResults.get(contingencyId).getStates()) {
+        for (Integer stateId : contingenciesWithSecurityRulesResults.get(contingencyId).getStates()) {
             statesWithSecurityRulesResults.add(stateId);
         }
         return statesWithSecurityRulesResults;
@@ -78,17 +78,17 @@ public class SecurityRulesApplicationResults implements OnlineWorkflowRulesResul
     @Override
     public Map<String, Boolean> getStateResults(String contingencyId, Integer stateId) {
         Map<SecurityIndexType, StateStatus> securityRulesResults = getSecurityRulesResults(contingencyId, stateId);
-        Map<String, Boolean> stateResults = new HashMap<String,Boolean>();
-        for(SecurityIndexType index : securityRulesResults.keySet()) {
+        Map<String, Boolean> stateResults = new HashMap<String, Boolean>();
+        for (SecurityIndexType index : securityRulesResults.keySet()) {
             switch (securityRulesResults.get(index)) {
-            case SAFE:
-                stateResults.put(index.getLabel(), true);
-                break;
-            case UNSAFE:
-                stateResults.put(index.getLabel(), false);
-                break;
-            default:
-                break;
+                case SAFE:
+                    stateResults.put(index.getLabel(), true);
+                    break;
+                case UNSAFE:
+                    stateResults.put(index.getLabel(), false);
+                    break;
+                default:
+                    break;
             }
         }
         return stateResults;
@@ -106,24 +106,27 @@ public class SecurityRulesApplicationResults implements OnlineWorkflowRulesResul
     @Override
     public boolean areValidRulesAvailable(String contingencyId, Integer stateId) {
         boolean rulesAvailable = false;
-        if ( contingenciesWithSecurityRulesResults.containsKey(contingencyId) )
+        if (contingenciesWithSecurityRulesResults.containsKey(contingencyId)) {
             rulesAvailable = contingenciesWithSecurityRulesResults.get(contingencyId).getRulesAvailability(stateId);
+        }
         return rulesAvailable;
     }
 
     @Override
     public List<SecurityIndexType> getInvalidRules(String contingencyId, Integer stateId) {
         List<SecurityIndexType> invalidRules = new ArrayList<SecurityIndexType>();
-        if ( contingenciesWithSecurityRulesResults.containsKey(contingencyId) )
+        if (contingenciesWithSecurityRulesResults.containsKey(contingencyId)) {
             invalidRules = contingenciesWithSecurityRulesResults.get(contingencyId).getInvalidRules(stateId);
+        }
         return invalidRules;
     }
 
     public String toString() {
-        String output = "time horizon: "+ timeHorizon.getName();
+        String output = "time horizon: " + timeHorizon.getName();
         output += "\n" + "contingencies with security rules results: " + getContingenciesWithSecurityRulesResults();
-        for(String contingencyId : getContingenciesWithSecurityRulesResults() )
-            output += "\n[contingecy id = " + contingencyId + ", states = " + getStatesWithSecurityRulesResults_int(contingencyId) + "]"; 
+        for (String contingencyId : getContingenciesWithSecurityRulesResults()) {
+            output += "\n[contingecy id = " + contingencyId + ", states = " + getStatesWithSecurityRulesResults_int(contingencyId) + "]";
+        }
         return output;
     }
 
@@ -141,7 +144,7 @@ public class SecurityRulesApplicationResults implements OnlineWorkflowRulesResul
         boolean addState(Integer stateId, StateStatus stateStatus, Map<SecurityIndexType, StateStatus> securityRulesResults,
                 Boolean rulesAvailable, List<SecurityIndexType> invalidRules) {
             boolean added = false;
-            if ( !states.containsKey(stateId) && !statesStatus.containsKey(stateId) ) {
+            if (!states.containsKey(stateId) && !statesStatus.containsKey(stateId)) {
                 states.put(stateId, securityRulesResults);
                 statesStatus.put(stateId, stateStatus);
                 statesWithRules.put(stateId, rulesAvailable);
@@ -173,7 +176,7 @@ public class SecurityRulesApplicationResults implements OnlineWorkflowRulesResul
 
         public String toString() {
             String output = "";
-            for(Integer stateId : getStates()) {
+            for (Integer stateId : getStates()) {
                 output += "[stateId " + stateId + ", " + getStateStatus(stateId) + ", rules = " + securityRulesResultsToString(getSecurityRulesResults(stateId)) + "]";
             }
             return output;

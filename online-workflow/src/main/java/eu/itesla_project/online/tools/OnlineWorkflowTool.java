@@ -64,12 +64,15 @@ public class OnlineWorkflowTool implements Tool {
         String host = line.getOptionValue(OnlineWorkflowCommand.HOST);
         String port = line.getOptionValue(OnlineWorkflowCommand.PORT);
         String threads = line.getOptionValue(OnlineWorkflowCommand.THREADS);
-        if (host != null)
+        if (host != null) {
             startconfig.setJmxHost(host);
-        if (port != null)
+        }
+        if (port != null) {
             startconfig.setJmxPort(Integer.valueOf(port));
-        if (threads != null)
+        }
+        if (threads != null) {
             startconfig.setThreads(Integer.valueOf(threads));
+        }
 
         Set<DateTime> baseCasesSet = null;
 
@@ -104,8 +107,9 @@ public class OnlineWorkflowTool implements Tool {
                     params.setCaseFile(null);
                 }
             }
-            if (line.hasOption(OnlineWorkflowCommand.CASE_TYPE))
+            if (line.hasOption(OnlineWorkflowCommand.CASE_TYPE)) {
                 params.setCaseType(CaseType.valueOf(line.getOptionValue(OnlineWorkflowCommand.CASE_TYPE)));
+            }
             if (line.hasOption(OnlineWorkflowCommand.COUNTRIES)) {
                 params.setCountries(Arrays.stream(line.getOptionValue(OnlineWorkflowCommand.COUNTRIES).split(","))
                         .map(Country::valueOf).collect(Collectors.toSet()));
@@ -134,34 +138,42 @@ public class OnlineWorkflowTool implements Tool {
         }
 
         String histo = line.getOptionValue(OnlineWorkflowCommand.HISTODB_INTERVAL);
-        if (histo != null)
+        if (histo != null) {
             params.setHistoInterval(Interval.parse(histo));
+        }
 
         String states = line.getOptionValue(OnlineWorkflowCommand.STATES);
-        if (states != null)
+        if (states != null) {
             params.setStates(Integer.parseInt(states));
+        }
 
         String timeHorizon = line.getOptionValue(OnlineWorkflowCommand.TIME_HORIZON);
-        if (timeHorizon != null)
+        if (timeHorizon != null) {
             params.setTimeHorizon(TimeHorizon.fromName(timeHorizon));
+        }
 
         String workflowid = line.getOptionValue(OnlineWorkflowCommand.WORKFLOW_ID);
-        if (workflowid != null)
+        if (workflowid != null) {
             params.setOfflineWorkflowId(workflowid);
+        }
 
         String feAnalysisId = line.getOptionValue(OnlineWorkflowCommand.FEANALYSIS_ID);
-        if (feAnalysisId != null)
+        if (feAnalysisId != null) {
             params.setFeAnalysisId(feAnalysisId);
+        }
 
         String rulesPurity = line.getOptionValue(OnlineWorkflowCommand.RULES_PURITY);
-        if (rulesPurity != null)
+        if (rulesPurity != null) {
             params.setRulesPurityThreshold(Double.parseDouble(rulesPurity));
+        }
 
-        if (line.hasOption(OnlineWorkflowCommand.STORE_STATES))
+        if (line.hasOption(OnlineWorkflowCommand.STORE_STATES)) {
             params.setStoreStates(true);
+        }
 
-        if (line.hasOption(OnlineWorkflowCommand.ANALYSE_BASECASE))
+        if (line.hasOption(OnlineWorkflowCommand.ANALYSE_BASECASE)) {
             params.setAnalyseBasecase(true);
+        }
 
         if (line.hasOption(OnlineWorkflowCommand.VALIDATION)) {
             params.setValidation(true);
@@ -172,18 +184,21 @@ public class OnlineWorkflowTool implements Tool {
 
         Set<SecurityIndexType> securityIndexes = null;
         if (line.hasOption(OnlineWorkflowCommand.SECURITY_INDEXES)) {
-            if (!"ALL".equals(line.getOptionValue(OnlineWorkflowCommand.SECURITY_INDEXES)))
+            if (!"ALL".equals(line.getOptionValue(OnlineWorkflowCommand.SECURITY_INDEXES))) {
                 securityIndexes = Arrays.stream(line.getOptionValue(OnlineWorkflowCommand.SECURITY_INDEXES).split(","))
                         .map(SecurityIndexType::valueOf).collect(Collectors.toSet());
+            }
             params.setSecurityIndexes(securityIndexes);
         }
 
-        if (line.hasOption(OnlineWorkflowCommand.MERGE_OPTIMIZED))
+        if (line.hasOption(OnlineWorkflowCommand.MERGE_OPTIMIZED)) {
             params.setMergeOptimized(true);
+        }
 
         String limitReduction = line.getOptionValue(OnlineWorkflowCommand.LIMIT_REDUCTION);
-        if (limitReduction != null)
+        if (limitReduction != null) {
             params.setLimitReduction(Float.parseFloat(limitReduction));
+        }
 
         if (line.hasOption(OnlineWorkflowCommand.HANDLE_VIOLATION_IN_N)) {
             params.setHandleViolationsInN(true);
@@ -193,8 +208,9 @@ public class OnlineWorkflowTool implements Tool {
         }
 
         String constraintMargin = line.getOptionValue(OnlineWorkflowCommand.CONSTRAINT_MARGIN);
-        if (constraintMargin != null)
+        if (constraintMargin != null) {
             params.setConstraintMargin(Float.parseFloat(constraintMargin));
+        }
 
         String urlString = "service:jmx:rmi:///jndi/rmi://" + startconfig.getJmxHost() + ":" + startconfig.getJmxPort()
                 + "/jmxrmi";

@@ -12,13 +12,12 @@ import java.util.Collection;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public interface ActionsContingenciesAssociation
-{
-	
-	Collection<String> getContingenciesId();
-	
-	Collection<Constraint> getConstraints();
-	
+public interface ActionsContingenciesAssociation {
+
+    Collection<String> getContingenciesId();
+
+    Collection<Constraint> getConstraints();
+
     Collection<String> getActionsId();
 
 }

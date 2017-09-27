@@ -22,7 +22,6 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 import eu.itesla_project.iidm.network.Country;
-import eu.itesla_project.iidm.network.Identifiable;
 import eu.itesla_project.iidm.network.Network;
 import eu.itesla_project.modules.contingencies.ActionParameterBooleanValue;
 import eu.itesla_project.modules.contingencies.ActionParameterFloatValue;
@@ -39,6 +38,9 @@ import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
  * @author Quinary <itesla@quinary.com>
  */
 public class OnlineDbMVStoreUtils {
+
+    private OnlineDbMVStoreUtils() {
+    }
 
     public static String contingenciesIdsToJson(Collection<String> contingenciesIds) {
         return JSONSerializer.toJSON(contingenciesIds).toString();
@@ -111,8 +113,9 @@ public class OnlineDbMVStoreUtils {
         limitViolation.put("Value", Float.toString(violation.getValue()));
         limitViolation.put("Country", violation.getCountry().name());
         limitViolation.put("BaseVoltage", Float.toString(violation.getBaseVoltage()));
-        if (violation.getLimitName() != null)
+        if (violation.getLimitName() != null) {
             limitViolation.put("LimitName", violation.getLimitName());
+        }
         return JSONSerializer.toJSON(limitViolation).toString();
     }
 
@@ -183,24 +186,24 @@ public class OnlineDbMVStoreUtils {
                 String name = parameter.get("name");
                 String type = parameter.get("type");
                 switch (type) {
-                case "FLOAT":
-                    float floatValue = Float.parseFloat(parameter.get("value"));
-                    actionParameters.addParameter(name, new ActionParameterFloatValue(floatValue));
-                    break;
-                case "INTEGER":
-                    int intValue = Integer.parseInt(parameter.get("value"));
-                    actionParameters.addParameter(name, new ActionParameterIntegerValue(intValue));
-                    break;
-                case "STRING":
-                    String stringValue = parameter.get("value");
-                    actionParameters.addParameter(name, new ActionParameterStringValue(stringValue));
-                    break;
-                case "BOOLEAN":
-                    boolean booleanValue = Boolean.parseBoolean(parameter.get("value"));
-                    actionParameters.addParameter(name, new ActionParameterBooleanValue(booleanValue));
-                    break;
-                default:
-                    break;
+                    case "FLOAT":
+                        float floatValue = Float.parseFloat(parameter.get("value"));
+                        actionParameters.addParameter(name, new ActionParameterFloatValue(floatValue));
+                        break;
+                    case "INTEGER":
+                        int intValue = Integer.parseInt(parameter.get("value"));
+                        actionParameters.addParameter(name, new ActionParameterIntegerValue(intValue));
+                        break;
+                    case "STRING":
+                        String stringValue = parameter.get("value");
+                        actionParameters.addParameter(name, new ActionParameterStringValue(stringValue));
+                        break;
+                    case "BOOLEAN":
+                        boolean booleanValue = Boolean.parseBoolean(parameter.get("value"));
+                        actionParameters.addParameter(name, new ActionParameterBooleanValue(booleanValue));
+                        break;
+                    default:
+                        break;
                 }
             }
         }

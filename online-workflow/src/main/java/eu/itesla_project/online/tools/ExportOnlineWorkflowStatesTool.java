@@ -27,66 +27,67 @@ import java.util.List;
 @AutoService(Tool.class)
 public class ExportOnlineWorkflowStatesTool implements Tool {
 
-	private static Command COMMAND = new Command() {
-		
-		@Override
-		public String getName() {
-			return "export-online-workflow-states";
-		}
+    private static Command COMMAND = new Command() {
 
-		@Override
-		public String getTheme() {
-			return Themes.ONLINE_WORKFLOW;
-		}
+        @Override
+        public String getName() {
+            return "export-online-workflow-states";
+        }
 
-		@Override
-		public String getDescription() {
-			return "Export network data of the stored states of an online workflow";
-		}
+        @Override
+        public String getTheme() {
+            return Themes.ONLINE_WORKFLOW;
+        }
 
-		@Override
-		public Options getOptions() {
-			Options options = new Options();
-			options.addOption(Option.builder().longOpt("workflow")
-	                .desc("the workflow id")
-	                .hasArg()
-	                .required()
-	                .argName("ID")
-	                .build());
-			options.addOption(Option.builder().longOpt("file")
-	                .desc("the file where to export the network data")
-	                .hasArg()
-	                .required()
-	                .argName("FILE")
-	                .build());
-			return options;
-		}
+        @Override
+        public String getDescription() {
+            return "Export network data of the stored states of an online workflow";
+        }
 
-		@Override
-		public String getUsageFooter() {
-			return null;
-		}
-		
-	};
-	
-	@Override
-	public Command getCommand() {
-		return COMMAND;
-	}
+        @Override
+        public Options getOptions() {
+            Options options = new Options();
+            options.addOption(Option.builder().longOpt("workflow")
+                    .desc("the workflow id")
+                    .hasArg()
+                    .required()
+                    .argName("ID")
+                    .build());
+            options.addOption(Option.builder().longOpt("file")
+                    .desc("the file where to export the network data")
+                    .hasArg()
+                    .required()
+                    .argName("FILE")
+                    .build());
+            return options;
+        }
 
-	@Override
-	public void run(CommandLine line, ToolRunningContext context) throws Exception {
-		OnlineConfig config = OnlineConfig.load();
-		OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
-		String workflowId = line.getOptionValue("workflow");
-		Path file =  Paths.get(line.getOptionValue("file"));
-		List<Integer> storedStates = onlinedb.listStoredStates(workflowId);
-		if ( !storedStates.isEmpty() ) {
-			context.getOutputStream().println("Exporting stored states of workflow " + workflowId + " to file " + file);
-			onlinedb.exportStates(workflowId, file);
-		} else
-			context.getOutputStream().println("No states stored for workflow " + workflowId);
-		onlinedb.close();
-	}
-	
+        @Override
+        public String getUsageFooter() {
+            return null;
+        }
+
+    };
+
+    @Override
+    public Command getCommand() {
+        return COMMAND;
+    }
+
+    @Override
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
+        OnlineConfig config = OnlineConfig.load();
+        OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
+        String workflowId = line.getOptionValue("workflow");
+        Path file =  Paths.get(line.getOptionValue("file"));
+        List<Integer> storedStates = onlinedb.listStoredStates(workflowId);
+        if (!storedStates.isEmpty()) {
+            context.getOutputStream().println("Exporting stored states of workflow " + workflowId + " to file " + file);
+            onlinedb.exportStates(workflowId, file);
+        } else {
+            context.getOutputStream().println("No states stored for workflow " + workflowId);
+        }
+        onlinedb.close();
+    }
+
 }

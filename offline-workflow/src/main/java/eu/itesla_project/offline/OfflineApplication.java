@@ -33,11 +33,11 @@ public interface OfflineApplication extends AutoCloseable {
     void computeSecurityRules(String workflowId);
 
     SecurityIndexSynthesis getSecurityIndexesSynthesis(String workflowId);
-    
+
     void getSecurityRules(String workflowId);
-    
+
     SecurityRuleExpression getSecurityRuleExpression(String workflowId, RuleId ruleId);
-    
+
     void addListener(OfflineApplicationListener l);
 
     void removeListener(OfflineApplicationListener l);

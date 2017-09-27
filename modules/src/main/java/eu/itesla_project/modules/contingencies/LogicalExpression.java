@@ -12,13 +12,13 @@ package eu.itesla_project.modules.contingencies;
  */
 public interface LogicalExpression {
 
-	Operator getOperator();
-	/*
-	//TODO
-	Operand getOperand();
-	Then getThen();
-	And getAnd();
-	Or getOr();
-	*/
-	
+    Operator getOperator();
+    /*
+    //TODO
+    Operand getOperand();
+    Then getThen();
+    And getAnd();
+    Or getOr();
+    */
+
 }

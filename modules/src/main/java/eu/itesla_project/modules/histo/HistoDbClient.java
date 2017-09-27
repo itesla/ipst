@@ -7,7 +7,6 @@
 package eu.itesla_project.modules.histo;
 
 import eu.itesla_project.iidm.network.Country;
-import eu.itesla_project.iidm.network.Identifiable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;

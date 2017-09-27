@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
 public class WCATool implements Tool {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WCATool.class);
-    
+
     private static final double DEFAULT_PURITY_THRESHOLD = 0.95;
 
     private static final char CSV_SEPARATOR = ';';
@@ -284,14 +284,14 @@ public class WCATool implements Tool {
                         }
                     }
                 }
-                if ( line.hasOption("reports-folder") ) {
+                if (line.hasOption("reports-folder")) {
                     Path reportsFolder = Paths.get(line.getOptionValue("reports-folder"));
-                    if ( !wca.getReport().exportCsv(reportsFolder) ) {
+                    if (!wca.getReport().exportCsv(reportsFolder)) {
                         context.getOutputStream().println("Could not store reports for network " + network.getId() + " in folder " + reportsFolder);
                     }
                 }
                 context.getOutputStream().println(table.render());
-            } else if (Files.isDirectory(caseFile)){
+            } else if (Files.isDirectory(caseFile)) {
                 if (outputCsvFile == null) {
                     throw new RuntimeException("In case of multiple wca, you have to specify and ouput to csv file");
                 }
@@ -331,9 +331,9 @@ public class WCATool implements Tool {
                         }
 
                         clusterPerContingencyPerBaseCase.put(network.getId(), clusterPerContingency);
-                        if ( line.hasOption("reports-folder") ) {
+                        if (line.hasOption("reports-folder")) {
                             Path reportsFolder = Paths.get(line.getOptionValue("reports-folder") + File.separator + network.getId());
-                            if ( !wca.getReport().exportCsv(reportsFolder) ) {
+                            if (!wca.getReport().exportCsv(reportsFolder)) {
                                 context.getOutputStream().println("Could not store reports for network " + network.getId() + " in folder " + reportsFolder);
                             }
                         }

@@ -34,88 +34,91 @@ import eu.itesla_project.offline.forecast_errors.ForecastErrorsAnalysisConfig;
  */
 @AutoService(Tool.class)
 public class ListForecastErrorsAnalysisTool implements Tool {
-	
-	private static int COLUMN_LENGTH = 55;
-	
-	private static Command COMMAND = new Command() {
-		
-		@Override
-		public String getName() {
-			return "list-forecast-errors-analysis";
-		}
 
-		@Override
-		public String getTheme() {
-			return Themes.MCLA;
-		}
+    private static int COLUMN_LENGTH = 55;
 
-		@Override
-		public String getDescription() {
-			return "list stored forecast errors analysis";
-		}
+    private static Command COMMAND = new Command() {
 
-		@Override
-		public Options getOptions() {
-			return new Options();
-		}
+        @Override
+        public String getName() {
+            return "list-forecast-errors-analysis";
+        }
 
-		@Override
-		public String getUsageFooter() {
-			return null;
-		}
-		
-	};
+        @Override
+        public String getTheme() {
+            return Themes.MCLA;
+        }
 
-	@Override
-	public Command getCommand() {
-		return COMMAND;
-	}
+        @Override
+        public String getDescription() {
+            return "list stored forecast errors analysis";
+        }
 
-	@Override
-	public void run(CommandLine line, ToolRunningContext context) throws Exception {
-		ForecastErrorsAnalysisConfig config = ForecastErrorsAnalysisConfig.load();
-		ForecastErrorsDataStorage feDataStorage = config.getForecastErrorsDataStorageFactoryClass().newInstance().create(); 
-		List<ForecastErrorsAnalysisDetails> analysisList = feDataStorage.listAnalysis();
-		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-		Table table = new Table(5, BorderStyle.CLASSIC_WIDE);
+        @Override
+        public Options getOptions() {
+            return new Options();
+        }
+
+        @Override
+        public String getUsageFooter() {
+            return null;
+        }
+
+    };
+
+    @Override
+    public Command getCommand() {
+        return COMMAND;
+    }
+
+    @Override
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
+        ForecastErrorsAnalysisConfig config = ForecastErrorsAnalysisConfig.load();
+        ForecastErrorsDataStorage feDataStorage = config.getForecastErrorsDataStorageFactoryClass().newInstance().create();
+        List<ForecastErrorsAnalysisDetails> analysisList = feDataStorage.listAnalysis();
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        Table table = new Table(5, BorderStyle.CLASSIC_WIDE);
         table.addCell("ID", new CellStyle(CellStyle.HorizontalAlign.center));
         table.addCell("Date", new CellStyle(CellStyle.HorizontalAlign.center));
         table.addCell("Errors Models", new CellStyle(CellStyle.HorizontalAlign.center));
         table.addCell("Statistics", new CellStyle(CellStyle.HorizontalAlign.center));
         table.addCell("Parameters", new CellStyle(CellStyle.HorizontalAlign.center));
         for (ForecastErrorsAnalysisDetails analysis : analysisList) {
-        	ArrayList<TimeHorizon> mergedList = new ArrayList<TimeHorizon>(analysis.getForecastErrorsDataList());
+            ArrayList<TimeHorizon> mergedList = new ArrayList<TimeHorizon>(analysis.getForecastErrorsDataList());
             mergedList.removeAll(analysis.getForecastErrorsStatisticsList());
             mergedList.addAll(analysis.getForecastErrorsStatisticsList());
-        	for (TimeHorizon timeHorizon : mergedList) {
-        		table.addCell(analysis.getAnalysisId());
-        		table.addCell(formatter.print(analysis.getAnalysisDate()));
-        		if ( analysis.getForecastErrorsDataList().contains(timeHorizon))
-        			table.addCell(timeHorizon.getName());
-        		else
-        			table.addCell("-");
-        		if ( analysis.getForecastErrorsStatisticsList().contains(timeHorizon))
-        			table.addCell(timeHorizon.getName());
-        		else
-        			table.addCell("-");
-        		ForecastErrorsAnalyzerParameters parameters = feDataStorage.getParameters(analysis.getAnalysisId(), timeHorizon);
-        		if ( parameters != null ) {
-        			//table.addCell(parameters.toString().substring(32));
-        			String value = parameters.toString().substring(32);
-					while ( value.length() > COLUMN_LENGTH ) {
-						table.addCell(value.substring(0, COLUMN_LENGTH), new CellStyle(CellStyle.HorizontalAlign.left));
-						table.addCell(" ", new CellStyle(CellStyle.HorizontalAlign.left));
-						table.addCell(" ", new CellStyle(CellStyle.HorizontalAlign.left));
-						table.addCell(" ", new CellStyle(CellStyle.HorizontalAlign.left));
-						table.addCell(" ", new CellStyle(CellStyle.HorizontalAlign.left));
-						value = value.substring(COLUMN_LENGTH);
-					}
-					table.addCell(value, new CellStyle(CellStyle.HorizontalAlign.left));
-        		} else
-        			table.addCell("-");
-			}            
+            for (TimeHorizon timeHorizon : mergedList) {
+                table.addCell(analysis.getAnalysisId());
+                table.addCell(formatter.print(analysis.getAnalysisDate()));
+                if (analysis.getForecastErrorsDataList().contains(timeHorizon)) {
+                    table.addCell(timeHorizon.getName());
+                } else {
+                    table.addCell("-");
+                }
+                if (analysis.getForecastErrorsStatisticsList().contains(timeHorizon)) {
+                    table.addCell(timeHorizon.getName());
+                } else {
+                    table.addCell("-");
+                }
+                ForecastErrorsAnalyzerParameters parameters = feDataStorage.getParameters(analysis.getAnalysisId(), timeHorizon);
+                if (parameters != null) {
+                    //table.addCell(parameters.toString().substring(32));
+                    String value = parameters.toString().substring(32);
+                    while (value.length() > COLUMN_LENGTH) {
+                        table.addCell(value.substring(0, COLUMN_LENGTH), new CellStyle(CellStyle.HorizontalAlign.left));
+                        table.addCell(" ", new CellStyle(CellStyle.HorizontalAlign.left));
+                        table.addCell(" ", new CellStyle(CellStyle.HorizontalAlign.left));
+                        table.addCell(" ", new CellStyle(CellStyle.HorizontalAlign.left));
+                        table.addCell(" ", new CellStyle(CellStyle.HorizontalAlign.left));
+                        value = value.substring(COLUMN_LENGTH);
+                    }
+                    table.addCell(value, new CellStyle(CellStyle.HorizontalAlign.left));
+                } else {
+                    table.addCell("-");
+                }
+            }
         }
         context.getOutputStream().println(table.render());
-	}
+    }
 
 }

@@ -106,11 +106,11 @@ public class PrintOnlineWorkflowPerformances implements Tool {
         OnlineConfig config = OnlineConfig.load();
         try (OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create()) {
             List<String> workflowsIds = new ArrayList<>();
-            if (line.hasOption("workflow"))
+            if (line.hasOption("workflow")) {
                 workflowsIds.add(line.getOptionValue("workflow"));
-            else if (line.hasOption("workflows"))
+            } else if (line.hasOption("workflows")) {
                 workflowsIds = Arrays.asList(line.getOptionValue("workflows").split(","));
-            else if (line.hasOption("basecase")) {
+            } else if (line.hasOption("basecase")) {
                 DateTime basecaseDate = DateTime.parse(line.getOptionValue("basecase"));
                 workflowsIds = onlinedb.listWorkflows(basecaseDate).stream().map(OnlineWorkflowDetails::getWorkflowId).collect(Collectors.toList());
             } else if (line.hasOption("basecases-interval")) {
@@ -126,31 +126,31 @@ public class PrintOnlineWorkflowPerformances implements Tool {
 
             TableFormatterConfig tableFormatterConfig = TableFormatterConfig.load();
             Column[] tableColumns = {
-                    new Column("workflow_id"),
-                    new Column("basecase"),
-                    new Column("secure_contingencies"),
-                    new Column("unsecure_contingencies"),
-                    new Column("unsecure_contingencies_ratio"),
-                    new Column("secure_contingencies_ratio"),
-                    new Column("unsecure_secure_contingencies_ratio"),
-                    new Column("wca_missed_alarms"),
-                    new Column("wca_missed_alarms_lst"),
-                    new Column("wca_false_alarms"),
-                    new Column("wca_false_alarms_lst"),
-                    new Column("wca_accuracy"),
-                    new Column("wca_efficiency"),
-                    new Column("mcla_missed_alarms"),
-                    new Column("mcla_missed_alarms_lst"),
-                    new Column("mcla_false_alarms"),
-                    new Column("mcla_false_alarms_lst"),
-                    new Column("mcla_accuracy"),
-                    new Column("mcla_efficiency"),
-                    new Column("wf_missed_alarms"),
-                    new Column("wf_missed_alarms_lst"),
-                    new Column("wf_false_alarms"),
-                    new Column("wf_false_alarms_lst"),
-                    new Column("wf_accuracy"),
-                    new Column("wf_efficiency")
+                new Column("workflow_id"),
+                new Column("basecase"),
+                new Column("secure_contingencies"),
+                new Column("unsecure_contingencies"),
+                new Column("unsecure_contingencies_ratio"),
+                new Column("secure_contingencies_ratio"),
+                new Column("unsecure_secure_contingencies_ratio"),
+                new Column("wca_missed_alarms"),
+                new Column("wca_missed_alarms_lst"),
+                new Column("wca_false_alarms"),
+                new Column("wca_false_alarms_lst"),
+                new Column("wca_accuracy"),
+                new Column("wca_efficiency"),
+                new Column("mcla_missed_alarms"),
+                new Column("mcla_missed_alarms_lst"),
+                new Column("mcla_false_alarms"),
+                new Column("mcla_false_alarms_lst"),
+                new Column("mcla_accuracy"),
+                new Column("mcla_efficiency"),
+                new Column("wf_missed_alarms"),
+                new Column("wf_missed_alarms_lst"),
+                new Column("wf_false_alarms"),
+                new Column("wf_false_alarms_lst"),
+                new Column("wf_accuracy"),
+                new Column("wf_efficiency")
             };
 
             try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, outputFormat, outputFile, TABLE_TITLE, tableColumns)) {
@@ -230,10 +230,11 @@ public class PrintOnlineWorkflowPerformances implements Tool {
                                         || (!contingencyWCASecure.get(contingencyId) && contingencyMCLASecure.get(contingencyId)));
 
                                 // compute data for performances
-                                if (contingencySecure.get(contingencyId))
+                                if (contingencySecure.get(contingencyId)) {
                                     secureContingencies++;
-                                else
+                                } else {
                                     unsecureContingencies++;
+                                }
 
                                 if (!contingencySecure.get(contingencyId) && contingencyWCASecure.get(contingencyId)) {
                                     wcaMissedAlarmsList.add(contingencyId);

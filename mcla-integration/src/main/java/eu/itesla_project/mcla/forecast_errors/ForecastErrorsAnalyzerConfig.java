@@ -16,17 +16,17 @@ import java.util.Objects;
 /*
    MCLA code 1.8
 */
+
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 public class ForecastErrorsAnalyzerConfig {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ForecastErrorsAnalyzerConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ForecastErrorsAnalyzerConfig.class);
 
-	private Path binariesDir;
-	private Path runtimeHomeDir;
-	private final boolean debug;
+    private Path binariesDir;
+    private Path runtimeHomeDir;
+    private final boolean debug;
     private final Integer rngSeed;
     private final Integer checkModule0;
     private final double percpuGaussLoad;
@@ -48,8 +48,8 @@ public class ForecastErrorsAnalyzerConfig {
     private final String nats;
 
     public ForecastErrorsAnalyzerConfig(
-			Path binariesDir,
-			Path runtimeHomeDir,
+            Path binariesDir,
+            Path runtimeHomeDir,
             Integer checkModule0,
             double percpuGaussLoad,
             double percpuGaussRes,
@@ -68,24 +68,24 @@ public class ForecastErrorsAnalyzerConfig {
             double histo_estremeQ,
             double thresGUI,
             String nats,
-			Integer rngSeed,
-			boolean debug
-			) {
-		Objects.requireNonNull(binariesDir,"sampler compiled binaries directory is null");
-		Objects.requireNonNull(runtimeHomeDir,"matlab runtime directory is null");
+            Integer rngSeed,
+            boolean debug
+    ) {
+        Objects.requireNonNull(binariesDir, "sampler compiled binaries directory is null");
+        Objects.requireNonNull(runtimeHomeDir, "matlab runtime directory is null");
 
-		this.binariesDir=binariesDir;
-		this.runtimeHomeDir = runtimeHomeDir;
+        this.binariesDir = binariesDir;
+        this.runtimeHomeDir = runtimeHomeDir;
         this.rngSeed = rngSeed;
-        this.checkModule0=checkModule0;
-        this.percpuGaussLoad=percpuGaussLoad;
-        this.percpuGaussRes=percpuGaussRes;
-        this.correlationGauss=correlationGauss;
-        this.tolVar=tolVar;
-        this.nMinObsFract=nMinObsFract;
-        this.nMinObsInterv=nMinObsInterv;
-        this.imputationMeth=imputationMeth;
-        this.nGaussians=nGaussians;
+        this.checkModule0 = checkModule0;
+        this.percpuGaussLoad = percpuGaussLoad;
+        this.percpuGaussRes = percpuGaussRes;
+        this.correlationGauss = correlationGauss;
+        this.tolVar = tolVar;
+        this.nMinObsFract = nMinObsFract;
+        this.nMinObsInterv = nMinObsInterv;
+        this.imputationMeth = imputationMeth;
+        this.nGaussians = nGaussians;
         this.kOutlier = kOutlier;
         this.tolerance = tolerance;
         this.iterations = iterations;
@@ -95,48 +95,48 @@ public class ForecastErrorsAnalyzerConfig {
         this.histo_estremeQ = histo_estremeQ;
         this.thresGUI = thresGUI;
         this.nats = nats;
-		this.debug=debug;
-	}
+        this.debug = debug;
+    }
 
-	public static ForecastErrorsAnalyzerConfig load() {
+    public static ForecastErrorsAnalyzerConfig load() {
         ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("forecastErrorsAnalyzer");
 
         Path binariesDir = config.getPathProperty("binariesDir");
         Path runtimeHomeDir = config.getPathProperty("runtimeHomeDir");
         boolean debug = config.getBooleanProperty("debug", false);
-        Integer checkModule0 = config.getOptionalIntProperty("checkModule0");
+        Integer checkModule0 = config.getOptionalIntegerProperty("checkModule0").orElse(null);
         double percpuGaussLoad = config.getDoubleProperty("percpuGaussLoad");
         double percpuGaussRes = config.getDoubleProperty("percpuGaussRes");
         double correlationGauss = config.getDoubleProperty("correlationGauss");
-        double tolVar= config.getDoubleProperty("tolvar");
-        double nMinObsFract= config.getDoubleProperty("Nmin_obs_fract");
-        Integer nMinObsInterv = config.getOptionalIntProperty("Nmin_obs_interv");
-        Integer imputationMeth = config.getOptionalIntProperty("imputation_meth");
-        Integer nGaussians = config.getOptionalIntProperty("Ngaussians");
-        Integer rngSeed = config.getOptionalIntProperty("rngSeed");
-        Integer kOutlier = config.getOptionalIntProperty("koutlier");
+        double tolVar = config.getDoubleProperty("tolvar");
+        double nMinObsFract = config.getDoubleProperty("Nmin_obs_fract");
+        Integer nMinObsInterv = config.getOptionalIntegerProperty("Nmin_obs_interv").orElse(null);
+        Integer imputationMeth = config.getOptionalIntegerProperty("imputation_meth").orElse(null);
+        Integer nGaussians = config.getOptionalIntegerProperty("Ngaussians").orElse(null);
+        Integer rngSeed = config.getOptionalIntegerProperty("rngSeed").orElse(null);
+        Integer kOutlier = config.getOptionalIntegerProperty("koutlier").orElse(null);
         double tolerance = config.getDoubleProperty("tolerance");
-        Integer iterations = config.getOptionalIntProperty("iterations");
+        Integer iterations = config.getOptionalIntegerProperty("iterations").orElse(null);
         double epsilo = config.getDoubleProperty("epsilo");
-        Integer conditionalSampling = config.getOptionalIntProperty("conditionalSampling");
-        Integer tFlags = config.getOptionalIntProperty("tFlags");
+        Integer conditionalSampling = config.getOptionalIntegerProperty("conditionalSampling").orElse(null);
+        Integer tFlags = config.getOptionalIntegerProperty("tFlags").orElse(null);
         double histo_estremeQ = config.getDoubleProperty("histo_estremeQ");
         double thresGUI = config.getDoubleProperty("thresGUI");
-        String nats = config.getStringProperty("nats","All");
+        String nats = config.getStringProperty("nats", "All");
 
         return new ForecastErrorsAnalyzerConfig(binariesDir, runtimeHomeDir, checkModule0, percpuGaussLoad, percpuGaussRes, correlationGauss, tolVar, nMinObsFract, nMinObsInterv, imputationMeth, nGaussians, kOutlier, tolerance, iterations, epsilo, conditionalSampling, tFlags, histo_estremeQ, thresGUI, nats, rngSeed, debug);
-	}
+    }
 
-	public Path getBinariesDir() {
-		return binariesDir;
-	}
+    public Path getBinariesDir() {
+        return binariesDir;
+    }
 
-	public Path getRuntimeHomeDir() {
-		return runtimeHomeDir;
-	}
+    public Path getRuntimeHomeDir() {
+        return runtimeHomeDir;
+    }
 
     public Integer getCheckModule0() {
-    	return checkModule0; 
+        return checkModule0;
     }
 
     public double getPercpuGaussLoad() {
@@ -171,39 +171,57 @@ public class ForecastErrorsAnalyzerConfig {
         return nGaussians;
     }
 
-    public Integer getkOutlier() { return kOutlier; }
+    public Integer getkOutlier() {
+        return kOutlier;
+    }
 
-    public double getTolerance() { return tolerance; }
+    public double getTolerance() {
+        return tolerance;
+    }
 
-    public Integer getIterations() { return iterations;}
+    public Integer getIterations() {
+        return iterations;
+    }
 
-    public double getEpsilo() { return epsilo; }
+    public double getEpsilo() {
+        return epsilo;
+    }
 
-    public Integer getConditionalSampling() { return conditionalSampling; }
+    public Integer getConditionalSampling() {
+        return conditionalSampling;
+    }
 
-    public Integer gettFlags() { return tFlags; }
+    public Integer gettFlags() {
+        return tFlags;
+    }
 
-    public double getHisto_estremeQ() { return histo_estremeQ; }
+    public double getHisto_estremeQ() {
+        return histo_estremeQ;
+    }
 
-    public double getThresGUI() { return thresGUI; }
+    public double getThresGUI() {
+        return thresGUI;
+    }
 
-    public String getNats() { return nats; }
+    public String getNats() {
+        return nats;
+    }
 
     public Integer getRngSeed() {
-		return rngSeed;
-	}
+        return rngSeed;
+    }
 
-	public static Logger getLogger() {
-		return LOGGER;
-	}
+    public static Logger getLogger() {
+        return LOGGER;
+    }
 
-	public boolean isDebug() {
-	        return debug;
-	}
+    public boolean isDebug() {
+        return debug;
+    }
 
-	@Override
-	public String toString() {
-		return "ForecastErrorsAnalyzerConfig [binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir
+    @Override
+    public String toString() {
+        return "ForecastErrorsAnalyzerConfig [binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir
                 + ", check module0=" + checkModule0
                 + ", per cpu gauss load=" + percpuGaussLoad
                 + ", per cpu gauss res=" + percpuGaussRes
@@ -222,7 +240,7 @@ public class ForecastErrorsAnalyzerConfig {
                 + ", histo_estremeQ=" + histo_estremeQ
                 + ", thresGUI=" + thresGUI
                 + ", nats=" + nats
-				+ ", debug=" + debug + "]";
-	}
+                + ", debug=" + debug + "]";
+    }
 
 }

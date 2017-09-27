@@ -136,6 +136,7 @@ public class EurostagScenario {
         writer.newLine();
         for (ContingencyElement element : contingency.getElements()) {
             switch (element.getType()) {
+                case BRANCH:
                 case LINE: {
                     Line l = network.getLine(element.getId());
                     if (l == null) {
@@ -191,7 +192,7 @@ public class EurostagScenario {
                             .append(" R          1                           0.");
                     writer.newLine();
                 }
-                break;
+                    break;
 
                 case GENERATOR: {
                     Generator g = network.getGenerator(element.getId());
@@ -223,7 +224,7 @@ public class EurostagScenario {
                             .append("                                                   0.                   0.");
                     writer.newLine();
                 }
-                break;
+                    break;
 
                 default:
                     throw new AssertionError();

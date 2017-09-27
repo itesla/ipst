@@ -57,19 +57,20 @@ public class SecurityRulesFacade implements OnlineRulesFacade {
                 LOGGER.info("Getting mc security rule for {} contingency and {} index", contingency.getId(), securityIndexType);
                 mcRules.addAll(rulesDbClient.getRules(parameters.getOfflineWorkflowId(), RuleAttributeSet.MONTE_CARLO, contingency.getId(), securityIndexType));
                 mcViolatedEquipmentForContingency.put(securityIndexType, new ArrayList<String>()); // so far we do not have the violated components for a rule/index
-                if ( parameters.wcaRules() )  { // get wca rules for validation
+                if (parameters.wcaRules())  { // get wca rules for validation
                     LOGGER.info("Getting wca security rule for {} contingency and {} index", contingency.getId(), securityIndexType);
                     wcaRules.addAll(rulesDbClient.getRules(parameters.getOfflineWorkflowId(), RuleAttributeSet.WORST_CASE, contingency.getId(), securityIndexType));
                     wcaViolatedEquipmentForContingency.put(securityIndexType, new ArrayList<String>()); // so far we do not have the violated components for a rule/index
                 }
             }
-            if ( parameters.wcaRules() ) // store wca rules for validation
-                evaluators.put(contingency.getId(), new ContingencyEvaluator(contingency, mcRules, wcaRules, parameters.getPurityThreshold(), 
+            if (parameters.wcaRules()) { // store wca rules for validation
+                evaluators.put(contingency.getId(), new ContingencyEvaluator(contingency, mcRules, wcaRules, parameters.getPurityThreshold(),
                         mcViolatedEquipmentForContingency, wcaViolatedEquipmentForContingency,
                         parameters.isCheckRules()));
-            else
-                evaluators.put(contingency.getId(), new ContingencyEvaluator(contingency, mcRules, parameters.getPurityThreshold(), 
+            } else {
+                evaluators.put(contingency.getId(), new ContingencyEvaluator(contingency, mcRules, parameters.getPurityThreshold(),
                         mcViolatedEquipmentForContingency, parameters.isCheckRules()));
+            }
         }
     }
 

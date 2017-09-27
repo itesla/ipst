@@ -20,7 +20,7 @@ public class StateSynthesis {
     private final List<ViolationSynthesis> preContingencyViolations = new ArrayList();
     private final Map<String, List<ViolationSynthesis>> postContingencyViolations = new HashMap();
 
-    public StateSynthesis(int state){
+    public StateSynthesis(int state) {
         this.state = state;
     }
 

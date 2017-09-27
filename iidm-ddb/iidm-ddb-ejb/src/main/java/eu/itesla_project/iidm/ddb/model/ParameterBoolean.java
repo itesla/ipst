@@ -14,35 +14,35 @@ import javax.persistence.*;
  * @author Quinary <itesla@quinary.com>
  */
 @Entity
-@Table(name="PARAMETERBOOLEAN")
+@Table(name = "PARAMETERBOOLEAN")
 @DiscriminatorValue("boolean")
 public class ParameterBoolean extends Parameter implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private Boolean value;
-	
-	protected ParameterBoolean() {
-		super();
-	}
-	public ParameterBoolean(String name, Boolean value) {
-		super();
-		this.name=name;
-		this.value=value;
-	}
-	
-	public ParameterBoolean(String name, boolean value) {
-		super();
-		this.name=name;
-		this.value=value;
-	}
+    private Boolean value;
 
-	public Boolean getValue() {
-		return value;
-	}
-	public void setValue(Boolean value) {
-		this.value = value;
-	}
-	
-	
-   
+    protected ParameterBoolean() {
+        super();
+    }
+    public ParameterBoolean(String name, Boolean value) {
+        super();
+        this.name = name;
+        this.value = value;
+    }
+
+    public ParameterBoolean(String name, boolean value) {
+        super();
+        this.name = name;
+        this.value = value;
+    }
+
+    public Boolean getValue() {
+        return value;
+    }
+    public void setValue(Boolean value) {
+        this.value = value;
+    }
+
+
+
 }

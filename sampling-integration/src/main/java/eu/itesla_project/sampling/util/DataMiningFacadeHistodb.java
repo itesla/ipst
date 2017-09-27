@@ -30,41 +30,41 @@ import java.util.stream.IntStream;
  */
 public class DataMiningFacadeHistodb implements DataMiningFacade {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(DataMiningFacadeHistodb.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataMiningFacadeHistodb.class);
 
-	private final HistoDbClient histoClient;
+    private final HistoDbClient histoClient;
 
-	public DataMiningFacadeHistodb(HistoDbClient histoClient) {
-		this.histoClient=histoClient;
-	}
+    public DataMiningFacadeHistodb(HistoDbClient histoClient) {
+        this.histoClient = histoClient;
+    }
 
     @Override
-	public Wp41HistoData getDataFromHistoDatabase(DataMiningFacadeParams dmParams) throws IOException, InterruptedException {
-		LOGGER.info("Get histodb data");
-		LOGGER.info("	interval {}", dmParams.getInterval());
-		LOGGER.info("	gens {}", dmParams.getGensIds());
-		LOGGER.info("	loads {}", dmParams.getLoadsIds());
-		LOGGER.info("	dangling lines {}", dmParams.getDanglingLinesIds());
+    public Wp41HistoData getDataFromHistoDatabase(DataMiningFacadeParams dmParams) throws IOException, InterruptedException {
+        LOGGER.info("Get histodb data");
+        LOGGER.info("    interval {}", dmParams.getInterval());
+        LOGGER.info("    gens {}", dmParams.getGensIds());
+        LOGGER.info("    loads {}", dmParams.getLoadsIds());
+        LOGGER.info("    dangling lines {}", dmParams.getDanglingLinesIds());
 
-		return parseData(dmParams);
-	}
+        return parseData(dmParams);
+    }
 
-	private static void parseCsv(InputStream is, Set<HistoDbAttributeId> ids, Table<Integer,String,Float> hdTable, int expectedRowCount) throws IOException {
-		int rowcount=0;
-		try (ICsvMapReader mapReader = new CsvMapReader(new InputStreamReader(is), new CsvPreference.Builder('"', ',', "\r\n").build())) {
+    private static void parseCsv(InputStream is, Set<HistoDbAttributeId> ids, Table<Integer, String, Float> hdTable, int expectedRowCount) throws IOException {
+        int rowcount = 0;
+        try (ICsvMapReader mapReader = new CsvMapReader(new InputStreamReader(is), new CsvPreference.Builder('"', ',', "\r\n").build())) {
 
-			final String[] header = mapReader.getHeader(true);
+            final String[] header = mapReader.getHeader(true);
 
-			final CellProcessor[] rowProcessors = new CellProcessor[header.length];
-			Map<String, AtomicInteger> observationCount = new TreeMap<>();
+            final CellProcessor[] rowProcessors = new CellProcessor[header.length];
+            Map<String, AtomicInteger> observationCount = new TreeMap<>();
             for (HistoDbAttributeId id : ids) {
                 if (id instanceof HistoDbNetworkAttributeId) { // skip meta data attributes
                     observationCount.put(((HistoDbNetworkAttributeId) id).getEquipmentId(), new AtomicInteger());
                 }
             }
-			Map<String, Object> componentMap;
-			while( (componentMap = mapReader.read(header, rowProcessors)) != null ) {
-				for (HistoDbAttributeId id : ids) {
+            Map<String, Object> componentMap;
+            while ((componentMap = mapReader.read(header, rowProcessors)) != null) {
+                for (HistoDbAttributeId id : ids) {
                     if (id instanceof HistoDbNetworkAttributeId) { // skip meta data attributes
                         String val = (String) componentMap.get(id.toString());
                         if (val != null) {
@@ -72,23 +72,23 @@ public class DataMiningFacadeHistodb implements DataMiningFacade {
                         }
                         hdTable.put(rowcount, id.toString(), val != null ? Float.valueOf(val) : null);
                     }
-				}
-				rowcount++;
-			}
-			if (rowcount != expectedRowCount) {
-				throw new AssertionError("Unexpected row count " + rowcount + " != " + expectedRowCount);
-			}
+                }
+                rowcount++;
+            }
+            if (rowcount != expectedRowCount) {
+                throw new AssertionError("Unexpected row count " + rowcount + " != " + expectedRowCount);
+            }
             LOGGER.info("Loaded records from historical DB data ({})", rowcount);
             Set<String> equipmentsNotFound = observationCount.entrySet().stream().filter(e -> e.getValue().get() == 0).map(Map.Entry::getKey).collect(Collectors.toSet());
             if (equipmentsNotFound.size() > 0) {
                 LOGGER.warn("The following equipments ({}) either have not been found or are always disconnected in the historical DB: {}",
                         equipmentsNotFound.size(), equipmentsNotFound);
             }
-		}
-	}
+        }
+    }
 
-	private Wp41HistoData parseData(DataMiningFacadeParams dmParams) throws IOException, InterruptedException {
-		int rowCount = histoClient.queryCount(dmParams.getInterval(), HistoDbHorizon.SN);
+    private Wp41HistoData parseData(DataMiningFacadeParams dmParams) throws IOException, InterruptedException {
+        int rowCount = histoClient.queryCount(dmParams.getInterval(), HistoDbHorizon.SN);
 
         Set<HistoDbAttributeId> attributeIds = new LinkedHashSet<>((dmParams.getGensIds().size() +
                                                                     dmParams.getLoadsIds().size() +
@@ -120,6 +120,6 @@ public class DataMiningFacadeHistodb implements DataMiningFacade {
         }
 
         return new Wp41HistoData(dmParams.getGensIds(), dmParams.getLoadsIds(), dmParams.getDanglingLinesIds(), hdTable);
-	}
+    }
 
 }

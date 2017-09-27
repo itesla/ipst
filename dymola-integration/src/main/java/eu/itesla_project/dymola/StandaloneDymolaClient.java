@@ -31,8 +31,8 @@ import java.nio.file.Paths;
 public class StandaloneDymolaClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(StandaloneDymolaClient.class);
     private static final int TRIES = 1; // number of soap remote service attempts, before giving up
-    private static final int CONNECTION_TIMEOUT = 4 * 60 * 60 * 1000 ;// in milliseconds
-    private static final int REQUEST_TIMEOUT =  4 * 60 * 60 * 1000 ;// in milliseconds
+    private static final int CONNECTION_TIMEOUT = 4 * 60 * 60 * 1000; // in milliseconds
+    private static final int REQUEST_TIMEOUT = 4 * 60 * 60 * 1000; // in milliseconds
 
     String wsdlService;
     private double startTime;
@@ -55,11 +55,11 @@ public class StandaloneDymolaClient {
         this.wsdlService = wsdlService;
     }
 
-    protected String runDymola(Path workingDir, String inputFileName, String outputFileName, String modelFileName, String modelName, String resultsFileName) throws InterruptedException{
+    protected String runDymola(Path workingDir, String inputFileName, String outputFileName, String modelFileName, String modelName, String resultsFileName) throws InterruptedException {
         Path pathIn = workingDir.resolve(inputFileName);
         Path pathOut = workingDir.resolve(outputFileName);
-        String retCode="";
-        RetryOnExceptionStrategy retry = new RetryOnExceptionStrategy(TRIES,2000);
+        String retCode = "";
+        RetryOnExceptionStrategy retry = new RetryOnExceptionStrategy(TRIES, 2000);
         LOGGER.info(" - invoking remote dymola proxy service");
         while (retry.shouldRetry()) {
             try {
@@ -80,7 +80,7 @@ public class StandaloneDymolaClient {
                 break;
             } catch (Exception e) {
                 try {
-                    LOGGER.warn(" - retry ... ({})",e.getMessage());
+                    LOGGER.warn(" - retry ... ({})", e.getMessage());
                     retry.errorOccured(e);
                 } catch (RuntimeException e1) {
                     LOGGER.error(" - remote dymola proxy service ended unsuccessfully", e);
@@ -96,13 +96,13 @@ public class StandaloneDymolaClient {
         return retCode;
     }
 
-    protected String runDymolaFake(Path workingDir, String inputFileName, String outputFileName, String modelFileName, String modelName, String resultsFileName) throws InterruptedException{
+    protected String runDymolaFake(Path workingDir, String inputFileName, String outputFileName, String modelFileName, String modelName, String resultsFileName) throws InterruptedException {
         Path pathIn = workingDir.resolve(inputFileName);
         Path pathOut = workingDir.resolve(outputFileName);
-        String retCode="";
+        String retCode = "";
         LOGGER.debug(" - executing remote dymola proxy service FAKE");
         try {
-            Path fakePath= Paths.get("/home/itesla/itesla_dymola/nordic44/fake").resolve(outputFileName);
+            Path fakePath = Paths.get("/home/itesla/itesla_dymola/nordic44/fake").resolve(outputFileName);
             LOGGER.info(" -  FAKE inputfile {}", fakePath.toFile().getAbsolutePath());
             Files.copy(fakePath, pathOut);
             LOGGER.debug(" - remote dymola proxy service FAKE ended successfully");

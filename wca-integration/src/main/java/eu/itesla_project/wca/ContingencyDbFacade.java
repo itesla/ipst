@@ -21,7 +21,7 @@ public interface ContingencyDbFacade {
     List<Contingency> getContingencies();
 
     List<List<Action>> getCurativeActions(Contingency contingency, List<LimitViolation> limitViolations);
-    
+
     List<List<Action>> getPreventiveActions(LimitViolation limitViolation);
 
 }

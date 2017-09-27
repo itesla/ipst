@@ -99,7 +99,7 @@ public class EchUtil {
 
     private static DecoratedBus decorate(Bus b) {
         final DecoratedBus decoratedBus = new DecoratedBus(b);
-        b.visitConnectedEquipments(new AbstractTopologyVisitor() {
+        b.visitConnectedEquipments(new DefaultTopologyVisitor() {
             @Override
             public void visitLine(Line line, Line.Side side) {
                 decoratedBus.branch++;
@@ -153,10 +153,10 @@ public class EchUtil {
     }
 
     private static Bus selectSlackbusCriteria1(Network network, EurostagEchExportConfig config, Set<String> busesToAvoid) {
-         return StreamSupport.stream(EchUtil.getBuses(network, config).spliterator(), false)
+        return StreamSupport.stream(EchUtil.getBuses(network, config).spliterator(), false)
                 .sorted((b1, b2) -> b1.getId().compareTo(b2.getId()))
                 .filter(b -> !busesToAvoid.contains(b.getId())
-                        && b.getConnectedComponent() != null && b.getConnectedComponent().getNum() == ConnectedComponent.MAIN_CC_NUM)
+                        && b.getConnectedComponent() != null && b.getConnectedComponent().getNum() == Component.MAIN_NUM)
                  .map(b -> decorate(b))
                  .filter(db -> db.regulatingGenerator > 0 && db.maxP > 100) // only keep bus with a regulating generator and a pmax > 100 MW
                  .sorted((db1, db2) -> Float.compare((db1.maxP - db1.minP) / 2 - db1.targetP, (db2.maxP - db2.minP) / 2 - db2.targetP)) // select first bus with a high margin

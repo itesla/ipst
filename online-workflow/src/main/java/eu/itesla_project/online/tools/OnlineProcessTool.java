@@ -108,25 +108,31 @@ public class OnlineProcessTool implements Tool {
         if (line.hasOption("config-file")) {
             proc_params = readParamsFile(line.getOptionValue("config-file"), context.getOutputStream());
 
-        } else
+        } else {
             proc_params = new OnlineProcessParameters();
+        }
         readParams(line, proc_params);
-        if (proc_params == null)
+        if (proc_params == null) {
             return;
-        if (proc_params.getDate() == null)
+        }
+        if (proc_params.getDate() == null) {
             proc_params.setDate(new DateTime());
-        if (proc_params.getCreationDate() == null)
+        }
+        if (proc_params.getCreationDate() == null) {
             proc_params.setCreationDate(new DateTime());
+        }
         context.getOutputStream().println("OnlineProcess config: " + proc_params);
-        if (proc_params.getCaseType() != null)
+        if (proc_params.getCaseType() != null) {
             params.setCaseType(CaseType.valueOf(proc_params.getCaseType()));
+        }
 
         if (params.getCaseType() == null) {
             context.getOutputStream().println("Error: Missing required param 'case-type'");
             return;
         }
-        if (proc_params.getStates() != null)
+        if (proc_params.getStates() != null) {
             params.setStates(proc_params.getStates());
+        }
 
         OnlineConfig oConfig = OnlineConfig.load();
         CaseRepository caseRepo = oConfig.getCaseRepositoryFactoryClass().newInstance()
@@ -197,7 +203,7 @@ public class OnlineProcessTool implements Tool {
                 } finally {
                     try {
                         onlinedb.close();
-                    } catch (Throwable t) {
+                    } catch (Throwable ignored) {
                     }
                 }
                 if (processed) {
@@ -222,20 +228,27 @@ public class OnlineProcessTool implements Tool {
     }
 
     private void readParams(CommandLine line, OnlineProcessParameters pp) {
-        if (line.hasOption("name"))
+        if (line.hasOption("name")) {
             pp.setName(line.getOptionValue("name"));
-        if (line.hasOption("owner"))
+        }
+        if (line.hasOption("owner")) {
             pp.setOwner(line.getOptionValue("owner"));
-        if (line.hasOption("basecases-interval"))
+        }
+        if (line.hasOption("basecases-interval")) {
             pp.setBasecasesInterval(line.getOptionValue("basecases-interval"));
-        if (line.hasOption("states"))
+        }
+        if (line.hasOption("states")) {
             pp.setStates(new Integer(line.getOptionValue("states")));
-        if (line.hasOption("case-type"))
+        }
+        if (line.hasOption("case-type")) {
             pp.setCaseType(line.getOptionValue("case-type"));
-        if (line.hasOption("date"))
+        }
+        if (line.hasOption("date")) {
             pp.setDate(DateTime.parse(line.getOptionValue("date")));
-        if (line.hasOption("creation-date"))
+        }
+        if (line.hasOption("creation-date")) {
             pp.setCreationDate(DateTime.parse(line.getOptionValue("creation-date")));
+        }
     }
 
     private OnlineProcessParameters readParamsFile(String filename, PrintStream out)
@@ -249,8 +262,9 @@ public class OnlineProcessTool implements Tool {
             objectMapper.configure(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
                     false);
             return objectMapper.readValue(json, OnlineProcessParameters.class);
-        } else
+        } else {
             out.println("File not found: " + filename);
+        }
         return null;
     }
 

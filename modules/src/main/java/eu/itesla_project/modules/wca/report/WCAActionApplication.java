@@ -26,7 +26,7 @@ public class WCAActionApplication {
     private final String comment;
     private List<LimitViolation> postActionViolations = new ArrayList<>();
 
-    public WCAActionApplication(String actionId, LimitViolation violation, WCALoadflowResult loadflowResult, 
+    public WCAActionApplication(String actionId, LimitViolation violation, WCALoadflowResult loadflowResult,
             boolean violationsRemoved, boolean actionApplied, String comment) {
         this.actionId = Objects.requireNonNull(actionId);
         this.violation = violation;
@@ -63,11 +63,11 @@ public class WCAActionApplication {
     public List<LimitViolation> getPostActionViolations() {
         return postActionViolations;
     }
-    
+
     public void setActionApplied(boolean actionApplied) {
         this.actionApplied = actionApplied;
     }
-    
+
     public void setPostActionViolations(List<LimitViolation> postActionViolations) {
         this.postActionViolations = Objects.requireNonNull(postActionViolations);
     }

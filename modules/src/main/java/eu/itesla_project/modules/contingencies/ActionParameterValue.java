@@ -12,5 +12,5 @@ package eu.itesla_project.modules.contingencies;
  */
 public interface ActionParameterValue {
 
-	Object getValue();
+    Object getValue();
 }

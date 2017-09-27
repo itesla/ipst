@@ -17,7 +17,7 @@ public class HistoDbClientFactoryImpl implements HistoDbClientFactory {
 
     @Override
     public HistoDbClient create(boolean cache) {
-        return new HistoDbClientImpl(HistoDbConfig.load(), cache ? new HistoDbCacheImpl(): null);
+        return new HistoDbClientImpl(HistoDbConfig.load(), cache ? new HistoDbCacheImpl() : null);
     }
 
 }
