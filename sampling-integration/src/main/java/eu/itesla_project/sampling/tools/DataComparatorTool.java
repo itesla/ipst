@@ -18,10 +18,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -129,19 +127,43 @@ public class DataComparatorTool implements Tool {
             throw new RuntimeException("either specify both set1 and set2 parameters, or none of them");
         }
 
-        try (CommandExecutor executor = context.getComputationManager().newCommandExecutor(createEnv(config), WORKING_DIR_PREFIX, config.isDebug())) {
-            Path workingDir = executor.getWorkingDir();
-            eu.itesla_project.computation.Command cmd = createConcatMatFilesCmd(config.getValidationDir(), MOD3FILES_PATTERN, config.getValidationDir().resolve(CONCATSAMPLESFILENAME), config);
-            int priority = 1;
-            ExecutionReport report = executor.start(new CommandExecution(cmd, 1, priority));
-            report.log();
-            if (report.getErrors().isEmpty()) {
-                report = executor.start(new CommandExecution(createDataComparatorCmd(config.getValidationDir().resolve(M1INPUTFILENAME).toFile().getAbsolutePath(), config.getValidationDir().resolve(CONCATSAMPLESFILENAME).toFile().getAbsolutePath(), set1, set2, config), 1, priority));
-                report.log();
-                Files.copy(workingDir.resolve(DATA_COMPARATOR_OUT_FIG), Paths.get(oFilePrefix + ".fig"), REPLACE_EXISTING);
-                Files.copy(workingDir.resolve(DATA_COMPARATOR_OUT_PNG), Paths.get(oFilePrefix + ".png"), REPLACE_EXISTING);
+        ExecutionEnvironment executionEnvironment = new ExecutionEnvironment(createEnv(config), WORKING_DIR_PREFIX, config.isDebug());
+        CompletableFuture<ExecutionReport> concatMatFiles = context.getComputationManager().execute(executionEnvironment, new AbstractExecutionHandler<ExecutionReport>() {
+            @Override
+            public List<CommandExecution> before(Path workingDir) throws IOException {
+                eu.itesla_project.computation.Command cmd = createConcatMatFilesCmd(config.getValidationDir(), MOD3FILES_PATTERN, config.getValidationDir().resolve(CONCATSAMPLESFILENAME), config);
+                int priority = 1;
+                return Collections.singletonList(new CommandExecution(cmd, 1, priority));
             }
-        }
+
+            @Override
+            public ExecutionReport after(Path workingDir, ExecutionReport report) throws IOException {
+                report.log();
+                return report;
+            }
+        });
+        CompletableFuture<Void> createConcatMatFiles = concatMatFiles.thenCompose(report -> {
+            if (report.getErrors().isEmpty()) {
+                return context.getComputationManager().execute(executionEnvironment, new AbstractExecutionHandler<Void>() {
+                    @Override
+                    public List<CommandExecution> before(Path workingDir) throws IOException {
+                        eu.itesla_project.computation.Command cmd = createConcatMatFilesCmd(config.getValidationDir(), MOD3FILES_PATTERN, config.getValidationDir().resolve(CONCATSAMPLESFILENAME), config);
+                        int priority = 1;
+                        return Collections.singletonList(new CommandExecution(cmd, 1, priority));
+                    }
+
+                    @Override
+                    public Void after(Path workingDir, ExecutionReport report) throws IOException {
+                        report.log();
+                        Files.copy(workingDir.resolve(DATA_COMPARATOR_OUT_FIG), Paths.get(oFilePrefix + ".fig"), REPLACE_EXISTING);
+                        Files.copy(workingDir.resolve(DATA_COMPARATOR_OUT_PNG), Paths.get(oFilePrefix + ".png"), REPLACE_EXISTING);
+                        return null;
+                    }
+                });
+            } else {
+                return new CompletableFuture<>();
+            }
+        });
     }
 
 
