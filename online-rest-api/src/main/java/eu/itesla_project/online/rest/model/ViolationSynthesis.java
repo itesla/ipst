@@ -49,7 +49,7 @@ public class ViolationSynthesis {
             return false;
         }
         ViolationSynthesis other = (ViolationSynthesis) obj;
-        return (equipment.equals(other.equipment) && type.equals(other.type));
+        return equipment.equals(other.equipment) && type.equals(other.type);
     }
 
     public String getEquipment() {

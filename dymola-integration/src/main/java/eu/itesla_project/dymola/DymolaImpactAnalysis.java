@@ -135,15 +135,15 @@ public class DymolaImpactAnalysis implements ImpactAnalysis {
                 case MO_LINE_OPEN_REC:
                     return ((MoLineOpenRecContingency) element).getT2() - ((MoLineOpenRecContingency) element).getT1();
                 case MO_LINE_2_OPEN:
-                    return (parameters.getPostFaultSimulationStopInstant() - ((MoLine2OpenContingency) element).getT1());
+                    return parameters.getPostFaultSimulationStopInstant() - ((MoLine2OpenContingency) element).getT1();
                 case MO_BANK_MODIF:
-                    return (parameters.getPostFaultSimulationStopInstant() - ((MoBankModifContingency) element).getT1());
+                    return parameters.getPostFaultSimulationStopInstant() - ((MoBankModifContingency) element).getT1();
                 case MO_LOAD_MODIF:
-                    return (parameters.getPostFaultSimulationStopInstant() - ((MoLoadModifContingency) element).getT1());
+                    return parameters.getPostFaultSimulationStopInstant() - ((MoLoadModifContingency) element).getT1();
                 case MO_BREAKER:
-                    return (parameters.getPostFaultSimulationStopInstant() - ((MoBreakerContingency) element).getT1());
+                    return parameters.getPostFaultSimulationStopInstant() - ((MoBreakerContingency) element).getT1();
                 case MO_SETPOINT_MODIF:
-                    return (parameters.getPostFaultSimulationStopInstant() - ((MoSetPointModifContingency) element).getT1());
+                    return parameters.getPostFaultSimulationStopInstant() - ((MoSetPointModifContingency) element).getT1();
                 default:
                     throw new AssertionError();
             }
@@ -180,7 +180,7 @@ public class DymolaImpactAnalysis implements ImpactAnalysis {
             // also scan errors in output
             //EurostagUtil.searchErrorMessage(workingDir.resolve(FAULT_OUT_GZ_FILE_NAME.replace(Command.EXECUTION_NUMBER_PATTERN, Integer.toString(i))), result.getMetrics(), i);
         }
-        LOGGER.trace("{} security indexes files read in {} ms", files, (System.currentTimeMillis() - start));
+        LOGGER.trace("{} security indexes files read in {} ms", files, System.currentTimeMillis() - start);
     }
 
     //OK

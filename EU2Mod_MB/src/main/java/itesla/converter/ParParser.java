@@ -134,28 +134,28 @@ public class ParParser {
     }
 
     public String getModelName() {
-        return (modelName);
+        return modelName;
     }
 
     public Integer getnParameters() {
-        return (nParameters);
+        return nParameters;
     }
 
     public Integer getnSets() {
-        return (nSets);
+        return nSets;
     }
 
     public List<String> getParNames() {
-        return (parNames);
+        return parNames;
     }
 
     public List<Integer> getSetIds() {
-        return (setIds);
+        return setIds;
     }
 
 
     public HashMap<String, String> getParTypes() {
-        return (parTypes);
+        return parTypes;
     }
 
 
