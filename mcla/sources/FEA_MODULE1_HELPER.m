@@ -247,8 +247,10 @@ try
                 maxvalue(ncol,:)=[0 0]; 
             else
             [x1,x2] = ecdf(snapQ(validi,ncol));
-            maxvalue(ncol,1) = x2(find(abs(x1-percentil)==min(abs(x1 - percentil))));
-            maxvalue(ncol,2) = x2(find(abs(x1-(1-percentil))==min(abs(x1 - (1-percentil)))));
+            idquantileL = find(abs(x1-percentil)==min(abs(x1 - percentil)));
+            idquantileH = find(abs(x1-(1-percentil))==min(abs(x1 - (1-percentil))));
+            maxvalue(ncol,1) = x2(idquantileL(1));
+            maxvalue(ncol,2) = x2(idquantileH(1));
             end
         end
         %%%%%%%%
@@ -396,8 +398,10 @@ try
                 maxvalue(ncol,:)=[0 0]; 
             else
             [x1,x2] = ecdf(snapQ(validi,ncol));
-            maxvalue(ncol,1) = x2(find(abs(x1-percentil)==min(abs(x1 - percentil))));
-            maxvalue(ncol,2) = x2(find(abs(x1-(1-percentil))==min(abs(x1 - (1-percentil)))));
+            idquantileL = find(abs(x1-percentil)==min(abs(x1 - percentil)));
+            idquantileH = find(abs(x1-(1-percentil))==min(abs(x1 - (1-percentil))));
+            maxvalue(ncol,1) = x2(idquantileL(1));
+            maxvalue(ncol,2) = x2(idquantileH(1));
             end
         end
             
@@ -454,8 +458,10 @@ try
                         maxvalue(ncol,:)=[0 0];
                     else
                         [x1,x2] = ecdf(snapQ(validi,ncol));
-                        maxvalue(ncol,1) = x2(find(abs(x1-percentil)==min(abs(x1 - percentil))));
-                        maxvalue(ncol,2) = x2(find(abs(x1-(1-percentil))==min(abs(x1 - (1-percentil)))));
+                        idquantileL = find(abs(x1-percentil)==min(abs(x1 - percentil)));
+                        idquantileH = find(abs(x1-(1-percentil))==min(abs(x1 - (1-percentil))));
+                        maxvalue(ncol,1) = x2(idquantileL(1));
+                        maxvalue(ncol,2) = x2(idquantileH(1));
                     end
                     inj_IDQ{ncol}=inj_IDQ1{ncol}(1:end-2);
                 end
@@ -523,8 +529,10 @@ try
                         maxvalue(ncol,:)=[0 0];
                     else
                         [x1,x2] = ecdf(snapQ(validi,ncol));
-                        maxvalue(ncol,1) = x2(find(abs(x1-percentil)==min(abs(x1 - percentil))));
-                        maxvalue(ncol,2) = x2(find(abs(x1-(1-percentil))==min(abs(x1 - (1-percentil)))));
+                        idquantileL = find(abs(x1-percentil)==min(abs(x1 - percentil)));
+                        idquantileH = find(abs(x1-(1-percentil))==min(abs(x1 - (1-percentil))));
+                        maxvalue(ncol,1) = x2(idquantileL(1));
+                        maxvalue(ncol,2) = x2(idquantileH(1));
                     end
                     inj_IDQ{ncol}=inj_IDQ1{ncol}(1:end-2);
                 end
