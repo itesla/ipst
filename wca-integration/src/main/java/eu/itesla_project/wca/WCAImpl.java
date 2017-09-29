@@ -981,8 +981,8 @@ public class WCAImpl implements WCA, WCAConstants {
                                         .join();
                                 }
                                 if (contingencies.stream().allMatch(
-                                    contingency -> (filteredClusters.getClusters(contingency.getId()).size() == 1
-                                                         && WCAClusterNum.FOUR.equals(filteredClusters.getCluster(contingency.getId())))
+                                    contingency -> filteredClusters.getClusters(contingency.getId()).size() == 1
+                                                         && WCAClusterNum.FOUR.equals(filteredClusters.getCluster(contingency.getId()))
                                         ) || config.loosenConstraints()) {
                                     wcaReport.setPostPreventiveActionsViolationsWithUncertainties(wcaReport.getBaseStateRemainingViolations());
                                     if (!wcaReport.getBaseStateRemainingViolations().isEmpty()) {

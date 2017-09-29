@@ -379,7 +379,7 @@ public class Initialization {
 
         genInitModelData = new String(initializationMT.getData(StaticData.MO));
 
-        return (new GeneratorInitData(initData.getGenerator(), initData.getGeneratorRecord(), initData.getGenerator().getName(), genInitModel, genInitModelData));
+        return new GeneratorInitData(initData.getGenerator(), initData.getGeneratorRecord(), initData.getGenerator().getName(), genInitModel, genInitModelData);
     }
 
 

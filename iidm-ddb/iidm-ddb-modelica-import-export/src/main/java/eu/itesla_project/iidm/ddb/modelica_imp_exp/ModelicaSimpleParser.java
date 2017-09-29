@@ -279,7 +279,7 @@ public class ModelicaSimpleParser implements CommentScannerEventHandler {
         }
 
         int qs = q.end();
-        int restart = (qs > 1 ? qs - 1 : qs);
+        int restart = qs > 1 ? qs - 1 : qs;
         if (!q.find(restart)) {
             log.debug("Get first quoted. Missing quoted end in line [" + line + "]");
             return null;

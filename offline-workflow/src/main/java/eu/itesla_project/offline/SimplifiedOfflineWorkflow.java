@@ -169,7 +169,7 @@ public class SimplifiedOfflineWorkflow extends AbstractOfflineWorkflow {
                     offlineDb.storeSecurityIndexes(id, caseNum, impactAnalysisResult.getSecurityIndexes());
 
                     LOGGER.debug("Workflow {}, case {}: security indexes stored in {} ms",
-                            id, caseNum, (System.currentTimeMillis() - startTime));
+                            id, caseNum, System.currentTimeMillis() - startTime);
                 }, executorService)
                 .exceptionally(throwable -> {
                     if (!(throwable instanceof CompletionException && throwable.getCause() instanceof StopException)) {

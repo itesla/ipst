@@ -51,7 +51,7 @@ public enum PsseRegisterType {
     }
 
     public static boolean isInternal(PsseRegister reg) {
-        return (!isEquipment(reg));
+        return !isEquipment(reg);
     }
 
 }

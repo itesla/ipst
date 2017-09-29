@@ -232,7 +232,7 @@ public class ModelicaExport {
          */
         exportGeneratorsAndRegulators(writerMo, modContext, modelicaModelsList, modelicaSim, sourceSim);
 
-        if ((this._sourceEngine instanceof PsseEngine)) {
+        if (this._sourceEngine instanceof PsseEngine) {
             this.addRecord(writerMo, null);
             this.addRecord(writerMo, "\t" + PsseModDefaultTypes.CONSTANT_TYPE + " " + PsseFixedData.CONSTANT + ";");
 
