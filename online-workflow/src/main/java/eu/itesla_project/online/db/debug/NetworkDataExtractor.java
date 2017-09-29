@@ -164,7 +164,7 @@ public class NetworkDataExtractor {
                                                            (generator.getTerminal().getBusBreakerView().getBus() != null)
                                                                        ? generator.getTerminal().getBusBreakerView().getBus().getId()
                                                                        : generator.getTerminal().getBusBreakerView().getConnectableBus().getId(),
-                                                           (generator.getTerminal().getBusBreakerView().getBus() != null),
+                                                           generator.getTerminal().getBusBreakerView().getBus() != null,
                                                            apparentPower(generator.getTerminal()),
                                                            generator.getTerminal().getP(),
                                                            generator.getTerminal().getQ(),
@@ -183,7 +183,7 @@ public class NetworkDataExtractor {
                                                  (load.getTerminal().getBusBreakerView().getBus() != null)
                                                          ? load.getTerminal().getBusBreakerView().getBus().getId()
                                                          : load.getTerminal().getBusBreakerView().getConnectableBus().getId(),
-                                                 (load.getTerminal().getBusBreakerView().getBus() != null),
+                                                 load.getTerminal().getBusBreakerView().getBus() != null,
                                                  load.getTerminal().getVoltageLevel().getNominalV(),
                                                  load.getTerminal().getP(),
                                                  load.getTerminal().getQ())

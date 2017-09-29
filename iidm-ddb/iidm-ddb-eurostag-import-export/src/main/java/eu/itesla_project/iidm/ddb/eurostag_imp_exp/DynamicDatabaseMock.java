@@ -42,7 +42,7 @@ class DynamicDatabaseMock implements DynamicDatabaseClient {
 
         //uses the first connected generator that is available in the iidm2eurostag map
         Generator generator = network.getGeneratorStream()
-                .filter(gen -> ((iidm2eurostagId.containsKey(gen.getId())) && (gen.getTerminal().isConnected())))
+                .filter(gen -> (iidm2eurostagId.containsKey(gen.getId())) && (gen.getTerminal().isConnected()))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("could not find a suitable generator in network: " + network + ", to be used in: " + fileName));
 

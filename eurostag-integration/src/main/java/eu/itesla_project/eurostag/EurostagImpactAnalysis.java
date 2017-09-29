@@ -392,7 +392,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
             EurostagUtil.searchErrorMessage(workingDir.resolve(FAULT_OUT_GZ_FILE_NAME.replace(Command.EXECUTION_NUMBER_PATTERN, Integer.toString(i))), result.getMetrics(), i);
         }
 
-        LOGGER.trace("{} security indexes files read in {} ms", files, (System.currentTimeMillis() - start));
+        LOGGER.trace("{} security indexes files read in {} ms", files, System.currentTimeMillis() - start);
     }
 
     private static EurostagDictionary getDictionary(Map<String, Object> context) {

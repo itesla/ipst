@@ -315,7 +315,7 @@ public class OnlineDbMVStore implements OnlineDb {
                     }
                     // gets step metrics for each state, if stored
                     stepStatesMap.keySet().stream()
-                            .filter(x -> (!"_".equals(x)))
+                            .filter(x -> !"_".equals(x))
                             .sorted(Comparator.comparing(Integer::valueOf))
                             .forEach(stateId -> {
                                 retTable.add(getStoredMapValues(wfMVStore, stateId, step, stepParamsMap.keySet().size(), paramsIndexes));

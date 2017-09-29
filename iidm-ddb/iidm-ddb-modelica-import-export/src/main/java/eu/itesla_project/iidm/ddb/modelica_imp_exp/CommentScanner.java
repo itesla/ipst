@@ -203,7 +203,7 @@ public class CommentScanner {
     int quoteStart(MatchResult q) {
         // If quote match start is greater than zero it must have been matched by a non-quote + quote
         // The position of the quote character is adjusted
-        return (q.start() > 0 ? q.start() + 1 : 0);
+        return q.start() > 0 ? q.start() + 1 : 0;
     }
 
     int quoteRestart(MatchResult q) {
@@ -211,7 +211,7 @@ public class CommentScanner {
         // because the regular expression for searching quotes looks for sequence non-quote + quote
         // This fix allows to match empty quoted strings
         // Only when end > 1, re-starting from 1 is wrong
-        return (q.end() > 1 ? q.end() - 1 : q.end());
+        return q.end() > 1 ? q.end() - 1 : q.end();
     }
 
     boolean isInsideString = false;

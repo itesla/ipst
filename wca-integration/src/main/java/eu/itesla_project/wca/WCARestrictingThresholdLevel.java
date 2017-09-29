@@ -33,7 +33,7 @@ public enum WCARestrictingThresholdLevel {
         Objects.requireNonNull(levels);
         return levels.stream()
                 .map(WCARestrictingThresholdLevel::getLevel)
-                .reduce(0, (a, b) -> (a | b));
+                .reduce(0, (a, b) -> a | b);
     }
 }
 

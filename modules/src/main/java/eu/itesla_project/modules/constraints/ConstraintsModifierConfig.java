@@ -61,7 +61,7 @@ public class ConstraintsModifierConfig {
     }
 
     public boolean isInAreaOfInterest(LimitViolation violation, Network network) {
-        return (countries.isEmpty() || countries.contains(violation.getCountry()));
+        return countries.isEmpty() || countries.contains(violation.getCountry());
     }
 
     @Override

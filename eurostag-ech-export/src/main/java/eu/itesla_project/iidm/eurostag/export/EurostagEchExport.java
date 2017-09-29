@@ -98,7 +98,7 @@ public class EurostagEchExport {
     private void createNodes(EsgNetwork esgNetwork) {
         fakeNodes.referencedEsgIdsAsStream().forEach(esgId -> {
             VoltageLevel vlevel = fakeNodes.getVoltageLevelByEsgId(esgId);
-            float nominalV = ((vlevel != null) ? vlevel.getNominalV() : 380f);
+            float nominalV = (vlevel != null) ? vlevel.getNominalV() : 380f;
             esgNetwork.addNode(createNode(esgId, EchUtil.FAKE_AREA, nominalV, nominalV, 0f, false));
         });
 

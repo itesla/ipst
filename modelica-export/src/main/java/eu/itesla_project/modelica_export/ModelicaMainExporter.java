@@ -142,7 +142,7 @@ public class ModelicaMainExporter {
 
             long duration = endExport - initTime;
 
-            _log.debug("ModelicaMainExporter. Duration: " + (duration));
+            _log.debug("ModelicaMainExporter. Duration: " + duration);
             _log.info("Conversion finished.");
             System.exit(0);
         } catch (Exception e) {
