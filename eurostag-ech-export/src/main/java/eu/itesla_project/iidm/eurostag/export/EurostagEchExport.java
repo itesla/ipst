@@ -77,7 +77,7 @@ public class EurostagEchExport {
             esgNetwork.addArea(new EsgArea(new Esg2charName(c.toString()), EsgArea.Type.AC));
         }
 
-        if (network.getHvdcLineCount() >0) {
+        if (network.getHvdcLineCount() > 0) {
             esgNetwork.addArea(new EsgArea(new Esg2charName("DC"), EsgArea.Type.DC));
         }
     }
@@ -557,11 +557,11 @@ public class EurostagEchExport {
         Objects.requireNonNull(hvdcLine);
         HvdcConverterStation side1Conv = hvdcLine.getConverterStation1();
         HvdcConverterStation side2Conv = hvdcLine.getConverterStation2();
-        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER))
+        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER))
                 && (vscConv.getId().equals(side1Conv.getId()))) {
             return true;
         }
-        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER))
+        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER))
                 && (vscConv.getId().equals(side2Conv.getId()))) {
             return true;
         }
@@ -585,15 +585,16 @@ public class EurostagEchExport {
             Esg8charName acNode = new Esg8charName(dictionary.getEsgId(ConnectionBus.fromTerminal(vscConv.getTerminal(), config, fakeNodes).getId())); // AC node name
             EsgACDCVscConverter.ConverterState xstate = EsgACDCVscConverter.ConverterState.ON; // converter state ' ' ON; 'S' OFF
             EsgACDCVscConverter.DCControlMode xregl = isPmode ? EsgACDCVscConverter.DCControlMode.AC_ACTIVE_POWER : EsgACDCVscConverter.DCControlMode.DC_VOLTAGE; // DC control mode 'P' AC_ACTIVE_POWER; 'V' DC_VOLTAGE
+            //AC control mode assumed to be "AC reactive power"(Q)
             EsgACDCVscConverter.ACControlMode xoper = EsgACDCVscConverter.ACControlMode.AC_REACTIVE_POWER; // AC control mode 'V' AC_VOLTAGE; 'Q' AC_REACTIVE_POWER; 'A' AC_POWER_FACTOR
             float rrdc = 0; // resistance [Ohms]
             float rxdc = 16; // reactance [Ohms]
-            float pac = isPmode ? zeroIfNanOrValue(hline.getActivePowerSetpoint()) : 0; // AC active power setpoint [MW]. Only if DC control mode is 'P'
-            float pvd = isPmode ? 0 : hline.getNominalV(); // DC voltage setpoint [MW]. Only if DC control mode is 'V'
-            float pva = 330; // AC voltage setpoint [kV]. Only if AC control mode is 'V'
-            //assume AC control mode always Q (how do I know if AC control mode is Q?)
+
+            float pac = zeroIfNanOrValue(hline.getActivePowerSetpoint()); // AC active power setpoint [MW]. Only if DC control mode is 'P'
+            pac = isPmode ? pac : -pac; //change sign in case of Q mode side
+            float pvd = hline.getNominalV(); // DC voltage setpoint [MW]. Only if DC control mode is 'V'
             float pre = vscConv.getReactivePowerSetpoint(); // AC reactive power setpoint [Mvar]. Only if AC control mode is 'Q'
-            if ((Float.isNaN(vscConv.getReactivePowerSetpoint())) || (vscConv.isVoltageRegulatorOn())) {
+            if ((Float.isNaN(pre)) || (vscConv.isVoltageRegulatorOn())) {
                 float terminalQ = vscConv.getTerminal().getQ();
                 if (Float.isNaN(terminalQ)) {
                     pre = zeroIfNanOrValue(vscConv.getReactivePowerSetpoint());
@@ -601,6 +602,7 @@ public class EurostagEchExport {
                     pre = terminalQ;
                 }
             }
+            pre = isPmode ? -pre : pre; // change sign in case of P mode side
             float pco = Float.NaN; // AC power factor setpoint. Only if AC control mode is 'A'
             float qvscsh = 1; // Reactive sharing cofficient [%]. Only if AC control mode is 'V'
             float pvscmin = -hline.getMaxP(); // Minimum AC active power [MW]
@@ -618,8 +620,9 @@ public class EurostagEchExport {
                     throw new RuntimeException("VSCConverter " + vscConv.getId() + " : connected bus not found!");
                 }
             }
-            float mvm = connectedBus.getV(); // Initial AC modulated voltage magnitude [p.u.]
+            float mvm = connectedBus.getV() / connectedBus.getVoltageLevel().getNominalV(); // Initial AC modulated voltage magnitude [p.u.]
             float mva = connectedBus.getAngle(); // Initial AC modulated voltage angle [deg]
+            float pva = connectedBus.getV(); // AC voltage setpoint [kV]. Only if AC control mode is 'V'
 
             esgNetwork.addACDCVscConverter(
                     new EsgACDCVscConverter(
