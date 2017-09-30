@@ -40,7 +40,7 @@ public class EurostagEchExport {
     /**
      * epsilon value for susceptance
      */
-    public static final float B_EPSILON = 0.00001f;
+    public static final float B_EPSILON = 0.000001f;
 
     private static final String XNODE_V_PROPERTY = "xnode_v";
     private static final String XNODE_ANGLE_PROPERTY = "xnode_angle";
@@ -452,6 +452,7 @@ public class EurostagEchExport {
             boolean isQminQmaxInverted = g.getReactiveLimits().getMinQ(pgen) > g.getReactiveLimits().getMaxQ(pgen);
             if (isQminQmaxInverted) {
                 LOGGER.warn("inverted qmin {} and qmax {} values for generator {}", g.getReactiveLimits().getMinQ(pgen), g.getReactiveLimits().getMaxQ(pgen), g.getId());
+                qgen = -g.getTerminal().getQ();
             }
             // in case qmin and qmax are inverted, take out the unit from the voltage regulation if it has a target Q
             // and open widely the Q interval
@@ -575,7 +576,7 @@ public class EurostagEchExport {
     private void createACDCVscConverters(EsgNetwork esgNetwork, BiMap<String, String> dcNodesEsgNames) {
         for (VscConverterStation vscConv : Identifiables.sort(network.getVscConverterStations())) {
             //hvdc line connected to this converter station
-            HvdcLine hline = network.getHvdcLineStream().filter(l -> ((vscConv.getId().equals(l.getConverterStation1().getId())) || (vscConv.getId().equals(l.getConverterStation2().getId())))).findFirst().orElse(null);
+            HvdcLine hline = network.getHvdcLineStream().filter(l -> (vscConv.getId().equals(l.getConverterStation1().getId())) || (vscConv.getId().equals(l.getConverterStation2().getId()))).findFirst().orElse(null);
             Objects.requireNonNull(hline, "no hvdc line connected to VscConverterStation " + vscConv.getId());
             boolean isPmode = isPMode(vscConv, hline);
 
