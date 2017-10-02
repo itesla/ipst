@@ -8,7 +8,9 @@ package eu.itesla_project.online.server.message;
 
 import javax.json.stream.JsonGenerator;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.itesla_project.online.StableContingenciesSynthesis;
 
@@ -33,9 +35,13 @@ public class StableContingenciesMessage extends Message<StableContingenciesSynth
 
     @Override
     public String toJson() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
-
+        ObjectMapper json = new ObjectMapper();
+        json.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
+        try {
+            return json.writeValueAsString(this);
+            } catch (Exception e) {
+            return "";
+         }
     }
 
     @Override

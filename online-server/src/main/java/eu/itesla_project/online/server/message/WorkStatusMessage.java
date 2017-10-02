@@ -7,7 +7,11 @@
 package eu.itesla_project.online.server.message;
 
 import javax.json.stream.JsonGenerator;
-import com.google.gson.Gson;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import eu.itesla_project.online.WorkSynthesis;
 
 /**
@@ -29,10 +33,14 @@ public class WorkStatusMessage extends Message<WorkSynthesis> {
 
     @Override
     public String toJson() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
-
-    }
+        ObjectMapper json = new ObjectMapper();
+        json.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
+        try {
+            return json.writeValueAsString(this);
+            } catch (Exception e) {
+            return "";
+         }
+        }
 
     @Override
     protected void toJson(JsonGenerator generator) {
