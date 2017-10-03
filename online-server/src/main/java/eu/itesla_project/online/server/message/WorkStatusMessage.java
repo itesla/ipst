@@ -37,10 +37,10 @@ public class WorkStatusMessage extends Message<WorkSynthesis> {
         json.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
         try {
             return json.writeValueAsString(this);
-            } catch (Exception e) {
+        } catch (Exception e) {
             return "";
-         }
         }
+    }
 
     @Override
     protected void toJson(JsonGenerator generator) {

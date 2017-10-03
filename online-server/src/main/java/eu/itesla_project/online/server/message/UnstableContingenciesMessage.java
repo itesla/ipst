@@ -38,9 +38,9 @@ public class UnstableContingenciesMessage extends Message<UnstableContingenciesS
         json.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
         try {
             return json.writeValueAsString(this);
-            } catch (Exception e) {
+        } catch (Exception e) {
             return "";
-         }
+        }
     }
 
     @Override

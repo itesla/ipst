@@ -35,9 +35,9 @@ public class RunningMessage extends Message<Boolean> {
         json.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
         try {
             return json.writeValueAsString(this);
-            } catch (Exception e) {
+        } catch (Exception e) {
             return "";
-         }
+        }
 
     }
 
