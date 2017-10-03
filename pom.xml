@@ -31,7 +31,7 @@
         <module>eurostag-step-up-transformer</module>
         <module>file-system-rules-db</module>
         <module>fpf-integration</module>
-        <!-- <module>histoDB</module> -->
+         <!--<module>histoDB</module>-->
         <module>histodb-client</module>
         <module>iidm-actions-contingencies-xml-client</module>
         <module>iidm-ddb</module>
@@ -85,7 +85,6 @@
         <commonsmath3.version>3.6.1</commonsmath3.version>
         <gdata.version>1.41.1_1</gdata.version>
         <graphvizapi.version>1.1</graphvizapi.version>
-<!--         <gson.version>2.6.2</gson.version> -->
         <guava.version>20.0</guava.version>
         <h2database.version>1.4.191</h2database.version>
         <httpclient.version>4.5.2</httpclient.version>
@@ -540,7 +539,7 @@
                 <version>${slf4j.version}</version>
                 <scope>runtime</scope>
             </dependency>
-            
+
             <!-- Test dependencies -->
             <dependency>
                 <groupId>junit</groupId>
