@@ -1,5 +1,6 @@
 # Maven projects
 /ampl-export/target/
+/entsoe-case-repository/target
 /case-projector/target
 /case-repository/target/
 /distribution/target
@@ -27,6 +28,7 @@
 /modelica-events-adder/target/
 /modelica-export/target
 /modules/target/
+/network-merge/target/
 /offline-mpi/target/
 /offline-server/target/
 /offline-workflow/target/
