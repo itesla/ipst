@@ -101,7 +101,7 @@ public class RunImpactAnalysisOnStateTool implements Tool {
         OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
         // load the network
         Network network = onlinedb.getState(workflowId, stateId);
-        if ( network != null ) {
+        if (network != null) {
             ContingenciesAndActionsDatabaseClient contingencyDb = config.getContingencyDbClientFactoryClass().newInstance().create();
             SimulatorFactory simulatorFactory = config.getSimulatorFactoryClass().newInstance();
             Stabilization stabilization = simulatorFactory.createStabilization(network, context.getComputationManager(), 0);
@@ -152,7 +152,7 @@ public class RunImpactAnalysisOnStateTool implements Tool {
                 }
                 context.getOutputStream().println(table.render());
             } else {
-                    context.getOutputStream().println("Error running stabilization -  metrics = " + sr.getMetrics());
+                context.getOutputStream().println("Error running stabilization -  metrics = " + sr.getMetrics());
             }
         } else {
             context.getOutputStream().println("no state " + stateId + " of workflow " + workflowId + " stored in the online db");

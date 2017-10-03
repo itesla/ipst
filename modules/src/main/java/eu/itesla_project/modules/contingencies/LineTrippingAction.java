@@ -33,13 +33,13 @@ public class LineTrippingAction implements ActionElement {
     }
 
 
-    public LineTrippingAction(String lineId, Number implementationTime, Number achievmentIndex ) {
+    public LineTrippingAction(String lineId, Number implementationTime, Number achievmentIndex) {
         this.equipmentId = lineId;
         this.implementationTime = implementationTime;
         this.achievmentIndex = achievmentIndex;
     }
 
-    public LineTrippingAction(String lineId, String substationId, Number implementationTime, Number achievmentIndex ) {
+    public LineTrippingAction(String lineId, String substationId, Number implementationTime, Number achievmentIndex) {
         this.equipmentId = lineId;
         this.substationId = substationId;
         this.implementationTime = implementationTime;

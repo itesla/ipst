@@ -117,7 +117,7 @@ public class RunWcaOnStateTool implements Tool {
         OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
         // load the network
         Network network = onlinedb.getState(workflowId, stateId);
-        if ( network != null ) {
+        if (network != null) {
             OnlineWorkflowParameters parameters = onlinedb.getWorkflowParameters(workflowId);
             String offlineWorkflowId = parameters.getOfflineWorkflowId();
             if (line.hasOption("offline-workflow")) {
@@ -158,7 +158,7 @@ public class RunWcaOnStateTool implements Tool {
                     table.addCell(cluster.getContingency().getId());
                     int[] clusterIndexes = new int[]{1, 2, 3, 4, -1};
                     for (int k = 0; k < clusterIndexes.length; k++) {
-                        if ( clusterIndexes[k] == cluster.getNum().toIntValue() ) {
+                        if (clusterIndexes[k] == cluster.getNum().toIntValue()) {
                             table.addCell("X", new CellStyle(CellStyle.HorizontalAlign.center));
                         } else {
                             table.addCell("-", new CellStyle(CellStyle.HorizontalAlign.center));

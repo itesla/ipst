@@ -42,15 +42,15 @@ public class WCAFilteredClusters {
         Objects.requireNonNull(contingencyId, "contingency id is null");
         Objects.requireNonNull(clustersNums, "clustersNums is null");
         LOGGER.info("Network {}, contingency {}: removing clusters {} for {}", networkId, contingencyId, clustersNums.toString(), flag);
-        if ( contingencyClusters.containsKey(contingencyId) ) {
+        if (contingencyClusters.containsKey(contingencyId)) {
             // remove clusters from the list of the contingency
             EnumSet<WCAClusterNum> clusters = contingencyClusters.get(contingencyId);
-            clustersNums.forEach( clusterNum -> clusters.remove(clusterNum));
+            clustersNums.forEach(clusterNum -> clusters.remove(clusterNum));
             contingencyClusters.put(contingencyId, clusters);
-            if ( flag != null ) {
+            if (flag != null) {
                 // add flag to the list of the contingency
                 EnumSet<WCAClusterOrigin> flags = EnumSet.noneOf(WCAClusterOrigin.class);
-                if ( contingencyFlags.containsKey(contingencyId) ) {
+                if (contingencyFlags.containsKey(contingencyId)) {
                     flags = contingencyFlags.get(contingencyId);
                 }
                 flags.add(flag);
@@ -65,18 +65,18 @@ public class WCAFilteredClusters {
         Objects.requireNonNull(contingencyId, "contingency id is null");
         Objects.requireNonNull(clustersNums, "clustersNums is null");
         LOGGER.info("Network {}, contingency {}: adding clusters {} for {}", networkId, contingencyId, clustersNums.toString(), flag);
-        if ( contingencyClusters.containsKey(contingencyId) ) {
+        if (contingencyClusters.containsKey(contingencyId)) {
             // add clusters to the list of the contingency
             EnumSet<WCAClusterNum> clusters = contingencyClusters.get(contingencyId);
-            clustersNums.forEach( clusterNum -> clusters.add(clusterNum));
+            clustersNums.forEach(clusterNum -> clusters.add(clusterNum));
             contingencyClusters.put(contingencyId, clusters);
-            if ( flag != null ) {
+            if (flag != null) {
                 // add flag to the list of the contingency
                 EnumSet<WCAClusterOrigin> flags = EnumSet.noneOf(WCAClusterOrigin.class);
-                if ( contingencyFlags.containsKey(contingencyId) ) {
+                if (contingencyFlags.containsKey(contingencyId)) {
                     flags = contingencyFlags.get(contingencyId);
                 }
-                    flags.add(flag);
+                flags.add(flag);
                 contingencyFlags.put(contingencyId, flags);
             }
         } else {
@@ -125,12 +125,12 @@ public class WCAFilteredClusters {
         Objects.requireNonNull(clusterNum, "clustersNums is null");
         LOGGER.info("Network {}, contigency {}: removing all clusters but {} for {}", networkId, contingencyId, clusterNum, flag);
         if (contingencyClusters.containsKey(contingencyId)) {
-            if ( contingencyClusters.get(contingencyId).contains(clusterNum) ) {
+            if (contingencyClusters.get(contingencyId).contains(clusterNum)) {
                 contingencyClusters.put(contingencyId, EnumSet.of(clusterNum));
-                if ( flag != null ) {
+                if (flag != null) {
                     // add flag to the list of the contingency
                     EnumSet<WCAClusterOrigin> flags = EnumSet.noneOf(WCAClusterOrigin.class);
-                    if ( contingencyFlags.containsKey(contingencyId) ) {
+                    if (contingencyFlags.containsKey(contingencyId)) {
                         flags = contingencyFlags.get(contingencyId);
                     }
                     flags.add(flag);

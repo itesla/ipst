@@ -237,7 +237,7 @@ public class ModelTemplateContainerController {
         return this.modelTemplateContainer;
     }
 
-    public void setModelTemplateContainer(    ModelTemplateContainer _modelTemplateContainer) {
+    public void setModelTemplateContainer(ModelTemplateContainer _modelTemplateContainer) {
         this.modelTemplateContainer = _modelTemplateContainer;
     }
 
@@ -245,7 +245,7 @@ public class ModelTemplateContainerController {
         return this.modelTemplate;
     }
 
-    public void setModelTemplate(    ModelTemplate _modelTemplate) {
+    public void setModelTemplate(ModelTemplate _modelTemplate) {
         this.modelTemplate = _modelTemplate;
     }
 
@@ -263,24 +263,24 @@ public class ModelTemplateContainerController {
     }
 
     public void setCurrentddbid(String currentddbid) {
-        log.log(Level.INFO, "setcurrentddbid:: enter  parameter currentddbid: "    + currentddbid);
-            this.currentddbid = currentddbid;
+        log.log(Level.INFO, "setcurrentddbid:: enter  parameter currentddbid: " + currentddbid);
+        this.currentddbid = currentddbid;
 
-        }
+    }
 
 
     public void downLoadFile(ModelTemplate mt, String mapKey) {
-            if (mt != null) {
-                System.out.println("mt id  " + mt.getId() + " mt comment " + mt.getComment() + "mapkey " + mapKey);
-                byte[] fileMap = mt.getData(mapKey);
-                ByteArrayInputStream bis = new ByteArrayInputStream(fileMap);
-                fileData = new DefaultStreamedContent(bis, "text/plain", mapKey + ".txt");
+        if (mt != null) {
+            System.out.println("mt id  " + mt.getId() + " mt comment " + mt.getComment() + "mapkey " + mapKey);
+            byte[] fileMap = mt.getData(mapKey);
+            ByteArrayInputStream bis = new ByteArrayInputStream(fileMap);
+            fileData = new DefaultStreamedContent(bis, "text/plain", mapKey + ".txt");
 
-            } else {
-                System.out.println("mt is null ");
+        } else {
+            System.out.println("mt is null ");
 
-            }
-     }
+        }
+    }
 
     public String create() throws Exception {
         FacesContext context = FacesContext.getCurrentInstance();
@@ -412,7 +412,7 @@ public class ModelTemplateContainerController {
 
             for (ModelTemplate mt : modelTemplates) {
                 if (mt.getSimulator().equals(modelTemplate.getSimulator())) {
-                    throw new Exception ("Model Template is already present!");
+                    throw new Exception("Model Template is already present!");
                 }
             }
 

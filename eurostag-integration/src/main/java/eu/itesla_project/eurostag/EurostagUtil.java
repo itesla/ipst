@@ -16,10 +16,7 @@ import eu.itesla_project.computation.ExecutionReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,7 +28,6 @@ import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 
 /**
- *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
 public class EurostagUtil {
@@ -47,11 +43,11 @@ public class EurostagUtil {
 
     private static final List<String> HEADER_STEADY_STATE
             = Arrays.asList("",
-                            "     MACHINE  MACROBLOC         NOM VAR.        SORT. BLOC    VALEUR EQU.      (P.U.)");
+            "     MACHINE  MACROBLOC         NOM VAR.        SORT. BLOC    VALEUR EQU.      (P.U.)");
 
     private static final List<String> HEADER_INITIAL_VALUE
             = Arrays.asList("",
-                            "    MACHINE            MACROBLOC   VARIABLE    BLOC DE SOR.  INITIA      LIMITE INF.       VALEUR      LIMITE SUP.");
+            "    MACHINE            MACROBLOC   VARIABLE    BLOC DE SOR.  INITIA      LIMITE INF.       VALEUR      LIMITE SUP.");
 
     private final static Supplier<JsonFactory> JSON_FACTORY_SUPPLIER = Suppliers.memoize(() -> new JsonFactory());
 
@@ -61,9 +57,16 @@ public class EurostagUtil {
     public static Map<String, String> createEnv(EurostagConfig config) {
         Map<String, String> env = new HashMap<>();
         if (config.getEurostagHomeDir() != null) {
-            env.put("EUROSTAG", config.getEurostagHomeDir().toString());
-            env.put("PATH", config.getEurostagHomeDir().toString());
-            env.put("LD_LIBRARY_PATH",  config.getEurostagHomeDir().toString());
+            String eurostagHome = config.getEurostagHomeDir().toString();
+            // v5.2 keeps the binaries in the x64 subdir
+            String eurostagX64 = config.getEurostagHomeDir().toString() + File.separator + "x64";
+            env.put("EUROSTAG", eurostagHome);
+            env.put("PATH", eurostagHome + File.pathSeparator + eurostagX64);
+            env.put("LD_LIBRARY_PATH", eurostagHome + File.pathSeparator + eurostagX64);
+            // needed by v5.2
+            env.put("EUROSTAG_EXE", eurostagX64);
+            // needed by v5.2
+            env.put("DMA_LICENSE_FILE", eurostagHome + File.separator + "licenses");
         }
         if (config.getIndexesBinDir() != null) {
             if (env.containsKey("PATH")) {

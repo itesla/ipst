@@ -81,7 +81,7 @@ public class StatsCondCalculator {
         this.timeHorizon = parameters.getTimeHorizon();
         this.feAnalysisId = parameters.getFeAnalysisId();
         // check if forecast error data file for this time horizon exists
-        if ( !forecastErrorsDataStorage.isForecastErrorsDataAvailable(feAnalysisId, timeHorizon) ) {
+        if (!forecastErrorsDataStorage.isForecastErrorsDataAvailable(feAnalysisId, timeHorizon)) {
             LOGGER.error("No forecast errors data for {} network, {} time horizon.", network.getId(), timeHorizon.getName());
             throw new Exception("Montecarlo sampler not ready to be used: No forecast errors data for " + network.getId() + " network, " + timeHorizon.getName() + " time horizon.");
         }

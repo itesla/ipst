@@ -51,7 +51,7 @@ public class SecurityRulesApplicationResults implements OnlineWorkflowRulesResul
     public void addStateWithSecurityRulesResults(String contingencyId, Integer stateId, StateStatus stateStatus, Map<SecurityIndexType, StateStatus> securityRulesResults,
             boolean rulesAvailable, List<SecurityIndexType> invalidRules) {
         StatesWithSecurityRulesResults statesWithSecurityRulesResults = new StatesWithSecurityRulesResults();
-        if ( contingenciesWithSecurityRulesResults.containsKey(contingencyId) ) {
+        if (contingenciesWithSecurityRulesResults.containsKey(contingencyId)) {
             statesWithSecurityRulesResults = contingenciesWithSecurityRulesResults.get(contingencyId);
         }
         statesWithSecurityRulesResults.addState(stateId, stateStatus, securityRulesResults, rulesAvailable, invalidRules);
@@ -81,14 +81,14 @@ public class SecurityRulesApplicationResults implements OnlineWorkflowRulesResul
         Map<String, Boolean> stateResults = new HashMap<String, Boolean>();
         for (SecurityIndexType index : securityRulesResults.keySet()) {
             switch (securityRulesResults.get(index)) {
-            case SAFE:
-                stateResults.put(index.getLabel(), true);
-                break;
-            case UNSAFE:
-                stateResults.put(index.getLabel(), false);
-                break;
-            default:
-                break;
+                case SAFE:
+                    stateResults.put(index.getLabel(), true);
+                    break;
+                case UNSAFE:
+                    stateResults.put(index.getLabel(), false);
+                    break;
+                default:
+                    break;
             }
         }
         return stateResults;
@@ -144,7 +144,7 @@ public class SecurityRulesApplicationResults implements OnlineWorkflowRulesResul
         boolean addState(Integer stateId, StateStatus stateStatus, Map<SecurityIndexType, StateStatus> securityRulesResults,
                 Boolean rulesAvailable, List<SecurityIndexType> invalidRules) {
             boolean added = false;
-            if ( !states.containsKey(stateId) && !statesStatus.containsKey(stateId) ) {
+            if (!states.containsKey(stateId) && !statesStatus.containsKey(stateId)) {
                 states.put(stateId, securityRulesResults);
                 statesStatus.put(stateId, stateStatus);
                 statesWithRules.put(stateId, rulesAvailable);

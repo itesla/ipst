@@ -81,8 +81,8 @@ public class PrintOnlineWorkflowOptimizerResultsTool implements Tool {
         OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
         String workflowId = line.getOptionValue("workflow");
         OnlineWorkflowResults wfResults = onlinedb.getResults(workflowId);
-        if ( wfResults != null ) {
-            if ( !wfResults.getContingenciesWithActions().isEmpty() ) {
+        if (wfResults != null) {
+            if (!wfResults.getContingenciesWithActions().isEmpty()) {
                 Table table = new Table(5, BorderStyle.CLASSIC_WIDE);
                 StringWriter content = new StringWriter();
                 CsvWriter cvsWriter = new CsvWriter(content, ',');
@@ -108,11 +108,11 @@ public class PrintOnlineWorkflowOptimizerResultsTool implements Tool {
                         table.addCell(stateId.toString(), new CellStyle(CellStyle.HorizontalAlign.right));
                         values[i++] = stateId.toString();
                         table.addCell(Boolean.toString(wfResults.getUnsafeStatesWithActions(contingencyId).get(stateId)), new CellStyle(CellStyle.HorizontalAlign.right));
-                        values[i++] = Boolean.toString( wfResults.getUnsafeStatesWithActions(contingencyId).get(stateId));
+                        values[i++] = Boolean.toString(wfResults.getUnsafeStatesWithActions(contingencyId).get(stateId));
                         table.addCell(wfResults.getStateStatus(contingencyId, stateId).name());
                         values[i++] = wfResults.getStateStatus(contingencyId, stateId).name();
                         String json = "-";
-                        if ( wfResults.getActionsIds(contingencyId, stateId) != null ) {
+                        if (wfResults.getActionsIds(contingencyId, stateId) != null) {
 //                            json = Utils.actionsToJson(wfResults, contingencyId, stateId);
                             json = Utils.actionsToJsonExtended(wfResults, contingencyId, stateId);
                         }

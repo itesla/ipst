@@ -60,5 +60,5 @@ public class ContingencyStatesActionsSynthesis implements Serializable {
 
 
 
-    }
+}
 

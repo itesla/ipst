@@ -284,9 +284,9 @@ public class WCATool implements Tool {
                         }
                     }
                 }
-                if ( line.hasOption("reports-folder") ) {
+                if (line.hasOption("reports-folder")) {
                     Path reportsFolder = Paths.get(line.getOptionValue("reports-folder"));
-                    if ( !wca.getReport().exportCsv(reportsFolder) ) {
+                    if (!wca.getReport().exportCsv(reportsFolder)) {
                         context.getOutputStream().println("Could not store reports for network " + network.getId() + " in folder " + reportsFolder);
                     }
                 }
@@ -331,9 +331,9 @@ public class WCATool implements Tool {
                         }
 
                         clusterPerContingencyPerBaseCase.put(network.getId(), clusterPerContingency);
-                        if ( line.hasOption("reports-folder") ) {
+                        if (line.hasOption("reports-folder")) {
                             Path reportsFolder = Paths.get(line.getOptionValue("reports-folder") + File.separator + network.getId());
-                            if ( !wca.getReport().exportCsv(reportsFolder) ) {
+                            if (!wca.getReport().exportCsv(reportsFolder)) {
                                 context.getOutputStream().println("Could not store reports for network " + network.getId() + " in folder " + reportsFolder);
                             }
                         }

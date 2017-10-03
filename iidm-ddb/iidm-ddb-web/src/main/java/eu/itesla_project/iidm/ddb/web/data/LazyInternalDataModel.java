@@ -22,18 +22,16 @@ import eu.itesla_project.iidm.ddb.service.DDBManager;
 public class LazyInternalDataModel extends LazyDataModel<Internal> {
 
 
-private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-private DDBManager pmanager;
-
-
+    private DDBManager pmanager;
 
 
-   public LazyInternalDataModel( DDBManager pmanager) {
-       this.pmanager = pmanager;
-       setPageSize(10);
-       setRowCount(pmanager.findInternalsAllCount());
-   }
+    public LazyInternalDataModel(DDBManager pmanager) {
+        this.pmanager = pmanager;
+        setPageSize(10);
+        setRowCount(pmanager.findInternalsAllCount());
+    }
 
     @Override
     public int getRowCount() {
@@ -52,20 +50,16 @@ private DDBManager pmanager;
     }
 
 
-
-
     @Override
     public List<Internal> load(int first, int pageSize,
-            List<SortMeta> multiSortMeta, Map<String, String> filters) {
+                               List<SortMeta> multiSortMeta, Map<String, String> filters) {
         return pmanager.findInternalsAllMaxResults(first, pageSize);
     }
 
     @Override
     public List<Internal> load(int first, int pageSize, String sortField,
-            SortOrder sortOrder, Map<String, String> filters) {
+                               SortOrder sortOrder, Map<String, String> filters) {
         return pmanager.findInternalsAllMaxResults(first, pageSize);
     }
-
-
 
 }

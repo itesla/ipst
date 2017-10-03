@@ -41,10 +41,10 @@ public class FooterRecord extends ModelicaRecord {
             parsedName = "M_" + parsedName;
         }
         parsedName = parsedName.replaceAll("\\s", "_");
-           parsedName = parsedName.replaceAll("\\.", "_");
-           parsedName = parsedName.replaceAll("\\-", "_");
-           parsedName = parsedName.replaceAll("/", "_");
-           parsedName = parsedName.replaceAll("\\+", "_");
+        parsedName = parsedName.replaceAll("\\.", "_");
+        parsedName = parsedName.replaceAll("\\-", "_");
+        parsedName = parsedName.replaceAll("/", "_");
+        parsedName = parsedName.replaceAll("\\+", "_");
         return parsedName;
     }
 

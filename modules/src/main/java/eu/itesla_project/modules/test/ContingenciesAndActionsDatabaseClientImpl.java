@@ -135,7 +135,7 @@ public class ContingenciesAndActionsDatabaseClientImpl implements ContingenciesA
     public Collection<ActionsContingenciesAssociation> getActionsCtgAssociationsByContingency(String contingencyId) {
         List<ActionsContingenciesAssociation> associationForContingency = new ArrayList<ActionsContingenciesAssociation>();
         for (ActionsContingenciesAssociation association : associations) {
-            if ( association.getContingenciesId().contains(contingencyId)) {
+            if (association.getContingenciesId().contains(contingencyId)) {
                 associationForContingency.add(association);
             }
         }

@@ -68,10 +68,10 @@ public class TableRow implements Serializable {
         super();
     }
 
-    public TableRow(Parameter...parameters) {
+    public TableRow(Parameter... parameters) {
         super();
-         for (Parameter parameter : parameters) {
-              addParameter(parameter);
-          }
+        for (Parameter parameter : parameters) {
+            addParameter(parameter);
+        }
     }
 }

@@ -59,7 +59,7 @@ public class ModelicaModel {
      * init_friParameters: string list with the name of the parameters in the .fri.
      * init_InterfaceParameters: string list with the name of the initialization variables of the interface variables.
      */
-    public ModelicaModel (Block[] Blocks, Integer[][] Link, String pathEu, Hashtable<Integer, Element> CT, ParParser parData) {
+    public ModelicaModel(Block[] Blocks, Integer[][] Link, String pathEu, Hashtable<Integer, Element> CT, ParParser parData) {
         this.Blocks = Blocks;
         this.Link = Link;
         this.pathEu = pathEu;

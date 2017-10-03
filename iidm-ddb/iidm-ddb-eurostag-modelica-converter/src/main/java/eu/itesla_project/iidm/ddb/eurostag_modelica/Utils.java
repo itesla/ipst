@@ -39,18 +39,18 @@ public class Utils {
         Path filePath = Paths.get(folderName, fileName);
         OutputStream os = null;
         try {
-             os = new FileOutputStream(new File(filePath.toString()));
-             System.out.println("file name = " + filePath.toString());
-             os.write(fileContent, 0, fileContent.length);
-         } catch (IOException e) {
-             e.printStackTrace();
+            os = new FileOutputStream(new File(filePath.toString()));
+            System.out.println("file name = " + filePath.toString());
+            os.write(fileContent, 0, fileContent.length);
+        } catch (IOException e) {
+            e.printStackTrace();
         } finally {
-             try {
-                 os.close();
-             } catch (IOException e) {
-                 e.printStackTrace();
-             }
-         }
+            try {
+                os.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         return filePath.toString();
     }
 

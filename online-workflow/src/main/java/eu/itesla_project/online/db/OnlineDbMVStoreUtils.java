@@ -186,24 +186,24 @@ public class OnlineDbMVStoreUtils {
                 String name = parameter.get("name");
                 String type = parameter.get("type");
                 switch (type) {
-                case "FLOAT":
-                    float floatValue = Float.parseFloat(parameter.get("value"));
-                    actionParameters.addParameter(name, new ActionParameterFloatValue(floatValue));
-                    break;
-                case "INTEGER":
-                    int intValue = Integer.parseInt(parameter.get("value"));
-                    actionParameters.addParameter(name, new ActionParameterIntegerValue(intValue));
-                    break;
-                case "STRING":
-                    String stringValue = parameter.get("value");
-                    actionParameters.addParameter(name, new ActionParameterStringValue(stringValue));
-                    break;
-                case "BOOLEAN":
-                    boolean booleanValue = Boolean.parseBoolean(parameter.get("value"));
-                    actionParameters.addParameter(name, new ActionParameterBooleanValue(booleanValue));
-                    break;
-                default:
-                    break;
+                    case "FLOAT":
+                        float floatValue = Float.parseFloat(parameter.get("value"));
+                        actionParameters.addParameter(name, new ActionParameterFloatValue(floatValue));
+                        break;
+                    case "INTEGER":
+                        int intValue = Integer.parseInt(parameter.get("value"));
+                        actionParameters.addParameter(name, new ActionParameterIntegerValue(intValue));
+                        break;
+                    case "STRING":
+                        String stringValue = parameter.get("value");
+                        actionParameters.addParameter(name, new ActionParameterStringValue(stringValue));
+                        break;
+                    case "BOOLEAN":
+                        boolean booleanValue = Boolean.parseBoolean(parameter.get("value"));
+                        actionParameters.addParameter(name, new ActionParameterBooleanValue(booleanValue));
+                        break;
+                    default:
+                        break;
                 }
             }
         }

@@ -87,6 +87,6 @@ public class ParametersContainer implements Serializable {
     // This must return true for another ParametersContainer this method is used to manage <f:selectItems value=""/>
     public boolean equals(Object other) {
         return other instanceof ParametersContainer ?
-                ddbId.equals( ( (ParametersContainer) other).getDdbId())  : false;
+                ddbId.equals(((ParametersContainer) other).getDdbId())  : false;
     }
 }

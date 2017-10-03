@@ -292,7 +292,7 @@ public class OnlineApplicationBean {
     }
 
     public boolean isJmxConnected() {
-        return (remoteConnected && application != null);
+        return remoteConnected && application != null;
     }
 
 }

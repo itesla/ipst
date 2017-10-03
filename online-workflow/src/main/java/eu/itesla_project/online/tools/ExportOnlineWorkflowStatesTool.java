@@ -81,7 +81,7 @@ public class ExportOnlineWorkflowStatesTool implements Tool {
         String workflowId = line.getOptionValue("workflow");
         Path file =  Paths.get(line.getOptionValue("file"));
         List<Integer> storedStates = onlinedb.listStoredStates(workflowId);
-        if ( !storedStates.isEmpty() ) {
+        if (!storedStates.isEmpty()) {
             context.getOutputStream().println("Exporting stored states of workflow " + workflowId + " to file " + file);
             onlinedb.exportStates(workflowId, file);
         } else {

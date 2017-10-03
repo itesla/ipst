@@ -40,7 +40,7 @@ public class ParameterWeb {
         this.value = value;
     }
 
-    public ParameterWeb( String name, Object value) {
+    public ParameterWeb(String name, Object value) {
         super();
         this.type = null;
         this.name = name;

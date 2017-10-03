@@ -23,7 +23,7 @@ public class Block {
     public Integer count;
     public List<Boolean> UsedInputPins = new ArrayList<Boolean>();
 
-    public Block (String[] param, String[] entries, String output, Integer GraphicalNumber, Integer idEu, Integer cont, Integer nInputPins) {
+    public Block(String[] param, String[] entries, String output, Integer GraphicalNumber, Integer idEu, Integer cont, Integer nInputPins) {
         this.param = param;
         this.entries = entries;
         this.output = output;

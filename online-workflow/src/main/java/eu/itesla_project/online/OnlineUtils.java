@@ -57,13 +57,13 @@ public final class OnlineUtils {
     public static UnitEnum getUnit(LimitViolationType type) {
         Objects.requireNonNull(type);
         switch (type) {
-        case CURRENT:
-            return UnitEnum.MW;
-        case LOW_VOLTAGE:
-        case HIGH_VOLTAGE:
-            return UnitEnum.KV;
-        default:
-            throw new IllegalArgumentException();
+            case CURRENT:
+                return UnitEnum.MW;
+            case LOW_VOLTAGE:
+            case HIGH_VOLTAGE:
+                return UnitEnum.KV;
+            default:
+                throw new IllegalArgumentException();
         }
     }
 

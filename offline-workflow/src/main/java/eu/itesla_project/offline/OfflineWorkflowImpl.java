@@ -187,7 +187,7 @@ public class OfflineWorkflowImpl extends AbstractOfflineWorkflow {
         offlineDb.storeSecurityIndexes(id, sampleId, securityIndexes);
 
         LOGGER.debug("Workflow {}, sample {}: security indexes stored in {} ms",
-                id, sampleId, (System.currentTimeMillis() - startTime));
+                id, sampleId, System.currentTimeMillis() - startTime);
 
         updateSecurityIndexesSynthesis(securityIndexes);
     }
@@ -692,7 +692,7 @@ public class OfflineWorkflowImpl extends AbstractOfflineWorkflow {
         offlineDb.storeState(id, sampleId, network, creationParameters.getAttributesCountryFilter());
 
         LOGGER.debug("Workflow {}, sample {}: state stored in {} ms",
-                id, sampleId, (System.currentTimeMillis() - startTime));
+                id, sampleId, System.currentTimeMillis() - startTime);
 /*
         for (OfflineWorkflowListener listener : listeners) {
             try {

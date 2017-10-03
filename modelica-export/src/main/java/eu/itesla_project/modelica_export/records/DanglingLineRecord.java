@@ -32,7 +32,7 @@ import eu.itesla_project.modelica_export.util.eurostag.EurostagModDefaultTypes;
 public class DanglingLineRecord extends ModelicaRecord {
 
 
-    public DanglingLineRecord (DanglingLine danglingLine, String danglingBusName, String danglingLoadName, float SNREF) {
+    public DanglingLineRecord(DanglingLine danglingLine, String danglingBusName, String danglingLoadName, float SNREF) {
         this.danglingLine = danglingLine;
         this.danglingBusName = danglingBusName;
         this.danglingLoadName = danglingLoadName;
@@ -50,7 +50,7 @@ public class DanglingLineRecord extends ModelicaRecord {
         Equipments.ConnectionInfo info1 = Equipments.getConnectionInfoInBusBreakerView(this.danglingLine.getTerminal());
         Bus b1 = info1.getConnectionBus();
 
-        if ((!Float.isNaN(b1.getV()) && info1.isConnected())) {
+        if (!Float.isNaN(b1.getV()) && info1.isConnected()) {
             if (super.isCorrect()) {
                 if (super.getModelicaType() != null) {
                     this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);
@@ -101,7 +101,7 @@ public class DanglingLineRecord extends ModelicaRecord {
 
     @Override
     public String parseName(String name) {
-           String parsedName = name.trim();
+        String parsedName = name.trim();
 
            //Lines contains "-"
         if (parsedName.contains("-")) {
@@ -120,8 +120,8 @@ public class DanglingLineRecord extends ModelicaRecord {
             parsedName = parsedName.substring(0, parsedName.length() - 1);
         }
 
-           parsedName = parsedName.replaceAll(StaticData.WHITE_SPACE, "_");
-           parsedName = parsedName.replaceAll(StaticData.DOT, "_");
+        parsedName = parsedName.replaceAll(StaticData.WHITE_SPACE, "_");
+        parsedName = parsedName.replaceAll(StaticData.DOT, "_");
 
         return parsedName;
     }

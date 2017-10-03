@@ -56,7 +56,7 @@ public class SimulatorInstListProducer {
     public List<String> getEurostagVersions() {
         List<String> eurostagVersions = new ArrayList<String>();
         for (SimulatorInst sim : simulatorsAll) {
-            if ( sim.getSimulator() == Simulator.EUROSTAG ) {
+            if (sim.getSimulator() == Simulator.EUROSTAG) {
                 eurostagVersions.add(sim.getVersion());
             }
         }
@@ -68,7 +68,7 @@ public class SimulatorInstListProducer {
     public List<String> getModelicaVersions() {
         List<String> modelicaVersions = new ArrayList<String>();
         for (SimulatorInst sim : simulatorsAll) {
-            if ( sim.getSimulator() == Simulator.MODELICA ) {
+            if (sim.getSimulator() == Simulator.MODELICA) {
                 modelicaVersions.add(sim.getVersion());
             }
         }

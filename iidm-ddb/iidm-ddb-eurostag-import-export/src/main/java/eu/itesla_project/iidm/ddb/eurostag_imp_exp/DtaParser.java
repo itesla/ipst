@@ -25,13 +25,11 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 public class DtaParser {
 
     private static final Logger log = LoggerFactory.getLogger(DtaParser.class.getName());
-
 
 
     private DtaParser(final String name) {
@@ -42,126 +40,126 @@ public class DtaParser {
     static HashMap<String, String> componentTypeMap = new HashMap<String, String>();
 
     static {
-        componentsVariablesNames.put("HEADER", new String[] {
-                "keyword,date,version"
+        componentsVariablesNames.put("HEADER", new String[]{
+            "keyword,date,version"
         });
 
-        componentsVariablesNames.put("R", new String[] {
-                "keyword, machine.name",
-                "macroblock.name,psetnum,coupling.par1,coupling.par2,coupling.par3,coupling.par4",
-                "coupling.par5,coupling.par6,coupling.par7,coupling.par8,coupling.par9"
+        componentsVariablesNames.put("R", new String[]{
+            "keyword, machine.name",
+            "macroblock.name,psetnum,coupling.par1,coupling.par2,coupling.par3,coupling.par4",
+            "coupling.par5,coupling.par6,coupling.par7,coupling.par8,coupling.par9"
         });
 
-        componentsVariablesNames.put("LOADP", new String[] {
-                "keyword, pattern.identifier",
-                "vf_subload.name,VF_RPPROPA,VF_RQPROPA",
-                "reg_subload.name,REG_RPPROPA,REG_RQPROPA,REG_RALFAPA,REG_RBETAPA,REG_RGAMMAPA,REG_RDELTAPA",
-                "dis_subload.name,DIS_RPPROPA,DIS_RQPROPA,DIS_RKSIMIMP,DIS_RKSIMAXP,DIS_RTTFOPA,DIS_RTAUFTOP,DIS_RUREFPA,DIS_RRTFOPA,DIS_RXTFOPA,DIS_RDELTAVP,DIS_RXSRPA,DIS_RTAUPA,DIS_RMUPA,DIS_GENMOTORNAME"
+        componentsVariablesNames.put("LOADP", new String[]{
+            "keyword, pattern.identifier",
+            "vf_subload.name,VF_RPPROPA,VF_RQPROPA",
+            "reg_subload.name,REG_RPPROPA,REG_RQPROPA,REG_RALFAPA,REG_RBETAPA,REG_RGAMMAPA,REG_RDELTAPA",
+            "dis_subload.name,DIS_RPPROPA,DIS_RQPROPA,DIS_RKSIMIMP,DIS_RKSIMAXP,DIS_RTTFOPA,DIS_RTAUFTOP,DIS_RUREFPA,DIS_RRTFOPA,DIS_RXTFOPA,DIS_RDELTAVP,DIS_RXSRPA,DIS_RTAUPA,DIS_RMUPA,DIS_GENMOTORNAME"
         });
 
-        componentsVariablesNames.put("CH", new String[] {
-                "keyword",
-                "identifier,definition,node.name,area.name,dynamic.zone.name"
+        componentsVariablesNames.put("CH", new String[]{
+            "keyword",
+            "identifier,definition,node.name,area.name,dynamic.zone.name"
         });
 
 
-        componentsVariablesNames.put("M1", new String[] {
-                /*record 1*/     "machine.type, type.fortescue, saturated, XMACOUP, fnum1, fnum2, falpha",
-                /*record 2*/     "machine.name,connection.node.name,SN,UN,PP,PQ,DAMP,H",
-                /*record 3*/     "RA,WL,WLMD,WMRC,RDD,WLDD,RF,WLF",
-                /*record 4*/     "WLMDV,WLMQ,RQ1,WLQ1,RQ2,WLQ2,IWLMDV",
-                /*record 5*/     "transformer.included,RT,XT,PNT,UNM,UNN,PN,PNALT",
-                /*record 6*/     "RMD,RND,RMQ,RNQ,RIFO,RIXFO,R0FO,R0XFO"
+        componentsVariablesNames.put("M1", new String[]{
+            /*record 1*/     "machine.type, type.fortescue, saturated, XMACOUP, fnum1, fnum2, falpha",
+            /*record 2*/     "machine.name,connection.node.name,SN,UN,PP,PQ,DAMP,H",
+            /*record 3*/     "RA,WL,WLMD,WMRC,RDD,WLDD,RF,WLF",
+            /*record 4*/     "WLMDV,WLMQ,RQ1,WLQ1,RQ2,WLQ2,IWLMDV",
+            /*record 5*/     "transformer.included,RT,XT,PNT,UNM,UNN,PN,PNALT",
+            /*record 6*/     "RMD,RND,RMQ,RNQ,RIFO,RIXFO,R0FO,R0XFO"
         });
 
-        componentsInterfaceVariablesNames.put("M1", new String[] {
-                "UR", "UI", "URI", "UII", "URH", "UIH", "ID", "IQ", "OMEGA", "TETA", "EFD", "CM",
-                "LAMBDAF", "LAMBDAD", "LAMBDAQ1", "LAMBDAQ2", "LAMBDAAD", "LAMBDAAQ",
-                "TerminalVoltage", "FieldCurrent",
-                "ActivePowerPNALT", "ActivePowerPN", "ActivePowerSNREF",
-                "ReactivePowerPNALT", "ReactivePowerPN", "ReactivePowerSNREF", "Current",
-                "pin_ActivePowerSN", "pin_ReactivePowerSN"
+        componentsInterfaceVariablesNames.put("M1", new String[]{
+            "UR", "UI", "URI", "UII", "URH", "UIH", "ID", "IQ", "OMEGA", "TETA", "EFD", "CM",
+            "LAMBDAF", "LAMBDAD", "LAMBDAQ1", "LAMBDAQ2", "LAMBDAAD", "LAMBDAAQ",
+            "TerminalVoltage", "FieldCurrent",
+            "ActivePowerPNALT", "ActivePowerPN", "ActivePowerSNREF",
+            "ReactivePowerPNALT", "ReactivePowerPN", "ReactivePowerSNREF", "Current",
+            "pin_ActivePowerSN", "pin_ReactivePowerSN"
         });
 
-        componentsVariablesNames.put("M2", new String[] {
-                /*record 1*/     "machine.type, type.fortescue, saturated, XMACOUP, fnum1, fnum2, falpha",
-                /*record 2*/     "machine.name,connection.node.name,SN,UN,PP,PQ,DAMP,H",
-                /*record 3*/     "RA,WL,XD,XPD,XSD,TPD0,TSD0,TX",
-                /*record 4*/     "WLMDV,XQ,XPQ,XSQ,TPQ0,TSQ0,IMOD,IENR,IWLMDV",
-                /*record 5*/     "transformer.included,RT,XT,PNT,UNM,UNN,PN,PNALT",
-                /*record 6*/     "RMD,RND,RMQ,RNQ,RIFO,RIXFO,R0FO,R0XFO"
+        componentsVariablesNames.put("M2", new String[]{
+            /*record 1*/     "machine.type, type.fortescue, saturated, XMACOUP, fnum1, fnum2, falpha",
+            /*record 2*/     "machine.name,connection.node.name,SN,UN,PP,PQ,DAMP,H",
+            /*record 3*/     "RA,WL,XD,XPD,XSD,TPD0,TSD0,TX",
+            /*record 4*/     "WLMDV,XQ,XPQ,XSQ,TPQ0,TSQ0,IMOD,IENR,IWLMDV",
+            /*record 5*/     "transformer.included,RT,XT,PNT,UNM,UNN,PN,PNALT",
+            /*record 6*/     "RMD,RND,RMQ,RNQ,RIFO,RIXFO,R0FO,R0XFO"
         });
 
-        componentsInterfaceVariablesNames.put("M2", new String[] {
-                "UR", "UI", "URI", "UII", "URH", "UIH", "ID", "IQ", "OMEGA", "TETA", "EFD", "CM",
-                "LAMBDAF", "LAMBDAD", "LAMBDAQ1", "LAMBDAQ2", "LAMBDAAD", "LAMBDAAQ",
-                "TerminalVoltage", "FieldCurrent",
-                "ActivePowerPNALT", "ActivePowerPN", "ActivePowerSNREF",
-                "ReactivePowerPNALT", "ReactivePowerPN", "ReactivePowerSNREF", "Current",
-                "pin_ActivePowerSN", "pin_ReactivePowerSN"
+        componentsInterfaceVariablesNames.put("M2", new String[]{
+            "UR", "UI", "URI", "UII", "URH", "UIH", "ID", "IQ", "OMEGA", "TETA", "EFD", "CM",
+            "LAMBDAF", "LAMBDAD", "LAMBDAQ1", "LAMBDAQ2", "LAMBDAAD", "LAMBDAAQ",
+            "TerminalVoltage", "FieldCurrent",
+            "ActivePowerPNALT", "ActivePowerPN", "ActivePowerSNREF",
+            "ReactivePowerPNALT", "ReactivePowerPN", "ReactivePowerSNREF", "Current",
+            "pin_ActivePowerSN", "pin_ReactivePowerSN"
         });
 
-        componentsVariablesNames.put("ABEGIN", new String[] {
-                "keyword"
+        componentsVariablesNames.put("ABEGIN", new String[]{
+            "keyword"
         });
 
-        componentsVariablesNames.put("AEND", new String[] {
-                "keyword"
+        componentsVariablesNames.put("AEND", new String[]{
+            "keyword"
         });
 
-        componentsVariablesNames.put("A11", new String[] {
-                "machine.name,connection.node.name,USINF,USRINF,TINF,TRINF,DELINF",
-                "connection.node.name,USSUP,USRSUP,TSUP,TRSUP,DELSUP"
+        componentsVariablesNames.put("A11", new String[]{
+            "machine.name,connection.node.name,USINF,USRINF,TINF,TRINF,DELINF",
+            "connection.node.name,USSUP,USRSUP,TSUP,TRSUP,DELSUP"
         });
 
-        componentsVariablesNames.put("A12", new String[] {
-                "machine.name,VIMIN,TMIN,VIMAX,TMAX,TDEL"
+        componentsVariablesNames.put("A12", new String[]{
+            "machine.name,VIMIN,TMIN,VIMAX,TMAX,TDEL"
         });
 
-        componentsVariablesNames.put("A14", new String[] {
-                "sending.node,receiving.node,index,R,E1,E2,T1,TINT,setpoint,VC,time.margin,transfo.name,control.type,ZNREF,transfo.side",
-                "tap.direction,TMAN,V1,V2,TV1,TDEL"
+        componentsVariablesNames.put("A14", new String[]{
+            "sending.node,receiving.node,index,R,E1,E2,T1,TINT,setpoint,VC,time.margin,transfo.name,control.type,ZNREF,transfo.side",
+            "tap.direction,TMAN,V1,V2,TV1,TDEL"
         });
 
         componentsVariablesNames.put("A33_ACMC", new String[]{
-                "keyword,ma.name,interface.name,block.number,c.type,S1,S2,S3,T1,TDEL",
-                "",
-                "ev.keyword,ev.type,keyword,ma.name,interface.name,block.number",
-                "equipment.name,seq.params"
+            "keyword,ma.name,interface.name,block.number,c.type,S1,S2,S3,T1,TDEL",
+            "",
+            "ev.keyword,ev.type,keyword,ma.name,interface.name,block.number",
+            "equipment.name,seq.params"
         });
 
-        componentsVariablesNames.put("M21", new String[] {
-                "machine.type, type.fortescue, XMACOUP, fnum1, fnum2, falpha",
-                "machine.name,connection.node.name,type.power.assigned,PP,PQ,PN,RIFO,RIXFO,R0FO,R0XFO"
+        componentsVariablesNames.put("M21", new String[]{
+            "machine.type, type.fortescue, XMACOUP, fnum1, fnum2, falpha",
+            "machine.name,connection.node.name,type.power.assigned,PP,PQ,PN,RIFO,RIXFO,R0FO,R0XFO"
         });
 
-        componentsInterfaceVariablesNames.put("M21", new String[] {
-                "TerminalVoltage", "KG", "SCL", "SLOPE", "VPCC", "SETMODE", "MODE", "BSVC", "ZERO", "BMAX", "BTCR", "MSCON", "MSRON"
+        componentsInterfaceVariablesNames.put("M21", new String[]{
+            "TerminalVoltage", "KG", "SCL", "SLOPE", "VPCC", "SETMODE", "MODE", "BSVC", "ZERO", "BMAX", "BTCR", "MSCON", "MSRON"
         });
 
-        componentsVariablesNames.put("MA", new String[] {
-                "keyword",
-                "ma.name,equipment.type,equipment.name"
+        componentsVariablesNames.put("MA", new String[]{
+            "keyword",
+            "ma.name,equipment.type,equipment.name"
         });
 
-        componentsInterfaceVariablesNames.put("MA", new String[] {
-                "TerminalVoltage"
+        componentsInterfaceVariablesNames.put("MA", new String[]{
+            "TerminalVoltage"
         });
 
-        componentsVariablesNames.put("RMA", new String[] {
-                "keyword, machine.name",
-                "macroblock.name,psetnum,coupling.par1,coupling.par2,coupling.par3,coupling.par4",
-                "coupling.par5,coupling.par6,coupling.par7,coupling.par8,coupling.par9"
+        componentsVariablesNames.put("RMA", new String[]{
+            "keyword, machine.name",
+            "macroblock.name,psetnum,coupling.par1,coupling.par2,coupling.par3,coupling.par4",
+            "coupling.par5,coupling.par6,coupling.par7,coupling.par8,coupling.par9"
         });
 
-        componentsVariablesNames.put("TRF", new String[] {
-                "keyword",
-                "type.zone, zone.name, sending.node.name, receiving.node.name, parallel.index, device.name, time.down.change, max.taps.down, time.up.change, max.taps.up, dyn.zone.name, dyn, three.name, three"
+        componentsVariablesNames.put("TRF", new String[]{
+            "keyword",
+            "type.zone, zone.name, sending.node.name, receiving.node.name, parallel.index, device.name, time.down.change, max.taps.down, time.up.change, max.taps.up, dyn.zone.name, dyn, three.name, three"
         });
 
-        componentsVariablesNames.put("BAT", new String[] {
-                "keyword",
-                "type.zone, zone.name, bank.name, model.name, min.time1, min.time2, min.time3, min.time4"
+        componentsVariablesNames.put("BAT", new String[]{
+            "keyword",
+            "type.zone, zone.name, bank.name, model.name, min.time1, min.time2, min.time3, min.time4"
         });
 
     }
@@ -169,105 +167,105 @@ public class DtaParser {
     static HashMap<String, String[]> componentsDescriptors = new HashMap<String, String[]>();
     static {
         //OK, verified
-        componentsDescriptors.put("HEADER", new String[] {
-                "(A6, 5X, A8, 1X, A8)"
+        componentsDescriptors.put("HEADER", new String[]{
+            "(A6, 5X, A8, 1X, A8)"
         });
 
         //OK, verified
-        componentsDescriptors.put("M1", new String[] {
-                /*record 1*/ "(A2, A1, 6X, A1, 1X, A1, 1X, F8, 1X, F8, 1X, A8)",
-                /*record 2*/ "(A8, 1X, A8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)",
-                /*record 3*/ "(9X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)",
-                /*record 4*/ "(9X, F8, 10X, F8, 10X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, A1)",
-                /*record 5*/ "(8X, A1, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)",
-                /*record 6*/ "(9X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)"});
+        componentsDescriptors.put("M1", new String[]{
+            /*record 1*/ "(A2, A1, 6X, A1, 1X, A1, 1X, F8, 1X, F8, 1X, A8)",
+            /*record 2*/ "(A8, 1X, A8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)",
+            /*record 3*/ "(9X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)",
+            /*record 4*/ "(9X, F8, 10X, F8, 10X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, A1)",
+            /*record 5*/ "(8X, A1, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)",
+            /*record 6*/ "(9X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)"});
 
         //OK, verified
-        componentsDescriptors.put("M2", new String[] {
-                /*record 1*/ "(A2, A1, 6X, A1, 1X, A1, 1X, F8, 1X, F8, 1X, A8)",
-                /*record 2*/ "(A8, 1X, A8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)",
-                /*record 3*/ "(9X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)",
-                /*record 4*/ "(9X, F8, 10X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, A1, 1X, A1, 1X, 5X, A1)",
-                /*record 5*/ "(8X, A1, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)",
-                /*record 6*/ "(9X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)"});
+        componentsDescriptors.put("M2", new String[]{
+            /*record 1*/ "(A2, A1, 6X, A1, 1X, A1, 1X, F8, 1X, F8, 1X, A8)",
+            /*record 2*/ "(A8, 1X, A8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)",
+            /*record 3*/ "(9X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)",
+            /*record 4*/ "(9X, F8, 10X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, A1, 1X, A1, 1X, 5X, A1)",
+            /*record 5*/ "(8X, A1, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)",
+            /*record 6*/ "(9X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)"});
 
         //OK, verified
-        componentsDescriptors.put("R", new String[] {
-                "(A1, 1X, A8)",
-                "(A8, 1X ,I3,13X,A24,1X,A24,1X,A24,1X,A24)",
-                "(A24,1X,A24,1X,A24,1X,A24,1X,A24)"
+        componentsDescriptors.put("R", new String[]{
+            "(A1, 1X, A8)",
+            "(A8, 1X ,I3,13X,A24,1X,A24,1X,A24,1X,A24)",
+            "(A24,1X,A24,1X,A24,1X,A24,1X,A24)"
         });
 
-        componentsDescriptors.put("LOADP", new String[] {
-                "(A5, 3X, A8)",
-                "(9X, A8, 1X, F8, 1X, F8)",
-                "(9X, A8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)",
-                "(9X, A8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X )"
+        componentsDescriptors.put("LOADP", new String[]{
+            "(A5, 3X, A8)",
+            "(9X, A8, 1X, F8, 1X, F8)",
+            "(9X, A8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)",
+            "(9X, A8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X )"
         });
 
-        componentsDescriptors.put("CH", new String[] {
-                "(A2)",
-                "(A8, 1X, A1, 1X, A8, 1X, A2, 1X, A8)"
+        componentsDescriptors.put("CH", new String[]{
+            "(A2)",
+            "(A8, 1X, A1, 1X, A8, 1X, A2, 1X, A8)"
         });
 
-        componentsDescriptors.put("ABEGIN", new String[] {
-                "(A3)"
+        componentsDescriptors.put("ABEGIN", new String[]{
+            "(A3)"
         });
 
-        componentsDescriptors.put("AEND", new String[] {
-                "(A6)"
+        componentsDescriptors.put("AEND", new String[]{
+            "(A6)"
         });
 
-        componentsDescriptors.put("A11", new String[] {
-                "(A8, 1X, A8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)",
-                "(9X, A8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)"
+        componentsDescriptors.put("A11", new String[]{
+            "(A8, 1X, A8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)",
+            "(9X, A8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)"
         });
 
-        componentsDescriptors.put("A12", new String[] {
-                "(A8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)"
+        componentsDescriptors.put("A12", new String[]{
+            "(A8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)"
         });
 
-        componentsDescriptors.put("A14", new String[] {
-                "(A8, 1X, A8, 1X, A1, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, A1, 1X, F8, 1X, F5, 1X, A8, 1X, I1, 1X, A8, 1X, A1)",
-                "(17X, A2, 10X, F8, 7X, F8, 1X, F8, 1X, F8, 1X, F8)"
+        componentsDescriptors.put("A14", new String[]{
+            "(A8, 1X, A8, 1X, A1, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, A1, 1X, F8, 1X, F5, 1X, A8, 1X, I1, 1X, A8, 1X, A1)",
+            "(17X, A2, 10X, F8, 7X, F8, 1X, F8, 1X, F8, 1X, F8)"
         });
 
-        componentsDescriptors.put("A33_ACMC", new String[] {
-                "(A3,1X,A8,1X,A8,1X,A8,1X,I1,1X,F8,1X,F8,1X,F8,1X,F8,1X,F8)",
-                "()",
-                "(A2,1X,A8,1X,A3,1X,A8,1X,A8,1X,A8)",
-                "(18X,A8,1X,A52)"
+        componentsDescriptors.put("A33_ACMC", new String[]{
+            "(A3,1X,A8,1X,A8,1X,A8,1X,I1,1X,F8,1X,F8,1X,F8,1X,F8,1X,F8)",
+            "()",
+            "(A2,1X,A8,1X,A3,1X,A8,1X,A8,1X,A8)",
+            "(18X,A8,1X,A52)"
         });
 
-        componentsDescriptors.put("M21", new String[] {
-                "(A3, A1, 1X, A1, 7X, F8, 1X, F8, 1X, A8)",
-                "(A8, 1X, A8, 1X, A1, 17X, F8, 1X, F8, 19X, F8, F8, 1X, F8, 1X, F8, 1X, F8)"
+        componentsDescriptors.put("M21", new String[]{
+            "(A3, A1, 1X, A1, 7X, F8, 1X, F8, 1X, A8)",
+            "(A8, 1X, A8, 1X, A1, 17X, F8, 1X, F8, 19X, F8, F8, 1X, F8, 1X, F8, 1X, F8)"
         });
 
-        componentsDescriptors.put("MA", new String[] {
-                "(A2)",
-                "(A8, 1X, A2, 1X, A8)"
+        componentsDescriptors.put("MA", new String[]{
+            "(A2)",
+            "(A8, 1X, A2, 1X, A8)"
         });
 
-        componentsDescriptors.put("RMA", new String[] {
-                "(A3, 1X, A8)",
-                //,"(A8, 1X, I3)"  //first version
-                //,"(A8, 1X ,I3,13X,A2,1X,A19,1X,A1,1X,A24,1X,A24,1X,A24)" // second version
-                "(A8, 1X ,I3,13X,A24,1X,A24,1X,A24,1X,A24)",
-                "(A24,1X,A24,1X,A24,1X,A24,1X,A24)"
+        componentsDescriptors.put("RMA", new String[]{
+            "(A3, 1X, A8)",
+            //,"(A8, 1X, I3)"  //first version
+            //,"(A8, 1X ,I3,13X,A2,1X,A19,1X,A1,1X,A24,1X,A24,1X,A24)" // second version
+            "(A8, 1X ,I3,13X,A24,1X,A24,1X,A24,1X,A24)",
+            "(A24,1X,A24,1X,A24,1X,A24,1X,A24)"
         });
 
-        componentsDescriptors.put("TRF", new String[] {
-                "(A3)",
-                "(A3, 6X, A2, 1X, A8, 1X, A8, 1X, A1, 1X, A8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, A8, 1X, A1, 1X, A8, A1)"
+        componentsDescriptors.put("TRF", new String[]{
+            "(A3)",
+            "(A3, 6X, A2, 1X, A8, 1X, A8, 1X, A1, 1X, A8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, A8, 1X, A1, 1X, A8, A1)"
         });
 
-        componentsDescriptors.put("BAT", new String[] {
-                "(A3)",
-                "(A3, 6X, A2, 10X, A8, 1X, A8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)"
+        componentsDescriptors.put("BAT", new String[]{
+            "(A3)",
+            "(A3, 6X, A2, 10X, A8, 1X, A8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)"
         });
 
-        for (String compId: componentsDescriptors.keySet()) {
+        for (String compId : componentsDescriptors.keySet()) {
             componentTypeMap.put(compId, compId);
         }
         componentTypeMap.put("M1D", "M1");
@@ -293,8 +291,11 @@ public class DtaParser {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < varTypes.length(); i++) {
             switch (varTypes.charAt(i)) {
-            case '(': case ')': break;
-            default: sb.append(varTypes.charAt(i));
+                case '(':
+                case ')':
+                    break;
+                default:
+                    sb.append(varTypes.charAt(i));
             }
         }
         String varTypesStripped = sb.toString();
@@ -302,7 +303,7 @@ public class DtaParser {
         ArrayList<String> realVarTypes = new ArrayList<String>();
         while (st.hasMoreTokens()) {
             String curToken = st.nextToken().trim();
-            if ((curToken.startsWith("F")) || (curToken.startsWith("A"))  || (curToken.startsWith("I"))) {
+            if ((curToken.startsWith("F")) || (curToken.startsWith("A")) || (curToken.startsWith("I"))) {
                 realVarTypes.add(curToken);
             }
         }
@@ -379,7 +380,13 @@ public class DtaParser {
         //System.out.println("Dumping zone: " + zone.typeName);
         FortranFormat ff = new FortranFormat("()");
         switch (zone.typeName) {
-            case "M1": case "M2": case "M21": case "TRF": case "BAT": case "MA" : case "A33_ACMC" :
+            case "M1":
+            case "M2":
+            case "M21":
+            case "TRF":
+            case "BAT":
+            case "MA":
+            case "A33_ACMC":
                 int rcount = 1;
                 String[] recordsFormatting = componentsDescriptors.get(zone.typeName);
                 for (String string : recordsFormatting) {
@@ -397,7 +404,8 @@ public class DtaParser {
                 out.println();
                 break;
 
-            case "R": case "RMA":
+            case "R":
+            case "RMA":
                 rcount = 1;
                 recordsFormatting = componentsDescriptors.get(zone.typeName);
 
@@ -469,7 +477,9 @@ public class DtaParser {
                 out.println();
                 break;
 
-            case "A11": case "A12": case "A14":
+            case "A11":
+            case "A12":
+            case "A14":
                 int acountl = 1;
                 String[] recordsFormattinga = componentsDescriptors.get(zone.typeName);
                 for (String string : recordsFormattinga) {
@@ -492,7 +502,8 @@ public class DtaParser {
 
     public static void dumpGensInertia(String cimId, EurostagRecord zone, PrintStream out) throws ParseException, IOException {
         switch (zone.typeName) {
-            case "M1": case "M2":
+            case "M1":
+            case "M2":
                 int rcount = 1;
                 Object genInertiaObj = zone.data.get("H");
                 //retrieve machine's inertia data
@@ -530,7 +541,7 @@ public class DtaParser {
 
 
             int lineNum = 0;
-            while (line != null ) {
+            while (line != null) {
                 line = reader.readLine();
                 if (line == null) {
                     continue;
@@ -561,11 +572,11 @@ public class DtaParser {
                 // (last element of each section followed by an empty record)
                 if ("R".equals(typeId)) {
                     //monitored blocks: just skip them
-                    while  (((line = reader.readLine()) != null) && (!line.trim().equals(""))) {
+                    while (((line = reader.readLine()) != null) && (!line.trim().equals(""))) {
                         log.warn("monitored block record ignored:" + line);
                     }
                     //parameter modifications: add each line as a new variable
-                    while  (((line = reader.readLine()) != null) && (!line.trim().equals(""))) {
+                    while (((line = reader.readLine()) != null) && (!line.trim().equals(""))) {
                         log.debug("param line: " + line);
                         ArrayList<Object> paramRec = FortranFormat.read(line, ADDITIONAL_PARAM_LINE_FORMAT);
                         if (paramRec.size() == 2) {
@@ -623,7 +634,6 @@ public class DtaParser {
 
 
     }
-
 
 
     /*

@@ -211,7 +211,7 @@ public class ParametersController {
         this.parameters = parameters;
         log.log(Level.INFO, "detailParameters:: enter  MT  ID" + parameters.getId() + " Simulator:" + parameters.getSimulator() + " derfParamSetNum: " + parameters.getDefParamSetNum());
         return "/parameters/details";
-        }
+    }
 
 
     public void save() {
@@ -248,7 +248,8 @@ public class ParametersController {
                         case "String":
                             this.parameters.addParameter(new ParameterString(pw.getName(), pw.getValue().toString()));
                             break;
-                    default: throw new RuntimeException(pw.getType() + " not supported.");
+                        default:
+                            throw new RuntimeException(pw.getType() + " not supported.");
                     }
                     pmanager.save(this.parameters);
                 } else {
@@ -418,17 +419,17 @@ public class ParametersController {
                         reinit();
                         FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, "Parameter " + bundle.getString("update.operation.msg"), bundle.getString("update.success.msg"));
                         facesContext.addMessage(null, m);
+                    }
+                } else {
+                    log.log(Level.WARNING, "There aren't any paramater to update:");
                 }
-            } else {
-                    log.log(Level.WARNING, "There aren't any paramater to update:" );
-                }
-        }
-    } catch (Exception e) {
-        log.log(Level.WARNING, "Error :" + e.getMessage());
-        e.printStackTrace();
-        String errorMessage = getRootErrorMessage(e);
-        FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,     errorMessage, bundle.getString("update.failure.msg"));
-        facesContext.addMessage(null, m);
+            }
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Error :" + e.getMessage());
+            e.printStackTrace();
+            String errorMessage = getRootErrorMessage(e);
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, bundle.getString("update.failure.msg"));
+            facesContext.addMessage(null, m);
         }
     }
 
@@ -439,13 +440,13 @@ public class ParametersController {
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
         try {
             // get Parameters Container
-              ParametersContainer paramitersContainer = pmanager.findParametersContainer(this.currentddbid);
-              List<Parameters> parametersContainerList = paramitersContainer.getParameters();
-              for (Parameters pt : parametersContainerList) {
-                  if (pt.getId().compareTo(currentId) == 0) {
-                      this.parameters = pt;
-                  }
-              }
+            ParametersContainer paramitersContainer = pmanager.findParametersContainer(this.currentddbid);
+            List<Parameters> parametersContainerList = paramitersContainer.getParameters();
+            for (Parameters pt : parametersContainerList) {
+                if (pt.getId().compareTo(currentId) == 0) {
+                    this.parameters = pt;
+                }
+            }
 
             ParameterWeb paramSelected = (ParameterWeb) event.getObject();
             //Parameter paramToCancel= null;
@@ -453,16 +454,16 @@ public class ParametersController {
             if (this.parameters.containsParameterWithName(paramSelected.getName())) {
                 ArrayList<Parameter> parametersToUpdate = new ArrayList<Parameter>();
                 List<Parameter> paramNameValueList = this.parameters.getParameters();
-                  for (Parameter pvl : paramNameValueList) {
-                      if (!pvl.getName().equals(paramSelected.getName())) {
-                          parametersToUpdate.add(pvl);
-                      }
+                for (Parameter pvl : paramNameValueList) {
+                    if (!pvl.getName().equals(paramSelected.getName())) {
+                        parametersToUpdate.add(pvl);
                     }
-                  this.parameters.setParameters(parametersToUpdate);
-                  this.parameters = pmanager.save(this.parameters);
-                  log.log(Level.FINEST, "  parameters saved! ");
+                }
+                this.parameters.setParameters(parametersToUpdate);
+                this.parameters = pmanager.save(this.parameters);
+                log.log(Level.FINEST, "  parameters saved! ");
 
-                  //for (Parameter parameter : this.parameters.getParameters()) {
+                //for (Parameter parameter : this.parameters.getParameters()) {
                     //log.log(Level.INFO, "  param name "+ parameter.getName() +" = " + parameter.getValue() );
                 //}
                   /**log.log(Level.INFO, "  after removing par end");
@@ -476,21 +477,21 @@ public class ParametersController {
                        }
 
                   }*/
-                  this.dbParams = buildParamsEditableTable(this.parameters);
-                  log.log(Level.INFO, "  after removing par end -  dbParams " + this.dbParams.size());
-                  reinit();
-                  FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, ((ParameterWeb) event.getObject()).getName() + " " + bundle.getString("delete.operation.msg"), bundle.getString("delete.success.msg"));
-                  facesContext.addMessage(null, m);
-              }
-          } catch (Exception e) {
-              log.log(Level.WARNING, "Error :" + e.getMessage());
-              e.printStackTrace();
-              String errorMessage = getRootErrorMessage(e);
-              FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR,    errorMessage, bundle.getString("delete.failure.msg"));
-              facesContext.addMessage(null, m);
-          }
+                this.dbParams = buildParamsEditableTable(this.parameters);
+                log.log(Level.INFO, "  after removing par end -  dbParams " + this.dbParams.size());
+                reinit();
+                FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, ((ParameterWeb) event.getObject()).getName() + " " + bundle.getString("delete.operation.msg"), bundle.getString("delete.success.msg"));
+                facesContext.addMessage(null, m);
+            }
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Error :" + e.getMessage());
+            e.printStackTrace();
+            String errorMessage = getRootErrorMessage(e);
+            FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, bundle.getString("delete.failure.msg"));
+            facesContext.addMessage(null, m);
+        }
         return "edit";
-      }
+    }
 
 
     public String reinit() {

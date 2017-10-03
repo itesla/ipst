@@ -121,8 +121,8 @@ public class EurostagStepUpTransformerInserter {
      *  qhvgen  qhvload
      */
     private static StateVariable toLvGenPf(TransformerModel transformerModel, StateVariable hvGenSv, PowerFlow hvLoadPf, PowerFlow lvLoadPf) {
-        double p1 = (hvGenSv.p + (hvLoadPf != null ? hvLoadPf.p : 0f));
-        double q1 = (hvGenSv.q + (hvLoadPf != null ? hvLoadPf.q : 0f));
+        double p1 = hvGenSv.p + (hvLoadPf != null ? hvLoadPf.p : 0f);
+        double q1 = hvGenSv.q + (hvLoadPf != null ? hvLoadPf.q : 0f);
         StateVariable sv1 = new StateVariable(p1, q1, hvGenSv.u, hvGenSv.theta);
         StateVariable sv2 = transformerModel.toSv2(sv1);
         double pLvGen = -(sv2.p + (lvLoadPf != null ? lvLoadPf.p : 0f));
@@ -699,7 +699,7 @@ public class EurostagStepUpTransformerInserter {
         for (Generator g : Identifiables.sort(n.getGenerators())) {
             count.get(insert(g, ddb, genDict, auxDict, config, stateBefore)).add(g.getId());
         }
-        LOGGER.info("{} step-up transformers added in {} ms", count.get(InsertionStatus.OK).size(), (System.currentTimeMillis() - start));
+        LOGGER.info("{} step-up transformers added in {} ms", count.get(InsertionStatus.OK).size(), System.currentTimeMillis() - start);
 
         int generatorsNotMoved = n.getGeneratorCount() - count.get(InsertionStatus.OK).size();
         if (generatorsNotMoved > 0) {

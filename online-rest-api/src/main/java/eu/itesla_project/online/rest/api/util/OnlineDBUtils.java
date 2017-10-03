@@ -241,7 +241,7 @@ public class OnlineDBUtils implements ProcessDBUtils {
                     Map<Integer, List<LimitViolation>> previolsMap = onlinedb.getViolations(workflowId, OnlineStep.LOAD_FLOW);
 
                     if (previolsMap != null) {
-                        previolsMap.forEach( (state, limitList) -> {
+                        previolsMap.forEach((state, limitList) -> {
                             StateSynthesis statesynt = statesMap.get(state);
                             if (statesynt == null) {
                                 statesynt = new StateSynthesis(state);
@@ -264,7 +264,7 @@ public class OnlineDBUtils implements ProcessDBUtils {
 
                             Map<String, List<ViolationSynthesis>> contingencyMap = statesynt.getPostContingencyViolations();
 
-                            contingencyViolationMap.forEach( (cont, limitList) -> {
+                            contingencyViolationMap.forEach((cont, limitList) -> {
                                 List<ViolationSynthesis> violationList = contingencyMap.get(cont);
                                 if (violationList == null) {
                                     violationList = new ArrayList();
@@ -275,7 +275,7 @@ public class OnlineDBUtils implements ProcessDBUtils {
                         });
                     }
                 });
-                result.addStateSynthesis(new ArrayList<>( statesMap.values()));
+                result.addStateSynthesis(new ArrayList<>(statesMap.values()));
                 return result;
             }
         } catch (Exception e) {
@@ -285,8 +285,8 @@ public class OnlineDBUtils implements ProcessDBUtils {
         return null;
     }
 
-    private void fillViolationSynthesis( DateTime dateTime, List<ViolationSynthesis> violationList, List<LimitViolation> limitList )  {
-        limitList.forEach( lv -> {
+    private void fillViolationSynthesis(DateTime dateTime, List<ViolationSynthesis> violationList, List<LimitViolation> limitList)  {
+        limitList.forEach(lv -> {
             LimitViolationType violationType = lv.getLimitType();
             String equipment = lv.getSubjectId();
             float limit = lv.getLimit();

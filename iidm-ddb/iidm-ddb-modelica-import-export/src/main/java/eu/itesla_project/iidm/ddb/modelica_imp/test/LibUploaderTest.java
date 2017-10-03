@@ -35,8 +35,8 @@ public class LibUploaderTest {
             isRegulator = Boolean.parseBoolean(args[8]);
 
         } else {
-               isLibrary = true;
-               isRegulator = false;
+            isLibrary = true;
+            isRegulator = false;
         }
 
         _log.info("Power Systems Library Dir = " + libFilePath);

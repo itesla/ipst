@@ -132,8 +132,8 @@ public class OMCPane extends JPanel implements ActionListener, KeyListener {
                 jTextArea.append("\nGot reply:" + result);
             } catch (Exception ex) {
                 jTextArea.append(
-                  "\nError while sending expression: " + command + "\n" +
-                  ex.getMessage());
+                        "\nError while sending expression: " + command + "\n" +
+                                ex.getMessage());
             }
             jTextField.setText("");
         } else {
@@ -172,7 +172,7 @@ public class OMCPane extends JPanel implements ActionListener, KeyListener {
                             "    flying = v_new > 0;\n" +
                             "    reinit(v, v_new);\n" +
                             "  end when;\n" +
-                    "end BouncingBall;\n");
+                            "end BouncingBall;\n");
                     jTextArea.repaint();
                     jTextArea.append("\n// see if there were any errors");
                     executeCommand("getErrorString()");

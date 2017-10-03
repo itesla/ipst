@@ -146,7 +146,7 @@ public class SamplerWp41 implements Sampler {
         }
 
         if (config.getValidationDir() != null) {
-                Files.createDirectories(config.getValidationDir());
+            Files.createDirectories(config.getValidationDir());
         }
 
         //infer the number of clusters from number module2 output files ....

@@ -36,16 +36,18 @@ public class PsseModDefaultTypes {
     public final static String WT4G1                            = "iPSL.Electrical.Wind.PSSE.WT4G.WT4G1";
 
     //Regulators with constant
-    public final static List<String> REGS_WITH_CONST            = Arrays.asList(new String[]{PsseModDefaultTypes.SCRX,
-                                                                                            PsseModDefaultTypes.SEXS,
-                                                                                            PsseModDefaultTypes.IEEET2});
+    public final static List<String> REGS_WITH_CONST = Arrays.asList(new String[]{
+        PsseModDefaultTypes.SCRX,
+        PsseModDefaultTypes.SEXS,
+        PsseModDefaultTypes.IEEET2});
 
 
 
     //Regulators with constant: en el caso de REN los reguladores tienes pines VUEL1, VUEL2, VUEL3, VOTHSG, VOTHSG2
-    public final static List<String> REGS_WITH_CONST_REN            = Arrays.asList(new String[]{PsseModDefaultTypes.IEEEST,
-                                                                                            PsseModDefaultTypes.ESST1A,
-                                                                                            PsseModDefaultTypes.ESAC1A});
+    public final static List<String> REGS_WITH_CONST_REN = Arrays.asList(new String[]{
+        PsseModDefaultTypes.IEEEST,
+        PsseModDefaultTypes.ESST1A,
+        PsseModDefaultTypes.ESAC1A});
 
 
 

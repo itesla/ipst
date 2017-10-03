@@ -8,11 +8,13 @@
 find_package(Boost REQUIRED)
 find_package(Eurostag REQUIRED)
 find_package(HDF5)
-find_package(IntelFortran REQUIRED COMPONENTS ifcore ifport imf intlc)
+find_package(IntelFortran REQUIRED COMPONENTS ifcore ifport imf intlc svml)
 find_package(Log4cpp REQUIRED)
 find_package(Matio REQUIRED)
 find_package(Threads)
 find_package(ZLIB REQUIRED)
+find_package(Szip REQUIRED)
+
 
 # wp43adapter
 set(WP43ADAPTER_SOURCES
@@ -21,7 +23,7 @@ set(WP43ADAPTER_SOURCES
     src/wp43adapter.cpp
 )
 add_executable(wp43adapter ${WP43ADAPTER_SOURCES})
-target_link_libraries(wp43adapter ${Eurostag_LIBRARIES} ${IntelFortran_LIBRARIES} ${Log4cpp_LIBRARIES} ${Matio_LIBRARIES} ${HDF5_LIBRARIES} ${ZLIB_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+target_link_libraries(wp43adapter ${Eurostag_LIBRARIES} ${IntelFortran_LIBRARIES} ${Log4cpp_LIBRARIES} ${Matio_LIBRARIES} ${HDF5_LIBRARIES} ${ZLIB_LIBRARIES} ${BOOST_LIBRARIES} ${SZIP_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${Eurostag_INCLUDE_DIRS})

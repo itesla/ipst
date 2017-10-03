@@ -46,10 +46,10 @@ public class XmlActionsContingenciesUtils {
         Zones zones = actionContingencies.getZones();
 
         for (Zone z : zones.getZone()) {
-                BigInteger zoneNumber = z.getNumber();
-                if (zoneNumber.equals(number)) {
-                    return z;
-                }
+            BigInteger zoneNumber = z.getNumber();
+            if (zoneNumber.equals(number)) {
+                return z;
+            }
         }
 
         return null;
@@ -63,7 +63,7 @@ public class XmlActionsContingenciesUtils {
     public static Zone getZone(ActionsContingencies actionContingencies, String name) {
 
         Zones zones = actionContingencies.getZones();
-        if ( zones != null ) {
+        if (zones != null) {
             for (Zone z : zones.getZone()) {
                 String zoneName = z.getName();
                 if (zoneName.equals(name)) {
@@ -74,7 +74,7 @@ public class XmlActionsContingenciesUtils {
         return null;
     }
 
-    public static Set<Zone> getZone( ActionsContingencies actionContingencies, Network network) {
+    public static Set<Zone> getZone(ActionsContingencies actionContingencies, Network network) {
         Set<Zone>  zones = new HashSet<Zone>();
 
         Zones xmlZones                    = actionContingencies.getZones();
@@ -104,7 +104,7 @@ public class XmlActionsContingenciesUtils {
      * @return Contingencies by zone's number.
      *
      */
-    public static List<Contingency> getContingenciesByZone ( ActionsContingencies actionContingencies, BigInteger number) {
+    public static List<Contingency> getContingenciesByZone(ActionsContingencies actionContingencies, BigInteger number) {
         List<Contingency> contingencyList = new ArrayList<Contingency>();
         Contingencies contingencies = actionContingencies.getContingencies();
 
@@ -123,7 +123,7 @@ public class XmlActionsContingenciesUtils {
      * @return Contingencies by zone's name.
      *
      */
-    public static List<Contingency> getContingencies ( ActionsContingencies actionContingencies, String name) {
+    public static List<Contingency> getContingencies(ActionsContingencies actionContingencies, String name) {
         List<Contingency> contingencyList = new ArrayList<Contingency>();
         Contingencies contingencies = actionContingencies.getContingencies();
         List<Zone> zones = actionContingencies.getZones().getZone();
@@ -178,7 +178,7 @@ public class XmlActionsContingenciesUtils {
      * @return ElementaryActions by zone's number.
      *
      */
-    public static List<ElementaryAction> getElementaryActionsByZone (ActionsContingencies actionContingencies, String name) {
+    public static List<ElementaryAction> getElementaryActionsByZone(ActionsContingencies actionContingencies, String name) {
         List<ElementaryAction> eactionsList = new ArrayList<ElementaryAction>();
 
         if (actionContingencies.getElementaryActions() != null) {

@@ -30,11 +30,11 @@ public class LazyModelTemplateContainerDataModel extends LazyDataModel<ModelTemp
 
 
 
-   public LazyModelTemplateContainerDataModel( DDBManager pmanager) {
-       this.pmanager = pmanager;
-       setPageSize(10);
-       setRowCount(pmanager.findModelTemplateContainerAllCount());
-   }
+    public LazyModelTemplateContainerDataModel(DDBManager pmanager) {
+        this.pmanager = pmanager;
+        setPageSize(10);
+        setRowCount(pmanager.findModelTemplateContainerAllCount());
+    }
 
     @Override
     public int getRowCount() {
@@ -66,7 +66,5 @@ public class LazyModelTemplateContainerDataModel extends LazyDataModel<ModelTemp
         List<ModelTemplateContainer> res = pmanager.findModelTemplateContainerAllMaxResults(first, pageSize);
         return res;
     }
-
-
 
 }

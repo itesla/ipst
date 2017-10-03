@@ -101,10 +101,10 @@ public class ListForecastErrorsAnalysisTool implements Tool {
                     table.addCell("-");
                 }
                 ForecastErrorsAnalyzerParameters parameters = feDataStorage.getParameters(analysis.getAnalysisId(), timeHorizon);
-                if ( parameters != null ) {
+                if (parameters != null) {
                     //table.addCell(parameters.toString().substring(32));
                     String value = parameters.toString().substring(32);
-                    while ( value.length() > COLUMN_LENGTH ) {
+                    while (value.length() > COLUMN_LENGTH) {
                         table.addCell(value.substring(0, COLUMN_LENGTH), new CellStyle(CellStyle.HorizontalAlign.left));
                         table.addCell(" ", new CellStyle(CellStyle.HorizontalAlign.left));
                         table.addCell(" ", new CellStyle(CellStyle.HorizontalAlign.left));

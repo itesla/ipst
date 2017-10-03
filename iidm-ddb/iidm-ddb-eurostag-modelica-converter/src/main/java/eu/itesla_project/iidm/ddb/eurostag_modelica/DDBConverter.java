@@ -44,7 +44,7 @@ public class DDBConverter {
         Converter eurostagModelicaConverter = new Converter(this.ddbManager, eurostagVersion, modelicaVersion);
         for (Internal internal : this.ddbManager.findInternalsAll()) {
             log.info("Converting internal " + internal.getNativeId() + " [MTC_ID = " + internal.getModelContainer().getDdbId() + "]");
-            if ( modelTemplateContainers.containsKey(internal.getModelContainer().getDdbId()) ) {
+            if (modelTemplateContainers.containsKey(internal.getModelContainer().getDdbId())) {
                 log.debug("Internal " + internal.getNativeId() + " has a model template container " + internal.getModelContainer().getDdbId() + " already converted to modelica, just adding the modelica parameter");
                 eurostagModelicaConverter.addModelicaParamerToInternal(internal.getNativeId());
             } else {
@@ -59,7 +59,7 @@ public class DDBConverter {
     }
 
     public void close() {
-        if ( this.context != null ) {
+        if (this.context != null) {
             try {
                 EjbClientCtxUtils.close(this.context);
             } catch (Exception e) {
@@ -95,7 +95,7 @@ public class DDBConverter {
         } catch (ConversionException e) {
             log.error("Error converting DDB data from eurostag to modelica: " + e.getMessage());
         } finally {
-            if ( DDBConverter != null ) {
+            if (DDBConverter != null) {
                 DDBConverter.close();
             }
         }

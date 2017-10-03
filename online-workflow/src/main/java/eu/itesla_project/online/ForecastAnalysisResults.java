@@ -59,9 +59,9 @@ public class ForecastAnalysisResults implements OnlineWorkflowResults {
         statesWithActionInfo.put(stateId, new StateWithCCOInfo(actionsFound, status, cause, actionPlan));
         contingenciesWithActionsInfo.put(contingencyId, statesWithActionInfo);
 
-        if ( actions != null ) {
+        if (actions != null) {
             StatesWithActions statesWithActions = new StatesWithActions();
-            if ( contingenciesWithActions.containsKey(contingencyId) ) {
+            if (contingenciesWithActions.containsKey(contingencyId)) {
                 statesWithActions = contingenciesWithActions.get(contingencyId);
             }
             statesWithActions.addState(stateId, actions);
@@ -71,7 +71,7 @@ public class ForecastAnalysisResults implements OnlineWorkflowResults {
 
     public void addUnsafeStateWithIndexes(String contingencyId, Integer stateId, List<SecurityIndex> indexes) {
         StatesWithIndexes unsafeStatesWithIndexes = new StatesWithIndexes();
-        if ( unsafeContingencies.containsKey(contingencyId) ) {
+        if (unsafeContingencies.containsKey(contingencyId)) {
             unsafeStatesWithIndexes = unsafeContingencies.get(contingencyId);
         }
         unsafeStatesWithIndexes.addState(stateId, indexes);

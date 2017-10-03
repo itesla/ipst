@@ -37,7 +37,7 @@ public enum WCAClusterNum {
     }
 
     public static WCAClusterNum fromInt(int intNum) {
-        if ( mapping.containsKey(intNum) ) {
+        if (mapping.containsKey(intNum)) {
             return mapping.get(intNum);
         }
         throw new RuntimeException("Undefined cluster number " + intNum);

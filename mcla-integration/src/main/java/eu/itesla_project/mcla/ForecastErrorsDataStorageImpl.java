@@ -67,7 +67,7 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
     private boolean isForecastErrorsFileAvailable(String analysisId, TimeHorizon timeHorizon, String forecastErrorsFileName) {
         Path analysisDataFolder = Paths.get(config.getForecastErrorsDir().toString(), analysisId.replaceAll(" ", "_"));
         LOGGER.info("Data folder for {} analysis is {} ", analysisId, analysisDataFolder);
-        if ( Files.exists(analysisDataFolder) ) {
+        if (Files.exists(analysisDataFolder)) {
             Path forecastErrorsFile = Paths.get(analysisDataFolder.toString(), forecastErrorsFileName);
             LOGGER.info("Forecast errors analysis file for {} analysis and {} time horizon is {} ", analysisId, timeHorizon.getName(), forecastErrorsFile);
             if (Files.exists(forecastErrorsFile)) {
@@ -95,7 +95,7 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
 
 
     private void getForecastErrorsFile(String analysisId, TimeHorizon timeHorizon, Path destinationFile, String forecastErrorsFileName) throws IOException {
-        if ( !isForecastErrorsFileAvailable(analysisId, timeHorizon, forecastErrorsFileName) ) {
+        if (!isForecastErrorsFileAvailable(analysisId, timeHorizon, forecastErrorsFileName)) {
             String errorMessage = "No forecast errors file " + forecastErrorsFileName + " for " + analysisId + " analysis and " + timeHorizon.getName() + " time horizon";
             LOGGER.error(errorMessage);
             throw new RuntimeException(errorMessage);
@@ -123,11 +123,11 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
 
     private void storeForecastErrorsFile(String analysisId, TimeHorizon timeHorizon, Path originFile, String forecastErrorsFileName) throws IOException {
         Path analysisDataFolder = Paths.get(config.getForecastErrorsDir().toString(), analysisId.replaceAll(" ", "_"));
-        if ( !Files.exists(analysisDataFolder) ) {
+        if (!Files.exists(analysisDataFolder)) {
             Files.createDirectories(analysisDataFolder);
         }
         Path forecastErrorsFile = Paths.get(analysisDataFolder.toString(), forecastErrorsFileName);
-        if ( Files.exists(forecastErrorsFile) ) {
+        if (Files.exists(forecastErrorsFile)) {
             String errorMessage = "Forecast errors file " + forecastErrorsFileName + " for " + analysisId + " analysis and " + timeHorizon.getName() + " time horizon already exists";
             LOGGER.error(errorMessage);
             throw new RuntimeException(errorMessage);
@@ -137,7 +137,7 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
 
     @Override
     public boolean deleteForecastErrorsData(String analysisId, TimeHorizon timeHorizon) {
-        if ( !isForecastErrorsDataAvailable(analysisId, timeHorizon) ) {
+        if (!isForecastErrorsDataAvailable(analysisId, timeHorizon)) {
             LOGGER.warn("Forecast errors data not available for analysis {} and time horizon {}", analysisId, timeHorizon);
             return false;
         }
@@ -145,7 +145,7 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
     }
 
     public boolean deleteForecastOfflineSamplesData(String analysisId, TimeHorizon timeHorizon) {
-        if ( !isForecastOfflineSamplesDataAvailable(analysisId, timeHorizon) ) {
+        if (!isForecastOfflineSamplesDataAvailable(analysisId, timeHorizon)) {
             LOGGER.warn("Forecast offline samples data not available for analysis {} and time horizon {}", analysisId, timeHorizon);
             return false;
         }
@@ -199,7 +199,7 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
         Objects.requireNonNull(analysisId, "analysis id is null");
         Objects.requireNonNull(timeHorizon, "time horizon is null");
         LOGGER.debug("Getting statistics for " + analysisId + " analysis, " + timeHorizon.getName() + " time horizon");
-        if ( !areStatisticsAvailable(analysisId, timeHorizon) ) {
+        if (!areStatisticsAvailable(analysisId, timeHorizon)) {
             String errorMessage = "No statistics for " + analysisId + " analysis and " + timeHorizon.getName() + " time horizon";
             LOGGER.error(errorMessage);
             throw new RuntimeException(errorMessage);
@@ -211,7 +211,7 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
 
     @Override
     public boolean deleteStatistics(String analysisId, TimeHorizon timeHorizon) {
-        if ( !areStatisticsAvailable(analysisId, timeHorizon) ) {
+        if (!areStatisticsAvailable(analysisId, timeHorizon)) {
             LOGGER.warn("Statistics not available for analysis {} and time horizon {}", analysisId, timeHorizon);
             return false;
         }
@@ -265,7 +265,7 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
         Objects.requireNonNull(analysisId, "analysis id is null");
         Objects.requireNonNull(timeHorizon, "time horizon is null");
         LOGGER.debug("Getting GUI uncertainties injection ids for " + analysisId + " analysis, " + timeHorizon.getName() + " time horizon");
-        if ( !areGuiUncertaintiesAvailable(analysisId, timeHorizon) ) {
+        if (!areGuiUncertaintiesAvailable(analysisId, timeHorizon)) {
             String errorMessage = "No GUI uncertainties for " + analysisId + " analysis and " + timeHorizon.getName() + " time horizon";
             LOGGER.error(errorMessage);
             throw new RuntimeException(errorMessage);
@@ -280,7 +280,7 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
         Objects.requireNonNull(analysisId, "analysis id is null");
         Objects.requireNonNull(timeHorizon, "time horizon is null");
         LOGGER.debug("Getting GUI uncertainties linear correlation for " + analysisId + " analysis, " + timeHorizon.getName() + " time horizon");
-        if ( !areGuiUncertaintiesAvailable(analysisId, timeHorizon) ) {
+        if (!areGuiUncertaintiesAvailable(analysisId, timeHorizon)) {
             String errorMessage = "No GUI uncertainties for " + analysisId + " analysis and " + timeHorizon.getName() + " time horizon";
             LOGGER.error(errorMessage);
             throw new RuntimeException(errorMessage);
@@ -295,7 +295,7 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
         Objects.requireNonNull(analysisId, "analysis id is null");
         Objects.requireNonNull(timeHorizon, "time horizon is null");
         LOGGER.debug("Getting GUI uncertainties loadings for " + analysisId + " analysis, " + timeHorizon.getName() + " time horizon");
-        if ( !areGuiUncertaintiesAvailable(analysisId, timeHorizon) ) {
+        if (!areGuiUncertaintiesAvailable(analysisId, timeHorizon)) {
             String errorMessage = "No GUI uncertainties for " + analysisId + " analysis and " + timeHorizon.getName() + " time horizon";
             LOGGER.error(errorMessage);
             throw new RuntimeException(errorMessage);
@@ -307,7 +307,7 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
 
     @Override
     public boolean deleteGuiUncertainties(String analysisId, TimeHorizon timeHorizon) {
-        if ( !areGuiUncertaintiesAvailable(analysisId, timeHorizon) ) {
+        if (!areGuiUncertaintiesAvailable(analysisId, timeHorizon)) {
             LOGGER.warn("GUI uncertainties not available for analysis {} and time horizon {}", analysisId, timeHorizon);
             return false;
         }
@@ -322,7 +322,7 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
     public List<ForecastErrorsAnalysisDetails> listAnalysis() {
         List<ForecastErrorsAnalysisDetails> analysisList = new ArrayList<ForecastErrorsAnalysisDetails>();
         LOGGER.info("Data folder for analysis is {} ", config.getForecastErrorsDir());
-        if ( Files.exists(config.getForecastErrorsDir()) ) {
+        if (Files.exists(config.getForecastErrorsDir())) {
             File[] analysisFiles = config.getForecastErrorsDir().toFile().listFiles();
             Arrays.sort(analysisFiles, new Comparator<File>() {
                 public int compare(File f1, File f2) {
@@ -330,7 +330,7 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
                 }
             });
             for (File analysisFile : analysisFiles) {
-                if ( analysisFile.isDirectory() ) {
+                if (analysisFile.isDirectory()) {
                     ForecastErrorsAnalysisDetails analysis = new ForecastErrorsAnalysisDetails(analysisFile.getName());
                     analysis.setAnalysisDate(new DateTime(analysisFile.lastModified()));
                     // add list of time horizons where forecast errors data is available
@@ -374,19 +374,19 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
     public boolean deleteAnalysis(String analysisId, TimeHorizon timeHorizon) {
         boolean deleted = true;
         boolean analysisAvailable = false;
-        if ( isForecastErrorsDataAvailable(analysisId, timeHorizon) ) {
+        if (isForecastErrorsDataAvailable(analysisId, timeHorizon)) {
             analysisAvailable = true;
             deleted = deleted && deleteForecastErrorsData(analysisId, timeHorizon);
         }
-        if ( isForecastOfflineSamplesDataAvailable(analysisId, timeHorizon) ) {
+        if (isForecastOfflineSamplesDataAvailable(analysisId, timeHorizon)) {
             analysisAvailable = true;
             deleted = deleted && deleteForecastOfflineSamplesData(analysisId, timeHorizon);
         }
-        if ( areStatisticsAvailable(analysisId, timeHorizon) ) {
+        if (areStatisticsAvailable(analysisId, timeHorizon)) {
             analysisAvailable = true;
             deleted = deleted && deleteStatistics(analysisId, timeHorizon);
         }
-        if ( areGuiUncertaintiesAvailable(analysisId, timeHorizon) ) {
+        if (areGuiUncertaintiesAvailable(analysisId, timeHorizon)) {
             analysisAvailable = true;
             deleted = deleted && deleteGuiUncertainties(analysisId, timeHorizon);
         }
@@ -400,7 +400,7 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
     @Override
     public void storeParameters(String analysisId, TimeHorizon timeHorizon, ForecastErrorsAnalyzerParameters parameters) throws IOException {
         Path analysisDataFolder = Paths.get(config.getForecastErrorsDir().toString(), analysisId.replaceAll(" ", "_"));
-        if ( !Files.exists(analysisDataFolder) ) {
+        if (!Files.exists(analysisDataFolder)) {
             Files.createDirectories(analysisDataFolder);
         }
         Path parametersFile = Paths.get(analysisDataFolder.toString(), parametersFileName(timeHorizon));
@@ -413,7 +413,7 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
     @Override
     public ForecastErrorsAnalyzerParameters getParameters(String analysisId, TimeHorizon timeHorizon) throws IOException {
         Path analysisDataFolder = Paths.get(config.getForecastErrorsDir().toString(), analysisId.replaceAll(" ", "_"));
-        if ( Files.exists(analysisDataFolder) ) {
+        if (Files.exists(analysisDataFolder)) {
             Path parametersFile = Paths.get(analysisDataFolder.toString(), parametersFileName(timeHorizon));
             if (Files.exists(parametersFile)) {
                 return ForecastErrorsAnalyzerParameters.fromFile(parametersFile);
