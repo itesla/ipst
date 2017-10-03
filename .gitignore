@@ -1,6 +1,7 @@
 # Maven projects
 /ampl-export/target/
 /case-projector/target
+/case-repository/target/
 /distribution/target
 /dymola-integration/target/
 /EU2Mod_MB/target/
