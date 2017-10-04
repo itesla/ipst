@@ -45,7 +45,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
 
     String[][] estg = new String[][] {
-            {"M1U", "Unsaturated generator defined by its internal parameters - full model", },
+            {"M1U", "Unsaturated generator defined by its internal parameters - full model"},
             {"M1DU", "Unsaturated generator defined by its internal parameters - full model - type Fortescue"},
             {"M2U", "Unsaturated generator defined by its external parameters - full model"},
             {"M2DU", "Unsaturated generator defined by its external parameters - full model - type Fortescue"},
