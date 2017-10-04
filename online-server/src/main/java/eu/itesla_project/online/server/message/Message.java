@@ -11,6 +11,10 @@ import java.io.StringWriter;
 import javax.json.Json;
 import javax.json.stream.JsonGenerator;
 
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  *
  * @author Quinary <itesla@quinary.com>
@@ -48,5 +52,15 @@ public abstract class Message<T> {
             generator.writeEnd();
         }
         return writer.toString();
+    }
+
+    public String writeValueAsString(Object obj) {
+        ObjectMapper json = new ObjectMapper();
+        json.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
+        try {
+            return json.writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
     }
 }
