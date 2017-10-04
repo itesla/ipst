@@ -33,7 +33,7 @@
         <module>eurostag-step-up-transformer</module>
         <module>file-system-rules-db</module>
         <module>fpf-integration</module>
-         <!--<module>histoDB</module>-->
+        <!-- <module>histoDB</module> -->
         <module>histodb-client</module>
         <module>iidm-actions-contingencies-xml-client</module>
         <module>iidm-ddb</module>

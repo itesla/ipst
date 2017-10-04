@@ -60,7 +60,7 @@ public abstract class Message<T> {
         try {
             return json.writeValueAsString(obj);
         } catch (Exception e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
     }
 }
