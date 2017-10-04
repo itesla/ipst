@@ -8,7 +8,6 @@ package eu.itesla_project.modelica_export.records;
 
 import eu.itesla_project.iidm.ddb.model.SimulatorInst;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
-import eu.itesla_project.iidm.network.Bus;
 import eu.itesla_project.iidm.network.Identifiable;
 import eu.itesla_project.iidm.network.ShuntCompensator;
 import eu.itesla_project.modelica_export.ModExportContext;
@@ -37,11 +36,7 @@ public class ConnectCapacitorRecord extends ConnectRecord {
         this.addValue(EurostagFixedData.CONNECT);
         this.addValue(super.nodeName1);
 
-        if (this.node1 instanceof Bus) {
-            this.addValue("." + StaticData.POSITIVE_PIN + ", ");
-        } else {
-            this.addValue("." + StaticData.POSITIVE_PIN + ", ");
-        }
+        this.addValue("." + StaticData.POSITIVE_PIN + ", ");
 
         this.addValue(super.nodeName2);
 
