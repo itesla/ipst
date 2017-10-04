@@ -700,7 +700,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                     String id2 = EquipmentsInternalsMap.get(nativeId).get(j);
                     Set<String> intSet = Sets.intersection(Sets.newHashSet(macroblocksPinNames.get(id1)), Sets.newHashSet(macroblocksPinNames.get(id2)));
                     log.debug("--- reg: " + id1 + ", reg: " + id2 + ", common variable names:" + intSet);
-                    boolean toBeProcessed = (intSet.size() > 0);
+                    boolean toBeProcessed = intSet.size() > 0;
                     if (toBeProcessed) {
                         for (String pinName : intSet) {
                             String longId1 = nativeId + "_" + id1;

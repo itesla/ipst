@@ -50,7 +50,7 @@ public class DanglingLineRecord extends ModelicaRecord {
         Equipments.ConnectionInfo info1 = Equipments.getConnectionInfoInBusBreakerView(this.danglingLine.getTerminal());
         Bus b1 = info1.getConnectionBus();
 
-        if ((!Float.isNaN(b1.getV()) && info1.isConnected())) {
+        if (!Float.isNaN(b1.getV()) && info1.isConnected()) {
             if (super.isCorrect()) {
                 if (super.getModelicaType() != null) {
                     this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);

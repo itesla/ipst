@@ -109,7 +109,7 @@ public class TopoHistoryParser {
                 row++;
             }
         }
-        LOGGER.info("Parsing done in {} ms", (System.currentTimeMillis() - start));
+        LOGGER.info("Parsing done in {} ms", System.currentTimeMillis() - start);
     }
 
 }

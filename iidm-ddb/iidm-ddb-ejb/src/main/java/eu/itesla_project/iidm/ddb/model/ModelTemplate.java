@@ -98,7 +98,7 @@ public class ModelTemplate  implements Serializable {
 
     public DefaultParameters defaultParametersBySetNum(int defSetNum) {
         int defParsSetsSize = defaultParameters.size();
-        if ((defParsSetsSize > 0)) {
+        if (defParsSetsSize > 0) {
             DefaultParameters foundDP = null;
             for (DefaultParameters defaultParams : defaultParameters) {
                 if (defaultParams.getSetNum() == defSetNum) {
@@ -106,7 +106,7 @@ public class ModelTemplate  implements Serializable {
                     break;
                 }
             }
-            return ((foundDP != null) ? foundDP : null);
+            return (foundDP != null) ? foundDP : null;
         }
         return null;
     }

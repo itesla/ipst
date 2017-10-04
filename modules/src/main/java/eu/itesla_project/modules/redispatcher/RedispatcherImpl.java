@@ -79,10 +79,10 @@ public class RedispatcherImpl implements Redispatcher {
 //                LOGGER.debug("{}: generator {} - new computed P:{}", network.getStateManager().getWorkingStateId(), generator.getId(), newP);
                 // keep P within redispatch limits
                 if (-newP <= redispatchPMin) {
-                    remainingDeltaP -= (redispatchPMin + newP); // the P outside the limits will be redispacthed at the following run
+                    remainingDeltaP -= redispatchPMin + newP; // the P outside the limits will be redispacthed at the following run
                     newP = -redispatchPMin;
                 } else if (-newP >= redispatchPMax) {
-                    remainingDeltaP += (-newP - redispatchPMax);  // the P outside the limits will be redispacthed at the following run
+                    remainingDeltaP += -newP - redispatchPMax;  // the P outside the limits will be redispacthed at the following run
                     newP = -redispatchPMax;
                 } else {
                     remainingRedispatchableGenerators.add(generator); // not outsied or at the limits -> I can use it for the next run
@@ -91,7 +91,7 @@ public class RedispatcherImpl implements Redispatcher {
                 LOGGER.debug("{}: generator {} - P:{} -> P:{} - limits[{},{}], redispatch limits[{},{}]",
                         network.getStateManager().getWorkingStateId(), generator.getId(), generator.getTerminal().getP(), newP,
                         generator.getMinP(), generator.getMaxP(), redispatchPMin, redispatchPMax);
-                redispactchedP += (-newP + generator.getTerminal().getP());
+                redispactchedP += -newP + generator.getTerminal().getP();
                 generator.getTerminal().setP(newP);
                 generator.setTargetP(-newP);
 //                LOGGER.debug("Redispatched {} MW", redispactchedP);

@@ -54,7 +54,7 @@ public class IIDM2DB {
 
         @Override
         public String toString() {
-            return (horizon + forecastDistance);
+            return horizon + forecastDistance;
         }
     }
 

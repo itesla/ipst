@@ -155,7 +155,7 @@ public class PrintOnlineWorkflowPerformances implements Tool {
 
             try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, outputFormat, outputFile, TABLE_TITLE, tableColumns)) {
                 workflowsIds.stream()
-                        .sorted((o1, o2) -> (o1.compareTo(o2)))
+                        .sorted((o1, o2) -> o1.compareTo(o2))
                         .forEach(workflowId -> {
                             OnlineWorkflowParameters parameters = onlinedb.getWorkflowParameters(workflowId);
                             if ((parameters == null) || (!parameters.validation())) {
