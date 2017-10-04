@@ -9,7 +9,6 @@ package eu.itesla_project.iidm.ddb.eurostag_imp_exp;
 import com.google.common.collect.Sets;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.utils.Utils;
 import eu.itesla_project.iidm.ddb.model.*;
-import eu.itesla_project.iidm.ddb.model.Equipment;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
 import eu.itesla_project.iidm.ejbclient.EjbClientCtx;
 import eu.itesla_project.iidm.network.*;
@@ -46,7 +45,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
 
     String[][] estg = new String[][] {
-            {"M1U", "Unsaturated generator defined by its internal parameters - full model", },
+            {"M1U", "Unsaturated generator defined by its internal parameters - full model"},
             {"M1DU", "Unsaturated generator defined by its internal parameters - full model - type Fortescue"},
             {"M2U", "Unsaturated generator defined by its external parameters - full model"},
             {"M2DU", "Unsaturated generator defined by its external parameters - full model - type Fortescue"},
@@ -201,7 +200,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                                         try {
                                             feedDDBWithEurostagData(file, dicoMapF, eurostagSimF, ddbmanagerF, regsMapping);
                                         } catch (Throwable t) {
-                                            log.error(t.getMessage() + "; file " + file, t);
+                                            log.error("errors processing file {} ; ", file,  t.getMessage(), t);
                                         }
                                     } else {
                                         log.warn("file " + file + " not recognized (not .dd, nor .dta): skipped!");
@@ -557,7 +556,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             for (String extension : Arrays.asList("fri", "frm", "par", "pcp", "rcp")) {
                 Path friPath = retrieveActualRegPath(macroblockName + "." + extension, regsMapping);
                 if ((friPath == null) || (Files.notExists(friPath))) {
-                    log.warn("--- Regulator file " + macroblockName + "." + extension
+                    log.error("--- Regulator file " + macroblockName + "." + extension
                             + " does not exist");
                 } else {
                     log.debug("--- Loading regulator file " + macroblockName + "." + extension + " in the database.");
@@ -717,7 +716,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                             }
                         }
                     } else {
-                        log.debug("---- no common variable names,, so no connections are created.");
+                        log.debug("---- no common variable names, so no connections are created.");
                     }
                 }
 
@@ -778,12 +777,16 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
     private void addPinNames(String nativeId, String macroblockName, Path friPath) {
         log.debug("addPinNames: NativeId " + nativeId + ", Macroblock " + macroblockName + ", file " + friPath);
         if (!macroblocksPinNames.containsKey(macroblockName)) {
-            log.debug(" ---------- Reading pin names from file {}", macroblockName, friPath);
-            Converter converter = new Converter(friPath.toAbsolutePath().toString(), "/tmp", false);
-
-            List<String> pinNames = converter.getConnections();
-            for (String pinName : pinNames) {
-                log.debug(" --------------  {}", pinName);
+            List<String> pinNames = Collections.emptyList();
+            if ((friPath == null) || Files.notExists(friPath)) {
+                log.error("could not parse pin names for macroblock {}: regulator files not found", macroblockName);
+            } else {
+                log.debug(" ---------- Reading pin names from file {}", macroblockName, friPath);
+                Converter converter = new Converter(friPath.toAbsolutePath().toString(), "/tmp", false);
+                pinNames = converter.getConnections();
+                for (String pinName : pinNames) {
+                    log.debug(" --------------  {}", pinName);
+                }
             }
             macroblocksPinNames.put(macroblockName, new HashSet<String>(pinNames));
         }
