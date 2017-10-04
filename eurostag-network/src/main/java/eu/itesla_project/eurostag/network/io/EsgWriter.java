@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,7 +11,9 @@ import eu.itesla_project.eurostag.network.*;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Comparator;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
@@ -495,7 +498,10 @@ public class EsgWriter {
         writeGeneralComment(recordWriter, comment);
 
         if (network.getAreas().size() > 0) {
-            for (EsgArea area : network.getAreas()) {
+            for (EsgArea area : network.getAreas()
+                    .stream()
+                    .sorted(Comparator.comparing(EsgArea::getType).thenComparing(area -> area.getName().toString()))
+                    .collect(Collectors.toList())) {
                 writeArea(area, recordWriter);
             }
             recordWriter.newLine();
@@ -587,5 +593,4 @@ public class EsgWriter {
             recordWriter.newLine();
         }
     }
-
 }
