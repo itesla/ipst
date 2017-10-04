@@ -102,6 +102,8 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
 
     private SimulationParameters parameters;
 
+    private final EurostagEchExportFactory eurostagEchExportFactory;
+
     public EurostagStabilization(Network network, ComputationManager computationManager, int priority) {
         this(network, computationManager, priority, EurostagConfig.load());
     }
@@ -115,6 +117,7 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
         this.priority = priority;
         ComponentDefaultConfig defaultConfig = ComponentDefaultConfig.load();
         this.ddbClient = defaultConfig.newFactoryImpl(DynamicDatabaseClientFactory.class).create(config.isDdbCaching());
+        this.eurostagEchExportFactory = defaultConfig.newFactoryImpl(EurostagEchExportFactory.class, EurostagEchExportFactoryImpl.class);
         this.config = config;
 
         LOGGER.info(config.toString());
@@ -194,7 +197,7 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
             } else {
                 parameters.setStartMode(config.isLfWarmStart() ? EsgGeneralParameters.StartMode.WARM_START : EsgGeneralParameters.StartMode.FLAT_START);
             }
-            EsgNetwork networkEch = new EurostagEchExport(network, exportConfig, parallelIndexes, dictionary, fakeNodes).createNetwork(parameters);
+            EsgNetwork networkEch = eurostagEchExportFactory.createEchExport(network, exportConfig, parallelIndexes, dictionary, fakeNodes).createNetwork(parameters);
             networkModifier.hvLoadModelling(networkEch);
             new EsgWriter(networkEch, parameters, specialParameters).write(writer, network.getId() + "/" + network.getStateManager().getWorkingStateId());
         }

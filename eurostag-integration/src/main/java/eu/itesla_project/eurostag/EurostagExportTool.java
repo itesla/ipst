@@ -88,7 +88,9 @@ public class EurostagExportTool implements Tool, EurostagConstants {
             } else {
                 parameters.setStartMode(eurostagConfig.isLfWarmStart() ? EsgGeneralParameters.StartMode.WARM_START : EsgGeneralParameters.StartMode.FLAT_START);
             }
-            EsgNetwork networkEch = new EurostagEchExport(network, exportConfig, parallelIndexes, dictionary, fakeNodes).createNetwork(parameters);
+
+            EurostagEchExportFactory echExportFactory = defaultConfig.newFactoryImpl(EurostagEchExportFactory.class, EurostagEchExportFactoryImpl.class);
+            EsgNetwork networkEch = echExportFactory.createEchExport(network, exportConfig, parallelIndexes, dictionary, fakeNodes).createNetwork(parameters);
             new EurostagNetworkModifier().hvLoadModelling(networkEch);
             new EsgWriter(networkEch, parameters, specialParameters).write(writer, network.getId() + "/" + network.getStateManager().getWorkingStateId());
         }
