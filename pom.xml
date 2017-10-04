@@ -22,8 +22,10 @@
     <modules>
         <module>ampl-export</module>
         <module>case-projector</module>
+        <module>case-repository</module>
         <module>distribution</module>
         <module>dymola-integration</module>
+        <module>entsoe-case-repository</module>
         <module>EU2Mod_MB</module>
         <module>eurostag-ech-export</module>
         <module>eurostag-integration</module>
@@ -40,6 +42,7 @@
         <module>modelica-events-adder</module>
         <module>modelica-export</module>
         <module>modules</module>
+        <module>network-merge</module>
         <module>offline-mpi</module>
         <module>offline-server</module>
         <module>offline-workflow</module>
@@ -545,7 +548,7 @@
                 <version>${slf4j.version}</version>
                 <scope>runtime</scope>
             </dependency>
-            
+
             <!-- Test dependencies -->
             <dependency>
                 <groupId>junit</groupId>
