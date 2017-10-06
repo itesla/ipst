@@ -573,84 +573,87 @@ public class EurostagEchExportImpl implements EurostagEchExport {
         return Float.isNaN(value) ? 0 : value;
     }
 
+    protected EsgACDCVscConverter createACDCVscConverter(VscConverterStation vscConv, HvdcLine hline, BiMap<String, String> dcNodesEsgNames) {
+        Objects.requireNonNull(vscConv);
+        Objects.requireNonNull(hline, "no hvdc line connected to VscConverterStation " + vscConv.getId());
+        boolean isPmode = isPMode(vscConv, hline);
+        Esg8charName znamsvc = new Esg8charName(dictionary.getEsgId(vscConv.getId())); // converter station ID
+        Esg8charName dcNode1 = new Esg8charName(getDCNodeName(vscConv.getId(), 5, dcNodesEsgNames)); // sending DC node name
+        Esg8charName dcNode2 = new Esg8charName("GROUND"); // receiving DC node name; is it always GROUND?
+        Esg8charName acNode = new Esg8charName(dictionary.getEsgId(ConnectionBus.fromTerminal(vscConv.getTerminal(), config, fakeNodes).getId())); // AC node name
+        EsgACDCVscConverter.ConverterState xstate = EsgACDCVscConverter.ConverterState.ON; // converter state ' ' ON; 'S' OFF
+        EsgACDCVscConverter.DCControlMode xregl = isPmode ? EsgACDCVscConverter.DCControlMode.AC_ACTIVE_POWER : EsgACDCVscConverter.DCControlMode.DC_VOLTAGE; // DC control mode 'P' AC_ACTIVE_POWER; 'V' DC_VOLTAGE
+        //AC control mode assumed to be "AC reactive power"(Q)
+        EsgACDCVscConverter.ACControlMode xoper = EsgACDCVscConverter.ACControlMode.AC_REACTIVE_POWER; // AC control mode 'V' AC_VOLTAGE; 'Q' AC_REACTIVE_POWER; 'A' AC_POWER_FACTOR
+        float rrdc = 0; // resistance [Ohms]
+        float rxdc = 16; // reactance [Ohms]
+
+        float pac = zeroIfNanOrValue(hline.getActivePowerSetpoint()); // AC active power setpoint [MW]. Only if DC control mode is 'P'
+        pac = isPmode ? pac : -pac; //change sign in case of Q mode side
+        float pvd = hline.getNominalV(); // DC voltage setpoint [MW]. Only if DC control mode is 'V'
+        float pre = vscConv.getReactivePowerSetpoint(); // AC reactive power setpoint [Mvar]. Only if AC control mode is 'Q'
+        if ((Float.isNaN(pre)) || (vscConv.isVoltageRegulatorOn())) {
+            float terminalQ = vscConv.getTerminal().getQ();
+            if (Float.isNaN(terminalQ)) {
+                pre = zeroIfNanOrValue(vscConv.getReactivePowerSetpoint());
+            } else {
+                pre = terminalQ;
+            }
+        }
+        pre = isPmode ? -pre : pre; // change sign in case of P mode side
+        float pco = Float.NaN; // AC power factor setpoint. Only if AC control mode is 'A'
+        float qvscsh = 1; // Reactive sharing cofficient [%]. Only if AC control mode is 'V'
+        float pvscmin = -hline.getMaxP(); // Minimum AC active power [MW]
+        float pvscmax = hline.getMaxP(); // Maximum AC active power [MW]
+        float qvscmin = vscConv.getReactiveLimits().getMinQ(0); // Minimum reactive power injected on AC node [kV]
+        float qvscmax = vscConv.getReactiveLimits().getMaxQ(0); // Maximum reactive power injected on AC node [kV]
+        float vsb0 = vscConv.getLossFactor(); // Losses coefficient Beta0 [MW]
+        float vsb1 = 0; // Losses coefficient Beta1 [kW]
+        float vsb2 = 0; // Losses coefficient Beta2 [Ohms]
+
+        Bus connectedBus = vscConv.getTerminal().getBusBreakerView().getConnectableBus();
+        if (connectedBus == null) {
+            connectedBus = vscConv.getTerminal().getBusView().getConnectableBus();
+            if (connectedBus == null) {
+                throw new RuntimeException("VSCConverter " + vscConv.getId() + " : connected bus not found!");
+            }
+        }
+        float mvm = connectedBus.getV() / connectedBus.getVoltageLevel().getNominalV(); // Initial AC modulated voltage magnitude [p.u.]
+        float mva = connectedBus.getAngle(); // Initial AC modulated voltage angle [deg]
+        float pva = connectedBus.getV(); // AC voltage setpoint [kV]. Only if AC control mode is 'V'
+
+        return new EsgACDCVscConverter(
+                znamsvc,
+                dcNode1,
+                dcNode2,
+                acNode,
+                xstate,
+                xregl,
+                xoper,
+                rrdc,
+                rxdc,
+                pac,
+                pvd,
+                pva,
+                pre,
+                pco,
+                qvscsh,
+                pvscmin,
+                pvscmax,
+                qvscmin,
+                qvscmax,
+                vsb0,
+                vsb1,
+                vsb2,
+                mvm,
+                mva);
+    }
+
     protected void createACDCVscConverters(EsgNetwork esgNetwork, BiMap<String, String> dcNodesEsgNames) {
         for (VscConverterStation vscConv : Identifiables.sort(network.getVscConverterStations())) {
-            //hvdc line connected to this converter station
+            //retrieve the hvdc line connected to this converter station
             HvdcLine hline = network.getHvdcLineStream().filter(l -> (vscConv.getId().equals(l.getConverterStation1().getId())) || (vscConv.getId().equals(l.getConverterStation2().getId()))).findFirst().orElse(null);
-            Objects.requireNonNull(hline, "no hvdc line connected to VscConverterStation " + vscConv.getId());
-            boolean isPmode = isPMode(vscConv, hline);
-
-            Esg8charName znamsvc = new Esg8charName(dictionary.getEsgId(vscConv.getId())); // converter station ID
-            Esg8charName dcNode1 = new Esg8charName(getDCNodeName(vscConv.getId(), 5, dcNodesEsgNames)); // sending DC node name
-            Esg8charName dcNode2 = new Esg8charName("GROUND"); // receiving DC node name; is it always GROUND?
-            Esg8charName acNode = new Esg8charName(dictionary.getEsgId(ConnectionBus.fromTerminal(vscConv.getTerminal(), config, fakeNodes).getId())); // AC node name
-            EsgACDCVscConverter.ConverterState xstate = EsgACDCVscConverter.ConverterState.ON; // converter state ' ' ON; 'S' OFF
-            EsgACDCVscConverter.DCControlMode xregl = isPmode ? EsgACDCVscConverter.DCControlMode.AC_ACTIVE_POWER : EsgACDCVscConverter.DCControlMode.DC_VOLTAGE; // DC control mode 'P' AC_ACTIVE_POWER; 'V' DC_VOLTAGE
-            //AC control mode assumed to be "AC reactive power"(Q)
-            EsgACDCVscConverter.ACControlMode xoper = EsgACDCVscConverter.ACControlMode.AC_REACTIVE_POWER; // AC control mode 'V' AC_VOLTAGE; 'Q' AC_REACTIVE_POWER; 'A' AC_POWER_FACTOR
-            float rrdc = 0; // resistance [Ohms]
-            float rxdc = 16; // reactance [Ohms]
-
-            float pac = zeroIfNanOrValue(hline.getActivePowerSetpoint()); // AC active power setpoint [MW]. Only if DC control mode is 'P'
-            pac = isPmode ? pac : -pac; //change sign in case of Q mode side
-            float pvd = hline.getNominalV(); // DC voltage setpoint [MW]. Only if DC control mode is 'V'
-            float pre = vscConv.getReactivePowerSetpoint(); // AC reactive power setpoint [Mvar]. Only if AC control mode is 'Q'
-            if ((Float.isNaN(pre)) || (vscConv.isVoltageRegulatorOn())) {
-                float terminalQ = vscConv.getTerminal().getQ();
-                if (Float.isNaN(terminalQ)) {
-                    pre = zeroIfNanOrValue(vscConv.getReactivePowerSetpoint());
-                } else {
-                    pre = terminalQ;
-                }
-            }
-            pre = isPmode ? -pre : pre; // change sign in case of P mode side
-            float pco = Float.NaN; // AC power factor setpoint. Only if AC control mode is 'A'
-            float qvscsh = 1; // Reactive sharing cofficient [%]. Only if AC control mode is 'V'
-            float pvscmin = -hline.getMaxP(); // Minimum AC active power [MW]
-            float pvscmax = hline.getMaxP(); // Maximum AC active power [MW]
-            float qvscmin = vscConv.getReactiveLimits().getMinQ(0); // Minimum reactive power injected on AC node [kV]
-            float qvscmax = vscConv.getReactiveLimits().getMaxQ(0); // Maximum reactive power injected on AC node [kV]
-            float vsb0 = vscConv.getLossFactor(); // Losses coefficient Beta0 [MW]
-            float vsb1 = 0; // Losses coefficient Beta1 [kW]
-            float vsb2 = 0; // Losses coefficient Beta2 [Ohms]
-
-            Bus connectedBus = vscConv.getTerminal().getBusBreakerView().getConnectableBus();
-            if (connectedBus == null) {
-                connectedBus = vscConv.getTerminal().getBusView().getConnectableBus();
-                if (connectedBus == null) {
-                    throw new RuntimeException("VSCConverter " + vscConv.getId() + " : connected bus not found!");
-                }
-            }
-            float mvm = connectedBus.getV() / connectedBus.getVoltageLevel().getNominalV(); // Initial AC modulated voltage magnitude [p.u.]
-            float mva = connectedBus.getAngle(); // Initial AC modulated voltage angle [deg]
-            float pva = connectedBus.getV(); // AC voltage setpoint [kV]. Only if AC control mode is 'V'
-
-            esgNetwork.addACDCVscConverter(
-                    new EsgACDCVscConverter(
-                            znamsvc,
-                            dcNode1,
-                            dcNode2,
-                            acNode,
-                            xstate,
-                            xregl,
-                            xoper,
-                            rrdc,
-                            rxdc,
-                            pac,
-                            pvd,
-                            pva,
-                            pre,
-                            pco,
-                            qvscsh,
-                            pvscmin,
-                            pvscmax,
-                            qvscmin,
-                            qvscmax,
-                            vsb0,
-                            vsb1,
-                            vsb2,
-                            mvm,
-                            mva));
+            esgNetwork.addACDCVscConverter(createACDCVscConverter(vscConv, hline, dcNodesEsgNames));
         }
     }
 
