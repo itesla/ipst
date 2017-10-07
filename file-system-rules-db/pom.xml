@@ -24,8 +24,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>modules</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

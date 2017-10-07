@@ -6,11 +6,11 @@
  */
 package eu.itesla_project.modules.wca;
 
-import eu.itesla_project.iidm.network.*;
-import eu.itesla_project.iidm.network.util.ConnectedComponents;
-import eu.itesla_project.iidm.network.util.Identifiables;
-import eu.itesla_project.entsoe.util.BoundaryPoint;
-import eu.itesla_project.entsoe.util.BoundaryPointXlsParser;
+import com.powsybl.iidm.network.*;
+import com.powsybl.iidm.network.util.ConnectedComponents;
+import com.powsybl.iidm.network.util.Identifiables;
+import com.powsybl.entsoe.util.BoundaryPoint;
+import com.powsybl.entsoe.util.BoundaryPointXlsParser;
 
 import java.io.IOException;
 import java.util.ArrayList;

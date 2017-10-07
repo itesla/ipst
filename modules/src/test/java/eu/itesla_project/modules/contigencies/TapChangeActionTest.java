@@ -6,14 +6,14 @@
  */
 package eu.itesla_project.modules.contigencies;
 
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.computation.local.LocalComputationManager;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.computation.local.LocalComputationManager;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
-import eu.itesla_project.contingency.tasks.ModificationTask;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.PhaseTapChanger;
-import eu.itesla_project.iidm.network.test.PhaseShifterTestCaseFactory;
+import com.powsybl.contingency.tasks.ModificationTask;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.PhaseTapChanger;
+import com.powsybl.iidm.network.test.PhaseShifterTestCaseFactory;
 import eu.itesla_project.modules.contingencies.ActionElementType;
 import eu.itesla_project.modules.contingencies.TapChangeAction;
 import org.junit.Test;

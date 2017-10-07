@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.eurostag;
 
-import eu.itesla_project.computation.Command;
+import com.powsybl.computation.Command;
 
 /**
  *

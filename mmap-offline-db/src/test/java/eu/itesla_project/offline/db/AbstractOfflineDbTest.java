@@ -8,13 +8,13 @@
 package eu.itesla_project.offline.db;
 
 import com.google.common.io.ByteStreams;
-import eu.itesla_project.iidm.network.Country;
-import eu.itesla_project.iidm.network.Load;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.test.EurostagTutorialExample1Factory;
+import com.powsybl.iidm.network.Country;
+import com.powsybl.iidm.network.Load;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.test.EurostagTutorialExample1Factory;
 import eu.itesla_project.modules.offline.*;
-import eu.itesla_project.simulation.securityindexes.OverloadSecurityIndex;
-import eu.itesla_project.simulation.securityindexes.SecurityIndex;
+import com.powsybl.simulation.securityindexes.OverloadSecurityIndex;
+import com.powsybl.simulation.securityindexes.SecurityIndex;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.nio.file.ShrinkWrapFileSystems;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;

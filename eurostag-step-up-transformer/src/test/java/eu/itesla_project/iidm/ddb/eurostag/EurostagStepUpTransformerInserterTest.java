@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.iidm.ddb.eurostag;
 
-import eu.itesla_project.iidm.network.*;
+import com.powsybl.iidm.network.*;
 import org.junit.*;
 
 import java.util.Arrays;

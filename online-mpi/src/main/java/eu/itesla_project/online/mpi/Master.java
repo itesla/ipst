@@ -6,13 +6,13 @@
  */
 package eu.itesla_project.online.mpi;
 
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.computation.mpi.MpiComputationManager;
-import eu.itesla_project.computation.mpi.MpiExecutorContext;
-import eu.itesla_project.computation.mpi.MpiStatistics;
-import eu.itesla_project.computation.mpi.MpiStatisticsFactory;
-import eu.itesla_project.computation.mpi.util.MultiStateNetworkAwareMpiExecutorContext;
-import eu.itesla_project.iidm.network.impl.util.MultiStateNetworkAwareExecutors;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.computation.mpi.MpiComputationManager;
+import com.powsybl.computation.mpi.MpiExecutorContext;
+import com.powsybl.computation.mpi.MpiStatistics;
+import com.powsybl.computation.mpi.MpiStatisticsFactory;
+import com.powsybl.computation.mpi.util.MultiStateNetworkAwareMpiExecutorContext;
+import com.powsybl.iidm.network.impl.util.MultiStateNetworkAwareExecutors;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.online.LocalOnlineApplication;
 import org.apache.commons.cli.*;

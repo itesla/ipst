@@ -23,7 +23,7 @@
         <dependency>
             <groupId>eu.itesla_project</groupId>
             <artifactId>modules</artifactId>
-            <version>${project.version}</version>
+            <version>${ipst.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -36,13 +36,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-impl</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${iidm-impl}</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-test</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${iidm-test}</artifactId>
             <scope>test</scope>
         </dependency>
 

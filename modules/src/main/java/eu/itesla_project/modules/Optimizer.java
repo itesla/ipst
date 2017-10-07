@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.modules;
 
-import eu.itesla_project.commons.Versionable;
+import com.powsybl.commons.Versionable;
 import eu.itesla_project.modules.topo.TopologyContext;
 
 import java.util.concurrent.CompletableFuture;

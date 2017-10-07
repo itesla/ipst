@@ -6,10 +6,10 @@
  */
 package eu.itesla_project.pclfsim;
 
-import eu.itesla_project.commons.config.ModuleConfig;
-import eu.itesla_project.commons.config.PlatformConfig;
-import eu.itesla_project.loadflow.api.LoadFlowFactory;
-import eu.itesla_project.security.Security;
+import com.powsybl.commons.config.ModuleConfig;
+import com.powsybl.commons.config.PlatformConfig;
+import com.powsybl.loadflow.LoadFlowFactory;
+import com.powsybl.security.Security;
 
 import java.util.Objects;
 

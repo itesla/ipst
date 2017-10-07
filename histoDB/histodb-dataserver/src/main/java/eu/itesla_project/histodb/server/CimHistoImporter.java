@@ -8,11 +8,11 @@
 package eu.itesla_project.histodb.server;
 
 import be.pepite.dataserver.api.ColumnDescriptor;
-import eu.itesla_project.commons.datasource.DataSourceUtil;
-import eu.itesla_project.commons.datasource.GenericReadOnlyDataSource;
-import eu.itesla_project.iidm.import_.Importer;
-import eu.itesla_project.iidm.import_.Importers;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.commons.datasource.DataSourceUtil;
+import com.powsybl.commons.datasource.GenericReadOnlyDataSource;
+import com.powsybl.iidm.import_.Importer;
+import com.powsybl.iidm.import_.Importers;
+import com.powsybl.iidm.network.Network;
 import eu.itesla_project.modules.histo.HistoDbAttributeId;
 import eu.itesla_project.modules.histo.HistoDbMetaAttributeType;
 import eu.itesla_project.modules.histo.IIDM2DB;

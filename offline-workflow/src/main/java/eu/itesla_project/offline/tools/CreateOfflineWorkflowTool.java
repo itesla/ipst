@@ -7,10 +7,10 @@
 package eu.itesla_project.offline.tools;
 
 import com.google.auto.service.AutoService;
-import eu.itesla_project.commons.tools.Command;
-import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.commons.tools.ToolRunningContext;
-import eu.itesla_project.iidm.network.Country;
+import com.powsybl.tools.Command;
+import com.powsybl.tools.Tool;
+import com.powsybl.tools.ToolRunningContext;
+import com.powsybl.iidm.network.Country;
 import eu.itesla_project.modules.offline.OfflineWorkflowCreationParameters;
 import eu.itesla_project.offline.OfflineApplication;
 import eu.itesla_project.offline.RemoteOfflineApplicationImpl;

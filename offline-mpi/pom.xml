@@ -30,24 +30,24 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>offline-workflow</artifactId>
-            <version>${project.version}</version>
+            <version>${ipst.version}</version>
+        </dependency>
+		<dependency>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${computation-mpi}</artifactId>
+            <version>${powsybl.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>computation-mpi</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>computation-mpi-util</artifactId>
-            <version>${project.version}</version>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${computation-mpi-util}</artifactId>
+            <version>${powsybl.version}</version>
         </dependency>
 
         <!-- network impl -->
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>iidm-impl</artifactId>
-            <version>${project.version}</version>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${iidm-impl}</artifactId>
+            <version>${powsybl.version}</version>
         </dependency>
 
         <!-- Test dependencies -->

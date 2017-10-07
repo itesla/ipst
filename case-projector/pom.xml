@@ -33,24 +33,24 @@
             <artifactId>commons-cli</artifactId>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>commons</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${commons}</artifactId>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-api</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${iidm-api}</artifactId>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-xml-converter</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${iidm-xml-converter}</artifactId>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>loadflow-api</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${loadflow-api}</artifactId>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>simulation-api</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${simulation-api}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -59,7 +59,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>ampl-export</artifactId>
-            <version>${project.version}</version>
+            <version>${ipst.version}</version>
         </dependency>
 
         <!-- Test dependencies -->

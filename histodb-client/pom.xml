@@ -35,9 +35,9 @@
             <artifactId>httpclient</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>iidm-api</artifactId>
-            <version>${project.version}</version>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${iidm-api}</artifactId>
+            <version>${powsybl.version}</version>
         </dependency>
         <dependency>
             <groupId>net.sf.json-lib</groupId>
@@ -52,8 +52,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>modules</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

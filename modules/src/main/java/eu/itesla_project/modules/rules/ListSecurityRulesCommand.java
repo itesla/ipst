@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.modules.rules;
 
-import eu.itesla_project.commons.tools.Command;
+import com.powsybl.tools.Command;
 import eu.itesla_project.modules.offline.OfflineConfig;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;

@@ -6,8 +6,8 @@
  */
 package eu.itesla_project.iidm.ddb.eurostag_imp_exp;
 
-import eu.itesla_project.commons.config.ModuleConfig;
-import eu.itesla_project.commons.config.PlatformConfig;
+import com.powsybl.commons.config.ModuleConfig;
+import com.powsybl.commons.config.PlatformConfig;
 
 /**
  *

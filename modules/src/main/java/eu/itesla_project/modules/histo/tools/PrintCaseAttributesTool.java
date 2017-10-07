@@ -7,12 +7,12 @@
 package eu.itesla_project.modules.histo.tools;
 
 import com.google.auto.service.AutoService;
-import eu.itesla_project.commons.ITeslaException;
-import eu.itesla_project.commons.tools.Command;
-import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.commons.tools.ToolRunningContext;
-import eu.itesla_project.iidm.import_.Importer;
-import eu.itesla_project.iidm.import_.Importers;
+import com.powsybl.commons.PowsyblException;
+import com.powsybl.tools.Command;
+import com.powsybl.tools.Tool;
+import com.powsybl.tools.ToolRunningContext;
+import com.powsybl.iidm.import_.Importer;
+import com.powsybl.iidm.import_.Importers;
 import eu.itesla_project.modules.histo.HistoDbAttributeId;
 import eu.itesla_project.modules.histo.HistoDbAttributeIdParser;
 import eu.itesla_project.modules.histo.IIDM2DB;
@@ -109,7 +109,7 @@ public class PrintCaseAttributesTool implements Tool {
 
         Importer importer = Importers.getImporter(caseFormat, context.getComputationManager());
         if (importer == null) {
-            throw new ITeslaException("Format " + caseFormat + " not supported");
+            throw new PowsyblException("Format " + caseFormat + " not supported");
         }
         try (BufferedWriter writer = Files.newBufferedWriter(outputCsvFile, StandardCharsets.UTF_8)) {
             writer.write("Case name");

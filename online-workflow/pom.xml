@@ -41,20 +41,20 @@
             <artifactId>case-repository</artifactId>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>commons</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${commons}</artifactId>
         </dependency>
         <dependency>
             <groupId>eu.itesla_project</groupId>
             <artifactId>network-merge</artifactId>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>security-analysis</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${security-analysis}</artifactId>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>simulation-api</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${simulation-api}</artifactId>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
@@ -77,12 +77,10 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>mcla-integration</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>modules</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- Test dependencies -->

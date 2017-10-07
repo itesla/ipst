@@ -40,17 +40,17 @@
             <artifactId>case-repository</artifactId>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>commons</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${commons}</artifactId>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-converter-api</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${iidm-converter-api}</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>entsoe-util</artifactId>
-            <version>${project.version}</version>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${entsoe-util}</artifactId>
+            <version>${powsybl.version}</version>
         </dependency>
 
         <!-- Test dependencies -->

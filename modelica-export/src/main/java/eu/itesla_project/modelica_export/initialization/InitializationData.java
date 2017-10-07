@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import eu.itesla_project.iidm.ddb.model.Internal;
-import eu.itesla_project.iidm.network.Generator;
+import com.powsybl.iidm.network.Generator;
 import eu.itesla_project.modelica_export.records.GeneratorRecord;
 import eu.itesla_project.modelica_export.records.RegulatorRecord;
 import eu.itesla_project.modelica_export.util.StaticData;

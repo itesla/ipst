@@ -10,10 +10,10 @@ import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.util.concurrent.AtomicLongMap;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.Terminal;
-import eu.itesla_project.iidm.network.VoltageLevel;
-import eu.itesla_project.iidm.network.util.Identifiables;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.Terminal;
+import com.powsybl.iidm.network.VoltageLevel;
+import com.powsybl.iidm.network.util.Identifiables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

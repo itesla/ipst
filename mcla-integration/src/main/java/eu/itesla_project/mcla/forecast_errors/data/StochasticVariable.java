@@ -8,7 +8,7 @@ package eu.itesla_project.mcla.forecast_errors.data;
 
 import java.util.Objects;
 
-import eu.itesla_project.iidm.network.Country;
+import com.powsybl.iidm.network.Country;
 
 /**
  *

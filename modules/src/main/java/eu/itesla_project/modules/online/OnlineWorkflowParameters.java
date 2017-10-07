@@ -8,10 +8,10 @@
 package eu.itesla_project.modules.online;
 
 import eu.itesla_project.cases.CaseType;
-import eu.itesla_project.commons.config.ModuleConfig;
-import eu.itesla_project.commons.config.PlatformConfig;
-import eu.itesla_project.iidm.network.Country;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.commons.config.ModuleConfig;
+import com.powsybl.commons.config.PlatformConfig;
+import com.powsybl.iidm.network.Country;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 

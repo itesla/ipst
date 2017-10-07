@@ -7,8 +7,8 @@
  */
 package eu.itesla_project.iidm.eurostag.export;
 
-import eu.itesla_project.iidm.network.Bus;
-import eu.itesla_project.iidm.network.Terminal;
+import com.powsybl.iidm.network.Bus;
+import com.powsybl.iidm.network.Terminal;
 
 /**
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>

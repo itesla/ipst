@@ -6,18 +6,18 @@
  */
 package eu.itesla_project.iidm.export.ampl;
 
-import eu.itesla_project.commons.util.StringToIntMapper;
-import eu.itesla_project.commons.datasource.DataSource;
-import eu.itesla_project.iidm.network.DanglingLine;
-import eu.itesla_project.iidm.network.Generator;
-import eu.itesla_project.iidm.network.Load;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.PhaseTapChanger;
-import eu.itesla_project.iidm.network.RatioTapChanger;
-import eu.itesla_project.iidm.network.ShuntCompensator;
-import eu.itesla_project.iidm.network.Terminal;
-import eu.itesla_project.iidm.network.ThreeWindingsTransformer;
-import eu.itesla_project.iidm.network.TwoWindingsTransformer;
+import com.powsybl.commons.util.StringToIntMapper;
+import com.powsybl.commons.datasource.DataSource;
+import com.powsybl.iidm.network.DanglingLine;
+import com.powsybl.iidm.network.Generator;
+import com.powsybl.iidm.network.Load;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.PhaseTapChanger;
+import com.powsybl.iidm.network.RatioTapChanger;
+import com.powsybl.iidm.network.ShuntCompensator;
+import com.powsybl.iidm.network.Terminal;
+import com.powsybl.iidm.network.ThreeWindingsTransformer;
+import com.powsybl.iidm.network.TwoWindingsTransformer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

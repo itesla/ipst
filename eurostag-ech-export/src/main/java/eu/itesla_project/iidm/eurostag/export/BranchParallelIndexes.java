@@ -10,7 +10,7 @@ package eu.itesla_project.iidm.eurostag.export;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
-import eu.itesla_project.iidm.network.*;
+import com.powsybl.iidm.network.*;
 
 import java.util.*;
 

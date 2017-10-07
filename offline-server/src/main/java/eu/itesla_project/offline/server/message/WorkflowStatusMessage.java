@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.offline.server.message;
 
-import eu.itesla_project.iidm.network.Country;
+import com.powsybl.iidm.network.Country;
 import eu.itesla_project.modules.offline.OfflineWorkflowCreationParameters;
 import eu.itesla_project.offline.OfflineWorkflowStartParameters;
 import eu.itesla_project.offline.OfflineWorkflowStatus;

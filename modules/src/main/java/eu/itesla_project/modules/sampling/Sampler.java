@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.modules.sampling;
 
-import eu.itesla_project.commons.Versionable;
+import com.powsybl.commons.Versionable;
 
 /**
  *

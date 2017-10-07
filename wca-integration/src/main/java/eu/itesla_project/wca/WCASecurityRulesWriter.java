@@ -7,14 +7,14 @@
  */
 package eu.itesla_project.wca;
 
-import eu.itesla_project.commons.io.table.Column;
-import eu.itesla_project.commons.io.table.TableFormatter;
-import eu.itesla_project.commons.util.StringToIntMapper;
-import eu.itesla_project.commons.datasource.DataSource;
+import com.powsybl.commons.io.table.Column;
+import com.powsybl.commons.io.table.TableFormatter;
+import com.powsybl.commons.util.StringToIntMapper;
+import com.powsybl.commons.datasource.DataSource;
 import eu.itesla_project.iidm.export.ampl.AmplConstants;
 import eu.itesla_project.iidm.export.ampl.AmplSubset;
 import eu.itesla_project.iidm.export.ampl.util.AmplDatTableFormatter;
-import eu.itesla_project.iidm.network.*;
+import com.powsybl.iidm.network.*;
 import eu.itesla_project.modules.histo.HistoDbAttr;
 import eu.itesla_project.modules.histo.HistoDbNetworkAttributeId;
 import eu.itesla_project.modules.rules.RuleAttributeSet;
@@ -22,7 +22,7 @@ import eu.itesla_project.modules.rules.RuleId;
 import eu.itesla_project.modules.rules.SecurityRuleExpression;
 import eu.itesla_project.modules.rules.SecurityRuleStatus;
 import eu.itesla_project.modules.rules.expr.*;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

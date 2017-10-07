@@ -6,14 +6,14 @@
  */
 package eu.itesla_project.offline.server;
 
-import eu.itesla_project.iidm.network.Country;
+import com.powsybl.iidm.network.Country;
 import eu.itesla_project.modules.offline.OfflineWorkflowCreationParameters;
 import eu.itesla_project.modules.offline.SecurityIndexSynthesis;
 import eu.itesla_project.modules.rules.RuleAttributeSet;
 import eu.itesla_project.modules.rules.RuleId;
 import eu.itesla_project.modules.rules.SecurityRuleExpression;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexId;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.securityindexes.SecurityIndexId;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 import eu.itesla_project.offline.OfflineWorkflowStartParameters;
 import eu.itesla_project.offline.server.message.CountriesMessage;
 import eu.itesla_project.offline.server.message.SecurityIndexesSynthesisMessage;

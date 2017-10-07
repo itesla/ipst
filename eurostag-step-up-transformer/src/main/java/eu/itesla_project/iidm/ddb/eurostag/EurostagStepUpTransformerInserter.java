@@ -6,18 +6,18 @@
  */
 package eu.itesla_project.iidm.ddb.eurostag;
 
-import eu.itesla_project.computation.ComputationManager;
+import com.powsybl.computation.ComputationManager;
 import eu.itesla_project.iidm.ddb.eurostag.model.PowerFlow;
 import eu.itesla_project.iidm.ddb.eurostag.model.StateVariable;
 import eu.itesla_project.iidm.ddb.eurostag.model.TransformerModel;
-import eu.itesla_project.iidm.network.*;
-import eu.itesla_project.iidm.network.ReactiveCapabilityCurve.Point;
-import eu.itesla_project.iidm.network.util.Identifiables;
-import eu.itesla_project.iidm.network.util.SV;
-import eu.itesla_project.loadflow.api.LoadFlow;
-import eu.itesla_project.loadflow.api.LoadFlowFactory;
-import eu.itesla_project.loadflow.api.LoadFlowParameters;
-import eu.itesla_project.loadflow.api.LoadFlowResult;
+import com.powsybl.iidm.network.*;
+import com.powsybl.iidm.network.ReactiveCapabilityCurve.Point;
+import com.powsybl.iidm.network.util.Identifiables;
+import com.powsybl.iidm.network.util.SV;
+import com.powsybl.loadflow.LoadFlow;
+import com.powsybl.loadflow.LoadFlowFactory;
+import com.powsybl.loadflow.LoadFlowParameters;
+import com.powsybl.loadflow.LoadFlowResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

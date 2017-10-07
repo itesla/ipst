@@ -56,6 +56,7 @@
     </modules>
 
     <properties>
+        <ipst.version>0.1-SNAPSHOT</ipst.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <java.version>1.8</java.version>
@@ -75,8 +76,7 @@
         <maven.war.version>2.4</maven.war.version>
 
         <pepite.libs.weightedtrees.version>1.1-ITESLA</pepite.libs.weightedtrees.version>
-        <pepite.libs.version>1.0-ITESLA</pepite.libs.version>
-
+        <pepite.libs.version>1.0-ITESLA</pepite.libs.version>        
         <autoservice.version>1.0-rc2</autoservice.version>
         <commons-compress.version>1.13</commons-compress.version>
         <commonscli.version>1.3.1</commonscli.version>
@@ -92,8 +92,8 @@
         <guava.version>20.0</guava.version>
         <h2database.version>1.4.191</h2database.version>
         <httpclient.version>4.5.2</httpclient.version>
-        <ipstcore.version>0.1-SNAPSHOT</ipstcore.version>
-        <ipstentsoe.version>0.1-SNAPSHOT</ipstentsoe.version>
+        <ipstcore.version>1.0-SNAPSHOT</ipstcore.version>
+        <ipstentsoe.version>1.0-SNAPSHOT</ipstentsoe.version>
         <javaee-api-version>7.0</javaee-api-version>
         <jackson.version>2.8.7</jackson.version>
         <javacsv.version>2.0</javacsv.version>
@@ -115,6 +115,30 @@
         <supercsv.version>2.4.0</supercsv.version>
         <trove4j.version>3.0.3</trove4j.version>
         <xmlunit.version>2.3.0</xmlunit.version>
+        
+        <!--         powsybl -->
+        
+        <powsybl.groupId>com.powsybl</powsybl.groupId>
+        <powsybl.version>1.0-SNAPSHOT</powsybl.version>
+        <computation>powsybl-computation</computation>
+        <commons>powsybl-commons</commons>
+        <computation-local>powsybl-computation-local</computation-local>
+        <contingency-api>powsybl-contingency-api</contingency-api>
+        <iidm-converter-api>powsybl-iidm-converter-api</iidm-converter-api>
+        <iidm-api>powsybl-iidm-api</iidm-api>
+        <iidm-impl>powsybl-iidm-impl</iidm-impl>
+        <iidm-xml-converter>powsybl-iidm-xml-converter</iidm-xml-converter>
+        <loadflow-api>powsybl-loadflow-api</loadflow-api>
+        <security-analysis>powsybl-security-analysis</security-analysis>
+        <simulation-api>powsybl-simulation-api</simulation-api>
+        <cim1-converter>powsybl-cim1-converter</cim1-converter>
+        <entsoe-util>powsybl-entsoe-util</entsoe-util>       
+        <tools>powsybl-tools</tools>
+        <iidm-test>powsybl-iidm-test</iidm-test>
+        <computation-mpi>powsybl-computation-mpi</computation-mpi>
+        <computation-mpi-util>powsybl-computation-mpi-util</computation-mpi-util>
+        
+        
     </properties>
 
     <licenses>
@@ -455,84 +479,99 @@
             <dependency>
                 <groupId>eu.itesla_project</groupId>
                 <artifactId>case-repository</artifactId>
-                <version>${ipstcore.version}</version>
+                <version>${ipst.version}</version>
             </dependency>
             <dependency>
-                <groupId>eu.itesla_project</groupId>
-                <artifactId>commons</artifactId>
-                <version>${ipstcore.version}</version>
+	            <groupId>${project.groupId}</groupId>
+	            <artifactId>modules</artifactId>
+	            <version>${ipst.version}</version>
             </dependency>
             <dependency>
-                <groupId>eu.itesla_project</groupId>
-                <artifactId>computation</artifactId>
-                <version>${ipstcore.version}</version>
+	            <groupId>${project.groupId}</groupId>
+	            <artifactId>online-workflow</artifactId>
+	            <version>${ipst.version}</version>
             </dependency>
             <dependency>
-                <groupId>eu.itesla_project</groupId>
-                <artifactId>computation-local</artifactId>
-                <version>${ipstcore.version}</version>
+	            <groupId>${project.groupId}</groupId>
+	            <artifactId>mcla-integration</artifactId>
+	            <version>${ipst.version}</version>
             </dependency>
             <dependency>
-                <groupId>eu.itesla_project</groupId>
-                <artifactId>contingency-api</artifactId>
-                <version>${ipstcore.version}</version>
+                <groupId>${powsybl.groupId}</groupId>
+                <artifactId>${commons}</artifactId>
+                <version>${powsybl.version}</version>
             </dependency>
             <dependency>
-                <groupId>eu.itesla_project</groupId>
-                <artifactId>iidm-converter-api</artifactId>
-                <version>${ipstcore.version}</version>
+                <groupId>${powsybl.groupId}</groupId>
+                <artifactId>${computation}</artifactId>
+                <version>${powsybl.version}</version>
             </dependency>
             <dependency>
-                <groupId>eu.itesla_project</groupId>
-                <artifactId>iidm-api</artifactId>
-                <version>${ipstcore.version}</version>
+                <groupId>${powsybl.groupId}</groupId>
+                <artifactId>${computation-local}</artifactId>
+                <version>${powsybl.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>iidm-impl</artifactId>
-                <version>${ipstcore.version}</version>
+                <groupId>${powsybl.groupId}</groupId>
+                <artifactId>${contingency-api}</artifactId>
+                <version>${powsybl.version}</version>
             </dependency>
             <dependency>
-                <groupId>eu.itesla_project</groupId>
-                <artifactId>iidm-xml-converter</artifactId>
-                <version>${ipstcore.version}</version>
+                <groupId>${powsybl.groupId}</groupId>
+                <artifactId>${iidm-converter-api}</artifactId>
+                <version>${powsybl.version}</version>
             </dependency>
             <dependency>
-                <groupId>eu.itesla_project</groupId>
-                <artifactId>loadflow-api</artifactId>
-                <version>${ipstcore.version}</version>
+                <groupId>${powsybl.groupId}</groupId>
+                <artifactId>${iidm-api}</artifactId>
+                <version>${powsybl.version}</version>
             </dependency>
             <dependency>
-                <groupId>eu.itesla_project</groupId>
-                <artifactId>security-analysis</artifactId>
-                <version>${ipstcore.version}</version>
+                <groupId>${powsybl.groupId}</groupId>
+                <artifactId>${iidm-impl}</artifactId>
+                <version>${powsybl.version}</version>
             </dependency>
             <dependency>
-                <groupId>eu.itesla_project</groupId>
-                <artifactId>simulation-api</artifactId>
-                <version>${ipstcore.version}</version>
+                <groupId>${powsybl.groupId}</groupId>
+                <artifactId>${iidm-xml-converter}</artifactId>
+                <version>${powsybl.version}</version>
             </dependency>
             <dependency>
-                <groupId>eu.itesla_project</groupId>
-                <artifactId>tools</artifactId>
-                <version>${ipstcore.version}</version>
+                <groupId>${powsybl.groupId}</groupId>
+                <artifactId>${loadflow-api}</artifactId>
+                <version>${powsybl.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${powsybl.groupId}</groupId>
+                <artifactId>${security-analysis}</artifactId>
+                <version>${powsybl.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${powsybl.groupId}</groupId>
+                <artifactId>${simulation-api}</artifactId>
+                <version>${powsybl.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${powsybl.groupId}</groupId>
+                <artifactId>${tools}</artifactId>
+                <version>${powsybl.version}</version>
             </dependency>
 
             <!-- ipst-entsoe dependencies -->
             <dependency>
-                <groupId>eu.itesla_project</groupId>
-                <artifactId>cim1-converter</artifactId>
+                <groupId>${powsybl.groupId}</groupId>
+                <artifactId>${cim1-converter}</artifactId>
                 <version>${ipstentsoe.version}</version>
             </dependency>
             <dependency>
-                <groupId>eu.itesla_project</groupId>
-                <artifactId>entsoe-util</artifactId>
+                <groupId>${powsybl.groupId}</groupId>
+                <artifactId>${entsoe-util}</artifactId>
                 <version>${ipstentsoe.version}</version>
             </dependency>
             <dependency>
-                <groupId>eu.itesla_project</groupId>
-                <artifactId>network-merge</artifactId>
-                <version>${ipstentsoe.version}</version>
+            <groupId>eu.itesla_project</groupId>
+            <artifactId>network-merge</artifactId>
+                <version>${ipst.version}</version>
             </dependency>
 
             <!-- Runtime dependencies -->
@@ -569,9 +608,9 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>iidm-test</artifactId>
-                <version>${ipstcore.version}</version>
+                <groupId>${powsybl.groupId}</groupId>
+                <artifactId>${iidm-test}</artifactId>
+                <version>${powsybl.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>

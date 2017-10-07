@@ -44,20 +44,20 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>commons</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${commons}</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>iidm-converter-api</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${iidm-converter-api}</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>loadflow-api</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${loadflow-api}</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>iidm-api</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${iidm-api}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -68,8 +68,8 @@
             <artifactId>junit</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>iidm-impl</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${iidm-impl}</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

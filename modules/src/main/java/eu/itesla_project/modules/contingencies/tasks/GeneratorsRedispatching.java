@@ -6,11 +6,11 @@
  */
 package eu.itesla_project.modules.contingencies.tasks;
 
-import eu.itesla_project.commons.ITeslaException;
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.contingency.tasks.ModificationTask;
-import eu.itesla_project.iidm.network.Generator;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.commons.PowsyblException;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.contingency.tasks.ModificationTask;
+import com.powsybl.iidm.network.Generator;
+import com.powsybl.iidm.network.Network;
 import eu.itesla_project.modules.contingencies.ActionParameters;
 import eu.itesla_project.modules.redispatcher.Redispatcher;
 import eu.itesla_project.modules.redispatcher.RedispatcherFactoryImpl;
@@ -37,12 +37,12 @@ public class GeneratorsRedispatching implements ModificationTask {
     public void modify(Network network, ComputationManager computationManager) {
         Float deltaP = (Float) actionsParameters.getValue(ActionParameters.REDISPATCHING_DELTAP_PARAMETER);
         if (deltaP == null) {
-            throw new ITeslaException("Missing delta P parameter for redispatching of generators " + generatorIds);
+            throw new PowsyblException("Missing delta P parameter for redispatching of generators " + generatorIds);
         }
         for (String generatorId : generatorIds) {
             Generator g = network.getGenerator(generatorId);
             if (g == null) {
-                throw new ITeslaException("Generator '" + generatorId + "' not found");
+                throw new PowsyblException("Generator '" + generatorId + "' not found");
             }
         }
         Redispatcher redispatcher = new RedispatcherFactoryImpl().create(network);

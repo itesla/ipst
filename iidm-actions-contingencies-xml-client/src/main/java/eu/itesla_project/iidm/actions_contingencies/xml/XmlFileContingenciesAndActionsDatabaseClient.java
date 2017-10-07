@@ -36,10 +36,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import eu.itesla_project.contingency.ContingencyElement;
-import eu.itesla_project.contingency.ContingencyImpl;
-import eu.itesla_project.contingency.GeneratorContingency;
-import eu.itesla_project.contingency.BranchContingency;
+import com.powsybl.contingency.ContingencyElement;
+import com.powsybl.contingency.ContingencyImpl;
+import com.powsybl.contingency.GeneratorContingency;
+import com.powsybl.contingency.BranchContingency;
 import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Action;
 import eu.itesla_project.iidm.actions_contingencies.xml.mapping.ActionCtgAssociations;
 import eu.itesla_project.iidm.actions_contingencies.xml.mapping.ActionPlan;
@@ -63,10 +63,10 @@ import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Then;
 import eu.itesla_project.iidm.actions_contingencies.xml.mapping.VoltageLevel;
 import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Zone;
 import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Zones;
-import eu.itesla_project.iidm.network.Line;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.Switch;
-import eu.itesla_project.iidm.network.TieLine;
+import com.powsybl.iidm.network.Line;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.Switch;
+import com.powsybl.iidm.network.TieLine;
 import eu.itesla_project.modules.contingencies.ActionElement;
 import eu.itesla_project.modules.contingencies.ActionPlanOption;
 import eu.itesla_project.modules.contingencies.ActionsContingenciesAssociation;
@@ -222,13 +222,13 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
      * @return List<eu.itesla_project.contingency.Contingency>
      * */
     @Override
-    public List<eu.itesla_project.contingency.Contingency> getContingencies(Network network) {
+    public List<com.powsybl.contingency.Contingency> getContingencies(Network network) {
         Objects.requireNonNull(network, "network is null");
         LOGGER.info("Getting contingencies for network {}", network.getId());
         if (zonesMapping.isEmpty()) {
             getZones();
         }
-        List<eu.itesla_project.contingency.Contingency> contingencies = new ArrayList<>();
+        List<com.powsybl.contingency.Contingency> contingencies = new ArrayList<>();
 
         try {
             // pre-index tie lines
@@ -283,12 +283,12 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
      * @param Contingency's name, Network
      * @return List<eu.itesla_project.contingency.Contingency>
      * */
-    public eu.itesla_project.contingency.Contingency getContingency(String name, Network network) {
+    public com.powsybl.contingency.Contingency getContingency(String name, Network network) {
         Objects.requireNonNull(name, "contingency id is null");
         Objects.requireNonNull(network, "network is null");
         LOGGER.info("Getting contingency {} for network {}", name, network);
         if (name != null) {
-            for (eu.itesla_project.contingency.Contingency c : getContingencies(network)) {
+            for (com.powsybl.contingency.Contingency c : getContingencies(network)) {
                 if (c.getId().equals(name)) {
                     return c;
                 }

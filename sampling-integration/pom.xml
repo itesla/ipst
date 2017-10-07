@@ -51,19 +51,18 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>iidm-api</artifactId>
-            <version>${project.version}</version>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${iidm-api}</artifactId>
+            <version>${powsybl.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>iidm-converter-api</artifactId>
-            <version>${project.version}</version>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${iidm-converter-api}</artifactId>
+            <version>${powsybl.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>modules</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.jmatio</groupId>
@@ -93,9 +92,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>iidm-impl</artifactId>
-            <version>${project.version}</version>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${iidm-impl}</artifactId>
+            <version>${powsybl.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

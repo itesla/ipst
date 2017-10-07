@@ -8,9 +8,9 @@ package eu.itesla_project.entsoe.cases;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
-import eu.itesla_project.commons.config.InMemoryPlatformConfig;
-import eu.itesla_project.commons.config.MapModuleConfig;
-import eu.itesla_project.entsoe.util.EntsoeGeographicalCode;
+import com.powsybl.commons.config.InMemoryPlatformConfig;
+import com.powsybl.commons.config.MapModuleConfig;
+import com.powsybl.entsoe.util.EntsoeGeographicalCode;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

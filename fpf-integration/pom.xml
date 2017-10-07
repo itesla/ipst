@@ -28,14 +28,14 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>iidm-api</artifactId>
-            <version>${project.version}</version>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${iidm-api}</artifactId>
+            <version>${powsybl.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>mcla-integration</artifactId>
-            <version>${project.version}</version>
+            <version>${ipst.version}</version>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.javacsv</groupId>

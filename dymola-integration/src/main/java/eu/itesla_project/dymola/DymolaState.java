@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.dymola;
 
-import eu.itesla_project.simulation.SimulationState;
+import com.powsybl.simulation.SimulationState;
 
 /**
  *

@@ -8,7 +8,7 @@ package eu.itesla_project.online.db;
 
 import java.util.Objects;
 
-import eu.itesla_project.security.LimitViolationType;
+import com.powsybl.security.LimitViolationType;
 
 /**
  *

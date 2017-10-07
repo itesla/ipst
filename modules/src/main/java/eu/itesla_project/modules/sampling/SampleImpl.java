@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.modules.sampling;
 
-import eu.itesla_project.iidm.network.*;
+import com.powsybl.iidm.network.*;
 
 import java.util.ArrayList;
 import java.util.List;

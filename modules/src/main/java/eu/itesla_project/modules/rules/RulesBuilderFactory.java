@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.modules.rules;
 
-import eu.itesla_project.computation.ComputationManager;
+import com.powsybl.computation.ComputationManager;
 import eu.itesla_project.modules.offline.MetricsDb;
 import eu.itesla_project.modules.offline.OfflineDb;
 

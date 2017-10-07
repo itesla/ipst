@@ -7,7 +7,7 @@
 package eu.itesla_project.modules.contingencies;
 
 import eu.itesla_project.modules.contingencies.tasks.GeneratorStarting;
-import eu.itesla_project.contingency.tasks.ModificationTask;
+import com.powsybl.contingency.tasks.ModificationTask;
 
 /**
  * @author Quinary <itesla@quinary.com>

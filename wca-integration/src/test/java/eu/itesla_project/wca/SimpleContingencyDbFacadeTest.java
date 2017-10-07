@@ -21,14 +21,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.google.common.collect.ImmutableMap;
 
-import eu.itesla_project.contingency.Contingency;
-import eu.itesla_project.contingency.ContingencyImpl;
-import eu.itesla_project.contingency.BranchContingency;
-import eu.itesla_project.iidm.network.Country;
-import eu.itesla_project.iidm.network.Line;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.NetworkFactory;
-import eu.itesla_project.iidm.network.TopologyKind;
+import com.powsybl.contingency.Contingency;
+import com.powsybl.contingency.ContingencyImpl;
+import com.powsybl.contingency.BranchContingency;
+import com.powsybl.iidm.network.Country;
+import com.powsybl.iidm.network.Line;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.NetworkFactory;
+import com.powsybl.iidm.network.TopologyKind;
 import eu.itesla_project.modules.contingencies.Action;
 import eu.itesla_project.modules.contingencies.ActionPlan;
 import eu.itesla_project.modules.contingencies.ActionPlanOption;
@@ -44,8 +44,8 @@ import eu.itesla_project.modules.contingencies.impl.ActionsContingenciesAssociat
 import eu.itesla_project.modules.contingencies.impl.ConstraintImpl;
 import eu.itesla_project.modules.contingencies.impl.LogicalExpressionImpl;
 import eu.itesla_project.modules.contingencies.impl.OptionImpl;
-import eu.itesla_project.security.LimitViolation;
-import eu.itesla_project.security.LimitViolationType;
+import com.powsybl.security.LimitViolation;
+import com.powsybl.security.LimitViolationType;
 import eu.itesla_project.wca.ContingencyDbFacade;
 import eu.itesla_project.wca.SimpleContingencyDbFacade;
 

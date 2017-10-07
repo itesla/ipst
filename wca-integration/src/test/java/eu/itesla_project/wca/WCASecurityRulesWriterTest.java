@@ -14,16 +14,16 @@ import java.util.List;
 
 import org.junit.Test;
 
-import eu.itesla_project.commons.util.StringToIntMapper;
-import eu.itesla_project.contingency.BranchContingency;
-import eu.itesla_project.contingency.Contingency;
-import eu.itesla_project.contingency.ContingencyElement;
-import eu.itesla_project.contingency.ContingencyImpl;
-import eu.itesla_project.commons.datasource.MemDataSource;
+import com.powsybl.commons.util.StringToIntMapper;
+import com.powsybl.contingency.BranchContingency;
+import com.powsybl.contingency.Contingency;
+import com.powsybl.contingency.ContingencyElement;
+import com.powsybl.contingency.ContingencyImpl;
+import com.powsybl.commons.datasource.MemDataSource;
 import eu.itesla_project.iidm.export.ampl.AmplSubset;
 import eu.itesla_project.iidm.export.ampl.AmplUtil;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.test.NetworkTest1Factory;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.test.NetworkTest1Factory;
 import eu.itesla_project.modules.histo.HistoDbAttr;
 import eu.itesla_project.modules.histo.HistoDbNetworkAttributeId;
 import eu.itesla_project.modules.rules.RuleAttributeSet;
@@ -35,8 +35,8 @@ import eu.itesla_project.modules.rules.expr.Attribute;
 import eu.itesla_project.modules.rules.expr.ComparisonOperator;
 import eu.itesla_project.modules.rules.expr.ExpressionNode;
 import eu.itesla_project.modules.rules.expr.Litteral;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexId;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.securityindexes.SecurityIndexId;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 
 /**
  *

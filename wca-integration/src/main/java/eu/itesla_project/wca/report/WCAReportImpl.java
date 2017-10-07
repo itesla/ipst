@@ -22,16 +22,16 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.itesla_project.commons.io.table.Column;
-import eu.itesla_project.commons.io.table.CsvTableFormatterFactory;
-import eu.itesla_project.commons.io.table.TableFormatter;
-import eu.itesla_project.commons.io.table.TableFormatterConfig;
+import com.powsybl.commons.io.table.Column;
+import com.powsybl.commons.io.table.CsvTableFormatterFactory;
+import com.powsybl.commons.io.table.TableFormatter;
+import com.powsybl.commons.io.table.TableFormatterConfig;
 import eu.itesla_project.modules.wca.report.WCAActionApplication;
 import eu.itesla_project.modules.wca.report.WCALoadflowResult;
 import eu.itesla_project.modules.wca.report.WCAPostContingencyStatus;
 import eu.itesla_project.modules.wca.report.WCAReport;
 import eu.itesla_project.modules.wca.report.WCASecurityRuleApplication;
-import eu.itesla_project.security.LimitViolation;
+import com.powsybl.security.LimitViolation;
 
 /**
  *

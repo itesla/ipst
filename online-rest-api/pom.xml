@@ -24,12 +24,12 @@
             <artifactId>h2-mvstore</artifactId>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-impl</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${iidm-impl}</artifactId>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-xml-converter</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${iidm-xml-converter}</artifactId>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
@@ -38,12 +38,10 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>modules</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>online-workflow</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>

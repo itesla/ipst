@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-import eu.itesla_project.contingency.Contingency;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.contingency.Contingency;
+import com.powsybl.iidm.network.Network;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
 import eu.itesla_project.modules.wca.WCA;
 import eu.itesla_project.modules.wca.WCAAsyncResult;

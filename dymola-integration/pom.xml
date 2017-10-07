@@ -75,9 +75,9 @@
             <artifactId>jmatio</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>iidm-converter-api</artifactId>
-            <version>${project.version}</version>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${iidm-converter-api}</artifactId>
+            <version>${powsybl.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -91,21 +91,21 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>simulation-api</artifactId>
-            <version>${project.version}</version>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${simulation-api}</artifactId>
+            <version>${powsybl.version}</version>
         </dependency>
 
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>modelica-export</artifactId>
-            <version>${project.version}</version>
+            <version>${ipst.version}</version>
         </dependency>
 
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>modelica-events-adder</artifactId>
-            <version>${project.version}</version>
+            <version>${ipst.version}</version>
         </dependency>
 
     </dependencies>

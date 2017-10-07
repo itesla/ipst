@@ -111,20 +111,20 @@
         </dependency>
 
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-converter-api</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${iidm-converter-api}</artifactId>
             <version>${ipstcore.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-api</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${iidm-api}</artifactId>
             <version>${ipstcore.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-impl</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${iidm-impl}</artifactId>
             <version>${ipstcore.version}</version>
         </dependency>
 
@@ -135,21 +135,21 @@
         </dependency>
 
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>cim1-converter</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${cim1-converter}</artifactId>
             <version>${ipstentsoe.version}</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-xml-converter</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${iidm-xml-converter}</artifactId>
             <version>${ipstcore.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>computation-local</artifactId>
+            <groupId>${powsybl.groupId}</groupId>
+            <artifactId>${computation-local}</artifactId>
             <version>${ipstcore.version}</version>
         </dependency>
 
