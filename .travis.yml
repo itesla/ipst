@@ -5,12 +5,8 @@ jdk:
 
 install:
 # Build iPST core
-- git clone https://github.com/itesla/ipst-core itesla/ipst-core
-- pushd itesla/ipst-core && mvn install && popd
-
-# Build iPST entsoe
-- git clone https://github.com/itesla/ipst-entsoe itesla/ipst-entsoe
-- pushd itesla/ipst-entsoe && mvn install && popd
+- git clone https://github.com/powsybl/powsybl-core powsybl/powsybl-core
+- pushd powsybl/powsybl-core && mvn install && popd
 
 script:
 - cd ${TRAVIS_BUILD_DIR}
