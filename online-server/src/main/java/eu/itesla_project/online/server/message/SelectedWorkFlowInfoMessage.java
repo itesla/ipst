@@ -9,8 +9,6 @@ package eu.itesla_project.online.server.message;
 
 import javax.json.stream.JsonGenerator;
 
-import com.google.gson.Gson;
-
 import eu.itesla_project.online.server.OnlineWorkflowInfo;
 
 /**
@@ -33,8 +31,7 @@ public class SelectedWorkFlowInfoMessage extends Message<OnlineWorkflowInfo> {
 
     @Override
     public String toJson() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
+        return writeValueAsString(this);
     }
 
     @Override
