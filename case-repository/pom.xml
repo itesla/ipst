@@ -30,13 +30,13 @@
             <artifactId>joda-time</artifactId>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${iidm-converter-api}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-converter-api</artifactId>
             <version>${powsybl.version}</version>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${computation}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-computation</artifactId>
             <version>${powsybl.version}</version>
         </dependency>
         <dependency>

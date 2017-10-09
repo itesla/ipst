@@ -41,20 +41,20 @@
             <artifactId>case-repository</artifactId>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${commons}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-commons</artifactId>
         </dependency>
         <dependency>
             <groupId>eu.itesla_project</groupId>
             <artifactId>network-merge</artifactId>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${security-analysis}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-security-analysis</artifactId>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${simulation-api}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-simulation-api</artifactId>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>

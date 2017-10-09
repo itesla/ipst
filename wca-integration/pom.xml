@@ -41,8 +41,8 @@
             <artifactId>modules</artifactId>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${computation-local}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-computation-local</artifactId>
             <version>${powsybl.version}</version>
         </dependency>
 
@@ -53,13 +53,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${iidm-impl}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-impl</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${iidm-test}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

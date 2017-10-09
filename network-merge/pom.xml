@@ -44,20 +44,20 @@
             <artifactId>case-repository</artifactId>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${commons}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-commons</artifactId>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${computation}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-computation</artifactId>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${iidm-converter-api}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-converter-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${loadflow-api}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-loadflow-api</artifactId>
         </dependency>
 
         <!-- Test dependencies -->

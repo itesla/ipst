@@ -51,13 +51,13 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${iidm-api}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-api</artifactId>
             <version>${powsybl.version}</version>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${iidm-converter-api}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-converter-api</artifactId>
             <version>${powsybl.version}</version>
         </dependency>
         <dependency>
@@ -92,8 +92,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${iidm-impl}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-impl</artifactId>
             <version>${powsybl.version}</version>
             <scope>test</scope>
         </dependency>

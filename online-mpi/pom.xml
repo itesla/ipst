@@ -33,13 +33,13 @@
             <version>${ipst.version}</version>
         </dependency>
 		<dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${computation-mpi}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-computation-mpi</artifactId>
             <version>${powsybl.version}</version>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${computation-mpi-util}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-computation-mpi-util</artifactId>
             <version>${powsybl.version}</version>
         </dependency>
 

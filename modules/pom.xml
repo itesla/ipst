@@ -43,48 +43,48 @@
             <artifactId>jgrapht-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${iidm-api}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${computation}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-computation</artifactId>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${computation-local}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-computation-local</artifactId>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${contingency-api}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-contingency-api</artifactId>
         </dependency>
         <dependency>
             <groupId>eu.itesla_project</groupId>
             <artifactId>case-repository</artifactId>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${entsoe-util}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-entsoe-util</artifactId>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${loadflow-api}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-loadflow-api</artifactId>
         </dependency>
         <dependency>
             <groupId>eu.itesla_project</groupId>
             <artifactId>network-merge</artifactId>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${security-analysis}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-security-analysis</artifactId>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${simulation-api}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-simulation-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${iidm-xml-converter}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-xml-converter</artifactId>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
@@ -134,13 +134,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${iidm-impl}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-impl</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${iidm-test}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

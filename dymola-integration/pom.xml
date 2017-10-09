@@ -75,8 +75,8 @@
             <artifactId>jmatio</artifactId>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${iidm-converter-api}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-converter-api</artifactId>
             <version>${powsybl.version}</version>
             <scope>test</scope>
         </dependency>
@@ -91,8 +91,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${simulation-api}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-simulation-api</artifactId>
             <version>${powsybl.version}</version>
         </dependency>
 

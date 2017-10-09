@@ -44,13 +44,13 @@
             <artifactId>joda-time</artifactId>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${iidm-api}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-api</artifactId>
             <version>${powsybl.version}</version>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${iidm-converter-api}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-converter-api</artifactId>
             <version>${powsybl.version}</version>
         </dependency>
         <dependency>
@@ -58,8 +58,8 @@
             <artifactId>modules</artifactId>
         </dependency>
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${computation-local}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-computation-local</artifactId>
             <version>${powsybl.version}</version>
         </dependency>
         <dependency>

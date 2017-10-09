@@ -111,20 +111,20 @@
         </dependency>
 
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${iidm-converter-api}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-converter-api</artifactId>
             <version>${ipstcore.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${iidm-api}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-api</artifactId>
             <version>${ipstcore.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${iidm-impl}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-impl</artifactId>
             <version>${ipstcore.version}</version>
         </dependency>
 
@@ -135,28 +135,28 @@
         </dependency>
 
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${cim1-converter}</artifactId>
-            <version>${ipstentsoe.version}</version>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-cim1-converter</artifactId>
+            <version>${powsybl.version}</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${iidm-xml-converter}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-xml-converter</artifactId>
             <version>${ipstcore.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>${powsybl.groupId}</groupId>
-            <artifactId>${computation-local}</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-computation-local</artifactId>
             <version>${ipstcore.version}</version>
         </dependency>
 
         <dependency>
             <groupId>eu.itesla_project</groupId>
             <artifactId>ucte-converter</artifactId>
-            <version>${ipstentsoe.version}</version>
+            <version>${powsybl.version}</version>
             <scope>runtime</scope>
         </dependency>
 
