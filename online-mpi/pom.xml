@@ -37,11 +37,6 @@
             <artifactId>powsybl-computation-mpi</artifactId>
             <version>${powsybl.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.powsybl</groupId>
-            <artifactId>powsybl-computation-mpi-util</artifactId>
-            <version>${powsybl.version}</version>
-        </dependency>
 
         <!-- Test dependencies -->
         <dependency>
