@@ -100,13 +100,11 @@
        <dependency>
            <groupId>com.powsybl</groupId>
            <artifactId>powsybl-iidm-impl</artifactId>
-           <version>${ipstcore.version}</version>
            <scope>test</scope>
        </dependency>
        <dependency>
            <groupId>com.powsybl</groupId>
            <artifactId>powsybl-iidm-test</artifactId>
-           <version>${ipstcore.version}</version>
            <scope>test</scope>
         </dependency>
        <dependency>

@@ -13,8 +13,7 @@ In order to build iPST you need:
   * Maven 
   * CMake *(2.6 or greater)*
   * Recent C++ compiler (GNU g++ or Clang)
-  * [ipst-core](https://github.com/itesla/ipst-core)
-  * [ipst-entsoe](https://github.com/itesla/ipst-entsoe)
+  * [powsybl-core](https://github.com/powsybl/powsybl-core)
   
 Optional C++ modules requires:
   * Intel Fortran Compiler 

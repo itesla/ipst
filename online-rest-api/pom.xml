@@ -38,11 +38,15 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>modules</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>online-workflow</artifactId>
+            <version>${project.version}</version>
         </dependency>
+
+        <!-- Runtime dependencies -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -79,6 +83,8 @@
             <version>${resteasy.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Test dependencies -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

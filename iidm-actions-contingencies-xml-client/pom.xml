@@ -23,7 +23,7 @@
         <dependency>
             <groupId>eu.itesla_project</groupId>
             <artifactId>modules</artifactId>
-            <version>${ipst.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

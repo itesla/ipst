@@ -70,34 +70,34 @@
        </dependency>
 
       <dependency>
-      	<groupId>net.sf.supercsv</groupId>
-      	<artifactId>super-csv</artifactId>
+          <groupId>net.sf.supercsv</groupId>
+          <artifactId>super-csv</artifactId>
      </dependency>
-	<dependency>
-		<groupId>eu.itesla_project</groupId>
-		<artifactId>modules</artifactId>
-		<version>${extends_ipst.version}</version>		
-		<exclusions>
-			<exclusion>
-				<groupId>eu.itesla_project</groupId>
-				<artifactId>network-merge</artifactId>
-			</exclusion>
-			<exclusion>
-				<groupId>eu.itesla_project</groupId>
-				<artifactId>case-repository</artifactId>
-			</exclusion>
-		</exclusions>		
-	</dependency>
-      <dependency>
+       <dependency>
+           <groupId>eu.itesla_project</groupId>
+           <artifactId>modules</artifactId>
+           <version>${extends_ipst.version}</version>
+           <exclusions>
+               <exclusion>
+                   <groupId>eu.itesla_project</groupId>
+                   <artifactId>network-merge</artifactId>
+               </exclusion>
+               <exclusion>
+                   <groupId>eu.itesla_project</groupId>
+                   <artifactId>case-repository</artifactId>
+               </exclusion>
+           </exclusions>
+       </dependency>
+       <dependency>
             <groupId>eu.itesla_project</groupId>
             <artifactId>network-merge</artifactId>
             <version>${extends_ipst.version}</version>
-      </dependency>
-      <dependency>
+       </dependency>
+       <dependency>
             <groupId>eu.itesla_project</groupId>
             <artifactId>case-repository</artifactId>
             <version>${extends_ipst.version}</version>
-        </dependency>
+       </dependency>
 
    </dependencies>
 

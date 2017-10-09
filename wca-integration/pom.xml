@@ -23,6 +23,11 @@
     <name>Worst Case Approach integration</name>
 
     <dependencies>
+        <!-- Compilation dependencies -->
+        <dependency>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-computation-local</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -34,17 +39,14 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>ampl-export</artifactId>
-            <version>${ipst.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>modules</artifactId>
+            <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.powsybl</groupId>
-            <artifactId>powsybl-computation-local</artifactId>
-            <version>${powsybl.version}</version>
-        </dependency>
+
 
         <!-- Test dependencies -->
         <dependency>

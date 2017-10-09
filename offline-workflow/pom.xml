@@ -27,13 +27,14 @@
             <artifactId>sirocco-text-table-formatter</artifactId>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>network-merge</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>modules</artifactId>
-            <version>${ipst.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- Test dependencies -->

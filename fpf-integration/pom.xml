@@ -35,7 +35,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>mcla-integration</artifactId>
-            <version>${ipst.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.javacsv</groupId>
