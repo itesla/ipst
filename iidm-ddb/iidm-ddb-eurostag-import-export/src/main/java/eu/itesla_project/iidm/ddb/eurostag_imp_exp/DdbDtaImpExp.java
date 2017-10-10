@@ -9,7 +9,6 @@ package eu.itesla_project.iidm.ddb.eurostag_imp_exp;
 import com.google.common.collect.Sets;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.utils.Utils;
 import eu.itesla_project.iidm.ddb.model.*;
-import eu.itesla_project.iidm.ddb.model.Equipment;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
 import eu.itesla_project.iidm.ejbclient.EjbClientCtx;
 import eu.itesla_project.iidm.network.*;
@@ -46,7 +45,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
 
     String[][] estg = new String[][] {
-            {"M1U", "Unsaturated generator defined by its internal parameters - full model", },
+            {"M1U", "Unsaturated generator defined by its internal parameters - full model"},
             {"M1DU", "Unsaturated generator defined by its internal parameters - full model - type Fortescue"},
             {"M2U", "Unsaturated generator defined by its external parameters - full model"},
             {"M2DU", "Unsaturated generator defined by its external parameters - full model - type Fortescue"},
@@ -192,36 +191,36 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                     final DDBManager ddbmanagerF = ddbmanager;
 
                     Files.walkFileTree(dtaFile,
-                            new SimpleFileVisitor<Path> () {
-                        @Override
-                        public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
-                            if (attr.isRegularFile()) {
-                                String aFileName = file.toString();
-                                if ((aFileName.endsWith(".dd")) || (aFileName.endsWith(".dta"))) {
-                                    try {
-                                        feedDDBWithEurostagData(file, dicoMapF, eurostagSimF, ddbmanagerF, regsMapping);
-                                    } catch (Throwable t) {
-                                        log.error(t.getMessage() + "; file " + file, t);
+                            new SimpleFileVisitor<Path>() {
+                            @Override
+                            public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
+                                if (attr.isRegularFile()) {
+                                    String aFileName = file.toString();
+                                    if ((aFileName.endsWith(".dd")) || (aFileName.endsWith(".dta"))) {
+                                        try {
+                                            feedDDBWithEurostagData(file, dicoMapF, eurostagSimF, ddbmanagerF, regsMapping);
+                                        } catch (Throwable t) {
+                                            log.error("errors processing file {} ; ", file,  t.getMessage(), t);
+                                        }
+                                    } else {
+                                        log.warn("file " + file + " not recognized (not .dd, nor .dta): skipped!");
                                     }
                                 } else {
-                                    log.warn("file " + file + " not recognized (not .dd, nor .dta): skipped!");
+                                    log.warn("file %s not a regular file: skipped!", file);
                                 }
-                            } else {
-                                log.warn("file %s not a regular file: skipped!", file);
+                                return FileVisitResult.CONTINUE;
                             }
-                            return FileVisitResult.CONTINUE;
-                        }
-                        @Override
-                        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                            return FileVisitResult.CONTINUE;
-                        };
-                        // If this method is not overridden and an error occurs, an IOException is thrown.
-                        @Override
-                        public FileVisitResult visitFileFailed(Path file, IOException exc) {
-                            log.error(exc.getMessage(), exc);
-                            return FileVisitResult.CONTINUE;
-                        }
-                    });
+                            @Override
+                            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                                return FileVisitResult.CONTINUE;
+                            };
+                            // If this method is not overridden and an error occurs, an IOException is thrown.
+                            @Override
+                            public FileVisitResult visitFileFailed(Path file, IOException exc) {
+                                log.error(exc.getMessage(), exc);
+                                return FileVisitResult.CONTINUE;
+                            }
+                        });
                 }
             }
 
@@ -282,25 +281,25 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             log.info(" processing:  {} ", zone);
             String dbId = "";
             switch (zone.getKeyName()) {
-            case "M1U":
-            case "M1DU":
-            case "M1S":
-            case "M1DS":
-            case "M2U":
-            case "M2DU":
-            case "M2S":
-            case "M2DS":
-                dbId = populateDDB_M1M2(zone, dicoMap, ddbmanager, eurostagSim);
-                break;
-            case "M21":
-                dbId = populateDDB_M21(zone, dicoMap, ddbmanager, eurostagSim);
-                break;
-            case "R":
-                dbId = populateDDB_R(zone, dicoMap, ddbmanager, eurostagSim, regsMapping);
-                break;
-            default:
-                dbId = populateDDB_Default(zone, dicoMap, ddbmanager, eurostagSim);
-                break;
+                case "M1U":
+                case "M1DU":
+                case "M1S":
+                case "M1DS":
+                case "M2U":
+                case "M2DU":
+                case "M2S":
+                case "M2DS":
+                    dbId = populateDDB_M1M2(zone, dicoMap, ddbmanager, eurostagSim);
+                    break;
+                case "M21":
+                    dbId = populateDDB_M21(zone, dicoMap, ddbmanager, eurostagSim);
+                    break;
+                case "R":
+                    dbId = populateDDB_R(zone, dicoMap, ddbmanager, eurostagSim, regsMapping);
+                    break;
+                default:
+                    dbId = populateDDB_Default(zone, dicoMap, ddbmanager, eurostagSim);
+                    break;
             }
             log.trace(dbId);
         }
@@ -557,7 +556,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             for (String extension : Arrays.asList("fri", "frm", "par", "pcp", "rcp")) {
                 Path friPath = retrieveActualRegPath(macroblockName + "." + extension, regsMapping);
                 if ((friPath == null) || (Files.notExists(friPath))) {
-                    log.warn("--- Regulator file " + macroblockName + "." + extension
+                    log.error("--- Regulator file " + macroblockName + "." + extension
                             + " does not exist");
                 } else {
                     log.debug("--- Loading regulator file " + macroblockName + "." + extension + " in the database.");
@@ -701,7 +700,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                     String id2 = EquipmentsInternalsMap.get(nativeId).get(j);
                     Set<String> intSet = Sets.intersection(Sets.newHashSet(macroblocksPinNames.get(id1)), Sets.newHashSet(macroblocksPinNames.get(id2)));
                     log.debug("--- reg: " + id1 + ", reg: " + id2 + ", common variable names:" + intSet);
-                    boolean toBeProcessed = (intSet.size() > 0);
+                    boolean toBeProcessed = intSet.size() > 0;
                     if (toBeProcessed) {
                         for (String pinName : intSet) {
                             String longId1 = nativeId + "_" + id1;
@@ -717,7 +716,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                             }
                         }
                     } else {
-                        log.debug("---- no common variable names,, so no connections are created.");
+                        log.debug("---- no common variable names, so no connections are created.");
                     }
                 }
 
@@ -778,12 +777,16 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
     private void addPinNames(String nativeId, String macroblockName, Path friPath) {
         log.debug("addPinNames: NativeId " + nativeId + ", Macroblock " + macroblockName + ", file " + friPath);
         if (!macroblocksPinNames.containsKey(macroblockName)) {
-            log.debug(" ---------- Reading pin names from file {}", macroblockName, friPath);
-            Converter converter = new Converter(friPath.toAbsolutePath().toString(), "/tmp", false);
-
-            List<String> pinNames = converter.getConnections();
-            for (String pinName : pinNames) {
-                log.debug(" --------------  {}", pinName);
+            List<String> pinNames = Collections.emptyList();
+            if ((friPath == null) || Files.notExists(friPath)) {
+                log.error("could not parse pin names for macroblock {}: regulator files not found", macroblockName);
+            } else {
+                log.debug(" ---------- Reading pin names from file {}", macroblockName, friPath);
+                Converter converter = new Converter(friPath.toAbsolutePath().toString(), "/tmp", false);
+                pinNames = converter.getConnections();
+                for (String pinName : pinNames) {
+                    log.debug(" --------------  {}", pinName);
+                }
             }
             macroblocksPinNames.put(macroblockName, new HashSet<String>(pinNames));
         }
@@ -834,9 +837,9 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
     private boolean filteredGenerator(Generator g) {
         if (configExport.getGensPQfilter() == true) {
-              if  ( !Float.isNaN(g.getTerminal().getP()) && ((-g.getTerminal().getP() > g.getMaxP()) || (-g.getTerminal().getP() < g.getMinP())) ) {
-                  return true;
-              }
+            if (!Float.isNaN(g.getTerminal().getP()) && ((-g.getTerminal().getP() > g.getMaxP()) || (-g.getTerminal().getP() < g.getMinP()))) {
+                return true;
+            }
         }
         return false;
     }
@@ -1074,29 +1077,29 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                         for (String dataKey : mt.modelDataMap()
                                 .keySet()) {
                             switch (dataKey) {
-                            case "pcp":
-                                foundRegFile = true;
-                                foundPCP = true;
-                                break;
-                            case "rcp":
-                                foundRegFile = true;
-                                foundRCP = true;
-                                break;
-                            case "fri":
-                                foundRegFile = true;
-                                foundFRI = true;
-                                break;
-                            case "frm":
-                                foundRegFile = true;
-                                foundFRM = true;
-                                break;
-                            case "par":
-                                foundRegFile = true;
-                                foundPAR = true;
-                                break;
-                            default:
-                                log.warn("- regfile extension not recognized: " + dataKey);
-                                break;
+                                case "pcp":
+                                    foundRegFile = true;
+                                    foundPCP = true;
+                                    break;
+                                case "rcp":
+                                    foundRegFile = true;
+                                    foundRCP = true;
+                                    break;
+                                case "fri":
+                                    foundRegFile = true;
+                                    foundFRI = true;
+                                    break;
+                                case "frm":
+                                    foundRegFile = true;
+                                    foundFRM = true;
+                                    break;
+                                case "par":
+                                    foundRegFile = true;
+                                    foundPAR = true;
+                                    break;
+                                default:
+                                    log.warn("- regfile extension not recognized: " + dataKey);
+                                    break;
                             }
 
                             if (foundRegFile) {
@@ -1167,24 +1170,28 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         // represented in eurostag with the same set of parameters
         String zoneTypeName = null;
         switch (mtc.getTypeName()) {
-        case "M1U":
-        case "M1DU":
-        case "M1S":
-        case "M1DS":  zoneTypeName = "M1";
-        break;
-        case "M2U":
-        case "M2DU":
-        case "M2S":
-        case "M2DS":  zoneTypeName = "M2";
-        break;
-        case "M21": zoneTypeName = "M21";
-        break;
-        case "R":  zoneTypeName = "R";
-        break;
+            case "M1U":
+            case "M1DU":
+            case "M1S":
+            case "M1DS":
+                zoneTypeName = "M1";
+                break;
+            case "M2U":
+            case "M2DU":
+            case "M2S":
+            case "M2DS":
+                zoneTypeName = "M2";
+                break;
+            case "M21":
+                zoneTypeName = "M21";
+                break;
+            case "R":
+                zoneTypeName = "R";
+                break;
 
-        default:
-            log.error("not supported keyword " + mtc.getTypeName());
-            break;
+            default:
+                log.error("not supported keyword " + mtc.getTypeName());
+                break;
 
         }
         if (zoneTypeName == null) {
@@ -1197,47 +1204,48 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
         //change machine.name, according to the mapping  iidm2eurostagId<cimid, eurostagid>
         switch (zoneTypeName) {
-        case "M2": case "M1":
-            if (iidm2eurostagId != null) {
-                String substMachineName = iidm2eurostagId.get(inst.getCimId());
-                if ((substMachineName != null) && (!"".equals(substMachineName))) {
-                    zm.put("machine.name", substMachineName);
-                }
-
-                if (log.isDebugEnabled()) {
-                    log.trace(" machine.name mapped to new eurostag id: " + substMachineName);
-                }
-
-                String nodeName = iidm2eurostagId.get(network.getGenerator(inst.getCimId()).getTerminal().getBusBreakerView().getConnectableBus().getId());
-                zm.put("connection.node.name", nodeName);
-                //Connection node name needed for RST couplings
-                //zm.put("connection.node.name",null);
-                //if (log.isDebugEnabled()) {
-                //    log.trace(" connection.node.name mapped to empty string" );
-                //}
-
-                //systematically, do not export fortescue data, more complex than what we need (Jun 20, 2013)
-                if ("D".equals(zm.get("type.fortescue"))) {
-                    zm.put("type.fortescue", null);
-                    //TBD (Sept 04, 2013) eurostag complains if transformer.included data is missing and the machine is not fortescue
-                    // since it happens frequently in french data, I'm forcing it to 'N'  but ... is it correct?
-                    // Moreover, is it still needed to skip fortescue ?
-                    if ("".equals(zm.get("transformer.included"))) {
-                        zm.put("transformer.included", "N");
+            case "M2":
+            case "M1":
+                if (iidm2eurostagId != null) {
+                    String substMachineName = iidm2eurostagId.get(inst.getCimId());
+                    if ((substMachineName != null) && (!"".equals(substMachineName))) {
+                        zm.put("machine.name", substMachineName);
                     }
+
+                    if (log.isDebugEnabled()) {
+                        log.trace(" machine.name mapped to new eurostag id: " + substMachineName);
+                    }
+
+                    String nodeName = iidm2eurostagId.get(network.getGenerator(inst.getCimId()).getTerminal().getBusBreakerView().getConnectableBus().getId());
+                    zm.put("connection.node.name", nodeName);
+                    //Connection node name needed for RST couplings
+                    //zm.put("connection.node.name",null);
+                    //if (log.isDebugEnabled()) {
+                    //    log.trace(" connection.node.name mapped to empty string" );
+                    //}
+
+                    //systematically, do not export fortescue data, more complex than what we need (Jun 20, 2013)
+                    if ("D".equals(zm.get("type.fortescue"))) {
+                        zm.put("type.fortescue", null);
+                        //TBD (Sept 04, 2013) eurostag complains if transformer.included data is missing and the machine is not fortescue
+                        // since it happens frequently in french data, I'm forcing it to 'N'  but ... is it correct?
+                        // Moreover, is it still needed to skip fortescue ?
+                        if ("".equals(zm.get("transformer.included"))) {
+                            zm.put("transformer.included", "N");
+                        }
+                    }
+                    //
+                    //                String substTerminalName=null;
+                    //                if ((substTerminalName!=null) && (!"".equals(substTerminalName))) {
+                    //                    zm.put("connection.node.name",substTerminalName);
+                    //                    if (log.isDebugEnabled()) {
+                    //                        log.trace(" connection.node.name mapped to new eurostag id: " +substTerminalName);
+                    //                    }
+                    //                }
                 }
-                //
-                //                String substTerminalName=null;
-                //                if ((substTerminalName!=null) && (!"".equals(substTerminalName))) {
-                //                    zm.put("connection.node.name",substTerminalName);
-                //                    if (log.isDebugEnabled()) {
-                //                        log.trace(" connection.node.name mapped to new eurostag id: " +substTerminalName);
-                //                    }
-                //                }
-            }
-            break;
-        default:
-            break;
+                break;
+            default:
+                break;
         }
 
         EurostagRecord eRecord = new EurostagRecord(zoneTypeName, zm);
@@ -1285,16 +1293,18 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         // represented in eurostag with the same set of parameters
         String zoneTypeName = null;
         switch (mtc.getTypeName()) {
-        case "R":  zoneTypeName = "R";
-        break;
-        case "RMA":  zoneTypeName = "RMA";
-        break;
-        default:
-            break;
+            case "R":
+                zoneTypeName = "R";
+                break;
+            case "RMA":
+                zoneTypeName = "RMA";
+                break;
+            default:
+                break;
 
         }
         if (zoneTypeName == null) {
-            throw new RuntimeException(" not supported typeName " + mtc.getTypeName() );
+            throw new RuntimeException(" not supported typeName " + mtc.getTypeName());
         }
 
         log.trace(" model template typename: " + mtc.getTypeName());
@@ -1310,18 +1320,18 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
         //change connection.node.name, according to the mapping  iidm2eurostagId<cimid, eurostagid>
         switch (zoneTypeName) {
-        case "R":
-            if ((machineName != null) && !("".equals(machineName))) {
-                zm.put("machine.name", machineName);
-            }
-            break;
-        case "RMA":
-            if ((machineName != null) && !("".equals(machineName))) {
-                zm.put("machine.name", machineName);
-            }
-            break;
-        default:
-            break;
+            case "R":
+                if ((machineName != null) && !("".equals(machineName))) {
+                    zm.put("machine.name", machineName);
+                }
+                break;
+            case "RMA":
+                if ((machineName != null) && !("".equals(machineName))) {
+                    zm.put("machine.name", machineName);
+                }
+                break;
+            default:
+                break;
         }
 
         //[06 sept 2013] This way, no node name is mentioned in the .dta, the correpsondance is only carried by the machine names.
@@ -1489,7 +1499,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             zm.put("coupling.par8", null);
             zm.put("coupling.par9", null);
             if (log.isDebugEnabled()) {
-                log.trace(" coupling.par(s) mapped to empty string" );
+                log.trace(" coupling.par(s) mapped to empty string");
             }
         }
 
@@ -1545,12 +1555,12 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             DtaParser.dumpAutomatonHeader("A14", false, dtaOutStream);
             for (TwoWindingsTransformer t : network.getTwoWindingsTransformers()) {
                 if (t.getPhaseTapChanger() == null // no TD
-                        && t.getRatioTapChanger() != null
-                        && t.getRatioTapChanger().hasLoadTapChangingCapabilities() // has tap changer
-                        && t.getRatioTapChanger().isRegulating()
-                        && t.getTerminal1().getVoltageLevel().getNominalV() >= 63.0 // no TG
-                        && t.getTerminal2().getVoltageLevel().getNominalV() >= 63.0 // no TG
-                        ) {
+                    && t.getRatioTapChanger() != null
+                    && t.getRatioTapChanger().hasLoadTapChangingCapabilities() // has tap changer
+                    && t.getRatioTapChanger().isRegulating()
+                    && t.getTerminal1().getVoltageLevel().getNominalV() >= 63.0 // no TG
+                    && t.getTerminal2().getVoltageLevel().getNominalV() >= 63.0 // no TG
+                    ) {
                     dumpDataTransformerAutomaton(t, eurostagSim, "A14_HT", dtaOutStream, iidm2eurostagId);
                 } else if (t.getPhaseTapChanger() != null
                         && t.getPhaseTapChanger().getRegulationMode() != PhaseTapChanger.RegulationMode.FIXED_TAP
@@ -1614,28 +1624,28 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         }
 
         switch (typeName) {
-        case "A11":
-            zm.put("USINF", "0.7");
-            zm.put("USRINF", "0.707");
-            zm.put("TINF", "0.7");
-            zm.put("TRINF", "0.");
-            zm.put("DELINF", "0.");
-            zm.put("USSUP", "1.2");
-            zm.put("USRSUP", "1.188");
-            zm.put("TSUP", "3.");
-            zm.put("TRSUP", "0.");
-            zm.put("DELSUP", "0.");
-            break;
-        case "A12":
-            zm.put("VIMIN", "47.5");
-            zm.put("TMIN", "1.");
-            zm.put("VIMAX", "55.");
-            zm.put("TMAX", "1.");
-            zm.put("TDEL", "0.");
-            break;
-        default:
-            log.error("not supported keyword " + typeName);
-            break;
+            case "A11":
+                zm.put("USINF", "0.7");
+                zm.put("USRINF", "0.707");
+                zm.put("TINF", "0.7");
+                zm.put("TRINF", "0.");
+                zm.put("DELINF", "0.");
+                zm.put("USSUP", "1.2");
+                zm.put("USRSUP", "1.188");
+                zm.put("TSUP", "3.");
+                zm.put("TRSUP", "0.");
+                zm.put("DELSUP", "0.");
+                break;
+            case "A12":
+                zm.put("VIMIN", "47.5");
+                zm.put("TMIN", "1.");
+                zm.put("VIMAX", "55.");
+                zm.put("TMAX", "1.");
+                zm.put("TDEL", "0.");
+                break;
+            default:
+                log.error("not supported keyword " + typeName);
+                break;
 
         }
 
@@ -1684,37 +1694,37 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
         String newTypeName = "";
         switch (typeName) {
-        case "A14_HT":
-            zm.put("R", "0");
-            zm.put("E1", "0.015");
-            zm.put("E2", "0.01");
-            zm.put("T1", "30.0");
-            zm.put("TINT", "10.0");
-            zm.put("setpoint", "2");
-            zm.put("time.margin", "3.0");
-            zm.put("tap.direction", "-1");
-            zm.put("TMAN", "10.0");
-            zm.put("V1", "0.5");
-            zm.put("V2", "0.6");
-            zm.put("TV1", "30.0");
-            zm.put("TDEL", "10.0");
-            newTypeName = "A14";
-            break;
-        case "A14_TD":
-            zm.put("T1", "23.0");
-            zm.put("TINT", "6.0");
-            zm.put("setpoint", "1");
-            zm.put("VC", "0.98");
-            zm.put("time.margin", "0.");
-            zm.put("control.type", 1);
-            zm.put("tap.direction", "+1");
-            zm.put("transfo.side", "S");
-            zm.put("TMAN", "0.0");
-            newTypeName = "A14";
-            break;
-        default:
-            log.error("not supported keyword " + typeName);
-            break;
+            case "A14_HT":
+                zm.put("R", "0");
+                zm.put("E1", "0.015");
+                zm.put("E2", "0.01");
+                zm.put("T1", "30.0");
+                zm.put("TINT", "10.0");
+                zm.put("setpoint", "2");
+                zm.put("time.margin", "3.0");
+                zm.put("tap.direction", "-1");
+                zm.put("TMAN", "10.0");
+                zm.put("V1", "0.5");
+                zm.put("V2", "0.6");
+                zm.put("TV1", "30.0");
+                zm.put("TDEL", "10.0");
+                newTypeName = "A14";
+                break;
+            case "A14_TD":
+                zm.put("T1", "23.0");
+                zm.put("TINT", "6.0");
+                zm.put("setpoint", "1");
+                zm.put("VC", "0.98");
+                zm.put("time.margin", "0.");
+                zm.put("control.type", 1);
+                zm.put("tap.direction", "+1");
+                zm.put("transfo.side", "S");
+                zm.put("TMAN", "0.0");
+                newTypeName = "A14";
+                break;
+            default:
+                log.error("not supported keyword " + typeName);
+                break;
         }
 
         log.trace(" typename: " + typeName);
@@ -1759,26 +1769,26 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         }
         String newTypeName = "";
         switch (typeName) {
-        case "A14_MT":
-            zm.put("index", "1");
-            zm.put("R", "0");
-            zm.put("E1", "0.015");
-            zm.put("E2", "0.01");
-            zm.put("T1", "60.0");
-            zm.put("TINT", "10.0");
-            zm.put("setpoint", "2");
-            zm.put("time.margin", "3.0");
-            zm.put("tap.direction", "-1");
-            zm.put("TMAN", "10.0");
-            zm.put("V1", "0.5");
-            zm.put("V2", "0.6");
-            zm.put("TV1", "60.0");
-            zm.put("TDEL", "10.0");
-            newTypeName = "A14";
-            break;
-        default:
-            log.error("not supported keyword " + typeName);
-            break;
+            case "A14_MT":
+                zm.put("index", "1");
+                zm.put("R", "0");
+                zm.put("E1", "0.015");
+                zm.put("E2", "0.01");
+                zm.put("T1", "60.0");
+                zm.put("TINT", "10.0");
+                zm.put("setpoint", "2");
+                zm.put("time.margin", "3.0");
+                zm.put("tap.direction", "-1");
+                zm.put("TMAN", "10.0");
+                zm.put("V1", "0.5");
+                zm.put("V2", "0.6");
+                zm.put("TV1", "60.0");
+                zm.put("TDEL", "10.0");
+                newTypeName = "A14";
+                break;
+            default:
+                log.error("not supported keyword " + typeName);
+                break;
         }
 
         log.trace(" typename: " + typeName);
@@ -1880,29 +1890,29 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                         for (String dataKey : mt.modelDataMap()
                                 .keySet()) {
                             switch (dataKey) {
-                            case "pcp":
-                                foundRegFile = true;
-                                foundPCP = true;
-                                break;
-                            case "rcp":
-                                foundRegFile = true;
-                                foundRCP = true;
-                                break;
-                            case "fri":
-                                foundRegFile = true;
-                                foundFRI = true;
-                                break;
-                            case "frm":
-                                foundRegFile = true;
-                                foundFRM = true;
-                                break;
-                            case "par":
-                                foundRegFile = true;
-                                foundPAR = true;
-                                break;
-                            default:
-                                log.warn("- regfile extension not recognized: " + dataKey);
-                                break;
+                                case "pcp":
+                                    foundRegFile = true;
+                                    foundPCP = true;
+                                    break;
+                                case "rcp":
+                                    foundRegFile = true;
+                                    foundRCP = true;
+                                    break;
+                                case "fri":
+                                    foundRegFile = true;
+                                    foundFRI = true;
+                                    break;
+                                case "frm":
+                                    foundRegFile = true;
+                                    foundFRM = true;
+                                    break;
+                                case "par":
+                                    foundRegFile = true;
+                                    foundPAR = true;
+                                    break;
+                                default:
+                                    log.warn("- regfile extension not recognized: " + dataKey);
+                                    break;
                             }
 
                             if (foundRegFile) {
@@ -2006,29 +2016,29 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                                         for (String dataKey : mt2.modelDataMap()
                                                 .keySet()) {
                                             switch (dataKey) {
-                                            case "pcp":
-                                                foundRegFile = true;
-                                                foundPCP = true;
-                                                break;
-                                            case "rcp":
-                                                foundRegFile = true;
-                                                foundRCP = true;
-                                                break;
-                                            case "fri":
-                                                foundRegFile = true;
-                                                foundFRI = true;
-                                                break;
-                                            case "frm":
-                                                foundRegFile = true;
-                                                foundFRM = true;
-                                                break;
-                                            case "par":
-                                                foundRegFile = true;
-                                                foundPAR = true;
-                                                break;
-                                            default:
-                                                log.warn("- regfile extension not recognized: " + dataKey);
-                                                break;
+                                                case "pcp":
+                                                    foundRegFile = true;
+                                                    foundPCP = true;
+                                                    break;
+                                                case "rcp":
+                                                    foundRegFile = true;
+                                                    foundRCP = true;
+                                                    break;
+                                                case "fri":
+                                                    foundRegFile = true;
+                                                    foundFRI = true;
+                                                    break;
+                                                case "frm":
+                                                    foundRegFile = true;
+                                                    foundFRM = true;
+                                                    break;
+                                                case "par":
+                                                    foundRegFile = true;
+                                                    foundPAR = true;
+                                                    break;
+                                                default:
+                                                    log.warn("- regfile extension not recognized: " + dataKey);
+                                                    break;
                                             }
 
                                             if (foundRegFile) {

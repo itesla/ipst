@@ -21,16 +21,16 @@ public class ModelicaExportEventsTest {
 
     public static void main(String[] args) {
 
-         if (args == null || args.length == 0) {
-             System.out.println("Modelica exporter eventss requires parameters: " + " moFile eventsFile");
-             System.exit(0);
-         }
+        if (args == null || args.length == 0) {
+            System.out.println("Modelica exporter eventss requires parameters: " + " moFile eventsFile");
+            System.exit(0);
+        }
 
-         moFile = Paths.get(args[0]).toFile();
-         eventsFile = Paths.get(args[1]).toFile();
+        moFile = Paths.get(args[0]).toFile();
+        eventsFile = Paths.get(args[1]).toFile();
 
-         ModEventsExport eventsExporter = new ModEventsExport(moFile, eventsFile);
-         eventsExporter.export();
+        ModEventsExport eventsExporter = new ModEventsExport(moFile, eventsFile);
+        eventsExporter.export();
 
     }
 

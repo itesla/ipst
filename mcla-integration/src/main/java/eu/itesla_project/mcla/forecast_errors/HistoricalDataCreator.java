@@ -163,7 +163,7 @@ public class HistoricalDataCreator {
     }
 
     protected String[] getColumnsIndexes(ArrayList<String> generatorsIds, ArrayList<String> loadsIds) {
-        int columnsNumber = 2 + ( ( generatorsIds.size() + loadsIds.size() ) * 2 );
+        int columnsNumber = 2 + ((generatorsIds.size() + loadsIds.size()) * 2);
         String[] columnsIndexes = new String[columnsNumber];
         int count = 0;
         // datetime

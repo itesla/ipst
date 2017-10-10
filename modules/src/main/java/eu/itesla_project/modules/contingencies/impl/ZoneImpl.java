@@ -14,13 +14,11 @@ import java.math.BigInteger;
 import java.util.List;
 
 
-
 import eu.itesla_project.modules.contingencies.VoltageLevel;
 import eu.itesla_project.modules.contingencies.Zone;
 
 
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 public class ZoneImpl implements Zone {
@@ -34,7 +32,7 @@ public class ZoneImpl implements Zone {
     private List<VoltageLevel> voltageLevels;
 
 
-    public ZoneImpl(String _name, BigInteger _number, List<VoltageLevel> _voltageLevels ) {
+    public ZoneImpl(String _name, BigInteger _number, List<VoltageLevel> _voltageLevels) {
         this.name = _name;
         this.number = _number;
         this.voltageLevels = _voltageLevels;
@@ -51,7 +49,7 @@ public class ZoneImpl implements Zone {
 
     @Override
     public String getName() {
-            return this.name;
+        return this.name;
     }
 
 

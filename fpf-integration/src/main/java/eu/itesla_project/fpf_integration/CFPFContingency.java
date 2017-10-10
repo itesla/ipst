@@ -24,11 +24,11 @@ public class CFPFContingency {
 
     }
 
-    public CFPFContingency( int number, ArrayList< Integer > branchesOnOutage ) {
-        setNumber( number );
-        setNumberBranchesOnOutage( branchesOnOutage.size() );
-        Collections.sort( branchesOnOutage );
-        setBranchesOnOutage( branchesOnOutage );
+    public CFPFContingency(int number, ArrayList< Integer > branchesOnOutage) {
+        setNumber(number);
+        setNumberBranchesOnOutage(branchesOnOutage.size());
+        Collections.sort(branchesOnOutage);
+        setBranchesOnOutage(branchesOnOutage);
     }
 
     public String printCFPFContingency() {
@@ -41,8 +41,8 @@ public class CFPFContingency {
         return out;
     }
 
-    public boolean contains( int number ) {
-        return branchesOnOutage.contains( number );
+    public boolean contains(int number) {
+        return branchesOnOutage.contains(number);
     }
 
     public int getNumber() {

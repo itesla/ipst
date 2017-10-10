@@ -111,8 +111,14 @@ public class DicoEurostagNamingStrategy implements EurostagNamingStrategy {
 
         //then process the entry that aren't, with the default strategy
         if (dicoPartioned.get(false).size() > 0) {
-            LOGGER.warn("dico mapping not found for iidmId ids: {}", dicoPartioned.get(false));
-            defaultStrategy.fillDictionary(dictionary, nameType, new HashSet(dicoPartioned.get(false)));
+            String notFoundMsgTemplate = "dico mapping not found for iidmId ids: {}";
+            List<String> notInMapping = dicoPartioned.get(false);
+            if (nameType == NameType.NODE) {
+                LOGGER.info(notFoundMsgTemplate, notInMapping);
+            } else {
+                LOGGER.warn(notFoundMsgTemplate, notInMapping);
+            }
+            defaultStrategy.fillDictionary(dictionary, nameType, new HashSet(notInMapping));
         }
     }
 }

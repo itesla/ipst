@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * line contingencies.
  * <p>Example:
  * <pre>
- *#contingency id;line count;line1 id;line2 id;...
+ * #contingency id;line count;line1 id;line2 id;...
  * ...
  * </pre>
  *
@@ -118,48 +118,48 @@ public class CsvFileContingenciesAndActionsDatabaseClient implements Contingenci
 
     @Override
     public Zone getZone(String id) {
-         throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Collection<ActionPlan> getActionPlans() {
-         throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public ActionPlan getActionPlan(String id) {
-         throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Collection<Zone> getZones() {
-         throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Collection<ActionsContingenciesAssociation> getActionsCtgAssociations() {
-         throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Collection<ActionsContingenciesAssociation> getActionsCtgAssociationsByContingency(
             String contingencyId) {
-         throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Contingency getContingency(String name, Network network) {
-         for (Contingency c : getContingencies(network)) {
-             if (c.getId().equals(name)) {
-                 return c;
-             }
-         }
+        for (Contingency c : getContingencies(network)) {
+            if (c.getId().equals(name)) {
+                return c;
+            }
+        }
         return null;
     }
 
     @Override
     public Collection<Action> getActions(Network network) {
-         throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
 
     }
 

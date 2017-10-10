@@ -159,7 +159,7 @@ class OnlineWorkflowResultsImpl implements OnlineWorkflowResults {
 
         if (actions != null) {
             Map<Integer, Map<String, Map<String, ActionParameters>>> statesWithActions = new HashMap<Integer, Map<String, Map<String, ActionParameters>>>();
-            if ( contingenciesWithActions.containsKey(contingencyId) ) {
+            if (contingenciesWithActions.containsKey(contingencyId)) {
                 statesWithActions = contingenciesWithActions.get(contingencyId);
             }
             statesWithActions.put(stateId, actions);

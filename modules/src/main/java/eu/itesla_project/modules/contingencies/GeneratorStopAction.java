@@ -10,7 +10,6 @@ import eu.itesla_project.contingency.tasks.GeneratorTripping;
 import eu.itesla_project.contingency.tasks.ModificationTask;
 
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 public class GeneratorStopAction implements ActionElement {
@@ -25,7 +24,7 @@ public class GeneratorStopAction implements ActionElement {
         this.equipmentId = genId;
     }
 
-    public GeneratorStopAction(String genId, Number implementationTime, Number achievmentIndex ) {
+    public GeneratorStopAction(String genId, Number implementationTime, Number achievmentIndex) {
         this.equipmentId = genId;
         this.implementationTime = implementationTime;
         this.achievmentIndex = achievmentIndex;
@@ -34,7 +33,7 @@ public class GeneratorStopAction implements ActionElement {
     @Override
     public ActionElementType getType() {
 
-         return ActionElementType.GENERATOR_STOP;
+        return ActionElementType.GENERATOR_STOP;
     }
 
     @Override
@@ -54,7 +53,7 @@ public class GeneratorStopAction implements ActionElement {
 
     @Override
     public Number getAchievmentIndex() {
-        return      achievmentIndex;
+        return achievmentIndex;
     }
 
     @Override

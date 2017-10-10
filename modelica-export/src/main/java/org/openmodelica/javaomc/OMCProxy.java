@@ -139,19 +139,19 @@ public class OMCProxy {
 
         /* This mirrors the way OMC creates the object file. */
         switch (os) {
-        case UNIX:
-            String username = System.getenv("USER");
-            if (username == null) {
-                username = "nobody";
-            }
-            fileName = "/tmp/openmodelica." + username + ".objid." + corbaSessionName;
-            break;
-        case WINDOWS:
-            String temp = System.getenv("TMP");
-            fileName = temp + "\\openmodelica.objid." + corbaSessionName;
-            break;
-        default:
-            logBug("org.modelica", "os variable set to unexpected os-type");
+            case UNIX:
+                String username = System.getenv("USER");
+                if (username == null) {
+                    username = "nobody";
+                }
+                fileName = "/tmp/openmodelica." + username + ".objid." + corbaSessionName;
+                break;
+            case WINDOWS:
+                String temp = System.getenv("TMP");
+                fileName = temp + "\\openmodelica.objid." + corbaSessionName;
+                break;
+            default:
+                logBug("org.modelica", "os variable set to unexpected os-type");
         }
 
         logOMCStatus("Will look for OMC object reference in '"
@@ -278,7 +278,7 @@ public class OMCProxy {
          * 5 seconds, abort. (Very arbitrary 5 seconds..)
          */
         int ticks = 0;
-        while (!f.exists() || (f.exists() && lastModified == f.lastModified()) ) {
+        while (!f.exists() || (f.exists() && lastModified == f.lastModified())) {
             try {
                 logOMCStatus("Waiting for OMC CORBA object reference to appear on disk ... for " + (ticks + 1) + " seconds");
                 Thread.sleep(100);

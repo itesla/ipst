@@ -605,8 +605,8 @@ public class AmplNetworkWriter implements AmplConstants {
                 float ratio = ratedU2 / vb2 / (ratedU1 / vb1);
                 RatioTapChanger rtc = twt.getRatioTapChanger();
                 PhaseTapChanger ptc = twt.getPhaseTapChanger();
-                int rtcNum = (rtc != null ? mapper.getInt(AmplSubset.RATIO_TAP_CHANGER, twt.getId()) : -1);
-                int ptcNum = (ptc != null ? mapper.getInt(AmplSubset.PHASE_TAP_CHANGER, twt.getId()) : -1);
+                int rtcNum = rtc != null ? mapper.getInt(AmplSubset.RATIO_TAP_CHANGER, twt.getId()) : -1;
+                int ptcNum = ptc != null ? mapper.getInt(AmplSubset.PHASE_TAP_CHANGER, twt.getId()) : -1;
                 formatter.writeCell(num)
                          .writeCell(bus1Num)
                          .writeCell(bus2Num)
@@ -697,8 +697,8 @@ public class AmplNetworkWriter implements AmplConstants {
                 float ratio3 =  ratedU1 / ratedU3;
                 RatioTapChanger rtc2 = twt.getLeg2().getRatioTapChanger();
                 RatioTapChanger rtc3 = twt.getLeg2().getRatioTapChanger();
-                int rtc2Num = (rtc2 != null ? mapper.getInt(AmplSubset.RATIO_TAP_CHANGER, id2) : -1);
-                int rtc3Num = (rtc3 != null ? mapper.getInt(AmplSubset.RATIO_TAP_CHANGER, id3) : -1);
+                int rtc2Num = rtc2 != null ? mapper.getInt(AmplSubset.RATIO_TAP_CHANGER, id2) : -1;
+                int rtc3Num = rtc3 != null ? mapper.getInt(AmplSubset.RATIO_TAP_CHANGER, id3) : -1;
 
                 int middleVlNum = mapper.getInt(AmplSubset.VOLTAGE_LEVEL, getThreeWindingsTransformerMiddleVoltageLevelId(twt));
                 String middleBusId = getThreeWindingsTransformerMiddleBusId(twt);

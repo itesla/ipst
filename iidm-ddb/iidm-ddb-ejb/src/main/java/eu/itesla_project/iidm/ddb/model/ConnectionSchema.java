@@ -37,6 +37,7 @@ import org.hibernate.validator.constraints.NotEmpty;
         }
 )
 @XmlAccessorType(XmlAccessType.FIELD)
+@SuppressWarnings("checkstyle:indentation")
 public class ConnectionSchema implements Serializable {
     private static final long serialVersionUID = 1L;
 

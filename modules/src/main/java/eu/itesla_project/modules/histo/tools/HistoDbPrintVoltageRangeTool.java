@@ -132,27 +132,28 @@ public class HistoDbPrintVoltageRangeTool implements Tool {
         table.addCell("max");
         table.addCell("count");
         table.addCell("pmax");
-        ranges.entrySet().stream().sorted((e1, e2) -> {
-            VoltageStats stats1 = e1.getValue();
-            VoltageStats stats2 = e2.getValue();
-            Range<Float> r1 = stats1.range;
-            Range<Float> r2 = stats2.range;
-            float s1 = r1.upperEndpoint() - r1.lowerEndpoint();
-            float s2 = r2.upperEndpoint() - r2.lowerEndpoint();
-            return Float.compare(s1, s2);
-        }).forEach(e -> {
-            String vlId = e.getKey();
-            VoltageStats stats = e.getValue();
-            Range<Float> r = stats.range;
-            float s = r.upperEndpoint() - r.lowerEndpoint();
-            table.addCell(vlId);
-            table.addCell(Float.toString(stats.vnom));
-            table.addCell(Float.toString(s));
-            table.addCell(Float.toString(r.lowerEndpoint()));
-            table.addCell(Float.toString(r.upperEndpoint()));
-            table.addCell(Integer.toString(stats.count));
-            table.addCell(Float.toString(stats.pmax));
-        });
+        ranges.entrySet().stream().sorted(
+            (e1, e2) -> {
+                VoltageStats stats1 = e1.getValue();
+                VoltageStats stats2 = e2.getValue();
+                Range<Float> r1 = stats1.range;
+                Range<Float> r2 = stats2.range;
+                float s1 = r1.upperEndpoint() - r1.lowerEndpoint();
+                float s2 = r2.upperEndpoint() - r2.lowerEndpoint();
+                return Float.compare(s1, s2);
+            }).forEach(e -> {
+                String vlId = e.getKey();
+                VoltageStats stats = e.getValue();
+                Range<Float> r = stats.range;
+                float s = r.upperEndpoint() - r.lowerEndpoint();
+                table.addCell(vlId);
+                table.addCell(Float.toString(stats.vnom));
+                table.addCell(Float.toString(s));
+                table.addCell(Float.toString(r.lowerEndpoint()));
+                table.addCell(Float.toString(r.upperEndpoint()));
+                table.addCell(Integer.toString(stats.count));
+                table.addCell(Float.toString(stats.pmax));
+            });
         context.getOutputStream().println(table.render());
     }
 

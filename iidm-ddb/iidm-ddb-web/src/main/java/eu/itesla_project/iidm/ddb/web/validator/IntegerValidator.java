@@ -26,7 +26,7 @@ public class IntegerValidator implements Validator {
     public void validate(FacesContext context, UIComponent component, Object objValue) throws ValidatorException {
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
         String objString = objValue.toString();
-         boolean valid = true;
+        boolean valid = true;
         try {
             Integer valueInt = Integer.valueOf(objString);
         } catch (NumberFormatException nEx) {
@@ -34,7 +34,7 @@ public class IntegerValidator implements Validator {
 
         }
         if (!valid) {
-            FacesMessage message = new FacesMessage( FacesMessage.SEVERITY_ERROR, bundle.getString("invalid.integer.summary.msg"),
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, bundle.getString("invalid.integer.summary.msg"),
                     bundle.getString("invalid.integer.detail.msg"));
             throw new ValidatorException(message);
         }

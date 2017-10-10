@@ -32,35 +32,35 @@ public class LineData implements EquipmentData {
 
     public static String[] getFields() {
         return new String[]{
-                    "id",
-                    "bus 1 id",
-                    "bus 2 id",
-                    "current 1",
-                    "current 2",
-                    "current limit 1",
-                    "current limit 2"
-                };
+            "id",
+            "bus 1 id",
+            "bus 2 id",
+            "current 1",
+            "current 2",
+            "current limit 1",
+            "current limit 2"
+        };
     }
 
     @Override
     public String getFieldValue(String fieldName) {
         switch (fieldName) {
-        case "id":
-            return lineId;
-        case "bus 1 id":
-            return bus1Id;
-        case "bus 2 id":
-            return bus2Id;
-        case "current 1":
-            return Float.toString(current1);
-        case "current 2":
-            return Float.toString(current2);
-        case "current limit 1":
-            return Float.toString(currentLimit1);
-        case "current limit 2":
-            return Float.toString(currentLimit2);
-        default:
-            throw new RuntimeException("no " + fieldName + " available in line data");
+            case "id":
+                return lineId;
+            case "bus 1 id":
+                return bus1Id;
+            case "bus 2 id":
+                return bus2Id;
+            case "current 1":
+                return Float.toString(current1);
+            case "current 2":
+                return Float.toString(current2);
+            case "current limit 1":
+                return Float.toString(currentLimit1);
+            case "current limit 2":
+                return Float.toString(currentLimit2);
+            default:
+                throw new RuntimeException("no " + fieldName + " available in line data");
         }
     }
 

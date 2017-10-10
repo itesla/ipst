@@ -10,7 +10,6 @@ import eu.itesla_project.modules.contingencies.tasks.GeneratorStarting;
 import eu.itesla_project.contingency.tasks.ModificationTask;
 
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 public class GeneratorStartAction implements ActionElement {
@@ -26,7 +25,7 @@ public class GeneratorStartAction implements ActionElement {
     }
 
 
-    public GeneratorStartAction(String genId, Number implementationTime, Number achievmentIndex ) {
+    public GeneratorStartAction(String genId, Number implementationTime, Number achievmentIndex) {
         this.equipmentId = genId;
         this.implementationTime = implementationTime;
         this.achievmentIndex = achievmentIndex;
@@ -35,7 +34,7 @@ public class GeneratorStartAction implements ActionElement {
     @Override
     public ActionElementType getType() {
 
-         return ActionElementType.GENERATOR_START;
+        return ActionElementType.GENERATOR_START;
     }
 
     @Override

@@ -17,8 +17,8 @@ import java.util.Objects;
 /*
    MCLA code 1.8.1
 */
+
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 public class ForecastErrorsAnalyzerConfig {
@@ -96,7 +96,7 @@ public class ForecastErrorsAnalyzerConfig {
             Integer correlation_fict_uniform,
             Integer rngSeed,
             boolean debug
-            ) {
+    ) {
         Objects.requireNonNull(binariesDir, "sampler compiled binaries directory is null");
         Objects.requireNonNull(runtimeHomeDir, "matlab runtime directory is null");
 

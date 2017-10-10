@@ -52,9 +52,9 @@ public class MCSMatFileWriter {
         MLStructure loads  = loadsDataAsMLStructure(mcNetworkSamplingData.getLoadsData());
         LOGGER.debug("Saving mat data into " + matFile.toString());
         List<MLArray> mlarray = new ArrayList<>();
-        mlarray.add((MLArray) buses );
-        mlarray.add((MLArray) generators );
-        mlarray.add((MLArray) loads );
+        mlarray.add((MLArray) buses);
+        mlarray.add((MLArray) generators);
+        mlarray.add((MLArray) loads);
         MatFileWriter writer = new MatFileWriter();
         writer.write(matFile.toFile(), mlarray);
     }

@@ -77,8 +77,8 @@ public class PrintOnlineWorkflowResultsTool implements Tool {
         OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
         String workflowId = line.getOptionValue("workflow");
         OnlineWorkflowResults wfResults = onlinedb.getResults(workflowId);
-        if ( wfResults != null ) {
-            if ( !wfResults.getContingenciesWithActions().isEmpty() ) {
+        if (wfResults != null) {
+            if (!wfResults.getContingenciesWithActions().isEmpty()) {
                 context.getOutputStream().println("** Contingencies requiring corrective actions **");
                 Table table = new Table(3, BorderStyle.CLASSIC_WIDE);
                 table.addCell("Contingency", new CellStyle(CellStyle.HorizontalAlign.center));
@@ -103,7 +103,7 @@ public class PrintOnlineWorkflowResultsTool implements Tool {
                 context.getOutputStream().println("\nNo contingencies requiring corrective actions");
             }
 
-            if ( !wfResults.getUnsafeContingencies().isEmpty() ) {
+            if (!wfResults.getUnsafeContingencies().isEmpty()) {
 //                context.getOutputStream().println("\n** Contingencies requiring T-D simulation **");
 //                Table table = new Table(4, BorderStyle.CLASSIC_WIDE);
 //                table.addCell("Contingency", new CellStyle(CellStyle.HorizontalAlign.center));
@@ -152,7 +152,7 @@ public class PrintOnlineWorkflowResultsTool implements Tool {
     private HashMap<String, String> getIndexesValues(Map<String, Boolean> securityIndexes) {
         HashMap<String, String> indexesValues = new HashMap<String, String>();
         for (SecurityIndexType securityIndexType : SecurityIndexType.values()) {
-            if ( securityIndexes.containsKey(securityIndexType.getLabel()) ) {
+            if (securityIndexes.containsKey(securityIndexType.getLabel())) {
                 indexesValues.put(securityIndexType.getLabel(), securityIndexes.get(securityIndexType.getLabel()) ? "Safe" : "Unsafe");
             } else {
                 indexesValues.put(securityIndexType.getLabel(), "-");

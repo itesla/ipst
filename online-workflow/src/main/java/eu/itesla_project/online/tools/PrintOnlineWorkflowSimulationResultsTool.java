@@ -94,8 +94,8 @@ public class PrintOnlineWorkflowSimulationResultsTool implements Tool {
         OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
         String workflowId = line.getOptionValue("workflow");
         OnlineWorkflowResults wfResults = onlinedb.getResults(workflowId);
-        if ( wfResults != null ) {
-            if ( !wfResults.getUnsafeContingencies().isEmpty() ) {
+        if (wfResults != null) {
+            if (!wfResults.getUnsafeContingencies().isEmpty()) {
                 OnlineWorkflowParameters parameters = onlinedb.getWorkflowParameters(workflowId);
                 SecurityIndexType[] securityIndexTypes = null;
                 if (line.hasOption(SECURITY_INDEXES)) {

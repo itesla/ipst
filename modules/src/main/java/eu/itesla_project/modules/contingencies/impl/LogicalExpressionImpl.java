@@ -19,7 +19,7 @@ public class LogicalExpressionImpl implements LogicalExpression {
 
     private Operator operator;
 
-    public LogicalExpressionImpl () {
+    public LogicalExpressionImpl() {
 
     }
 

@@ -41,47 +41,47 @@ public class Tfo2WData implements EquipmentData {
 
     public static String[] getFields() {
         return new String[]{
-                    "id",
-                    "bus 1 id",
-                    "bus 2 id",
-                    "apparent power 1",
-                    "apparent power 2",
-                    "nominal voltage 1",
-                    "nominal voltage 2",
-                    "current limit 1",
-                    "current limit 2",
-                    "regulating status",
-                    "step position"
-                };
+            "id",
+            "bus 1 id",
+            "bus 2 id",
+            "apparent power 1",
+            "apparent power 2",
+            "nominal voltage 1",
+            "nominal voltage 2",
+            "current limit 1",
+            "current limit 2",
+            "regulating status",
+            "step position"
+        };
     }
 
     @Override
     public String getFieldValue(String fieldName) {
         switch (fieldName) {
-        case "id":
-            return tfoId;
-        case "bus 1 id":
-            return bus1Id;
-        case "bus 2 id":
-            return bus2Id;
-        case "apparent power 1":
-            return Float.toString(apparentPower1);
-        case "apparent power 2":
-            return Float.toString(apparentPower2);
-        case "nominal voltage 1":
-            return Float.toString(nominalVoltage1);
-        case "nominal voltage 2":
-            return Float.toString(nominalVoltage2);
-        case "current limit 1":
-            return Float.toString(currentLimit1);
-        case "current limit 2":
-            return Float.toString(currentLimit2);
-        case "regulating status":
-            return Boolean.toString(isRegulating);
-        case "step position":
-            return Integer.toString(correntStepPosition);
-        default:
-            throw new RuntimeException("no " + fieldName + " available in tfo data");
+            case "id":
+                return tfoId;
+            case "bus 1 id":
+                return bus1Id;
+            case "bus 2 id":
+                return bus2Id;
+            case "apparent power 1":
+                return Float.toString(apparentPower1);
+            case "apparent power 2":
+                return Float.toString(apparentPower2);
+            case "nominal voltage 1":
+                return Float.toString(nominalVoltage1);
+            case "nominal voltage 2":
+                return Float.toString(nominalVoltage2);
+            case "current limit 1":
+                return Float.toString(currentLimit1);
+            case "current limit 2":
+                return Float.toString(currentLimit2);
+            case "regulating status":
+                return Boolean.toString(isRegulating);
+            case "step position":
+                return Integer.toString(correntStepPosition);
+            default:
+                throw new RuntimeException("no " + fieldName + " available in tfo data");
         }
     }
 

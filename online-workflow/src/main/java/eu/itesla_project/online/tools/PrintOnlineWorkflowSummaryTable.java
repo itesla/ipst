@@ -140,7 +140,7 @@ public class PrintOnlineWorkflowSummaryTable implements Tool {
                     new Column("Value"),
                     new Column("Limit"))) {
 
-                workflowsIds.sort((o1, o2) -> (o1.compareTo(o2)));
+                workflowsIds.sort((o1, o2) -> o1.compareTo(o2));
                 workflowsIds.forEach(workflowId -> {
                     Network basecase = onlinedb.getState(workflowId, 0);
                     String basecaseId = basecase.getId();

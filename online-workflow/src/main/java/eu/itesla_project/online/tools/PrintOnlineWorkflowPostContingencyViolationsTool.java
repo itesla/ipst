@@ -114,14 +114,14 @@ public class PrintOnlineWorkflowPostContingencyViolationsTool implements Tool {
                 : null;
         TableFormatterConfig tableFormatterConfig = TableFormatterConfig.load();
         Column[] tableColumns = {
-                new Column("State"),
-                new Column("Contingency"),
-                new Column("Equipment"),
-                new Column("Type"),
-                new Column("Value"),
-                new Column("Limit"),
-                new Column("Limit reduction"),
-                new Column("Voltage Level")
+            new Column("State"),
+            new Column("Contingency"),
+            new Column("Equipment"),
+            new Column("Type"),
+            new Column("Value"),
+            new Column("Limit"),
+            new Column("Limit reduction"),
+            new Column("Voltage Level")
         };
         Path outputFile = (line.hasOption("output-file")) ? Paths.get(line.getOptionValue("output-file")) : null;
         String outputFormat = (line.hasOption("output-format")) ? line.getOptionValue("output-format") : "ascii";

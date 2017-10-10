@@ -8,8 +8,6 @@ package eu.itesla_project.online.server.message;
 
 import javax.json.stream.JsonGenerator;
 
-import com.google.gson.Gson;
-
 /**
  *
  * @author Quinary <itesla@quinary.com>
@@ -29,9 +27,7 @@ public class ConnectionMessage extends Message<Boolean> {
 
     @Override
     public String toJson() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
-
+        return writeValueAsString(this);
     }
 
     @Override

@@ -32,8 +32,8 @@ public class RedispatchUtils {
     public static List<Generator> getRedispatchableGenerators(Network network, String[] generatorsToSkip, float redispatchLimitsPercentage) {
         List<Generator> redispatchableGenerators = new ArrayList<Generator>();
         for (Generator generator : network.getGenerators()) {
-            if ( isRedispatchable(generator, redispatchLimitsPercentage) ) {
-                if ( generatorsToSkip != null ) { // check if there are generators to skip
+            if (isRedispatchable(generator, redispatchLimitsPercentage)) {
+                if (generatorsToSkip != null) { // check if there are generators to skip
                     if (!Arrays.asList(generatorsToSkip).contains(generator.getId())) { // check if this generator have to be skipped
                         redispatchableGenerators.add(generator);
                     }
@@ -48,9 +48,9 @@ public class RedispatchUtils {
     public static List<Generator> filterRedispatchableGenerators(Network network, String[] generatorsToUse, float redispatchLimitsPercentage) {
         List<Generator> redispatchableGenerators = new ArrayList<Generator>();
         for (Generator generator : network.getGenerators()) {
-            if ( isRedispatchable(generator, redispatchLimitsPercentage) ) {
-                if ( generatorsToUse != null ) { // check if there are generators to use
-                    if ( Arrays.asList(generatorsToUse).contains(generator.getId()) ) { // check if this generator can be used
+            if (isRedispatchable(generator, redispatchLimitsPercentage)) {
+                if (generatorsToUse != null) { // check if there are generators to use
+                    if (Arrays.asList(generatorsToUse).contains(generator.getId())) { // check if this generator can be used
                         redispatchableGenerators.add(generator);
                     }
                 } else {

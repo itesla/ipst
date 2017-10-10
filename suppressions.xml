@@ -6,6 +6,6 @@
 
 <suppressions>
     <suppress checks="HideUtilityClassConstructor"
-              files="/iidm/ddb/model/.*_\.java"/>
+              files="[\\/]iidm[\\/]ddb[\\/]model[\\/].*_\.java"/>
 
 </suppressions>

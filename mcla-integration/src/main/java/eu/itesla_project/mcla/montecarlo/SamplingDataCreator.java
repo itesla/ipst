@@ -90,7 +90,7 @@ public class SamplingDataCreator {
             updateSlackBusData(bus, busIndex, slackBusData);
             LOGGER.debug(busData.toString());
         }
-        if ( slackBusData.getSlackBusIndex() != -1) {
+        if (slackBusData.getSlackBusIndex() != -1) {
             BusData busData = busesData.get(slackBusData.getSlackBusIndex() - 1);
             busData.setBusType(BusData.BUS_TYPE_SLACK); // slack bus
             LOGGER.debug(busData.toString());
@@ -99,30 +99,30 @@ public class SamplingDataCreator {
     }
 
     protected void updateSlackBusData(Bus bus, Integer busIndex, SlackBusData slackBusData) {
-        if ( bus.getGenerators() == null ) {
+        if (bus.getGenerators() == null) {
             return;
         }
         //...slackbus has at least one generator connected
         for (Generator generator : bus.getGenerators()) {
-              //...which has a generator with voltage regulator on
-              if ( !generator.isVoltageRegulatorOn()) {
-                  continue;
-              }
-              //...assure the generator is the one connected to the bus (and not on the aggregated buses)
-              if ( !generator.getTerminal().getBusBreakerView().getBus().getId().equals(bus.getId()) ) {
-                  return;
-              }
-              //...candidate slackbus
-              if ( slackBusData.getSlackBusIndex() == -1 ) {
-                  slackBusData.setSlackBusIndex(busIndex);
-                  slackBusData.setSlackBusGenerator(generator);
-                  return;
-              }
-              //...choice the generator with the largest TargetP
-              if ( generator.getTargetP() > slackBusData.getSlackBusGenerator().getTargetP() ) {
-                  slackBusData.setSlackBusIndex(busIndex);
-                  slackBusData.setSlackBusGenerator(generator);
-              }
+            //...which has a generator with voltage regulator on
+            if (!generator.isVoltageRegulatorOn()) {
+                continue;
+            }
+            //...assure the generator is the one connected to the bus (and not on the aggregated buses)
+            if (!generator.getTerminal().getBusBreakerView().getBus().getId().equals(bus.getId())) {
+                return;
+            }
+            //...candidate slackbus
+            if (slackBusData.getSlackBusIndex() == -1) {
+                slackBusData.setSlackBusIndex(busIndex);
+                slackBusData.setSlackBusGenerator(generator);
+                return;
+            }
+            //...choice the generator with the largest TargetP
+            if (generator.getTargetP() > slackBusData.getSlackBusGenerator().getTargetP()) {
+                slackBusData.setSlackBusIndex(busIndex);
+                slackBusData.setSlackBusGenerator(generator);
+            }
         }
     }
 
@@ -170,13 +170,13 @@ public class SamplingDataCreator {
         // I put the loads in a specific order, the same used when producing the matrix of historical data, for the forecast errors analysis
         for (String loadId : loadsIds) {
             Load load = network.getLoad(loadId);
-            if ( load != null ) {
+            if (load != null) {
                 LoadData loadData = new LoadData(load.getId());
                 Bus loadBus = load.getTerminal().getBusBreakerView().getBus();
                 if (loadBus == null) {
                     loadBus = load.getTerminal().getBusBreakerView().getConnectableBus();
                 }
-                if ( loadBus == null ) { // it should not happen
+                if (loadBus == null) { // it should not happen
                     LOGGER.warn("Skipping load " + load.getId() + ": not connected/connectable to a bus");
                     continue;
                 }

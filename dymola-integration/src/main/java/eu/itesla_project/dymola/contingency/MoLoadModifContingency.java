@@ -27,7 +27,7 @@ public class MoLoadModifContingency extends MoContingency {
     }
 
     //TODO
-     @Override
+    @Override
     public AbstractTrippingTask toTask() {
         return null;
     }

@@ -93,7 +93,7 @@ public class TopoHistoryParser {
             handler.onHeader(substationIds, rowCount);
             int row = 0;
             List<String> line;
-            while ( (line = reader.read()) != null ) {
+            while ((line = reader.read()) != null) {
                 for (int col = 0; col < line.size(); col++) {
                     Integer newCol = colMap.get(col);
                     if (newCol != null) {
@@ -109,7 +109,7 @@ public class TopoHistoryParser {
                 row++;
             }
         }
-        LOGGER.info("Parsing done in {} ms", (System.currentTimeMillis() - start));
+        LOGGER.info("Parsing done in {} ms", System.currentTimeMillis() - start);
     }
 
 }

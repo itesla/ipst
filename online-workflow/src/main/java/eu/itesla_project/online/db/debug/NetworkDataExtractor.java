@@ -47,7 +47,7 @@ public class NetworkDataExtractor {
             List<Float> generatorsActivePower = new ArrayList<Float>();
             List<Float> generatorsReactivePower = new ArrayList<Float>();
             //bus.getGenerators().forEach( (generator) -> generators.add(generator.getId()) );
-            bus.getGenerators().forEach( (generator) -> {
+            bus.getGenerators().forEach((generator) -> {
                 generators.add(generator.getId());
                 generatorsActivePower.add(generator.getTerminal().getP());
                 generatorsReactivePower.add(generator.getTerminal().getQ());
@@ -59,7 +59,7 @@ public class NetworkDataExtractor {
             List<Float> loadsActivePower = new ArrayList<Float>();
             List<Float> loadsReactivePower = new ArrayList<Float>();
             //bus.getLoads().forEach( (load) -> loads.add(load.getId()) );
-            bus.getLoads().forEach( (load) -> {
+            bus.getLoads().forEach((load) -> {
                 loads.add(load.getId());
                 loadsActivePower.add(load.getTerminal().getP());
                 loadsReactivePower.add(load.getTerminal().getQ());
@@ -87,7 +87,7 @@ public class NetworkDataExtractor {
 
             busIndex++;
         }
-        if ( slackBusData.getSlackBusIndex() != -1) {
+        if (slackBusData.getSlackBusIndex() != -1) {
             BusData busData = networkData.getBusesData().get(slackBusData.getSlackBusIndex());
             busData.setSlack(true); // slack bus
         }
@@ -95,7 +95,7 @@ public class NetworkDataExtractor {
 
     private static void extractLinesData(Network network, NetworkData networkData) {
         for (Line line : network.getLines()) {
-            if ( line.getTerminal1().getVoltageLevel().getNominalV() >= 110) {
+            if (line.getTerminal1().getVoltageLevel().getNominalV() >= 110) {
                 networkData.addLineData(new LineData(line.getId(),
                                                      (line.getTerminal1().getBusBreakerView().getBus() != null)
                                                          ? line.getTerminal1().getBusBreakerView().getBus().getId()
@@ -164,7 +164,7 @@ public class NetworkDataExtractor {
                                                            (generator.getTerminal().getBusBreakerView().getBus() != null)
                                                                        ? generator.getTerminal().getBusBreakerView().getBus().getId()
                                                                        : generator.getTerminal().getBusBreakerView().getConnectableBus().getId(),
-                                                           (generator.getTerminal().getBusBreakerView().getBus() != null),
+                                                           generator.getTerminal().getBusBreakerView().getBus() != null,
                                                            apparentPower(generator.getTerminal()),
                                                            generator.getTerminal().getP(),
                                                            generator.getTerminal().getQ(),
@@ -183,7 +183,7 @@ public class NetworkDataExtractor {
                                                  (load.getTerminal().getBusBreakerView().getBus() != null)
                                                          ? load.getTerminal().getBusBreakerView().getBus().getId()
                                                          : load.getTerminal().getBusBreakerView().getConnectableBus().getId(),
-                                                 (load.getTerminal().getBusBreakerView().getBus() != null),
+                                                 load.getTerminal().getBusBreakerView().getBus() != null,
                                                  load.getTerminal().getVoltageLevel().getNominalV(),
                                                  load.getTerminal().getP(),
                                                  load.getTerminal().getQ())
@@ -226,25 +226,25 @@ public class NetworkDataExtractor {
         }
         //...slackbus has at least one generator connected
         for (Generator generator : bus.getGenerators()) {
-              //...which has a generator with voltage regulator on
-              if (!generator.isVoltageRegulatorOn()) {
-                  continue;
-              }
-              //...assure the generator is the one connected to the bus (and not on the aggregated buses)
-              if (!generator.getTerminal().getBusBreakerView().getBus().getId().equals(bus.getId()) ) {
-                  return;
-              }
-              //...candidate slackbus
-              if ( slackBusData.getSlackBusIndex() == -1 ) {
-                  slackBusData.setSlackBusIndex(busIndex);
-                  slackBusData.setSlackBusGenerator(generator);
-                  return;
-              }
-              //...choice the generator with the largest TargetP
-              if ( generator.getTargetP() > slackBusData.getSlackBusGenerator().getTargetP() ) {
-                  slackBusData.setSlackBusIndex(busIndex);
-                  slackBusData.setSlackBusGenerator(generator);
-              }
+            //...which has a generator with voltage regulator on
+            if (!generator.isVoltageRegulatorOn()) {
+                continue;
+            }
+            //...assure the generator is the one connected to the bus (and not on the aggregated buses)
+            if (!generator.getTerminal().getBusBreakerView().getBus().getId().equals(bus.getId())) {
+                return;
+            }
+            //...candidate slackbus
+            if (slackBusData.getSlackBusIndex() == -1) {
+                slackBusData.setSlackBusIndex(busIndex);
+                slackBusData.setSlackBusGenerator(generator);
+                return;
+            }
+            //...choice the generator with the largest TargetP
+            if (generator.getTargetP() > slackBusData.getSlackBusGenerator().getTargetP()) {
+                slackBusData.setSlackBusIndex(busIndex);
+                slackBusData.setSlackBusGenerator(generator);
+            }
         }
     }
 

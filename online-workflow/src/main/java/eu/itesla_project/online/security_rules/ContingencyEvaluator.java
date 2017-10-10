@@ -104,9 +104,9 @@ public class ContingencyEvaluator {
         List<SecurityIndexType> invalidRulesIndexes = new ArrayList<SecurityIndexType>();
         boolean staticIndexUnsafe = false;
         boolean dynamicIndexUnsafe = false;
-        if ( checkRules ) {
+        if (checkRules) {
             checkRules(rules, invalidRulesIndexes, bacecaseInvalidRulesIndexes);
-            if ( "0".equals(stateId) ) {
+            if ("0".equals(stateId)) {
                 bacecaseInvalidRulesIndexes = invalidRulesIndexes; // keep for samples evaluation -> rules invalid on basecase are invalid for all samples
             }
         }
@@ -115,7 +115,7 @@ public class ContingencyEvaluator {
             boolean safe = rule.toExpression(purityThreshold).check(networkValues).isSafe();
             LOGGER.debug("{}: Result on {} network, {} state, {} contingency, {} index: safe = {}",
                     rule.getId(), networkId, stateId, contingency.getId(), rule.getId().getSecurityIndexId().getSecurityIndexType(), safe);
-            if ( safe ) {
+            if (safe) {
                 indexesResults.put(rule.getId().getSecurityIndexId().getSecurityIndexType(), StateStatus.SAFE);
             } else { // one index unsafe -> state-contingency unsafe
                 indexesResults.put(rule.getId().getSecurityIndexId().getSecurityIndexType(), StateStatus.UNSAFE);

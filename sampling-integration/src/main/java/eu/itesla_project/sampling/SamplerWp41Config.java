@@ -140,7 +140,7 @@ public class SamplerWp41Config {
     }
 
     public boolean isDebug() {
-            return debug;
+        return debug;
     }
 
     @Override

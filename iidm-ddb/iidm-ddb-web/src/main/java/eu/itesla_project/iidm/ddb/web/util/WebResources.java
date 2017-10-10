@@ -17,10 +17,10 @@ import javax.faces.context.FacesContext;
  */
 public class WebResources {
 
-   @Produces
-   @RequestScoped
-   public FacesContext produceFacesContext() {
-      return FacesContext.getCurrentInstance();
-   }
+    @Produces
+    @RequestScoped
+    public FacesContext produceFacesContext() {
+        return FacesContext.getCurrentInstance();
+    }
 
 }

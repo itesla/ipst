@@ -86,7 +86,7 @@ public class EurostagFakeNodes {
 
     //the esg nodes ids that are referenced at least once
     public Stream<String> referencedEsgIdsAsStream() {
-        return fakeNodesMap.values().stream().filter(esgId -> (countUses(esgId) > 0));
+        return fakeNodesMap.values().stream().filter(esgId -> countUses(esgId) > 0);
     }
 
     public Stream<String> esgIdsAsStream() {
@@ -99,7 +99,7 @@ public class EurostagFakeNodes {
 
     public VoltageLevel getVoltageLevelByEsgId(String esgId) {
         String voltageLevelId = fakeNodesMap.inverse().get(esgId);
-        return (voltageLevelId != null ? network.getVoltageLevel(voltageLevelId) : null);
+        return voltageLevelId != null ? network.getVoltageLevel(voltageLevelId) : null;
     }
 
     private String getEsgIdAndIncCounter(VoltageLevel vl) {

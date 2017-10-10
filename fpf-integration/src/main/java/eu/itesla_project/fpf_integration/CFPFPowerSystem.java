@@ -30,8 +30,8 @@ public class CFPFPowerSystem {
     public CFPFPowerSystem() {
     }
 
-    public CFPFPowerSystem( String date, String originatorName, double baseMVA, int year,
-            String season, String caseId ) {
+    public CFPFPowerSystem(String date, String originatorName, double baseMVA, int year,
+                           String season, String caseId) {
         this.date = date;
         this.originatorName = originatorName;
         this.baseMVA = baseMVA;
@@ -42,12 +42,12 @@ public class CFPFPowerSystem {
 
     public String printCFPFPowerSystem() {
         String ch = ",";
-        String out = String.format( "%s", getDate() ) + ch +
-                String.format( "%s", getOriginatorName() )  + ch +
-                String.format( "%.0f", getBaseMVA() ) + ch +
-                String.format( "%d", getYear() ) + ch +
-                String.format( "%s", getSeason() ) + ch +
-                String.format( "%s", getCaseId() );
+        String out = String.format("%s", getDate()) + ch +
+                String.format("%s", getOriginatorName()) + ch +
+                String.format("%.0f", getBaseMVA()) + ch +
+                String.format("%d", getYear()) + ch +
+                String.format("%s", getSeason()) + ch +
+                String.format("%s", getCaseId());
         return out;
     }
 

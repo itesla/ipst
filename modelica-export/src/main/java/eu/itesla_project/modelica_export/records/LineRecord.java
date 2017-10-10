@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  */
 public class LineRecord extends BranchRecord {
 
-    public LineRecord (Line line, float SNREF) {
+    public LineRecord(Line line, float SNREF) {
         super(line);
         this.line = line;
 

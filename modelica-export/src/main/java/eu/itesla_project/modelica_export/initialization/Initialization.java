@@ -305,21 +305,21 @@ public class Initialization {
                                 writerMo.append(StaticData.NEW_LINE);
                             }
                             else  {*/
-                                deviceFrom = reg.getRegName().concat(".").concat(pin);
-                                deviceTo = reg2.getRegName().concat(".").concat(conName);
+                            deviceFrom = reg.getRegName().concat(".").concat(pin);
+                            deviceTo = reg2.getRegName().concat(".").concat(conName);
 
-                                if (connectedPins.contains(deviceFrom) && connectedPins.contains(deviceTo)) {
-                                    continue;
-                                }
+                            if (connectedPins.contains(deviceFrom) && connectedPins.contains(deviceTo)) {
+                                continue;
+                            }
 
-                                writerMo.append("\t" + EurostagFixedData.CONNECT);
-                                writerMo.append(deviceFrom);
-                                connectedPins.add(deviceFrom);
-                                writerMo.append(", ");
-                                writerMo.append(deviceTo);
-                                connectedPins.add(deviceTo);
-                                writerMo.append(EurostagFixedData.ANNOT_CONNECT);
-                                writerMo.append(StaticData.NEW_LINE);
+                            writerMo.append("\t" + EurostagFixedData.CONNECT);
+                            writerMo.append(deviceFrom);
+                            connectedPins.add(deviceFrom);
+                            writerMo.append(", ");
+                            writerMo.append(deviceTo);
+                            connectedPins.add(deviceTo);
+                            writerMo.append(EurostagFixedData.ANNOT_CONNECT);
+                            writerMo.append(StaticData.NEW_LINE);
                             //}
                         }
                     }
@@ -379,7 +379,7 @@ public class Initialization {
 
         genInitModelData = new String(initializationMT.getData(StaticData.MO));
 
-        return (new GeneratorInitData(initData.getGenerator(), initData.getGeneratorRecord(), initData.getGenerator().getName(), genInitModel, genInitModelData));
+        return new GeneratorInitData(initData.getGenerator(), initData.getGeneratorRecord(), initData.getGenerator().getName(), genInitModel, genInitModelData);
     }
 
 
@@ -473,35 +473,35 @@ public class Initialization {
                         } else {
                             for (String r : regulatorInitVarsByRegulator.keySet()) {
                                 //    if(!r.equals(regName)) {
-                                    if (regulatorInitVarsByRegulator.get(r).contains(varPin)) {
-                                        if (!regInitVarsFromOtherRegs.containsKey(regName)) {
-                                            Map<String, List<String>> mapReg = new HashMap<>();
+                                if (regulatorInitVarsByRegulator.get(r).contains(varPin)) {
+                                    if (!regInitVarsFromOtherRegs.containsKey(regName)) {
+                                        Map<String, List<String>> mapReg = new HashMap<>();
+                                        List<String> pin = new ArrayList<>();
+                                        pin.add(st);
+                                        mapReg.put(r, pin);
+                                        regInitVarsFromOtherRegs.put(regName, mapReg);
+                                    } else {
+                                        if (!regInitVarsFromOtherRegs.get(regName).containsKey(r)) {
                                             List<String> pin = new ArrayList<>();
                                             pin.add(st);
-                                            mapReg.put(r, pin);
-                                            regInitVarsFromOtherRegs.put(regName, mapReg);
+                                            regInitVarsFromOtherRegs.get(regName).put(r, pin);
                                         } else {
-                                            if (!regInitVarsFromOtherRegs.get(regName).containsKey(r)) {
-                                                List<String> pin = new ArrayList<>();
-                                                    pin.add(st);
-                                                regInitVarsFromOtherRegs.get(regName).put(r, pin);
-                                            } else {
-                                                regInitVarsFromOtherRegs.get(regName).get(r).add(st);
-                                            }
-                                        }
-                                    } else {
-
-                                        String initVar = st.replace(StaticData.PIN, StaticData.INIT_VAR);
-                                        if (!regInitOtherVars.containsKey(regName)) {
-                                            List<String> initVars = new ArrayList<>();
-                                            initVars.add(initVar);
-                                            regInitOtherVars.put(regName, initVars);
-                                        } else {
-                                            if (!regInitOtherVars.get(regName).contains(initVar)) {
-                                                regInitOtherVars.get(regName).add(initVar);
-                                            }
+                                            regInitVarsFromOtherRegs.get(regName).get(r).add(st);
                                         }
                                     }
+                                } else {
+
+                                    String initVar = st.replace(StaticData.PIN, StaticData.INIT_VAR);
+                                    if (!regInitOtherVars.containsKey(regName)) {
+                                        List<String> initVars = new ArrayList<>();
+                                        initVars.add(initVar);
+                                        regInitOtherVars.put(regName, initVars);
+                                    } else {
+                                        if (!regInitOtherVars.get(regName).contains(initVar)) {
+                                            regInitOtherVars.get(regName).add(initVar);
+                                        }
+                                    }
+                                }
                                 //}
                             }
                         }
@@ -545,11 +545,11 @@ public class Initialization {
 
     public String parseName(String name) {
         String parsedName = name.trim();
-           parsedName = parsedName.replaceAll(StaticData.WHITE_SPACE, "_");
-           parsedName = parsedName.replaceAll("\\.", "_");
-           parsedName = parsedName.replaceAll("\\-", "_");
-           parsedName = parsedName.replaceAll("/", "_");
-           parsedName = parsedName.replaceAll("\\+", "_");
+        parsedName = parsedName.replaceAll(StaticData.WHITE_SPACE, "_");
+        parsedName = parsedName.replaceAll("\\.", "_");
+        parsedName = parsedName.replaceAll("\\-", "_");
+        parsedName = parsedName.replaceAll("/", "_");
+        parsedName = parsedName.replaceAll("\\+", "_");
         return parsedName;
     }
 

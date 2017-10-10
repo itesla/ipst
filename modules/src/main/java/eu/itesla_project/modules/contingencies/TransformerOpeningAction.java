@@ -33,13 +33,13 @@ public class TransformerOpeningAction implements ActionElement {
     }
 
 
-    public TransformerOpeningAction(String transformerId, Number implementationTime, Number achievmentIndex ) {
+    public TransformerOpeningAction(String transformerId, Number implementationTime, Number achievmentIndex) {
         this.equipmentId = transformerId;
         this.implementationTime = implementationTime;
         this.achievmentIndex = achievmentIndex;
     }
 
-    public TransformerOpeningAction(String lineId, String substationId, Number implementationTime, Number achievmentIndex ) {
+    public TransformerOpeningAction(String lineId, String substationId, Number implementationTime, Number achievmentIndex) {
         this.equipmentId = lineId;
         this.substationId = substationId;
         this.implementationTime = implementationTime;

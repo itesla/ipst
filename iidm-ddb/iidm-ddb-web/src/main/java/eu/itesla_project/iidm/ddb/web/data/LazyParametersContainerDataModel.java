@@ -30,11 +30,11 @@ public class LazyParametersContainerDataModel extends LazyDataModel<ParametersCo
 
 
 
-   public LazyParametersContainerDataModel( DDBManager pmanager) {
-       this.pmanager = pmanager;
-       setPageSize(10);
-       setRowCount(pmanager.findParametersContainerAllCount());
-   }
+    public LazyParametersContainerDataModel(DDBManager pmanager) {
+        this.pmanager = pmanager;
+        setPageSize(10);
+        setRowCount(pmanager.findParametersContainerAllCount());
+    }
 
     @Override
     public int getRowCount() {
@@ -51,9 +51,6 @@ public class LazyParametersContainerDataModel extends LazyDataModel<ParametersCo
         return object.getDdbId();
     }
 
-
-
-
     @Override
     public List<ParametersContainer> load(int first, int pageSize,
             List<SortMeta> multiSortMeta, Map<String, String> filters) {
@@ -66,7 +63,5 @@ public class LazyParametersContainerDataModel extends LazyDataModel<ParametersCo
         List<ParametersContainer> res = pmanager.findParametersContainerAllMaxResults(first, pageSize);
         return res;
     }
-
-
 
 }

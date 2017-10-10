@@ -10,17 +10,16 @@ import java.math.BigInteger;
 import java.util.Collection;
 
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 public interface Zone {
 
-     String getName();
+    String getName();
 
-     BigInteger getNumber();
+    BigInteger getNumber();
 
-     Collection<VoltageLevel> getVoltageLevels();
+    Collection<VoltageLevel> getVoltageLevels();
 
-     String getDescription();
+    String getDescription();
 
 }

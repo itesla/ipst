@@ -164,7 +164,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
                         new InputFile(wp43ConfigsZipFileName, ARCHIVE_UNZIP),
                         new InputFile(DDB_DICT_GENS_CSV))
                 .subCommand()
-                .program(EUSTAG_CPT)
+                .program(config.getEurostagCptCommandName())
                 .args("-s", FAULT_SEQ_FILE_NAME, PRE_FAULT_SAC_FILE_NAME)
                 .timeout(config.getSimTimeout())
                 .add()
@@ -306,7 +306,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
 
     private void writeScenarios(Domain domain, List<Contingency> contingencies, OutputStream os) throws IOException {
         GenericArchive archive = new EurostagScenario(parameters, config).writeFaultSeqArchive(domain, contingencies, network, dictionary,
-                faultNum -> FAULT_SEQ_FILE_NAME.replace(Command.EXECUTION_NUMBER_PATTERN, Integer.toString(faultNum)));
+            faultNum -> FAULT_SEQ_FILE_NAME.replace(Command.EXECUTION_NUMBER_PATTERN, Integer.toString(faultNum)));
         archive.as(ZipExporter.class).exportTo(os);
     }
 
@@ -392,7 +392,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
             EurostagUtil.searchErrorMessage(workingDir.resolve(FAULT_OUT_GZ_FILE_NAME.replace(Command.EXECUTION_NUMBER_PATTERN, Integer.toString(i))), result.getMetrics(), i);
         }
 
-        LOGGER.trace("{} security indexes files read in {} ms", files, (System.currentTimeMillis() - start));
+        LOGGER.trace("{} security indexes files read in {} ms", files, System.currentTimeMillis() - start);
     }
 
     private static EurostagDictionary getDictionary(Map<String, Object> context) {

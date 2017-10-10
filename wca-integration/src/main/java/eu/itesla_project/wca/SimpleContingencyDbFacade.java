@@ -114,9 +114,9 @@ public class SimpleContingencyDbFacade implements ContingencyDbFacade {
                         network.getId(), limitViolation.getLimitType(), limitViolation.getSubjectId());
             return preventiveActions;
         }
-        for ( ActionsContingenciesAssociation association : contingenciesActionsDbClient.getActionsCtgAssociationsByConstraint(limitViolation.getSubjectId(),
-                                                                                                                               ConstraintType.BRANCH_OVERLOAD) ) {
-            if ( !association.getContingenciesId().isEmpty() ) { // getting only actions not associated to a contingency
+        for (ActionsContingenciesAssociation association : contingenciesActionsDbClient.getActionsCtgAssociationsByConstraint(limitViolation.getSubjectId(),
+                                                                                                                               ConstraintType.BRANCH_OVERLOAD)) {
+            if (!association.getContingenciesId().isEmpty()) { // getting only actions not associated to a contingency
                 continue;
             }
             for (String actionId : association.getActionsId()) {

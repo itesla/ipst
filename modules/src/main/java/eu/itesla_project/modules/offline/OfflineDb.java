@@ -48,10 +48,10 @@ public interface OfflineDb extends AutoCloseable {
         }
     };
 
-    Predicate<HistoDbNetworkAttributeId> BRANCH_ATTRIBUTE_FILTER = attributeId -> (attributeId.getSide() != null
+    Predicate<HistoDbNetworkAttributeId> BRANCH_ATTRIBUTE_FILTER = attributeId -> attributeId.getSide() != null
             && (attributeId.getAttributeType() == HistoDbAttr.P
             || attributeId.getAttributeType() == HistoDbAttr.Q
-            || attributeId.getAttributeType() == HistoDbAttr.V));
+            || attributeId.getAttributeType() == HistoDbAttr.V);
 
     Predicate<HistoDbNetworkAttributeId> ACTIVE_POWER_ATTRIBUTE_FILTER = attributeId -> attributeId.getAttributeType() == HistoDbAttr.P;
 

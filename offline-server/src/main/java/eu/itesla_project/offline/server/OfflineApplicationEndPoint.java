@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
     WorkflowRemovalMessageEncoder.class,
     WorkflowStatusMessageEncoder.class,
 })
+@SuppressWarnings("checkstyle:indentation")
 public class OfflineApplicationEndPoint {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OfflineApplicationEndPoint.class);
