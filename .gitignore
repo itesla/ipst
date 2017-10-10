@@ -55,3 +55,5 @@
 
 # iPST compilation settings
 install.cfg
+/.project
+/.settings/

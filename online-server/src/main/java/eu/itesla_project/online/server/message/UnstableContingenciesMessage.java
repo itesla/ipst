@@ -8,8 +8,6 @@ package eu.itesla_project.online.server.message;
 
 import javax.json.stream.JsonGenerator;
 
-import com.google.gson.Gson;
-
 import eu.itesla_project.online.UnstableContingenciesSynthesis;
 
 /**
@@ -32,8 +30,7 @@ public class UnstableContingenciesMessage extends Message<UnstableContingenciesS
 
     @Override
     public String toJson() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
+        return writeValueAsString(this);
     }
 
     @Override
