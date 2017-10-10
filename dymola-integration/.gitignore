@@ -1,8 +1,5 @@
 /install
 dymola_integration_binaries.zip
-/.classpath
-<<<<<<< HEAD
-=======
-/.settings/
->>>>>>> refs/heads/master
-/.project
+.classpath
+.settings
+.project
