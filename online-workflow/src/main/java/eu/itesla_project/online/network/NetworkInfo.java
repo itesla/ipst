@@ -12,8 +12,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.VoltageLevel;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.VoltageLevel;
 
 /**
  *

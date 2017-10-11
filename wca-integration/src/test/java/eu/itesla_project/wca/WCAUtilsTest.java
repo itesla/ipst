@@ -33,19 +33,19 @@ import org.junit.Test;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 
-import eu.itesla_project.commons.util.StringToIntMapper;
-import eu.itesla_project.contingency.BranchContingency;
-import eu.itesla_project.contingency.Contingency;
-import eu.itesla_project.contingency.ContingencyElement;
-import eu.itesla_project.contingency.ContingencyImpl;
-import eu.itesla_project.commons.datasource.MemDataSource;
+import com.powsybl.commons.util.StringToIntMapper;
+import com.powsybl.contingency.BranchContingency;
+import com.powsybl.contingency.Contingency;
+import com.powsybl.contingency.ContingencyElement;
+import com.powsybl.contingency.ContingencyImpl;
+import com.powsybl.commons.datasource.MemDataSource;
 import eu.itesla_project.iidm.export.ampl.AmplSubset;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.StateManager;
-import eu.itesla_project.iidm.network.test.NetworkTest1Factory;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.StateManager;
+import com.powsybl.iidm.network.test.NetworkTest1Factory;
 import eu.itesla_project.modules.wca.WCAClusterNum;
-import eu.itesla_project.security.LimitViolation;
-import eu.itesla_project.security.LimitViolationType;
+import com.powsybl.security.LimitViolation;
+import com.powsybl.security.LimitViolationType;
 
 /**
  *

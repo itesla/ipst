@@ -8,8 +8,8 @@ package eu.itesla_project.dymola.contingency;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.contingency.*;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.contingency.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

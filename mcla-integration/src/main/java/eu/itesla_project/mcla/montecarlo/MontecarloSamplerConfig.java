@@ -7,8 +7,8 @@
  */
 package eu.itesla_project.mcla.montecarlo;
 
-import eu.itesla_project.commons.config.ModuleConfig;
-import eu.itesla_project.commons.config.PlatformConfig;
+import com.powsybl.commons.config.ModuleConfig;
+import com.powsybl.commons.config.PlatformConfig;
 import java.nio.file.Path;
 import java.util.Objects;
 

@@ -6,13 +6,13 @@
  */
 package eu.itesla_project.offline;
 
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.loadflow.api.LoadFlow;
-import eu.itesla_project.loadflow.api.LoadFlowParameters;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.loadflow.LoadFlow;
+import com.powsybl.loadflow.LoadFlowParameters;
 import eu.itesla_project.modules.Optimizer;
 import eu.itesla_project.modules.sampling.Sampler;
-import eu.itesla_project.simulation.ImpactAnalysis;
-import eu.itesla_project.simulation.Stabilization;
+import com.powsybl.simulation.ImpactAnalysis;
+import com.powsybl.simulation.Stabilization;
 
 /**
  *

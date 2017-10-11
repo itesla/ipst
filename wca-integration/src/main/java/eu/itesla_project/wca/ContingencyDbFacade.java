@@ -8,8 +8,8 @@
 package eu.itesla_project.wca;
 
 import eu.itesla_project.modules.contingencies.Action;
-import eu.itesla_project.contingency.Contingency;
-import eu.itesla_project.security.LimitViolation;
+import com.powsybl.contingency.Contingency;
+import com.powsybl.security.LimitViolation;
 
 import java.util.List;
 

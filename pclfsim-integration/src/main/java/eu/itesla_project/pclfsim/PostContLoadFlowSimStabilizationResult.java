@@ -7,9 +7,9 @@
 package eu.itesla_project.pclfsim;
 
 import com.google.common.collect.ImmutableMap;
-import eu.itesla_project.simulation.SimulationState;
-import eu.itesla_project.simulation.StabilizationResult;
-import eu.itesla_project.simulation.StabilizationStatus;
+import com.powsybl.simulation.SimulationState;
+import com.powsybl.simulation.StabilizationResult;
+import com.powsybl.simulation.StabilizationStatus;
 
 import java.util.Map;
 import java.util.Objects;

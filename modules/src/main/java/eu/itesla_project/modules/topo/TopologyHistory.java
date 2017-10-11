@@ -8,8 +8,8 @@ package eu.itesla_project.modules.topo;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import eu.itesla_project.commons.jaxb.IntervalAdapter;
-import eu.itesla_project.iidm.network.*;
+import com.powsybl.commons.jaxb.IntervalAdapter;
+import com.powsybl.iidm.network.*;
 import org.joda.time.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

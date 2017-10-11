@@ -6,9 +6,9 @@
  */
 package eu.itesla_project.modules.rules;
 
-import eu.itesla_project.commons.Versionable;
+import com.powsybl.commons.Versionable;
 import eu.itesla_project.modules.offline.OfflineDb;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexId;
+import com.powsybl.simulation.securityindexes.SecurityIndexId;
 
 import java.util.*;
 

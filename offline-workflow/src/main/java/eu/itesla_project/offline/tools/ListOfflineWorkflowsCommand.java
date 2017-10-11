@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.offline.tools;
 
-import eu.itesla_project.commons.tools.Command;
+import com.powsybl.tools.Command;
 import static eu.itesla_project.offline.tools.Themes.OFFLINE_APPLICATION_REMOTE_CONTROL;
 import org.apache.commons.cli.Options;
 

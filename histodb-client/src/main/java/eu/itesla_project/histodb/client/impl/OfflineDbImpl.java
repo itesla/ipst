@@ -8,12 +8,12 @@ package eu.itesla_project.histodb.client.impl;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
-import eu.itesla_project.commons.net.ConnectionParameters;
-import eu.itesla_project.iidm.network.Country;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.commons.net.ConnectionParameters;
+import com.powsybl.iidm.network.Country;
+import com.powsybl.iidm.network.Network;
 import eu.itesla_project.modules.offline.*;
-import eu.itesla_project.simulation.securityindexes.SecurityIndex;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexId;
+import com.powsybl.simulation.securityindexes.SecurityIndex;
+import com.powsybl.simulation.securityindexes.SecurityIndexId;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;

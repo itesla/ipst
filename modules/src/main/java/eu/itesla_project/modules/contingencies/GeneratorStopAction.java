@@ -6,8 +6,8 @@
  */
 package eu.itesla_project.modules.contingencies;
 
-import eu.itesla_project.contingency.tasks.GeneratorTripping;
-import eu.itesla_project.contingency.tasks.ModificationTask;
+import com.powsybl.contingency.tasks.GeneratorTripping;
+import com.powsybl.contingency.tasks.ModificationTask;
 
 /**
  * @author Quinary <itesla@quinary.com>

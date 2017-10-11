@@ -6,10 +6,10 @@
  */
 package eu.itesla_project.modules.topo;
 
-import eu.itesla_project.commons.config.PlatformConfig;
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.iidm.network.Identifiable;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.commons.config.PlatformConfig;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.iidm.network.Identifiable;
+import com.powsybl.iidm.network.Network;
 import eu.itesla_project.modules.histo.HistoDbClient;
 import org.joda.time.Interval;
 import org.slf4j.Logger;

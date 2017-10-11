@@ -6,12 +6,12 @@
  */
 package eu.itesla_project.iidm.ddb.eurostag_imp_exp;
 
-import eu.itesla_project.commons.io.CacheManager;
-import eu.itesla_project.commons.config.PlatformConfig;
-import eu.itesla_project.iidm.network.Generator;
-import eu.itesla_project.iidm.network.Identifiable;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.util.Identifiables;
+import com.powsybl.commons.io.CacheManager;
+import com.powsybl.commons.config.PlatformConfig;
+import com.powsybl.iidm.network.Generator;
+import com.powsybl.iidm.network.Identifiable;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.util.Identifiables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

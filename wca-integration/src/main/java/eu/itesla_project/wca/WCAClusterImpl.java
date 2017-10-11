@@ -11,7 +11,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
-import eu.itesla_project.contingency.Contingency;
+import com.powsybl.contingency.Contingency;
 import eu.itesla_project.modules.wca.WCACluster;
 import eu.itesla_project.modules.wca.WCAClusterNum;
 

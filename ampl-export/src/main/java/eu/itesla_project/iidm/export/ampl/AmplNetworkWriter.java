@@ -7,15 +7,15 @@
  */
 package eu.itesla_project.iidm.export.ampl;
 
-import eu.itesla_project.commons.util.StringToIntMapper;
-import eu.itesla_project.commons.datasource.DataSource;
-import eu.itesla_project.commons.io.table.Column;
-import eu.itesla_project.commons.io.table.TableFormatter;
+import com.powsybl.commons.util.StringToIntMapper;
+import com.powsybl.commons.datasource.DataSource;
+import com.powsybl.commons.io.table.Column;
+import com.powsybl.commons.io.table.TableFormatter;
 import eu.itesla_project.iidm.export.ampl.util.AmplDatTableFormatter;
-import eu.itesla_project.iidm.network.*;
-import eu.itesla_project.iidm.network.CurrentLimits.TemporaryLimit;
-import eu.itesla_project.iidm.network.util.ConnectedComponents;
-import eu.itesla_project.iidm.network.util.SV;
+import com.powsybl.iidm.network.*;
+import com.powsybl.iidm.network.CurrentLimits.TemporaryLimit;
+import com.powsybl.iidm.network.util.ConnectedComponents;
+import com.powsybl.iidm.network.util.SV;
 import eu.itesla_project.merge.MergeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

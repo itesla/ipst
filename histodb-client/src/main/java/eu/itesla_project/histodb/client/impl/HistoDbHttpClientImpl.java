@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.histodb.client.impl;
 
-import eu.itesla_project.commons.io.ForwardingInputStream;
+import com.powsybl.commons.io.ForwardingInputStream;
 import eu.itesla_project.modules.histo.cache.HistoDbCache;
 import org.apache.commons.io.input.TeeInputStream;
 import org.apache.http.HttpHost;

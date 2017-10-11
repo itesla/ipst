@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import eu.itesla_project.iidm.ddb.model.SimulatorInst;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
-import eu.itesla_project.iidm.network.ShuntCompensator;
+import com.powsybl.iidm.network.ShuntCompensator;
 import eu.itesla_project.modelica_export.ModExportContext;
 import eu.itesla_project.modelica_export.ModelicaRecord;
 import eu.itesla_project.modelica_export.util.IIDMParameter;

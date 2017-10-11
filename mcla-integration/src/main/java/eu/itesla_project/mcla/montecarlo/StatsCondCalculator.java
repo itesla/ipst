@@ -7,8 +7,8 @@
  */
 package eu.itesla_project.mcla.montecarlo;
 
-import eu.itesla_project.computation.*;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.computation.*;
+import com.powsybl.iidm.network.Network;
 import eu.itesla_project.mcla.NetworkUtils;
 import eu.itesla_project.mcla.montecarlo.data.SamplingNetworkData;
 import eu.itesla_project.modules.mcla.ForecastErrorsDataStorage;

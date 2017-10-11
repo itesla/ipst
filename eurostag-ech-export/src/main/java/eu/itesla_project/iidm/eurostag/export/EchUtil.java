@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.iidm.eurostag.export;
 
-import eu.itesla_project.iidm.network.*;
+import com.powsybl.iidm.network.*;
 
 import java.util.Collections;
 import java.util.HashSet;

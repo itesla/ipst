@@ -6,8 +6,8 @@
  */
 package eu.itesla_project.modules.optimizer;
 
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.contingency.Contingency;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.contingency.Contingency;
 
 /**
  *

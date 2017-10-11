@@ -26,7 +26,7 @@ import org.supercsv.prefs.CsvPreference;
 
 import com.google.common.collect.ArrayTable;
 
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.iidm.network.Network;
 import eu.itesla_project.sampling.util.Utils;
 
 /**

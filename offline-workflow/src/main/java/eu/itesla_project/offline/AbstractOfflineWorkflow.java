@@ -6,10 +6,10 @@
  */
 package eu.itesla_project.offline;
 
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.loadflow.api.LoadFlowFactory;
-import eu.itesla_project.loadflow.api.LoadFlowParameters;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.loadflow.LoadFlowFactory;
+import com.powsybl.loadflow.LoadFlowParameters;
 import eu.itesla_project.merge.MergeOptimizerFactory;
 import eu.itesla_project.merge.MergeUtil;
 import eu.itesla_project.cases.CaseRepository;
@@ -22,7 +22,7 @@ import eu.itesla_project.modules.rules.RuleAttributeSet;
 import eu.itesla_project.modules.rules.RuleId;
 import eu.itesla_project.modules.rules.RulesBuildListener;
 import eu.itesla_project.modules.rules.RulesBuilder;
-import eu.itesla_project.simulation.SimulatorFactory;
+import com.powsybl.simulation.SimulatorFactory;
 import eu.itesla_project.modules.validation.ValidationDb;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;

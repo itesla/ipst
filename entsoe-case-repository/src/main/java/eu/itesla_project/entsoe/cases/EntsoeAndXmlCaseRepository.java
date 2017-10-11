@@ -7,10 +7,10 @@
 package eu.itesla_project.entsoe.cases;
 
 import eu.itesla_project.cases.CaseRepository;
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.commons.datasource.GenericReadOnlyDataSource;
-import eu.itesla_project.commons.datasource.ReadOnlyDataSourceFactory;
-import eu.itesla_project.iidm.import_.Importers;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.commons.datasource.GenericReadOnlyDataSource;
+import com.powsybl.commons.datasource.ReadOnlyDataSourceFactory;
+import com.powsybl.iidm.import_.Importers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

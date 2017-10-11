@@ -15,9 +15,9 @@ import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
 import eu.itesla_project.cases.CaseType;
-import eu.itesla_project.iidm.network.Country;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.NetworkFactory;
+import com.powsybl.iidm.network.Country;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.NetworkFactory;
 import eu.itesla_project.modules.contingencies.ActionParameters;
 import eu.itesla_project.modules.online.OnlineDb;
 import eu.itesla_project.modules.online.OnlineProcess;
@@ -30,8 +30,8 @@ import eu.itesla_project.modules.online.OnlineWorkflowWcaResults;
 import eu.itesla_project.modules.online.StateProcessingStatus;
 import eu.itesla_project.modules.online.TimeHorizon;
 import eu.itesla_project.modules.optimizer.CCOFinalStatus;
-import eu.itesla_project.security.LimitViolation;
-import eu.itesla_project.security.LimitViolationType;
+import com.powsybl.security.LimitViolation;
+import com.powsybl.security.LimitViolationType;
 
 public class OnlineDbMock implements OnlineDb {
 

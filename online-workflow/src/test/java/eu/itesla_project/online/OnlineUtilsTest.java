@@ -6,10 +6,10 @@
  */
 package eu.itesla_project.online;
 
-import eu.itesla_project.contingency.Contingency;
-import eu.itesla_project.contingency.ContingencyImpl;
-import eu.itesla_project.security.LimitViolationType;
-import eu.itesla_project.simulation.securityindexes.SecurityIndex;
+import com.powsybl.contingency.Contingency;
+import com.powsybl.contingency.ContingencyImpl;
+import com.powsybl.security.LimitViolationType;
+import com.powsybl.simulation.securityindexes.SecurityIndex;
 import org.junit.Test;
 import org.mockito.Mockito;
 

@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.offline.db.mmap;
 
-import eu.itesla_project.commons.io.mmap.MemoryMapFileMock;
+import com.powsybl.commons.io.mmap.MemoryMapFileMock;
 import eu.itesla_project.offline.db.AbstractOfflineDbTest;
 import org.junit.Test;
 

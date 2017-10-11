@@ -7,14 +7,14 @@
 package eu.itesla_project.modules.rules;
 
 import com.google.auto.service.AutoService;
-import eu.itesla_project.commons.tools.Command;
-import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.commons.tools.ToolRunningContext;
+import com.powsybl.tools.Command;
+import com.powsybl.tools.Tool;
+import com.powsybl.tools.ToolRunningContext;
 import eu.itesla_project.modules.offline.MetricsDb;
 import eu.itesla_project.modules.offline.OfflineConfig;
 import eu.itesla_project.modules.offline.OfflineDb;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexId;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.securityindexes.SecurityIndexId;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 import org.apache.commons.cli.CommandLine;
 
 /**

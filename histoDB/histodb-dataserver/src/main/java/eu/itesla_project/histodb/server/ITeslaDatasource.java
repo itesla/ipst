@@ -15,7 +15,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-import eu.itesla_project.iidm.network.*;
+import com.powsybl.iidm.network.*;
 import eu.itesla_project.modules.histo.HistoDbAttributeId;
 import eu.itesla_project.modules.histo.IIDM2DB;
 import org.json.JSONArray;

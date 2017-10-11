@@ -6,14 +6,14 @@
  */
 package eu.itesla_project.merge;
 
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.iidm.network.Country;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.VoltageLevel;
-import eu.itesla_project.loadflow.api.LoadFlow;
-import eu.itesla_project.loadflow.api.LoadFlowFactory;
-import eu.itesla_project.loadflow.api.LoadFlowParameters;
-import eu.itesla_project.loadflow.api.LoadFlowResult;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.iidm.network.Country;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.VoltageLevel;
+import com.powsybl.loadflow.LoadFlow;
+import com.powsybl.loadflow.LoadFlowFactory;
+import com.powsybl.loadflow.LoadFlowParameters;
+import com.powsybl.loadflow.LoadFlowResult;
 import eu.itesla_project.cases.CaseRepository;
 import eu.itesla_project.cases.CaseType;
 import org.joda.time.DateTime;

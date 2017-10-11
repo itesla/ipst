@@ -10,8 +10,8 @@ package eu.itesla_project.modules.test;
 import java.nio.file.Path;
 import java.util.Objects;
 
-import eu.itesla_project.commons.config.ModuleConfig;
-import eu.itesla_project.commons.config.PlatformConfig;
+import com.powsybl.commons.config.ModuleConfig;
+import com.powsybl.commons.config.PlatformConfig;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClientFactory;
 

@@ -7,8 +7,8 @@
 package eu.itesla_project.iidm.actions_contingencies.xml.test;
 
 import eu.itesla_project.iidm.actions_contingencies.xml.XmlFileContingenciesAndActionsDatabaseClient;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.test.PhaseShifterTestCaseFactory;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.test.PhaseShifterTestCaseFactory;
 import eu.itesla_project.modules.contingencies.Action;
 import eu.itesla_project.modules.contingencies.ActionElement;
 import eu.itesla_project.modules.contingencies.ActionElementType;

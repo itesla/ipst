@@ -8,9 +8,9 @@ package eu.itesla_project.modelica_export.records;
 
 import eu.itesla_project.iidm.ddb.model.SimulatorInst;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
-import eu.itesla_project.iidm.network.Bus;
-import eu.itesla_project.iidm.network.Equipments;
-import eu.itesla_project.iidm.network.Line;
+import com.powsybl.iidm.network.Bus;
+import com.powsybl.iidm.network.Equipments;
+import com.powsybl.iidm.network.Line;
 import eu.itesla_project.modelica_export.ModExportContext;
 import eu.itesla_project.modelica_export.util.StaticData;
 import eu.itesla_project.modelica_export.util.eurostag.EurostagFixedData;

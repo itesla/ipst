@@ -7,13 +7,13 @@
 package eu.itesla_project.offline.mpi;
 
 import com.google.common.base.Joiner;
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.computation.mpi.MpiComputationManager;
-import eu.itesla_project.computation.mpi.MpiExecutorContext;
-import eu.itesla_project.computation.mpi.MpiStatistics;
-import eu.itesla_project.computation.mpi.MpiStatisticsFactory;
-import eu.itesla_project.computation.mpi.util.MultiStateNetworkAwareMpiExecutorContext;
-import eu.itesla_project.iidm.network.impl.util.MultiStateNetworkAwareExecutors;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.computation.mpi.MpiComputationManager;
+import com.powsybl.computation.mpi.MpiExecutorContext;
+import com.powsybl.computation.mpi.MpiStatistics;
+import com.powsybl.computation.mpi.MpiStatisticsFactory;
+import com.powsybl.commons.concurrent.CleanableExecutors;
+
 import eu.itesla_project.modules.offline.OfflineConfig;
 import eu.itesla_project.modules.offline.OfflineWorkflowCreationParameters;
 import eu.itesla_project.offline.LocalOfflineApplication;
@@ -126,9 +126,9 @@ public class Master {
             Path stdOutArchive = line.hasOption("stdout-archive") ? Paths.get(line.getOptionValue("stdout-archive")) : null;
             String workflowId = line.hasOption("workflow") ? line.getOptionValue("workflow") : null;
 
-            MpiExecutorContext mpiExecutorContext = new MultiStateNetworkAwareMpiExecutorContext();
+            MpiExecutorContext mpiExecutorContext = new MpiExecutorContext();
             ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
-            ExecutorService offlineExecutorService = MultiStateNetworkAwareExecutors.newSizeLimitedThreadPool("OFFLINE_POOL", 100);
+            ExecutorService offlineExecutorService = CleanableExecutors.newSizeLimitedThreadPool("OFFLINE_POOL", 100);
             try {
                 MpiStatisticsFactory statisticsFactory = statisticsFactoryClass.asSubclass(MpiStatisticsFactory.class).newInstance();
                 try (MpiStatistics statistics = statisticsFactory.create(statisticsDbDir, statisticsDbName)) {

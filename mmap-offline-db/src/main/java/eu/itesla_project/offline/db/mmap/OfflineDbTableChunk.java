@@ -6,13 +6,13 @@
  */
 package eu.itesla_project.offline.db.mmap;
 
-import eu.itesla_project.commons.io.mmap.MemoryMappedFile;
-import eu.itesla_project.commons.io.mmap.MemoryMappedFileFactory;
+import com.powsybl.commons.io.mmap.MemoryMappedFile;
+import com.powsybl.commons.io.mmap.MemoryMappedFileFactory;
 import eu.itesla_project.modules.histo.HistoDbNetworkAttributeId;
 import eu.itesla_project.modules.offline.OfflineTaskStatus;
 import eu.itesla_project.modules.offline.OfflineTaskType;
-import eu.itesla_project.simulation.securityindexes.SecurityIndex;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexId;
+import com.powsybl.simulation.securityindexes.SecurityIndex;
+import com.powsybl.simulation.securityindexes.SecurityIndexId;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

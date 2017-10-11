@@ -8,10 +8,10 @@ package eu.itesla_project.modules.rules;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.iidm.network.Network;
 import eu.itesla_project.modules.histo.HistoDbAttributeId;
 import eu.itesla_project.modules.histo.IIDM2DB;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 
 import java.util.*;
 import java.util.stream.Collectors;

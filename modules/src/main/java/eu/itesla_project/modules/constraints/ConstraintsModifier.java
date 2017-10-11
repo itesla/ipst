@@ -12,13 +12,13 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.itesla_project.iidm.network.Branch;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.StateManager;
-import eu.itesla_project.iidm.network.VoltageLevel;
-import eu.itesla_project.security.LimitViolation;
-import eu.itesla_project.security.LimitViolationFilter;
-import eu.itesla_project.security.Security;
+import com.powsybl.iidm.network.Branch;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.StateManager;
+import com.powsybl.iidm.network.VoltageLevel;
+import com.powsybl.security.LimitViolation;
+import com.powsybl.security.LimitViolationFilter;
+import com.powsybl.security.Security;
 
 /**
  *

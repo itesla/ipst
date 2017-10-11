@@ -6,9 +6,9 @@
  */
 package eu.itesla_project.modules.topo;
 
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.commons.Versionable;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.commons.Versionable;
 import eu.itesla_project.modules.histo.HistoDbClient;
 import org.joda.time.Interval;
 

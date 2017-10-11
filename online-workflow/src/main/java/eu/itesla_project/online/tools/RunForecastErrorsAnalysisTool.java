@@ -8,10 +8,10 @@ package eu.itesla_project.online.tools;
 
 import com.google.auto.service.AutoService;
 import eu.itesla_project.cases.CaseType;
-import eu.itesla_project.commons.tools.Command;
-import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.commons.tools.ToolRunningContext;
-import eu.itesla_project.iidm.network.Country;
+import com.powsybl.tools.Command;
+import com.powsybl.tools.Tool;
+import com.powsybl.tools.ToolRunningContext;
+import com.powsybl.iidm.network.Country;
 import eu.itesla_project.modules.online.TimeHorizon;
 import eu.itesla_project.offline.forecast_errors.ForecastErrorsAnalysis;
 import eu.itesla_project.offline.forecast_errors.ForecastErrorsAnalysisConfig;

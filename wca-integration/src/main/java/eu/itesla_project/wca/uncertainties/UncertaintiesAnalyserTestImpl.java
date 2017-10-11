@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.wca.uncertainties;
 
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.iidm.network.Network;
 import eu.itesla_project.modules.wca.StochasticInjection;
 import eu.itesla_project.modules.wca.Uncertainties;
 import eu.itesla_project.modules.wca.UncertaintiesAnalyser;

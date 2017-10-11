@@ -11,8 +11,8 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import eu.itesla_project.eurostag.network.Esg8charName;
 import eu.itesla_project.eurostag.network.EsgBranchName;
-import eu.itesla_project.iidm.network.*;
-import eu.itesla_project.iidm.network.util.Identifiables;
+import com.powsybl.iidm.network.*;
+import com.powsybl.iidm.network.util.Identifiables;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
