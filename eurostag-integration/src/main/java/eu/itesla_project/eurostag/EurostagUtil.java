@@ -10,9 +10,9 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import eu.itesla_project.commons.io.BufferedLineParser;
-import eu.itesla_project.computation.ExecutionError;
-import eu.itesla_project.computation.ExecutionReport;
+import com.powsybl.commons.io.BufferedLineParser;
+import com.powsybl.computation.ExecutionError;
+import com.powsybl.computation.ExecutionReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

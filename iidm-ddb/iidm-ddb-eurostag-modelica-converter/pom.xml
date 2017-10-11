@@ -117,7 +117,7 @@
         <dependency>
             <groupId>eu.itesla_project</groupId>
             <artifactId>EU2Mod_MB</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>${extends_ipst.version}</version>
         </dependency>
 
         <!-- Test dependencies -->

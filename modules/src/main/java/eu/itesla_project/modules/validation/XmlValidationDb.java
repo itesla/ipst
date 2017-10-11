@@ -6,11 +6,11 @@
  */
 package eu.itesla_project.modules.validation;
 
-import eu.itesla_project.commons.datasource.DataSource;
-import eu.itesla_project.commons.datasource.GzFileDataSource;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.xml.NetworkXml;
-import eu.itesla_project.iidm.xml.XMLExportOptions;
+import com.powsybl.commons.datasource.DataSource;
+import com.powsybl.commons.datasource.GzFileDataSource;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.xml.NetworkXml;
+import com.powsybl.iidm.xml.XMLExportOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

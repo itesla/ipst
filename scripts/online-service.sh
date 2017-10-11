@@ -9,7 +9,7 @@
 installBinDir=$(dirname $(readlink -f $0))
 installDir=${installBinDir%/*}
 
-. $installDir/etc/itesla.conf
+. $installDir/etc/itools.conf
 
 pidFile=$HOME/.itesla_online_pid
 
@@ -71,14 +71,14 @@ clean_cache() {
     if [ -n "$pid" ]; then
         echo "cannot clean cache: online service is running ($pid)"
     else
-        if [ -n "$itesla_cache_dir" ]; then
-            echo "cleaning cache ( $itesla_cache_dir ) ..."
-            rm -r $itesla_cache_dir >> /dev/null 2>&1
-            mkdir $itesla_cache_dir >> /dev/null 2>&1
-            touch $itesla_cache_dir/dontdeleteme >> /dev/null 2>&1
+        if [ -n "$itools_cache_dir" ]; then
+            echo "cleaning cache ( $itools_cache_dir ) ..."
+            rm -r $itools_cache_dir >> /dev/null 2>&1
+            mkdir $itools_cache_dir >> /dev/null 2>&1
+            touch $itools_cache_dir/dontdeleteme >> /dev/null 2>&1
             echo "cache cleaned."
         else
-            echo "variable itesla_cache-dir not defined"
+            echo "variable itools_cache-dir not defined"
         fi
     fi
 }

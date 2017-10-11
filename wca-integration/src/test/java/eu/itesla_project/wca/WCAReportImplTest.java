@@ -28,7 +28,7 @@ import com.google.common.io.CharStreams;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 
-import eu.itesla_project.iidm.network.Country;
+import com.powsybl.iidm.network.Country;
 import eu.itesla_project.modules.rules.RuleAttributeSet;
 import eu.itesla_project.modules.rules.RuleId;
 import eu.itesla_project.modules.rules.SecurityRule;
@@ -37,10 +37,10 @@ import eu.itesla_project.modules.wca.report.WCALoadflowResult;
 import eu.itesla_project.modules.wca.report.WCAPostContingencyStatus;
 import eu.itesla_project.modules.wca.report.WCARuleViolationType;
 import eu.itesla_project.modules.wca.report.WCASecurityRuleApplication;
-import eu.itesla_project.security.LimitViolation;
-import eu.itesla_project.security.LimitViolationType;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexId;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.security.LimitViolation;
+import com.powsybl.security.LimitViolationType;
+import com.powsybl.simulation.securityindexes.SecurityIndexId;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 import eu.itesla_project.wca.report.WCAReportImpl;
 
 /**

@@ -10,9 +10,9 @@ package eu.itesla_project.modules.contingencies;
 import java.util.Collection;
 import java.util.List;
 
-import eu.itesla_project.contingency.ContingenciesProvider;
-import eu.itesla_project.contingency.Contingency;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.contingency.ContingenciesProvider;
+import com.powsybl.contingency.Contingency;
+import com.powsybl.iidm.network.Network;
 
 /**
  * Contingencies and Actions Database Client

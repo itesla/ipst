@@ -8,9 +8,9 @@ package eu.itesla_project.modelica_export;
 
 import eu.itesla_project.iidm.ddb.model.*;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
-import eu.itesla_project.iidm.network.*;
-import eu.itesla_project.iidm.network.util.Identifiables;
-import eu.itesla_project.iidm.network.util.SV;
+import com.powsybl.iidm.network.*;
+import com.powsybl.iidm.network.util.Identifiables;
+import com.powsybl.iidm.network.util.SV;
 import eu.itesla_project.modelica_export.initialization.Initialization;
 import eu.itesla_project.modelica_export.initialization.InitializationData;
 import eu.itesla_project.modelica_export.records.*;

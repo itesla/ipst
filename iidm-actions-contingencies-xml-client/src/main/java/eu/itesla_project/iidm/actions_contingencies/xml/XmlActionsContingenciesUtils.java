@@ -21,8 +21,8 @@ import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Contingency;
 import eu.itesla_project.iidm.actions_contingencies.xml.mapping.ElementaryAction;
 import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Zone;
 import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Zones;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.VoltageLevel;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.VoltageLevel;
 import eu.itesla_project.modules.contingencies.ConstraintType;
 
 
@@ -214,9 +214,9 @@ public class XmlActionsContingenciesUtils {
     }
 
 
-    public  static boolean containsContingency(String id, List<eu.itesla_project.contingency.Contingency> contingency) {
+    public  static boolean containsContingency(String id, List<com.powsybl.contingency.Contingency> contingency) {
         System.out.println(" Contingency: " + id);
-        for (eu.itesla_project.contingency.Contingency ctg : contingency) {
+        for (com.powsybl.contingency.Contingency ctg : contingency) {
             if (ctg.equals(id)) {
                 return true;
             }

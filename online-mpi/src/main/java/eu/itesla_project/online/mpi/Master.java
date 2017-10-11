@@ -6,13 +6,12 @@
  */
 package eu.itesla_project.online.mpi;
 
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.computation.mpi.MpiComputationManager;
-import eu.itesla_project.computation.mpi.MpiExecutorContext;
-import eu.itesla_project.computation.mpi.MpiStatistics;
-import eu.itesla_project.computation.mpi.MpiStatisticsFactory;
-import eu.itesla_project.computation.mpi.util.MultiStateNetworkAwareMpiExecutorContext;
-import eu.itesla_project.iidm.network.impl.util.MultiStateNetworkAwareExecutors;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.computation.mpi.MpiComputationManager;
+import com.powsybl.computation.mpi.MpiExecutorContext;
+import com.powsybl.computation.mpi.MpiStatistics;
+import com.powsybl.computation.mpi.MpiStatisticsFactory;
+import com.powsybl.commons.concurrent.CleanableExecutors;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.online.LocalOnlineApplication;
 import org.apache.commons.cli.*;
@@ -80,9 +79,9 @@ public class Master {
             int coresPerRank = Integer.parseInt(line.getOptionValue("n"));
             Path stdOutArchive = line.hasOption("o") ? Paths.get(line.getOptionValue("o")) : null;
 
-            MpiExecutorContext mpiExecutorContext = new MultiStateNetworkAwareMpiExecutorContext();
+            MpiExecutorContext mpiExecutorContext = new MpiExecutorContext();
             ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
-            ExecutorService executorService = MultiStateNetworkAwareExecutors.newCachedThreadPool();
+            ExecutorService executorService = CleanableExecutors.newCachedThreadPool();
             try {
                 MpiStatisticsFactory statisticsFactory = statisticsFactoryClass.asSubclass(MpiStatisticsFactory.class).newInstance();
                 MpiStatistics statistics = statisticsFactory.create(statisticsDbDir, statisticsDbName);

@@ -10,12 +10,12 @@ import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
 
-import eu.itesla_project.commons.config.ModuleConfig;
-import eu.itesla_project.commons.config.PlatformConfig;
-import eu.itesla_project.iidm.network.Country;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.security.LimitViolation;
-import eu.itesla_project.security.LimitViolationType;
+import com.powsybl.commons.config.ModuleConfig;
+import com.powsybl.commons.config.PlatformConfig;
+import com.powsybl.iidm.network.Country;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.security.LimitViolation;
+import com.powsybl.security.LimitViolationType;
 
 /**
  *

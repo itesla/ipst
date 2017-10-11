@@ -8,17 +8,17 @@ package eu.itesla_project.modules.test;
 
 import com.google.common.collect.Iterables;
 
-import eu.itesla_project.iidm.network.Line;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.iidm.network.Line;
+import com.powsybl.iidm.network.Network;
 import eu.itesla_project.modules.contingencies.Action;
 import eu.itesla_project.modules.contingencies.ActionPlan;
 import eu.itesla_project.modules.contingencies.ActionsContingenciesAssociation;
 import eu.itesla_project.modules.contingencies.ConstraintType;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
-import eu.itesla_project.contingency.BranchContingency;
-import eu.itesla_project.contingency.Contingency;
-import eu.itesla_project.contingency.ContingencyElement;
-import eu.itesla_project.contingency.ContingencyImpl;
+import com.powsybl.contingency.BranchContingency;
+import com.powsybl.contingency.Contingency;
+import com.powsybl.contingency.ContingencyElement;
+import com.powsybl.contingency.ContingencyImpl;
 import eu.itesla_project.modules.contingencies.Scenario;
 import eu.itesla_project.modules.contingencies.Zone;
 

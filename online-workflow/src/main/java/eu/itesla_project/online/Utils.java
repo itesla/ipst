@@ -9,11 +9,11 @@ package eu.itesla_project.online;
 import java.io.Writer;
 import java.util.*;
 
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.iidm.network.Network;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
-import eu.itesla_project.simulation.*;
-import eu.itesla_project.simulation.securityindexes.SecurityIndex;
+import com.powsybl.simulation.*;
+import com.powsybl.simulation.securityindexes.SecurityIndex;
 import net.sf.json.JSONSerializer;
 import eu.itesla_project.modules.contingencies.ActionParameters;
 import eu.itesla_project.modules.online.OnlineWorkflowResults;

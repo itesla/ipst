@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.modelica_export.records;
 
-import eu.itesla_project.iidm.network.Bus;
+import com.powsybl.iidm.network.Bus;
 
 /**
  * @author Silvia Machado <machados@aia.es>

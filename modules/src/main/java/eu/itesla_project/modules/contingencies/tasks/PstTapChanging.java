@@ -6,12 +6,12 @@
  */
 package eu.itesla_project.modules.contingencies.tasks;
 
-import eu.itesla_project.commons.ITeslaException;
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.contingency.tasks.ModificationTask;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.PhaseTapChanger;
-import eu.itesla_project.iidm.network.TwoWindingsTransformer;
+import com.powsybl.commons.PowsyblException;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.contingency.tasks.ModificationTask;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.PhaseTapChanger;
+import com.powsybl.iidm.network.TwoWindingsTransformer;
 
 import java.util.Objects;
 
@@ -33,11 +33,11 @@ public class PstTapChanging implements ModificationTask {
     public void modify(Network network, ComputationManager computationManager) {
         TwoWindingsTransformer transformer = network.getTwoWindingsTransformer(transformerId);
         if (transformer == null) {
-            throw new ITeslaException("Two windings transformer '" + transformerId + "' not found");
+            throw new PowsyblException("Two windings transformer '" + transformerId + "' not found");
         }
         PhaseTapChanger tapChanger = transformer.getPhaseTapChanger();
         if (tapChanger == null) {
-            throw new ITeslaException("Transformer " + transformerId + " is not a PST");
+            throw new PowsyblException("Transformer " + transformerId + " is not a PST");
         }
         tapChanger.setRegulationMode(PhaseTapChanger.RegulationMode.FIXED_TAP);
         tapChanger.setTapPosition(tapPosition);

@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.itesla_project.iidm.ddb.model.Internal;
-import eu.itesla_project.iidm.network.Identifiable;
+import com.powsybl.iidm.network.Identifiable;
 
 /**
  * @author Silvia Machado <machados@aia.es>

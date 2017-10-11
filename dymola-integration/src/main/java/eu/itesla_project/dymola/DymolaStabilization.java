@@ -6,11 +6,11 @@
  */
 package eu.itesla_project.dymola;
 
-import eu.itesla_project.computation.ComputationManager;
+import com.powsybl.computation.ComputationManager;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.IIDMDynamicDatabaseFactory;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.iidm.network.Network;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClient;
-import eu.itesla_project.simulation.*;
+import com.powsybl.simulation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

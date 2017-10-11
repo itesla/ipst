@@ -42,8 +42,8 @@ import eu.itesla_project.online.rest.model.Violation;
 import eu.itesla_project.online.rest.model.ViolationSynthesis;
 import eu.itesla_project.online.rest.model.WorkflowInfo;
 import eu.itesla_project.online.rest.model.WorkflowResult;
-import eu.itesla_project.security.LimitViolation;
-import eu.itesla_project.security.LimitViolationType;
+import com.powsybl.security.LimitViolation;
+import com.powsybl.security.LimitViolationType;
 
 /**
  *

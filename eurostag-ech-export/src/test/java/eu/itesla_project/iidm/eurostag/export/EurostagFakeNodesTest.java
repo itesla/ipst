@@ -6,10 +6,10 @@
  */
 package eu.itesla_project.iidm.eurostag.export;
 
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.VoltageLevel;
-import eu.itesla_project.iidm.network.test.EurostagTutorialExample1Factory;
-import eu.itesla_project.iidm.network.util.Identifiables;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.VoltageLevel;
+import com.powsybl.iidm.network.test.EurostagTutorialExample1Factory;
+import com.powsybl.iidm.network.util.Identifiables;
 import org.junit.Test;
 
 import java.io.IOException;

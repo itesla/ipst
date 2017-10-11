@@ -7,8 +7,8 @@
  */
 package eu.itesla_project.iidm.export.ampl;
 
-import eu.itesla_project.commons.util.StringToIntMapper;
-import eu.itesla_project.iidm.network.*;
+import com.powsybl.commons.util.StringToIntMapper;
+import com.powsybl.iidm.network.*;
 
 /**
  *

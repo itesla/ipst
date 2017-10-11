@@ -6,9 +6,9 @@
  */
 package eu.itesla_project.modules.redispatcher;
 
-import eu.itesla_project.iidm.network.EnergySource;
-import eu.itesla_project.iidm.network.Generator;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.iidm.network.EnergySource;
+import com.powsybl.iidm.network.Generator;
+import com.powsybl.iidm.network.Network;
 
 import java.util.*;
 

@@ -6,9 +6,9 @@
  */
 package eu.itesla_project.dymola.contingency;
 
-import eu.itesla_project.contingency.ContingencyElement;
-import eu.itesla_project.contingency.ContingencyElementType;
-import eu.itesla_project.contingency.tasks.AbstractTrippingTask;
+import com.powsybl.contingency.ContingencyElement;
+import com.powsybl.contingency.ContingencyElementType;
+import com.powsybl.contingency.tasks.AbstractTrippingTask;
 
 import java.util.Map;
 

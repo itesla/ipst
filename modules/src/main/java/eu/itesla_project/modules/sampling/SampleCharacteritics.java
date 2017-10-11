@@ -6,10 +6,10 @@
  */
 package eu.itesla_project.modules.sampling;
 
-import eu.itesla_project.iidm.network.DanglingLine;
-import eu.itesla_project.iidm.network.Generator;
-import eu.itesla_project.iidm.network.Load;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.iidm.network.DanglingLine;
+import com.powsybl.iidm.network.Generator;
+import com.powsybl.iidm.network.Load;
+import com.powsybl.iidm.network.Network;
 
 /**
  *

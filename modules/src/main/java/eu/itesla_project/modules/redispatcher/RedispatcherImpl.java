@@ -6,8 +6,8 @@
  */
 package eu.itesla_project.modules.redispatcher;
 
-import eu.itesla_project.iidm.network.Generator;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.iidm.network.Generator;
+import com.powsybl.iidm.network.Network;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

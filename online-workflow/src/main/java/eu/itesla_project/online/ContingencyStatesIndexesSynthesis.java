@@ -12,8 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import eu.itesla_project.simulation.securityindexes.SecurityIndex;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.securityindexes.SecurityIndex;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 
 
 /**

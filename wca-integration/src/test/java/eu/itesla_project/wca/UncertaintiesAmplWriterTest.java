@@ -13,12 +13,12 @@ import java.nio.charset.StandardCharsets;
 import org.joda.time.Interval;
 import org.junit.Test;
 
-import eu.itesla_project.commons.util.StringToIntMapper;
-import eu.itesla_project.commons.datasource.MemDataSource;
+import com.powsybl.commons.util.StringToIntMapper;
+import com.powsybl.commons.datasource.MemDataSource;
 import eu.itesla_project.iidm.export.ampl.AmplSubset;
 import eu.itesla_project.iidm.export.ampl.AmplUtil;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.test.NetworkTest1Factory;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.test.NetworkTest1Factory;
 import eu.itesla_project.modules.wca.Uncertainties;
 import eu.itesla_project.modules.wca.UncertaintiesAnalyser;
 import eu.itesla_project.wca.uncertainties.UncertaintiesAmplWriter;

@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.modules.validation;
 
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.iidm.network.Network;
 
 /**
  *

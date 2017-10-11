@@ -8,8 +8,8 @@ package eu.itesla_project.eurostag;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
-import eu.itesla_project.commons.config.InMemoryPlatformConfig;
-import eu.itesla_project.commons.config.MapModuleConfig;
+import com.powsybl.commons.config.InMemoryPlatformConfig;
+import com.powsybl.commons.config.MapModuleConfig;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

@@ -9,7 +9,7 @@
 installBinDir=$(dirname $(readlink -f $0))
 installDir=${installBinDir%/*}
 
-. $installDir/etc/itesla.conf
+. $installDir/etc/itools.conf
 
 pidFile=$HOME/.itesla_offline_pid
 

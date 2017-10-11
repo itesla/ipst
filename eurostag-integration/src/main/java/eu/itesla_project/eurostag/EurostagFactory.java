@@ -6,12 +6,12 @@
  */
 package eu.itesla_project.eurostag;
 
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.contingency.ContingenciesProvider;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.simulation.ImpactAnalysis;
-import eu.itesla_project.simulation.SimulatorFactory;
-import eu.itesla_project.simulation.Stabilization;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.contingency.ContingenciesProvider;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.simulation.ImpactAnalysis;
+import com.powsybl.simulation.SimulatorFactory;
+import com.powsybl.simulation.Stabilization;
 
 /**
  *

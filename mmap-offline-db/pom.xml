@@ -37,19 +37,22 @@
     </build>
 
     <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
+        <!-- Compilation dependencies -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>modules</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <!-- Test dependencies -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -81,13 +84,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-test</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-impl</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-impl</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

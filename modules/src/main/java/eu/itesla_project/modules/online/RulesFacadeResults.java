@@ -10,7 +10,7 @@ package eu.itesla_project.modules.online;
 import java.util.List;
 import java.util.Map;
 
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 
 /**
  *

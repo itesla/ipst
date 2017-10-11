@@ -8,9 +8,9 @@ package eu.itesla_project.modules.offline;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import eu.itesla_project.simulation.securityindexes.SecurityIndex;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexId;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.securityindexes.SecurityIndex;
+import com.powsybl.simulation.securityindexes.SecurityIndexId;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 import java.io.Serializable;
 import java.util.Set;
 

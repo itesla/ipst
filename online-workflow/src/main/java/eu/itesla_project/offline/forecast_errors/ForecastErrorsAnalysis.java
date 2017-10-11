@@ -13,9 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.itesla_project.cases.CaseRepository;
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.loadflow.api.LoadFlowFactory;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.loadflow.LoadFlowFactory;
 import eu.itesla_project.merge.MergeOptimizerFactory;
 import eu.itesla_project.merge.MergeUtil;
 import eu.itesla_project.modules.histo.HistoDbClient;

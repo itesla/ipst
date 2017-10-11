@@ -7,9 +7,9 @@
 package eu.itesla_project.iidm.ddb.eurostag_imp_exp;
 
 import com.google.common.collect.ImmutableMap;
-import eu.itesla_project.iidm.network.Bus;
-import eu.itesla_project.iidm.network.Generator;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.iidm.network.Bus;
+import com.powsybl.iidm.network.Generator;
+import com.powsybl.iidm.network.Network;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -6,9 +6,9 @@
  */
 package eu.itesla_project.dymola;
 
-import eu.itesla_project.computation.ExecutionError;
-import eu.itesla_project.computation.ExecutionReport;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.computation.ExecutionError;
+import com.powsybl.computation.ExecutionReport;
+import com.powsybl.iidm.network.Network;
 
 import java.io.BufferedWriter;
 import java.io.IOException;

@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.modules.validation;
 
-import eu.itesla_project.commons.config.PlatformConfig;
+import com.powsybl.commons.config.PlatformConfig;
 
 import java.nio.file.Path;
 

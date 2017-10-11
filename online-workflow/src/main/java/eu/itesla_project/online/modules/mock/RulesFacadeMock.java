@@ -11,15 +11,15 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 
-import eu.itesla_project.commons.config.ModuleConfig;
-import eu.itesla_project.commons.config.PlatformConfig;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.contingency.Contingency;
+import com.powsybl.commons.config.ModuleConfig;
+import com.powsybl.commons.config.PlatformConfig;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.contingency.Contingency;
 import eu.itesla_project.modules.online.OnlineRulesFacade;
 import eu.itesla_project.modules.online.RulesFacadeParameters;
 import eu.itesla_project.modules.online.RulesFacadeResults;
 import eu.itesla_project.modules.online.StateStatus;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 
 /**
  *

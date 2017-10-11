@@ -6,8 +6,8 @@
  */
 package eu.itesla_project.modules.offline;
 
-import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.commons.tools.Command;
+import com.powsybl.tools.Tool;
+import com.powsybl.tools.Command;
 import com.google.auto.service.AutoService;
 
 import java.io.Writer;
@@ -16,7 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import eu.itesla_project.commons.tools.ToolRunningContext;
+import com.powsybl.tools.ToolRunningContext;
 import org.apache.commons.cli.CommandLine;
 
 /**

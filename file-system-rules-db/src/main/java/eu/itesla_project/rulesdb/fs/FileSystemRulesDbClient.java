@@ -7,8 +7,8 @@
 package eu.itesla_project.rulesdb.fs;
 
 import eu.itesla_project.modules.rules.*;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexId;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.securityindexes.SecurityIndexId;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 
 import java.io.File;
 import java.io.IOException;

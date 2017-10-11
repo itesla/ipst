@@ -7,7 +7,7 @@
  */
 package eu.itesla_project.online.tools;
 
-import eu.itesla_project.commons.io.table.*;
+import com.powsybl.commons.io.table.*;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;

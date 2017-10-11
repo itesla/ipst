@@ -9,16 +9,16 @@ package eu.itesla_project.modules.constraints;
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.itesla_project.iidm.network.Bus;
-import eu.itesla_project.iidm.network.Country;
-import eu.itesla_project.iidm.network.Line;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.NetworkFactory;
-import eu.itesla_project.iidm.network.Substation;
-import eu.itesla_project.iidm.network.TopologyKind;
-import eu.itesla_project.iidm.network.VoltageLevel;
-import eu.itesla_project.security.LimitViolation;
-import eu.itesla_project.security.LimitViolationType;
+import com.powsybl.iidm.network.Bus;
+import com.powsybl.iidm.network.Country;
+import com.powsybl.iidm.network.Line;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.NetworkFactory;
+import com.powsybl.iidm.network.Substation;
+import com.powsybl.iidm.network.TopologyKind;
+import com.powsybl.iidm.network.VoltageLevel;
+import com.powsybl.security.LimitViolation;
+import com.powsybl.security.LimitViolationType;
 
 /**
  *

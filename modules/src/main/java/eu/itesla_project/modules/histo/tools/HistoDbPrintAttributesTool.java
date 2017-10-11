@@ -8,9 +8,9 @@ package eu.itesla_project.modules.histo.tools;
 
 import com.google.auto.service.AutoService;
 import com.google.common.io.CharStreams;
-import eu.itesla_project.commons.tools.Command;
-import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.commons.tools.ToolRunningContext;
+import com.powsybl.tools.Command;
+import com.powsybl.tools.Tool;
+import com.powsybl.tools.ToolRunningContext;
 import eu.itesla_project.modules.histo.*;
 import eu.itesla_project.modules.offline.OfflineConfig;
 import org.apache.commons.cli.CommandLine;

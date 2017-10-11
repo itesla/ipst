@@ -7,11 +7,11 @@
 package eu.itesla_project.eurostag;
 
 import com.google.common.base.Strings;
-import eu.itesla_project.contingency.Contingency;
-import eu.itesla_project.contingency.ContingencyElement;
+import com.powsybl.contingency.Contingency;
+import com.powsybl.contingency.ContingencyElement;
 import eu.itesla_project.iidm.eurostag.export.EurostagDictionary;
-import eu.itesla_project.iidm.network.*;
-import eu.itesla_project.simulation.SimulationParameters;
+import com.powsybl.iidm.network.*;
+import com.powsybl.simulation.SimulationParameters;
 import org.jboss.shrinkwrap.api.Domain;
 import org.jboss.shrinkwrap.api.GenericArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;

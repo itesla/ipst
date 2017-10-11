@@ -23,6 +23,11 @@
     <name>Worst Case Approach integration</name>
 
     <dependencies>
+        <!-- Compilation dependencies -->
+        <dependency>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-computation-local</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -41,11 +46,7 @@
             <artifactId>modules</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>computation-local</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+
 
         <!-- Test dependencies -->
         <dependency>
@@ -54,13 +55,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-impl</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-impl</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-test</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
