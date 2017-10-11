@@ -7,9 +7,9 @@
  */
 package eu.itesla_project.online;
 
-import eu.itesla_project.contingency.Contingency;
-import eu.itesla_project.security.LimitViolationType;
-import eu.itesla_project.simulation.securityindexes.SecurityIndex;
+import com.powsybl.contingency.Contingency;
+import com.powsybl.security.LimitViolationType;
+import com.powsybl.simulation.securityindexes.SecurityIndex;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;

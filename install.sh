@@ -267,15 +267,15 @@ ipst_install()
         mkdir -p "$ipst_prefix" || exit $?
         cp -Rp "$sourceDir/distribution/target/distribution-${ipst_package_version}-full/itesla"/* "$ipst_prefix" || exit $?
 
-        if [ ! -f "$ipst_prefix/etc/itesla.conf" ]; then
+        if [ ! -f "$ipst_prefix/etc/itools.conf" ]; then
             echo "**** Copying configuration files"
             mkdir -p "$ipst_prefix/etc" || exit $?
 
-            echo "#itesla_cache_dir=" >> "$ipst_prefix/etc/itesla.conf"
-            echo "#itesla_config_dir=" >> "$ipst_prefix/etc/itesla.conf"
-            echo "itesla_config_name=config" >> "$ipst_prefix/etc/itesla.conf"
-            echo "mpi_tasks=3" >> "$ipst_prefix/etc/itesla.conf"
-            echo "mpi_hosts=localhost" >> "$ipst_prefix/etc/itesla.conf"
+            echo "#itools_cache_dir=" >> "$ipst_prefix/etc/itools.conf"
+            echo "#itools_config_dir=" >> "$ipst_prefix/etc/itools.conf"
+            echo "itools_config_name=config" >> "$ipst_prefix/etc/itools.conf"
+            echo "mpi_tasks=3" >> "$ipst_prefix/etc/itools.conf"
+            echo "mpi_hosts=localhost" >> "$ipst_prefix/etc/itools.conf"
         fi
     fi
 }

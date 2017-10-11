@@ -6,18 +6,18 @@
  */
 package eu.itesla_project.modelica_export;
 
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.computation.local.LocalComputationManager;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.computation.local.LocalComputationManager;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
 import eu.itesla_project.iidm.ejbclient.EjbClientCtx;
-import eu.itesla_project.iidm.network.*;
-import eu.itesla_project.loadflow.api.LoadFlow;
-import eu.itesla_project.loadflow.api.LoadFlowFactory;
+import com.powsybl.iidm.network.*;
+import com.powsybl.loadflow.LoadFlow;
+import com.powsybl.loadflow.LoadFlowFactory;
 import eu.itesla_project.modelica_export.util.EurostagEngine;
 import eu.itesla_project.modelica_export.util.PsseEngine;
 import eu.itesla_project.modelica_export.util.SourceEngine;
 import eu.itesla_project.modelica_export.util.StaticData;
-import eu.itesla_project.loadflow.api.LoadFlowResult;
+import com.powsybl.loadflow.LoadFlowResult;
 //import eu.itesla_project.helmflow.HELMLoadFlow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

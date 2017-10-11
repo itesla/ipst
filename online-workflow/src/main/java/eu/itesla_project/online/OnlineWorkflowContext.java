@@ -6,8 +6,8 @@
  */
 package eu.itesla_project.online;
 
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.contingency.Contingency;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.contingency.Contingency;
 import eu.itesla_project.modules.online.TimeHorizon;
 
 import java.util.ArrayList;

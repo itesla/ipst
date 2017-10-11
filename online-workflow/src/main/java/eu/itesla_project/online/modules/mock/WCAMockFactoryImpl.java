@@ -6,9 +6,9 @@
  */
 package eu.itesla_project.online.modules.mock;
 
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.loadflow.api.LoadFlowFactory;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.loadflow.LoadFlowFactory;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
 import eu.itesla_project.modules.histo.HistoDbClient;
 import eu.itesla_project.modules.rules.RulesDbClient;

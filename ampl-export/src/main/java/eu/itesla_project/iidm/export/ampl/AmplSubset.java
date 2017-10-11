@@ -7,7 +7,7 @@
  */
 package eu.itesla_project.iidm.export.ampl;
 
-import eu.itesla_project.commons.util.IntCounter;
+import com.powsybl.commons.util.IntCounter;
 
 /**
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>

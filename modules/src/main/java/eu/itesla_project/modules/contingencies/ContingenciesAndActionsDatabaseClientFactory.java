@@ -9,7 +9,7 @@ package eu.itesla_project.modules.contingencies;
 
 import java.nio.file.Path;
 
-import eu.itesla_project.contingency.ContingenciesProviderFactory;
+import com.powsybl.contingency.ContingenciesProviderFactory;
 
 /**
  *

@@ -7,12 +7,12 @@
 package eu.itesla_project.offline;
 
 import com.google.common.collect.ImmutableMap;
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.StateManager;
-import eu.itesla_project.loadflow.api.LoadFlow;
-import eu.itesla_project.loadflow.api.LoadFlowFactory;
-import eu.itesla_project.loadflow.api.LoadFlowParameters;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.StateManager;
+import com.powsybl.loadflow.LoadFlow;
+import com.powsybl.loadflow.LoadFlowFactory;
+import com.powsybl.loadflow.LoadFlowParameters;
 import eu.itesla_project.merge.MergeOptimizerFactory;
 import eu.itesla_project.cases.CaseRepository;
 import eu.itesla_project.cases.CaseType;
@@ -22,7 +22,7 @@ import eu.itesla_project.modules.offline.MetricsDb;
 import eu.itesla_project.modules.offline.OfflineDb;
 import eu.itesla_project.modules.offline.OfflineWorkflowCreationParameters;
 import eu.itesla_project.modules.rules.RulesBuilder;
-import eu.itesla_project.simulation.*;
+import com.powsybl.simulation.*;
 import eu.itesla_project.modules.validation.ValidationDb;
 import org.joda.time.DateTime;
 

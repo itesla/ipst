@@ -6,9 +6,9 @@
  */
 package eu.itesla_project.modules.offline;
 
-import eu.itesla_project.commons.config.ModuleConfig;
-import eu.itesla_project.commons.config.PlatformConfig;
-import eu.itesla_project.loadflow.api.LoadFlowFactory;
+import com.powsybl.commons.config.ModuleConfig;
+import com.powsybl.commons.config.PlatformConfig;
+import com.powsybl.loadflow.LoadFlowFactory;
 import eu.itesla_project.merge.MergeOptimizerFactory;
 import eu.itesla_project.cases.CaseRepositoryFactory;
 import eu.itesla_project.modules.OptimizerFactory;
@@ -17,7 +17,7 @@ import eu.itesla_project.modules.histo.HistoDbClientFactory;
 import eu.itesla_project.modules.rules.RulesBuilderFactory;
 import eu.itesla_project.modules.rules.RulesDbClientFactory;
 import eu.itesla_project.modules.sampling.SamplerFactory;
-import eu.itesla_project.simulation.SimulatorFactory;
+import com.powsybl.simulation.SimulatorFactory;
 import eu.itesla_project.modules.topo.TopologyMinerFactory;
 import eu.itesla_project.modules.validation.DefaultValidationDbFactory;
 import eu.itesla_project.modules.validation.ValidationDbFactory;

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import eu.itesla_project.security.LimitViolation;
+import com.powsybl.security.LimitViolation;
 
 /**
  *

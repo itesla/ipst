@@ -7,7 +7,7 @@
  */
 package eu.itesla_project.online.tools;
 
-import eu.itesla_project.commons.tools.Command;
+import com.powsybl.tools.Command;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;

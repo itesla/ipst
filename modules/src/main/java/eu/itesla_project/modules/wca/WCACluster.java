@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.modules.wca;
 
-import eu.itesla_project.contingency.Contingency;
+import com.powsybl.contingency.Contingency;
 
 import java.util.List;
 

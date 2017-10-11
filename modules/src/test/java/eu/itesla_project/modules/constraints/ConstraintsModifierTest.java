@@ -16,12 +16,12 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
-import eu.itesla_project.iidm.network.Line;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.StateManager;
-import eu.itesla_project.iidm.network.VoltageLevel;
-import eu.itesla_project.security.LimitViolation;
-import eu.itesla_project.security.LimitViolationType;
+import com.powsybl.iidm.network.Line;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.StateManager;
+import com.powsybl.iidm.network.VoltageLevel;
+import com.powsybl.security.LimitViolation;
+import com.powsybl.security.LimitViolationType;
 
 /**
  *

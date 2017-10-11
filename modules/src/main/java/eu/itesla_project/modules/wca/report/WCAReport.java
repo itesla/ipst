@@ -9,7 +9,7 @@ package eu.itesla_project.modules.wca.report;
 import java.nio.file.Path;
 import java.util.List;
 
-import eu.itesla_project.security.LimitViolation;
+import com.powsybl.security.LimitViolation;
 
 /**
  *

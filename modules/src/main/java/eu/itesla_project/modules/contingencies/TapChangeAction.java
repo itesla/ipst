@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.modules.contingencies;
 
-import eu.itesla_project.contingency.tasks.ModificationTask;
+import com.powsybl.contingency.tasks.ModificationTask;
 import eu.itesla_project.modules.contingencies.tasks.PstTapChanging;
 
 import java.util.Objects;

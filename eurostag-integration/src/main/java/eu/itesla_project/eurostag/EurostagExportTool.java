@@ -8,12 +8,12 @@
 package eu.itesla_project.eurostag;
 
 import com.google.auto.service.AutoService;
-import eu.itesla_project.commons.config.ComponentDefaultConfig;
-import eu.itesla_project.commons.tools.Command;
-import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.commons.tools.ToolRunningContext;
-import eu.itesla_project.contingency.ContingenciesProvider;
-import eu.itesla_project.contingency.ContingenciesProviderFactory;
+import com.powsybl.commons.config.ComponentDefaultConfig;
+import com.powsybl.tools.Command;
+import com.powsybl.tools.Tool;
+import com.powsybl.tools.ToolRunningContext;
+import com.powsybl.contingency.ContingenciesProvider;
+import com.powsybl.contingency.ContingenciesProviderFactory;
 import eu.itesla_project.eurostag.network.EsgGeneralParameters;
 import eu.itesla_project.eurostag.network.EsgNetwork;
 import eu.itesla_project.eurostag.network.EsgSpecialParameters;
@@ -22,9 +22,9 @@ import eu.itesla_project.eurostag.tools.EurostagNetworkModifier;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClient;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClientFactory;
 import eu.itesla_project.iidm.eurostag.export.*;
-import eu.itesla_project.iidm.import_.Importers;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.simulation.SimulationParameters;
+import com.powsybl.iidm.import_.Importers;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.simulation.SimulationParameters;
 import org.apache.commons.cli.CommandLine;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 
@@ -108,7 +108,7 @@ public class EurostagExportTool implements Tool, EurostagConstants {
             scenario.writePreFaultSeq(writer, PRE_FAULT_SAC_FILE_NAME);
         }
         ContingenciesProvider contingenciesProvider = defaultConfig.newFactoryImpl(ContingenciesProviderFactory.class).create();
-        scenario.writeFaultSeqArchive(contingenciesProvider.getContingencies(network), network, dictionary, faultNum -> FAULT_SEQ_FILE_NAME.replace(eu.itesla_project.computation.Command.EXECUTION_NUMBER_PATTERN, Integer.toString(faultNum)))
+        scenario.writeFaultSeqArchive(contingenciesProvider.getContingencies(network), network, dictionary, faultNum -> FAULT_SEQ_FILE_NAME.replace(com.powsybl.computation.Command.EXECUTION_NUMBER_PATTERN, Integer.toString(faultNum)))
                 .as(ZipExporter.class).exportTo(outputDir.resolve(ALL_SCENARIOS_ZIP_FILE_NAME).toFile());
 
         // export limits

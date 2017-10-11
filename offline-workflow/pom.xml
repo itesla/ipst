@@ -27,8 +27,9 @@
             <artifactId>sirocco-text-table-formatter</artifactId>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>network-merge</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -38,13 +39,13 @@
 
         <!-- Test dependencies -->
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-test</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-impl</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-impl</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

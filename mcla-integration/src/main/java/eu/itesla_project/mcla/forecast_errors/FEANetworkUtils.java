@@ -9,10 +9,10 @@ package eu.itesla_project.mcla.forecast_errors;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import eu.itesla_project.iidm.network.Country;
-import eu.itesla_project.iidm.network.Generator;
-import eu.itesla_project.iidm.network.Load;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.iidm.network.Country;
+import com.powsybl.iidm.network.Generator;
+import com.powsybl.iidm.network.Load;
+import com.powsybl.iidm.network.Network;
 import eu.itesla_project.mcla.NetworkUtils;
 import eu.itesla_project.mcla.forecast_errors.data.StochasticVariable;
 

@@ -16,7 +16,7 @@ import java.util.Set;
 import eu.itesla_project.modules.online.OnlineWorkflowRulesResults;
 import eu.itesla_project.modules.online.StateStatus;
 import eu.itesla_project.modules.online.TimeHorizon;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 
 /**
  *

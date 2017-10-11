@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.mcla.montecarlo.data;
 
-import eu.itesla_project.iidm.network.Generator;
+import com.powsybl.iidm.network.Generator;
 
 /**
  *

@@ -16,15 +16,15 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.contingency.Contingency;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.contingency.Contingency;
 import eu.itesla_project.modules.online.OnlineRulesFacade;
 import eu.itesla_project.modules.online.RulesFacadeParameters;
 import eu.itesla_project.modules.online.RulesFacadeResults;
 import eu.itesla_project.modules.rules.RuleAttributeSet;
 import eu.itesla_project.modules.rules.RulesDbClient;
 import eu.itesla_project.modules.rules.SecurityRule;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 
 /**
  *

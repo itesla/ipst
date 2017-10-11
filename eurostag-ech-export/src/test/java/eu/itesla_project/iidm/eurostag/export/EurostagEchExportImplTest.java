@@ -9,9 +9,9 @@ package eu.itesla_project.iidm.eurostag.export;
 import com.google.common.io.CharStreams;
 import eu.itesla_project.eurostag.network.EsgGeneralParameters;
 import eu.itesla_project.eurostag.network.EsgSpecialParameters;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.test.EurostagTutorialExample1Factory;
-import eu.itesla_project.iidm.network.test.SvcTestCaseFactory;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.test.EurostagTutorialExample1Factory;
+import com.powsybl.iidm.network.test.SvcTestCaseFactory;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 

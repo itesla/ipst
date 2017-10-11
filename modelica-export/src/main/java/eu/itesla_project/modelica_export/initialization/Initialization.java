@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import eu.itesla_project.iidm.ddb.model.*;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
-import eu.itesla_project.iidm.network.Generator;
+import com.powsybl.iidm.network.Generator;
 import eu.itesla_project.modelica_export.records.*;
 import eu.itesla_project.modelica_export.util.StaticData;
 import eu.itesla_project.modelica_export.util.Utils;

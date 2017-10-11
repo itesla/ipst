@@ -6,9 +6,9 @@
  */
 package eu.itesla_project.eurostag;
 
-import eu.itesla_project.simulation.SimulationState;
-import eu.itesla_project.simulation.StabilizationResult;
-import eu.itesla_project.simulation.StabilizationStatus;
+import com.powsybl.simulation.SimulationState;
+import com.powsybl.simulation.StabilizationResult;
+import com.powsybl.simulation.StabilizationStatus;
 
 import java.util.Map;
 

@@ -8,8 +8,8 @@ package eu.itesla_project.mcla.montecarlo;
 
 import java.util.Objects;
 
-import eu.itesla_project.iidm.network.Bus;
-import eu.itesla_project.iidm.network.Generator;
+import com.powsybl.iidm.network.Bus;
+import com.powsybl.iidm.network.Generator;
 import eu.itesla_project.mcla.montecarlo.data.BusData;
 import eu.itesla_project.mcla.montecarlo.data.GeneratorData;
 

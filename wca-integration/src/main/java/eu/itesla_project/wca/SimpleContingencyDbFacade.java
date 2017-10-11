@@ -7,11 +7,11 @@
  */
 package eu.itesla_project.wca;
 
-import eu.itesla_project.contingency.Contingency;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.contingency.Contingency;
+import com.powsybl.iidm.network.Network;
 import eu.itesla_project.modules.contingencies.*;
-import eu.itesla_project.security.LimitViolation;
-import eu.itesla_project.security.LimitViolationType;
+import com.powsybl.security.LimitViolation;
+import com.powsybl.security.LimitViolationType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

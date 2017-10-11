@@ -8,7 +8,7 @@ package eu.itesla_project.modelica_export.records;
 
 import eu.itesla_project.iidm.ddb.model.SimulatorInst;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
-import eu.itesla_project.iidm.network.*;
+import com.powsybl.iidm.network.*;
 import eu.itesla_project.modelica_export.ModExportContext;
 import eu.itesla_project.modelica_export.ModelicaMainExporter;
 import eu.itesla_project.modelica_export.util.StaticData;

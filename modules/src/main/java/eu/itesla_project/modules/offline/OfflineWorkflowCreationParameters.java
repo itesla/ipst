@@ -6,9 +6,9 @@
  */
 package eu.itesla_project.modules.offline;
 
-import eu.itesla_project.commons.config.ModuleConfig;
-import eu.itesla_project.commons.config.PlatformConfig;
-import eu.itesla_project.iidm.network.Country;
+import com.powsybl.commons.config.ModuleConfig;
+import com.powsybl.commons.config.PlatformConfig;
+import com.powsybl.iidm.network.Country;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.Objects;

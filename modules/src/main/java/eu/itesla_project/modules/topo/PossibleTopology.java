@@ -8,8 +8,8 @@ package eu.itesla_project.modules.topo;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import eu.itesla_project.iidm.network.ConnectableType;
-import eu.itesla_project.iidm.network.util.ShortIdDictionary;
+import com.powsybl.iidm.network.ConnectableType;
+import com.powsybl.iidm.network.util.ShortIdDictionary;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;

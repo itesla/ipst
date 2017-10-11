@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.modules.rules;
 
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 
 import java.util.Collection;
 import java.util.List;

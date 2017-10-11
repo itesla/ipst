@@ -9,14 +9,14 @@ package eu.itesla_project.offline.forecast_errors;
 
 import java.util.Objects;
 
-import eu.itesla_project.loadflow.api.LoadFlowFactory;
+import com.powsybl.loadflow.LoadFlowFactory;
 import eu.itesla_project.merge.MergeOptimizerFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.itesla_project.commons.config.ModuleConfig;
-import eu.itesla_project.commons.config.PlatformConfig;
+import com.powsybl.commons.config.ModuleConfig;
+import com.powsybl.commons.config.PlatformConfig;
 import eu.itesla_project.cases.CaseRepositoryFactory;
 import eu.itesla_project.modules.histo.HistoDbClientFactory;
 import eu.itesla_project.modules.mcla.ForecastErrorsAnalyzerFactory;

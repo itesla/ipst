@@ -10,11 +10,11 @@ package eu.itesla_project.iidm.eurostag.export;
 import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import eu.itesla_project.commons.ITeslaException;
+import com.powsybl.commons.PowsyblException;
+import com.powsybl.iidm.network.*;
+import com.powsybl.iidm.network.util.Identifiables;
 import eu.itesla_project.eurostag.network.*;
 import eu.itesla_project.eurostag.network.io.EsgWriter;
-import eu.itesla_project.iidm.network.*;
-import eu.itesla_project.iidm.network.util.Identifiables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -334,7 +334,7 @@ public class EurostagEchExportImpl implements EurostagEchExport {
                         regulatingMode = EsgDetailedTwoWindingTransformer.RegulatingMode.ACTIVE_FLUX_SIDE_2;
                     }
                     if (regulatingMode == EsgDetailedTwoWindingTransformer.RegulatingMode.NOT_REGULATING) {
-                        throw new ITeslaException("Phase transformer " + twt.getId() + " has an unknown regulated node");
+                        throw new PowsyblException("Phase transformer " + twt.getId() + " has an unknown regulated node");
                     }
                 }
                 ktap8 = ptc.getTapPosition() - ptc.getLowTapPosition() + 1;

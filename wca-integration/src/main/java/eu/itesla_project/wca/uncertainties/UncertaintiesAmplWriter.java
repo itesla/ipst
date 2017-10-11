@@ -6,10 +6,10 @@
  */
 package eu.itesla_project.wca.uncertainties;
 
-import eu.itesla_project.commons.io.table.Column;
-import eu.itesla_project.commons.io.table.TableFormatter;
-import eu.itesla_project.commons.util.StringToIntMapper;
-import eu.itesla_project.commons.datasource.DataSource;
+import com.powsybl.commons.io.table.Column;
+import com.powsybl.commons.io.table.TableFormatter;
+import com.powsybl.commons.util.StringToIntMapper;
+import com.powsybl.commons.datasource.DataSource;
 import static eu.itesla_project.iidm.export.ampl.AmplConstants.INVALID_FLOAT_VALUE;
 import static eu.itesla_project.iidm.export.ampl.AmplConstants.LOCALE;
 import eu.itesla_project.iidm.export.ampl.AmplSubset;

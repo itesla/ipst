@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.offline.db.util;
 
-import eu.itesla_project.commons.io.mmap.MemoryMappedFile;
+import com.powsybl.commons.io.mmap.MemoryMappedFile;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

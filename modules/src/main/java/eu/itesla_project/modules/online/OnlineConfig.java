@@ -14,9 +14,9 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.itesla_project.commons.config.ModuleConfig;
-import eu.itesla_project.commons.config.PlatformConfig;
-import eu.itesla_project.loadflow.api.LoadFlowFactory;
+import com.powsybl.commons.config.ModuleConfig;
+import com.powsybl.commons.config.PlatformConfig;
+import com.powsybl.loadflow.LoadFlowFactory;
 import eu.itesla_project.cases.CaseRepositoryFactory;
 import eu.itesla_project.merge.MergeOptimizerFactory;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClientFactory;
@@ -26,7 +26,7 @@ import eu.itesla_project.modules.rules.RulesDbClientFactory;
 import eu.itesla_project.modules.wca.UncertaintiesAnalyserFactory;
 import eu.itesla_project.modules.wca.WCAFactory;
 import eu.itesla_project.modules.mcla.MontecarloSamplerFactory;
-import eu.itesla_project.simulation.SimulatorFactory;
+import com.powsybl.simulation.SimulatorFactory;
 
 /**
  *

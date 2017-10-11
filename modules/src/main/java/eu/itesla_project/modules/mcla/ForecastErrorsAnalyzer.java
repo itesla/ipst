@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.modules.mcla;
 
-import eu.itesla_project.commons.Versionable;
+import com.powsybl.commons.Versionable;
 import eu.itesla_project.modules.online.TimeHorizon;
 
 /**

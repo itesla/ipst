@@ -21,7 +21,7 @@
     <logger name="ch.qos.logback.classic" level="ERROR" />
 
     <!-- logger name="eu.itesla_project.iidm.ddb" level="WARN" /-->
-    <!-- logger name="eu.itesla_project.computation" level="TRACE" /-->
+    <!-- logger name="com.powsybl.computation" level="TRACE" /-->
 
     <root level="INFO">
         <appender-ref ref="STDOUT" />

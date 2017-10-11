@@ -21,17 +21,17 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
 
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
-import eu.itesla_project.iidm.network.Country;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.iidm.network.Country;
+import com.powsybl.iidm.network.Network;
 import eu.itesla_project.modules.contingencies.ActionParameterBooleanValue;
 import eu.itesla_project.modules.contingencies.ActionParameterFloatValue;
 import eu.itesla_project.modules.contingencies.ActionParameterIntegerValue;
 import eu.itesla_project.modules.contingencies.ActionParameterStringValue;
 import eu.itesla_project.modules.contingencies.ActionParameters;
 import eu.itesla_project.modules.online.OnlineProcess;
-import eu.itesla_project.security.LimitViolation;
-import eu.itesla_project.security.LimitViolationType;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.security.LimitViolation;
+import com.powsybl.security.LimitViolationType;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 
 /**
  *

@@ -7,10 +7,10 @@
 package eu.itesla_project.sampling.tools;
 
 import com.google.auto.service.AutoService;
-import eu.itesla_project.commons.tools.Command;
-import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.commons.tools.ToolRunningContext;
-import eu.itesla_project.computation.*;
+import com.powsybl.tools.Command;
+import com.powsybl.tools.Tool;
+import com.powsybl.tools.ToolRunningContext;
+import com.powsybl.computation.*;
 import eu.itesla_project.sampling.SamplerWp41Config;
 import org.apache.commons.cli.CommandLine;
 
@@ -59,7 +59,7 @@ public class DataComparatorTool implements Tool {
         return env;
     }
 
-    private eu.itesla_project.computation.Command createConcatMatFilesCmd(Path dataPath, String pattern, Path outFile, SamplerWp41Config config) throws IOException {
+    private com.powsybl.computation.Command createConcatMatFilesCmd(Path dataPath, String pattern, Path outFile, SamplerWp41Config config) throws IOException {
         List<String> args1 = new ArrayList<>();
         args1.add(dataPath.toFile().getAbsolutePath() + "/");
         args1.add(pattern);
@@ -81,7 +81,7 @@ public class DataComparatorTool implements Tool {
                 .build();
     }
 
-    private eu.itesla_project.computation.Command createDataComparatorCmd(String file1, String file2, String set1, String set2, SamplerWp41Config config) {
+    private com.powsybl.computation.Command createDataComparatorCmd(String file1, String file2, String set1, String set2, SamplerWp41Config config) {
         List<String> args1 = new ArrayList<>();
         args1.add(file1);
         args1.add(file2);
@@ -131,7 +131,7 @@ public class DataComparatorTool implements Tool {
 
         try (CommandExecutor executor = context.getComputationManager().newCommandExecutor(createEnv(config), WORKING_DIR_PREFIX, config.isDebug())) {
             Path workingDir = executor.getWorkingDir();
-            eu.itesla_project.computation.Command cmd = createConcatMatFilesCmd(config.getValidationDir(), MOD3FILES_PATTERN, config.getValidationDir().resolve(CONCATSAMPLESFILENAME), config);
+            com.powsybl.computation.Command cmd = createConcatMatFilesCmd(config.getValidationDir(), MOD3FILES_PATTERN, config.getValidationDir().resolve(CONCATSAMPLESFILENAME), config);
             int priority = 1;
             ExecutionReport report = executor.start(new CommandExecution(cmd, 1, priority));
             report.log();

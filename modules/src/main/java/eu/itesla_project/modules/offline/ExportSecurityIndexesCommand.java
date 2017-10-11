@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.modules.offline;
 
-import eu.itesla_project.commons.tools.Command;
+import com.powsybl.tools.Command;
 
 import java.util.Arrays;
 

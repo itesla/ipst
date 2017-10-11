@@ -6,8 +6,8 @@
  */
 package eu.itesla_project.cases;
 
-import eu.itesla_project.iidm.network.Country;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.iidm.network.Country;
+import com.powsybl.iidm.network.Network;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 

@@ -8,7 +8,7 @@ package eu.itesla_project.sampling.util;
 
 import java.util.*;
 
-import eu.itesla_project.iidm.network.*;
+import com.powsybl.iidm.network.*;
 import org.joda.time.Interval;
 
 /**

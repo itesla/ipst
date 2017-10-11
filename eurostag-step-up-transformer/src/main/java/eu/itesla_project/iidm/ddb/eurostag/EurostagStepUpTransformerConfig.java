@@ -6,9 +6,9 @@
  */
 package eu.itesla_project.iidm.ddb.eurostag;
 
-import eu.itesla_project.commons.config.ModuleConfig;
-import eu.itesla_project.commons.config.PlatformConfig;
-import eu.itesla_project.loadflow.api.LoadFlowFactory;
+import com.powsybl.commons.config.ModuleConfig;
+import com.powsybl.commons.config.PlatformConfig;
+import com.powsybl.loadflow.LoadFlowFactory;
 
 import java.nio.file.Path;
 import java.util.Arrays;
