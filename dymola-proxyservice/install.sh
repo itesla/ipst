@@ -6,8 +6,8 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 
-if [ -z "$DYMOLAHOME" ]; then
-    echo "Need to set enviroment variable DYMOLAHOME, pointing to a Dymola installation. Compilation requires two files from DYMOLAHOME/Modelica/Library/java_interface : dymola_interface.jar ,  json-simple-1.1.1.jar"
+if [ -z "$DYMOLA_HOME" ]; then
+    echo "Need to set enviroment variable DYMOLA_HOME, pointing to a Dymola installation. Compilation requires two files from DYMOLA_HOME/Modelica/Library/java_interface : dymola_interface.jar ,  json-simple-1.1.1.jar"
     exit 1
 fi
 
