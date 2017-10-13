@@ -17,47 +17,44 @@ import eu.itesla_project.dymola.utils.ZipFileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
-import java.util.zip.ZipFile;
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.jws.WebService;
 import javax.xml.bind.annotation.XmlMimeType;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.MTOM;
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.zip.ZipFile;
 
 import static eu.itesla_project.dymola.utils.MapUtils.entry;
 
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 @MTOM
-@StreamingAttachment(parseEagerly = true, memoryThreshold = 5000000L, dir="/tmp")
+@StreamingAttachment(parseEagerly = true, memoryThreshold = 5000000L, dir = "/tmp")
 @WebService(endpointInterface = "eu.itesla_project.dymola.service.SimulatorServer")
 public class SimulatorServerImpl implements SimulatorServer {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimulatorServerImpl.class);
 
     static final String DYMOLASERVICE_TEMP = "/temp/Dymola/server";
     static final String DYMOLASERVICE_INPUTFILENAME = "dyninput.zip";
     static final String DYMSERV_PREFIX = "dymserv_";
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimulatorServerImpl.class);
     private static final String DYMOLA_LOG_FILENAME = "log.txt";
     private static final int MSGERRLEN = 400;
-
-    boolean debug;
-
     final Pool<Integer> portPool;
-
     final String serviceWorkDir;
-
+    boolean debug;
     //testing only
-    private String fakeSourceDir=null;
+    private String fakeSourceDir = null;
 
     public SimulatorServerImpl() {
         this(DYMOLASERVICE_TEMP, 9000, 20, false);
@@ -74,7 +71,7 @@ public class SimulatorServerImpl implements SimulatorServer {
         //DymolaWrapper.nowindow = false;
         DymolaWrapper.nowindow = true;
         LOGGER.info("Dymola proxy service");
-        LOGGER.info(" API version: {}",DymolaWrapper.dymola_version);
+        LOGGER.info(" API version: {}", DymolaWrapper.dymola_version);
         LOGGER.info(" service working directory: {}", serviceWorkDir);
         LOGGER.info(" ports pool starting from {}, size {}", start, size);
         ArrayList<Integer> portArray = new ArrayList<>();
@@ -90,10 +87,10 @@ public class SimulatorServerImpl implements SimulatorServer {
 
     //testing only
     public void setFakeSourceDir(String fakeSourceDir) {
-        this.fakeSourceDir=fakeSourceDir;
+        this.fakeSourceDir = fakeSourceDir;
     }
 
-    protected void prepareOutputFile(Path workingDir, Map<String,String> fileNamesMap, Path outFile) throws IOException, URISyntaxException {
+    protected void prepareOutputFile(Path workingDir, Map<String, String> fileNamesMap, Path outFile) throws IOException, URISyntaxException {
         Map<String, String> zip_properties = new HashMap<>();
         zip_properties.put("create", "true");
         zip_properties.put("encoding", "UTF-8");
@@ -111,11 +108,11 @@ public class SimulatorServerImpl implements SimulatorServer {
     }
 
     public
-    @XmlMimeType("application/octet-stream")
-    DataHandler simulate(String inputFileName, String problem, double startTime, double stopTime, int numberOfIntervals, double outputInterval, String method, double tolerance, double fixedstepsize, String resultsFileName, @XmlMimeType("application/octet-stream") DataHandler data) {
+        @XmlMimeType("application/octet-stream")
+        DataHandler simulate(String inputFileName, String problem, double startTime, double stopTime, int numberOfIntervals, double outputInterval, String method, double tolerance, double fixedstepsize, String resultsFileName, @XmlMimeType("application/octet-stream") DataHandler data) {
         Path workingDir = null;
         try {
-            long startms=System.currentTimeMillis();
+            long startms = System.currentTimeMillis();
             Path inputZipFile;
             try (StreamingDataHandler inputDh = (StreamingDataHandler) data) {
                 Files.createDirectories(Paths.get(serviceWorkDir));
@@ -127,24 +124,24 @@ public class SimulatorServerImpl implements SimulatorServer {
             try (ZipFile zipFile = new ZipFile(inputZipFile.toFile())) {
                 ZipFileUtil.unzipFileIntoDirectory(zipFile, workingDir.toFile());
             }
-            long endms=System.currentTimeMillis();
-            LOGGER.info(" {} - dymola simulation started - inputFileName:{}, problem:{}, startTime:{}, stopTime:{}, numberOfIntervals:{}, outputInterval:{}, method:{}, tolerance:{}, fixedstepsize:{}, resultsFileName:{}, input data unzipped in: {} ms.", workingDir, inputFileName, problem, startTime, stopTime, numberOfIntervals,outputInterval,method,tolerance,fixedstepsize,resultsFileName,(endms - startms));
-            startms=System.currentTimeMillis();
-            if (fakeSourceDir==null) {
+            long endms = System.currentTimeMillis();
+            LOGGER.info(" {} - dymola simulation started - inputFileName:{}, problem:{}, startTime:{}, stopTime:{}, numberOfIntervals:{}, outputInterval:{}, method:{}, tolerance:{}, fixedstepsize:{}, resultsFileName:{}, input data unzipped in: {} ms.", workingDir, inputFileName, problem, startTime, stopTime, numberOfIntervals, outputInterval, method, tolerance, fixedstepsize, resultsFileName, endms - startms);
+            startms = System.currentTimeMillis();
+            if (fakeSourceDir == null) {
                 simulateDymola(workingDir.toString(), inputFileName, problem, startTime, stopTime, numberOfIntervals, outputInterval, method, tolerance, fixedstepsize, resultsFileName);
             } else {
                 simulateDymolaFake(workingDir.toString(), inputFileName, problem, startTime, stopTime, numberOfIntervals, outputInterval, method, tolerance, fixedstepsize, resultsFileName);
             }
 
-            endms=System.currentTimeMillis();
-            long simulationTime=endms - startms;
+            endms = System.currentTimeMillis();
+            long simulationTime = endms - startms;
 
-            startms=System.currentTimeMillis();
+            startms = System.currentTimeMillis();
             String outputZipFile = workingDir.toAbsolutePath() + ".zip";
-            Map<String,String> fileNamesToInclude= MapUtils.asUnmodifiableMap(entry("log.txt", resultsFileName+"_log.txt"), entry("dslog.txt",resultsFileName+"_dslog.txt"), entry(resultsFileName + ".mat",resultsFileName + ".mat"));
+            Map<String, String> fileNamesToInclude = MapUtils.asUnmodifiableMap(entry("log.txt", resultsFileName + "_log.txt"), entry("dslog.txt", resultsFileName + "_dslog.txt"), entry(resultsFileName + ".mat", resultsFileName + ".mat"));
             prepareOutputFile(workingDir, fileNamesToInclude, Paths.get(outputZipFile));
-            endms=System.currentTimeMillis();
-            LOGGER.info(" {} - dymola simulation terminated - simulation time: {} ms., output file zipped in: {} ms.", workingDir, simulationTime, (endms - startms));
+            endms = System.currentTimeMillis();
+            LOGGER.info(" {} - dymola simulation terminated - simulation time: {} ms., output file zipped in: {} ms.", workingDir, simulationTime, endms - startms);
 
             TemporaryFileDataSource outDataSource = new TemporaryFileDataSource(Paths.get(outputZipFile).toFile());
             //FileDataSource outDataSource = new FileDataSource(Paths.get(outputZipFile).toFile());
@@ -152,10 +149,10 @@ public class SimulatorServerImpl implements SimulatorServer {
             return outputFileDataHandler;
         } catch (Exception e) {
             LOGGER.error(" {} - dymola simulation failed - inputFileName:{}, problem:{}, startTime:{}, stopTime:{}, numberOfIntervals:{}, outputInterval:{}, method:{}, tolerance:{}, fixedstepsize:{}, resultsFileName:{}",
-                     workingDir, inputFileName, problem, startTime, stopTime, numberOfIntervals,outputInterval,method,tolerance,fixedstepsize,resultsFileName,e);
-            String errMessg=e.getMessage();
-            errMessg=((errMessg != null) && (errMessg.length() > MSGERRLEN)) ? errMessg.substring(0,MSGERRLEN) +" ..." : errMessg;
-            throw new WebServiceException("dymola simulation failed - remote working directory " + workingDir +", fileName: "+ inputFileName +", problem:"+ problem +", error message:" + errMessg, e);
+                    workingDir, inputFileName, problem, startTime, stopTime, numberOfIntervals, outputInterval, method, tolerance, fixedstepsize, resultsFileName, e);
+            String errMessg = e.getMessage();
+            errMessg = ((errMessg != null) && (errMessg.length() > MSGERRLEN)) ? errMessg.substring(0, MSGERRLEN) + " ..." : errMessg;
+            throw new WebServiceException("dymola simulation failed - remote working directory " + workingDir + ", fileName: " + inputFileName + ", problem:" + problem + ", error message:" + errMessg, e);
         } finally {
             if (debug == false) {
                 try {
@@ -179,25 +176,25 @@ public class SimulatorServerImpl implements SimulatorServer {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            LOGGER.debug("   START {} - portnumber: {} - ThreadID: {} - @Dymolainst: {} - @SimulatorServerImpl {} ", workingDirectory, (dymola!=null)?((DymolaWrapper) dymola).portnumber:"FAKE", Thread.currentThread().getId(), (dymola!=null)?dymola.hashCode():"FAKE", this.hashCode());
+            LOGGER.debug("   START {} - portnumber: {} - ThreadID: {} - @Dymolainst: {} - @SimulatorServerImpl {} ", workingDirectory, (dymola != null) ? ((DymolaWrapper) dymola).portnumber : "FAKE", Thread.currentThread().getId(), (dymola != null) ? dymola.hashCode() : "FAKE", this.hashCode());
 
             try {
-                Files.copy(Paths.get(fakeSourceDir).resolve("dymolasim_0.mat"),Paths.get(workingDirectory).resolve(resultsFileName+".mat"));
-                Files.copy(Paths.get(fakeSourceDir).resolve("log.txt"),Paths.get(workingDirectory).resolve("log.txt"));
-                Files.copy(Paths.get(fakeSourceDir).resolve("dslog.txt"),Paths.get(workingDirectory).resolve("dslog.txt"));
+                Files.copy(Paths.get(fakeSourceDir).resolve("dymolasim_0.mat"), Paths.get(workingDirectory).resolve(resultsFileName + ".mat"));
+                Files.copy(Paths.get(fakeSourceDir).resolve("log.txt"), Paths.get(workingDirectory).resolve("log.txt"));
+                Files.copy(Paths.get(fakeSourceDir).resolve("dslog.txt"), Paths.get(workingDirectory).resolve("dslog.txt"));
                 try {
-                    int waiting_time=1000*60*1;
-                    LOGGER.info("simulating a real computation: waiting "+ (waiting_time/60000) + " minutes" );
+                    int waiting_time = 1000 * 60 * 1;
+                    LOGGER.info("simulating a real computation: waiting " + (waiting_time / 60000) + " minutes");
                     Thread.sleep(waiting_time);
-                    LOGGER.info("simulating a real computation: ended." );
+                    LOGGER.info("simulating a real computation: ended.");
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             } catch (IOException e) {
-                LOGGER.error(e.getMessage(),e);
+                LOGGER.error(e.getMessage(), e);
             }
 
-            LOGGER.debug("   END {} - portnumber: {} - ThreadID: {} - @Dymolainst: {} - @SimulatorServerImpl {} ", workingDirectory, (dymola!=null)?((DymolaWrapper) dymola).portnumber:"FAKE", Thread.currentThread().getId(), (dymola!=null)? dymola.hashCode():"FAKE", this.hashCode());
+            LOGGER.debug("   END {} - portnumber: {} - ThreadID: {} - @Dymolainst: {} - @SimulatorServerImpl {} ", workingDirectory, (dymola != null) ? ((DymolaWrapper) dymola).portnumber : "FAKE", Thread.currentThread().getId(), (dymola != null) ? dymola.hashCode() : "FAKE", this.hashCode());
         } finally {
             // The connection to Dymola is closed and Dymola is terminated
             if (dymola != null) {
@@ -243,7 +240,7 @@ public class SimulatorServerImpl implements SimulatorServer {
             dymola = DymolaWrapper.getInstance(true, port);
             LOGGER.debug("   START {} - portnumber: {} - ThreadID: {} - @Dymolainst: {} - @SimulatorServerImpl {} ", workingDirectory, ((DymolaWrapper) dymola).portnumber, Thread.currentThread().getId(), dymola.hashCode(), this.hashCode());
 
-            result= dymola.clear(false);
+            result = dymola.clear(false);
             if (!result) {
                 throw new RuntimeException("CLEAR : " + dymola.getLastError());
             }
@@ -272,7 +269,7 @@ public class SimulatorServerImpl implements SimulatorServer {
                       throws DymolaException
              e.g.
              result = dymola.simulateModel(problem, startTime, stopTime, 0, 0, "Dassl", 0.0001, 0, problem);
-			 */
+            */
             result = dymola.simulateModel(problem, startTime, stopTime, numberOfIntervals, outputInterval, method, tolerance, fixedstepsize, resultsFileName);
             if (!result) {
                 throw new RuntimeException("simulateModel: " + dymola.getLastError());

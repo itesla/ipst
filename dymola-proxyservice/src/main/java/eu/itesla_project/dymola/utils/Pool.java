@@ -14,7 +14,6 @@ import java.util.Collections;
 import java.util.concurrent.Semaphore;
 
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 public class Pool<T> {
@@ -38,8 +37,9 @@ public class Pool<T> {
     }
 
     public void putItem(T x) {
-        if (markAsUnused(x))
+        if (markAsUnused(x)) {
             available.release();
+        }
     }
 
 
@@ -56,11 +56,12 @@ public class Pool<T> {
     protected synchronized boolean markAsUnused(T item) {
         for (int i = 0; i < items.size(); ++i) {
             if (item.equals(items.get(i))) {
-                if (used.get(i)==true) {
+                if (used.get(i) == true) {
                     used.set(i, false);
                     return true;
-                } else
+                } else {
                     return false;
+                }
             }
         }
         return false;
