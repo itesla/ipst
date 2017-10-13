@@ -35,7 +35,7 @@ endif()
 set(CMAKE_BINARY_DIR ${prefix}/build)
 
 if (download)
-    set(szip_url https://support.hdfgroup.org/ftp/lib-external/szip/2.1/src/szip-2.1.tar.gz)
+    set(szip_url https://support.hdfgroup.org/ftp/lib-external/szip/previous/2.1/src/szip-2.1.tar.gz)
     set(hdf5_url https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.13/src/hdf5-1.8.13.tar.gz)
     set(matio_url http://downloads.sourceforge.net/project/matio/matio/1.5.2/matio-1.5.2.tar.gz)
 else()
