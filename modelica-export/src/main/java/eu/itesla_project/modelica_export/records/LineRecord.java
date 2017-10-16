@@ -89,10 +89,10 @@ public class LineRecord extends BranchRecord {
                 iidmbranchParameters = null;
                 branchParameters = null;
             } else {
-                _log.error(this.getModelicaName() + " not added to grid model.");
+                LOGGER.error(this.getModelicaName() + " not added to grid model.");
             }
         } else {
-            _log.warn("Line " + this.getModelicaName() + " disconnected.");
+            LOGGER.warn("Line " + this.getModelicaName() + " disconnected.");
             this.addValue(StaticData.COMMENT + " Line " + this.getModelicaName() + " disconnected.");
         }
     }
@@ -136,5 +136,5 @@ public class LineRecord extends BranchRecord {
     private String                DEFAULT_OPEN_LINE_TYPE    = EurostagModDefaultTypes.DEFAULT_OPEN_LINE_TYPE;
     private String                DEFAULT_LINE_PREFIX;
 
-    private static final Logger _log                    = LoggerFactory.getLogger(LineRecord.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LineRecord.class);
 }

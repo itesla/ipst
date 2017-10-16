@@ -32,7 +32,7 @@ import java.util.*;
  * @author Quinary <itesla@quinary.com>
  */
 public class DdbDtaImpExp implements DynamicDatabaseClient {
-    private static final String PAR_MACROBLOCK__NAME = "macroblock.name";
+    private static final String PAR_MACROBLOCK_NAME = "macroblock.name";
 
     private static final String MTC_PREFIX_NAME = "MTC_";
 
@@ -499,7 +499,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         log.debug("-Creating DDB component (R) " + zone);
 
         String macroblockName = (String) zone.getData().get(
-                PAR_MACROBLOCK__NAME);
+                PAR_MACROBLOCK_NAME);
         int paramSetNum = (int) zone.getData().get("psetnum");
         String machineName = (String) zone.getData().get("machine.name");
         String nativeId = amap.get(machineName);
@@ -1052,7 +1052,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                 // dump regulator files start
                 String macroblockName = ddbmanager.getStringParameter(
                         internal, eurostagSim,
-                        PAR_MACROBLOCK__NAME);
+                        PAR_MACROBLOCK_NAME);
                 if (macroblockName == null) {
                     throw new RuntimeException("null macroblock.name for internal " + internal);
                 }
@@ -1995,7 +1995,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                                     log.error("could not write macro.lis file, due to " + e.getMessage());
                                 }
                                 // dump regulator files start
-                                String macroblockName = ddbmanager.getStringParameter(internal, eurostagSim, PAR_MACROBLOCK__NAME);
+                                String macroblockName = ddbmanager.getStringParameter(internal, eurostagSim, PAR_MACROBLOCK_NAME);
                                 if (macroblockName == null) {
                                     throw new RuntimeException("null macroblock.name for internal " + internal);
                                 }

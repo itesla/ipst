@@ -37,7 +37,7 @@ public class RegulatorInitData {
         try {
             fillDataList();
         } catch (IOException e) {
-            _log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -76,7 +76,7 @@ public class RegulatorInitData {
                 }
             }
         } catch (IOException e) {
-            _log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -148,5 +148,5 @@ public class RegulatorInitData {
     private List<String>    initVars        = new ArrayList<String>();
     private Map<String, String> paramsMap    = new HashMap<String, String>();
 
-    private static final Logger _log    = LoggerFactory.getLogger(RegulatorInitData.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegulatorInitData.class);
 }

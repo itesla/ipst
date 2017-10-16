@@ -61,9 +61,9 @@ public class ModelicaMainExporter {
         } else if (sourceEngine.toLowerCase().compareTo(StaticData.PSSE) == 0) {
             this._sourceEngine = new PsseEngine(sourceEngine, sourceVersion);
         } else {
-            _log.error("This source engine doesn't exist.");
+            LOGGER.error("This source engine doesn't exist.");
         }
-        _log.info("Modelica main exporter created, slackId = " + this._slackId);
+        LOGGER.info("Modelica main exporter created, slackId = " + this._slackId);
 
         paramsDictionary = this._sourceEngine.createGenParamsDictionary();
     }
@@ -84,20 +84,20 @@ public class ModelicaMainExporter {
         } else if (sourceEngine.toLowerCase().compareTo(StaticData.PSSE) == 0) {
             this._sourceEngine = new PsseEngine(sourceEngine, sourceVersion);
         } else {
-            _log.error("This source engine doesn't exist.");
+            LOGGER.error("This source engine doesn't exist.");
         }
     }
 
     public void export(Path outputParentDir) {
-        _log.info("Exporting model from " + this._sourceEngine.getName() + ", version " + this._sourceEngine.getVersion() + "...");
+        LOGGER.info("Exporting model from " + this._sourceEngine.getName() + ", version " + this._sourceEngine.getVersion() + "...");
         long initTime = System.currentTimeMillis();
         try  (EjbClientCtx ctx = newEjbClientEcx(); ComputationManager _computationManager = new LocalComputationManager()) {
             long endEjb = System.currentTimeMillis();
-            _log.debug("Connexion EJB = " + (endEjb - initTime));
+            LOGGER.debug("Connexion EJB = " + (endEjb - initTime));
 
             //Executing LF
             long endStep = System.currentTimeMillis();
-            _log.debug("ModelicaMainExporter. StepUpTrafos = " + (endStep - endEjb));
+            LOGGER.debug("ModelicaMainExporter. StepUpTrafos = " + (endStep - endEjb));
             // Even if we are reading a different solution from a file, run a Loadflow
             // (it seems this allows to setup properly disconnected elements)
             runLoadFlow(_computationManager);
@@ -106,7 +106,7 @@ public class ModelicaMainExporter {
             }
 
             long endLF = System.currentTimeMillis();
-            _log.debug("ModelicaMainExporter. HELM LF (ms) = " + (endLF - endStep));
+            LOGGER.debug("ModelicaMainExporter. HELM LF (ms) = " + (endLF - endStep));
 
             //Exporting model
             DDBManager ddbmanager = ctx.connectEjb(DDBMANAGERJNDINAME);
@@ -129,24 +129,24 @@ public class ModelicaMainExporter {
             } else if (this._sourceEngine instanceof PsseEngine) {
                 export = new ModelicaExport(_network, ddbmanager, paramsDictionary, _sourceEngine);
             } else {
-                _log.error("The source engine must be eurostaqg or psse.");
+                LOGGER.error("The source engine must be eurostaqg or psse.");
                 System.exit(-1);
             }
             long preWrite = System.currentTimeMillis();
             //export.WriteMo("log/" + _network.getName(), _modelicaVersion);
             export.WriteMo(outputParentDir.resolve(_network.getName()).toAbsolutePath().toString(), _modelicaVersion);
-            _log.info("Writer time = " + (System.currentTimeMillis() - preWrite));
+            LOGGER.info("Writer time = " + (System.currentTimeMillis() - preWrite));
             ctx.close();
             long endExport = System.currentTimeMillis();
-            _log.debug("ModelicaMainExporter. Export (ms) = " + (endExport - endLF));
+            LOGGER.debug("ModelicaMainExporter. Export (ms) = " + (endExport - endLF));
 
             long duration = endExport - initTime;
 
-            _log.debug("ModelicaMainExporter. Duration: " + duration);
-            _log.info("Conversion finished.");
+            LOGGER.debug("ModelicaMainExporter. Duration: " + duration);
+            LOGGER.info("Conversion finished.");
             System.exit(0);
         } catch (Exception e) {
-            _log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -158,7 +158,7 @@ public class ModelicaMainExporter {
 
         if (!lfResults.isOk()) {
             System.out.println("LF has not been successfuly completed.");
-            _log.info("Loadflow finished. isOk == false");
+            LOGGER.info("Loadflow finished. isOk == false");
             System.exit(-1);
         }
     }
@@ -194,7 +194,7 @@ public class ModelicaMainExporter {
                     recordHandler.processRecord(fields);
                 }
             } catch (IOException e) {
-                _log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
@@ -209,24 +209,24 @@ public class ModelicaMainExporter {
         for (Voltage voltage : voltages.values()) {
             String properExternalId = ids.get(voltage.iidmId);
             if (properExternalId == null) {
-                _log.error("IIDM id not found in proper mappings, id = [" + voltage.iidmId + "]");
+                LOGGER.error("IIDM id not found in proper mappings, id = [" + voltage.iidmId + "]");
                 continue;
             }
             if (!properExternalId.equals(voltage.externalId)) {
-                _log.error("External id from proper mappings is not the same as voltage external Id, iidm id [" + voltage.iidmId + "], proper external Id = [" + properExternalId + "], voltage id = [" + voltage.externalId + "]");
+                LOGGER.error("External id from proper mappings is not the same as voltage external Id, iidm id [" + voltage.iidmId + "], proper external Id = [" + properExternalId + "], voltage id = [" + voltage.externalId + "]");
                 continue;
             }
-            _log.info("Proper IIDM mapping for bus [" + voltage.iidmId + "], proper external Id = [" + properExternalId + "], voltage id = [" + voltage.externalId + "]");
+            LOGGER.info("Proper IIDM mapping for bus [" + voltage.iidmId + "], proper external Id = [" + properExternalId + "], voltage id = [" + voltage.externalId + "]");
         }
         for (Bus bus : _network.getBusBreakerView().getBuses()) {
             Voltage voltage = voltages.get(bus.getId());
             if (voltage == null) {
-                _log.error("IIDM Bus not found in solution file, id = [" + bus.getId() + "]");
+                LOGGER.error("IIDM Bus not found in solution file, id = [" + bus.getId() + "]");
                 continue;
             }
             float v = voltage.vpu;
             if (v == 1.0 && voltage.adeg == 0.0) {
-                _log.warn("Ignore setting Voltage V=1.0 and A=0.0 (bus is disconnected, no voltage computed)");
+                LOGGER.warn("Ignore setting Voltage V=1.0 and A=0.0 (bus is disconnected, no voltage computed)");
                 continue;
             }
             bus.setV(v * bus.getVoltageLevel().getNominalV());
@@ -236,12 +236,12 @@ public class ModelicaMainExporter {
         for (Generator gen : _network.getGenerators()) {
             String externalId = ids.get(gen.getId());
             if (externalId == null) {
-                _log.error("IIDM generator id not found in mapping to external ids, iidm id = [" + gen.getId() + "]");
+                LOGGER.error("IIDM generator id not found in mapping to external ids, iidm id = [" + gen.getId() + "]");
                 continue;
             }
             Reactive reactive = reactives.get(externalId);
             if (reactive == null) {
-                _log.error("Reactive not found for external id, id = [" + externalId + "]");
+                LOGGER.error("Reactive not found for external id, id = [" + externalId + "]");
                 continue;
             }
             gen.getTerminal().setQ(-reactive.q);
@@ -249,31 +249,31 @@ public class ModelicaMainExporter {
         }
         for (Voltage voltage : voltages.values()) {
             if (!voltage.used) {
-                _log.warn("Voltage from file not used, bus Id = [" + voltage.iidmId + "], num = [" + voltage.externalId + "], V = " + voltage.vpu);
+                LOGGER.warn("Voltage from file not used, bus Id = [" + voltage.iidmId + "], num = [" + voltage.externalId + "], V = " + voltage.vpu);
             }
         }
         for (Reactive reactive : reactives.values()) {
             if (!reactive.used) {
-                _log.warn("Reactive from file not used, gen Id = [" + reactive.externalId + "]");
+                LOGGER.warn("Reactive from file not used, gen Id = [" + reactive.externalId + "]");
             }
         }
     }
     private HashMap<String, String> readIdMappings(CsvReader reader, String filename) {
-        _log.info("Reading mapping of identifiers from file [" + filename + "]");
+        LOGGER.info("Reading mapping of identifiers from file [" + filename + "]");
         HashMap<String, String> mappings = new HashMap(100);
         reader.read(filename, new RecordHandler() {
             public void processRecord(List<String> fields) {
                 String externalId = fields.get(0);
                 String iidmId = fields.get(1);
                 mappings.put(iidmId, externalId);
-                _log.info("    " + iidmId + ", " + externalId);
+                LOGGER.info("    " + iidmId + ", " + externalId);
             }
         });
         return mappings;
     }
 
     private HashMap<String, Voltage> readSolutionVoltagesFromFile(CsvReader reader, String filename) {
-        _log.info("Reading solution voltages from file [" + filename + "]");
+        LOGGER.info("Reading solution voltages from file [" + filename + "]");
         HashMap<String, Voltage> voltages = new HashMap(1000);
         reader.read(filename, new RecordHandler() {
             public void processRecord(List<String> fields) {
@@ -286,17 +286,17 @@ public class ModelicaMainExporter {
                 voltage.used = false;
                 float adegrad = voltage.arad * (float) (180.0 / Math.PI);
                 if (Math.abs(voltage.adeg - adegrad) > 1e-3) {
-                    _log.error("Error in angle at bus [" + voltage.iidmId + "], deg = " + voltage.adeg + ", deg from rad = " + adegrad);
+                    LOGGER.error("Error in angle at bus [" + voltage.iidmId + "], deg = " + voltage.adeg + ", deg from rad = " + adegrad);
                 }
                 voltages.put(voltage.iidmId, voltage);
-                _log.info("    " + voltage.iidmId + ", " + voltage.externalId + ", " + voltage.vpu);
+                LOGGER.info("    " + voltage.iidmId + ", " + voltage.externalId + ", " + voltage.vpu);
             }
         });
         return voltages;
     }
 
     private HashMap<String, Reactive> readSolutionReactivesFromFile(CsvReader reader, String filename) {
-        _log.info("Reading solution reactives from file [" + filename + "]");
+        LOGGER.info("Reading solution reactives from file [" + filename + "]");
         HashMap<String, Reactive> reactives = new HashMap(100);
         reader.read(filename, new RecordHandler() {
             public void processRecord(List<String> fields) {
@@ -305,7 +305,7 @@ public class ModelicaMainExporter {
                 reactive.q = Float.parseFloat(fields.get(1));
                 reactive.used = false;
                 reactives.put(reactive.externalId, reactive);
-                _log.info("    " + reactive.externalId + ", " + reactive.q);
+                LOGGER.info("    " + reactive.externalId + ", " + reactive.q);
             }
         });
         return reactives;
@@ -324,45 +324,45 @@ public class ModelicaMainExporter {
         }
         filename = network.getName() + "_"  + text;
 
-        _log.info(String.format("NETWORK %s", filename));
-        _log.info("GENERATORS");
-//        _log.info("#        Name          Q (MVAR) ");
-        _log.info("#------------  ---------------- ");
-        _log.info("#        Name          Q (MVAR)         TargetQ          P (MVAR)         TargetP");
-        _log.info("#------------  ----------------  --------------  ----------------  --------------");
+        LOGGER.info(String.format("NETWORK %s", filename));
+        LOGGER.info("GENERATORS");
+//        LOGGER.info("#        Name          Q (MVAR) ");
+        LOGGER.info("#------------  ---------------- ");
+        LOGGER.info("#        Name          Q (MVAR)         TargetQ          P (MVAR)         TargetP");
+        LOGGER.info("#------------  ----------------  --------------  ----------------  --------------");
         for (Generator gen : network.getGenerators()) {
-            _log.info(String.format("%s %15.8f %15.8f %15.8f %15.8f", gen.getId(), gen.getTerminal().getQ(), gen.getTargetQ(), gen.getTerminal().getP(), gen.getTargetP()));
+            LOGGER.info(String.format("%s %15.8f %15.8f %15.8f %15.8f", gen.getId(), gen.getTerminal().getQ(), gen.getTargetQ(), gen.getTerminal().getP(), gen.getTargetP()));
         }
-        _log.info("END GENERATORS\n");
+        LOGGER.info("END GENERATORS\n");
 
-        _log.info("BUSES");
-        _log.info("#        Name          V (kV) Angle (Degrees) ");
-        _log.info("#------------ --------------- --------------- ");
+        LOGGER.info("BUSES");
+        LOGGER.info("#        Name          V (kV) Angle (Degrees) ");
+        LOGGER.info("#------------ --------------- --------------- ");
         for (Bus bus : network.getBusBreakerView().getBuses()) {
-            _log.info(String.format("%s %15.8f %15.8f", bus.getId(), bus.getV(), bus.getAngle()));
+            LOGGER.info(String.format("%s %15.8f %15.8f", bus.getId(), bus.getV(), bus.getAngle()));
         }
-        _log.info("END BUSES\n");
+        LOGGER.info("END BUSES\n");
 
-        _log.info("BRANCHES");
-        _log.info("#                                                Q (MVAR)                          P (MW) ");
-        _log.info("#                         ------------------------------- ------------------------------- ");
-        _log.info("#                    Name            From              To            From              To ");
-        _log.info("#------------------------ --------------- --------------- --------------- --------------- ");
+        LOGGER.info("BRANCHES");
+        LOGGER.info("#                                                Q (MVAR)                          P (MW) ");
+        LOGGER.info("#                         ------------------------------- ------------------------------- ");
+        LOGGER.info("#                    Name            From              To            From              To ");
+        LOGGER.info("#------------------------ --------------- --------------- --------------- --------------- ");
         for (Line line : network.getLines()) {
-            _log.info(String.format("%s %15.8f %15.8f %15.8f %15.8f", line.getId(), line.getTerminal1().getQ(), line.getTerminal2().getQ(), line.getTerminal1().getP(), line.getTerminal2().getP()));
+            LOGGER.info(String.format("%s %15.8f %15.8f %15.8f %15.8f", line.getId(), line.getTerminal1().getQ(), line.getTerminal2().getQ(), line.getTerminal1().getP(), line.getTerminal2().getP()));
         }
-        _log.info("END BRANCHES\n");
+        LOGGER.info("END BRANCHES\n");
 
-        _log.info("TRANSFORMERS");
-        _log.info("#                                                Q (MVAR)                         P (MW) ");
-        _log.info("#                         ------------------------------- ------------------------------- ");
-        _log.info("#                    Name            From              To            From              To ");
-        _log.info("#------------------------ --------------- --------------- --------------- --------------- ");
+        LOGGER.info("TRANSFORMERS");
+        LOGGER.info("#                                                Q (MVAR)                         P (MW) ");
+        LOGGER.info("#                         ------------------------------- ------------------------------- ");
+        LOGGER.info("#                    Name            From              To            From              To ");
+        LOGGER.info("#------------------------ --------------- --------------- --------------- --------------- ");
         for (Branch trafo : network.getTwoWindingsTransformers()) {
-            _log.info(String.format("%s %15.8f %15.8f %15.8f %15.8f", trafo.getId(), trafo.getTerminal1().getQ(), trafo.getTerminal2().getQ(), trafo.getTerminal1().getP(), trafo.getTerminal2().getP()));
+            LOGGER.info(String.format("%s %15.8f %15.8f %15.8f %15.8f", trafo.getId(), trafo.getTerminal1().getQ(), trafo.getTerminal2().getQ(), trafo.getTerminal1().getP(), trafo.getTerminal2().getP()));
         }
-        _log.info("END TRANSFORMERS\n");
-        _log.info(String.format("END NETWORK %s", filename));
+        LOGGER.info("END TRANSFORMERS\n");
+        LOGGER.info(String.format("END NETWORK %s", filename));
     }
 
 
@@ -391,6 +391,6 @@ public class ModelicaMainExporter {
     private final String     DEFAULT_MODELICA_VERSION    = "3.2";
 //    private final String     DEFAULT_EUROSTAG_VERSION    = "5.1.1";
 
-    private static final Logger _log                    = LoggerFactory.getLogger(ModelicaMainExporter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModelicaMainExporter.class);
 }
 

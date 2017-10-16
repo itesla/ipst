@@ -83,10 +83,10 @@ public class DanglingLineRecord extends ModelicaRecord {
                 iidmbranchParameters = null;
                 branchParameters = null;
             } else {
-                _log.error(this.getModelicaName() + " not added to grid model.");
+                LOGGER.error(this.getModelicaName() + " not added to grid model.");
             }
         } else {
-            _log.warn("Line " + this.getModelicaName() + " disconnected.");
+            LOGGER.warn("Line " + this.getModelicaName() + " disconnected.");
             this.addValue(StaticData.COMMENT + " Line " + this.getModelicaName() + " disconnected.");
         }
     }
@@ -184,6 +184,6 @@ public class DanglingLineRecord extends ModelicaRecord {
 
     private String                DEFAULT_LINE_PREFIX;
 
-    private static final Logger _log                    = LoggerFactory.getLogger(DanglingLineRecord.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DanglingLineRecord.class);
 
 }

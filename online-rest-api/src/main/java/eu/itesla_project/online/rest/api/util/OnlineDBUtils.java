@@ -51,7 +51,7 @@ import com.powsybl.security.LimitViolationType;
  */
 public class OnlineDBUtils implements ProcessDBUtils {
     private final OnlineDbFactory fact;
-    private static final DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = ISODateTimeFormat.dateTime();
     private static final Logger LOGGER = LoggerFactory.getLogger(OnlineDBUtils.class);
 
     public OnlineDBUtils(OnlineDbFactory factory) {
@@ -237,7 +237,7 @@ public class OnlineDBUtils implements ProcessDBUtils {
                 Map<Integer, StateSynthesis> statesMap = new HashMap<Integer, StateSynthesis>();
 
                 p.getWorkflowsMap().forEach((basecase, workflowId) -> {
-                    DateTime dateTime = fmt.parseDateTime(basecase);
+                    DateTime dateTime = DATE_TIME_FORMATTER.parseDateTime(basecase);
                     Map<Integer, List<LimitViolation>> previolsMap = onlinedb.getViolations(workflowId, OnlineStep.LOAD_FLOW);
 
                     if (previolsMap != null) {

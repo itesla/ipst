@@ -65,9 +65,9 @@ public final class ModelicaDictionary {
         }
 
         if (!dictionary.containsKey(identifiable.getId())) {
-            _log.info("IIDM name: " + identifiable.getId() + ". Modelica name: " + dictionary.get(identifiable.getId()));
+            LOGGER.info("IIDM name: " + identifiable.getId() + ". Modelica name: " + dictionary.get(identifiable.getId()));
         } else {
-            _log.info("IIDM name: " + identifiable.getName());
+            LOGGER.info("IIDM name: " + identifiable.getName());
         }
 
         return identifiable.getId();
@@ -79,7 +79,7 @@ public final class ModelicaDictionary {
         }
 
         if (!dictionary.containsKey(internal.getNativeId())) {
-            _log.info("IIDM name: " + internal.getNativeId());
+            LOGGER.info("IIDM name: " + internal.getNativeId());
         }
 
         return internal.getNativeId();
@@ -91,7 +91,7 @@ public final class ModelicaDictionary {
         }
 
         if (!dictionary.containsKey(sourceId)) {
-            _log.info("IIDM name: " + sourceId);
+            LOGGER.info("IIDM name: " + sourceId);
         }
 
         return sourceId;
@@ -107,6 +107,6 @@ public final class ModelicaDictionary {
 
     private final Map<String, String>    dictionary;
 
-    private static final Logger            _log        = LoggerFactory.getLogger(ModelicaDictionary.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModelicaDictionary.class);
 
 }

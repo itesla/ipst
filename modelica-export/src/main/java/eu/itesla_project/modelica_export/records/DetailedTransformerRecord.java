@@ -77,10 +77,10 @@ public class DetailedTransformerRecord extends BranchRecord {
                 iidmbranchParameters = null;
                 branchParameters = null;
             } else {
-                _log.error(this.getModelicaName() + " not added to grid model.");
+                LOGGER.error(this.getModelicaName() + " not added to grid model.");
             }
         } else {
-            _log.warn("Detailed transformer " + this.getModelicaName() + " disconnected.");
+            LOGGER.warn("Detailed transformer " + this.getModelicaName() + " disconnected.");
             this.addValue(StaticData.COMMENT + " Detailed transformer " + this.getModelicaName() + " disconnected.");
         }
     }
@@ -156,5 +156,5 @@ public class DetailedTransformerRecord extends BranchRecord {
     private String                DEFAULT_DETAILED_TRAFO_TYPE        = EurostagModDefaultTypes.DEFAULT_DETAILED_TRAFO_TYPE;
     private String                DEFAULT_DETAILED_TRAFO_PREFIX;
 
-    private static final Logger _log                            = LoggerFactory.getLogger(DetailedTransformerRecord.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DetailedTransformerRecord.class);
 }

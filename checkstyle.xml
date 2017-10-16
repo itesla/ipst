@@ -18,6 +18,7 @@
 
     <module name="TreeWalker">
         <module name="ArrayTypeStyle"/>
+        <module name="ConstantName"/>
         <module name="EmptyCatchBlock">
             <property name="exceptionVariableName" value="ignored"/>
         </module>

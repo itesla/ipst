@@ -71,11 +71,11 @@ public class DdbPSLibImporter {
                     }
                     loadModelicaTemplates(ddbManager, modelicaSource1, mapping, isRegulator, defaultModelicaSimulator);
                 } catch (Throwable e) {
-                    log.error(e.getMessage() + " processing file " + modelicaSource1);
+                    LOGGER.error(e.getMessage() + " processing file " + modelicaSource1);
                 }
             }
         } catch (Throwable e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -91,7 +91,7 @@ public class DdbPSLibImporter {
         // An .mo library file is split in multiple files, one for each class defined
         // The name of the temp files is built using the complete hierarchy name of the output class
 
-        log.info("Building Modelica file. Processing file: " + modelicaLibFile.getAbsolutePath());
+        LOGGER.info("Building Modelica file. Processing file: " + modelicaLibFile.getAbsolutePath());
 
         ModelicaParserEventHandler s = new ModelicaFileSplitter(elementsFolder);
         ModelicaSimpleParser p = new ModelicaSimpleParser(s);
@@ -118,10 +118,10 @@ public class DdbPSLibImporter {
                 if (!file.isFile()) {
                     continue;
                 }
-                log.info("Loading Modelica model. Processing file: " + file.getName());
+                LOGGER.info("Loading Modelica model. Processing file: " + file.getName());
                 modelicaParser.parse(file);
                 if (modelicaModelExtractor.getMainClassQualifiedName() == null) {
-                    log.warn("File " + file + " does not contain a main class");
+                    LOGGER.warn("File " + file + " does not contain a main class");
                     continue;
                 }
                 String modelName = modelicaModelExtractor.getMainClassQualifiedName();
@@ -147,13 +147,13 @@ public class DdbPSLibImporter {
                 updateDatabase(ddbManager, modelName, modelComment, modelParams, modelText, mapping, modelicaSimulator);
             }
         } catch (Throwable e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
     static List<File> getModelicaFiles(File d) {
         if (!d.exists()) {
-            log.error(d + " does not exist");
+            LOGGER.error(d + " does not exist");
             return null;
         }
         List<File> files = new ArrayList<File>();
@@ -180,7 +180,7 @@ public class DdbPSLibImporter {
             return;
         }
 
-        log.info("Deleting all files in folder " + d);
+        LOGGER.info("Deleting all files in folder " + d);
         for (File f : files) {
             f.delete();
         }
@@ -197,19 +197,19 @@ public class DdbPSLibImporter {
         }
 
         // Update all Model Template Containers that use this model
-        log.info("\tModelica model = " + modelName);
+        LOGGER.info("\tModelica model = " + modelName);
         List<String> mtcIds = getModelTemplateContainerIdsRelatedTo(modelName, mapping);
         for (String mtcId : mtcIds) {
             ModelTemplateContainer mtc = ddbManager.findModelTemplateContainer(mtcId);
             if (mtc == null) {
-                log.info("\tCreating Model Template Container " + mtcId);
+                LOGGER.info("\tCreating Model Template Container " + mtcId);
                 mtc = new ModelTemplateContainer(mtcId, "");
             }
-            log.info("\tModel Template Container = " + mtc.getDdbId());
+            LOGGER.info("\tModel Template Container = " + mtc.getDdbId());
 
             ModelTemplate mt = findModelTemplate(mtc, modelicaSimulator);
             if (mt == null) {
-                log.info("\tCreating Model Template " + modelName);
+                LOGGER.info("\tCreating Model Template " + modelName);
                 mt = new ModelTemplate(modelicaSimulator, modelName, modelComment);
                 mtc.getModelTemplates().add(mt);
             }
@@ -217,7 +217,7 @@ public class DdbPSLibImporter {
             mt.setData("mo", Utils.stringAsByteArrayUTF8(modelText));
 
             int paramSetNum = mt.getDefaultParameters() != null ? mt.getDefaultParameters().size() : 0;
-            log.info("\tParam set number = " + paramSetNum);
+            LOGGER.info("\tParam set number = " + paramSetNum);
             DefaultParameters defaultParams = new DefaultParameters(paramSetNum);
             defaultParams.setParameters(ddbParams);
             mt.getDefaultParameters().add(defaultParams);
@@ -226,7 +226,7 @@ public class DdbPSLibImporter {
                 // In order to save long models, max_allowed_packet variable must be modified (on the server)
                 ddbManager.save(mtc);
             } catch (Exception x) {
-                log.error("MTC changes in " + mtc.getDdbId() + " not commited, reason: " + x.getMessage());
+                LOGGER.error("MTC changes in " + mtc.getDdbId() + " not commited, reason: " + x.getMessage());
             }
         }
     }
@@ -262,7 +262,7 @@ public class DdbPSLibImporter {
     SimulatorInst getOrCreateModelicaSimulatorInst(DDBManager ddbmanager, String modelicaVersion) {
         SimulatorInst modelicaSim = ddbmanager.findSimulator(Simulator.MODELICA, modelicaVersion);
         if (modelicaSim == null) {
-            log.debug("Creating Modelica simulator, version " + modelicaVersion);
+            LOGGER.debug("Creating Modelica simulator, version " + modelicaVersion);
             modelicaSim = new SimulatorInst(Simulator.MODELICA, modelicaVersion);
             modelicaSim = ddbmanager.save(modelicaSim);
         }
@@ -323,5 +323,5 @@ public class DdbPSLibImporter {
     private static final String    REGULATORS_PACKAGE_NAME        = "Regulators";
     private static final String    LIB_PACKAGE_NAME            = "PowerSystems";
 
-    private static final Logger log                            = LoggerFactory.getLogger(DdbPSLibImporter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DdbPSLibImporter.class);
 }

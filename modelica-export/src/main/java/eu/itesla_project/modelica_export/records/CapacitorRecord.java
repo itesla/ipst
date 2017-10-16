@@ -110,10 +110,10 @@ public class CapacitorRecord extends ModelicaRecord {
                 //Clear data
                 iidmcapacitorParameters = null;
             } else {
-                _log.error(this.getModelicaName() + " not added to grid model.");
+                LOGGER.error(this.getModelicaName() + " not added to grid model.");
             }
         } else {
-            _log.warn("Capacitor " + this.getModelicaName() + " disconnected.");
+            LOGGER.warn("Capacitor " + this.getModelicaName() + " disconnected.");
             this.addValue(StaticData.COMMENT + " Capacitor " + this.getModelicaName() + " disconnected.");
         }
 
@@ -143,5 +143,5 @@ public class CapacitorRecord extends ModelicaRecord {
     private String                DEFAULT_CAPACITOR_TYPE    = EurostagModDefaultTypes.DEFAULT_CAPACITOR_TYPE;
     private String                DEFAULT_CAPACITOR_PREFIX;
 
-    private static final Logger _log                    = LoggerFactory.getLogger(CapacitorRecord.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CapacitorRecord.class);
 }
