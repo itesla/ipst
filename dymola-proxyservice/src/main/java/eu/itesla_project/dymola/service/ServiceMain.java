@@ -11,7 +11,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 class ServiceMain {
@@ -23,34 +22,34 @@ class ServiceMain {
         String serviceWorkDir = "./server";
         int dymolaStartPort = 9000;
         int dymolaPortsRangeSize = 10;
-        boolean dymolaDebug=true;
+        boolean dymolaDebug = true;
 
-        String wsHost="localhost";
-        int wsPort=8888;
+        String wsHost = "localhost";
+        int wsPort = 8888;
         int wsNthreads = 5;
 
-        String fakeSourceDir=null;
+        String fakeSourceDir = null;
 
         if (args.length > 0) {
-            serviceWorkDir=args[0];
-            dymolaStartPort=Integer.parseInt(args[1]);
-            dymolaPortsRangeSize=Integer.parseInt(args[2]);
-            wsHost=args[3];
-            wsPort=Integer.parseInt(args[4]);
-            wsNthreads=Integer.parseInt(args[5]);
-            dymolaDebug=Boolean.parseBoolean(args[6]);
-            if (args.length>7){
-                fakeSourceDir=args[7];
+            serviceWorkDir = args[0];
+            dymolaStartPort = Integer.parseInt(args[1]);
+            dymolaPortsRangeSize = Integer.parseInt(args[2]);
+            wsHost = args[3];
+            wsPort = Integer.parseInt(args[4]);
+            wsNthreads = Integer.parseInt(args[5]);
+            dymolaDebug = Boolean.parseBoolean(args[6]);
+            if (args.length > 7) {
+                fakeSourceDir = args[7];
             }
         }
 
-        String serviceURL = "http://"+wsHost+":" + wsPort + "/dymservice";
+        String serviceURL = "http://" + wsHost + ":" + wsPort + "/dymservice";
 
-        System.setProperty("sun.net.httpserver.idleInterval","30000");
+        System.setProperty("sun.net.httpserver.idleInterval", "30000");
 
         System.out.println("Instantiating Dymola service proxy");
-        SimulatorServerImpl simImpl=new SimulatorServerImpl(serviceWorkDir, dymolaStartPort, dymolaPortsRangeSize, dymolaDebug);
-        if (fakeSourceDir!=null) {
+        SimulatorServerImpl simImpl = new SimulatorServerImpl(serviceWorkDir, dymolaStartPort, dymolaPortsRangeSize, dymolaDebug);
+        if (fakeSourceDir != null) {
             simImpl.setFakeSourceDir(fakeSourceDir);
         }
 

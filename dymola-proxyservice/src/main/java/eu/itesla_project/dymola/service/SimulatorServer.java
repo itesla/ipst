@@ -7,19 +7,19 @@
 package eu.itesla_project.dymola.service;
 
 import javax.activation.DataHandler;
-import javax.jws.WebService;
 import javax.jws.WebMethod;
+import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.bind.annotation.XmlMimeType;
 
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 @WebService
 @SOAPBinding(style = Style.RPC) // more on this later
 public interface SimulatorServer {
     @WebMethod
-    @XmlMimeType("application/octet-stream") DataHandler simulate(String inputFileName, String problem, double startTime, double stopTime, int numberOfIntervals, double outputInterval, String method, double tolerance, double fixedstepsize, String resultsFileName, @XmlMimeType("application/octet-stream") DataHandler data);
+    @XmlMimeType("application/octet-stream")
+    DataHandler simulate(String inputFileName, String problem, double startTime, double stopTime, int numberOfIntervals, double outputInterval, String method, double tolerance, double fixedstepsize, String resultsFileName, @XmlMimeType("application/octet-stream") DataHandler data);
 }
