@@ -256,11 +256,11 @@ public class SamplerWp41 implements Sampler {
             args1.add(Integer.toString(0));
         }
 
-        String wp41c_m1;
+        String wp41cM1;
         if (config.getBinariesDir() != null) {
-            wp41c_m1 = config.getBinariesDir().resolve(WP41C_M1).toAbsolutePath().toString();
+            wp41cM1 = config.getBinariesDir().resolve(WP41C_M1).toAbsolutePath().toString();
         } else {
-            wp41c_m1 = WP41C_M1;
+            wp41cM1 = WP41C_M1;
         }
 
         List<OutputFile> m1OutputFilesList = new ArrayList<>();
@@ -271,7 +271,7 @@ public class SamplerWp41 implements Sampler {
         m1OutputFilesList.add(new OutputFile(M1STATVARSFILENAME));
         return new SimpleCommandBuilder()
                 .id(WP41C_M1)
-                .program(wp41c_m1)
+                .program(wp41cM1)
                 .args(args1)
                 .inputFiles(new InputFile(M1INPUTFILENAME))
                 .outputFiles(m1OutputFilesList)
@@ -279,16 +279,16 @@ public class SamplerWp41 implements Sampler {
     }
 
     private Command createMatm2Cmd() {
-        String wp41c_m2;
+        String wp41cM2;
         if (config.getBinariesDir() != null) {
-            wp41c_m2 = config.getBinariesDir().resolve(WP41C_M2).toAbsolutePath().toString();
+            wp41cM2 = config.getBinariesDir().resolve(WP41C_M2).toAbsolutePath().toString();
         } else {
-            wp41c_m2 = WP41C_M2;
+            wp41cM2 = WP41C_M2;
         }
 
         return new SimpleCommandBuilder()
         .id(WP41C_M2)
-        .program(wp41c_m2)
+        .program(wp41cM2)
         .args("MOD1_${EXEC_NUM}.mat",
                 "MOD2_${EXEC_NUM}.mat",
                 Command.EXECUTION_NUMBER_PATTERN,
@@ -307,9 +307,9 @@ public class SamplerWp41 implements Sampler {
             Path workingDir = executor.getWorkingDir();
             LOGGER.info("Retrieving historical data for network {}", network.getId());
             Wp41HistoData histoData = getHistoDBData(dmParams, workingDir);
-            int par_k = config.getPar_k() == -1 ? (int) Math.round(Math.sqrt(histoData.getHdTable().rowKeyList().size() / 2))
+            int parK = config.getPar_k() == -1 ? (int) Math.round(Math.sqrt(histoData.getHdTable().rowKeyList().size() / 2))
                     : config.getPar_k();
-            LOGGER.info(" IR: {}, tflag: {}, number of clusters: {} ", config.getIr(), config.getTflag(), par_k);
+            LOGGER.info(" IR: {}, tflag: {}, number of clusters: {} ", config.getIr(), config.getTflag(), parK);
             double[][] dataMatrix = Utils.histoDataAsDoubleMatrixNew(histoData.getHdTable());
             Utils.writeWp41ContModule1Mat(workingDir.resolve(M1INPUTFILENAME), dataMatrix);
 
@@ -323,15 +323,15 @@ public class SamplerWp41 implements Sampler {
                 }
             }
 
-            LOGGER.info("Executing wp41 module1(once) module2 ({} times)", par_k);
+            LOGGER.info("Executing wp41 module1(once) module2 ({} times)", parK);
 
-            ExecutionReport report = executor.start(new CommandExecution(createMatm1Cmd(par_k), 1, priority));
+            ExecutionReport report = executor.start(new CommandExecution(createMatm1Cmd(parK), 1, priority));
             report.log();
             if (report.getErrors().size() > 0) {
                 throw new RuntimeException("Module 1 failed");
             }
             //1 brings all module1 output files (one per cluster plus the statvar file) back to the cache
-            for (int i = 0; i < par_k; i++) {
+            for (int i = 0; i < parK; i++) {
                 Path srcPath = workingDir.resolve("MOD1_" + i + ".mat");
                 Path destPath = cacheDir.resolve("MOD1_" + i + ".mat");
                 Files.copy(srcPath, destPath, REPLACE_EXISTING);
@@ -339,12 +339,12 @@ public class SamplerWp41 implements Sampler {
             Files.copy(workingDir.resolve(M1STATVARSFILENAME), cacheDir.resolve(M1STATVARSFILENAME), REPLACE_EXISTING);
 
             //2 execute module2
-            report = executor.start(new CommandExecution(createMatm2Cmd(), par_k, priority));
+            report = executor.start(new CommandExecution(createMatm2Cmd(), parK, priority));
             report.log();
             if (report.getErrors().size() > 0) {
                 throw new RuntimeException("Module 2 failed");
             }
-            for (int i = 0; i < par_k; i++) {
+            for (int i = 0; i < parK; i++) {
                 Path srcPath = workingDir.resolve("MOD2_" + i + ".mat");
                 Path destPath = cacheDir.resolve("MOD2_" + i + ".mat");
                 Files.copy(srcPath, destPath, REPLACE_EXISTING);
@@ -364,16 +364,16 @@ public class SamplerWp41 implements Sampler {
             args1.add(Integer.toString(0));
         }
 
-        String wp41c_m3pre;
+        String wp41cM3pre;
         if (config.getBinariesDir() != null) {
-            wp41c_m3pre = config.getBinariesDir().resolve(WP41C_M3PRE).toAbsolutePath().toString();
+            wp41cM3pre = config.getBinariesDir().resolve(WP41C_M3PRE).toAbsolutePath().toString();
         } else {
-            wp41c_m3pre = WP41C_M3PRE;
+            wp41cM3pre = WP41C_M3PRE;
         }
 
         return new SimpleCommandBuilder()
                 .id(WP41C_M3PRE)
-                .program(wp41c_m3pre)
+                .program(wp41cM3pre)
                 .args(args1)
                 .inputFiles(new InputFile(M1STATVARSFILENAME))
                 .outputFiles(new OutputFile(M3NSAMCFILENAME))
@@ -395,16 +395,16 @@ public class SamplerWp41 implements Sampler {
             args1.add(Integer.toString(0));
         }
 
-        String wp41c_m3;
+        String wp41cM3;
         if (config.getBinariesDir() != null) {
-            wp41c_m3 = config.getBinariesDir().resolve(WP41C_M3).toAbsolutePath().toString();
+            wp41cM3 = config.getBinariesDir().resolve(WP41C_M3).toAbsolutePath().toString();
         } else {
-            wp41c_m3 = WP41C_M3;
+            wp41cM3 = WP41C_M3;
         }
 
         return new SimpleCommandBuilder()
         .id(WP41C_M3)
-        .program(wp41c_m3)
+        .program(wp41cM3)
         .args(args1)
         .inputFiles(new InputFile("MOD1_${EXEC_NUM}.mat"),
                     new InputFile("MOD2_${EXEC_NUM}.mat"),
@@ -420,11 +420,11 @@ public class SamplerWp41 implements Sampler {
 
 
     private Command createMatm3reduceCmd(int clustNums) {
-        String wp41c_m3_reduce;
+        String wp41cM3Reduce;
         if (config.getBinariesDir() != null) {
-            wp41c_m3_reduce = config.getBinariesDir().resolve(WP41C_M3_REDUCE).toAbsolutePath().toString();
+            wp41cM3Reduce = config.getBinariesDir().resolve(WP41C_M3_REDUCE).toAbsolutePath().toString();
         } else {
-            wp41c_m3_reduce = WP41C_M3_REDUCE;
+            wp41cM3Reduce = WP41C_M3_REDUCE;
         }
         List<InputFile> m3partsfiles = new ArrayList<>(clustNums);
         for (int i = 0; i < clustNums; i++) {
@@ -433,7 +433,7 @@ public class SamplerWp41 implements Sampler {
         m3partsfiles.add(new InputFile(M1STATVARSFILENAME));
         return new SimpleCommandBuilder()
                 .id(WP41C_M3_REDUCE)
-                .program(wp41c_m3_reduce)
+                .program(wp41cM3Reduce)
                 .args("./",
                       M1STATVARSFILENAME,
                       "" + clustNums,
@@ -490,15 +490,15 @@ public class SamplerWp41 implements Sampler {
 
 
     private Command createBinSamplerCmd(Path iFilePath, int nSamples) {
-        String wp41b_is;
+        String wp41bIs;
         if (config.getBinariesDir() != null) {
-            wp41b_is = config.getBinariesDir().resolve(WP41B_IS).toAbsolutePath().toString();
+            wp41bIs = config.getBinariesDir().resolve(WP41B_IS).toAbsolutePath().toString();
         } else {
-            wp41b_is = WP41B_IS;
+            wp41bIs = WP41B_IS;
         }
         return new SimpleCommandBuilder()
                 .id(WP41B_IS)
-                .program(wp41b_is)
+                .program(wp41bIs)
                 .args(iFilePath.toAbsolutePath().toString(),
                       B1OUTPUTFILENAME,
                       "" + nSamples)

@@ -292,11 +292,11 @@ public class OnlineDBUtils implements ProcessDBUtils {
             float limit = lv.getLimit();
             float value = lv.getValue();
             ViolationSynthesis synt;
-            Optional<ViolationSynthesis> search_synt = violationList.stream()
+            Optional<ViolationSynthesis> searchSynt = violationList.stream()
                     .filter(v -> v.getEquipment().equals(equipment))
                     .filter(v -> v.getType().equals(violationType)).findFirst();
-            if (search_synt.isPresent()) {
-                synt = search_synt.get();
+            if (searchSynt.isPresent()) {
+                synt = searchSynt.get();
             } else {
                 synt = new ViolationSynthesis(equipment, lv.getBaseVoltage(), violationType, limit, lv.getLimitName());
                 violationList.add(synt);

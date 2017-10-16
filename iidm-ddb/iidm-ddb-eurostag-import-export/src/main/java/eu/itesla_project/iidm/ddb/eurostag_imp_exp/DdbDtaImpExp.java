@@ -343,11 +343,11 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
         }
 
-        String mtc_ddbid = MTC_PREFIX_NAME + zone.getKeyName();
+        String mtcDdbid = MTC_PREFIX_NAME + zone.getKeyName();
         ModelTemplateContainer mtc1 = ddbmanager
-                .findModelTemplateContainer(mtc_ddbid);
+                .findModelTemplateContainer(mtcDdbid);
         if (mtc1 == null) {
-            throw new RuntimeException(" template container " + mtc_ddbid
+            throw new RuntimeException(" template container " + mtcDdbid
                     + " not defined! ");
         }
 
@@ -437,11 +437,11 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
         }
 
-        String mtc_ddbid = MTC_PREFIX_NAME + zone.getKeyName();
+        String mtcDdbid = MTC_PREFIX_NAME + zone.getKeyName();
         ModelTemplateContainer mtc1 = ddbmanager
-                .findModelTemplateContainer(mtc_ddbid);
+                .findModelTemplateContainer(mtcDdbid);
         if (mtc1 == null) {
-            throw new RuntimeException(" template container " + mtc_ddbid
+            throw new RuntimeException(" template container " + mtcDdbid
                     + " not defined! ");
         }
 
@@ -513,13 +513,13 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         addPinNames(nativeId, macroblockName, retrieveActualRegPath(macroblockName + "." + "frm", regsMapping));
 
         //MTC and MT handling
-        String mtc_ddbid = MTC_PREFIX_NAME + macroblockName;
-        ModelTemplateContainer mtc1 = ddbmanager.findModelTemplateContainer(mtc_ddbid);
+        String mtcDdbid = MTC_PREFIX_NAME + macroblockName;
+        ModelTemplateContainer mtc1 = ddbmanager.findModelTemplateContainer(mtcDdbid);
         if (mtc1 != null) {
             log.info("-- Using existing Model Template Container: " + mtc1.getDdbId());
         } else {
-            log.info("-- Creating Model Template Container: " + mtc_ddbid);
-            mtc1 = new ModelTemplateContainer(mtc_ddbid, "");
+            log.info("-- Creating Model Template Container: " + mtcDdbid);
+            mtc1 = new ModelTemplateContainer(mtcDdbid, "");
         }
 
         //find a mt for this mtc and simulator
@@ -536,7 +536,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                 log.info("--- removing existing Model Template: {}, {}, {}", mt1.getSimulator(), mt1.getTypeName(), mt1.getComment());
                 mtc1.getModelTemplates().remove(mt1);
                 mtc1 = ddbmanager.save(mtc1);
-                mtc1 = ddbmanager.findModelTemplateContainer(mtc_ddbid);
+                mtc1 = ddbmanager.findModelTemplateContainer(mtcDdbid);
                 mt1 = null;
                 removePinNames(nativeId, macroblockName);
             } else {

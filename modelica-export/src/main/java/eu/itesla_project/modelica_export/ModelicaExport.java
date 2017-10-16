@@ -150,14 +150,14 @@ public class ModelicaExport {
 
         // File header
         List<GlobalVariable> globalVars = new ArrayList<GlobalVariable>();
-        GlobalVariable OMEGAREF_Var = null;
+        GlobalVariable omegaRefVar = null;
         SNREF = StaticData.SNREF_VALUE;
 
-        GlobalVariable SNREF_Var = new GlobalVariable(StaticData.PARAM_TYPE, StaticData.SNREF, SNREF);
-        globalVars.add(SNREF_Var);
+        GlobalVariable snrefVar = new GlobalVariable(StaticData.PARAM_TYPE, StaticData.SNREF, SNREF);
+        globalVars.add(snrefVar);
         if (this._sourceEngine instanceof EurostagEngine) {
-            OMEGAREF_Var = new GlobalVariable(EurostagModDefaultTypes.OUTPUT_PIN_TYPE, EurostagFixedData.OMEGAREF_NAME);
-            globalVars.add(OMEGAREF_Var);
+            omegaRefVar = new GlobalVariable(EurostagModDefaultTypes.OUTPUT_PIN_TYPE, EurostagFixedData.OMEGAREF_NAME);
+            globalVars.add(omegaRefVar);
         }
 
         HeaderRecord headerRecord = new HeaderRecord(_network.getName(), globalVars);
@@ -252,8 +252,8 @@ public class ModelicaExport {
             if ((generators.size() > 0) && (!generators.isEmpty())) {
                 omegaRefVal = calculateOmegaRef(generators);
             }
-            OMEGAREF_Var.setValue(omegaRefVal);
-            globalInitVars.add(OMEGAREF_Var);
+            omegaRefVar.setValue(omegaRefVal);
+            globalInitVars.add(omegaRefVar);
 
             for (GlobalVariable var : globalInitVars) {
                 if (var.getValue() != null) {
@@ -262,9 +262,9 @@ public class ModelicaExport {
                 }
             }
 
-            if (OMEGAREF_Var.getValue() != null) {
+            if (omegaRefVar.getValue() != null) {
                 // Export Connect between Generators and OmegaRef
-                exportConnectGlobalVar(writerMo, modContext, new ArrayList<Injection>(generators), OMEGAREF_Var, modelicaSim);
+                exportConnectGlobalVar(writerMo, modContext, new ArrayList<Injection>(generators), omegaRefVar, modelicaSim);
             }
         }
 

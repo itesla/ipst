@@ -82,15 +82,15 @@ public class LineOpeningReceivingRecord extends EventRecord {
      * Gets R, X, G, B from the original line to set them in the line opening receiving.
      */
     private void getLineParameters() {
-        String R = this.lineRecord.getParamsMap().get(StaticData.R);
-        String X = this.lineRecord.getParamsMap().get(StaticData.X);
-        String G = this.lineRecord.getParamsMap().get(StaticData.G);
-        String B = this.lineRecord.getParamsMap().get(StaticData.B);
+        String r = this.lineRecord.getParamsMap().get(StaticData.R);
+        String x = this.lineRecord.getParamsMap().get(StaticData.X);
+        String g = this.lineRecord.getParamsMap().get(StaticData.G);
+        String b = this.lineRecord.getParamsMap().get(StaticData.B);
 
-        addParameter(StaticData.R, R);
-        addParameter(StaticData.X, X);
-        addParameter(StaticData.G, G);
-        addParameter(StaticData.B, B);
+        addParameter(StaticData.R, r);
+        addParameter(StaticData.X, x);
+        addParameter(StaticData.G, g);
+        addParameter(StaticData.B, b);
     }
 
     private void addParameter(String name, Object value) {

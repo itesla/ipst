@@ -94,13 +94,13 @@ public class DetailedTransformerRecord extends BranchRecord {
 
         float t1NomV = this.transformer.getTerminal1().getVoltageLevel().getNominalV();
         float t2NomV = this.transformer.getTerminal2().getVoltageLevel().getNominalV();
-        float U1nom = Float.isNaN(t1NomV) == false ? t1NomV : 0;
-        float U2nom = Float.isNaN(t2NomV) == false ? t2NomV : 0;
-        float V1 = Float.isNaN(this.transformer.getRatedU1()) == false ? this.transformer.getRatedU1() : 0; // [kV]
-        float V2  = Float.isNaN(this.transformer.getRatedU2()) == false ? this.transformer.getRatedU2() : 0; // [kV]
-        float Zbase = (float) Math.pow(U2nom, 2) / SNREF;
-        float G = this.transformer.getG() * Zbase; // [p.u.]
-        float B = this.transformer.getB() * Zbase; // [p.u.]
+        float u1Nom = Float.isNaN(t1NomV) == false ? t1NomV : 0;
+        float u2Nom = Float.isNaN(t2NomV) == false ? t2NomV : 0;
+        float v1 = Float.isNaN(this.transformer.getRatedU1()) == false ? this.transformer.getRatedU1() : 0; // [kV]
+        float v2  = Float.isNaN(this.transformer.getRatedU2()) == false ? this.transformer.getRatedU2() : 0; // [kV]
+        float zBase = (float) Math.pow(u2Nom, 2) / SNREF;
+        float g = this.transformer.getG() * zBase; // [p.u.]
+        float b = this.transformer.getB() * zBase; // [p.u.]
 
         RatioTapChanger rtc = this.transformer.getRatioTapChanger();
         PhaseTapChanger ptc = this.transformer.getPhaseTapChanger();
@@ -109,7 +109,7 @@ public class DetailedTransformerRecord extends BranchRecord {
 
         if (rtc != null) {
             RatioTapChangerStep rtcs = rtc.getCurrentStep();
-            V1 /= rtcs.getRho();
+            v1 /= rtcs.getRho();
             dr += rtcs.getR();
             dx += rtcs.getX();
         }
@@ -117,30 +117,30 @@ public class DetailedTransformerRecord extends BranchRecord {
         PhaseTapChangerStep ptcs = null;
         if (ptc != null) {
             ptcs = ptc.getCurrentStep();
-            V1 /= ptcs.getRho();
+            v1 /= ptcs.getRho();
             dr += ptcs.getR();
             dx += ptcs.getX();
         }
         float theta = ptc != null ? ptcs.getAlpha() : 0;
 
-        double rpu2 = (this.transformer.getR() * (1 + dr / 100) * SNREF) / Math.pow(U2nom, 2); // [p.u.]
-        double xpu2 = (this.transformer.getX() * (1 + dx / 100) * SNREF) / Math.pow(U2nom, 2); // [p.u.]
+        double rpu2 = (this.transformer.getR() * (1 + dr / 100) * SNREF) / Math.pow(u2Nom, 2); // [p.u.]
+        double xpu2 = (this.transformer.getX() * (1 + dx / 100) * SNREF) / Math.pow(u2Nom, 2); // [p.u.]
 
         /*
          * El ratio esta calculado de acuerdo al valor obtenido por HELM FLow
          */
 
-        float Vend_pu = V1 / U1nom;
-        float Vsource_pu = V2 / U2nom;
-        float RATIO = Vsource_pu / Vend_pu; // ...transformation ratio [p.u.]
+        float vEndPu = v1 / u1Nom;
+        float vSourcePu = v2 / u2Nom;
+        float ration = vSourcePu / vEndPu; // ...transformation ratio [p.u.]
 
         if (ModelicaMainExporter.RATIOS_TO_1) {
-            RATIO = 1;
+            ration = 1;
         }
 
-        super.addParameter(this.iidmbranchParameters, EurostagFixedData.r, RATIO); // p.u.
-        super.addParameter(this.iidmbranchParameters, EurostagFixedData.B0, B);
-        super.addParameter(this.iidmbranchParameters, EurostagFixedData.G0, G);
+        super.addParameter(this.iidmbranchParameters, EurostagFixedData.r, ration); // p.u.
+        super.addParameter(this.iidmbranchParameters, EurostagFixedData.B0, b);
+        super.addParameter(this.iidmbranchParameters, EurostagFixedData.G0, g);
         super.addParameter(this.iidmbranchParameters, EurostagFixedData.THETA, theta);
         super.addParameter(this.iidmbranchParameters, StaticData.R, rpu2);
         super.addParameter(this.iidmbranchParameters, StaticData.X, xpu2);

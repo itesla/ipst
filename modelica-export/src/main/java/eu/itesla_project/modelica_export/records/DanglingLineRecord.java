@@ -133,12 +133,12 @@ public class DanglingLineRecord extends ModelicaRecord {
         //this.iidmbranchParameters = new ArrayList<IIDMParameter>();
         float tNominalV = this.danglingLine.getTerminal().getVoltageLevel().getNominalV();
         float voltage = Float.isNaN(tNominalV) == false ? tNominalV : 0;
-        float Z = (voltage * voltage) / SNREF;
+        float z = (voltage * voltage) / SNREF;
 
-        super.addParameter(this.iidmbranchParameters, StaticData.R, this.danglingLine.getR() / Z);
-        super.addParameter(this.iidmbranchParameters, StaticData.X, this.danglingLine.getX() / Z);
-        super.addParameter(this.iidmbranchParameters, StaticData.G, this.danglingLine.getG() * Z);
-        super.addParameter(this.iidmbranchParameters, StaticData.B, this.danglingLine.getB() * Z);
+        super.addParameter(this.iidmbranchParameters, StaticData.R, this.danglingLine.getR() / z);
+        super.addParameter(this.iidmbranchParameters, StaticData.X, this.danglingLine.getX() / z);
+        super.addParameter(this.iidmbranchParameters, StaticData.G, this.danglingLine.getG() * z);
+        super.addParameter(this.iidmbranchParameters, StaticData.B, this.danglingLine.getB() * z);
     }
 
     @Override

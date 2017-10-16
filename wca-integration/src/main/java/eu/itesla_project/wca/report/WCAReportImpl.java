@@ -237,7 +237,7 @@ public class WCAReportImpl implements WCAReport {
     private void exportViolations(Path folder, String file, String title, WCALoadflowResult loadflowResult,
                                   List<LimitViolation> violations) throws IOException {
         Path violationsPath = folder.resolve(file);
-        Column[] COLUMNS = {
+        Column[] columns = {
             new Column("Basecase"),
             new Column("FailureStep"),
             new Column("FailureDescription"),
@@ -250,7 +250,7 @@ public class WCAReportImpl implements WCAReport {
         };
         CsvTableFormatterFactory factory = new CsvTableFormatterFactory();
         try (Writer writer = Files.newBufferedWriter(violationsPath, StandardCharsets.UTF_8);
-             TableFormatter formatter = factory.create(writer, title, TABLE_FORMATTER_CONFIG, COLUMNS)) {
+             TableFormatter formatter = factory.create(writer, title, TABLE_FORMATTER_CONFIG, columns)) {
             writeViolations(formatter, null, loadflowResult, violations);
         }
     }
@@ -316,7 +316,7 @@ public class WCAReportImpl implements WCAReport {
         LOGGER.info("Exporting preventive action application report of basecase {} to file {}",
                     basecase, folder + File.separator + POST_PREVENTIVE_ACTIONS_FILE);
         Path violationsPath = folder.resolve(POST_PREVENTIVE_ACTIONS_FILE);
-        Column[] COLUMNS = {
+        Column[] columns = {
             new Column("Basecase"),
             new Column("ActionId"),
             new Column("ViolatedEquipment"),
@@ -329,7 +329,7 @@ public class WCAReportImpl implements WCAReport {
         };
         CsvTableFormatterFactory factory = new CsvTableFormatterFactory();
         try (Writer writer = Files.newBufferedWriter(violationsPath, StandardCharsets.UTF_8);
-             TableFormatter formatter = factory.create(writer, POST_PREVENTIVE_ACTIONS_TITLE, TABLE_FORMATTER_CONFIG, COLUMNS)) {
+             TableFormatter formatter = factory.create(writer, POST_PREVENTIVE_ACTIONS_TITLE, TABLE_FORMATTER_CONFIG, columns)) {
             writeActionsApplications(formatter, null, new ArrayList<>(preventiveActionsApplication.values()));
         }
     }
@@ -348,7 +348,7 @@ public class WCAReportImpl implements WCAReport {
         LOGGER.info("Exporting security rules application report of basecase {} to file {}",
                     basecase, folder + File.separator + SECURITY_RULES_VIOLATIONS_WITHOUT_UNCERTAINTIES_FILE);
         Path violationsPath = folder.resolve(SECURITY_RULES_VIOLATIONS_WITHOUT_UNCERTAINTIES_FILE);
-        Column[] COLUMNS = {
+        Column[] columns = {
             new Column("Basecase"),
             new Column("ContingencyId"),
             new Column("SecurityRule"),
@@ -359,7 +359,7 @@ public class WCAReportImpl implements WCAReport {
         };
         CsvTableFormatterFactory factory = new CsvTableFormatterFactory();
         try (Writer writer = Files.newBufferedWriter(violationsPath, StandardCharsets.UTF_8);
-             TableFormatter formatter = factory.create(writer, SECURITY_RULES_VIOLATIONS_WITHOUT_UNCERTAINTIES_TITLE, TABLE_FORMATTER_CONFIG, COLUMNS)) {
+             TableFormatter formatter = factory.create(writer, SECURITY_RULES_VIOLATIONS_WITHOUT_UNCERTAINTIES_TITLE, TABLE_FORMATTER_CONFIG, columns)) {
             if (!securityRulesApplication.isEmpty()) {
                 securityRulesApplication.forEach(ruleApplication -> {
                     try {
@@ -394,7 +394,7 @@ public class WCAReportImpl implements WCAReport {
                     basecase, folder + File.separator + POST_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_FILE);
         Path violationsPath1 = folder.resolve(POST_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_FILE);
         Path violationsPath2 = folder.resolve(POST_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_FILE);
-        Column[] COLUMNS = {
+        Column[] columns = {
             new Column("Basecase"),
             new Column("Contingency"),
             new Column("FailureStep"),
@@ -408,9 +408,9 @@ public class WCAReportImpl implements WCAReport {
         };
         CsvTableFormatterFactory factory = new CsvTableFormatterFactory();
         try (Writer writer1 = Files.newBufferedWriter(violationsPath1, StandardCharsets.UTF_8);
-             TableFormatter formatter1 = factory.create(writer1, POST_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_TITLE, TABLE_FORMATTER_CONFIG, COLUMNS);
+             TableFormatter formatter1 = factory.create(writer1, POST_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_TITLE, TABLE_FORMATTER_CONFIG, columns);
              Writer writer2 = Files.newBufferedWriter(violationsPath2, StandardCharsets.UTF_8);
-             TableFormatter formatter2 = factory.create(writer2, POST_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_TITLE, TABLE_FORMATTER_CONFIG, COLUMNS)) {
+             TableFormatter formatter2 = factory.create(writer2, POST_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_TITLE, TABLE_FORMATTER_CONFIG, columns)) {
             if (!postContingenciesStatus.isEmpty()) {
                 postContingenciesStatus.forEach(postContingencyStatus -> {
                     // post-contingency violations without uncertainties
@@ -432,7 +432,7 @@ public class WCAReportImpl implements WCAReport {
         LOGGER.info("Exporting curative action application report of basecase {} to file {}",
                     basecase, folder + File.separator + POST_CURATIVE_ACTIONS_FILE);
         Path violationsPath = folder.resolve(POST_CURATIVE_ACTIONS_FILE);
-        Column[] COLUMNS = {
+        Column[] columns = {
             new Column("Basecase"),
             new Column("Contingency"),
             new Column("ActionId"),
@@ -446,7 +446,7 @@ public class WCAReportImpl implements WCAReport {
         };
         CsvTableFormatterFactory factory = new CsvTableFormatterFactory();
         try (Writer writer = Files.newBufferedWriter(violationsPath, StandardCharsets.UTF_8);
-             TableFormatter formatter = factory.create(writer, POST_CURATIVE_ACTIONS_TITLE, TABLE_FORMATTER_CONFIG, COLUMNS)) {
+             TableFormatter formatter = factory.create(writer, POST_CURATIVE_ACTIONS_TITLE, TABLE_FORMATTER_CONFIG, columns)) {
             if (!postContingenciesStatus.isEmpty()) {
                 postContingenciesStatus.forEach(postContingencyStatus -> {
                     writeActionsApplications(formatter,

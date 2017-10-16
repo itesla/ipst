@@ -79,11 +79,11 @@ public class SamplerWp41Config {
 
         int module3Timeout = config.getIntProperty("module3Timeout", MODULE3_DEFAULT_TIMEOUT);
 
-        int par_k = config.getIntProperty("par_k", -1);
+        int parK = config.getIntProperty("par_k", -1);
 
         boolean debug = config.getBooleanProperty("debug", false);
 
-        return new SamplerWp41Config(binariesDir, runtimeHomeDir, validationDir, ir, tflag, rngSeed, module3Timeout, par_k, debug);
+        return new SamplerWp41Config(binariesDir, runtimeHomeDir, validationDir, ir, tflag, rngSeed, module3Timeout, parK, debug);
     }
 
     public SamplerWp41Config(

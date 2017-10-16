@@ -33,9 +33,9 @@ public class CapacitorRecord extends ModelicaRecord {
         this.capacitor = shunt;
         this.busInfo = busInfo;
 
-        double V = shunt.getTerminal().getVoltageLevel().getNominalV();
+        double nominalV = shunt.getTerminal().getVoltageLevel().getNominalV();
         int numSteps = shunt.getMaximumSectionCount();
-        double stepSize = V * V * shunt.getMaximumB() / numSteps;
+        double stepSize = nominalV * nominalV * shunt.getMaximumB() / numSteps;
 
         double b = stepSize * shunt.getCurrentSectionCount();
 

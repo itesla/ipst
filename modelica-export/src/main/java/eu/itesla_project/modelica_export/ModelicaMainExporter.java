@@ -91,7 +91,7 @@ public class ModelicaMainExporter {
     public void export(Path outputParentDir) {
         LOGGER.info("Exporting model from " + this._sourceEngine.getName() + ", version " + this._sourceEngine.getVersion() + "...");
         long initTime = System.currentTimeMillis();
-        try  (EjbClientCtx ctx = newEjbClientEcx(); ComputationManager _computationManager = new LocalComputationManager()) {
+        try  (EjbClientCtx ctx = newEjbClientEcx(); ComputationManager computationManager = new LocalComputationManager()) {
             long endEjb = System.currentTimeMillis();
             LOGGER.debug("Connexion EJB = " + (endEjb - initTime));
 
@@ -100,7 +100,7 @@ public class ModelicaMainExporter {
             LOGGER.debug("ModelicaMainExporter. StepUpTrafos = " + (endStep - endEjb));
             // Even if we are reading a different solution from a file, run a Loadflow
             // (it seems this allows to setup properly disconnected elements)
-            runLoadFlow(_computationManager);
+            runLoadFlow(computationManager);
             if (READ_SOLUTION_FROM_FILE) {
                 readSolutionFromFile();
             }
@@ -118,11 +118,11 @@ public class ModelicaMainExporter {
                 //Moreover, for Eurostag the sign must be the same in IIDM and HELM and as it has been changed in the HELM integration
                 //i should be changed after this in the IIDM
                 for (Generator gen : _network.getGenerators()) {
-                    float P = -gen.getTerminal().getP();
-                    float Q = -gen.getTerminal().getQ();
+                    float p = -gen.getTerminal().getP();
+                    float q = -gen.getTerminal().getQ();
 
-                    gen.getTerminal().setP(P);
-                    gen.getTerminal().setQ(Q);
+                    gen.getTerminal().setP(p);
+                    gen.getTerminal().setQ(q);
                 }
 
                 export = new ModelicaExport(_network, ddbmanager, paramsDictionary, this._modelicaLibPath.toFile(), _sourceEngine);

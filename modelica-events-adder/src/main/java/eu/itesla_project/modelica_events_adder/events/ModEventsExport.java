@@ -297,10 +297,10 @@ public class ModEventsExport {
                 record.addValue(StaticData.NEW_LINE);
                 record.setParamsMap(paramsMap);
 
-                String CIMid = EventsHelper.parseModelicaToCIM(modelicaName, modelicaType);
+                String cimID = EventsHelper.parseModelicaToCIM(modelicaName, modelicaType);
 
-                if (!recordsMap.containsKey(CIMid)) {
-                    recordsMap.put(CIMid, record);
+                if (!recordsMap.containsKey(cimID)) {
+                    recordsMap.put(cimID, record);
                 }
             } else if (isInsideRecord) {
                 record.addValue(line);

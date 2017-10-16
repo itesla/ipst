@@ -7,5 +7,7 @@
 <suppressions>
     <suppress checks="HideUtilityClassConstructor"
               files="[\\/]iidm[\\/]ddb[\\/]model[\\/].*_\.java"/>
+    <suppress checks="LocalVariableName"
+              files="_OmcCommunicationStub.java"/>
 
 </suppressions>
