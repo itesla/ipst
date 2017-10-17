@@ -293,6 +293,10 @@ public class StateAnalyzer implements Callable<Void> {
             //TODO  manage string ifo detail
             stateListener.onUpdate(stateId, status, context.timeHorizon, currentStatus + " failed ... ");
             logger.error("{}: Error working on state: {}", stateId, t.toString(), t);
+        } finally {
+            if (context.getNetwork().getStateManager().getStateIds().contains(String.valueOf(stateId))) {
+                context.getNetwork().getStateManager().removeState(String.valueOf(stateId));
+            }
         }
         return null;
     }
@@ -308,30 +312,49 @@ public class StateAnalyzer implements Callable<Void> {
                         @Override
                         public Void call() throws Exception {
                             String postContingencyStateId = OnlineUtils.getPostContingencyId(stateId, contingency.getId());
-                            boolean loadflowConverge = computePostContingencyState(network, stateId, contingency, postContingencyStateId);
-                            if (loadflowConverge) {
-                                logger.info("{}: adding state {} to post contingency states for optimizer", stateId, postContingencyStateId);
-                                PostContingencyState postContingencyState = new PostContingencyState(network, postContingencyStateId, contingency);
-                                logger.info("{}: running optimizer on post contingency state {} of contingency {}", stateId, postContingencyStateId, contingency.getId());
-                                CorrectiveControlOptimizerResult optimizerResult = null;
-                                try {
-                                    optimizerResult = optimizer.run(postContingencyState);
-                                } catch (Throwable t) {
-                                    logger.error("{}: Error running optimizer on contingency {}: {}", stateId, contingency.getId(), t.getMessage(), t);
-                                    optimizerResult = new CorrectiveControlOptimizerResult(contingency.getId(), false);
-                                    optimizerResult.setFinalStatus(CCOFinalStatus.OPTIMIZER_EXECUTION_ERROR);
-                                    optimizerResult.setCause(t.getMessage());
-                                }
-                                logger.info("{}: optimizer results for contingency {}: action found = {}, status = {}, cause = {}", stateId, contingency.getId(), optimizerResult.areActionsFound(), optimizerResult.getFinalStatus(), optimizerResult.getCause());
-                                Map<String, Map<String, ActionParameters>> actions = null;
-                                if (optimizerResult.areActionsFound()) {
-                                    logger.info("{}: optimizer results: action plan {}, actions {} for contingency {}", stateId, optimizerResult.getActionPlan(), optimizerResult.getActionsIds(), contingency.getId());
-                                    actions = new HashMap<String, Map<String, ActionParameters>>();
-                                    for (String actionId : optimizerResult.getActionsIds()) {
-                                        actions.put(actionId, optimizerResult.getEquipmentsWithParameters(actionId));
+                            try {
+                                boolean loadflowConverge = computePostContingencyState(network, stateId, contingency, postContingencyStateId);
+                                if (loadflowConverge) {
+                                    logger.info("{}: adding state {} to post contingency states for optimizer", stateId, postContingencyStateId);
+                                    PostContingencyState postContingencyState = new PostContingencyState(network, postContingencyStateId, contingency);
+                                    logger.info("{}: running optimizer on post contingency state {} of contingency {}", stateId, postContingencyStateId, contingency.getId());
+                                    CorrectiveControlOptimizerResult optimizerResult = null;
+                                    try {
+                                        optimizerResult = optimizer.run(postContingencyState);
+                                    } catch (Throwable t) {
+                                        logger.error("{}: Error running optimizer on contingency {}: {}", stateId, contingency.getId(), t.getMessage(), t);
+                                        optimizerResult = new CorrectiveControlOptimizerResult(contingency.getId(), false);
+                                        optimizerResult.setFinalStatus(CCOFinalStatus.OPTIMIZER_EXECUTION_ERROR);
+                                        optimizerResult.setCause(t.getMessage());
+                                    }
+                                    logger.info("{}: optimizer results for contingency {}: action found = {}, status = {}, cause = {}", stateId, contingency.getId(), optimizerResult.areActionsFound(), optimizerResult.getFinalStatus(), optimizerResult.getCause());
+                                    Map<String, Map<String, ActionParameters>> actions = null;
+                                    if (optimizerResult.areActionsFound()) {
+                                        logger.info("{}: optimizer results: action plan {}, actions {} for contingency {}", stateId, optimizerResult.getActionPlan(), optimizerResult.getActionsIds(), contingency.getId());
+                                        actions = new HashMap<String, Map<String, ActionParameters>>();
+                                        for (String actionId : optimizerResult.getActionsIds()) {
+                                            actions.put(actionId, optimizerResult.getEquipmentsWithParameters(actionId));
+                                        }
+                                    } else {
+                                        logger.error("{}: Error: optimizer didn't find actions for post contingency state {}", stateId, postContingencyStateId);
+                                        if (!parameters.validation()) { // if validation -> all the [contingency,state] pairs have already been added to the list for simulation -> no need to do it here
+                                            // add to contingencies for simulator
+                                            synchronized (contingenciesForSimulator) {
+                                                contingenciesForSimulator.add(contingency);
+                                            }
+                                        }
+                                    }
+                                    synchronized (results) {
+                                        results.addStateWithActions(contingency.getId(),
+                                                Integer.valueOf(stateId),
+                                                optimizerResult.areActionsFound(),
+                                                optimizerResult.getFinalStatus(),
+                                                optimizerResult.getCause(),
+                                                optimizerResult.getActionPlan(),
+                                                actions);
                                     }
                                 } else {
-                                    logger.error("{}: Error: optimizer didn't find actions for post contingency state {}", stateId, postContingencyStateId);
+                                    logger.info("{}: loadflow does not converge on post contigency state {}, the contingency {} will be analyzed by T-D simulation", stateId, postContingencyStateId, contingency.getId());
                                     if (!parameters.validation()) { // if validation -> all the [contingency,state] pairs have already been added to the list for simulation -> no need to do it here
                                         // add to contingencies for simulator
                                         synchronized (contingenciesForSimulator) {
@@ -339,25 +362,11 @@ public class StateAnalyzer implements Callable<Void> {
                                         }
                                     }
                                 }
-                                synchronized (results) {
-                                    results.addStateWithActions(contingency.getId(),
-                                            Integer.valueOf(stateId),
-                                            optimizerResult.areActionsFound(),
-                                            optimizerResult.getFinalStatus(),
-                                            optimizerResult.getCause(),
-                                            optimizerResult.getActionPlan(),
-                                            actions);
-                                }
-                            } else {
-                                logger.info("{}: loadflow does not converge on post contigency state {}, the contingency {} will be analyzed by T-D simulation", stateId, postContingencyStateId, contingency.getId());
-                                if (!parameters.validation()) { // if validation -> all the [contingency,state] pairs have already been added to the list for simulation -> no need to do it here
-                                    // add to contingencies for simulator
-                                    synchronized (contingenciesForSimulator) {
-                                        contingenciesForSimulator.add(contingency);
-                                    }
+                            } finally {
+                                if (context.getNetwork().getStateManager().getStateIds().contains(postContingencyStateId)) {
+                                    context.getNetwork().getStateManager().removeState(postContingencyStateId);
                                 }
                             }
-
                             return null;
                         }
 
