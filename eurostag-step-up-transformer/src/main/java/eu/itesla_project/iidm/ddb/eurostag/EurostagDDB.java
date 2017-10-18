@@ -7,11 +7,13 @@
 package eu.itesla_project.iidm.ddb.eurostag;
 
 import java.io.IOException;
+import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,12 +28,21 @@ class EurostagDDB {
 
     EurostagDDB(List<Path> ddbDirs) throws IOException {
         for (Path ddbDir : ddbDirs) {
+            if (Files.isSymbolicLink(ddbDir)) {
+                ddbDir = Files.readSymbolicLink(ddbDir);
+            }
             if (!Files.exists(ddbDir) && !Files.isDirectory(ddbDir)) {
                 throw new IllegalArgumentException(ddbDir + " must exist and be a dir");
             }
-            Files.walkFileTree(ddbDir, new SimpleFileVisitor<Path>() {
+            Files.walkFileTree(ddbDir, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    if (Files.isSymbolicLink(file)) {
+                        file = Files.readSymbolicLink(file);
+                        if (Files.isDirectory(file)) {
+                            Files.walkFileTree(file, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, this);
+                        }
+                    }
                     if (Files.isRegularFile(file) && file.toString().endsWith(".tg")) {
                         String fileName = file.getFileName().toString();
                         generators.put(fileName.substring(0, fileName.length() - 3), file);
