@@ -50,7 +50,7 @@ public class XmlFileContingenciesAndActionsDatabaseClientFactory implements
             throw new ConfigurationException(e);
         }
     }
-    
+
     @Override
     public ContingenciesAndActionsDatabaseClient create(InputStream data) {
         Objects.requireNonNull(data);

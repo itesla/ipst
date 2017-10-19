@@ -24,10 +24,15 @@ import eu.itesla_project.modules.contingencies.Zone;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,18 +61,9 @@ public class CsvFileContingenciesAndActionsDatabaseClient implements Contingenci
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-
-    @Override
-    public List<Contingency> getContingencies(Network network) {
-        // pre-index tie lines
-        Map<String, String> tieLines = new HashMap<>();
-        for (Line l : network.getLines()) {
-            if (l.isTieLine()) {
-                TieLine tl = (TieLine) l;
-                tieLines.put(tl.getHalf1().getId(), tl.getId());
-                tieLines.put(tl.getHalf2().getId(), tl.getId());
-            }
     }
+
+
 
     public CsvFileContingenciesAndActionsDatabaseClient(InputStream stream) {
         load(stream);
@@ -78,6 +74,7 @@ public class CsvFileContingenciesAndActionsDatabaseClient implements Contingenci
         try {
             Reader ir = new InputStreamReader(stream, Charset.defaultCharset());
             try (BufferedReader r = new BufferedReader(ir)) {
+
                 String txt;
                 while ((txt = r.readLine()) != null) {
                     if (txt.startsWith("#")) { // comment
@@ -98,20 +95,7 @@ public class CsvFileContingenciesAndActionsDatabaseClient implements Contingenci
                     }
                     for (int i = 2; i < lineCount + 2; i++) {
                         String id = tokens[i];
-                        if (network.getLine(id) != null) {
-                            elements.add(new BranchContingency(id));
-                        } else if (network.getGenerator(id) != null) {
-                            elements.add(new GeneratorContingency(id));
-                        } else if (tieLines.containsKey(id)) {
-                            elements.add(new BranchContingency(tieLines.get(id)));
-                        } else {
-                            LOGGER.warn("Contingency element '{}' not found", id);
-                        }
-                    }
-                    if (elements.size() > 0) {
-                        contingencies.add(new ContingencyImpl(contingencyId, elements));
-                    } else {
-                        LOGGER.warn("Skip empty contingency " + contingencyId);
+                        cd.addElementId(id);
                     }
                     contingency_data.add(cd);
                 }
@@ -123,7 +107,6 @@ public class CsvFileContingenciesAndActionsDatabaseClient implements Contingenci
 
     @Override
     public List<Contingency> getContingencies(Network network) {
-        // pre-index tie lines
         Map<String, String> tieLines = new HashMap<>();
         for (Line l : network.getLines()) {
             if (l.isTieLine()) {

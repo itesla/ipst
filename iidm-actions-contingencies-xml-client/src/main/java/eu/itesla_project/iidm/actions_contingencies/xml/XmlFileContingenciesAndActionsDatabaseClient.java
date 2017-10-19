@@ -110,7 +110,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
             load(stream);
         }
     }
-    
+
     public XmlFileContingenciesAndActionsDatabaseClient(InputStream data) throws JAXBException, SAXException, IOException {
         load(data);
     }

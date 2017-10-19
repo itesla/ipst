@@ -30,8 +30,8 @@
     <dependencies>
         <!-- Compilation dependencies -->
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>security-analysis</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-security-analysis</artifactId>
         </dependency>
 
         <!-- Runtime dependencies -->
@@ -48,23 +48,23 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>cim1-converter</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-cim1-converter</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>entsoe-util</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-entsoe-util</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-impl</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-impl</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project</groupId>
-            <artifactId>iidm-xml-converter</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-loadflow-api</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>

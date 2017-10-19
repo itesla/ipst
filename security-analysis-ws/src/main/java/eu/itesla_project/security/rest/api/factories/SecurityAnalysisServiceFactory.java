@@ -17,6 +17,9 @@ import eu.itesla_project.security.rest.api.impl.SecurityAnalysisServiceImpl;
  */
 public final class SecurityAnalysisServiceFactory {
 
+    private SecurityAnalysisServiceFactory() {
+    }
+
     private final static SecurityAnalysisService service = new SecurityAnalysisServiceImpl(
             new SecurityAnalyzer(LocalComputationManager.getDefault(), 0));
 

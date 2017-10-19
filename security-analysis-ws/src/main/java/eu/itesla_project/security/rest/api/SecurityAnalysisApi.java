@@ -29,7 +29,7 @@ public class SecurityAnalysisApi {
     @POST
     @Path("/security-analysis")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response process(MultipartFormDataInput form, @Context SecurityContext securityContext) {      
+    public Response process(MultipartFormDataInput form, @Context SecurityContext securityContext) {
         return delegate.analyze(form);
     }
 

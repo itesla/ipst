@@ -37,7 +37,7 @@ public class CsvFileContingenciesAndActionsDatabaseClientFactory implements Cont
 
         return new CsvFileContingenciesAndActionsDatabaseClient(csvFile);
     }
-    
+
     @Override
     public ContingenciesAndActionsDatabaseClient create(InputStream data) {
         Objects.requireNonNull(data);
