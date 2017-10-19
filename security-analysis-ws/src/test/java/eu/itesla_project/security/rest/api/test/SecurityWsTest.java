@@ -29,9 +29,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import eu.itesla_project.security.LimitViolationsResult;
-import eu.itesla_project.security.SecurityAnalysisResult;
-import eu.itesla_project.security.SecurityAnalyzer;
+import com.powsybl.security.LimitViolationsResult;
+import com.powsybl.security.SecurityAnalysisResult;
+import com.powsybl.security.SecurityAnalyzer;
 import eu.itesla_project.security.rest.api.impl.SecurityAnalysisServiceImpl;
 
 /**
