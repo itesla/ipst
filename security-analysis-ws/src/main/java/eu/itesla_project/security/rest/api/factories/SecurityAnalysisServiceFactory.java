@@ -6,8 +6,8 @@
  */
 package eu.itesla_project.security.rest.api.factories;
 
-import eu.itesla_project.computation.local.LocalComputationManager;
-import eu.itesla_project.security.SecurityAnalyzer;
+import com.powsybl.computation.local.LocalComputationManager;
+import com.powsybl.security.SecurityAnalyzer;
 import eu.itesla_project.security.rest.api.SecurityAnalysisService;
 import eu.itesla_project.security.rest.api.impl.SecurityAnalysisServiceImpl;
 

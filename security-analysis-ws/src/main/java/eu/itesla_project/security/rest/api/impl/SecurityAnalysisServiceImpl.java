@@ -32,14 +32,14 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.itesla_project.commons.io.table.CsvTableFormatterFactory;
-import eu.itesla_project.security.LimitViolationFilter;
-import eu.itesla_project.security.LimitViolationType;
-import eu.itesla_project.security.Security;
-import eu.itesla_project.security.SecurityAnalysisResult;
-import eu.itesla_project.security.SecurityAnalyzer;
-import eu.itesla_project.security.SecurityAnalyzer.Format;
-import eu.itesla_project.security.json.SecurityAnalysisResultSerializer;
+import com.powsybl.commons.io.table.CsvTableFormatterFactory;
+import com.powsybl.security.LimitViolationFilter;
+import com.powsybl.security.LimitViolationType;
+import com.powsybl.security.Security;
+import com.powsybl.security.SecurityAnalysisResult;
+import com.powsybl.security.SecurityAnalyzer;
+import com.powsybl.security.SecurityAnalyzer.Format;
+import com.powsybl.security.json.SecurityAnalysisResultSerializer;
 import eu.itesla_project.security.rest.api.SecurityAnalysisService;
 
 /**
