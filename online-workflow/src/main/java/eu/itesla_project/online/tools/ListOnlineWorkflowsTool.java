@@ -8,9 +8,9 @@
 package eu.itesla_project.online.tools;
 
 import com.google.auto.service.AutoService;
-import eu.itesla_project.commons.tools.Command;
-import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.commons.tools.ToolRunningContext;
+import com.powsybl.tools.Command;
+import com.powsybl.tools.Tool;
+import com.powsybl.tools.ToolRunningContext;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.online.OnlineDb;
 import eu.itesla_project.modules.online.OnlineWorkflowDetails;
@@ -114,20 +114,24 @@ public class ListOnlineWorkflowsTool implements Tool {
             String workflowId = line.getOptionValue("workflow");
             OnlineWorkflowDetails workflowDetails = onlinedb.getWorkflowDetails(workflowId);
             workflows = new ArrayList<OnlineWorkflowDetails>();
-            if (workflowDetails != null)
+            if (workflowDetails != null) {
                 workflows.add(workflowDetails);
-        } else
+            }
+        } else {
             workflows = onlinedb.listWorkflows();
+        }
         boolean printParameters = line.hasOption("parameters");
         DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         Table table = new Table(2, BorderStyle.CLASSIC_WIDE);
-        if (printParameters)
+        if (printParameters) {
             table = new Table(3, BorderStyle.CLASSIC_WIDE);
+        }
         List<Map<String, String>> jsonData = new ArrayList<Map<String, String>>();
         table.addCell("ID", new CellStyle(CellStyle.HorizontalAlign.center));
         table.addCell("Date", new CellStyle(CellStyle.HorizontalAlign.center));
-        if (printParameters)
+        if (printParameters) {
             table.addCell("Parameters", new CellStyle(CellStyle.HorizontalAlign.center));
+        }
         for (OnlineWorkflowDetails workflow : workflows) {
             Map<String, String> wfJsonData = new HashMap<String, String>();
             table.addCell(workflow.getWorkflowId());
@@ -225,8 +229,9 @@ public class ListOnlineWorkflowsTool implements Tool {
                 //JSONSerializer.toJSON(jsonData).write(jsonFileWriter);
                 jsonFileWriter.write(JSONSerializer.toJSON(jsonData).toString(3));
             }
-        } else
+        } else {
             context.getOutputStream().println(table.render());
+        }
 
         onlinedb.close();
     }

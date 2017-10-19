@@ -136,6 +136,22 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- case repositories -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>case-repository</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>entsoe-case-repository</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>network-merge</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
     </dependencies>
 

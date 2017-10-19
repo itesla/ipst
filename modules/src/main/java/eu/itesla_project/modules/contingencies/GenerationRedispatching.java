@@ -7,7 +7,7 @@
 package eu.itesla_project.modules.contingencies;
 
 import eu.itesla_project.modules.contingencies.tasks.GeneratorsRedispatching;
-import eu.itesla_project.contingency.tasks.ModificationTask;
+import com.powsybl.contingency.tasks.ModificationTask;
 
 import java.util.List;
 
@@ -57,8 +57,8 @@ public class GenerationRedispatching implements ActionElement {
         return implementationTime;
     }
 
-	@Override
-	public ModificationTask toTask(ActionParameters parameters) {
-		return new GeneratorsRedispatching(generatorIds, parameters);
-	}
+    @Override
+    public ModificationTask toTask(ActionParameters parameters) {
+        return new GeneratorsRedispatching(generatorIds, parameters);
+    }
 }

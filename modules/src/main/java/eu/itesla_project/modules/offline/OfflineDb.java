@@ -7,12 +7,12 @@
 package eu.itesla_project.modules.offline;
 
 import com.google.common.base.Predicate;
-import eu.itesla_project.iidm.network.Country;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.iidm.network.Country;
+import com.powsybl.iidm.network.Network;
 import eu.itesla_project.modules.histo.HistoDbAttr;
 import eu.itesla_project.modules.histo.HistoDbNetworkAttributeId;
-import eu.itesla_project.simulation.securityindexes.SecurityIndex;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexId;
+import com.powsybl.simulation.securityindexes.SecurityIndex;
+import com.powsybl.simulation.securityindexes.SecurityIndexId;
 
 import java.io.Writer;
 import java.util.Collection;
@@ -48,10 +48,10 @@ public interface OfflineDb extends AutoCloseable {
         }
     };
 
-    Predicate<HistoDbNetworkAttributeId> BRANCH_ATTRIBUTE_FILTER = attributeId -> (attributeId.getSide() != null
+    Predicate<HistoDbNetworkAttributeId> BRANCH_ATTRIBUTE_FILTER = attributeId -> attributeId.getSide() != null
             && (attributeId.getAttributeType() == HistoDbAttr.P
             || attributeId.getAttributeType() == HistoDbAttr.Q
-            || attributeId.getAttributeType() == HistoDbAttr.V));
+            || attributeId.getAttributeType() == HistoDbAttr.V);
 
     Predicate<HistoDbNetworkAttributeId> ACTIVE_POWER_ATTRIBUTE_FILTER = attributeId -> attributeId.getAttributeType() == HistoDbAttr.P;
 

@@ -8,9 +8,9 @@ package eu.itesla_project.modelica_export.records;
 
 import eu.itesla_project.iidm.ddb.model.SimulatorInst;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
-import eu.itesla_project.iidm.network.Bus;
-import eu.itesla_project.iidm.network.Generator;
-import eu.itesla_project.iidm.network.Identifiable;
+import com.powsybl.iidm.network.Bus;
+import com.powsybl.iidm.network.Generator;
+import com.powsybl.iidm.network.Identifiable;
 import eu.itesla_project.modelica_export.ModExportContext;
 import eu.itesla_project.modelica_export.util.EurostagEngine;
 import eu.itesla_project.modelica_export.util.PsseEngine;
@@ -23,51 +23,57 @@ import eu.itesla_project.modelica_export.util.eurostag.EurostagFixedData;
  * @author Silvia Machado <machados@aia.es>
  */
 public class ConnectGeneratorRecord extends ConnectRecord {
-	
-	public ConnectGeneratorRecord(ConnectBusInfo busInfo, Generator gen, boolean isInyection, SourceEngine sourceEngine) {
-		super(busInfo.getBus().getId(), gen.getId());
-		this.node1 = busInfo.getBus();
-		this.node2 = gen;
-		this.isConnected = busInfo.isConnected();
-		this.isInyection = isInyection;
-		this.sourceEngine = sourceEngine;
-	}
-	
-	@Override
-	public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
-		if(!isConnected) this.addValue(StaticData.COMMENT);
-		
-		this.addValue(StaticData.CONNECT);
-		this.addValue(super.nodeName1);
-		
-		if(this.node1 instanceof Bus) this.addValue("." + StaticData.POSITIVE_PIN + ", ");
-		else this.addValue("." + StaticData.NEGATIVE_PIN + ", ");
-		
-		this.addValue(super.nodeName2);
-		
-		if(!isInyection) {
-			if(this.sourceEngine instanceof EurostagEngine) {
-				this.addValue("." + EurostagFixedData.GEN_SORTIE_PIN);
-			} else if(this.sourceEngine instanceof PsseEngine) {
-				this.addValue("." + StaticData.POSITIVE_PIN);
-			}
-		}
-		else this.addValue("." + StaticData.POSITIVE_PIN);
-		
-		this.addValue(StaticData.ANNOT_CONNECT);	
-	}
-	
-	@Override
-	public ConnectGeneratorRecord getClassName() {
-		return this;
-	}
-	
-//	private ConnectBusInfo		busInfo;
-	private SourceEngine		sourceEngine;
-	
-	public boolean				isInyection;
-	public boolean				isConnected = true;
-	
-	private Identifiable		node1 = null;
-	private Identifiable		node2 = null;
+
+    public ConnectGeneratorRecord(ConnectBusInfo busInfo, Generator gen, boolean isInyection, SourceEngine sourceEngine) {
+        super(busInfo.getBus().getId(), gen.getId());
+        this.node1 = busInfo.getBus();
+        this.node2 = gen;
+        this.isConnected = busInfo.isConnected();
+        this.isInyection = isInyection;
+        this.sourceEngine = sourceEngine;
+    }
+
+    @Override
+    public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
+        if (!isConnected) {
+            this.addValue(StaticData.COMMENT);
+        }
+
+        this.addValue(StaticData.CONNECT);
+        this.addValue(super.nodeName1);
+
+        if (this.node1 instanceof Bus) {
+            this.addValue("." + StaticData.POSITIVE_PIN + ", ");
+        } else {
+            this.addValue("." + StaticData.NEGATIVE_PIN + ", ");
+        }
+
+        this.addValue(super.nodeName2);
+
+        if (!isInyection) {
+            if (this.sourceEngine instanceof EurostagEngine) {
+                this.addValue("." + EurostagFixedData.GEN_SORTIE_PIN);
+            } else if (this.sourceEngine instanceof PsseEngine) {
+                this.addValue("." + StaticData.POSITIVE_PIN);
+            }
+        } else {
+            this.addValue("." + StaticData.POSITIVE_PIN);
+        }
+
+        this.addValue(StaticData.ANNOT_CONNECT);
+    }
+
+    @Override
+    public ConnectGeneratorRecord getClassName() {
+        return this;
+    }
+
+//    private ConnectBusInfo        busInfo;
+    private SourceEngine        sourceEngine;
+
+    public boolean                isInyection;
+    public boolean                isConnected = true;
+
+    private Identifiable        node1 = null;
+    private Identifiable        node2 = null;
 }

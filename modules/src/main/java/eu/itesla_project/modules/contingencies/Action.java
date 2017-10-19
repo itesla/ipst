@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.modules.contingencies;
 
-import eu.itesla_project.contingency.tasks.ModificationTask;
+import com.powsybl.contingency.tasks.ModificationTask;
 
 import java.util.Collection;
 
@@ -23,15 +23,15 @@ public interface Action {
     boolean isCurative();
 
     Collection<String> getZones();
-    
+
     Collection<ActionElement> getElements();
 
     ModificationTask toTask();
-    
+
     Number getStartTime();
-    
+
     void setParameters(ActionParameters parameters);
-    
+
     ActionParameters getParameters();
 
 }

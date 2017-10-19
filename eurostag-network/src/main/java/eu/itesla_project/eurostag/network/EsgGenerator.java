@@ -15,8 +15,8 @@ public class EsgGenerator {
 
     private final Esg8charName znamge; // generator name
     private final EsgConnectionStatus xgenest; // status
-                                            // ‘Y‘ 	: connected
-                                            // ‘N’ 	: not connected
+                                            // ‘Y‘     : connected
+                                            // ‘N’     : not connected
     private final Esg8charName znodge; // connection node name
     private final float pgmin; // minimum active power [MW]
     private final float pgen; // active power [MW]

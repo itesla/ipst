@@ -7,10 +7,6 @@
 package eu.itesla_project.iidm.ddb.eurostag_imp_exp;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 
@@ -19,27 +15,27 @@ import java.io.Reader;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class MemoryBufferedReader extends BufferedReader{
-	
-	public MemoryBufferedReader(Reader in) {
-		super(in);
-	}
+public class MemoryBufferedReader extends BufferedReader {
 
-	public MemoryBufferedReader(Reader in, int sz) {
-		super(in, sz);
-	}
+    public MemoryBufferedReader(Reader in) {
+        super(in);
+    }
 
-	String bufferedLine=null;
+    public MemoryBufferedReader(Reader in, int sz) {
+        super(in, sz);
+    }
 
-	@Override
-	public String readLine() throws IOException {
-		bufferedLine=super.readLine();
-		return bufferedLine;
-	}
-	
-	public String lastLineRead() {
-		return bufferedLine;
-	}
-	
+    String bufferedLine = null;
+
+    @Override
+    public String readLine() throws IOException {
+        bufferedLine = super.readLine();
+        return bufferedLine;
+    }
+
+    public String lastLineRead() {
+        return bufferedLine;
+    }
+
 
 }

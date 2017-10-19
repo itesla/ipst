@@ -15,9 +15,9 @@ import eu.itesla_project.modules.mcla.ForecastErrorsDataStorageFactory;
  */
 public class ForecastErrorsDataStorageFactoryImpl implements ForecastErrorsDataStorageFactory {
 
-	@Override
-	public ForecastErrorsDataStorage create() {
-		return new ForecastErrorsDataStorageImpl();
-	}
+    @Override
+    public ForecastErrorsDataStorage create() {
+        return new ForecastErrorsDataStorageImpl();
+    }
 
 }

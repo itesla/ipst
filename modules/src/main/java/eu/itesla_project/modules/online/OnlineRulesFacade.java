@@ -6,19 +6,19 @@
  */
 package eu.itesla_project.modules.online;
 
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.contingency.Contingency;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.contingency.Contingency;
 
 /**
 *
 * @author Quinary <itesla@quinary.com>
 */
 public interface OnlineRulesFacade {
-	
-	void init(RulesFacadeParameters parameters) throws Exception;
-	
-	RulesFacadeResults evaluate(Contingency contingency, Network network);
-	
-	RulesFacadeResults wcaEvaluate(Contingency contingency, Network network);
+
+    void init(RulesFacadeParameters parameters) throws Exception;
+
+    RulesFacadeResults evaluate(Contingency contingency, Network network);
+
+    RulesFacadeResults wcaEvaluate(Contingency contingency, Network network);
 
 }

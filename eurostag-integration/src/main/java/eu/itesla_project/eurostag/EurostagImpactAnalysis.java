@@ -11,20 +11,20 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import eu.itesla_project.commons.Version;
-import eu.itesla_project.commons.config.PlatformConfig;
-import eu.itesla_project.computation.*;
-import eu.itesla_project.contingency.ContingenciesProvider;
-import eu.itesla_project.contingency.Contingency;
-import eu.itesla_project.contingency.ContingencyElement;
+import com.powsybl.commons.Version;
+import com.powsybl.commons.config.PlatformConfig;
+import com.powsybl.computation.*;
+import com.powsybl.contingency.ContingenciesProvider;
+import com.powsybl.contingency.Contingency;
+import com.powsybl.contingency.ContingencyElement;
 import eu.itesla_project.iidm.eurostag.export.EchUtil;
 import eu.itesla_project.iidm.eurostag.export.EurostagDictionary;
-import eu.itesla_project.iidm.network.*;
-import eu.itesla_project.iidm.network.util.Identifiables;
-import eu.itesla_project.iidm.network.util.Networks;
-import eu.itesla_project.simulation.*;
-import eu.itesla_project.simulation.securityindexes.SecurityIndex;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexParser;
+import com.powsybl.iidm.network.*;
+import com.powsybl.iidm.network.util.Identifiables;
+import com.powsybl.iidm.network.util.Networks;
+import com.powsybl.simulation.*;
+import com.powsybl.simulation.securityindexes.SecurityIndex;
+import com.powsybl.simulation.securityindexes.SecurityIndexParser;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalINIConfiguration;
 import org.apache.commons.configuration.SubnodeConfiguration;
@@ -44,9 +44,9 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-import static eu.itesla_project.computation.FilePostProcessor.FILE_GZIP;
-import static eu.itesla_project.computation.FilePreProcessor.ARCHIVE_UNZIP;
-import static eu.itesla_project.computation.FilePreProcessor.FILE_GUNZIP;
+import static com.powsybl.computation.FilePostProcessor.FILE_GZIP;
+import static com.powsybl.computation.FilePreProcessor.ARCHIVE_UNZIP;
+import static com.powsybl.computation.FilePreProcessor.FILE_GUNZIP;
 
 /**
  * Example:
@@ -59,13 +59,13 @@ import static eu.itesla_project.computation.FilePreProcessor.FILE_GUNZIP;
  * import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClient;
  * import eu.itesla_project.modules.ContingenciesAndActionsDatabaseClient;
  * import eu.itesla_project.modules.test.AutomaticContingenciesAndActionsDatabaseClient;
- * import eu.itesla_project.computation.ComputationPlatformClient;
- * import eu.itesla_project.computation.local.LocalComputationPlatformClient;
+ * import com.powsybl.computation.ComputationPlatformClient;
+ * import com.powsybl.computation.local.LocalComputationPlatformClient;
  * import eu.itesla_project.eurostag.EurostagConfig;
  * import eu.itesla_project.eurostag.EurostagStabilization;
  * import eu.itesla_project.eurostag.EurostagImpactAnalysis;
  * import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DdbDtaImpExp;
- * import eu.itesla_project.iidm.network.Network;
+ * import com.powsybl.iidm.network.Network;
  * import java.nio.file.Path;
  * import java.nio.file.Paths;
  * <p>
@@ -164,7 +164,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
                         new InputFile(wp43ConfigsZipFileName, ARCHIVE_UNZIP),
                         new InputFile(DDB_DICT_GENS_CSV))
                 .subCommand()
-                .program(EUSTAG_CPT)
+                .program(config.getEurostagCptCommandName())
                 .args("-s", FAULT_SEQ_FILE_NAME, PRE_FAULT_SAC_FILE_NAME)
                 .timeout(config.getSimTimeout())
                 .add()
@@ -227,7 +227,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
         }
     }
 
-    private static void dumpLimits(EurostagDictionary dictionary, BufferedWriter writer, TwoTerminalsConnectable branch) throws IOException {
+    private static void dumpLimits(EurostagDictionary dictionary, BufferedWriter writer, Branch branch) throws IOException {
         dumpLimits(dictionary, writer, branch.getId(),
                 branch.getCurrentLimits1(),
                 branch.getCurrentLimits2(),
@@ -306,7 +306,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
 
     private void writeScenarios(Domain domain, List<Contingency> contingencies, OutputStream os) throws IOException {
         GenericArchive archive = new EurostagScenario(parameters, config).writeFaultSeqArchive(domain, contingencies, network, dictionary,
-                faultNum -> FAULT_SEQ_FILE_NAME.replace(Command.EXECUTION_NUMBER_PATTERN, Integer.toString(faultNum)));
+            faultNum -> FAULT_SEQ_FILE_NAME.replace(Command.EXECUTION_NUMBER_PATTERN, Integer.toString(faultNum)));
         archive.as(ZipExporter.class).exportTo(os);
     }
 
@@ -318,6 +318,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
         switch (element.getType()) {
             case GENERATOR:
                 return parameters.getGeneratorFaultShortCircuitDuration(contingency.getId(), element.getId());
+            case BRANCH:
             case LINE:
                 return parameters.getBranchFaultShortCircuitDuration(contingency.getId(), element.getId());
             default:
@@ -326,7 +327,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
     }
 
     private void writeWp43Configs(List<Contingency> contingencies, Path workingDir) throws IOException, ConfigurationException {
-        Path baseWp43ConfigFile = PlatformConfig.CONFIG_DIR.resolve(WP43_CONFIGS_FILE_NAME);
+        Path baseWp43ConfigFile = PlatformConfig.defaultConfig().getConfigDir().resolve(WP43_CONFIGS_FILE_NAME);
 
         // generate one variant of the base config for all the contingency
         // this allow to add extra variables for some indexes
@@ -391,7 +392,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
             EurostagUtil.searchErrorMessage(workingDir.resolve(FAULT_OUT_GZ_FILE_NAME.replace(Command.EXECUTION_NUMBER_PATTERN, Integer.toString(i))), result.getMetrics(), i);
         }
 
-        LOGGER.trace("{} security indexes files read in {} ms", files, (System.currentTimeMillis() - start));
+        LOGGER.trace("{} security indexes files read in {} ms", files, System.currentTimeMillis() - start);
     }
 
     private static EurostagDictionary getDictionary(Map<String, Object> context) {
@@ -537,7 +538,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
         checkState(state);
 
         return computationManager.execute(new ExecutionEnvironment(EurostagUtil.createEnv(config), WORKING_DIR_PREFIX, config.isDebug()),
-                new DefaultExecutionHandler<ImpactAnalysisResult>() {
+                new AbstractExecutionHandler<ImpactAnalysisResult>() {
 
                     private final List<Contingency> contingencies = new ArrayList<>();
 

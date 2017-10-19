@@ -7,12 +7,10 @@
 package eu.itesla_project.iidm.ddb.model;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.*;
 
-import org.hibernate.validator.constraints.NotEmpty;
 
 
 /**
@@ -21,11 +19,11 @@ import org.hibernate.validator.constraints.NotEmpty;
  * @author Quinary <itesla@quinary.com>
  */
 @Entity
-@Table(name="DEFAULTPARAMETERS")
+@Table(name = "DEFAULTPARAMETERS")
 public class DefaultParameters implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	//The synthetic id of the object.
+    //The synthetic id of the object.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
@@ -37,54 +35,56 @@ public class DefaultParameters implements Serializable {
 //    }
 
     protected int setNum;
-    
-    public void setSetNum(int num){
-    	this.setNum= num;
-    	
+
+    public void setSetNum(int num) {
+        this.setNum = num;
+
     }
     public int getSetNum() {
-		return setNum;
-	}
+        return setNum;
+    }
 
-	@OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER, orphanRemoval=true)
-	@JoinTable(name="DEFAULTPARAMETERS_PARAMETER", joinColumns={@JoinColumn(name="DP_ID", referencedColumnName="id")}, inverseJoinColumns={@JoinColumn(name="P_ID", referencedColumnName="id")})
-    @OrderColumn(name="dpindx")
-    private List<Parameter> dpars=new ArrayList<Parameter>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinTable(name = "DEFAULTPARAMETERS_PARAMETER", joinColumns = {@JoinColumn(name = "DP_ID", referencedColumnName = "id")}, inverseJoinColumns = {@JoinColumn(name = "P_ID", referencedColumnName = "id")})
+    @OrderColumn(name = "dpindx")
+    private List<Parameter> dpars = new ArrayList<Parameter>();
+
     public List<Parameter> getParameters() {
         return dpars;
     }
+
     public void setParameters(List<Parameter> parameters) {
         this.dpars = parameters;
     }
-    
-	public boolean containsParameterWithName(String name) {
-		boolean found=false;
-		for (Parameter p : getParameters()) {
-			if (p.name.equals(name)) {
-				found=true;
-				break;
-			}
-		}
-		return found;
-	}
-	
-	public void addParameter(Parameter parameter) {
-		if (!containsParameterWithName(parameter.name)) {
-			getParameters().add(parameter);
-        } else {
-        	throw new RuntimeException("parameter with name "+parameter.name+" already exist in this parameter list");
+
+    public boolean containsParameterWithName(String name) {
+        boolean found = false;
+        for (Parameter p : getParameters()) {
+            if (p.name.equals(name)) {
+                found = true;
+                break;
+            }
         }
-	}
-    
-    
-	public DefaultParameters(int setNum) {
-		super();
-		this.setNum = setNum;
-	}
-	
-	protected DefaultParameters() {
-		super();
-		this.setNum = 0;
-	}
-    
+        return found;
+    }
+
+    public void addParameter(Parameter parameter) {
+        if (!containsParameterWithName(parameter.name)) {
+            getParameters().add(parameter);
+        } else {
+            throw new RuntimeException("parameter with name " + parameter.name + " already exist in this parameter list");
+        }
+    }
+
+
+    public DefaultParameters(int setNum) {
+        super();
+        this.setNum = setNum;
+    }
+
+    protected DefaultParameters() {
+        super();
+        this.setNum = 0;
+    }
+
 }

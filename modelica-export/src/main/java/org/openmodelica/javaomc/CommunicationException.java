@@ -44,15 +44,13 @@ package org.openmodelica.javaomc;
 /**
  * Thrown if there was an error while invoking command on compiler. E.g. if
  * compiler dies and connection breaks.
- * 
+ *
  * @author Andreas Remar
  */
-public class CommunicationException extends CompilerException
-{
-	private static final long serialVersionUID = 310955941812035161L;
+public class CommunicationException extends CompilerException {
+    private static final long serialVersionUID = 310955941812035161L;
 
-	public CommunicationException(String error)
-	{
-		super(error);
-	}
+    public CommunicationException(String error) {
+        super(error);
+    }
 }

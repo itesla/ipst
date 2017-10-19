@@ -8,13 +8,13 @@ package eu.itesla_project.modules.histo.tools;
 
 import com.google.auto.service.AutoService;
 import com.google.common.collect.Range;
-import eu.itesla_project.commons.tools.Command;
-import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.commons.tools.ToolRunningContext;
-import eu.itesla_project.iidm.import_.Importers;
-import eu.itesla_project.iidm.network.Generator;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.VoltageLevel;
+import com.powsybl.tools.Command;
+import com.powsybl.tools.Tool;
+import com.powsybl.tools.ToolRunningContext;
+import com.powsybl.iidm.import_.Importers;
+import com.powsybl.iidm.network.Generator;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.VoltageLevel;
 import eu.itesla_project.modules.histo.*;
 import eu.itesla_project.modules.offline.OfflineConfig;
 import org.apache.commons.cli.CommandLine;
@@ -132,27 +132,28 @@ public class HistoDbPrintVoltageRangeTool implements Tool {
         table.addCell("max");
         table.addCell("count");
         table.addCell("pmax");
-        ranges.entrySet().stream().sorted((e1, e2) -> {
-            VoltageStats stats1 = e1.getValue();
-            VoltageStats stats2 = e2.getValue();
-            Range<Float> r1 = stats1.range;
-            Range<Float> r2 = stats2.range;
-            float s1 = r1.upperEndpoint() - r1.lowerEndpoint();
-            float s2 = r2.upperEndpoint() - r2.lowerEndpoint();
-            return Float.compare(s1, s2);
-        }).forEach(e -> {
-            String vlId = e.getKey();
-            VoltageStats stats = e.getValue();
-            Range<Float> r = stats.range;
-            float s = r.upperEndpoint() - r.lowerEndpoint();
-            table.addCell(vlId);
-            table.addCell(Float.toString(stats.vnom));
-            table.addCell(Float.toString(s));
-            table.addCell(Float.toString(r.lowerEndpoint()));
-            table.addCell(Float.toString(r.upperEndpoint()));
-            table.addCell(Integer.toString(stats.count));
-            table.addCell(Float.toString(stats.pmax));
-        });
+        ranges.entrySet().stream().sorted(
+            (e1, e2) -> {
+                VoltageStats stats1 = e1.getValue();
+                VoltageStats stats2 = e2.getValue();
+                Range<Float> r1 = stats1.range;
+                Range<Float> r2 = stats2.range;
+                float s1 = r1.upperEndpoint() - r1.lowerEndpoint();
+                float s2 = r2.upperEndpoint() - r2.lowerEndpoint();
+                return Float.compare(s1, s2);
+            }).forEach(e -> {
+                String vlId = e.getKey();
+                VoltageStats stats = e.getValue();
+                Range<Float> r = stats.range;
+                float s = r.upperEndpoint() - r.lowerEndpoint();
+                table.addCell(vlId);
+                table.addCell(Float.toString(stats.vnom));
+                table.addCell(Float.toString(s));
+                table.addCell(Float.toString(r.lowerEndpoint()));
+                table.addCell(Float.toString(r.upperEndpoint()));
+                table.addCell(Integer.toString(stats.count));
+                table.addCell(Float.toString(stats.pmax));
+            });
         context.getOutputStream().println(table.render());
     }
 

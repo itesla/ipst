@@ -7,7 +7,7 @@
 package eu.itesla_project.modules.contingencies;
 
 import eu.itesla_project.modules.contingencies.tasks.BreakerClosing;
-import eu.itesla_project.contingency.tasks.ModificationTask;
+import com.powsybl.contingency.tasks.ModificationTask;
 
 /**
  *
@@ -15,59 +15,59 @@ import eu.itesla_project.contingency.tasks.ModificationTask;
  */
 public class SwitchClosingAction implements ActionElement {
 
-	private String voltageLevelId;
-	
-	private String equipmentId;
+    private String voltageLevelId;
 
-	private Number implementationTime;
-	
-	private Number achievmentIndex;
-	
-	public SwitchClosingAction(String vlId, String switchId) {
-		this.voltageLevelId=vlId;
-		this.equipmentId=switchId;
-	}
-	
-	public SwitchClosingAction(String vlId, String switchId, Number implementationTime, Number achievmentIndex ) {
-		this.voltageLevelId=vlId;
-		this.equipmentId=switchId;
-		this.implementationTime=implementationTime;
-		this.achievmentIndex=achievmentIndex;
-	}
+    private String equipmentId;
 
-	@Override
-	public ActionElementType getType() {
-		return ActionElementType.SWITCH_CLOSE;	
-	}
-	
-	public String getVoltageLevelId() {
-		return voltageLevelId;
-	}
+    private Number implementationTime;
 
-	@Override
-	public String getEquipmentId() {
-		return equipmentId;
-	}
+    private Number achievmentIndex;
 
-	@Override
-	public Number getImplementationTime() {
-		return implementationTime;
-	}
+    public SwitchClosingAction(String vlId, String switchId) {
+        this.voltageLevelId = vlId;
+        this.equipmentId = switchId;
+    }
 
-	@Override
-	public Number getAchievmentIndex() {
-		return achievmentIndex;
-	}
-	
-	@Override
-	public ModificationTask toTask() {
-		return new BreakerClosing(voltageLevelId, equipmentId);
-	}
+    public SwitchClosingAction(String vlId, String switchId, Number implementationTime, Number achievmentIndex) {
+        this.voltageLevelId = vlId;
+        this.equipmentId = switchId;
+        this.implementationTime = implementationTime;
+        this.achievmentIndex = achievmentIndex;
+    }
 
-	@Override
-	public ModificationTask toTask(ActionParameters parameters) {
-		throw new UnsupportedOperationException();
-	}
-	
+    @Override
+    public ActionElementType getType() {
+        return ActionElementType.SWITCH_CLOSE;
+    }
+
+    public String getVoltageLevelId() {
+        return voltageLevelId;
+    }
+
+    @Override
+    public String getEquipmentId() {
+        return equipmentId;
+    }
+
+    @Override
+    public Number getImplementationTime() {
+        return implementationTime;
+    }
+
+    @Override
+    public Number getAchievmentIndex() {
+        return achievmentIndex;
+    }
+
+    @Override
+    public ModificationTask toTask() {
+        return new BreakerClosing(voltageLevelId, equipmentId);
+    }
+
+    @Override
+    public ModificationTask toTask(ActionParameters parameters) {
+        throw new UnsupportedOperationException();
+    }
+
 
 }

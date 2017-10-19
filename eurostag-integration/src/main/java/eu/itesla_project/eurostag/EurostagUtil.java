@@ -10,16 +10,13 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import eu.itesla_project.commons.io.BufferedLineParser;
-import eu.itesla_project.computation.ExecutionError;
-import eu.itesla_project.computation.ExecutionReport;
+import com.powsybl.commons.io.BufferedLineParser;
+import com.powsybl.computation.ExecutionError;
+import com.powsybl.computation.ExecutionReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,7 +28,6 @@ import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 
 /**
- *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
 public class EurostagUtil {
@@ -47,11 +43,11 @@ public class EurostagUtil {
 
     private static final List<String> HEADER_STEADY_STATE
             = Arrays.asList("",
-                            "     MACHINE  MACROBLOC         NOM VAR.        SORT. BLOC    VALEUR EQU.      (P.U.)");
+            "     MACHINE  MACROBLOC         NOM VAR.        SORT. BLOC    VALEUR EQU.      (P.U.)");
 
     private static final List<String> HEADER_INITIAL_VALUE
             = Arrays.asList("",
-                            "    MACHINE            MACROBLOC   VARIABLE    BLOC DE SOR.  INITIA      LIMITE INF.       VALEUR      LIMITE SUP.");
+            "    MACHINE            MACROBLOC   VARIABLE    BLOC DE SOR.  INITIA      LIMITE INF.       VALEUR      LIMITE SUP.");
 
     private final static Supplier<JsonFactory> JSON_FACTORY_SUPPLIER = Suppliers.memoize(() -> new JsonFactory());
 
@@ -61,9 +57,16 @@ public class EurostagUtil {
     public static Map<String, String> createEnv(EurostagConfig config) {
         Map<String, String> env = new HashMap<>();
         if (config.getEurostagHomeDir() != null) {
-            env.put("EUROSTAG", config.getEurostagHomeDir().toString());
-            env.put("PATH", config.getEurostagHomeDir().toString());
-            env.put("LD_LIBRARY_PATH",  config.getEurostagHomeDir().toString());
+            String eurostagHome = config.getEurostagHomeDir().toString();
+            // v5.2 keeps the binaries in the x64 subdir
+            String eurostagX64 = config.getEurostagHomeDir().toString() + File.separator + "x64";
+            env.put("EUROSTAG", eurostagHome);
+            env.put("PATH", eurostagHome + File.pathSeparator + eurostagX64);
+            env.put("LD_LIBRARY_PATH", eurostagHome + File.pathSeparator + eurostagX64);
+            // needed by v5.2
+            env.put("EUROSTAG_EXE", eurostagX64);
+            // needed by v5.2
+            env.put("DMA_LICENSE_FILE", eurostagHome + File.separator + "licenses");
         }
         if (config.getIndexesBinDir() != null) {
             if (env.containsKey("PATH")) {
@@ -130,7 +133,7 @@ public class EurostagUtil {
                         }
                         if (in) {
                             String line = lines.get(0);
-                            if (line.length() > 0 && line.charAt(line.length()-1) == '*') {
+                            if (line.length() > 0 && line.charAt(line.length() - 1) == '*') {
                                 InitialValueError error = new InitialValueError();
                                 error.machine = line.substring(8, 16).trim();
                                 error.macrobloc = line.substring(24, 32).trim();
@@ -237,7 +240,7 @@ public class EurostagUtil {
 
     static void putBadExitCode(ExecutionReport report, Map<String, String> metrics) {
         if (report.getErrors().size() > 0) {
-            ExecutionError lastError = report.getErrors().get(report.getErrors().size()-1);
+            ExecutionError lastError = report.getErrors().get(report.getErrors().size() - 1);
             metrics.put("badExitCode", Integer.toString(lastError.getExitCode()));
         }
     }

@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.modules.mcla;
 
-import eu.itesla_project.commons.Versionable;
+import com.powsybl.commons.Versionable;
 import eu.itesla_project.modules.online.TimeHorizon;
 
 /**
@@ -16,7 +16,7 @@ import eu.itesla_project.modules.online.TimeHorizon;
 public interface ForecastErrorsAnalyzer extends Versionable {
 
     void init(ForecastErrorsAnalyzerParameters parameters);
-    
+
     void run(TimeHorizon timeHorizon) throws Exception;
-    
+
 }

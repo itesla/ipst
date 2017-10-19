@@ -6,8 +6,8 @@
  */
 package eu.itesla_project.dymola;
 
-import eu.itesla_project.commons.config.ModuleConfig;
-import eu.itesla_project.commons.config.PlatformConfig;
+import com.powsybl.commons.config.ModuleConfig;
+import com.powsybl.commons.config.PlatformConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +28,7 @@ public class DymolaSimulationConfig {
     tolerance=0.0001
     fixedStepSize=0.0
 
-	*/
+    */
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DymolaSimulationConfig.class);
@@ -60,11 +60,11 @@ public class DymolaSimulationConfig {
 
     public DymolaSimulationConfig(int numberOfIntervals,
                                   double outputInterval, String method, double tolerance, double outputFixedstepSize) {
-        this.numberOfIntervals =numberOfIntervals;
-        this.outputInterval =outputInterval;
-        this.method =method;
-        this.tolerance =tolerance;
-        this.outputFixedstepSize =outputFixedstepSize;
+        this.numberOfIntervals = numberOfIntervals;
+        this.outputInterval = outputInterval;
+        this.method = method;
+        this.tolerance = tolerance;
+        this.outputFixedstepSize = outputFixedstepSize;
     }
 
     public String getMethod() {

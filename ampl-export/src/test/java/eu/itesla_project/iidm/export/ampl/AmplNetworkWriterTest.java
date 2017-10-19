@@ -7,11 +7,11 @@
 package eu.itesla_project.iidm.export.ampl;
 
 import com.google.common.io.CharStreams;
-import eu.itesla_project.commons.datasource.MemDataSource;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.test.EurostagTutorialExample1Factory;
-import eu.itesla_project.iidm.network.test.HvdcTestNetwork;
-import eu.itesla_project.iidm.network.test.SvcTestCaseFactory;
+import com.powsybl.commons.datasource.MemDataSource;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.test.EurostagTutorialExample1Factory;
+import com.powsybl.iidm.network.test.HvdcTestNetwork;
+import com.powsybl.iidm.network.test.SvcTestCaseFactory;
 import org.junit.Test;
 
 import java.io.IOException;

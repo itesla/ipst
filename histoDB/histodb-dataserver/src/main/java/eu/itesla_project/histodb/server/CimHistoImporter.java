@@ -8,11 +8,11 @@
 package eu.itesla_project.histodb.server;
 
 import be.pepite.dataserver.api.ColumnDescriptor;
-import eu.itesla_project.iidm.datasource.DataSourceUtil;
-import eu.itesla_project.iidm.datasource.GenericReadOnlyDataSource;
-import eu.itesla_project.iidm.import_.Importer;
-import eu.itesla_project.iidm.import_.Importers;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.commons.datasource.DataSourceUtil;
+import com.powsybl.commons.datasource.GenericReadOnlyDataSource;
+import com.powsybl.iidm.import_.Importer;
+import com.powsybl.iidm.import_.Importers;
+import com.powsybl.iidm.network.Network;
 import eu.itesla_project.modules.histo.HistoDbAttributeId;
 import eu.itesla_project.modules.histo.HistoDbMetaAttributeType;
 import eu.itesla_project.modules.histo.IIDM2DB;
@@ -44,48 +44,58 @@ public class CimHistoImporter {
         this.datasource = datasource;
     }
 
-    public void addCim(File cims) throws IOException {
+    public void addCim(File cims, boolean parallel) throws IOException {
         try {
             for (Importer importer : importers) {
                 log.info("processing import - importer format = " + importer.getFormat());
-                Importers.importAll(cims.toPath(), importer, true, n -> {
-                Map<String, Object> query = new HashMap<String, Object>();
-                query.put(HistoDbMetaAttributeType.cimName.name(), n.getId());
+                Importers.importAll(cims.toPath(), importer, parallel, n -> {
+                    Map<String, Object> query = new HashMap<String, Object>();
+                    query.put(HistoDbMetaAttributeType.cimName.name(), n.getId());
 
-                //WARN is this still relevant with potential multi-horizon forecasts ?
-                if (datasource.getData(query, 0, 1, ColumnDescriptor.getDescriptorsForNames("_id")).getRowIterator().hasNext()) {
-                    log.warn("network already in DB: " + n.getId());
-                    return;
-                }
-
-                try {
-                    IIDM2DB.CimValuesMap valueMaps = IIDM2DB.extractCimValues(n, new IIDM2DB.Config(n.getId(), true));
-                    datasource.getMetadata().addTopologies(valueMaps.getToposPerSubstation());
-
-                    for (Map.Entry<IIDM2DB.HorizonKey, LinkedHashMap<HistoDbAttributeId, Object>> valueMapEntry : valueMaps.entrySet()) {
-                        LinkedHashMap<HistoDbAttributeId, Object> valueMap = valueMapEntry.getValue();
-                        query = new HashMap<String, Object>();
-                        query.put(HistoDbMetaAttributeType.datetime.name(), n.getCaseDate().toDate());
-                        query.put(HistoDbMetaAttributeType.forecastTime.name(), valueMapEntry.getKey().forecastDistance);
-                        query.put(HistoDbMetaAttributeType.horizon.name(), valueMapEntry.getKey().horizon.toString());
-                        List<String> colNames = new ArrayList<String>(valueMap.size());
-                        for (HistoDbAttributeId attrId : valueMap.keySet()) {
-                            colNames.add(attrId.toString());
-                        }
-                        datasource.updateData(query, colNames.toArray(new String[]{}), valueMap.values().toArray());
+                    // WARN is this still relevant with potential multi-horizon
+                    // forecasts ?
+                    if (datasource.getData(query, 0, 1, ColumnDescriptor.getDescriptorsForNames("_id")).getRowIterator()
+                            .hasNext()) {
+                        log.warn("network already in DB: " + n.getId());
+                        return;
                     }
 
-                    // only use snapshots as structural network, not forecasts
-                    // forecasts sometimes have different lines/topologies that will mess up metadata computation
-                    if (!valueMaps.hasForecastValues()) datasource.setLatestNetwork(n);
+                    try {
+                        IIDM2DB.CimValuesMap valueMaps = IIDM2DB.extractCimValues(n,
+                                new IIDM2DB.Config(n.getId(), true));
+                        datasource.getMetadata().addTopologies(valueMaps.getToposPerSubstation());
 
-                    log.info("Inserted network: " + n.getId() + ", format: " + importer.getFormat());
-                } catch (Exception e) {
-                    log.error(e.toString(), e);
-                }
+                        for (Map.Entry<IIDM2DB.HorizonKey, LinkedHashMap<HistoDbAttributeId, Object>> valueMapEntry : valueMaps
+                                .entrySet()) {
+                            LinkedHashMap<HistoDbAttributeId, Object> valueMap = valueMapEntry.getValue();
+                            query = new HashMap<String, Object>();
+                            query.put(HistoDbMetaAttributeType.datetime.name(), n.getCaseDate().toDate());
+                            query.put(HistoDbMetaAttributeType.forecastTime.name(),
+                                    valueMapEntry.getKey().forecastDistance);
+                            query.put(HistoDbMetaAttributeType.horizon.name(),
+                                    valueMapEntry.getKey().horizon.toString());
+                            List<String> colNames = new ArrayList<String>(valueMap.size());
+                            for (HistoDbAttributeId attrId : valueMap.keySet()) {
+                                colNames.add(attrId.toString());
+                            }
+                            datasource.updateData(query, colNames.toArray(new String[] {}),
+                                    valueMap.values().toArray());
+                        }
+
+                        // only use snapshots as structural network, not
+                        // forecasts
+                        // forecasts sometimes have different lines/topologies
+                        // that will mess up metadata computation
+                        if (!valueMaps.hasForecastValues())
+                            datasource.setLatestNetwork(n);
+
+                        log.info("Inserted network: " + n.getId() + ", format: " + importer.getFormat());
+                    } catch (Exception e) {
+                        log.error(e.toString(), e);
+                    }
                 });
             }
-        } catch(Exception e){
+        } catch (Exception e) {
             log.warn("Failed to insert network from " + cims.getAbsolutePath(), e);
         }
     }
@@ -97,13 +107,13 @@ public class CimHistoImporter {
         }
         Path dir = file.getParent();
         String baseName = DataSourceUtil.getBaseName(file);
-        for (Importer importer: importers) {
+        for (Importer importer : importers) {
             try {
-              Network n=importer.import_(new GenericReadOnlyDataSource(dir, baseName), null);
-              if (n!=null) {
-                  log.info("read network: " + n.getId());
-                  return n;
-              }
+                Network n = importer.importData(new GenericReadOnlyDataSource(dir, baseName), null);
+                if (n != null) {
+                    log.info("read network: " + n.getId());
+                    return n;
+                }
             } catch (Exception e) {
                 log.warn("could not read format " + importer.getFormat());
             }

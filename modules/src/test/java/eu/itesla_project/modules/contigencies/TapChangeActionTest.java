@@ -6,13 +6,21 @@
  */
 package eu.itesla_project.modules.contigencies;
 
-import eu.itesla_project.contingency.tasks.ModificationTask;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.PhaseTapChanger;
-import eu.itesla_project.iidm.network.test.PhaseShifterTestCaseFactory;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.computation.local.LocalComputationManager;
+import com.google.common.jimfs.Configuration;
+import com.google.common.jimfs.Jimfs;
+import com.powsybl.contingency.tasks.ModificationTask;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.PhaseTapChanger;
+import com.powsybl.iidm.network.test.PhaseShifterTestCaseFactory;
 import eu.itesla_project.modules.contingencies.ActionElementType;
 import eu.itesla_project.modules.contingencies.TapChangeAction;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.nio.file.Path;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -40,20 +48,26 @@ public class TapChangeActionTest {
     }
 
     @Test
-    public void testToTask() {
+    public void testToTask() throws Exception {
         Network network = PhaseShifterTestCaseFactory.create();
         PhaseTapChanger tapChanger = network.getTwoWindingsTransformer("PS1").getPhaseTapChanger();
         assertEquals(1, tapChanger.getTapPosition());
 
+
         TapChangeAction action = new TapChangeAction("PS1", 2);
         ModificationTask task = action.toTask();
-        task.modify(network);
-        assertEquals(2, tapChanger.getTapPosition());
+        try (FileSystem fileSystem = Jimfs.newFileSystem(Configuration.unix())) {
+            Path localDir = fileSystem.getPath("/tmp");
+            ComputationManager computationManager = new LocalComputationManager(localDir);
+            task.modify(network, computationManager);
+            assertEquals(2, tapChanger.getTapPosition());
 
-        try {
-            action.toTask(null);
-            fail();
-        } catch (UnsupportedOperationException exc) {
+            try {
+                action.toTask(null);
+                fail();
+            } catch (UnsupportedOperationException exc) {
+            }
         }
+
     }
 }

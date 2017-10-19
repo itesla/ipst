@@ -8,7 +8,7 @@ package eu.itesla_project.online.db;
 
 import java.util.Objects;
 
-import eu.itesla_project.security.LimitViolationType;
+import com.powsybl.security.LimitViolationType;
 
 /**
  *
@@ -16,7 +16,7 @@ import eu.itesla_project.security.LimitViolationType;
  */
 public class Violation {
 
-	private final String subject;
+    private final String subject;
     private final LimitViolationType limitType;
     private final float limit;
     private final float value;
@@ -43,8 +43,8 @@ public class Violation {
     public float getValue() {
         return value;
     }
-    
+
     public String getId() {
-    	return subject + "_" + limitType.name();
+        return subject + "_" + limitType.name();
     }
 }

@@ -6,9 +6,9 @@
  */
 package eu.itesla_project.offline;
 
-import eu.itesla_project.commons.Version;
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.loadflow.api.LoadFlowFactory;
+import com.powsybl.commons.Version;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.loadflow.LoadFlowFactory;
 import eu.itesla_project.merge.MergeOptimizerFactory;
 import eu.itesla_project.modules.OptimizerFactory;
 import eu.itesla_project.cases.CaseRepository;
@@ -17,9 +17,9 @@ import eu.itesla_project.modules.histo.HistoDbClientFactory;
 import eu.itesla_project.modules.offline.*;
 import eu.itesla_project.modules.rules.*;
 import eu.itesla_project.modules.sampling.SamplerFactory;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexId;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
-import eu.itesla_project.simulation.SimulatorFactory;
+import com.powsybl.simulation.securityindexes.SecurityIndexId;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.SimulatorFactory;
 import eu.itesla_project.modules.topo.TopologyMinerFactory;
 import eu.itesla_project.modules.validation.ValidationDb;
 import eu.itesla_project.offline.monitoring.BusyCoresSeries;
@@ -168,7 +168,7 @@ public class LocalOfflineApplication extends NotificationBroadcasterSupport impl
         workflowsLock.lock();
         try {
             Collection<OfflineWorkflowStatus> workflowStatus = new ArrayList<>();
-            for(OfflineWorkflow workflow : workflows.values()) {
+            for (OfflineWorkflow workflow : workflows.values()) {
                 workflowStatus.add(workflow.getStatus());
             }
             notifyWorkflowListChange(workflowStatus);
@@ -441,8 +441,7 @@ public class LocalOfflineApplication extends NotificationBroadcasterSupport impl
             metricsDb.create(workflowId2);
 
             return workflowId2;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
             workflowsLock.unlock();

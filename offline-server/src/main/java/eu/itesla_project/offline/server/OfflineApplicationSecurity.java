@@ -51,7 +51,7 @@ public class OfflineApplicationSecurity {
             this.username = username;
             this.password = password;
         }
-        
+
         @Override
         public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
             for (Callback callback : callbacks) {

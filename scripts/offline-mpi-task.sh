@@ -9,12 +9,12 @@
 installBinDir=$(dirname $(readlink -f $0))
 installDir=${installBinDir%/*}
 
-. $installDir/etc/itesla.conf
+. $installDir/etc/itools.conf
 
 if [[ -n "$OMPI_MCA_rmaps_base_cpus_per_rank" ]]; then
-	CORES=$OMPI_MCA_rmaps_base_cpus_per_rank
+    CORES=$OMPI_MCA_rmaps_base_cpus_per_rank
 else
-   	CORES=1
+    CORES=1
 fi
 
 tmpdir=$HOME/tmp 
@@ -28,14 +28,14 @@ if [ $rank = 0 ]; then
         exit -1
     fi
     export LD_LIBRARY_PATH=${installDir}/lib:$LD_LIBRARY_PATH
-    [ -n "$itesla_cache_dir" ] && options+="-Ditesla.cache.dir=$itesla_cache_dir"
-    [ -n "$itesla_config_dir" ] && options+=" -Ditesla.config.dir=$itesla_config_dir"
-    [ -n "$itesla_config_name" ] && options+=" -Ditesla.config.name=$itesla_config_name"
+    [ -n "$itools_cache_dir" ] && options+="-Ditools.cache.dir=$itools_cache_dir"
+    [ -n "$itools_config_dir" ] && options+=" -Ditools.config.dir=$itools_config_dir"
+    [ -n "$itools_config_name" ] && options+=" -Ditools.config.name=$itools_config_name"
     options+=" -Dcom.sun.management.jmxremote.port=6666"
     options+=" -Dcom.sun.management.jmxremote.authenticate=false"
     options+=" -Dcom.sun.management.jmxremote.ssl=false"
     options+=" -Dlogback.configurationFile="
-    [ -f "$itesla_config_dir/logback-offline.xml" ] && options+="$itesla_config_dir" || options+="$installDir/etc"
+    [ -f "$itools_config_dir/logback-offline.xml" ] && options+="$itools_config_dir" || options+="$installDir/etc"
     options+="/logback-offline.xml"
     $JAVA_HOME/bin/java \
 -Xmx8G \
@@ -44,16 +44,16 @@ $options \
 eu.itesla_project.offline.mpi.Master \
 --mode=$1 \
 --tmp-dir=$tmpdir \
---statistics-factory-class="eu.itesla_project.computation.mpi.CsvMpiStatisticsFactory" \
+--statistics-factory-class="com.powsybl.computation.mpi.CsvMpiStatisticsFactory" \
 --statistics-db-dir=$HOME \
 --statistics-db-name="statistics" \
 --cores=$CORES \
 --stdout-archive=$tmpdir/stdout-archive.zip
 else
-	# valgrind --show-reachable=yes --track-origins=yes --track-fds=yes --log-file=/tmp/val.log --error-limit=no
+    # valgrind --show-reachable=yes --track-origins=yes --track-fds=yes --log-file=/tmp/val.log --error-limit=no
     mkdir $HOME/archive > /dev/null 2>&1
-    rm -r $tmpdir/itesla_common_${rank}* > /dev/null 2>&1
-    rm -r $tmpdir/itesla_job_${rank}* > /dev/null 2>&1
-    rm -r $tmpdir/itesla_work_${rank}* > /dev/null 2>&1
+    rm -r $tmpdir/itools_common_${rank}* > /dev/null 2>&1
+    rm -r $tmpdir/itools_job_${rank}* > /dev/null 2>&1
+    rm -r $tmpdir/itools_work_${rank}* > /dev/null 2>&1
     ${installDir}/bin/slave --tmp-dir=$tmpdir --archive-dir=$HOME/archive --log-file=$tmpdir/slave.log --cores=$CORES
 fi

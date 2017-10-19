@@ -10,7 +10,7 @@ package eu.itesla_project.modules.online;
 import java.util.List;
 import java.util.Map;
 
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 
 /**
  *
@@ -25,7 +25,7 @@ public class RulesFacadeResults {
     private final List<SecurityIndexType> invalidRules;
     private final boolean rulesAvailable;
 
-    public RulesFacadeResults(String stateId, String contingencyId, StateStatus stateStatus, Map<SecurityIndexType, StateStatus> indexesResults, 
+    public RulesFacadeResults(String stateId, String contingencyId, StateStatus stateStatus, Map<SecurityIndexType, StateStatus> indexesResults,
             List<SecurityIndexType> invalidRules, boolean rulesAvailable) {
         this.stateId = stateId;
         this.contingencyId = contingencyId;
@@ -51,12 +51,12 @@ public class RulesFacadeResults {
         return indexesResults;
     }
 
-	public List<SecurityIndexType> getInvalidRules() {
-		return invalidRules;
-	}
-	
-	public boolean areRulesAvailable() {
-		return rulesAvailable;
-	}
+    public List<SecurityIndexType> getInvalidRules() {
+        return invalidRules;
+    }
+
+    public boolean areRulesAvailable() {
+        return rulesAvailable;
+    }
 
 }

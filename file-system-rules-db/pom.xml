@@ -21,11 +21,14 @@
     <name>File system rules DB</name>
 
     <dependencies>
+        <!-- Compilation dependencies -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>modules</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <!-- Test dependencies -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

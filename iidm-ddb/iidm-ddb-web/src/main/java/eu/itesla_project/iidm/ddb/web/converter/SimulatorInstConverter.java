@@ -22,36 +22,37 @@ import eu.itesla_project.iidm.ddb.service.DDBManager;
  *
  * @author Quinary <itesla@quinary.com>
  */
-@FacesConverter(forClass=SimulatorInst.class,value="simulatorInstConverter")
+@FacesConverter(forClass = SimulatorInst.class, value = "simulatorInstConverter")
 @ManagedBean
-public class SimulatorInstConverter implements Converter{
-		   
-	@EJB
-	private DDBManager dbManager;
-	
-	    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-	        // Convert the unique String representation of SimulatorInst to the actual SimulatorInst object.	    
-	    	String simulator="";
-	        String version="";
-	    	if (value.contains("simulator=") && (value.contains("version="))) {
-	    		simulator=value.substring(value.indexOf("simulator=")+"simulator=".length(), value.indexOf(","));
-	    		version=value.substring(value.indexOf("version=")+"version=".length(), value.indexOf("]"));
-	    	}else
-	    		throw new ConverterException(new FacesMessage("Cannot obtain simulator information  "));
-	    	
-	        SimulatorInst simul=dbManager.findSimulator(Simulator.valueOf(simulator) ,version);
-	        return simul;
-	    }
+public class SimulatorInstConverter implements Converter {
 
-	    public String getAsString(FacesContext context, UIComponent component, Object value) {
-	        // Convert the SimulatorInt object to its unique String representation.
-	    	//System.out.println("getAsString :"+value);
-	    	SimulatorInst sim = (SimulatorInst) value;
-	        return sim.toString();
+    @EJB
+    private DDBManager dbManager;
 
-	        
-	    }
+    public Object getAsObject(FacesContext context, UIComponent component, String value) {
+        // Convert the unique String representation of SimulatorInst to the actual SimulatorInst object.
+        String simulator = "";
+        String version = "";
+        if (value.contains("simulator=") && (value.contains("version="))) {
+            simulator = value.substring(value.indexOf("simulator=") + "simulator=".length(), value.indexOf(","));
+            version = value.substring(value.indexOf("version=") + "version=".length(), value.indexOf("]"));
+        } else {
+            throw new ConverterException(new FacesMessage("Cannot obtain simulator information  "));
+        }
 
-	}
+        SimulatorInst simul = dbManager.findSimulator(Simulator.valueOf(simulator), version);
+        return simul;
+    }
+
+    public String getAsString(FacesContext context, UIComponent component, Object value) {
+        // Convert the SimulatorInt object to its unique String representation.
+        //System.out.println("getAsString :"+value);
+        SimulatorInst sim = (SimulatorInst) value;
+        return sim.toString();
+
+
+    }
+
+}
 
 

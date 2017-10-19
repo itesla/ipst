@@ -6,11 +6,12 @@
  */
 package eu.itesla_project.modules.contingencies.tasks;
 
-import eu.itesla_project.commons.ITeslaException;
-import eu.itesla_project.contingency.tasks.ModificationTask;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.Switch;
-import eu.itesla_project.iidm.network.VoltageLevel;
+import com.powsybl.commons.PowsyblException;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.contingency.tasks.ModificationTask;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.Switch;
+import com.powsybl.iidm.network.VoltageLevel;
 
 /**
  *
@@ -28,14 +29,14 @@ public class BreakerClosing implements ModificationTask {
     }
 
     @Override
-    public void modify(Network network) {
+    public void modify(Network network, ComputationManager computationManager) {
         VoltageLevel vl = network.getVoltageLevel(voltageLevelId);
         if (vl == null) {
-            throw new ITeslaException("Voltage level '" + voltageLevelId + "' not found");
+            throw new PowsyblException("Voltage level '" + voltageLevelId + "' not found");
         }
         Switch s = vl.getBusBreakerView().getSwitch(breakerId);
         if (s == null) {
-            throw new ITeslaException("Breaker '" + breakerId + "' not found");
+            throw new PowsyblException("Breaker '" + breakerId + "' not found");
         }
         s.setOpen(false);
     }

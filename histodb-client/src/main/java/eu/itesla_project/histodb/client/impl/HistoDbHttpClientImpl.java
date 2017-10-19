@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.histodb.client.impl;
 
-import eu.itesla_project.commons.io.ForwardingInputStream;
+import com.powsybl.commons.io.ForwardingInputStream;
 import eu.itesla_project.modules.histo.cache.HistoDbCache;
 import org.apache.commons.io.input.TeeInputStream;
 import org.apache.http.HttpHost;
@@ -88,7 +88,7 @@ public class HistoDbHttpClientImpl implements HistoDbHttpClient {
                     @Override
                     public void checkServerTrusted(X509Certificate[] certs, String authType) {
                     }
-                }};
+                } };
                 SSLContext sslContext = SSLContext.getInstance("SSL");
                 sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
                 LayeredConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext);
@@ -112,7 +112,7 @@ public class HistoDbHttpClientImpl implements HistoDbHttpClient {
                 }
                 httpClient = httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
                         .build();
-            } catch (KeyManagementException|NoSuchAlgorithmException e) {
+            } catch (KeyManagementException | NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
             }
         }

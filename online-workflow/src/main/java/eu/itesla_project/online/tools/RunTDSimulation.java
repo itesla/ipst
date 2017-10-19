@@ -8,17 +8,17 @@ package eu.itesla_project.online.tools;
 
 import com.csvreader.CsvWriter;
 import com.google.common.collect.Sets;
-import eu.itesla_project.commons.tools.Command;
-import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.commons.tools.ToolRunningContext;
-import eu.itesla_project.iidm.import_.Importers;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.tools.Command;
+import com.powsybl.tools.Tool;
+import com.powsybl.tools.ToolRunningContext;
+import com.powsybl.iidm.import_.Importers;
+import com.powsybl.iidm.network.Network;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.online.Utils;
-import eu.itesla_project.security.LimitViolation;
-import eu.itesla_project.security.Security;
-import eu.itesla_project.simulation.SimulatorFactory;
+import com.powsybl.security.LimitViolation;
+import com.powsybl.security.Security;
+import com.powsybl.simulation.SimulatorFactory;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -91,8 +91,9 @@ public class RunTDSimulation implements Tool {
     }
 
     private Path getFile(Path folder, String filename) {
-        if (folder != null)
+        if (folder != null) {
             return Paths.get(folder.toString(), filename);
+        }
         return Paths.get(filename);
     }
 
@@ -117,8 +118,9 @@ public class RunTDSimulation implements Tool {
                 }
                 cvsWriter.flush();
             } finally {
-                if (cvsWriter != null)
+                if (cvsWriter != null) {
                     cvsWriter.close();
+                }
             }
         }
     }
@@ -137,8 +139,9 @@ public class RunTDSimulation implements Tool {
                 String[] headers = new String[indexIds.length + 1];
                 headers[0] = "Basecase";
                 int i = 1;
-                for (String securityIndexId : indexIds)
+                for (String securityIndexId : indexIds) {
                     headers[i++] = securityIndexId;
+                }
                 cvsWriter.writeRecord(headers);
                 for (String caseBasename : tdSimulationsResults.keySet()) {
                     String[] values = new String[indexIds.length + 1];
@@ -146,16 +149,18 @@ public class RunTDSimulation implements Tool {
                     i = 1;
                     for (String securityIndexId : indexIds) {
                         String result = "NA";
-                        if (tdSimulationsResults.get(caseBasename).containsKey(securityIndexId))
+                        if (tdSimulationsResults.get(caseBasename).containsKey(securityIndexId)) {
                             result = tdSimulationsResults.get(caseBasename).get(securityIndexId) ? "OK" : "KO";
+                        }
                         values[i++] = result;
                     }
                     cvsWriter.writeRecord(values);
                 }
                 cvsWriter.flush();
             } finally {
-                if (cvsWriter != null)
+                if (cvsWriter != null) {
                     cvsWriter.close();
+                }
             }
         }
     }

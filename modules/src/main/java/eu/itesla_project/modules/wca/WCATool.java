@@ -8,19 +8,19 @@
 package eu.itesla_project.modules.wca;
 
 import com.google.auto.service.AutoService;
-import eu.itesla_project.commons.tools.Command;
-import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.commons.tools.ToolRunningContext;
-import eu.itesla_project.iidm.import_.Importers;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.StateManager;
-import eu.itesla_project.loadflow.api.LoadFlowFactory;
+import com.powsybl.tools.Command;
+import com.powsybl.tools.Tool;
+import com.powsybl.tools.ToolRunningContext;
+import com.powsybl.iidm.import_.Importers;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.StateManager;
+import com.powsybl.loadflow.LoadFlowFactory;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
 import eu.itesla_project.modules.histo.*;
 import eu.itesla_project.modules.offline.OfflineConfig;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.rules.RulesDbClient;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
 public class WCATool implements Tool {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WCATool.class);
-    
+
     private static final double DEFAULT_PURITY_THRESHOLD = 0.95;
 
     private static final char CSV_SEPARATOR = ';';
@@ -284,14 +284,14 @@ public class WCATool implements Tool {
                         }
                     }
                 }
-                if ( line.hasOption("reports-folder") ) {
+                if (line.hasOption("reports-folder")) {
                     Path reportsFolder = Paths.get(line.getOptionValue("reports-folder"));
-                    if ( !wca.getReport().exportCsv(reportsFolder) ) {
+                    if (!wca.getReport().exportCsv(reportsFolder)) {
                         context.getOutputStream().println("Could not store reports for network " + network.getId() + " in folder " + reportsFolder);
                     }
                 }
                 context.getOutputStream().println(table.render());
-            } else if (Files.isDirectory(caseFile)){
+            } else if (Files.isDirectory(caseFile)) {
                 if (outputCsvFile == null) {
                     throw new RuntimeException("In case of multiple wca, you have to specify and ouput to csv file");
                 }
@@ -331,9 +331,9 @@ public class WCATool implements Tool {
                         }
 
                         clusterPerContingencyPerBaseCase.put(network.getId(), clusterPerContingency);
-                        if ( line.hasOption("reports-folder") ) {
+                        if (line.hasOption("reports-folder")) {
                             Path reportsFolder = Paths.get(line.getOptionValue("reports-folder") + File.separator + network.getId());
-                            if ( !wca.getReport().exportCsv(reportsFolder) ) {
+                            if (!wca.getReport().exportCsv(reportsFolder)) {
                                 context.getOutputStream().println("Could not store reports for network " + network.getId() + " in folder " + reportsFolder);
                             }
                         }

@@ -8,11 +8,11 @@
 package eu.itesla_project.iidm.eurostag.export;
 
 import com.google.common.base.Strings;
-import eu.itesla_project.commons.ITeslaException;
+import com.powsybl.commons.PowsyblException;
 import eu.itesla_project.eurostag.network.*;
 import eu.itesla_project.eurostag.network.io.EsgWriter;
-import eu.itesla_project.iidm.network.*;
-import eu.itesla_project.iidm.network.util.Identifiables;
+import com.powsybl.iidm.network.*;
+import com.powsybl.iidm.network.util.Identifiables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +92,7 @@ public class EurostagEchExport {
     private void createNodes(EsgNetwork esgNetwork) {
         fakeNodes.referencedEsgIdsAsStream().forEach(esgId -> {
             VoltageLevel vlevel = fakeNodes.getVoltageLevelByEsgId(esgId);
-            float nominalV = ((vlevel != null) ? vlevel.getNominalV() : 380f);
+            float nominalV = (vlevel != null) ? vlevel.getNominalV() : 380f;
             esgNetwork.addNode(createNode(esgId, EchUtil.FAKE_AREA, nominalV, nominalV, 0f, false));
         });
 
@@ -132,8 +132,8 @@ public class EurostagEchExport {
                 Bus bus2 = EchUtil.getBus2(vl, sw.getId(), config);
                 esgNetwork.addCouplingDevice(new EsgCouplingDevice(new EsgBranchName(new Esg8charName(dictionary.getEsgId(bus1.getId())),
                         new Esg8charName(dictionary.getEsgId(bus2.getId())),
-                        parallelIndexes.getParallelIndex(sw.getId()))
-                        , sw.isOpen() ? EsgCouplingDevice.ConnectionStatus.OPEN : EsgCouplingDevice.ConnectionStatus.CLOSED));
+                        parallelIndexes.getParallelIndex(sw.getId())),
+                        sw.isOpen() ? EsgCouplingDevice.ConnectionStatus.OPEN : EsgCouplingDevice.ConnectionStatus.CLOSED));
             }
         }
     }
@@ -328,7 +328,7 @@ public class EurostagEchExport {
                         regulatingMode = EsgDetailedTwoWindingTransformer.RegulatingMode.ACTIVE_FLUX_SIDE_2;
                     }
                     if (regulatingMode == EsgDetailedTwoWindingTransformer.RegulatingMode.NOT_REGULATING) {
-                        throw new ITeslaException("Phase transformer " + twt.getId() + " has an unknown regulated node");
+                        throw new PowsyblException("Phase transformer " + twt.getId() + " has an unknown regulated node");
                     }
                 }
                 ktap8 = ptc.getTapPosition() - ptc.getLowTapPosition() + 1;

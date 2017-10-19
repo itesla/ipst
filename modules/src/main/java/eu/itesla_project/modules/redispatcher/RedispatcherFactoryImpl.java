@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.modules.redispatcher;
 
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.iidm.network.Network;
 
 /**
  *
@@ -14,9 +14,9 @@ import eu.itesla_project.iidm.network.Network;
  */
 public class RedispatcherFactoryImpl implements RedispatcherFactory {
 
-	@Override
-	public Redispatcher create(Network network) {
-		return new RedispatcherImpl(network);
-	}
+    @Override
+    public Redispatcher create(Network network) {
+        return new RedispatcherImpl(network);
+    }
 
 }

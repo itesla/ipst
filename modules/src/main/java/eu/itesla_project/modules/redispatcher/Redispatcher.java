@@ -11,7 +11,7 @@ package eu.itesla_project.modules.redispatcher;
  * @author Quinary <itesla@quinary.com>
  */
 public interface Redispatcher {
-	
-	RedispatchingResults redispatch(RedispatchingParameters parameters);
+
+    RedispatchingResults redispatch(RedispatchingParameters parameters);
 
 }

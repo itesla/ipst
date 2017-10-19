@@ -8,8 +8,8 @@ package eu.itesla_project.modules.topo;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import eu.itesla_project.iidm.network.ConnectableType;
-import eu.itesla_project.iidm.network.util.ShortIdDictionary;
+import com.powsybl.iidm.network.ConnectableType;
+import com.powsybl.iidm.network.util.ShortIdDictionary;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -34,13 +34,13 @@ public class PossibleTopology {
 
     public static class Substation {
 
-        @XmlAttribute(required=true)
+        @XmlAttribute(required = true)
         private final String id;
 
         @XmlTransient
         private final boolean fictive;
 
-        @XmlElement(name="bus")
+        @XmlElement(name = "bus")
         private final List<Bus> buses = new ArrayList<>();
 
         @XmlTransient
@@ -163,10 +163,10 @@ public class PossibleTopology {
 
     public static class Bus {
 
-        @XmlAttribute(name="num")
+        @XmlAttribute(name = "num")
         private Integer num;
 
-        @XmlElement(name="equipment")
+        @XmlElement(name = "equipment")
         private final List<Equipment> equipments;
 
         public Bus() {
@@ -277,10 +277,10 @@ public class PossibleTopology {
 
         private String id;
 
-        @XmlAttribute(name="duplicateIndex")
+        @XmlAttribute(name = "duplicateIndex")
         private final int duplicateIndex;
 
-        @XmlAttribute(name="type")
+        @XmlAttribute(name = "type")
         private ConnectableType type;
 
         public Equipment(String id, ConnectableType type) {
@@ -399,7 +399,7 @@ public class PossibleTopology {
 
     public static class MetaSubstation {
 
-        @XmlElement(name="substation")
+        @XmlElement(name = "substation")
         private final List<Substation> substations = new ArrayList<>();
 
         public MetaSubstation() {
@@ -487,17 +487,17 @@ public class PossibleTopology {
 
     }
 
-    @XmlAttribute(name="num")
+    @XmlAttribute(name = "num")
     private Integer num;
 
-    @XmlElement(required=true)
+    @XmlElement(required = true)
     private final MetaSubstation metaSubstation;
 
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     private float probability;
 
     /* Topology hash is kept for further reference by DataMiningPlatformClient to update probabilities */
-    @XmlAttribute(name="topoHash")
+    @XmlAttribute(name = "topoHash")
     private String topoHash;
 
     public PossibleTopology(MetaSubstation metaSubstation, float probability, String topoHash) {

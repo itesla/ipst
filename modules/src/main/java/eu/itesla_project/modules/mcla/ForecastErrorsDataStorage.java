@@ -18,34 +18,34 @@ import eu.itesla_project.modules.online.TimeHorizon;
  */
 public interface ForecastErrorsDataStorage {
 
-	boolean isForecastErrorsDataAvailable(String analysisId, TimeHorizon timeHorizon);
-	void getForecastErrorsFile(String analysisId, TimeHorizon timeHorizon, Path destinationFile) throws IOException;
-	void storeForecastErrorsFile(String analysisId, TimeHorizon timeHorizon, Path originFile) throws IOException;
-	boolean deleteForecastErrorsData(String analysisId, TimeHorizon timeHorizon);
+    boolean isForecastErrorsDataAvailable(String analysisId, TimeHorizon timeHorizon);
+    void getForecastErrorsFile(String analysisId, TimeHorizon timeHorizon, Path destinationFile) throws IOException;
+    void storeForecastErrorsFile(String analysisId, TimeHorizon timeHorizon, Path originFile) throws IOException;
+    boolean deleteForecastErrorsData(String analysisId, TimeHorizon timeHorizon);
 
-	boolean isForecastOfflineSamplesDataAvailable(String analysisId, TimeHorizon timeHorizon);
-	void getForecastOfflineSamplesFile(String analysisId, TimeHorizon timeHorizon, Path destinationFile) throws IOException;
-	void storeForecastOfflineSamplesFile(String analysisId, TimeHorizon timeHorizon, Path originFile) throws IOException;
-	boolean deleteForecastOfflineSamplesData(String analysisId, TimeHorizon timeHorizon);
+    boolean isForecastOfflineSamplesDataAvailable(String analysisId, TimeHorizon timeHorizon);
+    void getForecastOfflineSamplesFile(String analysisId, TimeHorizon timeHorizon, Path destinationFile) throws IOException;
+    void storeForecastOfflineSamplesFile(String analysisId, TimeHorizon timeHorizon, Path originFile) throws IOException;
+    boolean deleteForecastOfflineSamplesData(String analysisId, TimeHorizon timeHorizon);
 
-	boolean areStatisticsAvailable(String analysisId, TimeHorizon timeHorizon);
-	void getStatisticsFile(String analysisId, TimeHorizon timeHorizon, Path destinationFile) throws IOException;
-	ForecastErrorsStatistics getStatistics(String analysisId, TimeHorizon timeHorizon) throws IOException;
-	void storeForecastErrorsFiles(String analysisId, TimeHorizon timeHorizon, Path forecastErrorsFile, Path statisticsFile) throws IOException;
-	void storeForecastErrorsFiles(String analysisId, TimeHorizon timeHorizon, Path forecastErrorsFile, Path samplesFile, Path statisticsFile, Path uncertaintiesGuiFile) throws IOException;
-	boolean deleteStatistics(String analysisId, TimeHorizon timeHorizon);
-	
-	boolean areGuiUncertaintiesAvailable(String analysisId, TimeHorizon timeHorizon);
-	String[] getGuiUncertaintiesInjectionIds(String analysisId, TimeHorizon timeHorizon) throws IOException;
-	double[][] getGuiUncertaintiesLinearCorrelation(String analysisId, TimeHorizon timeHorizon) throws IOException;
-	double[][] getGuiUncertaintiesLoadings(String analysisId, TimeHorizon timeHorizon) throws IOException;
-	void storeForecastErrorsFiles(String analysisId, TimeHorizon timeHorizon, Path forecastErrorsFile, Path statisticsFile, Path uncertaintiesGuiFile) throws IOException;
-	boolean deleteGuiUncertainties(String analysisId, TimeHorizon timeHorizon);
-	
-	List<ForecastErrorsAnalysisDetails> listAnalysis();
-	boolean deleteAnalysis(String analysisId, TimeHorizon timeHorizon);
-	
-	void storeParameters(String analysisId, TimeHorizon timeHorizon, ForecastErrorsAnalyzerParameters parameters) throws IOException;
-	ForecastErrorsAnalyzerParameters getParameters(String analysisId, TimeHorizon timeHorizon) throws IOException;
+    boolean areStatisticsAvailable(String analysisId, TimeHorizon timeHorizon);
+    void getStatisticsFile(String analysisId, TimeHorizon timeHorizon, Path destinationFile) throws IOException;
+    ForecastErrorsStatistics getStatistics(String analysisId, TimeHorizon timeHorizon) throws IOException;
+    void storeForecastErrorsFiles(String analysisId, TimeHorizon timeHorizon, Path forecastErrorsFile, Path statisticsFile) throws IOException;
+    void storeForecastErrorsFiles(String analysisId, TimeHorizon timeHorizon, Path forecastErrorsFile, Path samplesFile, Path statisticsFile, Path uncertaintiesGuiFile) throws IOException;
+    boolean deleteStatistics(String analysisId, TimeHorizon timeHorizon);
+
+    boolean areGuiUncertaintiesAvailable(String analysisId, TimeHorizon timeHorizon);
+    String[] getGuiUncertaintiesInjectionIds(String analysisId, TimeHorizon timeHorizon) throws IOException;
+    double[][] getGuiUncertaintiesLinearCorrelation(String analysisId, TimeHorizon timeHorizon) throws IOException;
+    double[][] getGuiUncertaintiesLoadings(String analysisId, TimeHorizon timeHorizon) throws IOException;
+    void storeForecastErrorsFiles(String analysisId, TimeHorizon timeHorizon, Path forecastErrorsFile, Path statisticsFile, Path uncertaintiesGuiFile) throws IOException;
+    boolean deleteGuiUncertainties(String analysisId, TimeHorizon timeHorizon);
+
+    List<ForecastErrorsAnalysisDetails> listAnalysis();
+    boolean deleteAnalysis(String analysisId, TimeHorizon timeHorizon);
+
+    void storeParameters(String analysisId, TimeHorizon timeHorizon, ForecastErrorsAnalyzerParameters parameters) throws IOException;
+    ForecastErrorsAnalyzerParameters getParameters(String analysisId, TimeHorizon timeHorizon) throws IOException;
 
 }

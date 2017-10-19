@@ -8,9 +8,9 @@ package eu.itesla_project.modules.histo.tools;
 
 import com.google.auto.service.AutoService;
 import com.google.common.io.CharStreams;
-import eu.itesla_project.commons.tools.Command;
-import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.commons.tools.ToolRunningContext;
+import com.powsybl.tools.Command;
+import com.powsybl.tools.Tool;
+import com.powsybl.tools.ToolRunningContext;
 import eu.itesla_project.modules.histo.*;
 import eu.itesla_project.modules.offline.OfflineConfig;
 import org.apache.commons.cli.CommandLine;
@@ -114,7 +114,7 @@ public class HistoDbPrintAttributesTool implements Tool {
                 table.addCell(cell);
             }
             List<String> row;
-            while( (row = reader.read()) != null ) {
+            while ((row = reader.read()) != null) {
                 for (int i = 0; i < row.size(); i++) {
                     String cell = row.get(i);
                     if (header[i].equals(HistoDbMetaAttributeId.datetime.toString())) {

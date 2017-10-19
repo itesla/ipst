@@ -6,9 +6,9 @@
  */
 package eu.itesla_project.modules.offline;
 
-import eu.itesla_project.commons.config.ModuleConfig;
-import eu.itesla_project.commons.config.PlatformConfig;
-import eu.itesla_project.iidm.network.Country;
+import com.powsybl.commons.config.ModuleConfig;
+import com.powsybl.commons.config.PlatformConfig;
+import com.powsybl.iidm.network.Country;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.Objects;
@@ -40,8 +40,8 @@ public class OfflineWorkflowCreationParameters implements Serializable {
 
     public static final int DEFAULT_ATTRIBUTES_MIN_BASE_VOLTAGE_FILTER = 0;
 
-    private final Set<Country> countries; 
-    
+    private final Set<Country> countries;
+
     private final DateTime baseCaseDate;
 
     private final Interval histoInterval;
@@ -182,7 +182,7 @@ public class OfflineWorkflowCreationParameters implements Serializable {
         out.println("attributes country filter: " + attributesCountryFilter);
         out.println("attributes min base voltage filter: " + attributesMinBaseVoltageFilter);
     }
-    
+
     @Override
     public String toString() {
         return "{countries=" + countries +

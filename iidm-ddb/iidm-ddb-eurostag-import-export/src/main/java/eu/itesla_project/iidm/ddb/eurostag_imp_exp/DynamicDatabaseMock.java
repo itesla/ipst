@@ -7,9 +7,9 @@
 package eu.itesla_project.iidm.ddb.eurostag_imp_exp;
 
 import com.google.common.collect.ImmutableMap;
-import eu.itesla_project.iidm.network.Bus;
-import eu.itesla_project.iidm.network.Generator;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.iidm.network.Bus;
+import com.powsybl.iidm.network.Generator;
+import com.powsybl.iidm.network.Network;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +42,7 @@ class DynamicDatabaseMock implements DynamicDatabaseClient {
 
         //uses the first connected generator that is available in the iidm2eurostag map
         Generator generator = network.getGeneratorStream()
-                .filter(gen -> ((iidm2eurostagId.containsKey(gen.getId())) && (gen.getTerminal().isConnected())))
+                .filter(gen -> (iidm2eurostagId.containsKey(gen.getId())) && (gen.getTerminal().isConnected()))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("could not find a suitable generator in network: " + network + ", to be used in: " + fileName));
 

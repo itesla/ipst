@@ -6,8 +6,8 @@
  */
 package eu.itesla_project.modules.contingencies;
 
-import eu.itesla_project.contingency.tasks.BranchTripping;
-import eu.itesla_project.contingency.tasks.ModificationTask;
+import com.powsybl.contingency.tasks.BranchTripping;
+import com.powsybl.contingency.tasks.ModificationTask;
 
 /**
  *
@@ -16,61 +16,62 @@ import eu.itesla_project.contingency.tasks.ModificationTask;
 public class TransformerOpeningAction implements ActionElement {
 
     private final String equipmentId;
-    
+
     private Number implementationTime;
-	
-	private Number achievmentIndex;
-	
-	private String substationId = null;
+
+    private Number achievmentIndex;
+
+    private String substationId = null;
 
     public TransformerOpeningAction(String transformerId) {
         this.equipmentId = transformerId;
     }
-    
+
     @Override
     public String getEquipmentId() {
         return equipmentId;
     }
 
-    
-    public TransformerOpeningAction(String transformerId, Number implementationTime, Number achievmentIndex ) {
-		this.equipmentId=transformerId;
-		this.implementationTime=implementationTime;
-		this.achievmentIndex=achievmentIndex;
-	}
-    
-    public TransformerOpeningAction(String lineId, String substationId, Number implementationTime, Number achievmentIndex ) {
-		this.equipmentId=lineId;
-		this.substationId = substationId;
-		this.implementationTime=implementationTime;
-		this.achievmentIndex=achievmentIndex;
-	}
-    
+
+    public TransformerOpeningAction(String transformerId, Number implementationTime, Number achievmentIndex) {
+        this.equipmentId = transformerId;
+        this.implementationTime = implementationTime;
+        this.achievmentIndex = achievmentIndex;
+    }
+
+    public TransformerOpeningAction(String lineId, String substationId, Number implementationTime, Number achievmentIndex) {
+        this.equipmentId = lineId;
+        this.substationId = substationId;
+        this.implementationTime = implementationTime;
+        this.achievmentIndex = achievmentIndex;
+    }
+
     @Override
     public ActionElementType getType() {
-    	return ActionElementType.TRANSFORMER_OPENING;
+        return ActionElementType.TRANSFORMER_OPENING;
     }
-    
+
     @Override
     public ModificationTask toTask() {
-    	if ( substationId != null )
-    		return new BranchTripping(equipmentId, substationId);
+        if (substationId != null) {
+            return new BranchTripping(equipmentId, substationId);
+        }
         return new BranchTripping(equipmentId);
     }
-    
-    @Override
-	public Number getImplementationTime() {
-		return implementationTime;
-	}
 
-	@Override
-	public Number getAchievmentIndex() {
-		return achievmentIndex;
-	}
-	
-	@Override
-	public ModificationTask toTask(ActionParameters parameters) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public Number getImplementationTime() {
+        return implementationTime;
+    }
+
+    @Override
+    public Number getAchievmentIndex() {
+        return achievmentIndex;
+    }
+
+    @Override
+    public ModificationTask toTask(ActionParameters parameters) {
+        throw new UnsupportedOperationException();
+    }
 
 }

@@ -16,10 +16,10 @@ import java.util.Map;
  */
 public interface ActionPlanOption {
 
-	BigInteger 			getPriority();
-			
-	LogicalExpression getLogicalExpression();
-	
-	// <num,actionId>
-	Map<BigInteger, String> getActions();
+    BigInteger             getPriority();
+
+    LogicalExpression getLogicalExpression();
+
+    // <num,actionId>
+    Map<BigInteger, String> getActions();
 }

@@ -6,18 +6,18 @@
  */
 package eu.itesla_project.iidm.ddb.eurostag;
 
-import eu.itesla_project.computation.ComputationManager;
+import com.powsybl.computation.ComputationManager;
 import eu.itesla_project.iidm.ddb.eurostag.model.PowerFlow;
 import eu.itesla_project.iidm.ddb.eurostag.model.StateVariable;
 import eu.itesla_project.iidm.ddb.eurostag.model.TransformerModel;
-import eu.itesla_project.iidm.network.*;
-import eu.itesla_project.iidm.network.ReactiveCapabilityCurve.Point;
-import eu.itesla_project.iidm.network.util.Identifiables;
-import eu.itesla_project.iidm.network.util.SV;
-import eu.itesla_project.loadflow.api.LoadFlow;
-import eu.itesla_project.loadflow.api.LoadFlowFactory;
-import eu.itesla_project.loadflow.api.LoadFlowParameters;
-import eu.itesla_project.loadflow.api.LoadFlowResult;
+import com.powsybl.iidm.network.*;
+import com.powsybl.iidm.network.ReactiveCapabilityCurve.Point;
+import com.powsybl.iidm.network.util.Identifiables;
+import com.powsybl.iidm.network.util.SV;
+import com.powsybl.loadflow.LoadFlow;
+import com.powsybl.loadflow.LoadFlowFactory;
+import com.powsybl.loadflow.LoadFlowParameters;
+import com.powsybl.loadflow.LoadFlowResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,8 +121,8 @@ public class EurostagStepUpTransformerInserter {
      *  qhvgen  qhvload
      */
     private static StateVariable toLvGenPf(TransformerModel transformerModel, StateVariable hvGenSv, PowerFlow hvLoadPf, PowerFlow lvLoadPf) {
-        double p1 = (hvGenSv.p + (hvLoadPf != null ? hvLoadPf.p : 0f));
-        double q1 = (hvGenSv.q + (hvLoadPf != null ? hvLoadPf.q : 0f));
+        double p1 = hvGenSv.p + (hvLoadPf != null ? hvLoadPf.p : 0f);
+        double q1 = hvGenSv.q + (hvLoadPf != null ? hvLoadPf.q : 0f);
         StateVariable sv1 = new StateVariable(p1, q1, hvGenSv.u, hvGenSv.theta);
         StateVariable sv2 = transformerModel.toSv2(sv1);
         double pLvGen = -(sv2.p + (lvLoadPf != null ? lvLoadPf.p : 0f));
@@ -511,7 +511,7 @@ public class EurostagStepUpTransformerInserter {
                 List<TwoWindingsTransformer> twtLs = new ArrayList<>();
                 List<Generator> genLs = new ArrayList<>();
 
-                lvBus.visitConnectedOrConnectableEquipments(new AbstractTopologyVisitor() {
+                lvBus.visitConnectedOrConnectableEquipments(new DefaultTopologyVisitor() {
                     @Override
                     public void visitLoad(Load load) {
                         auxLs.add(load);
@@ -699,7 +699,7 @@ public class EurostagStepUpTransformerInserter {
         for (Generator g : Identifiables.sort(n.getGenerators())) {
             count.get(insert(g, ddb, genDict, auxDict, config, stateBefore)).add(g.getId());
         }
-        LOGGER.info("{} step-up transformers added in {} ms", count.get(InsertionStatus.OK).size(), (System.currentTimeMillis() - start));
+        LOGGER.info("{} step-up transformers added in {} ms", count.get(InsertionStatus.OK).size(), System.currentTimeMillis() - start);
 
         int generatorsNotMoved = n.getGeneratorCount() - count.get(InsertionStatus.OK).size();
         if (generatorsNotMoved > 0) {

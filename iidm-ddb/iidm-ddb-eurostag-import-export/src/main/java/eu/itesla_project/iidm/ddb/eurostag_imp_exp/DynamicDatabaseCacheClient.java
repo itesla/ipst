@@ -6,12 +6,12 @@
  */
 package eu.itesla_project.iidm.ddb.eurostag_imp_exp;
 
-import eu.itesla_project.commons.io.CacheManager;
-import eu.itesla_project.commons.config.PlatformConfig;
-import eu.itesla_project.iidm.network.Generator;
-import eu.itesla_project.iidm.network.Identifiable;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.util.Identifiables;
+import com.powsybl.commons.io.CacheManager;
+import com.powsybl.commons.config.PlatformConfig;
+import com.powsybl.iidm.network.Generator;
+import com.powsybl.iidm.network.Identifiable;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.util.Identifiables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,28 +49,29 @@ public class DynamicDatabaseCacheClient implements DynamicDatabaseClient {
         return delegate.getVersion();
     }
 
-	private boolean filteredGenerator(Generator g, boolean isFiltered) {
-		if (isFiltered) {
-	  		if  (!Float.isNaN(g.getTerminal().getP()) && ((-g.getTerminal().getP() > g.getMaxP()) || (-g.getTerminal().getP() < g.getMinP())) ) {
-	  			return true;
-	  		}
-		}
-		return false;
-	}
+    private boolean filteredGenerator(Generator g, boolean isFiltered) {
+        if (isFiltered) {
+            if (!Float.isNaN(g.getTerminal().getP()) && ((-g.getTerminal().getP() > g.getMaxP()) || (-g.getTerminal().getP() < g.getMinP()))) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     private List<Generator> filterGenerators(Network network, boolean isFiltered) {
-    	List<Generator> filtGens=new ArrayList<>();
-		for (Generator g : Identifiables.sort(network.getGenerators())) {
-			if ( !filteredGenerator(g,isFiltered) )
-				filtGens.add(g);
-		}
-		return filtGens;
-	}
+        List<Generator> filtGens = new ArrayList<>();
+        for (Generator g : Identifiables.sort(network.getGenerators())) {
+            if (!filteredGenerator(g, isFiltered)) {
+                filtGens.add(g);
+            }
+        }
+        return filtGens;
+    }
 
 
     @Override
     public void dumpDtaFile(Path workingDir, String fileName, Network network, Map<String, Character> parallelIndexes, String eurostagVersion, Map<String, String> iidm2eurostagId) {
-    	boolean isFiltered = DdExportConfig.load().getGensPQfilter();
+        boolean isFiltered = DdExportConfig.load().getGensPQfilter();
 
         CacheManager.CacheEntry cacheEntry = PlatformConfig.defaultCacheManager().newCacheEntry("ddb")
                 .withKey(fileName)

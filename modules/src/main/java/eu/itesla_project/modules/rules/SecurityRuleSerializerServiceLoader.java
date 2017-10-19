@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.modules.rules;
 
-import eu.itesla_project.commons.util.ServiceLoaderCache;
+import com.powsybl.commons.util.ServiceLoaderCache;
 
 import java.util.Collection;
 

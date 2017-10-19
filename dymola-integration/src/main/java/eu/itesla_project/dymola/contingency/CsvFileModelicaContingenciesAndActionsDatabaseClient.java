@@ -8,8 +8,8 @@ package eu.itesla_project.dymola.contingency;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.contingency.*;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.contingency.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +49,7 @@ public class CsvFileModelicaContingenciesAndActionsDatabaseClient implements Con
 
         try {
 
-            Map<String,Contingency> contingenciesMap= new HashMap<>();
+            Map<String, Contingency> contingenciesMap = new HashMap<>();
             try (BufferedReader r = Files.newBufferedReader(file, Charset.defaultCharset())) {
                 String txt;
                 while ((txt = r.readLine()) != null) {
@@ -60,7 +60,7 @@ public class CsvFileModelicaContingenciesAndActionsDatabaseClient implements Con
                         continue;
                     }
 
-                    List<String> entryTokens= Splitter.on(';').omitEmptyStrings().trimResults().splitToList(txt);
+                    List<String> entryTokens = Splitter.on(';').omitEmptyStrings().trimResults().splitToList(txt);
                     String contingencyId = entryTokens.get(0);
                     String contingencyElementId = entryTokens.get(1);
                     String contingencyType = entryTokens.get(2);
@@ -70,10 +70,10 @@ public class CsvFileModelicaContingenciesAndActionsDatabaseClient implements Con
                     String  eventParams = null;
                     //TODO fix this bad handling of a case with no name=value param
                     if ("BREAKER".equals(contingencyType)) {
-                        deviceId2=entryTokens.get(4);
+                        deviceId2 = entryTokens.get(4);
                         eventParams = Splitter.on(';').omitEmptyStrings().trimResults().limit(6).splitToList(txt).get(5);
                     } else {
-                        deviceId2=null;
+                        deviceId2 = null;
                         eventParams = Splitter.on(';').omitEmptyStrings().trimResults().limit(5).splitToList(txt).get(4);
                     }
 
@@ -85,16 +85,16 @@ public class CsvFileModelicaContingenciesAndActionsDatabaseClient implements Con
                             .split(eventParams);
 
 
-                    ContingencyElement newElement=null;
+                    ContingencyElement newElement = null;
                     switch (contingencyType) {
-                        case "BUS_FAULT" : newElement=new MoBusFaultContingency(deviceId,txt,splitKeyValues); break; //1
-                        case "LINE_FAULT" : newElement=new MoLineFaultContingency(deviceId,txt,splitKeyValues); break; //2
-                        case "LINE_OPEN_REC" : newElement=new MoLineOpenRecContingency(deviceId,txt,splitKeyValues); break; //3
-                        case "LINE_2_OPEN" : newElement=new MoLine2OpenContingency(deviceId,txt,splitKeyValues); break; //4
-                        case "BANK_MODIF" : newElement=new MoBankModifContingency(deviceId,txt,splitKeyValues); break; //5
-                        case "LOAD_MODIF" : newElement=new MoLoadModifContingency(deviceId,txt,splitKeyValues); break; //6
-                        case "BREAKER" : newElement=new MoBreakerContingency(deviceId,txt,splitKeyValues); break; //7
-                        case "SETPOINT_MODIF" : newElement=new MoSetPointModifContingency(deviceId,txt,splitKeyValues); break; //8  tobevalidated; ref AIA's document
+                        case "BUS_FAULT" : newElement = new MoBusFaultContingency(deviceId, txt, splitKeyValues); break; //1
+                        case "LINE_FAULT" : newElement = new MoLineFaultContingency(deviceId, txt, splitKeyValues); break; //2
+                        case "LINE_OPEN_REC" : newElement = new MoLineOpenRecContingency(deviceId, txt, splitKeyValues); break; //3
+                        case "LINE_2_OPEN" : newElement = new MoLine2OpenContingency(deviceId, txt, splitKeyValues); break; //4
+                        case "BANK_MODIF" : newElement = new MoBankModifContingency(deviceId, txt, splitKeyValues); break; //5
+                        case "LOAD_MODIF" : newElement = new MoLoadModifContingency(deviceId, txt, splitKeyValues); break; //6
+                        case "BREAKER" : newElement = new MoBreakerContingency(deviceId, txt, splitKeyValues); break; //7
+                        case "SETPOINT_MODIF" : newElement = new MoSetPointModifContingency(deviceId, txt, splitKeyValues); break; //8  tobevalidated; ref AIA's document
                         default: LOGGER.warn("Contingency type '{}' not handled", contingencyType);
                     }
                     if (newElement == null) {
@@ -102,11 +102,11 @@ public class CsvFileModelicaContingenciesAndActionsDatabaseClient implements Con
                         continue;
                     }
 
-                    Contingency contingency=contingenciesMap.get(contingencyId);
-                    if ( contingency == null ) {
+                    Contingency contingency = contingenciesMap.get(contingencyId);
+                    if (contingency == null) {
                         List<ContingencyElement> elements = new ArrayList<>();
                         elements.add(newElement);
-                        contingency=new ContingencyImpl(contingencyId, elements);
+                        contingency = new ContingencyImpl(contingencyId, elements);
                         contingenciesMap.put(contingencyId, contingency);
                     } else {
                         contingency.getElements().add(newElement);

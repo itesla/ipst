@@ -8,21 +8,21 @@ package eu.itesla_project.case_projector;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import eu.itesla_project.commons.datasource.FileDataSource;
-import eu.itesla_project.commons.util.StringToIntMapper;
-import eu.itesla_project.computation.*;
+import com.powsybl.commons.datasource.FileDataSource;
+import com.powsybl.commons.util.StringToIntMapper;
+import com.powsybl.computation.*;
 import eu.itesla_project.iidm.export.ampl.*;
-import eu.itesla_project.iidm.network.Bus;
-import eu.itesla_project.iidm.network.Generator;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.Terminal;
-import eu.itesla_project.loadflow.api.LoadFlow;
-import eu.itesla_project.loadflow.api.LoadFlowFactory;
-import eu.itesla_project.loadflow.api.LoadFlowParameters;
-import eu.itesla_project.simulation.SimulationParameters;
-import eu.itesla_project.simulation.SimulatorFactory;
-import eu.itesla_project.simulation.Stabilization;
-import eu.itesla_project.simulation.StabilizationStatus;
+import com.powsybl.iidm.network.Bus;
+import com.powsybl.iidm.network.Generator;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.Terminal;
+import com.powsybl.loadflow.LoadFlow;
+import com.powsybl.loadflow.LoadFlowFactory;
+import com.powsybl.loadflow.LoadFlowParameters;
+import com.powsybl.simulation.SimulationParameters;
+import com.powsybl.simulation.SimulatorFactory;
+import com.powsybl.simulation.Stabilization;
+import com.powsybl.simulation.StabilizationStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +86,7 @@ public class CaseProjector {
 
     private CompletableFuture<Boolean> createAmplTask(String workingStateId) {
         return computationManager.execute(new ExecutionEnvironment(ImmutableMap.of("PATH", config.getAmplHomeDir().toString()), WORKING_DIR_PREFIX, config.isDebug()),
-                new DefaultExecutionHandler<Boolean>() {
+                new AbstractExecutionHandler<Boolean>() {
 
                     private StringToIntMapper<AmplSubset> mapper;
 

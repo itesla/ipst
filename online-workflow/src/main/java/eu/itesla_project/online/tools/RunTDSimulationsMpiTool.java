@@ -7,9 +7,9 @@
 package eu.itesla_project.online.tools;
 
 import com.google.auto.service.AutoService;
-import eu.itesla_project.commons.tools.Command;
-import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.commons.tools.ToolRunningContext;
+import com.powsybl.tools.Command;
+import com.powsybl.tools.Tool;
+import com.powsybl.tools.ToolRunningContext;
 import eu.itesla_project.online.LocalOnlineApplicationMBean;
 import eu.itesla_project.online.OnlineWorkflowStartParameters;
 import org.apache.commons.cli.CommandLine;
@@ -97,12 +97,15 @@ public class RunTDSimulationsMpiTool implements Tool {
         String host = line.getOptionValue(OnlineWorkflowCommand.HOST);
         String port = line.getOptionValue(OnlineWorkflowCommand.PORT);
         String threads = line.getOptionValue(OnlineWorkflowCommand.THREADS);
-        if (host != null)
+        if (host != null) {
             startconfig.setJmxHost(host);
-        if (port != null)
+        }
+        if (port != null) {
             startconfig.setJmxPort(Integer.valueOf(port));
-        if (threads != null)
+        }
+        if (threads != null) {
             startconfig.setThreads(Integer.valueOf(threads));
+        }
 
 
         String urlString = "service:jmx:rmi:///jndi/rmi://" + startconfig.getJmxHost() + ":" + startconfig.getJmxPort() + "/jmxrmi";

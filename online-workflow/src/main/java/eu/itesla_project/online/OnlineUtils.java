@@ -7,9 +7,9 @@
  */
 package eu.itesla_project.online;
 
-import eu.itesla_project.contingency.Contingency;
-import eu.itesla_project.security.LimitViolationType;
-import eu.itesla_project.simulation.securityindexes.SecurityIndex;
+import com.powsybl.contingency.Contingency;
+import com.powsybl.security.LimitViolationType;
+import com.powsybl.simulation.securityindexes.SecurityIndex;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -41,8 +41,9 @@ public final class OnlineUtils {
     public static boolean isSafe(Collection<SecurityIndex> securityIndexes) {
         Objects.requireNonNull(securityIndexes, "security indexes collection is null");
         for (SecurityIndex index : securityIndexes) {
-            if (!index.isOk())
+            if (!index.isOk()) {
                 return false;
+            }
         }
         return true;
     }
@@ -56,13 +57,13 @@ public final class OnlineUtils {
     public static UnitEnum getUnit(LimitViolationType type) {
         Objects.requireNonNull(type);
         switch (type) {
-        case CURRENT:
-            return UnitEnum.MW;
-        case LOW_VOLTAGE:
-        case HIGH_VOLTAGE:
-            return UnitEnum.KV;
-        default:
-            throw new IllegalArgumentException();
+            case CURRENT:
+                return UnitEnum.MW;
+            case LOW_VOLTAGE:
+            case HIGH_VOLTAGE:
+                return UnitEnum.KV;
+            default:
+                throw new IllegalArgumentException();
         }
     }
 

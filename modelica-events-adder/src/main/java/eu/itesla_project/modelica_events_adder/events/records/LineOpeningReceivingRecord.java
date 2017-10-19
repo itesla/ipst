@@ -20,86 +20,86 @@ import eu.itesla_project.modelica_events_adder.events.utils.StaticData;
  */
 public class LineOpeningReceivingRecord extends EventRecord {
 
-	
-	public LineOpeningReceivingRecord(Record lineRecord, Event event, Map<String, Record> recordsMap) {
-		super(event.getType(), event.getCIMDevice(), event.getParams());
-		this.event = event;
-		this.lineRecord = lineRecord;
-		this.recordsMap = recordsMap;
-		super.setModelicaType(EventsStaticData.LINE_OPEN_REC_MODEL);
-		
-		for(String par : event.getParams()) {
-			String name = par.split("=")[0];
-			String value = par.split("=")[1];
-			addParameter(name, value);
-		}
-	}
 
-	@Override
-	public void createModelicaName() {
-//		String modelicaName = this.event.getCIMDevice();
-		String modelicaName = this.lineRecord.getModelicaName();
-		super.setModelicaName(modelicaName);
-		
-		getLineParameters();
-	}
+    public LineOpeningReceivingRecord(Record lineRecord, Event event, Map<String, Record> recordsMap) {
+        super(event.getType(), event.getCIMDevice(), event.getParams());
+        this.event = event;
+        this.lineRecord = lineRecord;
+        this.recordsMap = recordsMap;
+        super.setModelicaType(EventsStaticData.LINE_OPEN_REC_MODEL);
 
-	@Override
-	public void createRecord() {
-		this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE); 
-		this.addValue(super.getModelicaName());
-		this.addValue(" (");
-		this.addValue(StaticData.NEW_LINE);
-		
-		if(!iidmParameters.isEmpty()) {
-			for(int i=0; i<iidmParameters.size()-1; i++) {
-				this.addValue("\t " + iidmParameters.get(i).getName() + " = " + iidmParameters.get(i).getValue() + ",");
-				this.addValue(StaticData.NEW_LINE);
-			}
-			this.addValue("\t " + iidmParameters.get(iidmParameters.size()-1).getName() + " = " + iidmParameters.get(iidmParameters.size()-1).getValue());
-			this.addValue(StaticData.NEW_LINE);
-		}
+        for (String par : event.getParams()) {
+            String name = par.split("=")[0];
+            String value = par.split("=")[1];
+            addParameter(name, value);
+        }
+    }
 
-		this.addValue("\t " + StaticData.ANNOT);
-		
-		//Clear data
-		iidmParameters = null;		
-		
-	}
+    @Override
+    public void createModelicaName() {
+//        String modelicaName = this.event.getCIMDevice();
+        String modelicaName = this.lineRecord.getModelicaName();
+        super.setModelicaName(modelicaName);
 
-	@Override
-	public String parseName(String name) {
-		return null;
-	}
+        getLineParameters();
+    }
 
-	@Override
-	public LineOpeningReceivingRecord getClassName() {
-		return this;
-	}
-	
-	
-	/**
-	 * Gets R, X, G, B from the original line to set them in the line opening receiving.
-	 */
-	private void getLineParameters() {
-		String R = this.lineRecord.getParamsMap().get(StaticData.R);
-		String X = this.lineRecord.getParamsMap().get(StaticData.X);
-		String G = this.lineRecord.getParamsMap().get(StaticData.G);
-		String B = this.lineRecord.getParamsMap().get(StaticData.B);
-		
-		addParameter(StaticData.R, R);
-		addParameter(StaticData.X, X);
-		addParameter(StaticData.G, G);
-		addParameter(StaticData.B, B);
-	}
-	
-	private void addParameter(String name, Object value) {
-		this.iidmParameters.add(new IIDMParameter(name, value));
-	}
-	
-	private Record lineRecord;
-	private Event event;
-	private List<IIDMParameter>	iidmParameters	= new ArrayList<IIDMParameter>();
-	
-	private Map<String, Record> recordsMap = new HashMap<String, Record>();
+    @Override
+    public void createRecord() {
+        this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);
+        this.addValue(super.getModelicaName());
+        this.addValue(" (");
+        this.addValue(StaticData.NEW_LINE);
+
+        if (!iidmParameters.isEmpty()) {
+            for (int i = 0; i < iidmParameters.size() - 1; i++) {
+                this.addValue("\t " + iidmParameters.get(i).getName() + " = " + iidmParameters.get(i).getValue() + ",");
+                this.addValue(StaticData.NEW_LINE);
+            }
+            this.addValue("\t " + iidmParameters.get(iidmParameters.size() - 1).getName() + " = " + iidmParameters.get(iidmParameters.size() - 1).getValue());
+            this.addValue(StaticData.NEW_LINE);
+        }
+
+        this.addValue("\t " + StaticData.ANNOT);
+
+        //Clear data
+        iidmParameters = null;
+
+    }
+
+    @Override
+    public String parseName(String name) {
+        return null;
+    }
+
+    @Override
+    public LineOpeningReceivingRecord getClassName() {
+        return this;
+    }
+
+
+    /**
+     * Gets R, X, G, B from the original line to set them in the line opening receiving.
+     */
+    private void getLineParameters() {
+        String R = this.lineRecord.getParamsMap().get(StaticData.R);
+        String X = this.lineRecord.getParamsMap().get(StaticData.X);
+        String G = this.lineRecord.getParamsMap().get(StaticData.G);
+        String B = this.lineRecord.getParamsMap().get(StaticData.B);
+
+        addParameter(StaticData.R, R);
+        addParameter(StaticData.X, X);
+        addParameter(StaticData.G, G);
+        addParameter(StaticData.B, B);
+    }
+
+    private void addParameter(String name, Object value) {
+        this.iidmParameters.add(new IIDMParameter(name, value));
+    }
+
+    private Record lineRecord;
+    private Event event;
+    private List<IIDMParameter>    iidmParameters    = new ArrayList<IIDMParameter>();
+
+    private Map<String, Record> recordsMap = new HashMap<String, Record>();
 }

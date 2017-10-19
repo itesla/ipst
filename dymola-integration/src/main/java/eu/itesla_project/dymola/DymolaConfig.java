@@ -6,11 +6,11 @@
  */
 package eu.itesla_project.dymola;
 
-import eu.itesla_project.commons.config.ModuleConfig;
-import eu.itesla_project.commons.config.PlatformConfig;
+import com.powsybl.commons.config.ModuleConfig;
+import com.powsybl.commons.config.PlatformConfig;
 import java.nio.file.Path;
 
-import eu.itesla_project.loadflow.api.LoadFlowFactory;
+import com.powsybl.loadflow.LoadFlowFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,13 +76,13 @@ indexNames=smallsignal,overload,underovervoltage,transient
             int simTimeout = config.getIntProperty("simTimeout", SIM_DEFAULT_TIMEOUT);
             int idxTimeout = config.getIntProperty("idxTimeout", IDX_DEFAULT_TIMEOUT);
             boolean debug = config.getBooleanProperty("debug", false);
-            String modelicaVersion = config.getStringProperty("modelicaVersion");;
-            String sourceEngine = config.getStringProperty("sourceEngine");;
-            String sourceEngineVersion = config.getStringProperty("sourceEngineVersion");;
+            String modelicaVersion = config.getStringProperty("modelicaVersion");
+            String sourceEngine = config.getStringProperty("sourceEngine");
+            String sourceEngineVersion = config.getStringProperty("sourceEngineVersion");
             String modelicaPowerSystemLibraryFile = config.getStringProperty("modelicaPowerSystemLibraryFile");
             boolean fakeDymolaExecution = config.getBooleanProperty("fakeDymolaExecution", false);
             String indexesNames = config.getStringProperty("indexesNames");
-            String slackId = config.getStringProperty("slackId",null);
+            String slackId = config.getStringProperty("slackId", null);
             Class<? extends LoadFlowFactory> loadFlowFactoryClass = config.getClassProperty("loadFlowFactoryClass", LoadFlowFactory.class);
 
             INSTANCE = new DymolaConfig(dymolaSeviceWSDL, indexesBinDir, simTimeout, idxTimeout, debug, modelicaVersion, sourceEngine, sourceEngineVersion, modelicaPowerSystemLibraryFile, fakeDymolaExecution, indexesNames, slackId, loadFlowFactoryClass);
@@ -91,7 +91,7 @@ indexNames=smallsignal,overload,underovervoltage,transient
     }
 
 
-    public DymolaConfig(String dymolaSeviceWSDL, Path indexesBinDir, int simTimeout, int idxTimeout, boolean debug,String modelicaVersion,String sourceEngine, String sourceEngineVersion, String modelicaPowerSystemLibraryFile, boolean fakeDymolaExecution, String indexesNames, String slackId, Class<? extends LoadFlowFactory> loadFlowFactoryClass) {
+    public DymolaConfig(String dymolaSeviceWSDL, Path indexesBinDir, int simTimeout, int idxTimeout, boolean debug, String modelicaVersion, String sourceEngine, String sourceEngineVersion, String modelicaPowerSystemLibraryFile, boolean fakeDymolaExecution, String indexesNames, String slackId, Class<? extends LoadFlowFactory> loadFlowFactoryClass) {
         if (simTimeout < -1 || simTimeout == 0) {
             throw new IllegalArgumentException("invalid simulation timeout value " + simTimeout);
         }
@@ -103,17 +103,19 @@ indexNames=smallsignal,overload,underovervoltage,transient
         this.simTimeout = simTimeout;
         this.idxTimeout = idxTimeout;
         this.debug = debug;
-        this.modelicaVersion=modelicaVersion;
-        this.sourceEngine=sourceEngine;
-        this.sourceEngineVersion=sourceEngineVersion;
-        this.modelicaPowerSystemLibraryFile=modelicaPowerSystemLibraryFile;
-        this.fakeDymolaExecution=fakeDymolaExecution;
-        this.indexesNames=indexesNames;
-        this.slackId=slackId;
+        this.modelicaVersion = modelicaVersion;
+        this.sourceEngine = sourceEngine;
+        this.sourceEngineVersion = sourceEngineVersion;
+        this.modelicaPowerSystemLibraryFile = modelicaPowerSystemLibraryFile;
+        this.fakeDymolaExecution = fakeDymolaExecution;
+        this.indexesNames = indexesNames;
+        this.slackId = slackId;
         this.loadFlowFactoryClass = loadFlowFactoryClass;
     }
 
-    public String getDymolaSeviceWSDL() { return dymolaSeviceWSDL; }
+    public String getDymolaSeviceWSDL() {
+        return dymolaSeviceWSDL;
+    }
 
     public Path getIndexesBinDir() {
         return indexesBinDir;
@@ -131,19 +133,33 @@ indexNames=smallsignal,overload,underovervoltage,transient
         return debug;
     }
 
-    public String getSourceEngineVersion() { return sourceEngineVersion; }
+    public String getSourceEngineVersion() {
+        return sourceEngineVersion;
+    }
 
-    public String getSourceEngine() { return sourceEngine; }
+    public String getSourceEngine() {
+        return sourceEngine;
+    }
 
-    public String getModelicaVersion() { return modelicaVersion; }
+    public String getModelicaVersion() {
+        return modelicaVersion;
+    }
 
-    public String getModelicaPowerSystemLibraryFile() { return modelicaPowerSystemLibraryFile; }
+    public String getModelicaPowerSystemLibraryFile() {
+        return modelicaPowerSystemLibraryFile;
+    }
 
-    public boolean isFakeDymolaExecution() { return fakeDymolaExecution; }
+    public boolean isFakeDymolaExecution() {
+        return fakeDymolaExecution;
+    }
 
-    public String[] getIndexesNames() {return indexesNames.split("\\s*,\\s*");}
+    public String[] getIndexesNames() {
+        return indexesNames.split("\\s*,\\s*");
+    }
 
-    public String getSlackId() { return slackId; }
+    public String getSlackId() {
+        return slackId;
+    }
 
     public Class<? extends LoadFlowFactory> getLoadFlowFactoryClass() {
         return loadFlowFactoryClass;

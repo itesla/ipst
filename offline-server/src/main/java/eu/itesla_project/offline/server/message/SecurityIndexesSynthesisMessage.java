@@ -8,7 +8,7 @@ package eu.itesla_project.offline.server.message;
 
 import eu.itesla_project.modules.offline.SecurityIndexSynthesis;
 import eu.itesla_project.modules.offline.SecurityIndexSynthesis.SecurityBalance;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 import javax.json.stream.JsonGenerator;
 
 /**

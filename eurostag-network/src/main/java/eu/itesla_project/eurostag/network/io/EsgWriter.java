@@ -61,7 +61,7 @@ public class EsgWriter {
         recordWriter.addValue("0", 5); //...no interrupt after reading and processing data
         recordWriter.addValue("0", 7); //...node optimal classification
         recordWriter.addValue("1", 9); //...print-out of results in the ".lf" file
-        recordWriter.addValue("1", 11);//...aving of results in file (.sav)
+        recordWriter.addValue("1", 11); //...aving of results in file (.sav)
         if (parameters.getMaxNumIteration() > 99) {
             throw new RuntimeException("max number of iteration has to be < 100");
         }

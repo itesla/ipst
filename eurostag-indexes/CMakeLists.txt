@@ -10,7 +10,7 @@ project(indexes)
 
 find_package(Boost 1.57 REQUIRED)
 find_package(Eurostag REQUIRED)
-find_package(IntelFortran REQUIRED COMPONENTS ifcore ifport imf intlc)
+find_package(IntelFortran REQUIRED COMPONENTS ifcore ifport imf intlc svml)
 
 # tsoindexes executable
 set(TSOINDEXES_SOURCES

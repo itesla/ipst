@@ -14,9 +14,9 @@ import java.math.BigInteger;
  * @author Quinary <itesla@quinary.com>
  */
 public interface VoltageLevel {
-	
-	String getId();
-	
-	BigInteger getLevel();
+
+    String getId();
+
+    BigInteger getLevel();
 
 }

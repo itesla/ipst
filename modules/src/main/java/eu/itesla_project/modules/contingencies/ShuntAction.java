@@ -6,62 +6,61 @@
  */
 package eu.itesla_project.modules.contingencies;
 
-import eu.itesla_project.contingency.tasks.ModificationTask;
+import com.powsybl.contingency.tasks.ModificationTask;
 
 /**
- *
  * @author Quinary <itesla@quinary.com>
  */
 public class ShuntAction implements ActionElement {
 
-	private String equipmentId;
-	
-	private Number implementationTime;
-		
-	private Number achievmentIndex;
+    private String equipmentId;
 
-	
-	public ShuntAction(String elementId) {
-		this.equipmentId=elementId;
-	}
+    private Number implementationTime;
 
-	public ShuntAction(String elementId, Number implementationTime, Number achievmentIndex ) {
-		this.equipmentId=elementId;
-		this.implementationTime=implementationTime;
-		this.achievmentIndex=achievmentIndex;
-	}
-    
-	@Override
-	public ActionElementType getType() {
-		
-		 return ActionElementType.SHUNT;
-	}
+    private Number achievmentIndex;
 
-	@Override
-	public ModificationTask toTask() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	@Override
-	public String getEquipmentId() {
-		return equipmentId;
-	}
+    public ShuntAction(String elementId) {
+        this.equipmentId = elementId;
+    }
 
-	@Override
-	public Number getImplementationTime() {
-		return implementationTime;
-	}
+    public ShuntAction(String elementId, Number implementationTime, Number achievmentIndex) {
+        this.equipmentId = elementId;
+        this.implementationTime = implementationTime;
+        this.achievmentIndex = achievmentIndex;
+    }
 
-	@Override
-	public Number getAchievmentIndex() {
-		return 	 achievmentIndex;	
-	}
-	
-	@Override
-	public ModificationTask toTask(ActionParameters parameters) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public ActionElementType getType() {
 
-	
+        return ActionElementType.SHUNT;
+    }
+
+    @Override
+    public ModificationTask toTask() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getEquipmentId() {
+        return equipmentId;
+    }
+
+    @Override
+    public Number getImplementationTime() {
+        return implementationTime;
+    }
+
+    @Override
+    public Number getAchievmentIndex() {
+        return achievmentIndex;
+    }
+
+    @Override
+    public ModificationTask toTask(ActionParameters parameters) {
+        throw new UnsupportedOperationException();
+    }
+
+
 }

@@ -6,46 +6,46 @@
  */
 package eu.itesla_project.modules.redispatcher;
 
-import eu.itesla_project.commons.config.ModuleConfig;
-import eu.itesla_project.commons.config.PlatformConfig;
+import com.powsybl.commons.config.ModuleConfig;
+import com.powsybl.commons.config.PlatformConfig;
 
 /**
  *
  * @author Quinary <itesla@quinary.com>
  */
 public class RedispatcherConfig {
-	
-	/*
-	 * example of redispatcher.properties file.
-	 *
-	# percentage used to compute redispatching limits (pmin and pmax of generators)
-	redispatchLimitsPercentage=10
 
-	*/
-	
-	private final float redispatchLimitsPercentage;
-	
-	public RedispatcherConfig(float redispatchLimitsPercentage) {
-		this.redispatchLimitsPercentage = redispatchLimitsPercentage;
-	}
-	
-	public static RedispatcherConfig load() {
+    /*
+     * example of redispatcher.properties file.
+     *
+    # percentage used to compute redispatching limits (pmin and pmax of generators)
+    redispatchLimitsPercentage=10
+
+    */
+
+    private final float redispatchLimitsPercentage;
+
+    public RedispatcherConfig(float redispatchLimitsPercentage) {
+        this.redispatchLimitsPercentage = redispatchLimitsPercentage;
+    }
+
+    public static RedispatcherConfig load() {
         ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("redispatcher");
-        
+
         float redispatchLimitsPercentage = config.getFloatProperty("redispatchLimitsPercentage");
 
         return new RedispatcherConfig(redispatchLimitsPercentage);
-	}
-	
+    }
 
-	public float getRedispatchLimitsPercentage() {
-		return redispatchLimitsPercentage;
-	}
-	
-	@Override
-	public String toString() {
-		return "RedispatcherConfig ["+ "redispatchLimitsPercentage=" + redispatchLimitsPercentage + "]";
-	}
+
+    public float getRedispatchLimitsPercentage() {
+        return redispatchLimitsPercentage;
+    }
+
+    @Override
+    public String toString() {
+        return "RedispatcherConfig [" + "redispatchLimitsPercentage=" + redispatchLimitsPercentage + "]";
+    }
 
 
 }

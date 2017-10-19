@@ -6,17 +6,16 @@
  */
 package eu.itesla_project.online.tools;
 
-import java.util.List;
 
-import eu.itesla_project.commons.tools.ToolRunningContext;
+import com.powsybl.tools.ToolRunningContext;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 import com.google.auto.service.AutoService;
 
-import eu.itesla_project.commons.tools.Command;
-import eu.itesla_project.commons.tools.Tool;
+import com.powsybl.tools.Command;
+import com.powsybl.tools.Tool;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.online.OnlineDb;
 
@@ -27,59 +26,60 @@ import eu.itesla_project.modules.online.OnlineDb;
 @AutoService(Tool.class)
 public class DeleteOnlineWorkflowTool implements Tool {
 
-	private static Command COMMAND = new Command() {
-		
-		@Override
-		public String getName() {
-			return "delete-online-workflow";
-		}
+    private static Command COMMAND = new Command() {
 
-		@Override
-		public String getTheme() {
-			return Themes.ONLINE_WORKFLOW;
-		}
+        @Override
+        public String getName() {
+            return "delete-online-workflow";
+        }
 
-		@Override
-		public String getDescription() {
-			return "Delete an online workflow from the online database";
-		}
+        @Override
+        public String getTheme() {
+            return Themes.ONLINE_WORKFLOW;
+        }
 
-		@Override
-		public Options getOptions() {
-			Options options = new Options();
-			options.addOption(Option.builder().longOpt("workflow")
-	                .desc("the workflow id")
-	                .hasArg()
-	                .required()
-	                .argName("ID")
-	                .build());
-			return options;
-		}
+        @Override
+        public String getDescription() {
+            return "Delete an online workflow from the online database";
+        }
 
-		@Override
-		public String getUsageFooter() {
-			return null;
-		}
-		
-	};
-	
-	@Override
-	public Command getCommand() {
-		return COMMAND;
-	}
+        @Override
+        public Options getOptions() {
+            Options options = new Options();
+            options.addOption(Option.builder().longOpt("workflow")
+                    .desc("the workflow id")
+                    .hasArg()
+                    .required()
+                    .argName("ID")
+                    .build());
+            return options;
+        }
 
-	@Override
-	public void run(CommandLine line, ToolRunningContext context) throws Exception {
-		OnlineConfig config = OnlineConfig.load();
-		OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
-		String workflowId = line.getOptionValue("workflow");
-		context.getOutputStream().println("Deleting workflow " + workflowId);
-		boolean deleted = onlinedb.deleteWorkflow(workflowId);
-		if ( deleted )
-			context.getOutputStream().println("Workflow " + workflowId + " deleted");
-		else
-			context.getOutputStream().println("Cannot delete workflow " + workflowId);
-		onlinedb.close();
-	}
-	
+        @Override
+        public String getUsageFooter() {
+            return null;
+        }
+
+    };
+
+    @Override
+    public Command getCommand() {
+        return COMMAND;
+    }
+
+    @Override
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
+        OnlineConfig config = OnlineConfig.load();
+        OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
+        String workflowId = line.getOptionValue("workflow");
+        context.getOutputStream().println("Deleting workflow " + workflowId);
+        boolean deleted = onlinedb.deleteWorkflow(workflowId);
+        if (deleted) {
+            context.getOutputStream().println("Workflow " + workflowId + " deleted");
+        } else {
+            context.getOutputStream().println("Cannot delete workflow " + workflowId);
+        }
+        onlinedb.close();
+    }
+
 }

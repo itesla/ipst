@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import eu.itesla_project.security.LimitViolationType;
+import com.powsybl.security.LimitViolationType;
 
 /**
 *
@@ -24,7 +24,7 @@ public class ViolationSynthesis {
     private final float voltageLevel;
     private final List<TimeValue> timeValues = new ArrayList<TimeValue>();
 
-    public ViolationSynthesis(String equipment, float voltageLevel, LimitViolationType type, float limit, String limitName ) {
+    public ViolationSynthesis(String equipment, float voltageLevel, LimitViolationType type, float limit, String limitName) {
         this.equipment = Objects.requireNonNull(equipment);
         this.type = Objects.requireNonNull(type);
         this.limit = limit;
@@ -39,14 +39,17 @@ public class ViolationSynthesis {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         ViolationSynthesis other = (ViolationSynthesis) obj;
-        return (equipment.equals(other.equipment) && type.equals(other.type));
+        return equipment.equals(other.equipment) && type.equals(other.type);
     }
 
     public String getEquipment() {
@@ -65,17 +68,17 @@ public class ViolationSynthesis {
         return timeValues;
     }
 
-    public void addTimeValue(TimeValue val){
+    public void addTimeValue(TimeValue val) {
         Objects.requireNonNull(val);
         timeValues.add(val);
     }
 
-	public String getLimitName() {
-		return limitName;
-	}
+    public String getLimitName() {
+        return limitName;
+    }
 
-	public float getVoltageLevel() {
-		return voltageLevel;
-	}
-    
+    public float getVoltageLevel() {
+        return voltageLevel;
+    }
+
 }

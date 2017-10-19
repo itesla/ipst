@@ -12,10 +12,10 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Table;
 import com.google.common.io.ByteStreams;
-import eu.itesla_project.commons.io.MathUtil;
-import eu.itesla_project.iidm.network.Country;
-import eu.itesla_project.iidm.network.Identifiable;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.commons.io.MathUtil;
+import com.powsybl.iidm.network.Country;
+import com.powsybl.iidm.network.Identifiable;
+import com.powsybl.iidm.network.Network;
 import eu.itesla_project.modules.histo.*;
 import eu.itesla_project.modules.histo.cache.HistoDbCache;
 import net.sf.json.JSONArray;
@@ -94,7 +94,7 @@ public class HistoDbClientImpl implements HistoDbClient {
         } catch (NumberFormatException e) {
             // FIXME I don't know why but histo db seems to return from time to time
             // an empty string
-            LOGGER.error(e.toString() , e);
+            LOGGER.error(e.toString(), e);
         }
 
         return count;
@@ -230,7 +230,7 @@ public class HistoDbClientImpl implements HistoDbClient {
             Collection<Collection<String>> result = new HashSet<>();
 
             JSONArray topology = JSONArray.fromObject(new String(bytes, Charset.forName("UTF-8")));
-            for (int i=0;i<topology.size();i++) {
+            for (int i = 0; i < topology.size(); i++) {
                 JSONArray jsonConnectedSet = topology.getJSONArray(i);
                 Collection<String> connectedSet = Arrays.asList((String[]) jsonConnectedSet.toArray(new String[]{}));
 
@@ -369,7 +369,9 @@ public class HistoDbClientImpl implements HistoDbClient {
             writer.close();
 
             // if no id is provided, rely on server-side auto-increment mechanism
-            if (id == null) id = "autoIncrement";
+            if (id == null) {
+                id = "autoIncrement";
+            }
 
             try (InputStream is = httpClient.postHttpRequest(new HistoDbUrl(config,
                                                                             "data/" + id + ".csv", // WARN here one must NOT use the itesla suffix (not supporting POST of new data)
@@ -378,7 +380,7 @@ public class HistoDbClientImpl implements HistoDbClient {
                 return new String(ByteStreams.toByteArray(is), StandardCharsets.UTF_8);
             }
         } catch (IOException e) {
-            throw new RuntimeException("Failed to store network values for id "+id, e);
+            throw new RuntimeException("Failed to store network values for id " + id, e);
         }
     }
 

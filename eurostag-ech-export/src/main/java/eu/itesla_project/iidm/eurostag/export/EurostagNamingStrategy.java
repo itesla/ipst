@@ -6,8 +6,6 @@
  */
 package eu.itesla_project.iidm.eurostag.export;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**

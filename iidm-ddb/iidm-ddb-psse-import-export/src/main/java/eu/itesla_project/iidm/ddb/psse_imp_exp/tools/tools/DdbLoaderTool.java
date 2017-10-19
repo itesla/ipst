@@ -9,14 +9,14 @@ package eu.itesla_project.iidm.ddb.psse_imp_exp.tools.tools;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import eu.itesla_project.commons.tools.ToolRunningContext;
+import com.powsybl.tools.ToolRunningContext;
 import eu.itesla_project.iidm.ddb.psse_imp_exp.DdbDyrLoader;
 import org.apache.commons.cli.CommandLine;
 
 import com.google.auto.service.AutoService;
 
-import eu.itesla_project.commons.tools.Command;
-import eu.itesla_project.commons.tools.Tool;
+import com.powsybl.tools.Command;
+import com.powsybl.tools.Tool;
 import eu.itesla_project.iidm.ddb.psse_imp_exp.DdbConfig;
 
 /**
@@ -26,30 +26,30 @@ import eu.itesla_project.iidm.ddb.psse_imp_exp.DdbConfig;
 @AutoService(Tool.class)
 public class DdbLoaderTool implements Tool {
 
-	@Override
-	public Command getCommand() {
-		return DdbLoaderCommand.INSTANCE;
-	}
+    @Override
+    public Command getCommand() {
+        return DdbLoaderCommand.INSTANCE;
+    }
 
-	@Override
-	public void run(CommandLine line, ToolRunningContext context) throws Exception {
-		String dyrPathS  = line.getOptionValue(DdbLoaderCommand.PSSE_DYRFILEPATH);
-		String mappingPathS  = line.getOptionValue(DdbLoaderCommand.PSSE_MAPPINGFILEPATH);
-		String jbossHost = line.getOptionValue(DdbLoaderCommand.HOST);
+    @Override
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
+        String dyrPathS  = line.getOptionValue(DdbLoaderCommand.PSSE_DYRFILEPATH);
+        String mappingPathS  = line.getOptionValue(DdbLoaderCommand.PSSE_MAPPINGFILEPATH);
+        String jbossHost = line.getOptionValue(DdbLoaderCommand.HOST);
         String jbossPort = line.getOptionValue(DdbLoaderCommand.PORT);
         String jbossUser = line.getOptionValue(DdbLoaderCommand.USER);
         String jbossPassword = line.getOptionValue(DdbLoaderCommand.PASSWORD);
         String psseVersion = line.getOptionValue(DdbLoaderCommand.PSSE_VERSION);
-		String optionRemoveData = line.getOptionValue(DdbLoaderCommand.OPTION_REMOVE);
-        
+        String optionRemoveData = line.getOptionValue(DdbLoaderCommand.OPTION_REMOVE);
+
         DdbConfig ddbConfig = new DdbConfig(jbossHost, jbossPort, jbossUser, jbossPassword);
-        Path dyrPath=Paths.get(dyrPathS);
-		Path mappingPath=Paths.get(mappingPathS);
-		DdbDyrLoader dyrLoader = new DdbDyrLoader();
+        Path dyrPath = Paths.get(dyrPathS);
+        Path mappingPath = Paths.get(mappingPathS);
+        DdbDyrLoader dyrLoader = new DdbDyrLoader();
 
-		boolean removeDataAfterHavingLoadedIt=Boolean.parseBoolean(optionRemoveData);
+        boolean removeDataAfterHavingLoadedIt = Boolean.parseBoolean(optionRemoveData);
 
-		dyrLoader.load(dyrPath, mappingPath, psseVersion, ddbConfig, removeDataAfterHavingLoadedIt);
-	}
+        dyrLoader.load(dyrPath, mappingPath, psseVersion, ddbConfig, removeDataAfterHavingLoadedIt);
+    }
 
 }

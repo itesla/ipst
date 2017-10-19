@@ -6,8 +6,8 @@
  */
 package eu.itesla_project.online.modules.mock;
 
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.iidm.network.Network;
 import eu.itesla_project.modules.mcla.ForecastErrorsDataStorage;
 import eu.itesla_project.modules.mcla.MontecarloSampler;
 import eu.itesla_project.modules.mcla.MontecarloSamplerParameters;
@@ -35,7 +35,8 @@ public class MontecarloSamplerMock implements MontecarloSampler {
         LOGGER.warn("running sampler mock");
         try {
             Thread.sleep(100);
-        } catch (InterruptedException e) {}
+        } catch (InterruptedException ignored) {
+        }
     }
 
     @Override

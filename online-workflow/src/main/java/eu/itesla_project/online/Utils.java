@@ -9,11 +9,11 @@ package eu.itesla_project.online;
 import java.io.Writer;
 import java.util.*;
 
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.iidm.network.Network;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
-import eu.itesla_project.simulation.*;
-import eu.itesla_project.simulation.securityindexes.SecurityIndex;
+import com.powsybl.simulation.*;
+import com.powsybl.simulation.securityindexes.SecurityIndex;
 import net.sf.json.JSONSerializer;
 import eu.itesla_project.modules.contingencies.ActionParameters;
 import eu.itesla_project.modules.online.OnlineWorkflowResults;
@@ -24,6 +24,9 @@ import eu.itesla_project.modules.online.OnlineWorkflowResults;
 public class Utils {
 
     private static final String EMPTY_CONTINGENCY_ID = "Empty-Contingency";
+
+    private Utils() {
+    }
 
     public static String actionsToJson(OnlineWorkflowResults wfResults, String contingencyId, Integer stateId) {
         Map<String, Object> actionInfo = new HashMap<>();
@@ -45,19 +48,22 @@ public class Utils {
                         }
                         equipment.put(equipmentId, params);
                         equipments.add(equipment);
-                    } else
+                    } else {
                         equipments.add(equipmentId);
+                    }
                 }
                 action.put(actionId, equipments);
                 actions.add(action);
-            } else
+            } else {
                 actions.add(actionId);
+            }
         }
         if (wfResults.getActionPlan(contingencyId, stateId) != null) {
             actionInfo.put(wfResults.getActionPlan(contingencyId, stateId), actions);
         } else {
-            if (!actions.isEmpty())
+            if (!actions.isEmpty()) {
                 actionInfo.put("actions", actions);
+            }
         }
         return JSONSerializer.toJSON(actionInfo).toString();
     }
@@ -67,8 +73,9 @@ public class Utils {
         actionInfo.put("actions_found", wfResults.getUnsafeStatesWithActions(contingencyId).get(stateId));
         actionInfo.put("status", wfResults.getStateStatus(contingencyId, stateId));
         String cause = wfResults.getCause(contingencyId, stateId);
-        if (cause != null)
+        if (cause != null) {
             actionInfo.put("cause", cause);
+        }
         if (wfResults.getActionsIds(contingencyId, stateId) != null && !wfResults.getActionsIds(contingencyId, stateId).isEmpty()) {
             List<Object> actions = new ArrayList<>();
             for (String actionId : wfResults.getActionsIds(contingencyId, stateId)) {
@@ -119,16 +126,19 @@ public class Utils {
         metricsContent.write("*** Stabilization Metrics ***\n");
         Map<String, String> stabilizationMetrics = stabilizationResults.getMetrics();
         if (stabilizationMetrics != null && !stabilizationMetrics.isEmpty()) {
-            for (String parameter : stabilizationMetrics.keySet())
+            for (String parameter : stabilizationMetrics.keySet()) {
                 metricsContent.write(parameter + " = " + stabilizationMetrics.get(parameter) + "\n");
+            }
         }
         metricsContent.flush();
         if (stabilizationResults.getStatus() == StabilizationStatus.COMPLETED) {
-            if (emptyContingency) // store data for t-d simulation on empty contingency, i.e. stabilization
+            if (emptyContingency) { // store data for t-d simulation on empty contingency, i.e. stabilization
                 tdSimulationResults.put(EMPTY_CONTINGENCY_ID, true);
+            }
             // check if there are contingencies to run impact analysis
-            if (contingencyIds == null && contingencyDb.getContingencies(network).size() == 0)
+            if (contingencyIds == null && contingencyDb.getContingencies(network).size() == 0) {
                 contingencyIds = new HashSet<>();
+            }
             if (contingencyIds == null || !contingencyIds.isEmpty()) {
                 // run impact analysis
                 ImpactAnalysis impactAnalysis = simulatorFactory.createImpactAnalysis(network, computationManager, 0, contingencyDb);
@@ -141,14 +151,16 @@ public class Utils {
                 metricsContent.write("*** Impact Analysis Metrics ***\n");
                 Map<String, String> impactAnalysisMetrics = impactAnalisResults.getMetrics();
                 if (impactAnalysisMetrics != null && !impactAnalysisMetrics.isEmpty()) {
-                    for (String parameter : impactAnalysisMetrics.keySet())
+                    for (String parameter : impactAnalysisMetrics.keySet()) {
                         metricsContent.write(parameter + " = " + impactAnalysisMetrics.get(parameter) + "\n");
+                    }
                 }
                 metricsContent.flush();
             }
         } else {
-            if (emptyContingency) // store data for t-d simulation on empty contingency, i.e. stabilization
+            if (emptyContingency) { // store data for t-d simulation on empty contingency, i.e. stabilization
                 tdSimulationResults.put(EMPTY_CONTINGENCY_ID, false);
+            }
         }
         return tdSimulationResults;
     }

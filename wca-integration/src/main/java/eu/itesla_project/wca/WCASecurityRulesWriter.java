@@ -7,14 +7,14 @@
  */
 package eu.itesla_project.wca;
 
-import eu.itesla_project.commons.io.table.Column;
-import eu.itesla_project.commons.io.table.TableFormatter;
-import eu.itesla_project.commons.util.StringToIntMapper;
-import eu.itesla_project.commons.datasource.DataSource;
+import com.powsybl.commons.io.table.Column;
+import com.powsybl.commons.io.table.TableFormatter;
+import com.powsybl.commons.util.StringToIntMapper;
+import com.powsybl.commons.datasource.DataSource;
 import eu.itesla_project.iidm.export.ampl.AmplConstants;
 import eu.itesla_project.iidm.export.ampl.AmplSubset;
 import eu.itesla_project.iidm.export.ampl.util.AmplDatTableFormatter;
-import eu.itesla_project.iidm.network.*;
+import com.powsybl.iidm.network.*;
 import eu.itesla_project.modules.histo.HistoDbAttr;
 import eu.itesla_project.modules.histo.HistoDbNetworkAttributeId;
 import eu.itesla_project.modules.rules.RuleAttributeSet;
@@ -22,7 +22,7 @@ import eu.itesla_project.modules.rules.RuleId;
 import eu.itesla_project.modules.rules.SecurityRuleExpression;
 import eu.itesla_project.modules.rules.SecurityRuleStatus;
 import eu.itesla_project.modules.rules.expr.*;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,10 +48,10 @@ public class WCASecurityRulesWriter implements AmplConstants, WCAConstants {
     private final StringToIntMapper<AmplSubset> mapper;
 
     private final boolean debug;
-    
+
     private final boolean activateFiltering;
 
-    public WCASecurityRulesWriter(Network network, List<SecurityRuleExpression> rules, DataSource dataSource, 
+    public WCASecurityRulesWriter(Network network, List<SecurityRuleExpression> rules, DataSource dataSource,
                                   StringToIntMapper<AmplSubset> mapper, boolean debug, boolean activateFiltering) {
         this.dataSource = Objects.requireNonNull(dataSource);
         this.network = Objects.requireNonNull(network);
@@ -80,7 +80,7 @@ public class WCASecurityRulesWriter implements AmplConstants, WCAConstants {
         int entityNum;
         int sideNum = 0;
         float nomV;
-        TwoTerminalsConnectable branch = network.getBranch(attrId.getEquipmentId());
+        Branch branch = network.getBranch(attrId.getEquipmentId());
         if (branch != null) {
             entityType = 1;
             entityNum = mapper.getInt(AmplSubset.BRANCH, attrId.getEquipmentId());
@@ -175,10 +175,11 @@ public class WCASecurityRulesWriter implements AmplConstants, WCAConstants {
                 final int attributeSetNum = attributeSet.ordinal();
 
                 if (rule.getStatus() == SecurityRuleStatus.ALWAYS_UNSECURE) {
-                    if ( activateFiltering )
+                    if (activateFiltering) {
                         throw new RuntimeException("Always unsecure rule " + ruleId);
-                    else
+                    } else {
                         continue;
+                    }
                 }
                 if (rule.getStatus() == SecurityRuleStatus.ALWAYS_SECURE) {
                     continue;

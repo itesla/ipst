@@ -16,15 +16,15 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.contingency.Contingency;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.contingency.Contingency;
 import eu.itesla_project.modules.online.OnlineRulesFacade;
 import eu.itesla_project.modules.online.RulesFacadeParameters;
 import eu.itesla_project.modules.online.RulesFacadeResults;
 import eu.itesla_project.modules.rules.RuleAttributeSet;
 import eu.itesla_project.modules.rules.RulesDbClient;
 import eu.itesla_project.modules.rules.SecurityRule;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 
 /**
  *
@@ -57,19 +57,20 @@ public class SecurityRulesFacade implements OnlineRulesFacade {
                 LOGGER.info("Getting mc security rule for {} contingency and {} index", contingency.getId(), securityIndexType);
                 mcRules.addAll(rulesDbClient.getRules(parameters.getOfflineWorkflowId(), RuleAttributeSet.MONTE_CARLO, contingency.getId(), securityIndexType));
                 mcViolatedEquipmentForContingency.put(securityIndexType, new ArrayList<String>()); // so far we do not have the violated components for a rule/index
-                if ( parameters.wcaRules() )  { // get wca rules for validation
+                if (parameters.wcaRules())  { // get wca rules for validation
                     LOGGER.info("Getting wca security rule for {} contingency and {} index", contingency.getId(), securityIndexType);
                     wcaRules.addAll(rulesDbClient.getRules(parameters.getOfflineWorkflowId(), RuleAttributeSet.WORST_CASE, contingency.getId(), securityIndexType));
                     wcaViolatedEquipmentForContingency.put(securityIndexType, new ArrayList<String>()); // so far we do not have the violated components for a rule/index
                 }
             }
-            if ( parameters.wcaRules() ) // store wca rules for validation
-                evaluators.put(contingency.getId(), new ContingencyEvaluator(contingency, mcRules, wcaRules, parameters.getPurityThreshold(), 
+            if (parameters.wcaRules()) { // store wca rules for validation
+                evaluators.put(contingency.getId(), new ContingencyEvaluator(contingency, mcRules, wcaRules, parameters.getPurityThreshold(),
                         mcViolatedEquipmentForContingency, wcaViolatedEquipmentForContingency,
                         parameters.isCheckRules()));
-            else
-                evaluators.put(contingency.getId(), new ContingencyEvaluator(contingency, mcRules, parameters.getPurityThreshold(), 
+            } else {
+                evaluators.put(contingency.getId(), new ContingencyEvaluator(contingency, mcRules, parameters.getPurityThreshold(),
                         mcViolatedEquipmentForContingency, parameters.isCheckRules()));
+            }
         }
     }
 

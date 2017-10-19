@@ -7,8 +7,8 @@
  */
 package eu.itesla_project.modules.online;
 
-import eu.itesla_project.contingency.Contingency;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.contingency.Contingency;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 
 import java.util.List;
 import java.util.Set;
@@ -26,7 +26,7 @@ public class RulesFacadeParameters {
     private final boolean wcaRules;
     private final boolean checkRules;
 
-    public RulesFacadeParameters(String offlineWorkflowId, List<Contingency> contingencies, double purityThreshold, 
+    public RulesFacadeParameters(String offlineWorkflowId, List<Contingency> contingencies, double purityThreshold,
             Set<SecurityIndexType> securityIndexTypes, boolean wcaRules, boolean checkRules) {
         this.offlineWorkflowId = offlineWorkflowId;
         this.contingencies = contingencies;

@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.offline.tools;
 
-import eu.itesla_project.commons.tools.Command;
+import com.powsybl.tools.Command;
 import static eu.itesla_project.offline.tools.Themes.OFFLINE_APPLICATION_REMOTE_CONTROL;
 import org.apache.commons.cli.Options;
 
@@ -27,7 +27,7 @@ public class ListOfflineWorkflowsCommand implements Command {
     public String getTheme() {
         return OFFLINE_APPLICATION_REMOTE_CONTROL;
     }
-    
+
     @Override
     public String getDescription() {
         return "list offline workflows and their status (running or not)";

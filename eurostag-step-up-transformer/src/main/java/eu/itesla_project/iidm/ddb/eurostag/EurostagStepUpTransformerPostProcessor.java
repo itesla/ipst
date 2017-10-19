@@ -9,9 +9,9 @@ package eu.itesla_project.iidm.ddb.eurostag;
 import com.google.auto.service.AutoService;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.iidm.import_.ImportPostProcessor;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.iidm.import_.ImportPostProcessor;
+import com.powsybl.iidm.network.Network;
 import org.jboss.shrinkwrap.api.GenericArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.nio.file.ShrinkWrapFileSystems;
@@ -91,7 +91,7 @@ public class EurostagStepUpTransformerPostProcessor implements ImportPostProcess
                 throw new RuntimeException("Auxiliary dictionary is empty");
             }
             EurostagStepUpTransformerInserter.insert(network, config.get().getLoadFlowFactoryClass().newInstance(), computationManager, ddbPath, genDict, auxDict, statorVoltageLevels, config.get());
-        } catch (IllegalAccessException|InstantiationException e) {
+        } catch (IllegalAccessException | InstantiationException e) {
             throw new RuntimeException(e);
         } finally {
             for (FileSystem zipFs : zipFsLs) {

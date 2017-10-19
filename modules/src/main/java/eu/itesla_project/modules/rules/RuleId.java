@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.modules.rules;
 
-import eu.itesla_project.simulation.securityindexes.SecurityIndexId;
+import com.powsybl.simulation.securityindexes.SecurityIndexId;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -16,7 +16,7 @@ import java.util.Objects;
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
 public class RuleId implements Serializable, Comparable<RuleId> {
-    
+
     private final RuleAttributeSet attributeSet;
 
     private final SecurityIndexId securityIndexId;

@@ -6,14 +6,14 @@
  */
 package eu.itesla_project.offline.server;
 
-import eu.itesla_project.iidm.network.Country;
+import com.powsybl.iidm.network.Country;
 import eu.itesla_project.modules.offline.OfflineWorkflowCreationParameters;
 import eu.itesla_project.modules.offline.SecurityIndexSynthesis;
 import eu.itesla_project.modules.rules.RuleAttributeSet;
 import eu.itesla_project.modules.rules.RuleId;
 import eu.itesla_project.modules.rules.SecurityRuleExpression;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexId;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.securityindexes.SecurityIndexId;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 import eu.itesla_project.offline.OfflineWorkflowStartParameters;
 import eu.itesla_project.offline.server.message.CountriesMessage;
 import eu.itesla_project.offline.server.message.SecurityIndexesSynthesisMessage;
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 public class OfflineApplicationResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OfflineApplicationResource.class);
-    
+
     @Inject
     private OfflineApplicationBean bean;
 
@@ -69,7 +69,7 @@ public class OfflineApplicationResource {
         DateTime histoIntervalEnd = DateTime.parse(paramsObj.getJsonObject("histoInterval").getJsonString("end").getString());
         List<JsonString> countryCodes = paramsObj.getJsonArray("countries").getValuesAs(JsonString.class);
         Set<Country> countries = new HashSet<>(countryCodes.size());
-        for(JsonString countryCode : countryCodes) {
+        for (JsonString countryCode : countryCodes) {
             countries.add(Country.valueOf(countryCode.getString()));
         }
         OfflineWorkflowCreationParameters parameters = new OfflineWorkflowCreationParameters(
@@ -80,7 +80,7 @@ public class OfflineApplicationResource {
                 false);
         try {
             return Response.status(200).entity(bean.getApplication().createWorkflow(workflowId, parameters)).build();
-        } catch(Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.toString(), e);
             return Response.status(500).entity(e.getMessage()).build();
         }

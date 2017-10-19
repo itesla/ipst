@@ -8,10 +8,10 @@
 package eu.itesla_project.iidm.export.ampl;
 
 import com.google.auto.service.AutoService;
-import eu.itesla_project.commons.ITeslaException;
-import eu.itesla_project.commons.datasource.DataSource;
-import eu.itesla_project.iidm.export.Exporter;
-import eu.itesla_project.iidm.network.*;
+import com.powsybl.commons.PowsyblException;
+import com.powsybl.commons.datasource.DataSource;
+import com.powsybl.iidm.export.Exporter;
+import com.powsybl.iidm.network.*;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -35,12 +35,12 @@ public class AmplExporter implements Exporter {
     @Override
     public void export(Network network, Properties parameters, DataSource dataSource) {
         if (network == null) {
-            throw new ITeslaException("network is null");
+            throw new PowsyblException("network is null");
         }
         try {
             new AmplNetworkWriter(network, dataSource, new AmplExportConfig(AmplExportConfig.ExportScope.ONLY_MAIN_CC_AND_CONNECTABLE_GENERATORS_AND_SHUNTS, false, AmplExportConfig.ExportActionType.CURATIVE)).write();
         } catch (IOException e) {
-            throw new ITeslaException(e);
+            throw new PowsyblException(e);
         }
     }
 }

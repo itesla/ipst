@@ -10,7 +10,7 @@ import eu.itesla_project.modules.offline.SecurityIndexSynthesis;
 import eu.itesla_project.modules.offline.SecurityIndexSynthesis.SecurityBalance;
 import eu.itesla_project.modules.rules.RuleId;
 import eu.itesla_project.modules.rules.SecurityRule;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 import eu.itesla_project.offline.monitoring.BusyCoresSeries;
 
 import java.util.Collection;
@@ -39,7 +39,7 @@ public class OfflineApplicationPrinter implements OfflineApplicationListener {
     @Override
     public void onWorkflowListChange(Collection<OfflineWorkflowStatus> statuses) {
         System.out.println("onWorkflowListChange");
-        for(OfflineWorkflowStatus offlineWorkflowStatus : statuses) {
+        for (OfflineWorkflowStatus offlineWorkflowStatus : statuses) {
             System.out.println(offlineWorkflowStatus);
         }
     }

@@ -10,10 +10,10 @@ import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.util.concurrent.AtomicLongMap;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.Terminal;
-import eu.itesla_project.iidm.network.VoltageLevel;
-import eu.itesla_project.iidm.network.util.Identifiables;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.Terminal;
+import com.powsybl.iidm.network.VoltageLevel;
+import com.powsybl.iidm.network.util.Identifiables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +86,7 @@ public class EurostagFakeNodes {
 
     //the esg nodes ids that are referenced at least once
     public Stream<String> referencedEsgIdsAsStream() {
-        return fakeNodesMap.values().stream().filter(esgId -> (countUses(esgId) > 0));
+        return fakeNodesMap.values().stream().filter(esgId -> countUses(esgId) > 0);
     }
 
     public Stream<String> esgIdsAsStream() {
@@ -99,7 +99,7 @@ public class EurostagFakeNodes {
 
     public VoltageLevel getVoltageLevelByEsgId(String esgId) {
         String voltageLevelId = fakeNodesMap.inverse().get(esgId);
-        return (voltageLevelId != null ? network.getVoltageLevel(voltageLevelId) : null);
+        return voltageLevelId != null ? network.getVoltageLevel(voltageLevelId) : null;
     }
 
     private String getEsgIdAndIncCounter(VoltageLevel vl) {

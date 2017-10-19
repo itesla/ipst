@@ -7,8 +7,8 @@
  */
 package eu.itesla_project.online;
 
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.loadflow.api.LoadFlowFactory;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.loadflow.LoadFlowFactory;
 import eu.itesla_project.merge.MergeOptimizerFactory;
 import eu.itesla_project.cases.CaseRepository;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
@@ -20,7 +20,7 @@ import eu.itesla_project.modules.online.OnlineWorkflowParameters;
 import eu.itesla_project.modules.online.RulesFacadeFactory;
 import eu.itesla_project.modules.optimizer.CorrectiveControlOptimizerFactory;
 import eu.itesla_project.modules.rules.RulesDbClient;
-import eu.itesla_project.simulation.SimulatorFactory;
+import com.powsybl.simulation.SimulatorFactory;
 import eu.itesla_project.modules.wca.UncertaintiesAnalyserFactory;
 import eu.itesla_project.modules.wca.WCAFactory;
 
@@ -30,14 +30,14 @@ import eu.itesla_project.modules.wca.WCAFactory;
 */
 public interface OnlineWorkflowFactory {
 
-	OnlineWorkflow create(ComputationManager computationManager,
-			ContingenciesAndActionsDatabaseClient cadbClient,
-			HistoDbClient histoDbClient, RulesDbClient rulesDbClient, WCAFactory wcaFactory,
-			LoadFlowFactory loadFlowFactory, ForecastErrorsDataStorage feDataStorage, OnlineDb onlineDB,
-			UncertaintiesAnalyserFactory uncertaintiesAnalyserFactory,
-			CorrectiveControlOptimizerFactory optimizerFactory, SimulatorFactory simulatorFactory,
-			CaseRepository caseRepository, MontecarloSamplerFactory montecarloSamplerFactory,
-			MergeOptimizerFactory mergeOptimizerFactory, RulesFacadeFactory rulesFacadeFactory,
-			OnlineWorkflowParameters parameters, OnlineWorkflowStartParameters startParameters);
+    OnlineWorkflow create(ComputationManager computationManager,
+            ContingenciesAndActionsDatabaseClient cadbClient,
+            HistoDbClient histoDbClient, RulesDbClient rulesDbClient, WCAFactory wcaFactory,
+            LoadFlowFactory loadFlowFactory, ForecastErrorsDataStorage feDataStorage, OnlineDb onlineDB,
+            UncertaintiesAnalyserFactory uncertaintiesAnalyserFactory,
+            CorrectiveControlOptimizerFactory optimizerFactory, SimulatorFactory simulatorFactory,
+            CaseRepository caseRepository, MontecarloSamplerFactory montecarloSamplerFactory,
+            MergeOptimizerFactory mergeOptimizerFactory, RulesFacadeFactory rulesFacadeFactory,
+            OnlineWorkflowParameters parameters, OnlineWorkflowStartParameters startParameters);
 
 }

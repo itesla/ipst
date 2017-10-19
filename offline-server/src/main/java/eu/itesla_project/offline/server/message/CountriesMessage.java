@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.offline.server.message;
 
-import eu.itesla_project.iidm.network.Country;
+import com.powsybl.iidm.network.Country;
 import javax.json.stream.JsonGenerator;
 
 /**
@@ -15,9 +15,9 @@ import javax.json.stream.JsonGenerator;
  */
 public class CountriesMessage extends Message {
 
-    private final Country [] countries;
-    
-    public CountriesMessage(Country [] countries) {
+    private final Country[] countries;
+
+    public CountriesMessage(Country[] countries) {
         this.countries = countries;
     }
 
@@ -29,7 +29,7 @@ public class CountriesMessage extends Message {
     @Override
     public void toJson(JsonGenerator generator) {
         generator.writeStartArray("countries");
-        for(Country country : countries) {
+        for (Country country : countries) {
             generator.writeStartObject();
             generator.write("id", country.name());
             generator.write("label", country.name() + ", " + country.getName());

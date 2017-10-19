@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.eurostag;
 
-import eu.itesla_project.commons.tools.Command;
+import com.powsybl.tools.Command;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 

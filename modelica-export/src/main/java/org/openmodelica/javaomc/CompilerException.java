@@ -45,36 +45,32 @@ package org.openmodelica.javaomc;
 /**
  * Supertype of all exceptions that can be encountered while communicating
  * with the modelica compiler.
- *  
+ *
  * @author Andreas Remar
  */
-abstract public class CompilerException extends Exception
-{
-	private static final long serialVersionUID = -7881546855664735599L;
+abstract public class CompilerException extends Exception {
+    private static final long serialVersionUID = -7881546855664735599L;
 
-	
-	/**
-	 * @see Exception#Exception(java.lang.String)
-	 */
-	public CompilerException(String message)
-	{
-		super(message);
-	}
-	
-	/**
-	 * @see Exception#Exception()
-	 */
-	public CompilerException()
-	{
-		super();
-	}
 
-	/**
-	 * @see Exception#Exception(java.lang.Throwable) 
-	 */
-	public CompilerException(Exception e)
-	{
-		super(e);
-	}
-	
+    /**
+     * @see Exception#Exception(java.lang.String)
+     */
+    public CompilerException(String message) {
+        super(message);
+    }
+
+    /**
+     * @see Exception#Exception()
+     */
+    public CompilerException() {
+        super();
+    }
+
+    /**
+     * @see Exception#Exception(java.lang.Throwable)
+     */
+    public CompilerException(Exception e) {
+        super(e);
+    }
+
 }

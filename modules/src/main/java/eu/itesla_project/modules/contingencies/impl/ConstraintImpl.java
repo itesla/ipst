@@ -14,47 +14,42 @@ import eu.itesla_project.modules.contingencies.ConstraintType;
  * @author Quinary <itesla@quinary.com>
  */
 public class ConstraintImpl implements Constraint {
-	
-	
-	private String equipment;
-	private Number value;
-	private ConstraintType type;
-	
-	
-	public ConstraintImpl(String _equipment, Number _value, ConstraintType _type)
-	{
-		this.equipment = _equipment;
-		this.value     = _value;
-		this.type	   =  _type;
-		
-	}
 
-	@Override
-	public String getEquipment() 
-	{
-		
-		return equipment;
-	}
 
-	@Override
-	public Number getValue() 
-	{
-		return value;
-	}
+    private String equipment;
+    private Number value;
+    private ConstraintType type;
 
-	@Override
-	public ConstraintType getType()
-	{
-		return type;
-	}
 
-	
-	public String toString()
-	{
-		StringBuffer sb= new StringBuffer();
-		sb.append(" Equipment: ").append(this.equipment).append(" , Value: ").append(this.value).append(" , Type: ").append(this.type);
-		return sb.toString();
-		
-	}
-	
+    public ConstraintImpl(String _equipment, Number _value, ConstraintType _type) {
+        this.equipment = _equipment;
+        this.value     = _value;
+        this.type       =  _type;
+
+    }
+
+    @Override
+    public String getEquipment() {
+
+        return equipment;
+    }
+
+    @Override
+    public Number getValue() {
+        return value;
+    }
+
+    @Override
+    public ConstraintType getType() {
+        return type;
+    }
+
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append(" Equipment: ").append(this.equipment).append(" , Value: ").append(this.value).append(" , Type: ").append(this.type);
+        return sb.toString();
+
+    }
+
 }

@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.eurostag;
 
-import eu.itesla_project.computation.Command;
+import com.powsybl.computation.Command;
 
 /**
  *
@@ -14,7 +14,6 @@ import eu.itesla_project.computation.Command;
  */
 public interface EurostagConstants {
 
-    String EUSTAG_CPT = "eustag_cpt.e";
     String TSOINDEXES = "tsoindexes";
     String WP43 = "wp43_eurostag.sh";
 

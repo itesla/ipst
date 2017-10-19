@@ -7,7 +7,6 @@
 package eu.itesla_project.offline.server;
 
 import java.io.IOException;
-import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Response;

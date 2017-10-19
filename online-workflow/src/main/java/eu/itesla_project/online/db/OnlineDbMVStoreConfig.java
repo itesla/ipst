@@ -6,8 +6,8 @@
  */
 package eu.itesla_project.online.db;
 
-import eu.itesla_project.commons.config.ModuleConfig;
-import eu.itesla_project.commons.config.PlatformConfig;
+import com.powsybl.commons.config.ModuleConfig;
+import com.powsybl.commons.config.PlatformConfig;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -17,38 +17,38 @@ import java.util.Objects;
  */
 public class OnlineDbMVStoreConfig {
 
-	/*
-	 * example of onlineDbMVStore.properties file.
-	 *
-	#path to the directory containing the db data
-	onlineDbDir=/shared/allrw/onlinewf-db
+    /*
+     * example of onlineDbMVStore.properties file.
+     *
+    #path to the directory containing the db data
+    onlineDbDir=/shared/allrw/onlinewf-db
 
-	*/
+    */
 
-	private final Path onlineDbDir;
+    private final Path onlineDbDir;
 
-	public OnlineDbMVStoreConfig(Path onlineDbDir) {
-		Objects.requireNonNull(onlineDbDir,"onlie db directory is null");
+    public OnlineDbMVStoreConfig(Path onlineDbDir) {
+        Objects.requireNonNull(onlineDbDir, "onlie db directory is null");
 
-		this.onlineDbDir = onlineDbDir;
-	}
+        this.onlineDbDir = onlineDbDir;
+    }
 
-	public static OnlineDbMVStoreConfig load() {
+    public static OnlineDbMVStoreConfig load() {
         ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("onlineDbMVStore");
 
         Path onlienDbDir = config.getPathProperty("onlineDbDir");
 
         return new OnlineDbMVStoreConfig(onlienDbDir);
-	}
+    }
 
 
-	public Path getOnlineDbDir() {
-		return onlineDbDir;
-	}
+    public Path getOnlineDbDir() {
+        return onlineDbDir;
+    }
 
-	@Override
-	public String toString() {
-		return "OnlineDbMVStoreConfig ["+ "onlineDbDir=" + onlineDbDir + "]";
-	}
+    @Override
+    public String toString() {
+        return "OnlineDbMVStoreConfig [" + "onlineDbDir=" + onlineDbDir + "]";
+    }
 
 }

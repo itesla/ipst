@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.modules.optimizer;
 
-import eu.itesla_project.computation.ComputationManager;
+import com.powsybl.computation.ComputationManager;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
 
 /**
@@ -15,6 +15,6 @@ import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseCl
  */
 public interface CorrectiveControlOptimizerFactory {
 
-	CorrectiveControlOptimizer create(ContingenciesAndActionsDatabaseClient cadbClient, ComputationManager computationManager);
-	
+    CorrectiveControlOptimizer create(ContingenciesAndActionsDatabaseClient cadbClient, ComputationManager computationManager);
+
 }

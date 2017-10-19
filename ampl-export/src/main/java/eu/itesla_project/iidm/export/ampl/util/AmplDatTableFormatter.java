@@ -6,9 +6,9 @@
  */
 package eu.itesla_project.iidm.export.ampl.util;
 
-import eu.itesla_project.commons.io.table.Column;
-import eu.itesla_project.commons.io.table.CsvTableFormatter;
-import eu.itesla_project.commons.io.table.TableFormatter;
+import com.powsybl.commons.io.table.Column;
+import com.powsybl.commons.io.table.CsvTableFormatter;
+import com.powsybl.commons.io.table.TableFormatter;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -33,7 +33,7 @@ public class AmplDatTableFormatter extends CsvTableFormatter {
               .append("#");
         for (int i = 0; i < columns.length; i++) {
             writer.append("\"").append(columns[i].getName()).append("\"");
-            if (i < columns.length-1) {
+            if (i < columns.length - 1) {
                 writer.append(separator);
             }
         }

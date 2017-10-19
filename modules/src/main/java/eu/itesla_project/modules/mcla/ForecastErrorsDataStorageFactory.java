@@ -11,7 +11,7 @@ package eu.itesla_project.modules.mcla;
  * @author Quinary <itesla@quinary.com>
  */
 public interface ForecastErrorsDataStorageFactory {
-	
-	ForecastErrorsDataStorage create();
+
+    ForecastErrorsDataStorage create();
 
 }

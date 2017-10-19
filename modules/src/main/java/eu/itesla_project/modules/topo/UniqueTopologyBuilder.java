@@ -9,9 +9,9 @@ package eu.itesla_project.modules.topo;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-import eu.itesla_project.iidm.network.*;
-import eu.itesla_project.iidm.network.util.Networks;
-import eu.itesla_project.iidm.network.util.ShortIdDictionary;
+import com.powsybl.iidm.network.*;
+import com.powsybl.iidm.network.util.Networks;
+import com.powsybl.iidm.network.util.ShortIdDictionary;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.alg.ConnectivityInspector;
@@ -250,14 +250,14 @@ public class UniqueTopologyBuilder {
         List<String> equipmentsRemoved = new ArrayList<>();
         List<String> fictiveEquipmentsRemoved = new ArrayList<>();
         // branches
-        List<TwoTerminalsConnectable> branches = new ArrayList<>();
+        List<Branch> branches = new ArrayList<>();
         for (Line l : network.getLines()) {
             branches.add(l);
         }
         for (TwoWindingsTransformer twt : network.getTwoWindingsTransformers()) {
             branches.add(twt);
         }
-        for (TwoTerminalsConnectable branch : branches) {
+        for (Branch branch : branches) {
             UniqueTopology topo1 = uniqueTopos.get(branch.getTerminal1().getVoltageLevel().getId());
             UniqueTopology topo2 = uniqueTopos.get(branch.getTerminal2().getVoltageLevel().getId());
             if (!topo1.containsEquipment(branch.getId()) && !topo2.containsEquipment(branch.getId())) {
@@ -275,7 +275,7 @@ public class UniqueTopologyBuilder {
         }
 
         // injections
-        List<SingleTerminalConnectable> injections = new ArrayList<>();
+        List<Injection> injections = new ArrayList<>();
         for (Generator g : network.getGenerators()) {
             injections.add(g);
         }
@@ -288,7 +288,7 @@ public class UniqueTopologyBuilder {
         for (DanglingLine dl : network.getDanglingLines()) {
             injections.add(dl);
         }
-        for (SingleTerminalConnectable injection : injections) {
+        for (Injection injection : injections) {
             UniqueTopology topo = uniqueTopos.get(injection.getTerminal().getVoltageLevel().getId());
             if (!topo.containsEquipment(injection.getId())) {
                 if (injection.getId().contains(TopologyHistory.FICTIVE_PATTERN)) {

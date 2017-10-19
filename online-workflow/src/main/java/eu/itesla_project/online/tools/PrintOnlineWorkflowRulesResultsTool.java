@@ -9,14 +9,14 @@ package eu.itesla_project.online.tools;
 
 import com.csvreader.CsvWriter;
 import com.google.auto.service.AutoService;
-import eu.itesla_project.commons.tools.Command;
-import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.commons.tools.ToolRunningContext;
+import com.powsybl.tools.Command;
+import com.powsybl.tools.Tool;
+import com.powsybl.tools.ToolRunningContext;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.online.OnlineDb;
 import eu.itesla_project.modules.online.OnlineWorkflowParameters;
 import eu.itesla_project.modules.online.OnlineWorkflowRulesResults;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -35,9 +35,9 @@ import java.util.Map;
  */
 @AutoService(Tool.class)
 public class PrintOnlineWorkflowRulesResultsTool implements Tool {
-	
-	private static String NO_RULES_AVAILABLE = "NO_RULES_AVAILABLE";
-	private static String INVALID_RULE = "Invalid Rule";
+
+    private static String NO_RULES_AVAILABLE = "NO_RULES_AVAILABLE";
+    private static String INVALID_RULE = "Invalid Rule";
 
     private static Command COMMAND = new Command() {
 
@@ -92,17 +92,18 @@ public class PrintOnlineWorkflowRulesResultsTool implements Tool {
         OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
         String workflowId = line.getOptionValue("workflow");
         OnlineWorkflowRulesResults wfRulesResults = onlinedb.getRulesResults(workflowId);
-        if ( line.hasOption("wca"))
+        if (line.hasOption("wca")) {
             wfRulesResults = onlinedb.getWcaRulesResults(workflowId);
-        if ( wfRulesResults != null ) {
-            if ( !wfRulesResults.getContingenciesWithSecurityRulesResults().isEmpty() ) {
+        }
+        if (wfRulesResults != null) {
+            if (!wfRulesResults.getContingenciesWithSecurityRulesResults().isEmpty()) {
                 OnlineWorkflowParameters parameters = onlinedb.getWorkflowParameters(workflowId);
                 SecurityIndexType[] securityIndexTypes = parameters.getSecurityIndexes() == null ? SecurityIndexType.values()
                         : parameters.getSecurityIndexes().toArray(new SecurityIndexType[parameters.getSecurityIndexes().size()]);
-                Table table = new Table(securityIndexTypes.length+3, BorderStyle.CLASSIC_WIDE);
+                Table table = new Table(securityIndexTypes.length + 3, BorderStyle.CLASSIC_WIDE);
                 StringWriter content = new StringWriter();
                 CsvWriter cvsWriter = new CsvWriter(content, ',');
-                String[] headers = new String[securityIndexTypes.length+3];
+                String[] headers = new String[securityIndexTypes.length + 3];
                 int i = 0;
                 table.addCell("Contingency", new CellStyle(CellStyle.HorizontalAlign.center));
                 headers[i++] = "Contingency";
@@ -117,20 +118,20 @@ public class PrintOnlineWorkflowRulesResultsTool implements Tool {
                 cvsWriter.writeRecord(headers);
                 for (String contingencyId : wfRulesResults.getContingenciesWithSecurityRulesResults()) {
                     for (Integer stateId : wfRulesResults.getStatesWithSecurityRulesResults(contingencyId)) {
-                        String[] values = new String[securityIndexTypes.length+3];
+                        String[] values = new String[securityIndexTypes.length + 3];
                         i = 0;
                         table.addCell(contingencyId);
                         values[i++] = contingencyId;
                         table.addCell(stateId.toString(), new CellStyle(CellStyle.HorizontalAlign.right));
                         values[i++] = stateId.toString();
-                        if ( wfRulesResults.areValidRulesAvailable(contingencyId, stateId) ) {
+                        if (wfRulesResults.areValidRulesAvailable(contingencyId, stateId)) {
                             table.addCell(wfRulesResults.getStateStatus(contingencyId, stateId).name());
                             values[i++] = wfRulesResults.getStateStatus(contingencyId, stateId).name();
                         } else {
                             table.addCell(NO_RULES_AVAILABLE);
                             values[i++] = NO_RULES_AVAILABLE;
                         }
-                        HashMap<String, String> rulesResults = getRulesResults(wfRulesResults.getStateResults(contingencyId, stateId), securityIndexTypes, 
+                        HashMap<String, String> rulesResults = getRulesResults(wfRulesResults.getStateResults(contingencyId, stateId), securityIndexTypes,
                                 wfRulesResults.getInvalidRules(contingencyId, stateId));
                         for (SecurityIndexType securityIndexType : securityIndexTypes) {
                             table.addCell(rulesResults.get(securityIndexType.getLabel()), new CellStyle(CellStyle.HorizontalAlign.center));
@@ -140,27 +141,31 @@ public class PrintOnlineWorkflowRulesResultsTool implements Tool {
                     }
                 }
                 cvsWriter.flush();
-                if ( line.hasOption("csv"))
+                if (line.hasOption("csv")) {
                     context.getOutputStream().println(content.toString());
-                else
+                } else {
                     context.getOutputStream().println(table.render());
+                }
                 cvsWriter.close();
-            } else
+            } else {
                 context.getOutputStream().println("\nNo results of security rules applications for this workflow");
-        } else
+            }
+        } else {
             context.getOutputStream().println("No results for this workflow");
+        }
         onlinedb.close();
     }
 
-    private HashMap<String, String> getRulesResults(Map<String,Boolean> stateResults, SecurityIndexType[] securityIndexTypes, List<SecurityIndexType> invalidRules) {
+    private HashMap<String, String> getRulesResults(Map<String, Boolean> stateResults, SecurityIndexType[] securityIndexTypes, List<SecurityIndexType> invalidRules) {
         HashMap<String, String> rulesResults = new HashMap<String, String>();
         for (SecurityIndexType securityIndexType : securityIndexTypes) {
-            if ( stateResults.containsKey(securityIndexType.getLabel()) )
+            if (stateResults.containsKey(securityIndexType.getLabel())) {
                 rulesResults.put(securityIndexType.getLabel(), stateResults.get(securityIndexType.getLabel()) ? "Safe" : "Unsafe");
-            else if ( invalidRules.contains(securityIndexType) )
+            } else if (invalidRules.contains(securityIndexType)) {
                 rulesResults.put(securityIndexType.getLabel(), INVALID_RULE);
-            else
+            } else {
                 rulesResults.put(securityIndexType.getLabel(), "-");
+            }
         }
         return rulesResults;
     }

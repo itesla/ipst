@@ -11,27 +11,27 @@ package eu.itesla_project.mcla.montecarlo.data;
  * @author Quinary <itesla@quinary.com>
  */
 public class SampledData {
-	
-	private double[][] generatorsActivePower;
-	private double[][] loadsActivePower;
-	private double[][] loadsReactivePower;
-	
-	public SampledData(double[][] generatorsActivePower, double[][] loadsActivePower, double[][] loadsReactivePower) {
-		this.generatorsActivePower = generatorsActivePower;
-		this.loadsActivePower = loadsActivePower;
-		this.loadsReactivePower = loadsReactivePower;
-	}
-	
-	public double[][] getGeneratorsActivePower() {
-		return generatorsActivePower;
-	}
 
-	public double[][] getLoadsActivePower() {
-		return loadsActivePower;
-	}
+    private double[][] generatorsActivePower;
+    private double[][] loadsActivePower;
+    private double[][] loadsReactivePower;
 
-	public double[][] getLoadsReactivePower() {
-		return loadsReactivePower;
-	}
+    public SampledData(double[][] generatorsActivePower, double[][] loadsActivePower, double[][] loadsReactivePower) {
+        this.generatorsActivePower = generatorsActivePower;
+        this.loadsActivePower = loadsActivePower;
+        this.loadsReactivePower = loadsReactivePower;
+    }
+
+    public double[][] getGeneratorsActivePower() {
+        return generatorsActivePower;
+    }
+
+    public double[][] getLoadsActivePower() {
+        return loadsActivePower;
+    }
+
+    public double[][] getLoadsReactivePower() {
+        return loadsReactivePower;
+    }
 
 }

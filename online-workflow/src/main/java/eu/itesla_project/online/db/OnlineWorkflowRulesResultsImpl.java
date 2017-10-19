@@ -16,7 +16,7 @@ import java.util.Map;
 import eu.itesla_project.modules.online.OnlineWorkflowRulesResults;
 import eu.itesla_project.modules.online.StateStatus;
 import eu.itesla_project.modules.online.TimeHorizon;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 
 /**
  *
@@ -29,13 +29,13 @@ class OnlineWorkflowRulesResultsImpl implements OnlineWorkflowRulesResults {
     // the time horizon used for the workflow where the rules have been applied
     private final TimeHorizon timeHorizon;
     // <contingency, list of <stateId, security rule result>>
-    private Map<String, Map<Integer,Map<String, Boolean>>> contingenciesWithRulesResults = new HashMap<String, Map<Integer,Map<String,Boolean>>>();
+    private Map<String, Map<Integer, Map<String, Boolean>>> contingenciesWithRulesResults = new HashMap<String, Map<Integer, Map<String, Boolean>>>();
     // <contingency, list of <stateId, state status>
-    private Map<String, Map<Integer,StateStatus>> contingenciesWithRulesStatus = new HashMap<String, Map<Integer,StateStatus>>();
-    // contingencies, map of <stateId, available rules flag> 
-    private Map<String, Map<Integer, Boolean>> contingenciesWithRules = new HashMap<String, Map<Integer,Boolean>>();
+    private Map<String, Map<Integer, StateStatus>> contingenciesWithRulesStatus = new HashMap<String, Map<Integer, StateStatus>>();
+    // contingencies, map of <stateId, available rules flag>
+    private Map<String, Map<Integer, Boolean>> contingenciesWithRules = new HashMap<String, Map<Integer, Boolean>>();
     // contingencies, map of <stateId, list of invalid rules>
-    private Map<String, Map<Integer, List<SecurityIndexType>>> contingenciesWithInvalidRules = new HashMap<String, Map<Integer,List<SecurityIndexType>>>();
+    private Map<String, Map<Integer, List<SecurityIndexType>>> contingenciesWithInvalidRules = new HashMap<String, Map<Integer, List<SecurityIndexType>>>();
 
 
     OnlineWorkflowRulesResultsImpl(String workflowId, TimeHorizon timeHorizon) {
@@ -78,30 +78,30 @@ class OnlineWorkflowRulesResultsImpl implements OnlineWorkflowRulesResults {
     void addContingencyWithSecurityRulesResults(String contingencyId, Integer stateId, StateStatus stateStatus, Map<String, Boolean> stateResults,
             boolean rulesAvailable, List<SecurityIndexType> invalidRules) {
         // save state results
-        Map<Integer,Map<String, Boolean>> statesWithRulesResults = new HashMap<Integer, Map<String, Boolean>>();
-        if ( contingenciesWithRulesResults.containsKey(contingencyId) ) {
+        Map<Integer, Map<String, Boolean>> statesWithRulesResults = new HashMap<Integer, Map<String, Boolean>>();
+        if (contingenciesWithRulesResults.containsKey(contingencyId)) {
             statesWithRulesResults = contingenciesWithRulesResults.get(contingencyId);
         }
         statesWithRulesResults.put(stateId, stateResults);
         contingenciesWithRulesResults.put(contingencyId, statesWithRulesResults);
 
         // save state status
-        Map<Integer,StateStatus> statesWithRulesStatus = new HashMap<Integer, StateStatus>();
-        if ( contingenciesWithRulesStatus.containsKey(contingencyId) ) {
+        Map<Integer, StateStatus> statesWithRulesStatus = new HashMap<Integer, StateStatus>();
+        if (contingenciesWithRulesStatus.containsKey(contingencyId)) {
             statesWithRulesStatus = contingenciesWithRulesStatus.get(contingencyId);
         }
         statesWithRulesStatus.put(stateId, stateStatus);
         contingenciesWithRulesStatus.put(contingencyId, statesWithRulesStatus);
 
         Map<Integer, Boolean> statesWithRules = new HashMap<Integer, Boolean>();
-        if ( contingenciesWithRules.containsKey(contingencyId) ) {
+        if (contingenciesWithRules.containsKey(contingencyId)) {
             statesWithRules = contingenciesWithRules.get(contingencyId);
         }
         statesWithRules.put(stateId, rulesAvailable);
         contingenciesWithRules.put(contingencyId, statesWithRules);
 
         Map<Integer, List<SecurityIndexType>> statesWithInvalidRules = new HashMap<Integer, List<SecurityIndexType>>();
-        if ( contingenciesWithInvalidRules.containsKey(contingencyId) ) {
+        if (contingenciesWithInvalidRules.containsKey(contingencyId)) {
             statesWithInvalidRules = contingenciesWithInvalidRules.get(contingencyId);
         }
         statesWithInvalidRules.put(stateId, invalidRules);
@@ -111,16 +111,18 @@ class OnlineWorkflowRulesResultsImpl implements OnlineWorkflowRulesResults {
     @Override
     public boolean areValidRulesAvailable(String contingencyId, Integer stateId) {
         boolean rulesAvailable = false;
-        if ( contingenciesWithRules.containsKey(contingencyId) && contingenciesWithRules.get(contingencyId).containsKey(stateId) )
+        if (contingenciesWithRules.containsKey(contingencyId) && contingenciesWithRules.get(contingencyId).containsKey(stateId)) {
             rulesAvailable = contingenciesWithRules.get(contingencyId).get(stateId);
+        }
         return rulesAvailable;
     }
 
     @Override
     public List<SecurityIndexType> getInvalidRules(String contingencyId, Integer stateId) {
         List<SecurityIndexType> invalidRules = new ArrayList<SecurityIndexType>();
-        if ( contingenciesWithInvalidRules.containsKey(contingencyId) && contingenciesWithInvalidRules.get(contingencyId).containsKey(stateId) )
+        if (contingenciesWithInvalidRules.containsKey(contingencyId) && contingenciesWithInvalidRules.get(contingencyId).containsKey(stateId)) {
             invalidRules = contingenciesWithInvalidRules.get(contingencyId).get(stateId);
+        }
         return invalidRules;
     }
 

@@ -76,8 +76,9 @@ public class OnlineApplicationBean {
         public void onBusyCoresUpdate(int[] busyCores) {
             StringBuffer sb = new StringBuffer();
             sb.append("[");
-            for (int i : busyCores)
+            for (int i : busyCores) {
                 sb.append(" " + i);
+            }
             sb.append(" ]");
             LOGGER.info("onBusyCoresUpdate " + sb.toString());
             sessions.send(new BusyCoresMessage(busyCores));
@@ -190,14 +191,16 @@ public class OnlineApplicationBean {
     @PreDestroy
     void terminate() {
         LOGGER.info("Terminating online workflow");
-        if (application != null)
+        if (application != null) {
             application.removeListener(computationResourcesListener);
+        }
         sessions.close();
     }
 
     void start() {
-        if (!remoteConnected)
+        if (!remoteConnected) {
             return;
+        }
 
         executorService.submit(new Runnable() {
             @Override
@@ -216,10 +219,12 @@ public class OnlineApplicationBean {
 
     void stop() {
         LOGGER.info("STOP WORKFLOW");
-        if (!remoteConnected)
+        if (!remoteConnected) {
             return;
-        if (application != null)
+        }
+        if (application != null) {
             application.stopWorkflow();
+        }
     }
 
     boolean isWorkflowRunning(String workflowId) {
@@ -267,8 +272,9 @@ public class OnlineApplicationBean {
 
     public int getAvailableCores() {
         int cores = 0;
-        if (remoteConnected && application != null)
+        if (remoteConnected && application != null) {
             cores = application.getAvailableCores();
+        }
         return cores;
     }
 
@@ -286,7 +292,7 @@ public class OnlineApplicationBean {
     }
 
     public boolean isJmxConnected() {
-        return (remoteConnected && application != null);
+        return remoteConnected && application != null;
     }
 
 }

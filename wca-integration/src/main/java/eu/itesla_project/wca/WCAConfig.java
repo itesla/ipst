@@ -13,9 +13,9 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import eu.itesla_project.commons.config.ModuleConfig;
-import eu.itesla_project.commons.config.PlatformConfig;
-import eu.itesla_project.iidm.network.Country;
+import com.powsybl.commons.config.ModuleConfig;
+import com.powsybl.commons.config.PlatformConfig;
+import com.powsybl.iidm.network.Country;
 
 /**
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
@@ -80,14 +80,14 @@ public class WCAConfig {
         boolean filterPreventiveActions = config.getBooleanProperty("filterPreventiveActions", DEFAULT_FILTER_PREVENTIVE_ACTIONS);
         boolean filterCurativeActions = config.getBooleanProperty("filterCurativeActions", DEFAULT_FILTER_CURATIVE_ACTIONS);
         boolean loosenConstraints = config.getBooleanProperty("loosenConstraints", DEFAULT_LOOOSEN_CONSTRAINTS);
-        return new WCAConfig(xpressHome, reducedVariableRatio, debug, exportStates, restrictingThresholdLevels, margin, ignoreVoltageConstraints, 
+        return new WCAConfig(xpressHome, reducedVariableRatio, debug, exportStates, restrictingThresholdLevels, margin, ignoreVoltageConstraints,
                              activateFiltering, preventiveActionsFilter, preventiveActionsOptimizer, applyPreventiveActions, curativeActionsOptimizer,
                              voltageLevelConstraintFilter, countryConstraintFilter, filterPreventiveActions, filterCurativeActions, loosenConstraints);
     }
 
-    public WCAConfig(Path xpressHome, float reducedVariableRatio, boolean debug, boolean exportStates, Set<WCARestrictingThresholdLevel> restrictingThresholdLevels, 
-                     float margin, boolean ignoreVoltageConstraints, boolean activateFiltering, WCAPreventiveActionsFilter preventiveActionsFilter, 
-                     WCAPreventiveActionsOptimizer preventiveActionsOptimizer, boolean applyPreventiveActions, WCACurativeActionsOptimizer curativeActionsOptimizer, 
+    public WCAConfig(Path xpressHome, float reducedVariableRatio, boolean debug, boolean exportStates, Set<WCARestrictingThresholdLevel> restrictingThresholdLevels,
+                     float margin, boolean ignoreVoltageConstraints, boolean activateFiltering, WCAPreventiveActionsFilter preventiveActionsFilter,
+                     WCAPreventiveActionsOptimizer preventiveActionsOptimizer, boolean applyPreventiveActions, WCACurativeActionsOptimizer curativeActionsOptimizer,
                      float voltageLevelConstraintFilter, Set<Country> countryConstraintFilter, boolean filterPreventiveActions, boolean filterCurativeActions,
                      boolean loosenConstraints) {
         this.xpressHome = Objects.requireNonNull(xpressHome);
@@ -189,10 +189,10 @@ public class WCAConfig {
                 ", activateFiltering=" + activateFiltering +
                 ", preventiveActionsFilter=" + preventiveActionsFilter +
                 ", preventiveActionsOptimizer=" + preventiveActionsOptimizer +
-                ", applyPreventiveActions=" + applyPreventiveActions + 
+                ", applyPreventiveActions=" + applyPreventiveActions +
                 ", curativeActionsOptimizer=" + curativeActionsOptimizer +
-                ", voltageLevelConstraintFilter=" + voltageLevelConstraintFilter + 
-                ", countryConstraintFilter=" + countryConstraintFilter + 
+                ", voltageLevelConstraintFilter=" + voltageLevelConstraintFilter +
+                ", countryConstraintFilter=" + countryConstraintFilter +
                 ", filterPreventiveActions=" + filterPreventiveActions +
                 ", filterCurativeActions=" + filterCurativeActions +
                 ", loosenConstraints=" + loosenConstraints +

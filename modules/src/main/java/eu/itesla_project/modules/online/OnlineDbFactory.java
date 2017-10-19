@@ -11,7 +11,7 @@ package eu.itesla_project.modules.online;
  * @author Quinary <itesla@quinary.com>
  */
 public interface OnlineDbFactory {
-	
-	OnlineDb create();
+
+    OnlineDb create();
 
 }

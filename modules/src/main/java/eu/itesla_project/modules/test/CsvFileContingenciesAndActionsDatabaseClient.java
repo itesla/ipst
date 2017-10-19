@@ -6,52 +6,38 @@
  */
 package eu.itesla_project.modules.test;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UncheckedIOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import eu.itesla_project.contingency.BranchContingency;
-import eu.itesla_project.contingency.Contingency;
-import eu.itesla_project.contingency.ContingencyElement;
-import eu.itesla_project.contingency.ContingencyImpl;
-import eu.itesla_project.contingency.GeneratorContingency;
-import eu.itesla_project.iidm.network.Line;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.TieLine;
+import com.powsybl.iidm.network.Line;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.TieLine;
 import eu.itesla_project.modules.contingencies.Action;
 import eu.itesla_project.modules.contingencies.ActionPlan;
 import eu.itesla_project.modules.contingencies.ActionsContingenciesAssociation;
 import eu.itesla_project.modules.contingencies.ConstraintType;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
+import com.powsybl.contingency.BranchContingency;
+import com.powsybl.contingency.Contingency;
+import com.powsybl.contingency.ContingencyElement;
+import com.powsybl.contingency.GeneratorContingency;
+import com.powsybl.contingency.ContingencyImpl;
 import eu.itesla_project.modules.contingencies.Scenario;
 import eu.itesla_project.modules.contingencies.Zone;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Contingencies and actions database based on CSV file. Can only contain NmK
  * line contingencies.
- * <p>
- * Example:
- * 
+ * <p>Example:
  * <pre>
- *#contingency id;line count;line1 id;line2 id;...
+ * #contingency id;line count;line1 id;line2 id;...
  * ...
  * </pre>
  *
@@ -71,6 +57,16 @@ public class CsvFileContingenciesAndActionsDatabaseClient implements Contingenci
             throw new UncheckedIOException(e);
         }
 
+    @Override
+    public List<Contingency> getContingencies(Network network) {
+        // pre-index tie lines
+        Map<String, String> tieLines = new HashMap<>();
+        for (Line l : network.getLines()) {
+            if (l.isTieLine()) {
+                TieLine tl = (TieLine) l;
+                tieLines.put(tl.getHalf1().getId(), tl.getId());
+                tieLines.put(tl.getHalf2().getId(), tl.getId());
+            }
     }
 
     public CsvFileContingenciesAndActionsDatabaseClient(InputStream stream) {
@@ -82,7 +78,6 @@ public class CsvFileContingenciesAndActionsDatabaseClient implements Contingenci
         try {
             Reader ir = new InputStreamReader(stream, Charset.defaultCharset());
             try (BufferedReader r = new BufferedReader(ir)) {
-
                 String txt;
                 while ((txt = r.readLine()) != null) {
                     if (txt.startsWith("#")) { // comment
@@ -103,7 +98,20 @@ public class CsvFileContingenciesAndActionsDatabaseClient implements Contingenci
                     }
                     for (int i = 2; i < lineCount + 2; i++) {
                         String id = tokens[i];
-                        cd.addElementId(id);
+                        if (network.getLine(id) != null) {
+                            elements.add(new BranchContingency(id));
+                        } else if (network.getGenerator(id) != null) {
+                            elements.add(new GeneratorContingency(id));
+                        } else if (tieLines.containsKey(id)) {
+                            elements.add(new BranchContingency(tieLines.get(id)));
+                        } else {
+                            LOGGER.warn("Contingency element '{}' not found", id);
+                        }
+                    }
+                    if (elements.size() > 0) {
+                        contingencies.add(new ContingencyImpl(contingencyId, elements));
+                    } else {
+                        LOGGER.warn("Skip empty contingency " + contingencyId);
                     }
                     contingency_data.add(cd);
                 }
@@ -185,7 +193,8 @@ public class CsvFileContingenciesAndActionsDatabaseClient implements Contingenci
     }
 
     @Override
-    public Collection<ActionsContingenciesAssociation> getActionsCtgAssociationsByContingency(String contingencyId) {
+    public Collection<ActionsContingenciesAssociation> getActionsCtgAssociationsByContingency(
+            String contingencyId) {
         throw new UnsupportedOperationException();
     }
 
@@ -221,13 +230,14 @@ public class CsvFileContingenciesAndActionsDatabaseClient implements Contingenci
     }
 
     @Override
-    public List<ActionsContingenciesAssociation> getActionsCtgAssociations(Network network) {
+    public List<ActionsContingenciesAssociation> getActionsCtgAssociations(
+            Network network) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Collection<ActionsContingenciesAssociation> getActionsCtgAssociationsByConstraint(String equipmentId,
-            ConstraintType constraintType) {
+    public Collection<ActionsContingenciesAssociation> getActionsCtgAssociationsByConstraint(
+            String equipmentId, ConstraintType constraintType) {
         throw new UnsupportedOperationException();
     }
 

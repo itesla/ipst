@@ -7,7 +7,7 @@
  */
 package eu.itesla_project.online.tools;
 
-import eu.itesla_project.commons.io.table.*;
+import com.powsybl.commons.io.table.*;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -35,6 +35,9 @@ public class PrintOnlineWorkflowUtils {
         private TableFormatterFactorySupplier(Supplier<TableFormatterFactory> supplier) {
             this.supplier = Objects.requireNonNull(supplier, "null supplier for name " + name());
         }
+    }
+
+    private PrintOnlineWorkflowUtils() {
     }
 
     public static String availableTableFormatterFormats() {

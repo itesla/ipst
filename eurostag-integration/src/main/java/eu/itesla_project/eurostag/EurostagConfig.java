@@ -6,10 +6,11 @@
  */
 package eu.itesla_project.eurostag;
 
-import eu.itesla_project.commons.config.ModuleConfig;
-import eu.itesla_project.commons.config.PlatformConfig;
+import com.powsybl.commons.config.ModuleConfig;
+import com.powsybl.commons.config.PlatformConfig;
 
 import java.nio.file.Path;
+import java.util.Objects;
 
 /**
  *
@@ -26,6 +27,12 @@ public class EurostagConfig {
     private static final boolean DEFAULT_USE_BROADCAST = true;
     private static final boolean DEFAULT_DDB_CACHING = true;
     private static final double DEFAULT_MIN_STEP_AT_END_OF_STABILIZATION = 1;
+
+    //Eurostag v5.1 default eustag_cpt command name
+    private static final String DEFAULT_EUROSTAG_CMD_NAME = "eustag_cpt.e";
+    //Eurostag v5.2 default eustag_cpt command name
+    //  ulimit -s unlimited is a temporary trick to prevent a core dump for the current version of Eurostag v5.2
+    //private static final String DEFAULT_EUSTAG_CMD_NAME = "ulimit -s unlimited && eustag_cpt_noGUI.e";
 
     private final Path eurostagHomeDir;
 
@@ -53,8 +60,14 @@ public class EurostagConfig {
 
     private boolean debug;
 
+    private final String eurostagCptCommandName;
+
     public synchronized static EurostagConfig load() {
-        ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("eurostag");
+        return load(PlatformConfig.defaultConfig());
+    }
+
+    public synchronized static EurostagConfig load(PlatformConfig platformConfig) {
+        ModuleConfig config = platformConfig.getModuleConfig("eurostag");
         Path eurostagHomeDir = config.getPathProperty("eurostagHomeDir", null);
         Path indexesBinDir = config.getPathProperty("indexesBinDir", null);
         boolean lfNoGeneratorMinMaxQ = config.getBooleanProperty("lfNoGeneratorMinMaxQ", false);
@@ -68,20 +81,21 @@ public class EurostagConfig {
         boolean ddbCaching = config.getBooleanProperty("ddbCaching", DEFAULT_DDB_CACHING);
         double minStepAtEndOfStabilization = config.getDoubleProperty("minStepAtEndOfStabilization", DEFAULT_MIN_STEP_AT_END_OF_STABILIZATION);
         boolean debug = config.getBooleanProperty("debug", false);
+        String eurostagCptCommandName = config.getStringProperty("eurostagCptCommandName", DEFAULT_EUROSTAG_CMD_NAME);
         return new EurostagConfig(eurostagHomeDir, indexesBinDir, lfNoGeneratorMinMaxQ, lfTimeout, simTimeout, idxTimeout,
                                   lfMaxNumIteration, minimumStep, lfWarmStart, useBroadcast, ddbCaching, minStepAtEndOfStabilization,
-                                  debug);
+                                  debug, eurostagCptCommandName);
     }
 
     public EurostagConfig() {
         this(null, null, false, LF_DEFAULT_TIMEOUT, SIM_DEFAULT_TIMEOUT, IDX_DEFAULT_TIMEOUT, DEFAULT_LF_MAX_NUM_ITERATION,
                 DEFAULT_MINIMUM_STEP, DEFAULT_LF_WARM_START, DEFAULT_USE_BROADCAST, DEFAULT_DDB_CACHING, DEFAULT_MIN_STEP_AT_END_OF_STABILIZATION,
-                false);
+                false, DEFAULT_EUROSTAG_CMD_NAME);
     }
 
     public EurostagConfig(Path eurostagHomeDir, Path indexesBinDir, boolean lfNoGeneratorMinMaxQ, int lfTimeout, int simTimeout,
                           int idxTimeout, int lfMaxNumIteration, double minimumStep, boolean lfWarmStart, boolean useBroadcast,
-                          boolean ddbCaching, double minStepAtEndOfStabilization, boolean debug) {
+                          boolean ddbCaching, double minStepAtEndOfStabilization, boolean debug, String eurostagCptCommandName) {
         if (lfTimeout < -1 || lfTimeout == 0) {
             throw new IllegalArgumentException("invalid load flow timeout value " + lfTimeout);
         }
@@ -107,6 +121,7 @@ public class EurostagConfig {
         this.ddbCaching = ddbCaching;
         this.minStepAtEndOfStabilization = minStepAtEndOfStabilization;
         this.debug = debug;
+        this.eurostagCptCommandName = Objects.requireNonNull(eurostagCptCommandName);
     }
 
     public Path getEurostagHomeDir() {
@@ -193,6 +208,10 @@ public class EurostagConfig {
         this.debug = debug;
     }
 
+    public String getEurostagCptCommandName() {
+        return eurostagCptCommandName;
+    }
+
     @Override
     public String toString() {
         return getClass().getSimpleName() + " [eurostagHomeDir=" + eurostagHomeDir +
@@ -208,6 +227,7 @@ public class EurostagConfig {
                                             ", ddbCaching=" + ddbCaching +
                                             ", minStepAtEndOfStabilization=" + minStepAtEndOfStabilization +
                                             ", debug=" + debug +
+                                            ", eurostagCptCommandName=" + eurostagCptCommandName +
                                             "]";
     }
 

@@ -20,6 +20,9 @@ public final class ProcessApiServiceFactory {
     private final static ProcessApiService service = new ProcessApiServiceImpl(
             new OnlineDBUtils(new OnlineDbMVStoreFactory()));
 
+    private ProcessApiServiceFactory() {
+    }
+
     public static ProcessApiService getProcessApi() {
         return service;
     }

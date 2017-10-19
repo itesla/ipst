@@ -59,7 +59,7 @@ public class RemoteOnlineApplication implements OnlineApplication, NotificationL
                     try {
                         notifyDisconnection();
                         connect();
-                    } catch (Throwable t) {
+                    } catch (Throwable ignored) {
                     }
                 }
             }
@@ -98,52 +98,52 @@ public class RemoteOnlineApplication implements OnlineApplication, NotificationL
     public void handleNotification(Notification notification, Object handback) {
         AttributeChangeNotification notification1 = (AttributeChangeNotification) notification;
         switch (notification1.getAttributeName()) {
-        case LocalOnlineApplicationMBean.BUSY_CORES_ATTRIBUTE:
-            for (OnlineApplicationListener l : listeners) {
-                l.onBusyCoresUpdate((int[]) notification1.getNewValue());
-            }
-            break;
-        case LocalOnlineApplicationMBean.RUNNING_ATTRIBUTE:
-            for (OnlineApplicationListener l : listeners) {
-                l.onWorkflowUpdate((StatusSynthesis) notification1.getNewValue());
-            }
-            break;
-        case LocalOnlineApplicationMBean.WCA_RUNNING_ATTRIBUTE:
-            for (OnlineApplicationListener l : listeners) {
-                l.onWcaUpdate((RunningSynthesis) notification1.getNewValue());
-            }
-            break;
-        case LocalOnlineApplicationMBean.STATES_ACTIONS_ATTRIBUTE:
-            for (OnlineApplicationListener l : listeners) {
-                l.onStatesWithActionsUpdate((ContingencyStatesActionsSynthesis) notification1.getNewValue());
-            }
-            break;
-        case LocalOnlineApplicationMBean.STATES_INDEXES_ATTRIBUTE:
-            for (OnlineApplicationListener l : listeners) {
-                l.onStatesWithIndexesUpdate((ContingencyStatesIndexesSynthesis) notification1.getNewValue());
-            }
-            break;
-        case LocalOnlineApplicationMBean.WORK_STATES_ATTRIBUTE:
-            for (OnlineApplicationListener l : listeners) {
-                l.onWorkflowStateUpdate((WorkSynthesis) notification1.getNewValue());
-            }
-            break;
-        case LocalOnlineApplicationMBean.INDEXES_SECURITY_RULES_ATTRIBUTE:
+            case LocalOnlineApplicationMBean.BUSY_CORES_ATTRIBUTE:
+                for (OnlineApplicationListener l : listeners) {
+                    l.onBusyCoresUpdate((int[]) notification1.getNewValue());
+                }
+                break;
+            case LocalOnlineApplicationMBean.RUNNING_ATTRIBUTE:
+                for (OnlineApplicationListener l : listeners) {
+                    l.onWorkflowUpdate((StatusSynthesis) notification1.getNewValue());
+                }
+                break;
+            case LocalOnlineApplicationMBean.WCA_RUNNING_ATTRIBUTE:
+                for (OnlineApplicationListener l : listeners) {
+                    l.onWcaUpdate((RunningSynthesis) notification1.getNewValue());
+                }
+                break;
+            case LocalOnlineApplicationMBean.STATES_ACTIONS_ATTRIBUTE:
+                for (OnlineApplicationListener l : listeners) {
+                    l.onStatesWithActionsUpdate((ContingencyStatesActionsSynthesis) notification1.getNewValue());
+                }
+                break;
+            case LocalOnlineApplicationMBean.STATES_INDEXES_ATTRIBUTE:
+                for (OnlineApplicationListener l : listeners) {
+                    l.onStatesWithIndexesUpdate((ContingencyStatesIndexesSynthesis) notification1.getNewValue());
+                }
+                break;
+            case LocalOnlineApplicationMBean.WORK_STATES_ATTRIBUTE:
+                for (OnlineApplicationListener l : listeners) {
+                    l.onWorkflowStateUpdate((WorkSynthesis) notification1.getNewValue());
+                }
+                break;
+            case LocalOnlineApplicationMBean.INDEXES_SECURITY_RULES_ATTRIBUTE:
 
-            for (OnlineApplicationListener l : listeners) {
-                l.onStatesWithSecurityRulesResultsUpdate(
-                        (IndexSecurityRulesResultsSynthesis) notification1.getNewValue());
-            }
-            break;
-        case LocalOnlineApplicationMBean.WCA_CONTINGENCIES_ATTRIBUTE:
-            for (OnlineApplicationListener l : listeners) {
-                l.onWcaContingencies((WcaContingenciesSynthesis) notification1.getNewValue());
-            }
+                for (OnlineApplicationListener l : listeners) {
+                    l.onStatesWithSecurityRulesResultsUpdate(
+                            (IndexSecurityRulesResultsSynthesis) notification1.getNewValue());
+                }
+                break;
+            case LocalOnlineApplicationMBean.WCA_CONTINGENCIES_ATTRIBUTE:
+                for (OnlineApplicationListener l : listeners) {
+                    l.onWcaContingencies((WcaContingenciesSynthesis) notification1.getNewValue());
+                }
 
-            break;
+                break;
 
-        default:
-            throw new AssertionError();
+            default:
+                throw new AssertionError();
         }
     }
 

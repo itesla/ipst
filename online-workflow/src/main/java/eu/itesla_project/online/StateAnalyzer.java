@@ -10,11 +10,12 @@ package eu.itesla_project.online;
 import com.google.common.base.Function;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-import eu.itesla_project.contingency.Contingency;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.StateManager;
-import eu.itesla_project.loadflow.api.LoadFlow;
-import eu.itesla_project.loadflow.api.LoadFlowResult;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.contingency.Contingency;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.StateManager;
+import com.powsybl.loadflow.LoadFlow;
+import com.powsybl.loadflow.LoadFlowResult;
 import eu.itesla_project.modules.constraints.ConstraintsModifier;
 import eu.itesla_project.modules.contingencies.ActionParameters;
 import eu.itesla_project.modules.mcla.MontecarloSampler;
@@ -24,11 +25,10 @@ import eu.itesla_project.modules.optimizer.CorrectiveControlOptimizer;
 import eu.itesla_project.modules.optimizer.CorrectiveControlOptimizerResult;
 import eu.itesla_project.modules.optimizer.PostContingencyState;
 import eu.itesla_project.online.OnlineWorkflowImpl.StateAnalizerListener;
-import eu.itesla_project.security.LimitViolation;
-import eu.itesla_project.security.Security;
-import eu.itesla_project.security.Security.CurrentLimitType;
-import eu.itesla_project.simulation.*;
-import eu.itesla_project.simulation.securityindexes.SecurityIndex;
+import com.powsybl.security.LimitViolation;
+import com.powsybl.security.Security;
+import com.powsybl.simulation.*;
+import com.powsybl.simulation.securityindexes.SecurityIndex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +55,7 @@ public class StateAnalyzer implements Callable<Void> {
     private OnlineDb onlineDb;
     private Integer stateId;
     private OnlineWorkflowParameters parameters;
+    private ComputationManager computationManager;
     private StateAnalizerListener stateListener;
     private EnumMap<OnlineTaskType, OnlineTaskStatus> status = new EnumMap<OnlineTaskType, OnlineTaskStatus>(OnlineTaskType.class);
     Map<String, Boolean> loadflowResults = new HashMap<String, Boolean>();
@@ -63,7 +64,7 @@ public class StateAnalyzer implements Callable<Void> {
     public StateAnalyzer(OnlineWorkflowContext context, MontecarloSampler sampler, LoadFlow loadFlow,
                          OnlineRulesFacade rulesFacade, CorrectiveControlOptimizer optimizer, Stabilization stabilization,
                          ImpactAnalysis impactAnalysis, OnlineDb onlineDb, StateAnalizerListener stateListener, ConstraintsModifier constraintsModifier,
-                         OnlineWorkflowParameters parameters) {
+                         OnlineWorkflowParameters parameters, ComputationManager computationManager) {
         Objects.requireNonNull(context);
         Objects.requireNonNull(sampler);
         Objects.requireNonNull(loadFlow);
@@ -75,6 +76,7 @@ public class StateAnalyzer implements Callable<Void> {
         Objects.requireNonNull(stateListener);
         Objects.requireNonNull(constraintsModifier);
         Objects.requireNonNull(parameters);
+        Objects.requireNonNull(computationManager);
         this.context = context;
         this.sampler = sampler;
         this.loadFlow = loadFlow;
@@ -114,10 +116,11 @@ public class StateAnalyzer implements Callable<Void> {
             logger.info("{}: sampling started", stateId);
             status.put(currentStatus, OnlineTaskStatus.RUNNING);
             stateListener.onUpdate(stateId, status, context.timeHorizon);
-            if (!parameters.analyseBasecase() || stateId > 0)
+            if (!parameters.analyseBasecase() || stateId > 0) {
                 sampler.sample();
-            else
+            } else {
                 logger.info("{}: state = basecase", stateId);
+            }
             status.put(currentStatus, OnlineTaskStatus.SUCCESS);
             stateListener.onUpdate(stateId, status, context.timeHorizon);
             logger.info("{}: sampling terminated", stateId);
@@ -133,8 +136,9 @@ public class StateAnalyzer implements Callable<Void> {
             logger.info("{}: loadflow terminated", stateId);
             if (result.getMetrics() != null) {
                 logger.info("{}: loadflow metrics: {}", stateId, result.getMetrics());
-                if (!result.getMetrics().isEmpty())
+                if (!result.getMetrics().isEmpty()) {
                     onlineDb.storeMetrics(context.getWorkflowId(), stateId, OnlineStep.LOAD_FLOW, result.getMetrics());
+                }
             }
             status.put(currentStatus, result.isOk() ? OnlineTaskStatus.SUCCESS : OnlineTaskStatus.FAILED);
 
@@ -161,8 +165,9 @@ public class StateAnalyzer implements Callable<Void> {
                             constraintsModifier.looseConstraints(stateIdStr, violations); // loose constraints on sampled state
                         }
                     }
-                } else
+                } else {
                     logger.info("{}: no violations after {}", stateId, OnlineStep.LOAD_FLOW);
+                }
 
                 stateListener.onUpdate(stateId, status, context.timeHorizon);
                 // check state against contingencies
@@ -253,16 +258,18 @@ public class StateAnalyzer implements Callable<Void> {
                         logger.info("{}: stabilization terminated", stateId);
                         if (stabilizationResult.getMetrics() != null) {
                             logger.info("{}: stabilization metrics: {}", stateId, stabilizationResult.getMetrics());
-                            if (!stabilizationResult.getMetrics().isEmpty())
+                            if (!stabilizationResult.getMetrics().isEmpty()) {
                                 onlineDb.storeMetrics(context.getWorkflowId(), stateId, OnlineStep.STABILIZATION, stabilizationResult.getMetrics());
+                            }
                         }
                         if (stabilizationResult.getStatus() == StabilizationStatus.COMPLETED) {
                             ImpactAnalysisResult impactAnalysisResult = impactAnalysis.run(stabilizationResult.getState(), OnlineUtils.getContingencyIds(contingenciesForSimulator));
                             logger.info("{}: impact analysis terminated", stateId);
                             if (impactAnalysisResult.getMetrics() != null) {
                                 logger.info("{}: impact analysis metrics: {}", stateId, impactAnalysisResult.getMetrics());
-                                if (!impactAnalysisResult.getMetrics().isEmpty())
+                                if (!impactAnalysisResult.getMetrics().isEmpty()) {
                                     onlineDb.storeMetrics(context.getWorkflowId(), stateId, OnlineStep.IMPACT_ANALYSIS, impactAnalysisResult.getMetrics());
+                                }
                             }
                             putResultsIntoContext(stateId, impactAnalysisResult, context.getResults());
                             stateListener.onImpactAnalysisResults(stateId, context);
@@ -283,7 +290,7 @@ public class StateAnalyzer implements Callable<Void> {
             }
         } catch (Throwable t) {
             status.put(currentStatus, OnlineTaskStatus.FAILED);
-            //TODO  manage string ifo detail 
+            //TODO  manage string ifo detail
             stateListener.onUpdate(stateId, status, context.timeHorizon, currentStatus + " failed ... ");
             logger.error("{}: Error working on state: {}", stateId, t.toString(), t);
         }
@@ -320,8 +327,9 @@ public class StateAnalyzer implements Callable<Void> {
                                 if (optimizerResult.areActionsFound()) {
                                     logger.info("{}: optimizer results: action plan {}, actions {} for contingency {}", stateId, optimizerResult.getActionPlan(), optimizerResult.getActionsIds(), contingency.getId());
                                     actions = new HashMap<String, Map<String, ActionParameters>>();
-                                    for (String actionId : optimizerResult.getActionsIds())
+                                    for (String actionId : optimizerResult.getActionsIds()) {
                                         actions.put(actionId, optimizerResult.getEquipmentsWithParameters(actionId));
+                                    }
                                 } else {
                                     logger.error("{}: Error: optimizer didn't find actions for post contingency state {}", stateId, postContingencyStateId);
                                     if (!parameters.validation()) { // if validation -> all the [contingency,state] pairs have already been added to the list for simulation -> no need to do it here
@@ -383,7 +391,7 @@ public class StateAnalyzer implements Callable<Void> {
                             if (loadflowConverge) {
                                 logger.info("{}: computing post contingency violations for contingency {}", stateId, contingency.getId());
                                 violations = Security.checkLimits(network, parameters.getLimitReduction());
-                                
+
                                 if (violations == null || violations.isEmpty()) {
                                     logger.info("{}: no post contingency violations for contingency {}", stateId, contingency.getId());
                                     violations = new ArrayList<LimitViolation>();
@@ -394,7 +402,7 @@ public class StateAnalyzer implements Callable<Void> {
                             logger.info("{}: storing post contingency violations/loadflow results for contingency {} in online db", stateId, contingency.getId());
                             onlineDb.storePostContingencyViolations(context.getWorkflowId(), Integer.valueOf(stateId), contingency.getId(), loadflowConverge, violations);
                             network.getStateManager().setWorkingState(stateId);
-                            //							network.getStateManager().removeState(postContingencyStateId);
+                            //                            network.getStateManager().removeState(postContingencyStateId);
                             return null;
                         }
                     }
@@ -430,7 +438,7 @@ public class StateAnalyzer implements Callable<Void> {
             network.getStateManager().setWorkingState(postContingencyStateId);
             // apply contingency to post contingency state
             logger.info("{}: applying contingency {} to post contingency state {}", stateId, contingency.getId(), postContingencyStateId);
-            contingency.toTask().modify(network);
+            contingency.toTask().modify(network, computationManager);
             try {
                 // run load flow on post contingency state
                 logger.info("{}: running load flow on post contingency state {}", stateId, postContingencyStateId);
@@ -465,9 +473,9 @@ public class StateAnalyzer implements Callable<Void> {
         Objects.requireNonNull(simulationResult, "simulation result is null");
         Objects.requireNonNull(results, "forecast analysis result is null");
         List<SecurityIndex> securityIndexesList = new ArrayList<SecurityIndex>();
-        if (parameters.getSecurityIndexes() == null)
+        if (parameters.getSecurityIndexes() == null) {
             securityIndexesList = simulationResult.getSecurityIndexes();
-        else {
+        } else {
             securityIndexesList = simulationResult.getSecurityIndexes().stream().filter(x -> parameters.getSecurityIndexes().contains(x.getId().getSecurityIndexType())).collect(Collectors.toList());
             if (securityIndexesList.isEmpty()) {
                 logger.info("Empty filter security indexes -> using all the indexes");
@@ -489,8 +497,9 @@ public class StateAnalyzer implements Callable<Void> {
                     results.addUnsafeStateWithIndexes(entry.getKey(), stateId, new ArrayList<>(entry.getValue()));
                 } else {
                     logger.info("{}: safe for contingency {} afer time domain simulation", stateId, entry.getKey());
-                    if (parameters.validation()) // if validation add anyway to results
+                    if (parameters.validation()) { // if validation add anyway to results
                         results.addUnsafeStateWithIndexes(entry.getKey(), stateId, new ArrayList<>(entry.getValue()));
+                    }
                 }
             }
         }

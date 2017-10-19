@@ -10,7 +10,6 @@ import java.util.Collection;
 
 import javax.json.stream.JsonGenerator;
 
-import com.google.gson.Gson;
 
 /**
  *
@@ -32,8 +31,7 @@ public class WorkFlowIdsMessage extends Message<Collection<String>> {
 
     @Override
     public String toJson() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
+        return writeValueAsString(this);
     }
 
     @Override

@@ -8,13 +8,13 @@ package eu.itesla_project.offline;
 
 import com.google.common.collect.ForwardingBlockingDeque;
 import com.google.common.collect.Queues;
-import eu.itesla_project.computation.ComputationManager;
-import eu.itesla_project.iidm.network.*;
-import eu.itesla_project.iidm.network.util.Networks;
-import eu.itesla_project.loadflow.api.LoadFlow;
-import eu.itesla_project.loadflow.api.LoadFlowFactory;
-import eu.itesla_project.loadflow.api.LoadFlowParameters;
-import eu.itesla_project.loadflow.api.LoadFlowResult;
+import com.powsybl.computation.ComputationManager;
+import com.powsybl.iidm.network.*;
+import com.powsybl.iidm.network.util.Networks;
+import com.powsybl.loadflow.LoadFlow;
+import com.powsybl.loadflow.LoadFlowFactory;
+import com.powsybl.loadflow.LoadFlowParameters;
+import com.powsybl.loadflow.LoadFlowResult;
 import eu.itesla_project.merge.MergeOptimizerFactory;
 import eu.itesla_project.modules.*;
 import eu.itesla_project.cases.CaseRepository;
@@ -32,9 +32,9 @@ import eu.itesla_project.modules.topo.TopologyMiner;
 import eu.itesla_project.modules.topo.TopologyMinerFactory;
 import eu.itesla_project.modules.topo.UniqueTopologyBuilder;
 import eu.itesla_project.modules.validation.ValidationDb;
-import eu.itesla_project.security.Security;
-import eu.itesla_project.simulation.securityindexes.SecurityIndex;
-import eu.itesla_project.simulation.*;
+import com.powsybl.security.Security;
+import com.powsybl.simulation.securityindexes.SecurityIndex;
+import com.powsybl.simulation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -187,7 +187,7 @@ public class OfflineWorkflowImpl extends AbstractOfflineWorkflow {
         offlineDb.storeSecurityIndexes(id, sampleId, securityIndexes);
 
         LOGGER.debug("Workflow {}, sample {}: security indexes stored in {} ms",
-                id, sampleId, (System.currentTimeMillis() - startTime));
+                id, sampleId, System.currentTimeMillis() - startTime);
 
         updateSecurityIndexesSynthesis(securityIndexes);
     }
@@ -692,7 +692,7 @@ public class OfflineWorkflowImpl extends AbstractOfflineWorkflow {
         offlineDb.storeState(id, sampleId, network, creationParameters.getAttributesCountryFilter());
 
         LOGGER.debug("Workflow {}, sample {}: state stored in {} ms",
-                id, sampleId, (System.currentTimeMillis() - startTime));
+                id, sampleId, System.currentTimeMillis() - startTime);
 /*
         for (OfflineWorkflowListener listener : listeners) {
             try {
@@ -794,7 +794,7 @@ public class OfflineWorkflowImpl extends AbstractOfflineWorkflow {
     @Override
     protected void notifyRuleStorage(String workflowId, RuleId ruleId, boolean ok, float percentComplete) {
         LOGGER.info("Rule {} for workflow {}: {}", ruleId, workflowId, ok ? "success" : "failure");
-        for(OfflineWorkflowListener listener : listeners) {
+        for (OfflineWorkflowListener listener : listeners) {
             listener.onSecurityRuleStorage(workflowId, ruleId, ok, percentComplete);
         }
     }

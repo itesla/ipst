@@ -8,8 +8,8 @@ package eu.itesla_project.modules.topo;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import eu.itesla_project.iidm.network.*;
-import eu.itesla_project.iidm.network.util.ShortIdDictionary;
+import com.powsybl.iidm.network.*;
+import com.powsybl.iidm.network.util.ShortIdDictionary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

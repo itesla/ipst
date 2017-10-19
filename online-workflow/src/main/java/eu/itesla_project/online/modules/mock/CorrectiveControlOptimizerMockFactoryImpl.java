@@ -7,7 +7,7 @@
  */
 package eu.itesla_project.online.modules.mock;
 
-import eu.itesla_project.computation.ComputationManager;
+import com.powsybl.computation.ComputationManager;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
 import eu.itesla_project.modules.optimizer.CorrectiveControlOptimizer;
 import eu.itesla_project.modules.optimizer.CorrectiveControlOptimizerFactory;
@@ -18,9 +18,9 @@ import eu.itesla_project.modules.optimizer.CorrectiveControlOptimizerFactory;
  */
 public class CorrectiveControlOptimizerMockFactoryImpl implements CorrectiveControlOptimizerFactory {
 
-	@Override
-	public CorrectiveControlOptimizer create(ContingenciesAndActionsDatabaseClient cadbClient, ComputationManager computationManager) {
-		return new CorrectiveControlOptimizerMock();
-	}
+    @Override
+    public CorrectiveControlOptimizer create(ContingenciesAndActionsDatabaseClient cadbClient, ComputationManager computationManager) {
+        return new CorrectiveControlOptimizerMock();
+    }
 
 }

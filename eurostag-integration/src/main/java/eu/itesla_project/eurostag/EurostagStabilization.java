@@ -9,26 +9,26 @@ package eu.itesla_project.eurostag;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
-import eu.itesla_project.commons.Version;
-import eu.itesla_project.commons.config.ComponentDefaultConfig;
-import eu.itesla_project.computation.*;
+import com.powsybl.commons.Version;
+import com.powsybl.commons.config.ComponentDefaultConfig;
+import com.powsybl.commons.datasource.FileDataSource;
+import com.powsybl.computation.*;
 import eu.itesla_project.eurostag.network.EsgGeneralParameters;
 import eu.itesla_project.eurostag.network.EsgNetwork;
 import eu.itesla_project.eurostag.network.EsgSpecialParameters;
 import eu.itesla_project.eurostag.network.io.EsgWriter;
 import eu.itesla_project.eurostag.tools.EurostagNetworkModifier;
-import eu.itesla_project.commons.datasource.FileDataSource;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClient;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClientFactory;
 import eu.itesla_project.iidm.eurostag.export.*;
-import eu.itesla_project.iidm.export.Exporter;
-import eu.itesla_project.iidm.export.Exporters;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.iidm.network.util.Networks;
-import eu.itesla_project.simulation.SimulationParameters;
-import eu.itesla_project.simulation.Stabilization;
-import eu.itesla_project.simulation.StabilizationResult;
-import eu.itesla_project.simulation.StabilizationStatus;
+import com.powsybl.iidm.export.Exporter;
+import com.powsybl.iidm.export.Exporters;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.util.Networks;
+import com.powsybl.simulation.SimulationParameters;
+import com.powsybl.simulation.Stabilization;
+import com.powsybl.simulation.StabilizationResult;
+import com.powsybl.simulation.StabilizationStatus;
 import org.jboss.shrinkwrap.api.Domain;
 import org.jboss.shrinkwrap.api.GenericArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -47,9 +47,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import static eu.itesla_project.computation.FilePostProcessor.FILE_GZIP;
-import static eu.itesla_project.computation.FilePreProcessor.ARCHIVE_UNZIP;
-import static eu.itesla_project.computation.FilePreProcessor.FILE_GUNZIP;
+import static com.powsybl.computation.FilePostProcessor.FILE_GZIP;
+import static com.powsybl.computation.FilePreProcessor.ARCHIVE_UNZIP;
+import static com.powsybl.computation.FilePreProcessor.FILE_GUNZIP;
 
 /**
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
@@ -126,12 +126,12 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
                         new InputFile(PRE_FAULT_SEQ_FILE_NAME),
                         new InputFile(DDB_ZIP_FILE_NAME, ARCHIVE_UNZIP))
                 .subCommand()
-                .program(EUSTAG_CPT)
+                .program(config.getEurostagCptCommandName())
                 .args("-lf", ECH_FILE_NAME)
                 .timeout(config.getLfTimeout())
                 .add()
                 .subCommand()
-                .program(EUSTAG_CPT)
+                .program(config.getEurostagCptCommandName())
                 .args("-s", PRE_FAULT_SEQ_FILE_NAME, DTA_FILE_NAME, SAV_FILE_NAME)
                 .timeout(config.getSimTimeout())
                 .add()
@@ -246,7 +246,7 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
             // dump state info for debugging
             Networks.dumpStateId(workingDir, network);
 
-            Exporter exporter = Exporters.getExporter("XML");
+            Exporter exporter = Exporters.getExporter("XIIDM");
             if (exporter != null) {
                 Properties parameters = new Properties();
                 parameters.setProperty("iidm.export.xml.indent", "true");
@@ -361,7 +361,7 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
     @Override
     public CompletableFuture<StabilizationResult> runAsync(String workingStateId) {
         return computationManager.execute(new ExecutionEnvironment(EurostagUtil.createEnv(config), WORKING_DIR_PREFIX, config.isDebug()),
-                new DefaultExecutionHandler<StabilizationResult>() {
+                new AbstractExecutionHandler<StabilizationResult>() {
 
                     private EurostagContext context;
 

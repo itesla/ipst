@@ -13,42 +13,42 @@ import java.util.Map;
  * @author Quinary <itesla@quinary.com>
  */
 public class RedispatchingParameters {
-	
-	private final float deltaP; // P to redispatch
-	private String[] generatorsToUse = null; // generators to use while redispatching
-	private String[] generatorsToSkip = null; // generators to skip while redispatching
-	private Map<String, Float> participationFactor = null; // participation factor to redispatching for each generator
-	
-	public RedispatchingParameters(float deltaP) {
-		this.deltaP = deltaP;
-	}
-	
-	public float getDeltaP() {
-		return deltaP;
-	}
-	
-	public String[] getGeneratorsToUse() {
-		return generatorsToUse;
-	}
 
-	public void setGeneratorsToUse(String[] generatorsToUse) {
-		this.generatorsToUse = generatorsToUse;
-	}
-	
-	public String[] getGeneratorsToSkip() {
-		return generatorsToSkip;
-	}
+    private final float deltaP; // P to redispatch
+    private String[] generatorsToUse = null; // generators to use while redispatching
+    private String[] generatorsToSkip = null; // generators to skip while redispatching
+    private Map<String, Float> participationFactor = null; // participation factor to redispatching for each generator
 
-	public void setGeneratorsToSkip(String[] generatorsToSkip) {
-		this.generatorsToSkip = generatorsToSkip;
-	}
+    public RedispatchingParameters(float deltaP) {
+        this.deltaP = deltaP;
+    }
 
-	public Map<String, Float> getParticipationFactor() {
-		return participationFactor;
-	}
+    public float getDeltaP() {
+        return deltaP;
+    }
 
-	public void setParticipationFactor(Map<String, Float> participationFactor) {
-		this.participationFactor = participationFactor;
-	}
+    public String[] getGeneratorsToUse() {
+        return generatorsToUse;
+    }
+
+    public void setGeneratorsToUse(String[] generatorsToUse) {
+        this.generatorsToUse = generatorsToUse;
+    }
+
+    public String[] getGeneratorsToSkip() {
+        return generatorsToSkip;
+    }
+
+    public void setGeneratorsToSkip(String[] generatorsToSkip) {
+        this.generatorsToSkip = generatorsToSkip;
+    }
+
+    public Map<String, Float> getParticipationFactor() {
+        return participationFactor;
+    }
+
+    public void setParticipationFactor(Map<String, Float> participationFactor) {
+        this.participationFactor = participationFactor;
+    }
 
 }

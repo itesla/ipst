@@ -14,8 +14,8 @@ import eu.itesla_project.modules.rules.RuleAttributeSet;
 import eu.itesla_project.modules.rules.RuleId;
 import eu.itesla_project.modules.rules.RulesDbClient;
 import eu.itesla_project.modules.rules.SecurityRule;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexId;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.securityindexes.SecurityIndexId;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
@@ -102,8 +102,12 @@ public class RulesDbClientImpl implements RulesDbClient {
         StringBuilder path = new StringBuilder();
         path.append(RULES_PREFIX).append(workflowId)
                 .append("/itesla/rules/").append(attributeSet);
-        if (contingencyId != null) path.append("/").append(contingencyId);
-        if (securityIndexType != null) path.append("/").append(securityIndexType.getLabel());
+        if (contingencyId != null) {
+            path.append("/").append(contingencyId);
+        }
+        if (securityIndexType != null) {
+            path.append("/").append(securityIndexType.getLabel());
+        }
         path.append(".json");
 
         List<SecurityRule> result = new ArrayList<>();
@@ -140,7 +144,7 @@ public class RulesDbClientImpl implements RulesDbClient {
 
                 List<RuleId> ruleIds = new ArrayList<>();
 
-                while(csvReader.readRecord()) {
+                while (csvReader.readRecord()) {
                     String[] values = csvReader.getValues();
                     ruleIds.add(new RuleId(RuleAttributeSet.valueOf(values[0]),
                                 new SecurityIndexId(values[1], SecurityIndexType.fromLabel(values[2]))));

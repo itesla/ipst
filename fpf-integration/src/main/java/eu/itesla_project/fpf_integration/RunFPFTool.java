@@ -9,13 +9,13 @@ package eu.itesla_project.fpf_integration;
 import com.google.auto.service.AutoService;
 import eu.itesla_project.cases.CaseRepository;
 import eu.itesla_project.cases.CaseType;
-import eu.itesla_project.commons.tools.Command;
-import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.commons.tools.ToolRunningContext;
-import eu.itesla_project.contingency.Contingency;
+import com.powsybl.tools.Command;
+import com.powsybl.tools.Tool;
+import com.powsybl.tools.ToolRunningContext;
+import com.powsybl.contingency.Contingency;
 import eu.itesla_project.fpf_integration.executor.FPFAnalysis;
-import eu.itesla_project.iidm.network.Country;
-import eu.itesla_project.iidm.network.Network;
+import com.powsybl.iidm.network.Country;
+import com.powsybl.iidm.network.Network;
 import eu.itesla_project.mcla.ForecastErrorsDataStorageImpl;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
 import eu.itesla_project.modules.online.OnlineConfig;
@@ -97,8 +97,8 @@ public class RunFPFTool implements Tool {
     @Override
     public void run(CommandLine line, ToolRunningContext context) throws Exception {
 
-        OnlineWorkflowParameters parameters=OnlineWorkflowParameters.loadDefault();
-        OnlineConfig onlineConfig=OnlineConfig.load();
+        OnlineWorkflowParameters parameters = OnlineWorkflowParameters.loadDefault();
+        OnlineConfig onlineConfig = OnlineConfig.load();
 
         String analysisId = line.hasOption("analysis")
                 ? line.getOptionValue("analysis")
@@ -124,10 +124,10 @@ public class RunFPFTool implements Tool {
         context.getOutputStream().println("- Network name: " + network.getName());
 
         ContingenciesAndActionsDatabaseClient contingenciesDb = onlineConfig.getContingencyDbClientFactoryClass().newInstance().create();
-        List<Contingency> contingencyList=contingenciesDb.getContingencies(network);
+        List<Contingency> contingencyList = contingenciesDb.getContingencies(network);
 
-        FPFAnalysis fpfce=new FPFAnalysis();
-        fpfce.init(network,context.getComputationManager(),feDataStorage);
+        FPFAnalysis fpfce = new FPFAnalysis();
+        fpfce.init(network, context.getComputationManager(), feDataStorage);
         fpfce.run(analysisId, timeHorizon, contingencyList, Paths.get(outputDir));
     }
 }

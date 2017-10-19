@@ -6,7 +6,7 @@
  */
 package eu.itesla_project.mcla.montecarlo.data;
 
-import eu.itesla_project.iidm.network.Generator;
+import com.powsybl.iidm.network.Generator;
 
 /**
  *
@@ -14,20 +14,20 @@ import eu.itesla_project.iidm.network.Generator;
  */
 public class SlackBusData {
 
-	int slackBusIndex = -1;
-	Generator slackBusGenerator = null;
-	
-	public int getSlackBusIndex() {
-		return slackBusIndex;
-	}
-	public void setSlackBusIndex(int slackBusIndex) {
-		this.slackBusIndex = slackBusIndex;
-	}
-	public Generator getSlackBusGenerator() {
-		return slackBusGenerator;
-	}
-	public void setSlackBusGenerator(Generator slackBusGenerator) {
-		this.slackBusGenerator = slackBusGenerator;
-	}
-	
+    int slackBusIndex = -1;
+    Generator slackBusGenerator = null;
+
+    public int getSlackBusIndex() {
+        return slackBusIndex;
+    }
+    public void setSlackBusIndex(int slackBusIndex) {
+        this.slackBusIndex = slackBusIndex;
+    }
+    public Generator getSlackBusGenerator() {
+        return slackBusGenerator;
+    }
+    public void setSlackBusGenerator(Generator slackBusGenerator) {
+        this.slackBusGenerator = slackBusGenerator;
+    }
+
 }

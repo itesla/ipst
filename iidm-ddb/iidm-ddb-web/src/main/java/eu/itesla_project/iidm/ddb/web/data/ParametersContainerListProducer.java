@@ -6,7 +6,6 @@
  */
 package eu.itesla_project.iidm.ddb.web.data;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,14 +28,14 @@ import eu.itesla_project.iidm.ddb.service.DDBManager;
 public class ParametersContainerListProducer {
 
     @Inject
-	private Logger log;
-    
-	@EJB
-	private DDBManager pmanager;
+    private Logger log;
+
+    @EJB
+    private DDBManager pmanager;
 
     private List<ParametersContainer> parametersContainerAll;
-    
-    
+
+
     //private List<String> parametersContainerDdbids;
 
     // @Named provides access the return value via the EL variable name "members" in the UI (e.g.
@@ -45,24 +44,24 @@ public class ParametersContainerListProducer {
     @Named
     public List<ParametersContainer> getParametersContainerAll() {
         return parametersContainerAll;
-    }    
+    }
 
-    
+
     @PostConstruct
     public void retrieveAllParametersContainer() {
-    	log.log(Level.INFO," create parametersContainerAll  list ");
-    	
-    	this.parametersContainerAll= pmanager.findParametersContainerAll();
-    	log.log(Level.INFO," DONE create parametersContainerAll  list ");
-    /*	this.parametersContainerDdbids  = new ArrayList<String>();
-    	
-    	for (ParametersContainer pc :parametersContainerAll) {
-    		parametersContainerDdbids.add(pc.getDdbId());
-    	}*/    	
+        log.log(Level.INFO, " create parametersContainerAll  list ");
+
+        this.parametersContainerAll = pmanager.findParametersContainerAll();
+        log.log(Level.INFO, " DONE create parametersContainerAll  list ");
+    /*    this.parametersContainerDdbids  = new ArrayList<String>();
+
+        for (ParametersContainer pc :parametersContainerAll) {
+            parametersContainerDdbids.add(pc.getDdbId());
+        }*/
     }
-    
+
    /* public List<String> geetParametersContainerDdbids(){
-    	return this.parametersContainerDdbids; 
+        return this.parametersContainerDdbids;
     }*/
-    
+
 }

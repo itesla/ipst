@@ -6,45 +6,45 @@
  */
 package eu.itesla_project.modules.optimizer;
 
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.contingency.Contingency;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.contingency.Contingency;
 
 /**
  *
  * @author Quinary <itesla@quinary.com>
  */
 public class PostContingencyState {
-	
-	private Network network;
-	private final String stateId;
-	private final Contingency contingency;
-	
-	public PostContingencyState(Network network, String stateId, Contingency contingency) {
-		this.network = network;
-		this.stateId = stateId;
-		this.contingency = contingency;
-	}
 
-	
-	public Network getNetwork() {
-		network.getStateManager().setWorkingState(stateId);
-		return network;
-	}
-	
-	public String getStateId() {
-		return stateId;
-	}
+    private Network network;
+    private final String stateId;
+    private final Contingency contingency;
 
-	public Contingency getContingency() {
-		return contingency;
-	}
+    public PostContingencyState(Network network, String stateId, Contingency contingency) {
+        this.network = network;
+        this.stateId = stateId;
+        this.contingency = contingency;
+    }
 
-	@Override
-	public String toString() {
-		return "postCtgState[newtwork= "+ network.getId() + ", id=" + stateId + ", cid=" + contingency.getId() + "]";
-	}
-	
-	
-	
+
+    public Network getNetwork() {
+        network.getStateManager().setWorkingState(stateId);
+        return network;
+    }
+
+    public String getStateId() {
+        return stateId;
+    }
+
+    public Contingency getContingency() {
+        return contingency;
+    }
+
+    @Override
+    public String toString() {
+        return "postCtgState[newtwork= " + network.getId() + ", id=" + stateId + ", cid=" + contingency.getId() + "]";
+    }
+
+
+
 
 }

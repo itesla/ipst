@@ -12,10 +12,10 @@ package eu.itesla_project.iidm.ddb.eurostag_modelica;
  */
 public class ConversionException extends Exception {
 
-	public ConversionException(String message) {
-		super(message);
-	}
+    public ConversionException(String message) {
+        super(message);
+    }
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
 }

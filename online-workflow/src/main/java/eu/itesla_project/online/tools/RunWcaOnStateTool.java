@@ -8,11 +8,11 @@
 package eu.itesla_project.online.tools;
 
 import com.google.auto.service.AutoService;
-import eu.itesla_project.commons.tools.Command;
-import eu.itesla_project.commons.tools.Tool;
-import eu.itesla_project.commons.tools.ToolRunningContext;
-import eu.itesla_project.iidm.network.Network;
-import eu.itesla_project.loadflow.api.LoadFlowFactory;
+import com.powsybl.tools.Command;
+import com.powsybl.tools.Tool;
+import com.powsybl.tools.ToolRunningContext;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.loadflow.LoadFlowFactory;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
 import eu.itesla_project.modules.histo.HistoDbClient;
 import eu.itesla_project.modules.online.OnlineConfig;
@@ -20,7 +20,7 @@ import eu.itesla_project.modules.online.OnlineDb;
 import eu.itesla_project.modules.online.OnlineWorkflowParameters;
 import eu.itesla_project.modules.rules.RulesDbClient;
 import eu.itesla_project.modules.wca.*;
-import eu.itesla_project.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -117,17 +117,20 @@ public class RunWcaOnStateTool implements Tool {
         OnlineDb onlinedb = config.getOnlineDbFactoryClass().newInstance().create();
         // load the network
         Network network = onlinedb.getState(workflowId, stateId);
-        if ( network != null ) {
+        if (network != null) {
             OnlineWorkflowParameters parameters = onlinedb.getWorkflowParameters(workflowId);
             String offlineWorkflowId = parameters.getOfflineWorkflowId();
-            if (line.hasOption("offline-workflow"))
+            if (line.hasOption("offline-workflow")) {
                 offlineWorkflowId = line.getOptionValue("offline-workflow");
+            }
             Interval histoInterval = parameters.getHistoInterval();
-            if (line.hasOption("history-interval"))
+            if (line.hasOption("history-interval")) {
                 histoInterval = Interval.parse(line.getOptionValue("history-interval"));
+            }
             double purityThreshold = parameters.getRulesPurityThreshold();
-            if (line.hasOption("purity-threshold"))
+            if (line.hasOption("purity-threshold")) {
                 purityThreshold = Double.parseDouble(line.getOptionValue("purity-threshold"));
+            }
             Set<SecurityIndexType> securityIndexTypes = parameters.getSecurityIndexes();
             if (line.hasOption("security-index-types")) {
                 securityIndexTypes = Arrays.stream(line.getOptionValue("security-index-types").split(","))
@@ -155,7 +158,7 @@ public class RunWcaOnStateTool implements Tool {
                     table.addCell(cluster.getContingency().getId());
                     int[] clusterIndexes = new int[]{1, 2, 3, 4, -1};
                     for (int k = 0; k < clusterIndexes.length; k++) {
-                        if ( clusterIndexes[k] == cluster.getNum().toIntValue() ) {
+                        if (clusterIndexes[k] == cluster.getNum().toIntValue()) {
                             table.addCell("X", new CellStyle(CellStyle.HorizontalAlign.center));
                         } else {
                             table.addCell("-", new CellStyle(CellStyle.HorizontalAlign.center));

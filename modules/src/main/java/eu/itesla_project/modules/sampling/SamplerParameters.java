@@ -21,11 +21,11 @@ public class SamplerParameters {
 
     private final boolean boundariesSampled;
 
-	public SamplerParameters(Interval histoInterval, boolean generationSampled, boolean boundariesSampled) {
-		this.histoInterval = histoInterval;
+    public SamplerParameters(Interval histoInterval, boolean generationSampled, boolean boundariesSampled) {
+        this.histoInterval = histoInterval;
         this.generationSampled = generationSampled;
         this.boundariesSampled = boundariesSampled;
-	}
+    }
 
     public Interval getHistoInterval() {
         return histoInterval;
