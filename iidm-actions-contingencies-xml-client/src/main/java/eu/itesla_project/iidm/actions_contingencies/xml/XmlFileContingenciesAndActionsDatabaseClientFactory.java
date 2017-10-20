@@ -8,6 +8,7 @@
 package eu.itesla_project.iidm.actions_contingencies.xml;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -42,13 +43,22 @@ public class XmlFileContingenciesAndActionsDatabaseClientFactory implements
     @Override
     public ContingenciesAndActionsDatabaseClient create(Path xmlFile) {
         Objects.requireNonNull(xmlFile);
-        XmlFileContingenciesAndActionsDatabaseClient client = null;
         try {
-            client = new XmlFileContingenciesAndActionsDatabaseClient(xmlFile);
+            return new XmlFileContingenciesAndActionsDatabaseClient(xmlFile);
         } catch (JAXBException | SAXException | IOException e) {
             LOGGER.error("Error loading input file " + xmlFile, e);
             throw new ConfigurationException(e);
         }
-        return client;
+    }
+
+    @Override
+    public ContingenciesAndActionsDatabaseClient create(InputStream data) {
+        Objects.requireNonNull(data);
+        try {
+            return new XmlFileContingenciesAndActionsDatabaseClient(data);
+        } catch (JAXBException | SAXException | IOException e) {
+            LOGGER.error("Error loading input data ", e);
+            throw new ConfigurationException(e);
+        }
     }
 }
