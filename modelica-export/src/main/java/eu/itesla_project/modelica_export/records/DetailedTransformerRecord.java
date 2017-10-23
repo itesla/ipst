@@ -132,13 +132,13 @@ public class DetailedTransformerRecord extends BranchRecord {
 
         float vEndPu = v1 / u1Nom;
         float vSourcePu = v2 / u2Nom;
-        float ration = vSourcePu / vEndPu; // ...transformation ratio [p.u.]
+        float ratio = vSourcePu / vEndPu; // ...transformation ratio [p.u.]
 
         if (ModelicaMainExporter.RATIOS_TO_1) {
-            ration = 1;
+            ratio = 1;
         }
 
-        super.addParameter(this.iidmbranchParameters, EurostagFixedData.r, ration); // p.u.
+        super.addParameter(this.iidmbranchParameters, EurostagFixedData.r, ratio); // p.u.
         super.addParameter(this.iidmbranchParameters, EurostagFixedData.B0, b);
         super.addParameter(this.iidmbranchParameters, EurostagFixedData.G0, g);
         super.addParameter(this.iidmbranchParameters, EurostagFixedData.THETA, theta);
