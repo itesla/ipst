@@ -18,6 +18,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
@@ -25,7 +28,7 @@ import java.util.Map;
 class EurostagDDB {
 
     private final Map<String, Path> generators = new HashMap<>();
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(EurostagDDB.class);
     EurostagDDB(List<Path> ddbDirs) throws IOException {
         for (Path ddbDir : ddbDirs) {
             if (Files.isSymbolicLink(ddbDir)) {
@@ -37,15 +40,23 @@ class EurostagDDB {
             Files.walkFileTree(ddbDir, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    if (Files.isSymbolicLink(file)) {
-                        file = Files.readSymbolicLink(file);
-                        if (Files.isDirectory(file)) {
-                            Files.walkFileTree(file, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, this);
+                    String fileName = file.getFileName().toString();
+                    Path tmpfile = file;
+                    if (Files.isSymbolicLink(tmpfile)) {
+                        tmpfile = Files.readSymbolicLink(file);
+                        while (Files.isSymbolicLink(tmpfile)) {
+                            tmpfile = Files.readSymbolicLink(tmpfile);
+                        }
+                        if (Files.isDirectory(tmpfile)) {
+                            Files.walkFileTree(tmpfile, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, this);
                         }
                     }
-                    if (Files.isRegularFile(file) && file.toString().endsWith(".tg")) {
-                        String fileName = file.getFileName().toString();
-                        generators.put(fileName.substring(0, fileName.length() - 3), file);
+                    if (Files.isRegularFile(tmpfile) && tmpfile.toString().endsWith(".tg")) {
+                        String key = fileName.substring(0, fileName.length() - 3);
+                        if (generators.containsKey(key)) {
+                            LOGGER.error("the processing has detected that the file " + fileName + " is present in " + tmpfile + " and " + generators.get(key));
+                        }
+                        generators.put(fileName.substring(0, fileName.length() - 3), tmpfile);
                     }
                     return super.visitFile(file, attrs);
                 }

@@ -42,6 +42,9 @@ public class EurostagDDBTest {
         Files.createFile(file5);
         Files.createDirectory(path3);
         Files.createFile(p3file);
+        Files.createFile(fs.getPath("/path1/p3file.tg"));
+        Path ln2 = Files.createSymbolicLink(fs.getPath("/path2/ln2.tg"), file5);
+        Files.createSymbolicLink(fs.getPath("/path1/ln1.tg"), ln2);
         List<Path> ddbDirs = new ArrayList<>();
         ddbDirs.add(path1);
         EurostagDDB eurostagDDB = new EurostagDDB(ddbDirs);
@@ -49,7 +52,8 @@ public class EurostagDDBTest {
         assertEquals(eurostagDDB.findGenerator("p3file").getFileName().toString(), "p3file.tg");
         assertEquals(eurostagDDB.findGenerator("file4").getFileName().toString(), "file4.tg");
         assertEquals(eurostagDDB.findGenerator("file1").getFileName().toString(), "file1.tg");
-        assertEquals(eurostagDDB.findGenerator("file5").getFileName().toString(), "file5.tg");
+        assertEquals(eurostagDDB.findGenerator("ln").getFileName().toString(), "file5.tg");
+        assertEquals(eurostagDDB.findGenerator("ln1").getFileName().toString(), "file5.tg");
         }
     }
 
@@ -57,10 +61,10 @@ public class EurostagDDBTest {
     public void testFindGenerator() throws IOException {
         try (FileSystem fs = Jimfs.newFileSystem(Configuration.unix())) {
         Path path2 = fs.getPath("/path2");
-        Path filereal = fs.getPath("/path2/file5.tg");
+        Path file5 = fs.getPath("/path2/file5.tg");
         Path path = fs.getPath("lnpath2");
         Files.createDirectory(path2);
-        Files.createFile(filereal);
+        Files.createFile(file5);
         Files.createSymbolicLink(path, path2);
         List<Path> ddbDirs = new ArrayList<>();
         ddbDirs.add(path);
