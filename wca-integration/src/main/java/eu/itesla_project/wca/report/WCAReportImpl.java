@@ -415,14 +415,14 @@ public class WCAReportImpl implements WCAReport {
                 postContingenciesStatus.forEach(postContingencyStatus -> {
                     // post-contingency violations without uncertainties
                     writeViolations(formatter1,
-                                    postContingencyStatus.getContingencyId(),
-                                    postContingencyStatus.getPostContingencyLoadflowResult(),
-                                    postContingencyStatus.getPostContingencyViolationsWithoutUncertainties());
+                            postContingencyStatus.getContingencyId(),
+                            postContingencyStatus.getPostContingencyLoadflowResult(),
+                            postContingencyStatus.getPostContingencyViolationsWithoutUncertainties());
                     // post-contingency violations with uncertainties
                     writeViolations(formatter2,
-                                    postContingencyStatus.getContingencyId(),
-                                    postContingencyStatus.getPostContingencyWithUncertaintiesLoadflowResult(),
-                                    postContingencyStatus.getPostContingencyViolationsWithUncertainties());
+                            postContingencyStatus.getContingencyId(),
+                            postContingencyStatus.getPostContingencyWithUncertaintiesLoadflowResult(),
+                            postContingencyStatus.getPostContingencyViolationsWithUncertainties());
                 });
             }
         }
