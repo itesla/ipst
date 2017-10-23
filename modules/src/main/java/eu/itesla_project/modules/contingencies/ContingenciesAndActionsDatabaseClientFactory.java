@@ -7,6 +7,7 @@
  */
 package eu.itesla_project.modules.contingencies;
 
+import java.io.InputStream;
 import java.nio.file.Path;
 
 import com.powsybl.contingency.ContingenciesProviderFactory;
@@ -21,8 +22,8 @@ public interface ContingenciesAndActionsDatabaseClientFactory extends Contingenc
     ContingenciesAndActionsDatabaseClient create();
 
     @Override
-    default ContingenciesAndActionsDatabaseClient create(Path contingenciesAndActionsFile) {
-        return create();
-    }
+    ContingenciesAndActionsDatabaseClient create(Path contingenciesAndActionsFile);
 
+    @Override
+    ContingenciesAndActionsDatabaseClient create(InputStream data);
 }
