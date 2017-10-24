@@ -343,6 +343,8 @@ public class WCATool implements Tool {
                 }, dataSource -> context.getOutputStream().println("loading case " + dataSource.getBaseName() + "..."));
 
                 writeClustersCsv(clusterPerContingencyPerBaseCase, contingencyIds, outputCsvFile);
+            } else {
+                LOGGER.error("case-file parameter is not valid");
             }
         }
     }
