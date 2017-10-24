@@ -27,12 +27,12 @@ import org.slf4j.LoggerFactory;
  */
 class EurostagDDB {
 
-    private final Map<String, Path> generators = new HashMap<>();
     private static final Logger LOGGER = LoggerFactory.getLogger(EurostagDDB.class);
+    private final Map<String, Path> generators = new HashMap<>();
     EurostagDDB(List<Path> ddbDirs) throws IOException {
         for (Path ddbDir : ddbDirs) {
             if (Files.isSymbolicLink(ddbDir)) {
-                ddbDir = Files.readSymbolicLink(ddbDir);
+                ddbDir = readSymbolicLink(ddbDir);
             }
             if (!Files.exists(ddbDir) && !Files.isDirectory(ddbDir)) {
                 throw new IllegalArgumentException(ddbDir + " must exist and be a dir");
@@ -41,23 +41,17 @@ class EurostagDDB {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     String fileName = file.getFileName().toString();
-                    Path tmpfile = file;
-                    if (Files.isSymbolicLink(tmpfile)) {
-                        tmpfile = Files.readSymbolicLink(file);
-                        while (Files.isSymbolicLink(tmpfile)) {
-                            tmpfile = Files.readSymbolicLink(tmpfile);
-                        }
-                        if (Files.isDirectory(tmpfile)) {
-                            Files.walkFileTree(tmpfile, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, this);
-                        }
-                    }
-                    if (Files.isRegularFile(tmpfile) && tmpfile.toString().endsWith(".tg")) {
-                        String key = fileName.substring(0, fileName.length() - 3);
-                        if (generators.containsKey(key)) {
-                            LOGGER.error("the processing has detected that the file " + fileName + " is present in " + tmpfile + " and " + generators.get(key));
-                        }
-                        generators.put(fileName.substring(0, fileName.length() - 3), tmpfile);
-                    }
+                    Path tmpfile = readSymbolicLink(file);
+                    if (Files.isDirectory(tmpfile)) {
+                        Files.walkFileTree(tmpfile, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, this);
+                    } else
+                            if (Files.isRegularFile(tmpfile) && file.toString().endsWith(".tg")) {
+                                String key = fileName.substring(0, fileName.length() - 3);
+                                if (generators.containsKey(key)) {
+                                    LOGGER.warn("the processing has detected that the file {} is present in {} and {}", fileName, tmpfile, generators.get(key));
+                                }
+                                generators.put(key, tmpfile);
+                            }
                     return super.visitFile(file, attrs);
                 }
             });
@@ -66,6 +60,14 @@ class EurostagDDB {
 
     Path findGenerator(String idDdb) throws IOException {
         return generators.get(idDdb);
+    }
+
+    private static Path readSymbolicLink(Path link) throws IOException {
+        Path path = link;
+        while (Files.isSymbolicLink(path)) {
+            path = Files.readSymbolicLink(path);
+        }
+        return path;
     }
 
 }
