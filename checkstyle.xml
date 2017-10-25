@@ -33,6 +33,9 @@
         <module name="NeedBraces"/>
         <module name="NoWhitespaceAfter"/>
         <module name="NoWhitespaceBefore"/>
+        <module name="OuterTypeFilename"/>
+        <module name="ParameterAssignment"/>
+        <module name="ParameterName"/>
         <module name="ParenPad"/>
         <module name="RedundantImport"/>
         <module name="RightCurly"/>

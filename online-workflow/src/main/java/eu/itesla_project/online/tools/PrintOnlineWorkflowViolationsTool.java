@@ -184,10 +184,11 @@ public class PrintOnlineWorkflowViolationsTool implements Tool {
     private void printStateStepViolations(TableFormatter formatter, Integer stateId, OnlineStep step, List<LimitViolation> violations,
                                           LimitViolationFilter violationsFilter) {
         if (violations != null) {
+            List<LimitViolation> filtedViolations = violations;
             if (violationsFilter != null) {
-                violations = violationsFilter.apply(violations);
+                filtedViolations = violationsFilter.apply(violations);
             }
-            violations
+            filtedViolations
                     .stream()
                     .sorted((o1, o2) -> o1.getSubjectId().compareTo(o2.getSubjectId()))
                     .forEach(violation -> {

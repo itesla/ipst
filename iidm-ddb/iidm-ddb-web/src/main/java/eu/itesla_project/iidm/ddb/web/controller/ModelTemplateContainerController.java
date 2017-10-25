@@ -237,16 +237,16 @@ public class ModelTemplateContainerController {
         return this.modelTemplateContainer;
     }
 
-    public void setModelTemplateContainer(ModelTemplateContainer _modelTemplateContainer) {
-        this.modelTemplateContainer = _modelTemplateContainer;
+    public void setModelTemplateContainer(ModelTemplateContainer modelTemplateContainer) {
+        this.modelTemplateContainer = modelTemplateContainer;
     }
 
     public ModelTemplate getModelTemplate() {
         return this.modelTemplate;
     }
 
-    public void setModelTemplate(ModelTemplate _modelTemplate) {
-        this.modelTemplate = _modelTemplate;
+    public void setModelTemplate(ModelTemplate modelTemplate) {
+        this.modelTemplate = modelTemplate;
     }
 
     public StreamedContent getFileData() {
@@ -447,7 +447,6 @@ public class ModelTemplateContainerController {
             log.log(Level.INFO, "  removeModelTemplate  [ddbId:" + modelTemplateContainer.getDdbId() + " MTC Comment:" + modelTemplateContainer.getComment() + " MT Comment " + modelTemplate.getComment() + " " + modelTemplate.getId() + " " + modelTemplate.getSimulator() + "]");
             modelTemplateContainer.getModelTemplates().remove(modelTemplate);
             pmanager.save(modelTemplateContainer);
-            modelTemplate = new ModelTemplate();
             this.modelTemplateContainer = pmanager.findModelTemplateContainer(ddbId);
             FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("delete.operation.msg"), bundle.getString("delete.success.msg"));
             facesContext.addMessage(null, m);

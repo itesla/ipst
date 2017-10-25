@@ -59,11 +59,11 @@ public class ModelicaModel {
      * init_friParameters: string list with the name of the parameters in the .fri.
      * init_InterfaceParameters: string list with the name of the initialization variables of the interface variables.
      */
-    public ModelicaModel(Block[] Blocks, Integer[][] Link, String pathEu, Hashtable<Integer, Element> CT, ParParser parData) {
-        this.Blocks = Blocks;
-        this.Link = Link;
+    public ModelicaModel(Block[] blocks, Integer[][] link, String pathEu, Hashtable<Integer, Element> correspondenceTable, ParParser parData) {
+        this.Blocks = blocks;
+        this.Link = link;
         this.pathEu = pathEu;
-        this.CT = CT;
+        this.CT = correspondenceTable;
         this.parData = parData;
         this.outputHeading = "";
         this.outputEnd = "";
@@ -80,7 +80,7 @@ public class ModelicaModel {
         this.interfaceVariables = new HashMap<String, String>();
         this.init_friParameters = new ArrayList<String>();
         this.init_InterfaceParameters = new ArrayList<String>();
-        this.LinksBlocksId1 = new int[Blocks.length][7];
+        this.LinksBlocksId1 = new int[blocks.length][7];
 
         Heading();
         paramDeclaration();

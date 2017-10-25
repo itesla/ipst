@@ -975,6 +975,7 @@ public class Converter {
 
 
     // Main
+    @SuppressWarnings("checkstyle:parameterassignment")
     public static void main(String[] args) {
 
         // ********************************** Initializations ********************************** //

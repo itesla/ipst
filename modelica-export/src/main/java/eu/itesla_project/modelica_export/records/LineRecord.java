@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  */
 public class LineRecord extends BranchRecord {
 
-    public LineRecord(Line line, float SNREF) {
+    public LineRecord(Line line, float snref) {
         super(line);
         this.line = line;
 
@@ -42,7 +42,7 @@ public class LineRecord extends BranchRecord {
             super.setDEFAULT_BRANCH_TYPE(DEFAULT_LINE_TYPE);
         }
         super.setDEFAULT_BRANCH_PREFIX(StaticData.PREF_LINE);
-        this.setParameters(SNREF);
+        this.setParameters(snref);
     }
 
     @Override
@@ -101,11 +101,11 @@ public class LineRecord extends BranchRecord {
      * Add IIDM parameters to Line Modelica Model in p.u
      */
     @Override
-    public void setParameters(float SNREF) {
+    public void setParameters(float snref) {
         //super.iidmbranchParameters = new ArrayList<IIDMParameter>();
         float tNominalV = ((Line) this.line).getTerminal2().getVoltageLevel().getNominalV();
         float voltage = Float.isNaN(tNominalV) == false ? tNominalV : 0;
-        float z = (voltage * voltage) / SNREF;
+        float z = (voltage * voltage) / snref;
 
         super.addParameter(this.iidmbranchParameters, StaticData.R, this.line.getR() / z);
         super.addParameter(this.iidmbranchParameters, StaticData.X, this.line.getX() / z);
