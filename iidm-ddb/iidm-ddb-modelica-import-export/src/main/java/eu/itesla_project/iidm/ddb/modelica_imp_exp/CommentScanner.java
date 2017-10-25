@@ -41,7 +41,7 @@ public class CommentScanner {
 
     public void scan(File file) throws IOException {
         if (!isInitialized()) {
-            log.error("Not initialized");
+            LOGGER.error("Not initialized");
             return;
         }
         BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -220,5 +220,5 @@ public class CommentScanner {
     final CommentScannerEventHandler eventHandler;
     Pattern quoteRegex, lineCommentRegex, blockCommentStartRegex, blockCommentEndRegex;
 
-    static final Logger log = LoggerFactory.getLogger(CommentScanner.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommentScanner.class);
 }

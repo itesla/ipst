@@ -49,11 +49,11 @@ public class EurostagNetworkModifier {
                 EsgLoad esgLoad = networkEch.getLoad(load);
                 Esg8charName nodeName = esgLoad.getZnodlo();
                 Esg8charName loadName = esgLoad.getZnamlo();
-                float Pi = esgLoad.getPldstp();
-                float Qi = esgLoad.getQldstp();
+                float pi = esgLoad.getPldstp();
+                float qi = esgLoad.getQldstp();
 
                 // Tfo parameters
-                float rate = (float) Math.max(1.0F, 1.5 * Math.sqrt(new Float(Pi * Pi + Qi * Qi).doubleValue()));
+                float rate = (float) Math.max(1.0F, 1.5 * Math.sqrt(new Float(pi * pi + qi * qi).doubleValue()));
                 float vBase = 20.0F;
                 float ucc = 1.0F;
                 float vB = 1.14F;
@@ -78,8 +78,8 @@ public class EurostagNetworkModifier {
                 float vInit = 1.015F;
 
                 // Load parameters
-                float Pf = Pi;
-                float Qf = Qi - ucc / 100 * (Pi * Pi + Qi * Qi) / rate * 1 / (vInit * vInit);
+                float pf = pi;
+                float qf = qi - ucc / 100 * (pi * pi + qi * qi) / rate * 1 / (vInit * vInit);
 
                 Esg8charName lvNodeName = new Esg8charName(loadName.toString().toUpperCase()); // Upper Case for Eurostag 5.1.1
                 networkEch.addNode(new EsgNode(esgNode.getArea(), lvNodeName, vBase, vInit, 0, false));
@@ -94,7 +94,7 @@ public class EurostagNetworkModifier {
 
                 networkEch.removeLoad(load);
                 networkEch.addLoad(new EsgLoad(EsgConnectionStatus.CONNECTED, loadName, lvNodeName, esgLoad.getPldsti(),
-                        esgLoad.getPldstz(), Pf, esgLoad.getQldsti(), esgLoad.getQldstz(), Qf));
+                        esgLoad.getPldstz(), pf, esgLoad.getQldsti(), esgLoad.getQldstz(), qf));
             }
         }
     }

@@ -51,7 +51,7 @@ import com.powsybl.security.LimitViolationType;
  */
 public class OnlineDBUtils implements ProcessDBUtils {
     private final OnlineDbFactory fact;
-    private static final DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = ISODateTimeFormat.dateTime();
     private static final Logger LOGGER = LoggerFactory.getLogger(OnlineDBUtils.class);
 
     public OnlineDBUtils(OnlineDbFactory factory) {
@@ -237,7 +237,7 @@ public class OnlineDBUtils implements ProcessDBUtils {
                 Map<Integer, StateSynthesis> statesMap = new HashMap<Integer, StateSynthesis>();
 
                 p.getWorkflowsMap().forEach((basecase, workflowId) -> {
-                    DateTime dateTime = fmt.parseDateTime(basecase);
+                    DateTime dateTime = DATE_TIME_FORMATTER.parseDateTime(basecase);
                     Map<Integer, List<LimitViolation>> previolsMap = onlinedb.getViolations(workflowId, OnlineStep.LOAD_FLOW);
 
                     if (previolsMap != null) {
@@ -292,11 +292,11 @@ public class OnlineDBUtils implements ProcessDBUtils {
             float limit = lv.getLimit();
             float value = lv.getValue();
             ViolationSynthesis synt;
-            Optional<ViolationSynthesis> search_synt = violationList.stream()
+            Optional<ViolationSynthesis> searchSynt = violationList.stream()
                     .filter(v -> v.getEquipment().equals(equipment))
                     .filter(v -> v.getType().equals(violationType)).findFirst();
-            if (search_synt.isPresent()) {
-                synt = search_synt.get();
+            if (searchSynt.isPresent()) {
+                synt = searchSynt.get();
             } else {
                 synt = new ViolationSynthesis(equipment, lv.getBaseVoltage(), violationType, limit, lv.getLimitName());
                 violationList.add(synt);

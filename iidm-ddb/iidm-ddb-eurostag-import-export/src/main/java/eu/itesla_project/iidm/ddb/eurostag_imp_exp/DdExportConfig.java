@@ -53,12 +53,12 @@ public class DdExportConfig {
         boolean automatonA14 = DEFAULT_AUTOMATON_A14;
         boolean importExportRST = DEFAULT_RST;
         boolean importExportACMC = DEFAULT_ACMC;
-        boolean LVLoadModeling = DEFAULT_LV_LOAD_MODELING;
-        String RSTRegulInjector = DEFAULT_RST_REGUL_INJECTOR;
-        String RSTRegulGenerator = DEFAULT_RST_REGUL_GENERATOR;
-        String RSTRegulGeneratorDelete = DEFAULT_RST_REGUL_GENERATOR_DELETE;
-        String ACMCRegul = DEFAULT_ACMC_REGUL;
-        String RSTPilotGenerators = DEFAULT_RST_PILOT_GENERATORS;
+        boolean lvLoadModeling = DEFAULT_LV_LOAD_MODELING;
+        String rstRegulInjector = DEFAULT_RST_REGUL_INJECTOR;
+        String rstRegulGenerator = DEFAULT_RST_REGUL_GENERATOR;
+        String rstRegulGeneratorDelete = DEFAULT_RST_REGUL_GENERATOR_DELETE;
+        String acmcRegul = DEFAULT_ACMC_REGUL;
+        String rstPilotGenerators = DEFAULT_RST_PILOT_GENERATORS;
         float loadPatternAlpha = DEFAULT_LOAD_PATTERN_ALPHA;
         float loadPatternBeta = DEFAULT_LOAD_PATTERN_BETA;
         boolean gensPQfilter = DEFAULT_GENPQFILTER;
@@ -71,19 +71,19 @@ public class DdExportConfig {
             automatonA14 = config.getBooleanProperty("automatonA14", DEFAULT_AUTOMATON_A14);
             importExportRST = config.getBooleanProperty("importExportRST", DEFAULT_RST);
             importExportACMC = config.getBooleanProperty("importExportACMC", DEFAULT_ACMC);
-            LVLoadModeling = config.getBooleanProperty("LVLoadModeling", DEFAULT_LV_LOAD_MODELING);
-            RSTRegulInjector = config.getStringProperty("RSTRegulInjector", DEFAULT_RST_REGUL_INJECTOR);
-            RSTRegulGenerator = config.getStringProperty("RSTRegulGenerator", DEFAULT_RST_REGUL_GENERATOR);
-            RSTRegulGeneratorDelete = config.getStringProperty("RSTRegulGeneratorDelete", DEFAULT_RST_REGUL_GENERATOR_DELETE);
-            ACMCRegul = config.getStringProperty("ACMCRegul", DEFAULT_ACMC_REGUL);
-            RSTPilotGenerators = config.getStringProperty("RSTPilotGenerators", DEFAULT_RST_PILOT_GENERATORS);
+            lvLoadModeling = config.getBooleanProperty("LVLoadModeling", DEFAULT_LV_LOAD_MODELING);
+            rstRegulInjector = config.getStringProperty("RSTRegulInjector", DEFAULT_RST_REGUL_INJECTOR);
+            rstRegulGenerator = config.getStringProperty("RSTRegulGenerator", DEFAULT_RST_REGUL_GENERATOR);
+            rstRegulGeneratorDelete = config.getStringProperty("RSTRegulGeneratorDelete", DEFAULT_RST_REGUL_GENERATOR_DELETE);
+            acmcRegul = config.getStringProperty("ACMCRegul", DEFAULT_ACMC_REGUL);
+            rstPilotGenerators = config.getStringProperty("RSTPilotGenerators", DEFAULT_RST_PILOT_GENERATORS);
             loadPatternAlpha = config.getFloatProperty("loadPatternAlpha", DEFAULT_LOAD_PATTERN_ALPHA);
             loadPatternBeta = config.getFloatProperty("loadPatternBeta", DEFAULT_LOAD_PATTERN_BETA);
             gensPQfilter = config.getBooleanProperty("gensPQfilter", DEFAULT_GENPQFILTER);
         }
         return new DdExportConfig(automatonA11, automatonA12, automatonA14, importExportRST, importExportACMC,
-                                  LVLoadModeling, RSTRegulInjector, RSTRegulGenerator, RSTRegulGeneratorDelete,
-                                  ACMCRegul, RSTPilotGenerators, loadPatternAlpha, loadPatternBeta, gensPQfilter);
+                                  lvLoadModeling, rstRegulInjector, rstRegulGenerator, rstRegulGeneratorDelete,
+                                  acmcRegul, rstPilotGenerators, loadPatternAlpha, loadPatternBeta, gensPQfilter);
     }
 
     public DdExportConfig() {

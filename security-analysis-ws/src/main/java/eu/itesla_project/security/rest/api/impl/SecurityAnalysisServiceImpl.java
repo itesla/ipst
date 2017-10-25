@@ -67,9 +67,9 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
             List<InputPart> formatParts = formParts.get("format");
             if (formatParts != null) {
                 try {
-                    String out_format = getParameter(formatParts);
-                    if (out_format != null) {
-                        format = Format.valueOf(out_format);
+                    String outFormat = getParameter(formatParts);
+                    if (outFormat != null) {
+                        format = Format.valueOf(outFormat);
                     }
                 } catch (IllegalArgumentException ie) {
                     return Response.status(Status.BAD_REQUEST).entity("Wrong format parameter").build();
@@ -154,12 +154,12 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
         for (InputPart inputPart : parts) {
             String disposition = inputPart.getHeaders().getFirst("Content-Disposition");
             if (disposition != null) {
-                Optional<String> filename_header = Arrays.stream(disposition.split(";"))
+                Optional<String> filenameHeader = Arrays.stream(disposition.split(";"))
                         .filter(n -> n.trim().startsWith("filename")).findFirst();
-                if (filename_header.isPresent()) {
-                    String[] filename_tokens = filename_header.get().split("=");
-                    if (filename_tokens.length > 1) {
-                        String filename = filename_tokens[1].trim().replaceAll("\"", "");
+                if (filenameHeader.isPresent()) {
+                    String[] filenameTokens = filenameHeader.get().split("=");
+                    if (filenameTokens.length > 1) {
+                        String filename = filenameTokens[1].trim().replaceAll("\"", "");
                         if (!filename.isEmpty()) {
                             return new FilePart(filename, inputPart.getBody(InputStream.class, null));
                         }

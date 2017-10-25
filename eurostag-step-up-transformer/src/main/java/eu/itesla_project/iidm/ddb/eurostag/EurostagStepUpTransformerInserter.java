@@ -153,14 +153,14 @@ public class EurostagStepUpTransformerInserter {
         }
         // pcu ucc are given as %, hence the factor 100f
         float ucc = tg.t4x.ucc.get(tg.t4x.ktpnom - 1);
-        float r_pu = config.isNoActiveLosses() ? 0f : tg.t4x.pcu / 100f * SB / tg.t4x.rate;
-        float z_pu = ucc / 100f;
-        float x_pu = (float) Math.sqrt(z_pu * z_pu - r_pu * r_pu) * SB / tg.t4x.rate;
+        float rpu = config.isNoActiveLosses() ? 0f : tg.t4x.pcu / 100f * SB / tg.t4x.rate;
+        float zpu = ucc / 100f;
+        float xpu = (float) Math.sqrt(zpu * zpu - rpu * rpu) * SB / tg.t4x.rate;
         float uno1 = tg.t4x.uno1.get(tg.t4x.ktpnom - 1);
         float uno2 = tg.t4x.uno2.get(tg.t4x.ktpnom - 1);
         float zb2 = (float) (Math.pow(vbaseLvBdd, 2) / SB);
-        float r = r_pu * zb2;
-        float x = x_pu * zb2;
+        float r = rpu * zb2;
+        float x = xpu * zb2;
         float ratedU1 = Math.max(uno1, uno2);
         float ratedU2 = Math.min(uno1, uno2);
         TwoWindingsTransformer twt = twta
@@ -173,7 +173,7 @@ public class EurostagStepUpTransformerInserter {
                 .setG(0f)
                 .setB(0f)
                 .add();
-        LOGGER.trace("Creating transformer '{}' (r_pu={}, x_pu={}, r={}, x={})", twt.getId(), r_pu, x_pu, r, x);
+        LOGGER.trace("Creating transformer '{}' (r_pu={}, x_pu={}, r={}, x={})", twt.getId(), rpu, xpu, r, x);
         if (tg.t4x.uno1.size() > 0) {
             for (float depha : tg.t4x.dephas) {
                 if (depha != 0) {
@@ -184,19 +184,19 @@ public class EurostagStepUpTransformerInserter {
                     .setLoadTapChangingCapabilities(false);
             float a = (ratedU2 / vbaseLvBdd) / (ratedU1 / vbaseHvBdd);
             for (int i = 0; i < tg.t4x.uno1.size(); i++) {
-                float uno1_i = tg.t4x.uno1.get(i);
-                float uno2_i = tg.t4x.uno2.get(i);
-                float ucc_i = tg.t4x.ucc.get(i);
-                float z_pu_i = ucc_i / 100f;
-                float ratedU1_i = Math.max(uno1_i, uno2_i);
-                float ratedU2_i = Math.min(uno1_i, uno2_i);
-                float x_pu_i = (float) Math.sqrt(z_pu_i * z_pu_i - r_pu * r_pu) * SB / tg.t4x.rate;
-                float x_i = x_pu_i * zb2;
-                float a_i = (ratedU2_i / vbaseLvBdd) / (ratedU1_i / vbaseHvBdd);
+                float uno1I = tg.t4x.uno1.get(i);
+                float uno2I = tg.t4x.uno2.get(i);
+                float uccI = tg.t4x.ucc.get(i);
+                float zpuI = uccI / 100f;
+                float ratedU1I = Math.max(uno1I, uno2I);
+                float ratedU2I = Math.min(uno1I, uno2I);
+                float xpuI = (float) Math.sqrt(zpuI * zpuI - rpu * rpu) * SB / tg.t4x.rate;
+                float xI = xpuI * zb2;
+                float aI = (ratedU2I / vbaseLvBdd) / (ratedU1I / vbaseHvBdd);
                 rtca.beginStep()
-                        .setRho(a_i / a)
+                        .setRho(aI / a)
                         .setR(0f)
-                        .setX(100f * (x_i - x) / x)
+                        .setX(100f * (xI - x) / x)
                         .setG(0f)
                         .setB(0f)
                         .endStep();
