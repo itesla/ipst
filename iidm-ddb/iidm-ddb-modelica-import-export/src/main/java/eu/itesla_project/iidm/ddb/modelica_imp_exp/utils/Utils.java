@@ -25,10 +25,10 @@ public class Utils {
         try {
             return par.getBytes("UTF-8");
         } catch (UnsupportedEncodingException e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             return new byte[] {};
         }
     }
 
-    private static final Logger log    = LoggerFactory.getLogger(Utils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
 }

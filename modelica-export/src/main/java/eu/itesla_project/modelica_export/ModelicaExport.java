@@ -76,7 +76,7 @@ public class ModelicaExport {
                 omc.getStandardLibrary();
             }
         } catch (Exception e) {
-            _log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -143,21 +143,21 @@ public class ModelicaExport {
         }
 
         if (modelicaSim == null) {
-            _log.error("Simulator with version = " + modelicaVersion + " does not exist.");
+            LOGGER.error("Simulator with version = " + modelicaVersion + " does not exist.");
             return;
         }
         List<String> modelicaModelsList = null;
 
         // File header
         List<GlobalVariable> globalVars = new ArrayList<GlobalVariable>();
-        GlobalVariable OMEGAREF_Var = null;
+        GlobalVariable omegaRefVar = null;
         SNREF = StaticData.SNREF_VALUE;
 
-        GlobalVariable SNREF_Var = new GlobalVariable(StaticData.PARAM_TYPE, StaticData.SNREF, SNREF);
-        globalVars.add(SNREF_Var);
+        GlobalVariable snrefVar = new GlobalVariable(StaticData.PARAM_TYPE, StaticData.SNREF, SNREF);
+        globalVars.add(snrefVar);
         if (this._sourceEngine instanceof EurostagEngine) {
-            OMEGAREF_Var = new GlobalVariable(EurostagModDefaultTypes.OUTPUT_PIN_TYPE, EurostagFixedData.OMEGAREF_NAME);
-            globalVars.add(OMEGAREF_Var);
+            omegaRefVar = new GlobalVariable(EurostagModDefaultTypes.OUTPUT_PIN_TYPE, EurostagFixedData.OMEGAREF_NAME);
+            globalVars.add(omegaRefVar);
         }
 
         HeaderRecord headerRecord = new HeaderRecord(_network.getName(), globalVars);
@@ -252,8 +252,8 @@ public class ModelicaExport {
             if ((generators.size() > 0) && (!generators.isEmpty())) {
                 omegaRefVal = calculateOmegaRef(generators);
             }
-            OMEGAREF_Var.setValue(omegaRefVal);
-            globalInitVars.add(OMEGAREF_Var);
+            omegaRefVar.setValue(omegaRefVal);
+            globalInitVars.add(omegaRefVar);
 
             for (GlobalVariable var : globalInitVars) {
                 if (var.getValue() != null) {
@@ -262,9 +262,9 @@ public class ModelicaExport {
                 }
             }
 
-            if (OMEGAREF_Var.getValue() != null) {
+            if (omegaRefVar.getValue() != null) {
                 // Export Connect between Generators and OmegaRef
-                exportConnectGlobalVar(writerMo, modContext, new ArrayList<Injection>(generators), OMEGAREF_Var, modelicaSim);
+                exportConnectGlobalVar(writerMo, modContext, new ArrayList<Injection>(generators), omegaRefVar, modelicaSim);
             }
         }
 
@@ -409,14 +409,14 @@ public class ModelicaExport {
      */
     private void exportDanglingLines(Writer writerMo, ModExportContext modContext, List<String> modelicaModelsList, SimulatorInst modelicaSim) throws IOException {
         if ((dangLinesList.size() != 0) && (!dangLinesList.isEmpty())) {
-            _log.info("EXPORTING DANGLING LINES");
+            LOGGER.info("EXPORTING DANGLING LINES");
             this.addRecord(writerMo, null);
             this.addRecord(writerMo, "// DANGLING LINES");
             for (DanglingLine dl : dangLinesList) {
-                _log.info("Exporting dangling line " + dl.getId());
+                LOGGER.info("Exporting dangling line " + dl.getId());
 
                 if (dl.getTerminal().getBusBreakerView().getBus() == null) {
-                    _log.info("DANGLING LINE " + dl.getId() + " OUT OF SERVICE.");
+                    LOGGER.info("DANGLING LINE " + dl.getId() + " OUT OF SERVICE.");
                 } else {
                     Bus knownBus = dl.getTerminal().getBusBreakerView().getBus();
                     SV sv = new SV(0, 0,  knownBus.getV(), knownBus.getAngle());
@@ -450,11 +450,11 @@ public class ModelicaExport {
      */
     private void exportBuses(Writer writerMo, ModExportContext modContext, List<String> modelicaModelsList, SimulatorInst modelicaSim) throws IOException {
         if ((busesList.size() != 0) && (!busesList.isEmpty())) {
-            _log.info("EXPORTING BUSES");
+            LOGGER.info("EXPORTING BUSES");
             this.addRecord(writerMo, null);
             this.addRecord(writerMo, "// BUSES");
             for (Bus bus : busesList) {
-                _log.info("Exporting bus " + bus.getId());
+                LOGGER.info("Exporting bus " + bus.getId());
                 BusRecord busRecord = ModelConverter.getModelicaRecord(bus, modContext, _ddbManager, modelicaSim);
                 this.addRecord(busRecord, writerMo, modContext, _ddbManager, modelicaSim);
             }
@@ -472,13 +472,13 @@ public class ModelicaExport {
      */
     private void exportLines(Writer writerMo, ModExportContext modContext, List<String> modelicaModelsList, SimulatorInst modelicaSim) throws IOException {
         if ((linesList.size() != 0) && (!linesList.isEmpty())) {
-            _log.info("EXPORTING LINES");
+            LOGGER.info("EXPORTING LINES");
             this.addRecord(writerMo, null);
             this.addRecord(writerMo, "// LINES");
             for (Line line : linesList) {
-                _log.info("Exporting line " + line.getId());
+                LOGGER.info("Exporting line " + line.getId());
                 if (line.getTerminal1().getBusBreakerView().getBus() == null && line.getTerminal2().getBusBreakerView().getBus() == null) {
-                    _log.info("LINE " + line.getId() + " OUT OF SERVICE.");
+                    LOGGER.info("LINE " + line.getId() + " OUT OF SERVICE.");
                 }
 
                 if ((line.getB1() == line.getB2()) && (line.getG1() == line.getG2())) {
@@ -486,7 +486,7 @@ public class ModelicaExport {
                     this.addRecord(lineRecord, writerMo, modContext, _ddbManager, modelicaSim);
                 } else {
                     //For now we consider the asymmetrical lines as symmetrical lines.
-                    _log.warn("The model has an asymmetric line: {}.", line.getId());
+                    LOGGER.warn("The model has an asymmetric line: {}.", line.getId());
                     LineRecord lineRecord = ModelConverter.getModelicaRecord(line, modContext, _ddbManager, modelicaSim, SNREF);
                     this.addRecord(lineRecord, writerMo, modContext, _ddbManager, modelicaSim);
                 }
@@ -515,11 +515,11 @@ public class ModelicaExport {
 
             // Export Fixed Transformers
             if ((fixedTranformers.size() != 0) && (!fixedTranformers.isEmpty())) {
-                _log.info("EXPORTING FIXED TRANSFORMERS");
+                LOGGER.info("EXPORTING FIXED TRANSFORMERS");
                 this.addRecord(writerMo, null);
                 this.addRecord(writerMo, "// FIXED TRANSFORMERS");
                 for (TwoWindingsTransformer trafo : fixedTranformers) {
-                    _log.info("Exporting fixed trafo " + trafo.getId());
+                    LOGGER.info("Exporting fixed trafo " + trafo.getId());
                     FixedTransformerRecord fixedTrafoRecord = (FixedTransformerRecord) ModelConverter.getModelicaRecord(trafo, modContext, true, _ddbManager, modelicaSim, SNREF);
                     this.addRecord(fixedTrafoRecord, writerMo, modContext, _ddbManager, modelicaSim);
                 }
@@ -527,11 +527,11 @@ public class ModelicaExport {
 
             // Export Detailed Transformers
             if ((detailedTranformers.size() != 0) && (!detailedTranformers.isEmpty())) {
-                _log.info("EXPORTING TAP CHANGER TRANSFORMERS");
+                LOGGER.info("EXPORTING TAP CHANGER TRANSFORMERS");
                 this.addRecord(writerMo, null);
                 this.addRecord(writerMo, "// TAP CHANGER TRANSFORMERS");
                 for (TwoWindingsTransformer trafo : detailedTranformers) {
-                    _log.info("Exporting detailed trafo " + trafo.getId());
+                    LOGGER.info("Exporting detailed trafo " + trafo.getId());
                     DetailedTransformerRecord detailedTrafoRecord = (DetailedTransformerRecord) ModelConverter.getModelicaRecord(trafo, modContext, false, _ddbManager, modelicaSim, SNREF);
                     this.addRecord(detailedTrafoRecord, writerMo, modContext, _ddbManager, modelicaSim);
                 }
@@ -549,11 +549,11 @@ public class ModelicaExport {
      */
     private void exportLoads(Writer writerMo, ModExportContext modContext, List<String> modelicaModelsList, SimulatorInst modelicaSim) throws IOException {
         if ((loadsList.size() != 0) && (!loadsList.isEmpty())) {
-            _log.info("EXPORTING LOADS");
+            LOGGER.info("EXPORTING LOADS");
             this.addRecord(writerMo, null);
             this.addRecord(writerMo, "// LOADS");
             for (Load load : loadsList) {
-                _log.info("Exporting load " + load.getId());
+                LOGGER.info("Exporting load " + load.getId());
                 ConnectBusInfo busInfo = findBus(load.getTerminal(), load.getId());
                 // If load's disconnected we remove it from list in order to didn't corresponding connects
                 LoadRecord loadRecord = ModelConverter.getModelicaRecord(load, busInfo, modContext, _ddbManager, modelicaSim, SNREF, this._sourceEngine);
@@ -573,11 +573,11 @@ public class ModelicaExport {
      */
     private void exportCapacitors(Writer writerMo, ModExportContext modContext, List<String> modelicaModelsList, SimulatorInst modelicaSim) throws IOException {
         if ((shuntsList.size() != 0) && (!shuntsList.isEmpty())) {
-            _log.info("EXPORTING SHUNTS");
+            LOGGER.info("EXPORTING SHUNTS");
             this.addRecord(writerMo, null);
             this.addRecord(writerMo, "// CAPACITORS");
             for (ShuntCompensator shunt : shuntsList) {
-                _log.info("Exporting shunt " + shunt.getId());
+                LOGGER.info("Exporting shunt " + shunt.getId());
                 ConnectBusInfo busInfo = findBus(shunt.getTerminal(), shunt.getId());
                 CapacitorRecord shuntRecord = ModelConverter.getModelicaRecord(shunt, busInfo, modContext, _ddbManager, modelicaSim);
                 this.addRecord(shuntRecord, writerMo, modContext, _ddbManager, modelicaSim);
@@ -597,9 +597,9 @@ public class ModelicaExport {
     private void exportGeneratorsAsFixedInjections(Writer writerMo, ModExportContext modContext, List<String> modelicaModelsList, SimulatorInst modelicaSim, SimulatorInst sourceSim) throws IOException {
         // Export Generators as Fixed Inyections
         if ((generatorsInyections.size() != 0) && (!generatorsInyections.isEmpty())) {
-            _log.info("EXPORTING GENERATORS AS FIXED INYECTIONS");
+            LOGGER.info("EXPORTING GENERATORS AS FIXED INYECTIONS");
             for (Generator generator : generatorsInyections) {
-                _log.info("\t Exporting generator inyection " + generator.getId());
+                LOGGER.info("\t Exporting generator inyection " + generator.getId());
                 ConnectBusInfo busInfo = findBus(generator.getTerminal(), generator.getId());
                 GeneratorRecord generatorRecord = ModelConverter.getModelicaRecord(generator, busInfo, modContext, _ddbManager, modelicaSim, sourceSim, true, SNREF, this.paramsDictionary, this._sourceEngine);
                 this.addRecord(generatorRecord, writerMo, modContext, _ddbManager, modelicaSim);
@@ -632,14 +632,14 @@ public class ModelicaExport {
             InitializationData initializationData;
             tmpDir = Files.createTempDirectory(Paths.get(new File(".").getCanonicalPath()), "itesla_tmp");
             if ((generators.size() != 0) && (!generators.isEmpty())) {
-                _log.info("EXPORTING GENERATORS");
+                LOGGER.info("EXPORTING GENERATORS");
                 this.addRecord(writerMo, null);
                 this.addRecord(writerMo, "// GENERATORS");
                 for (Generator generator : generators) {
                     genRegsRecordList = new ArrayList<RegulatorRecord>();
                     genRegulators = new ArrayList<Internal>();
                     genRegRecords = new HashMap<Internal, RegulatorRecord>();
-                    _log.info("\t Exporting generator " + generator.getId());
+                    LOGGER.info("\t Exporting generator " + generator.getId());
                     ConnectBusInfo busInfo = findBus(generator.getTerminal(), generator.getId());
                     GeneratorRecord generatorRecord = ModelConverter.getModelicaRecord(generator, busInfo, modContext, _ddbManager, modelicaSim, sourceSim, false, SNREF, this.paramsDictionary, this._sourceEngine);
                     generatorsRecords.add(generatorRecord);
@@ -855,7 +855,7 @@ public class ModelicaExport {
                                     }
                                     //Having the generator and the list of all its regulators a Mi_init.mo file is created
                                     // for the initialization (only for the Eurostag case)
-                                    _log.info("GENERATOR_= " + generator.getId());
+                                    LOGGER.info("GENERATOR_= " + generator.getId());
                                     if (this._sourceEngine instanceof EurostagEngine) {
                                         initializationData = new InitializationData(generator, generatorRecord, genRegRecords);
                                         initializationDataList.add(initializationData);
@@ -870,7 +870,7 @@ public class ModelicaExport {
                                         }
                                     }
                                 } else {
-                                    _log.info("GENERATOR HAS NOT CONNECTIONS");
+                                    LOGGER.info("GENERATOR HAS NOT CONNECTIONS");
                                     //If the generator has not regulators only the generator will be initialized.
                                     if (this._sourceEngine instanceof EurostagEngine) {
                                         initializationData = new InitializationData(generator, generatorRecord, genRegRecords);
@@ -878,7 +878,7 @@ public class ModelicaExport {
                                     }
                                 }
                             } else {
-                                _log.info("CONNECTION SCHEMA IS NULL");
+                                LOGGER.info("CONNECTION SCHEMA IS NULL");
                             }
                         }
                         if (!genRegsRecordMap.containsKey(generator)) {
@@ -907,11 +907,11 @@ public class ModelicaExport {
 
             // Export Regulators
             if ((regulatorsList.size() != 0) && (!regulatorsList.isEmpty())) {
-                _log.info("EXPORTING REGULATORS");
+                LOGGER.info("EXPORTING REGULATORS");
                 this.addRecord(writerMo, null);
                 this.addRecord(writerMo, "// REGULATORS");
                 for (RegulatorRecord reg : regulatorsList) {
-                    _log.info("\t Exporting regulator " + reg.getModelicaName());
+                    LOGGER.info("\t Exporting regulator " + reg.getModelicaName());
                     this.addRecord(reg, writerMo, modContext, _ddbManager, modelicaSim);
                 }
             }
@@ -991,40 +991,40 @@ public class ModelicaExport {
      * @throws IOException
      */
     private void exportConnectRegulators(Writer writerMo, ModExportContext modContext, List<String> modelicaModelsList, SimulatorInst modelicaSim) throws IOException {
-        _log.info("EXPORTING CONNECT REGULATORS");
+        LOGGER.info("EXPORTING CONNECT REGULATORS");
         if ((connectRegList.size() != 0) && (!connectRegList.isEmpty())) {
             this.addRecord(writerMo, null);
             this.addRecord(writerMo, "// Connecting REGULATORS and MACHINES");
             for (ConnectRegulatorRecord connectReg : connectRegList) {
-                _log.info("\t Exporting regulator connect " + connectReg.getModelicaName());
+                LOGGER.info("\t Exporting regulator connect " + connectReg.getModelicaName());
                 this.addRecord(connectReg, writerMo, modContext, _ddbManager, modelicaSim);
             }
         }
-        _log.info("EXPORTING CONNECT BETWEEN 2 REGULATORS");
+        LOGGER.info("EXPORTING CONNECT BETWEEN 2 REGULATORS");
         if ((connect2RegsList.size() != 0) && (!connect2RegsList.isEmpty())) {
             this.addRecord(writerMo, null);
             this.addRecord(writerMo, "// Connecting REGULATORS and REGULATORS");
             for (Connect2RegulatorsRecord connectReg : connect2RegsList) {
-                _log.info("\t Exporting regulator connect " + connectReg.getModelicaName());
+                LOGGER.info("\t Exporting regulator connect " + connectReg.getModelicaName());
                 this.addRecord(connectReg, writerMo, modContext, _ddbManager, modelicaSim);
             }
         }
-        _log.info("EXPORTING CONNECT BETWEEN 2 EQUIPMENTS");
+        LOGGER.info("EXPORTING CONNECT BETWEEN 2 EQUIPMENTS");
         if ((connect2GensList.size() != 0) && (!connect2GensList.isEmpty())) {
             this.addRecord(writerMo, null);
             this.addRecord(writerMo, "// Connecting EQUIPMENTS and EQUIPMENTS");
             for (Connect2GeneratorsRecord connectGen : connect2GensList) {
-                _log.info("\t Exporting equipment connect " + connectGen.getModelicaName());
+                LOGGER.info("\t Exporting equipment connect " + connectGen.getModelicaName());
                 this.addRecord(connectGen, writerMo, modContext, _ddbManager, modelicaSim);
             }
         }
         //If the regulator is SCRX | SEXS | IEEET2 the connections connect(const.y, Reg.VOEL) and connect(const.y, Reg.VOEL) are added.
-        _log.info("EXPORTING CONNECT BETWEEN REGULATOR AND CONSTANT");
+        LOGGER.info("EXPORTING CONNECT BETWEEN REGULATOR AND CONSTANT");
         if ((connectConstList.size() != 0) && (!connectConstList.isEmpty())) {
             this.addRecord(writerMo, null);
             this.addRecord(writerMo, "// Connecting REGULATORS and CONSTANTS");
             for (ConnectConstantRecord connectReg : connectConstList) {
-                _log.info("\t Exporting regulator connect " + connectReg.getModelicaName());
+                LOGGER.info("\t Exporting regulator connect " + connectReg.getModelicaName());
                 this.addRecord(connectReg, writerMo, modContext, _ddbManager, modelicaSim);
             }
         }
@@ -1040,11 +1040,11 @@ public class ModelicaExport {
      */
     private void exportConnectLines(Writer writerMo, ModExportContext modContext, List<String> modelicaModelsList, SimulatorInst modelicaSim) throws IOException {
         if ((connectLinesList.size() != 0) && (!connectLinesList.isEmpty())) {
-            _log.info("EXPORTING CONNECT LINES");
+            LOGGER.info("EXPORTING CONNECT LINES");
             this.addRecord(writerMo, null);
             this.addRecord(writerMo, "// Connecting LINES");
             for (Line line : connectLinesList) {
-                _log.info("\t Exporting line connect " + line.getId());
+                LOGGER.info("\t Exporting line connect " + line.getId());
                 Equipments.ConnectionInfo info1 = Equipments.getConnectionInfoInBusBreakerView(line.getTerminal1());
                 Bus b = info1.getConnectionBus();
                 if (!Float.isNaN(b.getV())) {
@@ -1075,11 +1075,11 @@ public class ModelicaExport {
      */
     private void exportConnectDanglingLines(Writer writerMo, ModExportContext modContext, List<String> modelicaModelsList, SimulatorInst modelicaSim) throws IOException {
         if ((danglingLines.size() != 0) && (!danglingLines.isEmpty())) {
-            _log.info("EXPORTING CONNECT DANGLING LINES");
+            LOGGER.info("EXPORTING CONNECT DANGLING LINES");
             this.addRecord(writerMo, null);
             this.addRecord(writerMo, "// Connecting DANGLING LINES");
             for (DanglingLineRecord dline : danglingLines) {
-                _log.info("\t Exporting dangling line connect " + dline.getDanglingLine().getId());
+                LOGGER.info("\t Exporting dangling line connect " + dline.getDanglingLine().getId());
                 Equipments.ConnectionInfo info1 = Equipments.getConnectionInfoInBusBreakerView(dline.getDanglingLine().getTerminal());
                 Bus b = info1.getConnectionBus();
                 if (!Float.isNaN(b.getV())) {
@@ -1104,12 +1104,12 @@ public class ModelicaExport {
      */
     private void exportConnectCouplingDevices(Writer writerMo, ModExportContext modContext, List<String> modelicaModelsList, SimulatorInst modelicaSim) throws IOException {
         if ((connectCouplingList.size() != 0) && (!connectCouplingList.isEmpty())) {
-            _log.info("EXPORTING CONNECT COUPLING DEVICES " + connectCouplingList.size());
+            LOGGER.info("EXPORTING CONNECT COUPLING DEVICES " + connectCouplingList.size());
             this.addRecord(writerMo, null);
             this.addRecord(writerMo, "// COUPLING DEVICES");
             for (VoltageLevel voltageLevel : connectCouplingList) {
                 for (Switch sw : voltageLevel.getBusBreakerView().getSwitches()) {
-                    _log.info("\t Exporting coupling device connect " + sw.getId());
+                    LOGGER.info("\t Exporting coupling device connect " + sw.getId());
                     Bus bus1 = voltageLevel.getBusBreakerView().getBus1(sw.getId());
                     Bus bus2 = voltageLevel.getBusBreakerView().getBus2(sw.getId());
                     if (!Float.isNaN(bus1.getV()) && !Float.isNaN(bus2.getV())) {
@@ -1131,11 +1131,11 @@ public class ModelicaExport {
      */
     private void exportConnectLoads(Writer writerMo, ModExportContext modContext, List<String> modelicaModelsList, SimulatorInst modelicaSim) throws IOException {
         if ((connectLoadsList.size() != 0) && (!connectLoadsList.isEmpty())) {
-            _log.info("EXPORTING CONNECT LOADS");
+            LOGGER.info("EXPORTING CONNECT LOADS");
             this.addRecord(writerMo, null);
             this.addRecord(writerMo, "// Connecting LOADS");
             for (Load load : connectLoadsList) {
-                _log.info("\t Exporting load connect " + load.getId());
+                LOGGER.info("\t Exporting load connect " + load.getId());
                 ConnectBusInfo busInfo = findBus(load.getTerminal(), load.getId());
                 if (!Float.isNaN(busInfo.getBus().getV())) {
                     if (busInfo.isConnected()) {
@@ -1157,11 +1157,11 @@ public class ModelicaExport {
      */
     private void exportConnectDanglingLoads(Writer writerMo, ModExportContext modContext, List<String> modelicaModelsList, SimulatorInst modelicaSim) throws IOException {
         if ((danglingLines.size() != 0) && (!danglingLines.isEmpty())) {
-            _log.info("EXPORTING CONNECT LOADS");
+            LOGGER.info("EXPORTING CONNECT LOADS");
             this.addRecord(writerMo, null);
             this.addRecord(writerMo, "// Connecting LOADS");
             for (DanglingLineRecord dline : danglingLines) {
-                _log.info("\t Exporting load connect " + dline.getDanglingLine().getId());
+                LOGGER.info("\t Exporting load connect " + dline.getDanglingLine().getId());
                 ConnectRecord loadConnect = ModelConverter.getModelicaRecord(dline.getDanglingBusName(), dline.getDanglingLoadName(), modContext, _ddbManager, modelicaSim);
                 this.addRecord(loadConnect, writerMo, modContext, _ddbManager, modelicaSim);
             }
@@ -1173,11 +1173,11 @@ public class ModelicaExport {
      */
     private void exportConnectCapacitors(Writer writerMo, ModExportContext modContext, List<String> modelicaModelsList, SimulatorInst modelicaSim) throws IOException {
         if ((connectCapacitorsList.size() != 0) && (!connectCapacitorsList.isEmpty())) {
-            _log.info("EXPORTING CONNECT CAPACITORS");
+            LOGGER.info("EXPORTING CONNECT CAPACITORS");
             this.addRecord(writerMo, null);
             this.addRecord(writerMo, "// Connecting Capacitors");
             for (ShuntCompensator capacitor : connectCapacitorsList) {
-                _log.info("\t Exporting capacitor connect " + capacitor.getId());
+                LOGGER.info("\t Exporting capacitor connect " + capacitor.getId());
                 ConnectBusInfo busInfo = findBus(capacitor.getTerminal(), capacitor.getId());
                 if (!Float.isNaN(busInfo.getBus().getV())) {
                     if (busInfo.isConnected()) {
@@ -1200,11 +1200,11 @@ public class ModelicaExport {
     private void exportConnectGenerators(Writer writerMo, ModExportContext modContext, List<String> modelicaModelsList, SimulatorInst modelicaSim) throws IOException {
         if ((genList.size() != 0) && (!genList.isEmpty())) {
             if ((generators.size() != 0) && (!generators.isEmpty())) {
-                _log.info("EXPORTING CONNECT GENERATORS");
+                LOGGER.info("EXPORTING CONNECT GENERATORS");
                 this.addRecord(writerMo, null);
                 this.addRecord(writerMo, "// Connecting GENERATORS");
                 for (Generator gen : generators) {
-                    _log.info("\t Exporting generator connect " + gen.getId());
+                    LOGGER.info("\t Exporting generator connect " + gen.getId());
                     ConnectBusInfo busInfo = findBus(gen.getTerminal(), gen.getId());
                     if (!Float.isNaN(busInfo.getBus().getV())) {
                         if (busInfo.isConnected()) {
@@ -1215,11 +1215,11 @@ public class ModelicaExport {
                 }
             }
             if ((generatorsInyections.size() != 0) && (!generatorsInyections.isEmpty())) {
-                _log.info("EXPORTING CONNECT GENERATORS AS FIXED INYECTIONS");
+                LOGGER.info("EXPORTING CONNECT GENERATORS AS FIXED INYECTIONS");
                 this.addRecord(writerMo, null);
                 this.addRecord(writerMo, "// Connecting GENERATORS AS FIXED INYECTIONS");
                 for (Generator gen : generatorsInyections) {
-                    _log.info("\t Exporting generator connect " + gen.getId());
+                    LOGGER.info("\t Exporting generator connect " + gen.getId());
                     ConnectBusInfo busInfo = findBus(gen.getTerminal(), gen.getId());
                     if (!Float.isNaN(busInfo.getBus().getV())) {
                         if (busInfo.isConnected()) {
@@ -1243,11 +1243,11 @@ public class ModelicaExport {
     private void exportConnectTransformers(Writer writerMo, ModExportContext modContext, List<String> modelicaModelsList, SimulatorInst modelicaSim) throws IOException {
         if ((trafosList.size() != 0) && (!trafosList.isEmpty())) {
             if ((fixedTranformers.size() != 0) && (!fixedTranformers.isEmpty())) {
-                _log.info("EXPORTING CONNECT FIXED TRANSFORMERS");
+                LOGGER.info("EXPORTING CONNECT FIXED TRANSFORMERS");
                 this.addRecord(writerMo, null);
                 this.addRecord(writerMo, "// Connecting FIXED TRANSFORMERS");
                 for (TwoWindingsTransformer trafo : fixedTranformers) {
-                    _log.info("\t Exporting fixed trafo connect " + trafo.getId());
+                    LOGGER.info("\t Exporting fixed trafo connect " + trafo.getId());
                     Equipments.ConnectionInfo trafoT1Info = Equipments.getConnectionInfoInBusBreakerView(trafo.getTerminal1());
                     if (!Float.isNaN(trafoT1Info.getConnectionBus().getV()) && trafoT1Info.isConnected()) {
                         ConnectFixedTransformerRecord connectFixedTrafoT1Record = (ConnectFixedTransformerRecord) ModelConverter.getModelicaRecord(trafoT1Info.getConnectionBus(), trafo, modContext, true, _ddbManager, modelicaSim);
@@ -1261,11 +1261,11 @@ public class ModelicaExport {
                 }
             }
             if ((detailedTranformers.size() != 0) && (!detailedTranformers.isEmpty())) {
-                _log.info("EXPORTING CONNECT DETAILED TRANSFORMERS");
+                LOGGER.info("EXPORTING CONNECT DETAILED TRANSFORMERS");
                 this.addRecord(writerMo, null);
                 this.addRecord(writerMo, "// Connecting DETAILED TRANSFORMERS");
                 for (TwoWindingsTransformer trafo : detailedTranformers) {
-                    _log.info("\t Exporting detailed trafo connect " + trafo.getId());
+                    LOGGER.info("\t Exporting detailed trafo connect " + trafo.getId());
                     Equipments.ConnectionInfo trafoT1Info = Equipments.getConnectionInfoInBusBreakerView(trafo.getTerminal1());
                     if (!Float.isNaN(trafoT1Info.getConnectionBus().getV()) && trafoT1Info.isConnected()) {
                         ConnectDetailedTransformerRecord connectDetailedTrafoT1Record = (ConnectDetailedTransformerRecord) ModelConverter.getModelicaRecord(trafoT1Info.getConnectionBus(), trafo, modContext, false, _ddbManager, modelicaSim);
@@ -1368,11 +1368,11 @@ public class ModelicaExport {
                 elements.append(StaticData.NEW_LINE);
                 count++;
             }
-            _log.info("Buses = " + count);
+            LOGGER.info("Buses = " + count);
             count = 0;
             elements.append("LINES");
             elements.append(StaticData.NEW_LINE);
-            _log.info("Lines = " + count);
+            LOGGER.info("Lines = " + count);
             count = 0;
 
             elements.append("TRAFOS");
@@ -1389,9 +1389,9 @@ public class ModelicaExport {
                 elements.append(StaticData.NEW_LINE);
                 count++;
             }
-            _log.info("Trafos = " + count);
-            _log.info("Fixed Trafos = " + fixedTranformers.size());
-            _log.info("Detailed Trafos = " + detailedTranformers.size());
+            LOGGER.info("Trafos = " + count);
+            LOGGER.info("Fixed Trafos = " + fixedTranformers.size());
+            LOGGER.info("Detailed Trafos = " + detailedTranformers.size());
             count = 0;
             elements.append("LOAD");
             elements.append(StaticData.NEW_LINE);
@@ -1400,7 +1400,7 @@ public class ModelicaExport {
                 elements.append(StaticData.NEW_LINE);
                 count++;
             }
-            _log.info("Loads = " + count);
+            LOGGER.info("Loads = " + count);
             count = 0;
             elements.append("SHUNTS");
             elements.append(StaticData.NEW_LINE);
@@ -1409,7 +1409,7 @@ public class ModelicaExport {
                 elements.append(StaticData.NEW_LINE);
                 count++;
             }
-            _log.info("Shunts = " + count);
+            LOGGER.info("Shunts = " + count);
             elements.append("GENERATOR");
             elements.append(StaticData.NEW_LINE);
             count = 0;
@@ -1441,14 +1441,14 @@ public class ModelicaExport {
                     }
                 }
             }
-            _log.info("Gens = " + count);
-            _log.info("Machines = " + countEq);
-            _log.info("Inyections = " + (count - countEq));
+            LOGGER.info("Gens = " + count);
+            LOGGER.info("Machines = " + countEq);
+            LOGGER.info("Inyections = " + (count - countEq));
             count = 0;
             elements.close();
         } catch (IOException e) {
             e.printStackTrace();
-            _log.error("Error counting elements.");
+            LOGGER.error("Error counting elements.");
         }
     }
 
@@ -1489,5 +1489,5 @@ public class ModelicaExport {
     private List<Connect2GeneratorsRecord> connect2GensList = new ArrayList<Connect2GeneratorsRecord>();
     private List<ConnectConstantRecord> connectConstList = new ArrayList<ConnectConstantRecord>();
 
-    private static final Logger _log = LoggerFactory.getLogger(ModelicaExport.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModelicaExport.class);
 }

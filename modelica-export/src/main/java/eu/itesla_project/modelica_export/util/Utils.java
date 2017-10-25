@@ -156,5 +156,5 @@ public class Utils {
         return initList;
     }
 
-    private static final Logger log = LoggerFactory.getLogger(Utils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
 }

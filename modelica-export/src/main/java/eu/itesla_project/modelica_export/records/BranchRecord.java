@@ -62,7 +62,7 @@ public abstract class BranchRecord extends ModelicaRecord {
         ModelTemplateContainer mtc = ddbManager.findModelTemplateContainer(ddbid);
 
         if (mtc == null) {
-//            _log.warn("EUROSTAG Model Template Container does not exist. Searching Default MODELICA Model Template Container in DDB.");
+//            LOGGER.warn("EUROSTAG Model Template Container does not exist. Searching Default MODELICA Model Template Container in DDB.");
             mtc = ddbManager.findModelTemplateContainer(StaticData.MTC_PREFIX_NAME + DEFAULT_BRANCH_TYPE);
         }
 
@@ -77,11 +77,11 @@ public abstract class BranchRecord extends ModelicaRecord {
                 super.setModelicaType(model.getTypeName());
             } else {
                 super.setCorrect(false);
-                _log.error("MODELICA Model Template does not exist in DDB.");
+                LOGGER.error("MODELICA Model Template does not exist in DDB.");
             }
         } else {
             super.setCorrect(false);
-//            _log.error("MODELICA Model Template Container does not exist in DDB.");
+//            LOGGER.error("MODELICA Model Template Container does not exist in DDB.");
         }
     }
 
@@ -141,5 +141,5 @@ public abstract class BranchRecord extends ModelicaRecord {
     public String                        DEFAULT_BRANCH_TYPE;
     public String                        DEFAULT_BRANCH_PREFIX;
 
-    private static final Logger            _log                        = LoggerFactory.getLogger(BranchRecord.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BranchRecord.class);
 }

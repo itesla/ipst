@@ -87,7 +87,7 @@ public class RegulatorRecord extends ModelicaRecord {
                                     }
                                 }
                             } else {
-                                _log.error("Regulator " + this.getModelicaName() + " has not default parameters.");
+                                LOGGER.error("Regulator " + this.getModelicaName() + " has not default parameters.");
                             }
 
                         }
@@ -102,7 +102,7 @@ public class RegulatorRecord extends ModelicaRecord {
                     }
                     super.setModelicaType(model.getTypeName());
                 } else {
-                    _log.warn("MODELICA Model Template does not exist in DDB (1)");
+                    LOGGER.warn("MODELICA Model Template does not exist in DDB (1)");
 
                     model = ddbManager.findModelTemplate(in, modelicaSim);
 
@@ -136,12 +136,12 @@ public class RegulatorRecord extends ModelicaRecord {
                         super.setModelicaType(model.getTypeName());
                     } else {
                         super.setCorrect(false);
-                        _log.warn("MODELICA Model Template does not exist in DDB. (2)");
+                        LOGGER.warn("MODELICA Model Template does not exist in DDB. (2)");
                     }
                 }
             } else if (this.sourceEngine instanceof PsseEngine) {
                 model = ddbManager.findModelTemplate(in, modelicaSim);
-                _log.info("REGULATOR MODELICA MODELI: " + in.getNativeId() + " in modelica sim " + modelicaSim + " model " + model.getTypeName());
+                LOGGER.info("REGULATOR MODELICA MODELI: " + in.getNativeId() + " in modelica sim " + modelicaSim + " model " + model.getTypeName());
                 Parameters parameters = ddbManager.findParameters(in, modelicaSim);
                 Parameters modelicaParameters = null;
                 if (parameters != null) {
@@ -177,7 +177,7 @@ public class RegulatorRecord extends ModelicaRecord {
                                     }
                                 }
                             } else {
-                                _log.error("Regulator " + this.getModelicaName() + " has not default parameters.");
+                                LOGGER.error("Regulator " + this.getModelicaName() + " has not default parameters.");
                             }
 
                         }
@@ -197,7 +197,7 @@ public class RegulatorRecord extends ModelicaRecord {
                     }
                     super.setModelicaType(model.getTypeName());
                 } else {
-                    _log.warn("MODELICA Model Template does not exist in DDB (3)");
+                    LOGGER.warn("MODELICA Model Template does not exist in DDB (3)");
 
                     model = ddbManager.findModelTemplate(in, modelicaSim);
 
@@ -245,7 +245,7 @@ public class RegulatorRecord extends ModelicaRecord {
             Converter eurostagModelicaConverter = new Converter(ddbManager, eurostagVersion, modelicaVersion);
             eurostagModelicaConverter.convertAndSaveInternal(nativeId, true);
         } catch (Throwable e) {
-            _log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -464,5 +464,5 @@ public class RegulatorRecord extends ModelicaRecord {
 
     private String dataInit;
 
-    private static final Logger _log = LoggerFactory.getLogger(RegulatorRecord.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegulatorRecord.class);
 }

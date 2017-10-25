@@ -197,16 +197,16 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
             args1.add(Integer.toString(config.getRngSeed()));
         }
 
-        String wp5_m1;
+        String wp5M1;
         if (config.getBinariesDir() != null) {
-            wp5_m1 = config.getBinariesDir().resolve(WP5_M1).toAbsolutePath().toString();
+            wp5M1 = config.getBinariesDir().resolve(WP5_M1).toAbsolutePath().toString();
         } else {
-            wp5_m1 = WP5_M1;
+            wp5M1 = WP5_M1;
         }
 
         return new SimpleCommandBuilder()
                 .id("wp5_m1")
-                .program(wp5_m1)
+                .program(wp5M1)
                 .args(args1)
                 .inputFiles(new InputFile(historicalDataMatFile.getFileName().toString()))
                 .outputFiles(new OutputFile(M1OUTPUTFILENAME), new OutputFile(M0OUTPUTFILENAME), new OutputFile(M0OUTPUTFILENAMECSV), new OutputFile(GUIOUTPUTFILENAME))
@@ -214,15 +214,15 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
     }
 
     private Command createMatm2Cmd() {
-        String wp5_m2;
+        String wp5M2;
         if (config.getBinariesDir() != null) {
-            wp5_m2 = config.getBinariesDir().resolve(WP5_M2).toAbsolutePath().toString();
+            wp5M2 = config.getBinariesDir().resolve(WP5_M2).toAbsolutePath().toString();
         } else {
-            wp5_m2 = WP5_M2;
+            wp5M2 = WP5_M2;
         }
         return new SimpleCommandBuilder()
                 .id("wp5_m2")
-                .program(wp5_m2)
+                .program(wp5M2)
                 .args(M1OUTPUTFILENAME,
                         M2OUTPUTFILENAME,
                         Command.EXECUTION_NUMBER_PATTERN,
@@ -235,11 +235,11 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
     }
 
     private Command createMatm2reduceCmd() {
-        String wp5_m2_reduce;
+        String wp5M2Reduce;
         if (config.getBinariesDir() != null) {
-            wp5_m2_reduce = config.getBinariesDir().resolve(WP5_M2_REDUCE).toAbsolutePath().toString();
+            wp5M2Reduce = config.getBinariesDir().resolve(WP5_M2_REDUCE).toAbsolutePath().toString();
         } else {
-            wp5_m2_reduce = WP5_M2_REDUCE;
+            wp5M2Reduce = WP5_M2_REDUCE;
         }
         List<InputFile> m2partsfiles = new ArrayList<InputFile>(parameters.getnClusters() + 1);
         m2partsfiles.add(new InputFile(M1OUTPUTFILENAME));
@@ -248,7 +248,7 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
         }
         return new SimpleCommandBuilder()
                 .id("wp5_m2_reduce")
-                .program(wp5_m2_reduce)
+                .program(wp5M2Reduce)
                 .args(M1OUTPUTFILENAME, ".",
                         M2PATHPREFIX,
                         "" + parameters.getnClusters(),
@@ -263,11 +263,11 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
     }
 
     private Command createMatm3Cmd() {
-        String wp5_m3;
+        String wp5M3;
         if (config.getBinariesDir() != null) {
-            wp5_m3 = config.getBinariesDir().resolve(WP5_M3_SAMPLING).toAbsolutePath().toString();
+            wp5M3 = config.getBinariesDir().resolve(WP5_M3_SAMPLING).toAbsolutePath().toString();
         } else {
-            wp5_m3 = WP5_M3_SAMPLING;
+            wp5M3 = WP5_M3_SAMPLING;
         }
         List<String> args1 = new ArrayList<>();
         args1.add(FEAOUTPUTFILENAME);
@@ -279,7 +279,7 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
 
         return new SimpleCommandBuilder()
                 .id(WP5_M3_SAMPLING)
-                .program(wp5_m3)
+                .program(wp5M3)
                 .args(args1)
                 .inputFiles(new InputFile(FEAOUTPUTFILENAME))
                 .outputFiles(new OutputFile(FEASAMPLERFILENAME))

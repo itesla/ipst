@@ -24,10 +24,15 @@ import eu.itesla_project.modules.contingencies.Zone;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,27 +52,29 @@ public class CsvFileContingenciesAndActionsDatabaseClient implements Contingenci
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CsvFileContingenciesAndActionsDatabaseClient.class);
 
-    private final Path file;
+    private final List<ContingencyData> contingency_data = new ArrayList<>();
 
     public CsvFileContingenciesAndActionsDatabaseClient(Path file) {
-        this.file = file;
+        Objects.requireNonNull(file);
+        try (InputStream stream = Files.newInputStream(file)) {
+            load(stream);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
-    @Override
-    public List<Contingency> getContingencies(Network network) {
-        // pre-index tie lines
-        Map<String, String> tieLines = new HashMap<>();
-        for (Line l : network.getLines()) {
-            if (l.isTieLine()) {
-                TieLine tl = (TieLine) l;
-                tieLines.put(tl.getHalf1().getId(), tl.getId());
-                tieLines.put(tl.getHalf2().getId(), tl.getId());
-            }
-        }
 
-        List<Contingency> contingencies = new ArrayList<>();
+
+    public CsvFileContingenciesAndActionsDatabaseClient(InputStream stream) {
+        load(stream);
+    }
+
+    private void load(InputStream stream) {
+        Objects.requireNonNull(stream);
         try {
-            try (BufferedReader r = Files.newBufferedReader(file, Charset.defaultCharset())) {
+            Reader ir = new InputStreamReader(stream, Charset.defaultCharset());
+            try (BufferedReader r = new BufferedReader(ir)) {
+
                 String txt;
                 while ((txt = r.readLine()) != null) {
                     if (txt.startsWith("#")) { // comment
@@ -81,34 +88,61 @@ public class CsvFileContingenciesAndActionsDatabaseClient implements Contingenci
                         throw new RuntimeException("Error parsing '" + txt + "'");
                     }
                     String contingencyId = tokens[0];
+                    ContingencyData cd = new ContingencyData(contingencyId);
                     int lineCount = Integer.parseInt(tokens[1]);
                     if (tokens.length != lineCount + 2) {
                         throw new RuntimeException("Error parsing '" + txt + "'");
                     }
-                    List<ContingencyElement> elements = new ArrayList<>(lineCount);
                     for (int i = 2; i < lineCount + 2; i++) {
                         String id = tokens[i];
-                        if (network.getLine(id) != null) {
-                            elements.add(new BranchContingency(id));
-                        } else if (network.getGenerator(id) != null) {
-                            elements.add(new GeneratorContingency(id));
-                        } else if (tieLines.containsKey(id)) {
-                            elements.add(new BranchContingency(tieLines.get(id)));
-                        } else {
-                            LOGGER.warn("Contingency element '{}' not found", id);
-                        }
+                        cd.addElementId(id);
                     }
-                    if (elements.size() > 0) {
-                        contingencies.add(new ContingencyImpl(contingencyId, elements));
-                    } else {
-                        LOGGER.warn("Skip empty contingency " + contingencyId);
-                    }
+                    contingency_data.add(cd);
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
+    }
+
+    @Override
+    public List<Contingency> getContingencies(Network network) {
+        Map<String, String> tieLines = new HashMap<>();
+        for (Line l : network.getLines()) {
+            if (l.isTieLine()) {
+                TieLine tl = (TieLine) l;
+                tieLines.put(tl.getHalf1().getId(), tl.getId());
+                tieLines.put(tl.getHalf2().getId(), tl.getId());
+            }
+        }
+
+        List<Contingency> contingencies = new ArrayList<>();
+        contingency_data.forEach(cd -> {
+            List<ContingencyElement> elements = cd.getElementsIds().stream()
+                    .map(id -> getElement(network, tieLines, id))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            if (elements.size() > 0) {
+                contingencies.add(new ContingencyImpl(cd.getId(), elements));
+            } else {
+                LOGGER.warn("Skip empty contingency " + cd.getId());
+            }
+        });
         return contingencies;
+    }
+
+    private ContingencyElement getElement(Network network, Map<String, String> tieLines, String id) {
+        if (network.getLine(id) != null) {
+            return new BranchContingency(id);
+        } else if (network.getGenerator(id) != null) {
+            return new GeneratorContingency(id);
+        } else if (tieLines.containsKey(id)) {
+            return new BranchContingency(tieLines.get(id));
+        } else {
+            LOGGER.warn("Contingency element '{}' not found", id);
+        }
+        return null;
+
     }
 
     @Override
@@ -188,6 +222,30 @@ public class CsvFileContingenciesAndActionsDatabaseClient implements Contingenci
     public Collection<ActionsContingenciesAssociation> getActionsCtgAssociationsByConstraint(
             String equipmentId, ConstraintType constraintType) {
         throw new UnsupportedOperationException();
+    }
+
+    private static class ContingencyData {
+        private final String id;
+        private final List<String> elementIds;
+
+        ContingencyData(String id) {
+            this.id = Objects.requireNonNull(id);
+            elementIds = new ArrayList<>();
+        }
+
+        String getId() {
+            return id;
+        }
+
+        void addElementId(String id) {
+            Objects.requireNonNull(id);
+            elementIds.add(id);
+        }
+
+        List<String> getElementsIds() {
+            return elementIds;
+        }
+
     }
 
 }
