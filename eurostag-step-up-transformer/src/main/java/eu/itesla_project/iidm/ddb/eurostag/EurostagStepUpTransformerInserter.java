@@ -40,7 +40,7 @@ public class EurostagStepUpTransformerInserter {
 
     private final static float SB = 100;
     private final static float ACCEPTABLE_VOLTAGE_DIFF = 0.1f;
-    private final static float INFINITE_REACTIVE_LIMIT = 9999f;
+    private final static float INFINITE_REACTIVE_LIMIT = 99999f;
 
     public enum InsertionStatus {
         OK("ok"),
