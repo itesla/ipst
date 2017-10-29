@@ -7,12 +7,12 @@
 package eu.itesla_project.iidm.ddb.eurostag_imp_exp;
 
 import com.google.common.collect.Sets;
+import com.powsybl.iidm.network.*;
+import com.powsybl.iidm.network.util.Identifiables;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.utils.Utils;
 import eu.itesla_project.iidm.ddb.model.*;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
 import eu.itesla_project.iidm.ejbclient.EjbClientCtx;
-import com.powsybl.iidm.network.*;
-import com.powsybl.iidm.network.util.Identifiables;
 import itesla.converter.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +79,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             //              {"M22D", "I-PHI injector - type Fortescue"},
             //              {"M23",  "IR-II injector"},
             //              {"M23D", "IR-II injector - type Fortescue"},
-            //              {"M50",  "Converter"},
+            {"M50",  "Converter"},
             //              {"M50D", "Converter - type Fortescue"},
             {"MA",  "Macro-Automaton"},
             ////          {"R",    "Macroblock"}
@@ -294,6 +294,9 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                 case "M21":
                     dbId = populateDDB_M21(zone, dicoMap, ddbmanager, eurostagSim);
                     break;
+                case "M50":
+                    dbId = populateDDB_M50(zone, dicoMap, ddbmanager, eurostagSim);
+                    break;
                 case "R":
                     dbId = populateDDB_R(zone, dicoMap, ddbmanager, eurostagSim, regsMapping);
                     break;
@@ -492,6 +495,102 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
         return cimId;
     }
+
+    public String populateDDB_M50(EurostagRecord zone, Map<String, String> amap,
+                                  DDBManager ddbmanager, SimulatorInst eurostagSim) {
+        // here we assume that the simulator with the required version already
+        // exists
+        if (eurostagSim == null) {
+            throw new RuntimeException("Eurostag simulator could not be null");
+        }
+
+        if (!"M50".equals(zone.getTypeName())) {
+            throw new RuntimeException("not expected type M50: " + zone);
+        }
+
+        log.debug("-Creating DDB component {} ", zone.getTypeName());
+        String mName = (String) zone.getData().get("machine.name");
+        String cimId = amap.get(mName);
+        if ((cimId == null) || ("".equals(cimId))) {
+            throw new RuntimeException(mName + ": cimId not found in mapping.");
+        }
+
+        if (!equipmentsTypeMap.contains(cimId)) {
+            equipmentsTypeMap.put(cimId, zone.getTypeName());
+        }
+
+        Equipment eq1 = ddbmanager.findEquipment(cimId);
+        if ((eq1 != null) && (updateFlag == true)) {
+            Set<String> connectedInternals = getConnectedInternals(cimId, ddbmanager);
+
+            //remove this equipment graph
+            log.info("- removing existing equipment {}", cimId);
+            removeEquipment(cimId, ddbmanager);
+            eq1 = null;
+
+            for (String internalId : connectedInternals) {
+                log.info("- removing existing connected internal {}", internalId);
+                removeInternal(internalId, ddbmanager);
+            }
+
+        }
+
+        String mtc_ddbid = MTC_PREFIX_NAME + zone.getKeyName();
+        ModelTemplateContainer mtc1 = ddbmanager
+                .findModelTemplateContainer(mtc_ddbid);
+        if (mtc1 == null) {
+            throw new RuntimeException(" template container " + mtc_ddbid
+                    + " not defined! ");
+        }
+
+        ParametersContainer pc1 = ddbmanager.findParametersContainer(mName);
+        if (pc1 == null) {
+            log.debug("-- creating Parameters Container " + mName + " plus parameters.");
+            pc1 = new ParametersContainer(mName);
+            Parameters pars = new Parameters(eurostagSim);
+            for (String varName : zone.getData().keySet()) {
+                String varFType = DtaParser.getVarFType(zone.typeName, varName);
+                Object varValue = zone.getData().get(varName);
+                if (log.isDebugEnabled()) {
+                    log.trace("----" + varName + " = " + varValue + ", " + varFType);
+                }
+                if (varFType.startsWith("F")) {
+                    if (varValue != null) {
+                        pars.addParameter(new ParameterFloat(varName,
+                                new Float((Double) varValue)));
+                    } else {
+                        pars.addParameter(new ParameterFloat(varName, null));
+                    }
+                } else if (varFType.startsWith("A")) {
+                    pars.addParameter(new ParameterString(varName,
+                            (String) varValue));
+                } else {
+                    log.error(varFType + " not handled");
+                }
+            }
+            pc1.getParameters().add(pars);
+            pc1 = ddbmanager.save(pc1);
+        } else {
+            log.debug("-- Parameters Container container " + mName
+                    + " already defined, id: " + pc1.getId());
+            // ddbmanager.delete(pc1);
+        }
+
+        if (eq1 == null) {
+            log.info("-- creating Equipment " + cimId + "; eurostag name is: "
+                    + mName);
+            eq1 = new Equipment(cimId);
+            eq1.setModelContainer(mtc1);
+            eq1.setParametersContainer(pc1);
+            eq1 = ddbmanager.save(eq1);
+        } else {
+            log.warn("-- Equipment  " + cimId + " already defined, id: "
+                    + eq1.getId());
+        }
+
+        return cimId;
+    }
+
     private String populateDDB_R(EurostagRecord zone, Map<String, String> amap,
             DDBManager ddbmanager, SimulatorInst eurostagSim, Map<String, Path> regsMapping) {
 
@@ -906,6 +1005,12 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             //adding svc to the equipment list
             network.getStaticVarCompensators().forEach(svc -> cimIds.add(svc.getId()));
 
+            //add vscConverter stations to the equipment list
+            for (HvdcLine hvdcLine : Identifiables.sort(network.getHvdcLines())) {
+                cimIds.add(hvdcLine.getConverterStation1().getId());
+                cimIds.add(hvdcLine.getConverterStation2().getId());
+            }
+
             // writing a .dta
             DtaParser.dumpHeader(new Date(), eurostagVersion, dtaOutStream);
 
@@ -1045,7 +1150,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                     substMachineName = iidm2eurostagId.get(eq.getCimId());
                 }
                 try {
-                    dumpData(internal, eurostagSim, ddbmanager, dtaOutStream, substMachineName, iidm2eurostagId, network);
+                    dumpData(internal, eurostagSim, ddbmanager, dtaOutStream, substMachineName, iidm2eurostagId, network, eq, cimId);
                 } catch (Exception e) {
                     log.error("could not write macro.lis file, due to " + e.getMessage());
                 }
@@ -1185,6 +1290,9 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             case "M21":
                 zoneTypeName = "M21";
                 break;
+            case "M50":
+                zoneTypeName = "M50";
+                break;
             case "R":
                 zoneTypeName = "R";
                 break;
@@ -1244,6 +1352,19 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                     //                }
                 }
                 break;
+            case "M50":
+                if (iidm2eurostagId != null) {
+                    String substMachineName = iidm2eurostagId.get(inst.getCimId());
+                    if ((substMachineName != null) && (!"".equals(substMachineName))) {
+                        zm.put("machine.name", substMachineName);
+                    }
+
+                    if (log.isDebugEnabled()) {
+                        log.debug(" machine.name mapped to new eurostag id: " + substMachineName);
+                    }
+
+                }
+                break;
             default:
                 break;
         }
@@ -1259,7 +1380,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         }
     }
 
-    public void dumpData(Internal inst, SimulatorInst simInst, DDBManager ddbmanager, PrintStream out, String machineName, Map<String, String> iidm2eurostagId, Network network) throws IOException {
+    public void dumpData(Internal inst, SimulatorInst simInst, DDBManager ddbmanager, PrintStream out, String machineName, Map<String, String> iidm2eurostagId, Network network, Equipment eq, String eqCimId) throws IOException {
         if (inst == null) {
             throw new RuntimeException("Internal must be not null");
         }
@@ -1487,19 +1608,57 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             }
         } else {
             if (couplingDataExists == true) {
-                log.warn("coupling macroblock data in ddb -  macroblock name: " + zm.get("macroblock.name") + "; machine name: " + machineName);
-            }
-            zm.put("coupling.par1", null);
-            zm.put("coupling.par2", null);
-            zm.put("coupling.par3", null);
-            zm.put("coupling.par4", null);
-            zm.put("coupling.par5", null);
-            zm.put("coupling.par6", null);
-            zm.put("coupling.par7", null);
-            zm.put("coupling.par8", null);
-            zm.put("coupling.par9", null);
-            if (log.isDebugEnabled()) {
-                log.trace(" coupling.par(s) mapped to empty string");
+                //retrieve the equipment model template 'type'
+                ModelTemplate eqModelTemplate = ddbmanager.findModelTemplate(eq, simInst);
+                //Converter model: fixes DDB coupling parameters with actual ids
+                if (eqModelTemplate.getTypeName().equals("M50")) {
+                    log.debug("Converter id: {}, machine name: {} original macrobloc data: {}", eqCimId, machineName, zm);
+                    //from eqCimId, find the other vscConverter id, other side of the hvdc line
+                    String eqCimId2 = network.getHvdcLineStream()
+                            .filter(hvdcLine -> hvdcLine.getConverterStation1().getId().equals(eqCimId) || hvdcLine.getConverterStation2().getId().equals(eqCimId))
+                            .findFirst()
+                            .map(hvdcLine -> hvdcLine.getConverterStation1().getId().equals(eqCimId) ? hvdcLine.getConverterStation2().getId() : hvdcLine.getConverterStation1().getId())
+                            .orElse(null);
+
+                    String machineName2 = iidm2eurostagId.get(eqCimId2);
+
+                    String macroBlockName = (String) zm.get("macroblock.name");
+                    String par1 = (String) zm.get("coupling.par1");
+                    String par2 = (String) zm.get("coupling.par2");
+                    String par3 = (String) zm.get("coupling.par3");
+
+                    if (par1.startsWith("M")) {
+                        zm.put("coupling.par1", "M  " + machineName2);
+                    }
+                    if (par2.startsWith("M")) {
+                        zm.put("coupling.par2", "M  " + machineName);
+                    } else  if (par2.startsWith("N")) {
+                        //set par2 to the other converter AC node eurostag name (connected bus)
+                        VscConverterStation vscConv = network.getVscConverterStation(eqCimId2);
+                        Bus conBus = vscConv.getTerminal().getBusBreakerView().getConnectableBus();
+                        if (conBus == null) {
+                            conBus = vscConv.getTerminal().getBusView().getConnectableBus();
+                        }
+                        if (conBus != null) {
+                            zm.put("coupling.par2", "N  " + iidm2eurostagId.get(conBus.getId()));
+                        }
+
+                    }
+                    log.debug("Converter id: {}, machine name: {} fixed macrobloc data: {}", eqCimId, machineName, zm);
+                } else {
+                    zm.put("coupling.par1", null);
+                    zm.put("coupling.par2", null);
+                    zm.put("coupling.par3", null);
+                    zm.put("coupling.par4", null);
+                    zm.put("coupling.par5", null);
+                    zm.put("coupling.par6", null);
+                    zm.put("coupling.par7", null);
+                    zm.put("coupling.par8", null);
+                    zm.put("coupling.par9", null);
+                    if (log.isDebugEnabled()) {
+                        log.trace(" coupling.par(s) mapped to empty string");
+                    }
+                }
             }
         }
 
@@ -1990,7 +2149,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                                 log.warn("- internal with nativeId: " + nativeId + " not found !");
                             } else {
                                 try {
-                                    dumpData(internal, eurostagSim, ddbmanager, dtaOutStream, acmcName, iidm2eurostagId, network);
+                                    dumpData(internal, eurostagSim, ddbmanager, dtaOutStream, acmcName, iidm2eurostagId, network, eq, acmcName);
                                 } catch (Exception e) {
                                     log.error("could not write macro.lis file, due to " + e.getMessage());
                                 }

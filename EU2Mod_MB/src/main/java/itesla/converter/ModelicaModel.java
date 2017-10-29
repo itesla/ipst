@@ -14,6 +14,7 @@ import java.util.List;
 
 /**
  * Class that represents the block model in Modelica.
+ *
  * @author Marc Sabate <sabatem@aia.es>
  * @author Raul Viruez <viruezr@aia.es>
  **/
@@ -549,9 +550,13 @@ public class ModelicaModel {
                     ConnRight = model.nameModelica + "_" + Blocks[Link[i][1] - 1].GraphicalNumber.toString() + ".u" + Link[i][2].toString();
                 }
             }
-            Blocks[Link[i][1] - 1].UsedInputPins.set(Link[i][2] - 1, true);
-            Conn = Conn + ConnLeft + ", " + ConnRight + ");";
-            outputConnection.add(Conn);
+            if ((Link[i][2]) <=  Blocks[Link[i][1] - 1].UsedInputPins.size()) {
+                Blocks[Link[i][1] - 1].UsedInputPins.set(Link[i][2] - 1, true);
+                Conn = Conn + ConnLeft + ", " + ConnRight + ");";
+                outputConnection.add(Conn);
+            } else {
+                System.err.println("Connection - file: " + pathEu + ", id: " + Blocks[Link[i][1] - 1].idEu + ",  inputPins: " + Blocks[Link[i][1] - 1].UsedInputPins + ", inputPins size: " + Blocks[Link[i][1] - 1].UsedInputPins.size() + ", but the index to-be set is: " + Link[i][2]);
+            }
         }
     }
 
@@ -601,8 +606,12 @@ public class ModelicaModel {
                         }
                     }
                     Conn = "  connect(" + ConnLeft + ", " + ConnRight + ");";
-                    Blocks[i].UsedInputPins.set(indConnRight - 1, true);
-                    outputInputConnection.add(Conn);
+                    if (indConnRight <= Blocks[i].UsedInputPins.size()) {
+                        Blocks[i].UsedInputPins.set(indConnRight - 1, true);
+                        outputInputConnection.add(Conn);
+                    } else {
+                        System.err.println("InputConnection - file: " + pathEu + ", id: " + Blocks[i].idEu + ",  inputPins: " + Blocks[i].UsedInputPins + ", inputPins size: " + Blocks[i].UsedInputPins.size() + ",  but the index to-be set is: " + (indConnRight - 1));
+                    }
                 }
             }
         }

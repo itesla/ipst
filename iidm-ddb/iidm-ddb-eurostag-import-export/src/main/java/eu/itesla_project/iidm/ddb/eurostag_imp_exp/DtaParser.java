@@ -137,6 +137,16 @@ public class DtaParser {
             "TerminalVoltage", "KG", "SCL", "SLOPE", "VPCC", "SETMODE", "MODE", "BSVC", "ZERO", "BMAX", "BTCR", "MSCON", "MSRON"
         });
 
+        componentsVariablesNames.put("M50", new String[]{
+            "machine.type, type.fortescue, XMACOUP, fnum1, fnum2, falpha",
+            "machine.name,connection.node.name,TFIL,PP,PQ,RP,RPX,SN"
+        });
+
+        componentsInterfaceVariablesNames.put("M50", new String[]{
+            "TerminalVoltage", "UDC", "UDCA", "UDCB", "UREF"
+        });
+
+
         componentsVariablesNames.put("MA", new String[]{
             "keyword",
             "ma.name,equipment.type,equipment.name"
@@ -240,6 +250,11 @@ public class DtaParser {
         componentsDescriptors.put("M21", new String[]{
             "(A3, A1, 1X, A1, 7X, F8, 1X, F8, 1X, A8)",
             "(A8, 1X, A8, 1X, A1, 17X, F8, 1X, F8, 19X, F8, F8, 1X, F8, 1X, F8, 1X, F8)"
+        });
+
+        componentsDescriptors.put("M50", new String[]{
+            "(A3, A1, 1X, A1, 7X, F8, 1X, F8, 1X, A8)",
+            "(A8, 1X, A8, 3X, F8, 8X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8)"
         });
 
         componentsDescriptors.put("MA", new String[]{
@@ -387,6 +402,7 @@ public class DtaParser {
             case "BAT":
             case "MA":
             case "A33_ACMC":
+            case "M50":
                 int rcount = 1;
                 String[] recordsFormatting = componentsDescriptors.get(zone.typeName);
                 for (String string : recordsFormatting) {
