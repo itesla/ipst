@@ -136,12 +136,11 @@ public class Utils {
                 tdSimulationResults.put(EMPTY_CONTINGENCY_ID, true);
             }
             // check if there are contingencies to run impact analysis
-            boolean runAnalysis = false;
-            if (contingencyIds == null && contingencyDb.getContingencies(network).size() == 0) {
-                runAnalysis = true;
-            }
-            if (contingencyIds != null && !contingencyIds.isEmpty()) {
-                runAnalysis = true;
+            boolean runAnalysis;
+            if (contingencyIds == null) {
+                runAnalysis = contingencyDb.getContingencies(network).size() != 0 ? true : false;
+            } else {
+                runAnalysis = !contingencyIds.isEmpty() ? true : false;
             }
             if (runAnalysis) {
                 // run impact analysis
