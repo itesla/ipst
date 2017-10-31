@@ -28,12 +28,12 @@ import org.slf4j.LoggerFactory;
 class EurostagDDB {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EurostagDDB.class);
+
     private final Map<String, Path> generators = new HashMap<>();
+
     EurostagDDB(List<Path> ddbDirs) throws IOException {
         for (Path ddbDir : ddbDirs) {
-            if (Files.isSymbolicLink(ddbDir)) {
-                ddbDir = readSymbolicLink(ddbDir);
-            }
+            ddbDir = readSymbolicLink(ddbDir);
             if (!Files.exists(ddbDir) && !Files.isDirectory(ddbDir)) {
                 throw new IllegalArgumentException(ddbDir + " must exist and be a dir");
             }
@@ -44,21 +44,20 @@ class EurostagDDB {
                     Path tmpfile = readSymbolicLink(file);
                     if (Files.isDirectory(tmpfile)) {
                         Files.walkFileTree(tmpfile, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, this);
-                    } else
-                            if (Files.isRegularFile(tmpfile) && file.toString().endsWith(".tg")) {
-                                String key = fileName.substring(0, fileName.length() - 3);
-                                if (generators.containsKey(key)) {
-                                    LOGGER.warn("the processing has detected that the file {} is present in {} and {}", fileName, tmpfile, generators.get(key));
-                                }
-                                generators.put(key, tmpfile);
-                            }
+                    } else if (Files.isRegularFile(tmpfile) && fileName.endsWith(".tg")) {
+                        String key = fileName.substring(0, fileName.length() - 3);
+                        if (generators.containsKey(key)) {
+                            LOGGER.warn("the processing has detected that the file {} is present in {} and {}", fileName, tmpfile, generators.get(key));
+                        }
+                        generators.put(key, tmpfile);
+                    }
                     return super.visitFile(file, attrs);
                 }
             });
         }
     }
 
-    Path findGenerator(String idDdb) throws IOException {
+    Path findGenerator(String idDdb) {
         return generators.get(idDdb);
     }
 
