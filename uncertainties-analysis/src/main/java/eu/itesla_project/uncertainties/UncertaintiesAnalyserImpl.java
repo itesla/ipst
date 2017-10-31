@@ -299,7 +299,7 @@ public class UncertaintiesAnalyserImpl implements UncertaintiesAnalyser {
 
     }
 
-    private static final Scripts scripts = new BluestoneV35Scripts();
+    private static final Scripts SCRIPTS = new BluestoneV35Scripts();
 
     private static final String FORECAST_DIFF_LOAD_CSV = "forecastsDiff_load.csv";
     private static final String FORECAST_DIFF_GEN_CSV = "forecastsDiff_gen.csv";
@@ -335,7 +335,7 @@ public class UncertaintiesAnalyserImpl implements UncertaintiesAnalyser {
         return PlatformConfig.defaultCacheManager().newCacheEntry("uncertainties")
                 .withKey(interval.toString())
                 .withKeys(networkInjections.stream().map(StochasticInjection::getId).collect(Collectors.toList()))
-                .withKey(scripts.getVersion())
+                .withKey(SCRIPTS.getVersion())
                 .withKey(Float.toString(config.getPrctRisk()))
                 .build();
     }
@@ -344,7 +344,7 @@ public class UncertaintiesAnalyserImpl implements UncertaintiesAnalyser {
         return PlatformConfig.defaultCacheManager().newCacheEntry("uncertainties")
                 .withKey(interval.toString())
                 .withKey("" + network.getCaseDate().year().get() + network.getCaseDate().monthOfYear().get())
-                .withKey(scripts.getVersion())
+                .withKey(SCRIPTS.getVersion())
                 .withKey(Float.toString(config.getPrctRisk()))
                 .build();
     }
@@ -371,7 +371,7 @@ public class UncertaintiesAnalyserImpl implements UncertaintiesAnalyser {
 
                 List<CommandExecution> commandExecutions = new ArrayList<>();
 
-                LOGGER.info("Uncertainties analysis version {}", scripts.getVersion());
+                LOGGER.info("Uncertainties analysis version {}", SCRIPTS.getVersion());
 
                 networkInjections = StochasticInjection.create(network, false, config.isOnlyIntermittentGeneration(), config.isWithBoundaries(), config.getBoundariesFilter()); // only main cc
 
@@ -394,10 +394,10 @@ public class UncertaintiesAnalyserImpl implements UncertaintiesAnalyser {
                         Files.copy(cacheEntry.toPath().resolve(BORNES_SUP_CSV), workingDir.resolve(BORNES_SUP_CSV));
                     } else {
                         // copy R script
-                        for (String scriptName : scripts.getScripts()) {
-                            String scriptJarPath = "/R/" + scripts.getVersion() + "/" + scriptName;
+                        for (String scriptName : SCRIPTS.getScripts()) {
+                            String scriptJarPath = "/R/" + SCRIPTS.getVersion() + "/" + scriptName;
                             Path scriptFile = workingDir.resolve(scriptName);
-                            if (scriptName.equals(scripts.getConfigScript())) {
+                            if (scriptName.equals(SCRIPTS.getConfigScript())) {
                                 // FIXME vraiment degueulasse comme facon de faire mais pas le temps de faire mieux...
                                 boolean found = false;
                                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(scriptJarPath), StandardCharsets.UTF_8));
@@ -484,8 +484,8 @@ public class UncertaintiesAnalyserImpl implements UncertaintiesAnalyser {
                             throw new RuntimeException(e);
                         }
 
-                        List<InputFile> inputFiles = new ArrayList<>(4 + scripts.getScripts().size());
-                        for (String scriptName : scripts.getScripts()) {
+                        List<InputFile> inputFiles = new ArrayList<>(4 + SCRIPTS.getScripts().size());
+                        for (String scriptName : SCRIPTS.getScripts()) {
                             inputFiles.add(new InputFile(scriptName));
                         }
                         inputFiles.add(new InputFile(FORECAST_DIFF_LOAD_CSV));
@@ -501,7 +501,7 @@ public class UncertaintiesAnalyserImpl implements UncertaintiesAnalyser {
                                         new OutputFile(VECTEUR_CSV),
                                         new OutputFile(BORNES_INF_CSV),
                                         new OutputFile(BORNES_SUP_CSV))
-                                .args("--no-save", "-f", scripts.getMainScript())
+                                .args("--no-save", "-f", SCRIPTS.getMainScript())
                                 .build();
 
                         commandExecutions.add(new CommandExecution(cmd, 1, Integer.MAX_VALUE));
@@ -610,7 +610,7 @@ public class UncertaintiesAnalyserImpl implements UncertaintiesAnalyser {
 
                     for (int i = 0; i < analysedInjections.size(); i++) {
                         StochasticInjection inj = analysedInjections.get(i);
-                        Float v = meanVector.get(scripts.getMeanRowName(), inj.getId() + "_P");
+                        Float v = meanVector.get(SCRIPTS.getMeanRowName(), inj.getId() + "_P");
                         if (v == null) {
                             throw new RuntimeException("Missing value in the mean vector");
                         }
@@ -619,8 +619,8 @@ public class UncertaintiesAnalyserImpl implements UncertaintiesAnalyser {
 
                     for (int j = 0; j < reducedVariables.size(); j++) {
                         String var = reducedVariables.get(j);
-                        Float min = infVector.get(var, scripts.getInfColumnName());
-                        Float max = supVector.get(var, scripts.getSupColumnName());
+                        Float min = infVector.get(var, SCRIPTS.getInfColumnName());
+                        Float max = supVector.get(var, SCRIPTS.getSupColumnName());
                         if (min == null) {
                             throw new RuntimeException("Missing value in the min vector");
                         }
