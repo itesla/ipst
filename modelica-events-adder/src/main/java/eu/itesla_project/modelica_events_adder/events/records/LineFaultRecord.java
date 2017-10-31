@@ -136,15 +136,15 @@ public class LineFaultRecord extends EventRecord {
         //TOD search in the record text the R1, X1, G1 and B1 values
 
         //Get bus from voltages
-        String R1 = this.lineRecord.getParamsMap().get(StaticData.R);
-        String X1 = this.lineRecord.getParamsMap().get(StaticData.X);
-        String G1 = this.lineRecord.getParamsMap().get(StaticData.G);
-        String B1 = this.lineRecord.getParamsMap().get(StaticData.B);
+        String r1 = this.lineRecord.getParamsMap().get(StaticData.R);
+        String x1 = this.lineRecord.getParamsMap().get(StaticData.X);
+        String g1 = this.lineRecord.getParamsMap().get(StaticData.G);
+        String b1 = this.lineRecord.getParamsMap().get(StaticData.B);
 
-        addParameter(EventsStaticData.R1, R1);
-        addParameter(EventsStaticData.X1, X1);
-        addParameter(EventsStaticData.G1, G1);
-        addParameter(EventsStaticData.B1, B1);
+        addParameter(EventsStaticData.R1, r1);
+        addParameter(EventsStaticData.X1, x1);
+        addParameter(EventsStaticData.G1, g1);
+        addParameter(EventsStaticData.B1, b1);
     }
 
     private void getBuses() {

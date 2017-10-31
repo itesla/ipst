@@ -89,10 +89,10 @@ public class LineRecord extends BranchRecord {
                 iidmbranchParameters = null;
                 branchParameters = null;
             } else {
-                _log.error(this.getModelicaName() + " not added to grid model.");
+                LOGGER.error(this.getModelicaName() + " not added to grid model.");
             }
         } else {
-            _log.warn("Line " + this.getModelicaName() + " disconnected.");
+            LOGGER.warn("Line " + this.getModelicaName() + " disconnected.");
             this.addValue(StaticData.COMMENT + " Line " + this.getModelicaName() + " disconnected.");
         }
     }
@@ -105,12 +105,12 @@ public class LineRecord extends BranchRecord {
         //super.iidmbranchParameters = new ArrayList<IIDMParameter>();
         float tNominalV = ((Line) this.line).getTerminal2().getVoltageLevel().getNominalV();
         float voltage = Float.isNaN(tNominalV) == false ? tNominalV : 0;
-        float Z = (voltage * voltage) / SNREF;
+        float z = (voltage * voltage) / SNREF;
 
-        super.addParameter(this.iidmbranchParameters, StaticData.R, this.line.getR() / Z);
-        super.addParameter(this.iidmbranchParameters, StaticData.X, this.line.getX() / Z);
-        super.addParameter(this.iidmbranchParameters, StaticData.G, this.line.getG1() * Z);
-        super.addParameter(this.iidmbranchParameters, StaticData.B, this.line.getB1() * Z);
+        super.addParameter(this.iidmbranchParameters, StaticData.R, this.line.getR() / z);
+        super.addParameter(this.iidmbranchParameters, StaticData.X, this.line.getX() / z);
+        super.addParameter(this.iidmbranchParameters, StaticData.G, this.line.getG1() * z);
+        super.addParameter(this.iidmbranchParameters, StaticData.B, this.line.getB1() * z);
     }
 
     @Override
@@ -136,5 +136,5 @@ public class LineRecord extends BranchRecord {
     private String                DEFAULT_OPEN_LINE_TYPE    = EurostagModDefaultTypes.DEFAULT_OPEN_LINE_TYPE;
     private String                DEFAULT_LINE_PREFIX;
 
-    private static final Logger _log                    = LoggerFactory.getLogger(LineRecord.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LineRecord.class);
 }

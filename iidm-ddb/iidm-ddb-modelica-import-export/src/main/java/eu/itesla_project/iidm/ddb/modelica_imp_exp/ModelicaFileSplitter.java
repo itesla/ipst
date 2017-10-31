@@ -54,7 +54,7 @@ public class ModelicaFileSplitter extends ModelicaHierarchyExtractor {
             writer.write(line);
             writer.newLine();
         } catch (IOException x) {
-            log.error("onLine, writing line [" + line + "]");
+            LOGGER.error("onLine, writing line [" + line + "]");
         }
     }
 
@@ -119,7 +119,7 @@ public class ModelicaFileSplitter extends ModelicaHierarchyExtractor {
                 writer.newLine();
             }
         } catch (IOException x) {
-            log.error("startSplitFile for [" + h.getQualifiedName() + "]");
+            LOGGER.error("startSplitFile for [" + h.getQualifiedName() + "]");
         }
     }
 
@@ -127,7 +127,7 @@ public class ModelicaFileSplitter extends ModelicaHierarchyExtractor {
         splitItem = null;
 
         if (writer == null) {
-            log.error("endSplitFile, no current writer");
+            LOGGER.error("endSplitFile, no current writer");
             return;
         }
         try {
@@ -149,7 +149,7 @@ public class ModelicaFileSplitter extends ModelicaHierarchyExtractor {
             writer.close();
             writer = null;
         } catch (IOException x) {
-            log.error("endSplitFile for " + getHierarchy().getQualifiedName() + "]");
+            LOGGER.error("endSplitFile for " + getHierarchy().getQualifiedName() + "]");
         }
     }
 
@@ -159,5 +159,5 @@ public class ModelicaFileSplitter extends ModelicaHierarchyExtractor {
 
     static final boolean        OUTPUT_ORIGINAL_CLASS_SPECIFIER_LINES    = true;
 
-    static final Logger log                                        = LoggerFactory.getLogger(ModelicaFileSplitter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModelicaFileSplitter.class);
 }

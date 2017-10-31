@@ -40,9 +40,9 @@ public class WCAHistoLimits implements AmplConstants, WCAConstants {
 
     private static Range<Float> range(String id, HistoDbAttr attr, HistoDbStats stats) {
         HistoDbAttributeId pAttrId = new HistoDbNetworkAttributeId(id, HistoDbAttr.P);
-        float p_min = stats.getValue(HistoDbStatsType.MIN, pAttrId, INVALID_FLOAT_VALUE);
-        float p_max = stats.getValue(HistoDbStatsType.MAX, pAttrId, INVALID_FLOAT_VALUE);
-        return Range.closed(p_min, p_max);
+        float minP = stats.getValue(HistoDbStatsType.MIN, pAttrId, INVALID_FLOAT_VALUE);
+        float maxP = stats.getValue(HistoDbStatsType.MAX, pAttrId, INVALID_FLOAT_VALUE);
+        return Range.closed(minP, maxP);
     }
 
     public void load(Network network, HistoDbClient histoDbClient) throws IOException, InterruptedException {

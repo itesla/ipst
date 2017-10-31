@@ -18,6 +18,7 @@
 
     <module name="TreeWalker">
         <module name="ArrayTypeStyle"/>
+        <module name="ConstantName"/>
         <module name="EmptyCatchBlock">
             <property name="exceptionVariableName" value="ignored"/>
         </module>
@@ -26,6 +27,8 @@
         <module name="IllegalImport"/>
         <module name="Indentation"/>
         <module name="LeftCurly"/>
+        <module name="LocalFinalVariableName"/>
+        <module name="LocalVariableName"/>
         <module name="MethodParamPad"/>
         <module name="NeedBraces"/>
         <module name="NoWhitespaceAfter"/>

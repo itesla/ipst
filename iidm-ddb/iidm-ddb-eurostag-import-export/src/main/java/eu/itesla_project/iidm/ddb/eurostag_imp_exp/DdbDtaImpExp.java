@@ -32,7 +32,7 @@ import java.util.*;
  * @author Quinary <itesla@quinary.com>
  */
 public class DdbDtaImpExp implements DynamicDatabaseClient {
-    private static final String PAR_MACROBLOCK__NAME = "macroblock.name";
+    private static final String PAR_MACROBLOCK_NAME = "macroblock.name";
 
     private static final String MTC_PREFIX_NAME = "MTC_";
 
@@ -343,11 +343,11 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
         }
 
-        String mtc_ddbid = MTC_PREFIX_NAME + zone.getKeyName();
+        String mtcDdbId = MTC_PREFIX_NAME + zone.getKeyName();
         ModelTemplateContainer mtc1 = ddbmanager
-                .findModelTemplateContainer(mtc_ddbid);
+                .findModelTemplateContainer(mtcDdbId);
         if (mtc1 == null) {
-            throw new RuntimeException(" template container " + mtc_ddbid
+            throw new RuntimeException(" template container " + mtcDdbId
                     + " not defined! ");
         }
 
@@ -437,11 +437,11 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
         }
 
-        String mtc_ddbid = MTC_PREFIX_NAME + zone.getKeyName();
+        String mtcDdbId = MTC_PREFIX_NAME + zone.getKeyName();
         ModelTemplateContainer mtc1 = ddbmanager
-                .findModelTemplateContainer(mtc_ddbid);
+                .findModelTemplateContainer(mtcDdbId);
         if (mtc1 == null) {
-            throw new RuntimeException(" template container " + mtc_ddbid
+            throw new RuntimeException(" template container " + mtcDdbId
                     + " not defined! ");
         }
 
@@ -499,7 +499,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         log.debug("-Creating DDB component (R) " + zone);
 
         String macroblockName = (String) zone.getData().get(
-                PAR_MACROBLOCK__NAME);
+                PAR_MACROBLOCK_NAME);
         int paramSetNum = (int) zone.getData().get("psetnum");
         String machineName = (String) zone.getData().get("machine.name");
         String nativeId = amap.get(machineName);
@@ -513,13 +513,13 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         addPinNames(nativeId, macroblockName, retrieveActualRegPath(macroblockName + "." + "frm", regsMapping));
 
         //MTC and MT handling
-        String mtc_ddbid = MTC_PREFIX_NAME + macroblockName;
-        ModelTemplateContainer mtc1 = ddbmanager.findModelTemplateContainer(mtc_ddbid);
+        String mtcDdbId = MTC_PREFIX_NAME + macroblockName;
+        ModelTemplateContainer mtc1 = ddbmanager.findModelTemplateContainer(mtcDdbId);
         if (mtc1 != null) {
             log.info("-- Using existing Model Template Container: " + mtc1.getDdbId());
         } else {
-            log.info("-- Creating Model Template Container: " + mtc_ddbid);
-            mtc1 = new ModelTemplateContainer(mtc_ddbid, "");
+            log.info("-- Creating Model Template Container: " + mtcDdbId);
+            mtc1 = new ModelTemplateContainer(mtcDdbId, "");
         }
 
         //find a mt for this mtc and simulator
@@ -536,7 +536,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                 log.info("--- removing existing Model Template: {}, {}, {}", mt1.getSimulator(), mt1.getTypeName(), mt1.getComment());
                 mtc1.getModelTemplates().remove(mt1);
                 mtc1 = ddbmanager.save(mtc1);
-                mtc1 = ddbmanager.findModelTemplateContainer(mtc_ddbid);
+                mtc1 = ddbmanager.findModelTemplateContainer(mtcDdbId);
                 mt1 = null;
                 removePinNames(nativeId, macroblockName);
             } else {
@@ -1052,7 +1052,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                 // dump regulator files start
                 String macroblockName = ddbmanager.getStringParameter(
                         internal, eurostagSim,
-                        PAR_MACROBLOCK__NAME);
+                        PAR_MACROBLOCK_NAME);
                 if (macroblockName == null) {
                     throw new RuntimeException("null macroblock.name for internal " + internal);
                 }
@@ -1995,7 +1995,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                                     log.error("could not write macro.lis file, due to " + e.getMessage());
                                 }
                                 // dump regulator files start
-                                String macroblockName = ddbmanager.getStringParameter(internal, eurostagSim, PAR_MACROBLOCK__NAME);
+                                String macroblockName = ddbmanager.getStringParameter(internal, eurostagSim, PAR_MACROBLOCK_NAME);
                                 if (macroblockName == null) {
                                     throw new RuntimeException("null macroblock.name for internal " + internal);
                                 }

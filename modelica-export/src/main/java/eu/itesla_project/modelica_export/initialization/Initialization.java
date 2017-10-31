@@ -75,7 +75,7 @@ public class Initialization {
         try {
             this.writerMo = new FileWriter(file);
         } catch (IOException e) {
-            _log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -115,9 +115,9 @@ public class Initialization {
 
             this.omc.loadFile(filePath.toAbsolutePath().toString());
         } catch (IOException e) {
-            _log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         } catch (ConnectException e) {
-            _log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -141,7 +141,7 @@ public class Initialization {
                 try {
                     this.writerMo = new FileWriter(fileInitName);
                 } catch (IOException e) {
-                    _log.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
                 }
 
                 writerMo.append(StaticData.WITHIN);
@@ -351,7 +351,7 @@ public class Initialization {
             }
             buffer.close();
         } catch (IOException e) {
-            _log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
 
         return conName;
@@ -421,7 +421,7 @@ public class Initialization {
                     regulatorInitVarsByRegulator.get(regName).addAll(regulatorInitializationVars);
                 }
             } catch (IOException e) {
-                _log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
 
         }
@@ -513,7 +513,7 @@ public class Initialization {
 
                 regInitData.add(regulatorInit);
             } catch (IOException e) {
-                _log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
 
@@ -587,5 +587,5 @@ public class Initialization {
     //Tmp directory to save reg_init models in order to load them to OMC
     private Path tmpDir;
 
-    private static final Logger _log    = LoggerFactory.getLogger(Initialization.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Initialization.class);
 }

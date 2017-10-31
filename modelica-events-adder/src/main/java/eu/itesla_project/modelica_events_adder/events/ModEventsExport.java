@@ -75,7 +75,7 @@ public class ModEventsExport {
             //For each network file with events:
             for (Integer fileId : eventsMap.keySet()) {
                 if (eventsMap.get(fileId) == null || eventsMap.get(fileId).isEmpty()) {
-                    log.error("There is no event.");
+                    LOGGER.error("There is no event.");
                     System.exit(0);
                 }
 
@@ -96,7 +96,7 @@ public class ModEventsExport {
                     Record record = recordsMap.get(event.getCIMDevice().toLowerCase());
 
                     if (record == null) {
-                        log.warn("This device doesn't exist in the model.");
+                        LOGGER.warn("This device doesn't exist in the model.");
                         continue;
                     }
 
@@ -196,9 +196,9 @@ public class ModEventsExport {
                 writer.close();
             }
         } catch (FileNotFoundException e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         } catch (IOException e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -297,10 +297,10 @@ public class ModEventsExport {
                 record.addValue(StaticData.NEW_LINE);
                 record.setParamsMap(paramsMap);
 
-                String CIMid = EventsHelper.parseModelicaToCIM(modelicaName, modelicaType);
+                String cimId = EventsHelper.parseModelicaToCIM(modelicaName, modelicaType);
 
-                if (!recordsMap.containsKey(CIMid)) {
-                    recordsMap.put(CIMid, record);
+                if (!recordsMap.containsKey(cimId)) {
+                    recordsMap.put(cimId, record);
                 }
             } else if (isInsideRecord) {
                 record.addValue(line);
@@ -361,6 +361,6 @@ public class ModEventsExport {
     private File            eventsFile;
     private EventsParser    eventsParser;
 
-    private static final Logger log = LoggerFactory.getLogger(ModEventsExport.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModEventsExport.class);
 
 }

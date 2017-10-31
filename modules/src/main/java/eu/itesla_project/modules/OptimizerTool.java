@@ -7,6 +7,7 @@
 package eu.itesla_project.modules;
 
 import com.google.auto.service.AutoService;
+import com.powsybl.security.LimitViolationFilter;
 import com.powsybl.tools.Command;
 import com.powsybl.tools.Tool;
 import com.powsybl.tools.ToolRunningContext;
@@ -150,7 +151,7 @@ public class OptimizerTool implements Tool {
                 context.getOutputStream().println("loadflow status is " + (result2.isOk() ? "ok" : "nok") + " (" + result2.getMetrics() + ")");
 
                 if (result2.isOk() && checkConstraints) {
-                    String report = Security.printLimitsViolations(network);
+                    String report = Security.printLimitsViolations(network, LimitViolationFilter.load());
                     if (report != null) {
                         context.getOutputStream().println(report);
                     }

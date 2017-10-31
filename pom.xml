@@ -52,6 +52,7 @@
         <module>online-workflow</module>
         <module>pclfsim-integration</module>
         <module>sampling-integration</module>
+        <module>security-analysis-ws</module>
         <module>uncertainties-analysis</module>
         <module>wca-integration</module>
     </modules>
