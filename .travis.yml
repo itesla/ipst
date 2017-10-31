@@ -3,6 +3,12 @@ language: java
 jdk:
 - oraclejdk8
 
+before_install:
+- openssl aes-256-cbc -K $encrypted_973a780dd4ea_key -iv $encrypted_973a780dd4ea_iv -in id_rsa_gandi.enc -out /tmp/id_rsa_gandi -d
+- eval "$(ssh-agent -s)"
+- chmod 600 /tmp/id_rsa_gandi
+- ssh-add /tmp/id_rsa_gandi
+
 install:
 # Build iPST core
 - git clone https://github.com/powsybl/powsybl-core powsybl/powsybl-core
@@ -10,4 +16,14 @@ install:
 
 script:
 - cd ${TRAVIS_BUILD_DIR}
-- mvn clean test jacoco:report coveralls:report
+- mvn clean verify jacoco:report coveralls:report
+
+addons:
+  ssh_known_hosts: sftp.dc0.gpaas.net
+  apt:
+    packages:
+      - graphviz
+after_success:
+- test $TRAVIS_BRANCH = "master" && test $TRAVIS_PULL_REQUEST = "false" && mvn javadoc:javadoc && pushd $TRAVIS_BUILD_DIR/target/site/apidocs && zip -r /tmp/ipst-javadoc.zip . && sftp $JAVADOC_USER@sftp.dc0.gpaas.net:vhosts/www.itesla-pst.org/htdocs/javadoc <<< $'put /tmp/ipst-javadoc.zip' && popd
+- test $TRAVIS_BRANCH = "master" && test $TRAVIS_PULL_REQUEST = "false" && cd $TRAVIS_BUILD_DIR/powsybl/powsybl-core && mvn javadoc:javadoc && cd target/site/apidocs && zip -r /tmp/powsybl-core-javadoc.zip . && sftp $JAVADOC_USER@sftp.dc0.gpaas.net:vhosts/www.itesla-pst.org/htdocs/javadoc <<< $'put /tmp/powsybl-core-javadoc.zip'
+
