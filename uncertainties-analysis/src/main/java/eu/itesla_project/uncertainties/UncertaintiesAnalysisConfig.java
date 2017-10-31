@@ -37,14 +37,18 @@ public class UncertaintiesAnalysisConfig {
     private final boolean useMonthlyCache;
 
     public static UncertaintiesAnalysisConfig load() {
+        return load(PlatformConfig.defaultConfig());
+    }
+
+    public static UncertaintiesAnalysisConfig load(PlatformConfig platformConfig) {
         boolean onlyIntermittentGeneration = DEFAULT_ONLY_INTERMITTENT_GENERATION;
         float prctRisk = DEFAULT_PRCT_RISK;
         boolean withBoundaries = DEFAULT_WITH_BOUNDARIES;
         Set<Country> boundariesFilter = null;
         boolean debug = false;
         boolean useMonthlyCache = DEFAULT_USE_MONTHLY_CACHE;
-        if (PlatformConfig.defaultConfig().moduleExists(MODULE_NAME)) {
-            ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig(MODULE_NAME);
+        if (platformConfig.moduleExists(MODULE_NAME)) {
+            ModuleConfig config = platformConfig.getModuleConfig(MODULE_NAME);
             onlyIntermittentGeneration = config.getBooleanProperty("onlyIntermittentGeneration", DEFAULT_ONLY_INTERMITTENT_GENERATION);
             prctRisk = config.getFloatProperty("prctRisk", DEFAULT_PRCT_RISK);
             withBoundaries = config.getBooleanProperty("withBoundaries", DEFAULT_WITH_BOUNDARIES);
