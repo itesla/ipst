@@ -6,11 +6,7 @@
  */
 package eu.itesla_project.wca;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -176,14 +172,15 @@ public final class WCAUtils {
         Objects.requireNonNull(contingencies);
         Objects.requireNonNull(dataSource);
         Objects.requireNonNull(mapper);
-        try (TableFormatter formatter = new AmplDatTableFormatter(
-                    new OutputStreamWriter(dataSource.newOutputStream(WCAConstants.FAULTS_FILE_SUFFIX, WCAConstants.TXT_EXT, false), StandardCharsets.UTF_8),
-                    "Contingencies",
-                    AmplConstants.INVALID_FLOAT_VALUE,
-                    true,
-                    AmplConstants.LOCALE,
-                    new Column("num"),
-                    new Column("id"))) {
+        try (Writer writer = new OutputStreamWriter(dataSource.newOutputStream(WCAConstants.FAULTS_FILE_SUFFIX, WCAConstants.TXT_EXT, false), StandardCharsets.UTF_8);
+             TableFormatter formatter = new AmplDatTableFormatter(
+                 writer,
+                 "Contingencies",
+                 AmplConstants.INVALID_FLOAT_VALUE,
+                 true,
+                 AmplConstants.LOCALE,
+                 new Column("num"),
+                 new Column("id"))) {
             for (Contingency contingency : contingencies) {
                 int contingencyNum = mapper.getInt(AmplSubset.FAULT, contingency.getId());
                 formatter.writeCell(contingencyNum)
@@ -201,14 +198,15 @@ public final class WCAUtils {
         Objects.requireNonNull(mapper);
         Objects.requireNonNull(title);
         Objects.requireNonNull(amplSubset);
-        try (TableFormatter formatter = new AmplDatTableFormatter(
-                    new OutputStreamWriter(dataSource.newOutputStream(WCAConstants.ACTIONS_FILE_SUFFIX, WCAConstants.TXT_EXT, false), StandardCharsets.UTF_8),
-                    title,
-                    AmplConstants.INVALID_FLOAT_VALUE,
-                    true,
-                    AmplConstants.LOCALE,
-                    new Column("num"),
-                    new Column("id"))) {
+        try (Writer writer = new OutputStreamWriter(dataSource.newOutputStream(WCAConstants.ACTIONS_FILE_SUFFIX, WCAConstants.TXT_EXT, false), StandardCharsets.UTF_8);
+             TableFormatter formatter = new AmplDatTableFormatter(
+                 writer,
+                 title,
+                 AmplConstants.INVALID_FLOAT_VALUE,
+                 true,
+                 AmplConstants.LOCALE,
+                 new Column("num"),
+                 new Column("id"))) {
             for (String actionId : actionIds) {
                 int actionNum = mapper.getInt(amplSubset, actionId);
                 formatter.writeCell(actionNum)
