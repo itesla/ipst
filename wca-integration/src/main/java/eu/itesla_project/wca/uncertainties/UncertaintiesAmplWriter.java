@@ -20,6 +20,7 @@ import eu.itesla_project.wca.WCAConstants;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
@@ -53,16 +54,17 @@ public class UncertaintiesAmplWriter implements WCAConstants {
     }
 
     private void writeReductionMatrix(Uncertainties uncertainties, DataSource dataSource, StringToIntMapper<AmplSubset> mapper) throws IOException {
-        try (TableFormatter formatter = new AmplDatTableFormatter(
-                    new OutputStreamWriter(dataSource.newOutputStream(REDUCTION_MATRIX_FILE_SUFFIX, TXT_EXT, false), StandardCharsets.UTF_8),
-                    "Reduction matrix",
-                    INVALID_FLOAT_VALUE,
-                    true,
-                    LOCALE,
-                    new Column("inj. type"),
-                    new Column("inj. num"),
-                    new Column("var. num"),
-                    new Column("coeff."))) {
+        try (Writer writer = new OutputStreamWriter(dataSource.newOutputStream(REDUCTION_MATRIX_FILE_SUFFIX, TXT_EXT, false), StandardCharsets.UTF_8);
+             TableFormatter formatter = new AmplDatTableFormatter(
+                 writer,
+                 "Reduction matrix",
+                 INVALID_FLOAT_VALUE,
+                 true,
+                 LOCALE,
+                 new Column("inj. type"),
+                 new Column("inj. num"),
+                 new Column("var. num"),
+                 new Column("coeff."))) {
             for (int i =  0; i < uncertainties.reductionMatrix.length; i++) {
                 StochasticInjection inj = uncertainties.injections.get(i);
                 for (int varNum = 0; varNum < uncertainties.reductionMatrix[i].length; varNum++) {
@@ -79,15 +81,16 @@ public class UncertaintiesAmplWriter implements WCAConstants {
     }
 
     private void writeTrustIntervals(Uncertainties uncertainties, DataSource dataSource) throws IOException {
-        try (AmplDatTableFormatter formatter = new AmplDatTableFormatter(
-                    new OutputStreamWriter(dataSource.newOutputStream(TRUST_INTERVAL_FILE_SUFFIX, TXT_EXT, false), StandardCharsets.UTF_8),
-                    "Trust intervals",
-                    INVALID_FLOAT_VALUE,
-                    true,
-                    LOCALE,
-                    new Column("var. num"),
-                    new Column("min"),
-                    new Column("max"))) {
+        try (Writer writer = new OutputStreamWriter(dataSource.newOutputStream(TRUST_INTERVAL_FILE_SUFFIX, TXT_EXT, false), StandardCharsets.UTF_8);
+             AmplDatTableFormatter formatter = new AmplDatTableFormatter(
+                 writer,
+                 "Trust intervals",
+                 INVALID_FLOAT_VALUE,
+                 true,
+                 LOCALE,
+                 new Column("var. num"),
+                 new Column("min"),
+                 new Column("max"))) {
             for (int varNum = 0; varNum < uncertainties.min.length; varNum++) {
                 formatter.writeCell(varNum + 1)
                         .writeCell(uncertainties.min[varNum])
@@ -97,15 +100,16 @@ public class UncertaintiesAmplWriter implements WCAConstants {
     }
 
     private void writeMeans(Uncertainties uncertainties, DataSource dataSource, StringToIntMapper<AmplSubset> mapper) throws IOException {
-        try (AmplDatTableFormatter formatter = new AmplDatTableFormatter(
-                    new OutputStreamWriter(dataSource.newOutputStream(MEANS_FILE_SUFFIX, TXT_EXT, false), StandardCharsets.UTF_8),
-                    "Means",
-                    INVALID_FLOAT_VALUE,
-                    true,
-                    LOCALE,
-                    new Column("inj. type"),
-                    new Column("inj. num"),
-                    new Column("mean"))) {
+        try (Writer writer = new OutputStreamWriter(dataSource.newOutputStream(MEANS_FILE_SUFFIX, TXT_EXT, false), StandardCharsets.UTF_8);
+             AmplDatTableFormatter formatter = new AmplDatTableFormatter(
+                 writer,
+                 "Means",
+                 INVALID_FLOAT_VALUE,
+                 true,
+                 LOCALE,
+                 new Column("inj. type"),
+                 new Column("inj. num"),
+                 new Column("mean"))) {
             for (int i =  0; i < uncertainties.means.length; i++) {
                 StochasticInjection inj = uncertainties.injections.get(i);
                 formatter.writeCell(inj.getType().toChar())

@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -7,9 +8,6 @@
 package eu.itesla_project.iidm.ddb.eurostag;
 
 import com.powsybl.computation.ComputationManager;
-import eu.itesla_project.iidm.ddb.eurostag.model.PowerFlow;
-import eu.itesla_project.iidm.ddb.eurostag.model.StateVariable;
-import eu.itesla_project.iidm.ddb.eurostag.model.TransformerModel;
 import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.ReactiveCapabilityCurve.Point;
 import com.powsybl.iidm.network.util.Identifiables;
@@ -18,6 +16,9 @@ import com.powsybl.loadflow.LoadFlow;
 import com.powsybl.loadflow.LoadFlowFactory;
 import com.powsybl.loadflow.LoadFlowParameters;
 import com.powsybl.loadflow.LoadFlowResult;
+import eu.itesla_project.iidm.ddb.eurostag.model.PowerFlow;
+import eu.itesla_project.iidm.ddb.eurostag.model.StateVariable;
+import eu.itesla_project.iidm.ddb.eurostag.model.TransformerModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +40,7 @@ public class EurostagStepUpTransformerInserter {
 
     private final static float SB = 100;
     private final static float ACCEPTABLE_VOLTAGE_DIFF = 0.1f;
-    private final static float INFINITE_REACTIVE_LIMIT = 9999f;
+    private final static float INFINITE_REACTIVE_LIMIT = 99999f;
 
     public enum InsertionStatus {
         OK("ok"),
@@ -301,7 +302,7 @@ public class EurostagStepUpTransformerInserter {
     }
 
     private static Generator moveGenerator(Generator srcGen, StateVariable srcSv, VoltageLevel destVl, Bus destBus, boolean connected,
-                                           Function<StateVariable, StateVariable> fct, EurostagStepUpTransformerConfig config) {
+                                           Function<StateVariable, StateVariable> fct, EurostagStepUpTransformerConfig config, TwoWindingsTransformer twt) {
 
         fillGeneratorState(srcGen, srcSv);
 
@@ -367,6 +368,17 @@ public class EurostagStepUpTransformerInserter {
                         float newP = (float) -fct.apply(new StateVariable(-point.getP(), 0, srcSv.u, srcSv.theta)).p;
                         float newMinQ = config.isNoReactiveLimits() ? -INFINITE_REACTIVE_LIMIT : (float) -fct.apply(new StateVariable(srcSv.p, -point.getMinQ(), srcSv.u, srcSv.theta)).q;
                         float newMaxQ = config.isNoReactiveLimits() ? INFINITE_REACTIVE_LIMIT : (float) -fct.apply(new StateVariable(srcSv.p, -point.getMaxQ(), srcSv.u, srcSv.theta)).q;
+
+                        //test if the step-up transformer impedance is compatible with the reactive limit bounds: the maximun nominal power with a very high
+                        //short-circuit power should be higher than the reactive bounds. If not, remove the bounds
+                        float sMax = computeMaxRate(twt);
+                        if ((sMax < Math.abs(newMinQ)) || (sMax < Math.abs(newMaxQ))) {
+                            LOGGER.warn("Infinite limit mode activated for '{}': either abs({}) or abs({}) higher than {} (maximum nominal power with a short-circuit power of 40%)",
+                                    lvGen.getId(), newMinQ, newMaxQ, sMax);
+                            newMinQ = -INFINITE_REACTIVE_LIMIT;
+                            newMaxQ = INFINITE_REACTIVE_LIMIT;
+                        }
+
                         LOGGER.trace("Resizing reactive limits of '{}': [{}, {}] -> [{}, {}]",
                                 lvGen.getId(), point.getMinQ(), point.getMaxQ(), newMinQ, newMaxQ);
                         rcca.beginPoint()
@@ -455,11 +467,25 @@ public class EurostagStepUpTransformerInserter {
         Function<StateVariable, StateVariable> fct = sv -> toLvGenPf(transformerModel, sv, hvAuxPf, lvAuxPf);
 
         StateVariable hvGenSv = new StateVariable();
-        moveGenerator(hvGen, hvGenSv, lvVl, lvBus, hvGenBus != null, fct, config);
+        moveGenerator(hvGen, hvGenSv, lvVl, lvBus, hvGenBus != null, fct, config, twt);
 
         stateBefore.injections.put(twt.getId(), new PowerFlow((float) (hvGenSv.p + hvAuxPf.p), (float) (hvGenSv.q + hvAuxPf.q)));
 
         return InsertionStatus.OK;
+    }
+
+    /**
+     * Compute a reasonable maximum nominal power ('rate') for a TwoWindingsTransformer
+     * with a very high short-circuit power of 40%
+     *
+     * @param twt two winding transformer
+     * @return maximum nominal power
+     */
+    private static float computeMaxRate(TwoWindingsTransformer twt) {
+        Objects.requireNonNull(twt);
+        VoltageLevel u2 = twt.getTerminal2().getVoltageLevel();
+        float z = SV.getX(twt);
+        return 0.4f * (float) Math.pow(u2.getNominalV(), 2) / z;
     }
 
     public static InsertionStatus insert(Generator g, Path ddbFile, IdDictionary auxDict, EurostagStepUpTransformerConfig config, StateBefore stateBefore) throws IOException {
@@ -612,7 +638,7 @@ public class EurostagStepUpTransformerInserter {
                     boolean connected = twt.getTerminal1().isConnected() && twt.getTerminal2().isConnected() && lvGen.getTerminal().isConnected();
 
                     StateVariable lvGenSv = new StateVariable();
-                    moveGenerator(lvGen, lvGenSv, hvVl, hvBus, connected, fct, config);
+                    moveGenerator(lvGen, lvGenSv, hvVl, hvBus, connected, fct, config, twt);
                 }
 
                 for (Load aux : auxLs) {
