@@ -59,24 +59,24 @@ public class EditController {
         return this.modelTemplCont;
     }
 
-    public void setModelTemplCont(ModelTemplateContainer _mtc) {
-        this.modelTemplCont = _mtc;
+    public void setModelTemplCont(ModelTemplateContainer modelTemplateContainer) {
+        this.modelTemplCont = modelTemplateContainer;
     }
 
     public ModelTemplate getModelTempl() {
         return this.modelTempl;
     }
 
-    public void setModelTempl(ModelTemplate _mt) {
-        this.modelTempl = _mt;
+    public void setModelTempl(ModelTemplate modelTemplate) {
+        this.modelTempl = modelTemplate;
     }
 
     public boolean getShowNewMt() {
         return this.showNewMt;
     }
 
-    public void setShowNewMt(boolean _show) {
-        this.showNewMt = _show;
+    public void setShowNewMt(boolean show) {
+        this.showNewMt = show;
     }
 
 

@@ -361,7 +361,7 @@ public class HistoDbClientImpl implements HistoDbClient {
         writer.writeHeader(headersList.toArray(new String[] {}));
         writer.write(valuesList.toArray());
         */
-
+        String idNonNull = id;
         try {
             writer.writeHeader(headers);
             writer.write(values);
@@ -369,18 +369,19 @@ public class HistoDbClientImpl implements HistoDbClient {
             writer.close();
 
             // if no id is provided, rely on server-side auto-increment mechanism
-            if (id == null) {
-                id = "autoIncrement";
+
+            if (idNonNull == null) {
+                idNonNull = "autoIncrement";
             }
 
             try (InputStream is = httpClient.postHttpRequest(new HistoDbUrl(config,
-                                                                            "data/" + id + ".csv", // WARN here one must NOT use the itesla suffix (not supporting POST of new data)
+                                                                            "data/" + idNonNull + ".csv", // WARN here one must NOT use the itesla suffix (not supporting POST of new data)
                                                                             Collections.emptyMap()),
                                                              sw.toString().getBytes("UTF-8"))) {
                 return new String(ByteStreams.toByteArray(is), StandardCharsets.UTF_8);
             }
         } catch (IOException e) {
-            throw new RuntimeException("Failed to store network values for id " + id, e);
+            throw new RuntimeException("Failed to store network values for id " + idNonNull, e);
         }
     }
 

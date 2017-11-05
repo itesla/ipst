@@ -152,8 +152,8 @@ public class ParametersContainerController {
         return this.parametersContainer;
     }
 
-    public void setParametersContainer(ParametersContainer _parametersContainer) {
-        this.parametersContainer = _parametersContainer;
+    public void setParametersContainer(ParametersContainer parametersContainer) {
+        this.parametersContainer = parametersContainer;
     }
 
     public List<SimulatorInst> getSimulatorParamsKeys() {

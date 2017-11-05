@@ -209,10 +209,10 @@ public class ModEventsExport {
                 modified = stWriter.toString().replace(conRec.getConnectLine(), "");
             }
         }
-        stWriter = new StringWriter();
-        stWriter.write(modified);
+        StringWriter returningStringWriter = new StringWriter();
+        returningStringWriter.write(modified);
 
-        return stWriter;
+        return returningStringWriter;
     }
 
     private Record getBus(Record record) {
@@ -345,8 +345,7 @@ public class ModEventsExport {
         String parsedName;
 
         //Remove the bus prefix = "bus_"
-        name = name.substring(5);
-        parsedName = "_" + name.replaceAll("_", "-");
+        parsedName = "_" + name.substring(5).replaceAll("_", "-");
 
         return parsedName;
     }

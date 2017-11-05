@@ -35,7 +35,7 @@ import java.util.List;
  */
 public class LoadRecord extends ModelicaRecord {
 
-    public LoadRecord(Load load, ConnectBusInfo busInfo, float SNREF, SourceEngine sourceEngine) {
+    public LoadRecord(Load load, ConnectBusInfo busInfo, float snref, SourceEngine sourceEngine) {
         this.load = load;
         this.busInfo = busInfo;
         this.loadId = load.getId();
@@ -67,7 +67,7 @@ public class LoadRecord extends ModelicaRecord {
         }
     }
 
-    public LoadRecord(String loadId, float p0, float q0, float busVoltage, float busAngle, float SNREF, SourceEngine sourceEngine) {
+    public LoadRecord(String loadId, float p0, float q0, float busVoltage, float busAngle, float snref, SourceEngine sourceEngine) {
         this.loadId = loadId;
         this.busVoltage = busVoltage;
         this.busAngle = busAngle;

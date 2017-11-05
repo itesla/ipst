@@ -595,8 +595,8 @@ public class LocalOfflineApplication extends NotificationBroadcasterSupport impl
 
     @Override
     public SecurityRuleExpression getSecurityRuleExpression(String workflowId, RuleId ruleId) {
-        workflowId = Objects.requireNonNull(workflowId);
-        ruleId = Objects.requireNonNull(ruleId);
+        Objects.requireNonNull(workflowId);
+        Objects.requireNonNull(ruleId);
         RuleAttributeSet attributeSet = Objects.requireNonNull(ruleId.getAttributeSet());
         SecurityIndexId securityIndexId = Objects.requireNonNull(ruleId.getSecurityIndexId());
         SecurityIndexType securityIndexType = Objects.requireNonNull(securityIndexId.getSecurityIndexType());

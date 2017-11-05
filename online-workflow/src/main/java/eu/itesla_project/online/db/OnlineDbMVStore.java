@@ -1368,15 +1368,16 @@ public class OnlineDbMVStore implements OnlineDb {
         if (isWorkflowStored(workflowId)) {
             MVStore wfMVStore = getStore(workflowId);
             if (wfMVStore.getMapNames().contains(mapName)) {
-                if (network == null) {
+                Network workingNetwork = network;
+                if (workingNetwork == null) {
                     // load network: used to get equipment from equipment id, when creating limit violations
-                    network = getState(workflowId, 0);
+                    workingNetwork = getState(workflowId, 0);
                 }
-                if (network != null) {
+                if (workingNetwork != null) {
                     List<LimitViolation> violations = new ArrayList<LimitViolation>();
                     Map<String, String> storedMap = wfMVStore.openMap(mapName, mapBuilder);
                     for (String violationId : storedMap.keySet()) {
-                        LimitViolation violation = OnlineDbMVStoreUtils.jsonToLimitViolation(storedMap.get(violationId), network);
+                        LimitViolation violation = OnlineDbMVStoreUtils.jsonToLimitViolation(storedMap.get(violationId), workingNetwork);
                         if (violation != null) {
                             violations.add(violation);
                         }

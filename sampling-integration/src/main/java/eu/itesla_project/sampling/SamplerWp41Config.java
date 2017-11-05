@@ -94,7 +94,7 @@ public class SamplerWp41Config {
             double tflag,
             Integer rngSeed,
             int module3Timeout,
-            int par_k,
+            int parK,
             boolean debug) {
         this.binariesDir = binariesDir;
         this.runtimeHomeDir = Objects.requireNonNull(runtimeHomeDir, "matlab runtime directory is null");
@@ -103,7 +103,7 @@ public class SamplerWp41Config {
         this.tflag = tflag;
         this.rngSeed = rngSeed;
         this.module3Timeout = module3Timeout;
-        this.par_k = par_k;
+        this.par_k = parK;
         this.debug = debug;
     }
 
