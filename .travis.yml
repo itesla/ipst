@@ -16,7 +16,7 @@ install:
 
 script:
 - cd ${TRAVIS_BUILD_DIR}
-- mvn clean install jacoco:report coveralls:report
+- mvn clean verify jacoco:report coveralls:report
 
 addons:
   ssh_known_hosts: sftp.dc0.gpaas.net
