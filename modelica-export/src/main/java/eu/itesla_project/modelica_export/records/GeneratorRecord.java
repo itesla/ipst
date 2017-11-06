@@ -29,7 +29,7 @@ import java.util.Map.Entry;
  */
 public class GeneratorRecord extends ModelicaRecord {
 
-    public GeneratorRecord(Generator generator, ConnectBusInfo busInfo, boolean isInyection, float SNREF, SimulatorInst eurSim, Map<String, Map<String, String>> paramsDictionary, SourceEngine sourceEngine) {
+    public GeneratorRecord(Generator generator, ConnectBusInfo busInfo, boolean isInyection, float snref, SimulatorInst eurSim, Map<String, Map<String, String>> paramsDictionary, SourceEngine sourceEngine) {
         this.generator = generator;
         this.isInyection = isInyection;
         this.sourceSim = eurSim;
@@ -61,7 +61,7 @@ public class GeneratorRecord extends ModelicaRecord {
             }
             DEFAULT_GEN_LOAD_PREFIX = DEFAULT_GEN_LOAD_PREFIX + "_GEN";
         }
-        setParameters(isInyection, SNREF);
+        setParameters(isInyection, snref);
     }
 
     @Override
@@ -388,7 +388,7 @@ public class GeneratorRecord extends ModelicaRecord {
         }
     }
 
-    public void setParameters(boolean isInyection, float SNREF) {
+    public void setParameters(boolean isInyection, float snref) {
         IIDMParameter parameter;
         iidmgenParameters = new ArrayList<IIDMParameter>();
         float voltage = 0;
@@ -431,12 +431,12 @@ public class GeneratorRecord extends ModelicaRecord {
                 addParamInMap(parameter.getName(), parameter.getValue().toString());
 
                 //Before 2015-05-28 the sign of pelec and qelec was not changed but now we change the sign.
-                float pelec = -this.generator.getTerminal().getP() / SNREF;
+                float pelec = -this.generator.getTerminal().getP() / snref;
                 parameter = new IIDMParameter(EurostagFixedData.P, pelec);
                 this.iidmgenParameters.add(parameter);
                 addParamInMap(parameter.getName(), parameter.getValue().toString());
 
-                float qelec = -this.generator.getTerminal().getQ() / SNREF;
+                float qelec = -this.generator.getTerminal().getQ() / snref;
                 parameter = new IIDMParameter(EurostagFixedData.Q, qelec);
                 this.iidmgenParameters.add(parameter);
                 addParamInMap(parameter.getName(),  parameter.getValue().toString());

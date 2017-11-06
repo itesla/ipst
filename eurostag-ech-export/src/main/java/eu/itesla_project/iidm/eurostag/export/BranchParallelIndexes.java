@@ -63,13 +63,14 @@ public class BranchParallelIndexes {
     }
 
     private static char incParallelIndex(char index) {
-        if (index == 'Z') {
+        char idx = index;
+        if (idx == 'Z') {
             throw new RuntimeException("Number max of parallel index reached");
         }
-        if (index == '9') {
+        if (idx == '9') {
             return 'A';
         } else {
-            return ++index;
+            return ++idx;
         }
     }
 

@@ -231,8 +231,8 @@ public class IndexSecurityRulesResultsSynthesis implements Serializable {
             return stateId;
         }
 
-        public void setStateId(Integer _stateId) {
-            this.stateId = _stateId;
+        public void setStateId(Integer stateId) {
+            this.stateId = stateId;
         }
 
 
@@ -241,8 +241,8 @@ public class IndexSecurityRulesResultsSynthesis implements Serializable {
         }
 
 
-        public void setStatus(StateStatus _status) {
-            this.status =  _status;
+        public void setStatus(StateStatus status) {
+            this.status =  status;
         }
 
         public String getStatusCode() {

@@ -89,16 +89,16 @@ public abstract class BranchRecord extends ModelicaRecord {
         return DEFAULT_BRANCH_TYPE;
     }
 
-    public void setDEFAULT_BRANCH_TYPE(String Default_Branch_Type) {
-        DEFAULT_BRANCH_TYPE = Default_Branch_Type;
+    public void setDEFAULT_BRANCH_TYPE(String defaultBranchType) {
+        DEFAULT_BRANCH_TYPE = defaultBranchType;
     }
 
     public String getDEFAULT_BRANCH_PREFIX() {
         return DEFAULT_BRANCH_PREFIX;
     }
 
-    public void setDEFAULT_BRANCH_PREFIX(String Default_Branch_Prefix) {
-        DEFAULT_BRANCH_PREFIX = WordUtils.uncapitalize(Default_Branch_Prefix.substring(0, 1)) + Default_Branch_Prefix.substring(1);
+    public void setDEFAULT_BRANCH_PREFIX(String defaultBranchPrefix) {
+        DEFAULT_BRANCH_PREFIX = WordUtils.uncapitalize(defaultBranchPrefix.substring(0, 1)) + defaultBranchPrefix.substring(1);
     }
 
     @Override
@@ -124,7 +124,7 @@ public abstract class BranchRecord extends ModelicaRecord {
         return parsedName;
     }
 
-    abstract void setParameters(float SNREF);
+    abstract void setParameters(float snref);
 
 //    abstract void addParameter(String name, Object value);
 

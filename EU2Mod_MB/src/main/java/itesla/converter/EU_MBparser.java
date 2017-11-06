@@ -41,8 +41,8 @@ public class EU_MBparser {
      * nLinks: number of links.
      * link: nLinks x 3 array. Each row is a link: the output block and the input block.
      */
-    public EU_MBparser(File EUfile) {
-        this.EUfile = EUfile;
+    public EU_MBparser(File euFile) {
+        this.EUfile = euFile;
         try {
             parser();
         } catch (IOException e) {
