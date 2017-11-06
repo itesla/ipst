@@ -16,7 +16,7 @@ install:
 
 script:
 - cd ${TRAVIS_BUILD_DIR}
-- mvn clean verify jacoco:report coveralls:report
+- mvn clean install jacoco:report coveralls:report
 
 addons:
   ssh_known_hosts: sftp.dc0.gpaas.net
@@ -24,6 +24,6 @@ addons:
     packages:
       - graphviz
 after_success:
-- test $TRAVIS_BRANCH = "master" && test $TRAVIS_PULL_REQUEST = "false" && mvn javadoc:javadoc && pushd $TRAVIS_BUILD_DIR/target/site/apidocs && zip -r /tmp/ipst-javadoc.zip . && sftp $JAVADOC_USER@sftp.dc0.gpaas.net:vhosts/www.itesla-pst.org/htdocs/javadoc <<< $'put /tmp/ipst-javadoc.zip' && popd
-- test $TRAVIS_BRANCH = "master" && test $TRAVIS_PULL_REQUEST = "false" && cd $TRAVIS_BUILD_DIR/powsybl/powsybl-core && mvn javadoc:javadoc && cd target/site/apidocs && zip -r /tmp/powsybl-core-javadoc.zip . && sftp $JAVADOC_USER@sftp.dc0.gpaas.net:vhosts/www.itesla-pst.org/htdocs/javadoc <<< $'put /tmp/powsybl-core-javadoc.zip'
+- mvn javadoc:javadoc && pushd $TRAVIS_BUILD_DIR/target/site/apidocs && zip -r /tmp/ipst-javadoc.zip . && sftp $JAVADOC_USER@sftp.dc0.gpaas.net:vhosts/www.itesla-pst.org/htdocs/javadoc <<< $'put /tmp/ipst-javadoc.zip' && popd
+- cd $TRAVIS_BUILD_DIR/powsybl/powsybl-core && mvn javadoc:javadoc && cd target/site/apidocs && zip -r /tmp/powsybl-core-javadoc.zip . && sftp $JAVADOC_USER@sftp.dc0.gpaas.net:vhosts/www.itesla-pst.org/htdocs/javadoc <<< $'put /tmp/powsybl-core-javadoc.zip'
 
