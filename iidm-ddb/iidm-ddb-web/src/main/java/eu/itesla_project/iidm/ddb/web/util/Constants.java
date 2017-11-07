@@ -10,7 +10,7 @@ package eu.itesla_project.iidm.ddb.web.util;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class Constants {
+public final class Constants {
 
     private Constants() {
     }

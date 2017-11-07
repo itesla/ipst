@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author Silvia Machado <machados@aia.es>
  */
-public class EventsStaticData {
+public final class EventsStaticData {
 
     private EventsStaticData() {
     }

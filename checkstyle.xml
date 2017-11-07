@@ -25,6 +25,7 @@
             <property name="exceptionVariableName" value="ignored"/>
         </module>
         <module name="EmptyStatement"/>
+        <module name="FinalClass"/>
         <module name="HideUtilityClassConstructor"/>
         <module name="IllegalImport"/>
         <module name="Indentation"/>
@@ -32,6 +33,7 @@
         <module name="LocalFinalVariableName"/>
         <module name="LocalVariableName"/>
         <module name="MethodParamPad"/>
+        <module name="MutableException"/>
         <module name="NeedBraces"/>
         <module name="NoWhitespaceAfter"/>
         <module name="NoWhitespaceBefore"/>

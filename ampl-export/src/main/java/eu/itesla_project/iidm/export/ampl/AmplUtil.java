@@ -14,7 +14,7 @@ import com.powsybl.iidm.network.*;
  *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
-public class AmplUtil {
+public final class AmplUtil {
 
     private AmplUtil() {
     }

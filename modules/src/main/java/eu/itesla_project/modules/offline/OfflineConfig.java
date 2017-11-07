@@ -30,7 +30,7 @@ import java.util.Objects;
  *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
-public class OfflineConfig {
+public final class OfflineConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OfflineConfig.class);
 

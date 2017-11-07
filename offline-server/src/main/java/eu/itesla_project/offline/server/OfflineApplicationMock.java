@@ -146,7 +146,7 @@ public class OfflineApplicationMock implements RemoteOfflineApplication {
 
     private final static int AVAILABLE_CORES = 48;
 
-    private class OfflineWorkflowMock implements OfflineWorkflow {
+    private final class OfflineWorkflowMock implements OfflineWorkflow {
 
         private final String id;
 

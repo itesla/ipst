@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 /**
  * @author c.biasuzzi@techrain.it
  */
-public class PrintOnlineWorkflowUtils {
+public final class PrintOnlineWorkflowUtils {
 
     enum TableFormatterFactorySupplier {
 

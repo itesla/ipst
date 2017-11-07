@@ -55,7 +55,7 @@ public class CompilerInstantiationException extends CompilerException {
         ERROR_CREATING_COMPILER
     }
 
-    private ProblemType type;
+    private final ProblemType type;
 
     public CompilerInstantiationException(ProblemType type) {
         super();

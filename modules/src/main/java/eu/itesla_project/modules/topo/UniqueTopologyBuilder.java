@@ -32,7 +32,7 @@ public class UniqueTopologyBuilder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UniqueTopologyBuilder.class);
 
-    private static class StackedConnectivity {
+    private static final class StackedConnectivity {
 
         private final Multimap<PossibleTopology.Equipment, PossibleTopology.Equipment> connections = HashMultimap.create();
 

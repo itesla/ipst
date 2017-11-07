@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
  * bin/add-user.sh -u user -p password -a -up standalone/configuration/application-users.properties -gp standalone/configuration/application-roles.properties
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
-public class OfflineApplicationSecurity {
+public final class OfflineApplicationSecurity {
 
     public static final String USERNAME_HTTP_PARAMETER = "Username";
     public static final String PASSWORD_HTTP_PARAMETER = "Password";

@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class NetworkDataExtractor {
+public final class NetworkDataExtractor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NetworkDataExtractor.class);
 

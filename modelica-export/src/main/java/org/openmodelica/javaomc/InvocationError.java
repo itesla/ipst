@@ -51,8 +51,8 @@ package org.openmodelica.javaomc;
  */
 public class InvocationError extends CompilerException {
     private static final long serialVersionUID = 1437868457853593664L;
-    private String action;
-    private String expression;
+    private final String action;
+    private final String expression;
 
     /**
      * @param action human readable decscription of what action failed

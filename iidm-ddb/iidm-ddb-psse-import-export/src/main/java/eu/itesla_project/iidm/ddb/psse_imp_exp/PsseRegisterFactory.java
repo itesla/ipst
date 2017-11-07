@@ -16,7 +16,7 @@ import java.util.*;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class PsseRegisterFactory {
+public final class PsseRegisterFactory {
 
     static Logger log = LoggerFactory.getLogger(PsseRegisterFactory.class);
 
