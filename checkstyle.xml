@@ -16,6 +16,8 @@
         <property name="message" value="Line has trailing spaces."/>
     </module>
 
+    <module name="Translation"/>
+
     <module name="TreeWalker">
         <module name="ArrayTypeStyle"/>
         <module name="ConstantName"/>
@@ -39,6 +41,8 @@
         <module name="ParenPad"/>
         <module name="RedundantImport"/>
         <module name="RightCurly"/>
+        <module name="SimplifyBooleanExpression"/>
+        <module name="SimplifyBooleanReturn"/>
         <module name="SuppressWarningsHolder"/>
         <module name="TypecastParenPad"/>
         <module name="WhitespaceAfter"/>

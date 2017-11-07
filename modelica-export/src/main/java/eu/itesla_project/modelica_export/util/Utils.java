@@ -75,14 +75,14 @@ public class Utils {
             if (line.trim().startsWith(EurostagFixedData.PARAMETER)) {
                 lineData = line.trim().split(StaticData.WHITE_SPACE);
                 if (lineData.length >= 3) {
-                    String paramName = lineData[2].endsWith(StaticData.SEMICOLON) == true ? lineData[2].substring(0, lineData[2].length() - 1) : lineData[2];
+                    String paramName = lineData[2].endsWith(StaticData.SEMICOLON) ? lineData[2].substring(0, lineData[2].length() - 1) : lineData[2];
 
                     paramsList.add(paramName);
                 }
             } else if (line.trim().startsWith(EurostagModDefaultTypes.PIN_TYPE)) {
                 lineData = line.trim().split(StaticData.WHITE_SPACE);
                 if (lineData.length >= 2) {
-                    String pinName = lineData[1].endsWith(StaticData.SEMICOLON) == true ? lineData[1].substring(0, lineData[1].length() - 1) : lineData[1];
+                    String pinName = lineData[1].endsWith(StaticData.SEMICOLON) ? lineData[1].substring(0, lineData[1].length() - 1) : lineData[1];
                     pinsList.add(pinName);
                 }
             }
@@ -106,7 +106,7 @@ public class Utils {
             if ((line.trim().startsWith(EurostagModDefaultTypes.PIN_TYPE) || line.trim().startsWith(EurostagModDefaultTypes.INPUT_PIN_TYPE) || line.trim().startsWith(EurostagModDefaultTypes.OUTPUT_PIN_TYPE)) && !line.contains("isInitValue")) { //Parseo de pines //21-8-2014 modificación && line.contains("isInitValue")
                 lineData = line.trim().split(StaticData.WHITE_SPACE);
                 if (lineData.length >= 2) {
-                    String pinName = lineData[1].endsWith(StaticData.SEMICOLON) == true ? lineData[1].substring(0, lineData[1].length() - 1) : lineData[1];
+                    String pinName = lineData[1].endsWith(StaticData.SEMICOLON) ? lineData[1].substring(0, lineData[1].length() - 1) : lineData[1];
                     pinsList.add(pinName);
                 }
             }
@@ -125,7 +125,7 @@ public class Utils {
             if (line.contains("isInitValue")) {
                 lineData = line.trim().split(StaticData.WHITE_SPACE);
                 if (lineData.length >= 2) {
-                    String pinName = lineData[1].endsWith(StaticData.SEMICOLON) == true ? lineData[1].substring(0, lineData[1].length() - 1) : lineData[1];
+                    String pinName = lineData[1].endsWith(StaticData.SEMICOLON) ? lineData[1].substring(0, lineData[1].length() - 1) : lineData[1];
                     pinsList.add(pinName);
                 }
             }
@@ -145,7 +145,7 @@ public class Utils {
             if (line.trim().startsWith(EurostagFixedData.PARAMETER) && !line.contains("=")) {
                 lineData = line.trim().split(StaticData.WHITE_SPACE);
                 if (lineData.length >= 3) {
-                    String varName = lineData[2].endsWith(StaticData.SEMICOLON) == true ? lineData[2].substring(0, lineData[2].length() - 1) : lineData[2];
+                    String varName = lineData[2].endsWith(StaticData.SEMICOLON) ? lineData[2].substring(0, lineData[2].length() - 1) : lineData[2];
                     if (varName.startsWith(StaticData.INIT_VAR)) {
                         initList.add(varName);
                     }
