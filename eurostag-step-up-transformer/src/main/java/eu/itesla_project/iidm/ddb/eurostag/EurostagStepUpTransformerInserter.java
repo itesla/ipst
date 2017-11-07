@@ -34,7 +34,7 @@ import java.util.stream.Stream;
  *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
-public class EurostagStepUpTransformerInserter {
+public final class EurostagStepUpTransformerInserter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EurostagStepUpTransformerInserter.class);
 

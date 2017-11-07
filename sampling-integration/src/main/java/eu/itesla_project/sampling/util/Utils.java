@@ -38,7 +38,7 @@ import com.jmatio.types.MLDouble;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class Utils {
+public final class Utils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
 

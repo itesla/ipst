@@ -23,7 +23,7 @@ import eu.itesla_project.modelica_export.util.eurostag.EurostagModDefaultTypes;
 /**
  * @author Silvia Machado <machados@aia.es>
  */
-public class Utils {
+public final class Utils {
 
     private Utils() {
     }

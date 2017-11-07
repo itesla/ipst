@@ -22,7 +22,7 @@ import java.util.Map;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class DymolaUtil {
+public final class DymolaUtil {
 
 
     static final String PRODUCT_NAME = "Dymola";

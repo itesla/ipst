@@ -60,7 +60,7 @@ public class MMapOfflineDb implements OfflineDb {
 
     private static final boolean CHECK_MISSING_VALUES = false;
 
-    public static class PersistenceContext implements AutoCloseable {
+    public static final class PersistenceContext implements AutoCloseable {
 
         private final Path workflowDir;
 

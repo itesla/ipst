@@ -20,7 +20,7 @@ import eu.itesla_project.mcla.forecast_errors.data.StochasticVariable;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class FEANetworkUtils {
+public final class FEANetworkUtils {
 
     private FEANetworkUtils() {
     }

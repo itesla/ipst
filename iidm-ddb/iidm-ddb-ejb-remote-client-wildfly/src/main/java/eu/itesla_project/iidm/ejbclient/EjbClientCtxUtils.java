@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class EjbClientCtxUtils {
+public final class EjbClientCtxUtils {
     static Logger LOGGER = LoggerFactory.getLogger(EjbClientCtxUtils.class.getName());
 
     private EjbClientCtxUtils() {

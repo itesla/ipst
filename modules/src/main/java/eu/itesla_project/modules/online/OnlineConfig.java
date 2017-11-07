@@ -32,7 +32,7 @@ import com.powsybl.simulation.SimulatorFactory;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class OnlineConfig {
+public final class OnlineConfig {
     /*
     #example of online.properties file.
 
