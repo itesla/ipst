@@ -534,7 +534,7 @@ public class Initialization {
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(regInitModel);
             boolean found = false;
-            while ((matcher.find()) && (found == false)) {
+            while ((matcher.find()) && (!found)) {
                 found = true;
                 patron = matcher.group();
             }

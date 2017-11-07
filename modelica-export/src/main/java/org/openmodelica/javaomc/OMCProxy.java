@@ -413,7 +413,7 @@ public class OMCProxy {
             throws ConnectException {
         String retval = null;
 
-        if (hasInitialized == false) {
+        if (!hasInitialized) {
             init();
         }
 
