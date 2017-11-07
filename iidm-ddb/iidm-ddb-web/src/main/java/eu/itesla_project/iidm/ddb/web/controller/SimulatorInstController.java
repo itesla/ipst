@@ -62,8 +62,8 @@ public class SimulatorInstController {
         return this.simulatorInst;
     }
 
-    public void setSimulatorInst(SimulatorInst _simulatorInst) {
-        this.simulatorInst = _simulatorInst;
+    public void setSimulatorInst(SimulatorInst simulatorInst) {
+        this.simulatorInst = simulatorInst;
     }
 
     public void setSimulatorValues() {
@@ -96,20 +96,20 @@ public class SimulatorInstController {
     }
 
 
-    public String view(SimulatorInst _simulatorInst) {
-        log.log(Level.INFO, " view enter:: [" + _simulatorInst.toString() + "]");
-        this.simulatorInst = pmanager.findSimulator(_simulatorInst.getSimulator(), _simulatorInst.getVersion());
+    public String view(SimulatorInst simulatorInstToView) {
+        log.log(Level.INFO, " view enter:: [" + simulatorInstToView.toString() + "]");
+        this.simulatorInst = pmanager.findSimulator(simulatorInstToView.getSimulator(), simulatorInstToView.getVersion());
         log.log(Level.INFO, "view:: for model simulator: [" + simulatorInst.getId() + " " + simulatorInst.getSimulator().name() + " " + simulatorInst.getVersion() + "]");
         return "details";
     }
 
 
-    public String edit(SimulatorInst _simulatorInst) {
-        log.log(Level.INFO, " edit enter:: [" + _simulatorInst.toString() + "]");
+    public String edit(SimulatorInst simulatorInstToEdit) {
+        log.log(Level.INFO, " edit enter:: [" + simulatorInstToEdit.toString() + "]");
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
 
-        this.simulatorInst = pmanager.findSimulator(_simulatorInst.getSimulator(), _simulatorInst.getVersion());
+        this.simulatorInst = pmanager.findSimulator(simulatorInstToEdit.getSimulator(), simulatorInstToEdit.getVersion());
         try {
             if (simulatorInst != null) {
                 log.log(Level.INFO, "Edit SimulatorInst : [" + simulatorInst.getId() + " " + simulatorInst.getSimulator().name() + " " + simulatorInst.getVersion() + "]");
@@ -127,12 +127,12 @@ public class SimulatorInstController {
     }
 
 
-    public String delete(SimulatorInst _simulatorInst) {
-        log.log(Level.INFO, " delete enter:: [" + _simulatorInst.toString() + "]");
+    public String delete(SimulatorInst simulatorInstToDelete) {
+        log.log(Level.INFO, " delete enter:: [" + simulatorInstToDelete.toString() + "]");
 
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
-        SimulatorInst simInst = pmanager.findSimulator(_simulatorInst.getSimulator(), _simulatorInst.getVersion());
+        SimulatorInst simInst = pmanager.findSimulator(simulatorInstToDelete.getSimulator(), simulatorInstToDelete.getVersion());
         try {
             if (simInst != null) {
                 log.log(Level.INFO, "Delete simulator :[" + simInst.getId() + " " + simInst.getSimulator().name() + " " + simInst.getVersion() + "]");
@@ -172,11 +172,5 @@ public class SimulatorInstController {
         // This is the root cause message
         return errorMessage;
     }
-
-
-
-
-
-
 
 }

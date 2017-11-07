@@ -7,14 +7,19 @@
 package eu.itesla_project.iidm.ddb.eurostag;
 
 import java.io.IOException;
+import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -22,19 +27,29 @@ import java.util.Map;
  */
 class EurostagDDB {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(EurostagDDB.class);
+
     private final Map<String, Path> generators = new HashMap<>();
 
     EurostagDDB(List<Path> ddbDirs) throws IOException {
         for (Path ddbDir : ddbDirs) {
+            ddbDir = readSymbolicLink(ddbDir);
             if (!Files.exists(ddbDir) && !Files.isDirectory(ddbDir)) {
                 throw new IllegalArgumentException(ddbDir + " must exist and be a dir");
             }
-            Files.walkFileTree(ddbDir, new SimpleFileVisitor<Path>() {
+            Files.walkFileTree(ddbDir, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    if (Files.isRegularFile(file) && file.toString().endsWith(".tg")) {
-                        String fileName = file.getFileName().toString();
-                        generators.put(fileName.substring(0, fileName.length() - 3), file);
+                    String fileName = file.getFileName().toString();
+                    Path tmpfile = readSymbolicLink(file);
+                    if (Files.isDirectory(tmpfile)) {
+                        Files.walkFileTree(tmpfile, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, this);
+                    } else if (Files.isRegularFile(tmpfile) && fileName.endsWith(".tg")) {
+                        String key = fileName.substring(0, fileName.length() - 3);
+                        if (generators.containsKey(key)) {
+                            LOGGER.warn("the processing has detected that the file {} is present in {} and {}", fileName, tmpfile, generators.get(key));
+                        }
+                        generators.put(key, tmpfile);
                     }
                     return super.visitFile(file, attrs);
                 }
@@ -42,8 +57,16 @@ class EurostagDDB {
         }
     }
 
-    Path findGenerator(String idDdb) throws IOException {
+    Path findGenerator(String idDdb) {
         return generators.get(idDdb);
+    }
+
+    private static Path readSymbolicLink(Path link) throws IOException {
+        Path path = link;
+        while (Files.isSymbolicLink(path)) {
+            path = Files.readSymbolicLink(path);
+        }
+        return path;
     }
 
 }

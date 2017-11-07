@@ -106,9 +106,6 @@ public class ContingencyEvaluator {
         boolean dynamicIndexUnsafe = false;
         if (checkRules) {
             checkRules(rules, invalidRulesIndexes, bacecaseInvalidRulesIndexes);
-            if ("0".equals(stateId)) {
-                bacecaseInvalidRulesIndexes = invalidRulesIndexes; // keep for samples evaluation -> rules invalid on basecase are invalid for all samples
-            }
         }
         Map<SecurityIndexType, StateStatus> indexesResults = new EnumMap<>(SecurityIndexType.class);
         for (SecurityRule rule : rules) {

@@ -150,9 +150,9 @@ public class ModelicaMainExporter {
         }
     }
 
-    private void runLoadFlow(ComputationManager _computationManager) throws Exception {
+    private void runLoadFlow(ComputationManager computationManager) throws Exception {
         int priority = 1;
-        LoadFlow loadflow = loadFlowFactory.create(_network, _computationManager, priority);
+        LoadFlow loadflow = loadFlowFactory.create(_network, computationManager, priority);
         //((HELMLoadFlow) loadflow).setSlack(this._slackId);
         LoadFlowResult lfResults = loadflow.run();
 

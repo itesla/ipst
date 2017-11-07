@@ -26,14 +26,14 @@ import org.slf4j.LoggerFactory;
 public class FixedTransformerRecord extends BranchRecord {
 
     public FixedTransformerRecord(TwoWindingsTransformer transformer,
-            float SNREF) {
+            float snref) {
         super(transformer);
         this.transformer = transformer;
         super.setDEFAULT_BRANCH_TYPE(DEFAULT_FIXED_TRAFO_TYPE);
 
         super.setDEFAULT_BRANCH_PREFIX(StaticData.PREF_TRAFO);
 
-        this.setParameters(SNREF);
+        this.setParameters(snref);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class FixedTransformerRecord extends BranchRecord {
      * Add IIDM parameters to Fixed Transformer Modelica Model in p.u
      */
     @Override
-    void setParameters(float SNREF) {
+    void setParameters(float snref) {
         //super.iidmbranchParameters = new ArrayList<IIDMParameter>();
 
         float t1NomV = this.transformer.getTerminal1().getVoltageLevel().getNominalV();
@@ -117,7 +117,7 @@ public class FixedTransformerRecord extends BranchRecord {
         float u2Nom = Float.isNaN(t2NomV) == false ? t2NomV : 0;
         float v1 = Float.isNaN(this.transformer.getRatedU1()) == false ? this.transformer.getRatedU1() : 0; // [kV]
         float v2 = Float.isNaN(this.transformer.getRatedU2()) == false ? this.transformer.getRatedU2() : 0; // [kV]
-        float zBase = (float) Math.pow(u2Nom, 2) / SNREF;
+        float zBase = (float) Math.pow(u2Nom, 2) / snref;
 
         float r = this.transformer.getR() / zBase; // [p.u.]
         super.addParameter(this.iidmbranchParameters, StaticData.R, r); // p.u.

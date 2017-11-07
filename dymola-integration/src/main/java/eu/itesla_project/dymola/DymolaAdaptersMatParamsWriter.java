@@ -70,9 +70,9 @@ public class DymolaAdaptersMatParamsWriter {
         return mlarray;
     }
 
-    public List<MLArray> smallsignalMLArray(Double step_min, Double var_min, Double f1, Double f2, Double d1, Double d2, Double d3, Double nm, Double fInstant, Double fDuration) {
-        MLDouble mStepMin = new MLDouble("step_min", new double[]{step_min}, 1);
-        MLDouble mVarMin = new MLDouble("var_min", new double[]{var_min}, 1);
+    public List<MLArray> smallsignalMLArray(Double stepMin, Double varMin, Double f1, Double f2, Double d1, Double d2, Double d3, Double nm, Double fInstant, Double fDuration) {
+        MLDouble mStepMin = new MLDouble("step_min", new double[]{stepMin}, 1);
+        MLDouble mVarMin = new MLDouble("var_min", new double[]{varMin}, 1);
         MLDouble mF = new MLDouble("f", new double[]{f1, f2}, 1);
         MLDouble mD = new MLDouble("d", new double[]{d1, d2, d3}, 1);
         MLDouble mNm = new MLDouble("Nm", new double[]{nm}, 1);

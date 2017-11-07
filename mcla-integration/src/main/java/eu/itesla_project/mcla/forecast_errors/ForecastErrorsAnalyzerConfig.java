@@ -65,7 +65,7 @@ public class ForecastErrorsAnalyzerConfig {
             double epsilo,
             Integer conditionalSampling,
             Integer tFlags,
-            double histo_estremeQ,
+            double histoEstremeQ,
             double thresGUI,
             String nats,
             Integer rngSeed,
@@ -92,7 +92,7 @@ public class ForecastErrorsAnalyzerConfig {
         this.epsilo = epsilo;
         this.conditionalSampling = conditionalSampling;
         this.tFlags = tFlags;
-        this.histo_estremeQ = histo_estremeQ;
+        this.histo_estremeQ = histoEstremeQ;
         this.thresGUI = thresGUI;
         this.nats = nats;
         this.debug = debug;

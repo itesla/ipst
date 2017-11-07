@@ -79,8 +79,7 @@ public class LineFaultRecord extends EventRecord {
         String parsedName;
 
         //Remove the bus prefix = "bus_"
-        name = name.substring(5);
-        parsedName = "_" + name.replaceAll("_", "-");
+        parsedName = "_" + name.substring(5).replaceAll("_", "-");
 
         return parsedName;
     }

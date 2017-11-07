@@ -32,13 +32,13 @@ import eu.itesla_project.modelica_export.util.eurostag.EurostagModDefaultTypes;
 public class DanglingLineRecord extends ModelicaRecord {
 
 
-    public DanglingLineRecord(DanglingLine danglingLine, String danglingBusName, String danglingLoadName, float SNREF) {
+    public DanglingLineRecord(DanglingLine danglingLine, String danglingBusName, String danglingLoadName, float snref) {
         this.danglingLine = danglingLine;
         this.danglingBusName = danglingBusName;
         this.danglingLoadName = danglingLoadName;
         this.DEFAULT_LINE_PREFIX = StaticData.PREF_LINE;
 
-        this.setParameters(SNREF);
+        this.setParameters(snref);
     }
 
 
@@ -129,11 +129,11 @@ public class DanglingLineRecord extends ModelicaRecord {
     /**
      * Add IIDM parameters to Dangling Line Modelica Model in p.u
      */
-    private void setParameters(float SNREF) {
+    private void setParameters(float snref) {
         //this.iidmbranchParameters = new ArrayList<IIDMParameter>();
         float tNominalV = this.danglingLine.getTerminal().getVoltageLevel().getNominalV();
         float voltage = Float.isNaN(tNominalV) == false ? tNominalV : 0;
-        float z = (voltage * voltage) / SNREF;
+        float z = (voltage * voltage) / snref;
 
         super.addParameter(this.iidmbranchParameters, StaticData.R, this.danglingLine.getR() / z);
         super.addParameter(this.iidmbranchParameters, StaticData.X, this.danglingLine.getX() / z);
