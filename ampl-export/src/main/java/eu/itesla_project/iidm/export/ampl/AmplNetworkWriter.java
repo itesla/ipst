@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -111,23 +112,24 @@ public class AmplNetworkWriter implements AmplConstants {
     }
 
     private void writeSubstations(AmplExportContext context) throws IOException {
-        try (TableFormatter formatter = new AmplDatTableFormatter(
-                new OutputStreamWriter(dataSource.newOutputStream("_network_substations", "txt", append), StandardCharsets.UTF_8),
-                getTableTitle("Substations"),
-                INVALID_FLOAT_VALUE,
-                !append,
-                LOCALE,
-                new Column("num"),
-                new Column("horizon"),
-                new Column("reference date distance (minutes)"),
-                new Column("nomV (KV)"),
-                new Column("minV (pu)"),
-                new Column("maxV (pu)"),
-                new Column("fault"),
-                new Column(config.getActionType().getLabel()),
-                new Column("country"),
-                new Column("id"),
-                new Column("description"))) {
+        try (Writer writer = new OutputStreamWriter(dataSource.newOutputStream("_network_substations", "txt", append), StandardCharsets.UTF_8);
+             TableFormatter formatter = new AmplDatTableFormatter(
+                 writer,
+                 getTableTitle("Substations"),
+                 INVALID_FLOAT_VALUE,
+                 !append,
+                 LOCALE,
+                 new Column("num"),
+                 new Column("horizon"),
+                 new Column("reference date distance (minutes)"),
+                 new Column("nomV (KV)"),
+                 new Column("minV (pu)"),
+                 new Column("maxV (pu)"),
+                 new Column("fault"),
+                 new Column(config.getActionType().getLabel()),
+                 new Column("country"),
+                 new Column("id"),
+                 new Column("description"))) {
             for (VoltageLevel vl : network.getVoltageLevels()) {
 //                if (!context.voltageLevelIdsToExport.contains(vl.getId())) {
 //                    continue;
@@ -233,22 +235,23 @@ public class AmplNetworkWriter implements AmplConstants {
     }
 
     private void writeBuses(AmplExportContext context) throws IOException {
-        try (TableFormatter formatter = new AmplDatTableFormatter(
-                new OutputStreamWriter(dataSource.newOutputStream("_network_buses", "txt", append), StandardCharsets.UTF_8),
-                getTableTitle("Buses"),
-                INVALID_FLOAT_VALUE,
-                !append,
-                LOCALE,
-                new Column("num"),
-                new Column("substation"),
-                new Column("cc"),
-                new Column("v (pu)"),
-                new Column("theta (rad)"),
-                new Column("p (MW)"),
-                new Column("q (MVar)"),
-                new Column("fault"),
-                new Column(config.getActionType().getLabel()),
-                new Column("id"))) {
+        try (Writer writer = new OutputStreamWriter(dataSource.newOutputStream("_network_buses", "txt", append), StandardCharsets.UTF_8);
+             TableFormatter formatter = new AmplDatTableFormatter(
+                 writer,
+                 getTableTitle("Buses"),
+                 INVALID_FLOAT_VALUE,
+                 !append,
+                 LOCALE,
+                 new Column("num"),
+                 new Column("substation"),
+                 new Column("cc"),
+                 new Column("v (pu)"),
+                 new Column("theta (rad)"),
+                 new Column("p (MW)"),
+                 new Column("q (MVar)"),
+                 new Column("fault"),
+                 new Column(config.getActionType().getLabel()),
+                 new Column("id"))) {
             for (Bus b : AmplUtil.getBuses(network)) {
                 int ccNum = ConnectedComponents.getCcNum(b);
                 // skip buses not in the main connected component
@@ -400,38 +403,39 @@ public class AmplNetworkWriter implements AmplConstants {
     }
 
     private void writeBranches(AmplExportContext context) throws IOException {
-        try (TableFormatter formatter = new AmplDatTableFormatter(
-                new OutputStreamWriter(dataSource.newOutputStream("_network_branches", "txt", append), StandardCharsets.UTF_8),
-                getTableTitle("Branches"),
-                INVALID_FLOAT_VALUE,
-                !append,
-                LOCALE,
-                new Column("num"),
-                new Column("bus1"),
-                new Column("bus2"),
-                new Column("3wt num"),
-                new Column("sub.1"),
-                new Column("sub.2"),
-                new Column("r (pu)"),
-                new Column("x (pu)"),
-                new Column("g1 (pu)"),
-                new Column("g2 (pu)"),
-                new Column("b1 (pu)"),
-                new Column("b2 (pu)"),
-                new Column("cst ratio (pu)"),
-                new Column("ratio tc"),
-                new Column("phase tc"),
-                new Column("p1 (MW)"),
-                new Column("p2 (MW)"),
-                new Column("q1 (MVar)"),
-                new Column("q2 (MVar)"),
-                new Column("patl1 (A)"),
-                new Column("patl2 (A)"),
-                new Column("merged"),
-                new Column("fault"),
-                new Column(config.getActionType().getLabel()),
-                new Column("id"),
-                new Column("description"))) {
+        try (Writer writer = new OutputStreamWriter(dataSource.newOutputStream("_network_branches", "txt", append), StandardCharsets.UTF_8);
+             TableFormatter formatter = new AmplDatTableFormatter(
+                 writer,
+                 getTableTitle("Branches"),
+                 INVALID_FLOAT_VALUE,
+                 !append,
+                 LOCALE,
+                 new Column("num"),
+                 new Column("bus1"),
+                 new Column("bus2"),
+                 new Column("3wt num"),
+                 new Column("sub.1"),
+                 new Column("sub.2"),
+                 new Column("r (pu)"),
+                 new Column("x (pu)"),
+                 new Column("g1 (pu)"),
+                 new Column("g2 (pu)"),
+                 new Column("b1 (pu)"),
+                 new Column("b2 (pu)"),
+                 new Column("cst ratio (pu)"),
+                 new Column("ratio tc"),
+                 new Column("phase tc"),
+                 new Column("p1 (MW)"),
+                 new Column("p2 (MW)"),
+                 new Column("q1 (MVar)"),
+                 new Column("q2 (MVar)"),
+                 new Column("patl1 (A)"),
+                 new Column("patl2 (A)"),
+                 new Column("merged"),
+                 new Column("fault"),
+                 new Column(config.getActionType().getLabel()),
+                 new Column("id"),
+                 new Column("description"))) {
             for (Line l : network.getLines()) {
                 Terminal t1 = l.getTerminal1();
                 Terminal t2 = l.getTerminal2();
@@ -850,19 +854,20 @@ public class AmplNetworkWriter implements AmplConstants {
     }
 
     private void writeTapChangerTable() throws IOException {
-        try (TableFormatter formatter = new AmplDatTableFormatter(
-                new OutputStreamWriter(dataSource.newOutputStream("_network_tct", "txt", append), StandardCharsets.UTF_8),
-                getTableTitle("Tap changer table"),
-                INVALID_FLOAT_VALUE,
-                !append,
-                LOCALE,
-                new Column("num"),
-                new Column("tap"),
-                new Column("var ratio"),
-                new Column("x (pu)"),
-                new Column("angle (rad)"),
-                new Column("fault"),
-                new Column(config.getActionType().getLabel()))) {
+        try (Writer writer = new OutputStreamWriter(dataSource.newOutputStream("_network_tct", "txt", append), StandardCharsets.UTF_8);
+             TableFormatter formatter = new AmplDatTableFormatter(
+                 writer,
+                 getTableTitle("Tap changer table"),
+                 INVALID_FLOAT_VALUE,
+                 !append,
+                 LOCALE,
+                 new Column("num"),
+                 new Column("tap"),
+                 new Column("var ratio"),
+                 new Column("x (pu)"),
+                 new Column("angle (rad)"),
+                 new Column("fault"),
+                 new Column(config.getActionType().getLabel()))) {
             for (TwoWindingsTransformer twt : network.getTwoWindingsTransformers()) {
                 Terminal t2 = twt.getTerminal2();
                 float vb2 = t2.getVoltageLevel().getNominalV();
@@ -972,13 +977,14 @@ public class AmplNetworkWriter implements AmplConstants {
         columns.add(new Column("fault"));
         columns.add(new Column(config.getActionType().getLabel()));
         columns.add(new Column("id"));
-        try (TableFormatter formatter = new AmplDatTableFormatter(
-                new OutputStreamWriter(dataSource.newOutputStream("_network_rtc", "txt", append), StandardCharsets.UTF_8),
-                getTableTitle("Ratio tap changers"),
-                INVALID_FLOAT_VALUE,
-                !append,
-                LOCALE,
-                columns.toArray(new Column[columns.size()]))) {
+        try (Writer writer = new OutputStreamWriter(dataSource.newOutputStream("_network_rtc", "txt", append), StandardCharsets.UTF_8);
+             TableFormatter formatter = new AmplDatTableFormatter(
+                 writer,
+                 getTableTitle("Ratio tap changers"),
+                 INVALID_FLOAT_VALUE,
+                 !append,
+                 LOCALE,
+                 columns.toArray(new Column[columns.size()]))) {
             for (TwoWindingsTransformer twt : network.getTwoWindingsTransformers()) {
                 RatioTapChanger rtc = twt.getRatioTapChanger();
                 if (rtc != null) {
@@ -1005,18 +1011,19 @@ public class AmplNetworkWriter implements AmplConstants {
     }
 
     private void writePhaseTapChangers() throws IOException {
-        try (TableFormatter formatter = new AmplDatTableFormatter(
-                new OutputStreamWriter(dataSource.newOutputStream("_network_ptc", "txt", append), StandardCharsets.UTF_8),
-                getTableTitle("Phase tap changers"),
-                INVALID_FLOAT_VALUE,
-                !append,
-                LOCALE,
-                new Column("num"),
-                new Column("tap"),
-                new Column("table"),
-                new Column("fault"),
-                new Column(config.getActionType().getLabel()),
-                new Column("id"))) {
+        try (Writer writer = new OutputStreamWriter(dataSource.newOutputStream("_network_ptc", "txt", append), StandardCharsets.UTF_8);
+             TableFormatter formatter = new AmplDatTableFormatter(
+                 writer,
+                 getTableTitle("Phase tap changers"),
+                 INVALID_FLOAT_VALUE,
+                 !append,
+                 LOCALE,
+                 new Column("num"),
+                 new Column("tap"),
+                 new Column("table"),
+                 new Column("fault"),
+                 new Column(config.getActionType().getLabel()),
+                 new Column("id"))) {
             for (TwoWindingsTransformer twt : network.getTwoWindingsTransformers()) {
                 PhaseTapChanger ptc = twt.getPhaseTapChanger();
                 if (ptc != null) {
@@ -1049,21 +1056,22 @@ public class AmplNetworkWriter implements AmplConstants {
     }
 
     private void writeLoads(AmplExportContext context) throws IOException {
-        try (TableFormatter formatter = new AmplDatTableFormatter(
-                new OutputStreamWriter(dataSource.newOutputStream("_network_loads", "txt", append), StandardCharsets.UTF_8),
-                getTableTitle("Loads"),
-                INVALID_FLOAT_VALUE,
-                !append,
-                LOCALE,
-                new Column("num"),
-                new Column("bus"),
-                new Column("substation"),
-                new Column("p (MW)"),
-                new Column("q (MVar)"),
-                new Column("fault"),
-                new Column(config.getActionType().getLabel()),
-                new Column("id"),
-                new Column("description"))) {
+        try (Writer writer = new OutputStreamWriter(dataSource.newOutputStream("_network_loads", "txt", append), StandardCharsets.UTF_8);
+             TableFormatter formatter = new AmplDatTableFormatter(
+                 writer,
+                 getTableTitle("Loads"),
+                 INVALID_FLOAT_VALUE,
+                 !append,
+                 LOCALE,
+                 new Column("num"),
+                 new Column("bus"),
+                 new Column("substation"),
+                 new Column("p (MW)"),
+                 new Column("q (MVar)"),
+                 new Column("fault"),
+                 new Column(config.getActionType().getLabel()),
+                 new Column("id"),
+                 new Column("description"))) {
             List<String> skipped = new ArrayList<>();
             for (Load l : network.getLoads()) {
                 Terminal t = l.getTerminal();
@@ -1134,24 +1142,25 @@ public class AmplNetworkWriter implements AmplConstants {
     }
 
     private void writeShunts(AmplExportContext context) throws IOException {
-        try (TableFormatter formatter = new AmplDatTableFormatter(
-                new OutputStreamWriter(dataSource.newOutputStream("_network_shunts", "txt", append), StandardCharsets.UTF_8),
-                getTableTitle("Shunts"),
-                INVALID_FLOAT_VALUE,
-                !append,
-                LOCALE,
-                new Column("num"),
-                new Column("bus"),
-                new Column("con. bus"),
-                new Column("substation"),
-                new Column("minB (pu)"),
-                new Column("maxB (pu)"),
-                new Column("inter. points"),
-                new Column("b (pu)"),
-                new Column("fault"),
-                new Column(config.getActionType().getLabel()),
-                new Column("id"),
-                new Column("description"))) {
+        try (Writer writer = new OutputStreamWriter(dataSource.newOutputStream("_network_shunts", "txt", append), StandardCharsets.UTF_8);
+             TableFormatter formatter = new AmplDatTableFormatter(
+                 writer,
+                 getTableTitle("Shunts"),
+                 INVALID_FLOAT_VALUE,
+                 !append,
+                 LOCALE,
+                 new Column("num"),
+                 new Column("bus"),
+                 new Column("con. bus"),
+                 new Column("substation"),
+                 new Column("minB (pu)"),
+                 new Column("maxB (pu)"),
+                 new Column("inter. points"),
+                 new Column("b (pu)"),
+                 new Column("fault"),
+                 new Column(config.getActionType().getLabel()),
+                 new Column("id"),
+                 new Column("description"))) {
             List<String> skipped = new ArrayList<>();
             for (ShuntCompensator sc : network.getShunts()) {
                 Terminal t = sc.getTerminal();
@@ -1205,16 +1214,17 @@ public class AmplNetworkWriter implements AmplConstants {
     }
 
     private void writeStaticVarCompensators(AmplExportContext context) throws IOException {
-        try (TableFormatter formatter = new AmplDatTableFormatter(
-                new OutputStreamWriter(dataSource.newOutputStream("_network_static_var_compensators", "txt", append), StandardCharsets.UTF_8),
-                getTableTitle("Static VAR compensators"),
-                INVALID_FLOAT_VALUE,
-                !append,
-                LOCALE,
-                new Column("num"),
-                new Column("fault"),
-                new Column(config.getActionType().getLabel()),
-                new Column("id"))) {
+        try (Writer writer = new OutputStreamWriter(dataSource.newOutputStream("_network_static_var_compensators", "txt", append), StandardCharsets.UTF_8);
+             TableFormatter formatter = new AmplDatTableFormatter(
+                 writer,
+                 getTableTitle("Static VAR compensators"),
+                 INVALID_FLOAT_VALUE,
+                 !append,
+                 LOCALE,
+                 new Column("num"),
+                 new Column("fault"),
+                 new Column(config.getActionType().getLabel()),
+                 new Column("id"))) {
             List<String> skipped = new ArrayList<>();
             for (StaticVarCompensator svc : network.getStaticVarCompensators()) {
                 // FIXME
@@ -1232,30 +1242,31 @@ public class AmplNetworkWriter implements AmplConstants {
     }
 
     private void writeGenerators(AmplExportContext context) throws IOException {
-        try (TableFormatter formatter = new AmplDatTableFormatter(
-                new OutputStreamWriter(dataSource.newOutputStream("_network_generators", "txt", append), StandardCharsets.UTF_8),
-                getTableTitle("Generators"),
-                INVALID_FLOAT_VALUE,
-                !append,
-                LOCALE,
-                new Column("num"),
-                new Column("bus"),
-                new Column("con. bus"),
-                new Column("substation"),
-                new Column("minP (MW)"),
-                new Column("maxP (MW)"),
-                new Column("minQmaxP (MVar)"),
-                new Column("minQminP (MVar)"),
-                new Column("maxQmaxP (MVar)"),
-                new Column("maxQminP (MVar)"),
-                new Column("v regul."),
-                new Column("targetV (pu)"),
-                new Column("targetP (MW)"),
-                new Column("targetQ (MVar)"),
-                new Column("fault"),
-                new Column(config.getActionType().getLabel()),
-                new Column("id"),
-                new Column("description"))) {
+        try (Writer writer = new OutputStreamWriter(dataSource.newOutputStream("_network_generators", "txt", append), StandardCharsets.UTF_8);
+             TableFormatter formatter = new AmplDatTableFormatter(
+                 writer,
+                 getTableTitle("Generators"),
+                 INVALID_FLOAT_VALUE,
+                 !append,
+                 LOCALE,
+                 new Column("num"),
+                 new Column("bus"),
+                 new Column("con. bus"),
+                 new Column("substation"),
+                 new Column("minP (MW)"),
+                 new Column("maxP (MW)"),
+                 new Column("minQmaxP (MVar)"),
+                 new Column("minQminP (MVar)"),
+                 new Column("maxQmaxP (MVar)"),
+                 new Column("maxQminP (MVar)"),
+                 new Column("v regul."),
+                 new Column("targetV (pu)"),
+                 new Column("targetP (MW)"),
+                 new Column("targetQ (MVar)"),
+                 new Column("fault"),
+                 new Column(config.getActionType().getLabel()),
+                 new Column("id"),
+                 new Column("description"))) {
             List<String> skipped = new ArrayList<>();
             for (Generator g : network.getGenerators()) {
                 Terminal t = g.getTerminal();
@@ -1326,19 +1337,20 @@ public class AmplNetworkWriter implements AmplConstants {
     }
 
     private void writeTemporaryCurrentLimits() throws IOException {
-        try (TableFormatter formatter = new AmplDatTableFormatter(
-                new OutputStreamWriter(dataSource.newOutputStream("_network_limits", "txt", append), StandardCharsets.UTF_8),
-                getTableTitle("Temporary current limits"),
-                INVALID_FLOAT_VALUE,
-                !append,
-                LOCALE,
-                new Column("num"),
-                new Column("branch"),
-                new Column("side"),
-                new Column("limit (A)"),
-                new Column("accept. duration (s)"),
-                new Column("fault"),
-                new Column(config.getActionType().getLabel()))) {
+        try (Writer writer = new OutputStreamWriter(dataSource.newOutputStream("_network_limits", "txt", append), StandardCharsets.UTF_8);
+             TableFormatter formatter = new AmplDatTableFormatter(
+                 writer,
+                 getTableTitle("Temporary current limits"),
+                 INVALID_FLOAT_VALUE,
+                 !append,
+                 LOCALE,
+                 new Column("num"),
+                 new Column("branch"),
+                 new Column("side"),
+                 new Column("limit (A)"),
+                 new Column("accept. duration (s)"),
+                 new Column("fault"),
+                 new Column(config.getActionType().getLabel()))) {
             for (Line l : network.getLines()) {
                 String branchId = l.getId();
                 if (l.getCurrentLimits1() != null) {
@@ -1400,16 +1412,17 @@ public class AmplNetworkWriter implements AmplConstants {
     }
 
     private void writeHVDCLines(AmplExportContext context) throws IOException {
-        try (TableFormatter formatter = new AmplDatTableFormatter(
-                new OutputStreamWriter(dataSource.newOutputStream("_network_hvdc", "txt", append), StandardCharsets.UTF_8),
-                getTableTitle("HVDC lines"),
-                INVALID_FLOAT_VALUE,
-                !append,
-                LOCALE,
-                new Column("num"),
-                new Column("fault"),
-                new Column(config.getActionType().getLabel()),
-                new Column("id"))) {
+        try (Writer writer = new OutputStreamWriter(dataSource.newOutputStream("_network_hvdc", "txt", append), StandardCharsets.UTF_8);
+             TableFormatter formatter = new AmplDatTableFormatter(
+                 writer,
+                 getTableTitle("HVDC lines"),
+                 INVALID_FLOAT_VALUE,
+                 !append,
+                 LOCALE,
+                 new Column("num"),
+                 new Column("fault"),
+                 new Column(config.getActionType().getLabel()),
+                 new Column("id"))) {
             List<String> skipped = new ArrayList<>();
             for (HvdcLine hvdcLine : network.getHvdcLines()) {
                 // FIXME

@@ -88,15 +88,15 @@ public class DDBConverter {
         String modelicaVersion = args[5];
         boolean overwrite = Boolean.parseBoolean(args[6]);
 
-        DDBConverter DDBConverter = null;
+        DDBConverter converter = null;
         try {
-            DDBConverter = new DDBConverter(jbHost, jbPort, ddbUser, ddbPassword);
-            DDBConverter.convertDDB(eurostagVersion, modelicaVersion, overwrite);
+            converter = new DDBConverter(jbHost, jbPort, ddbUser, ddbPassword);
+            converter.convertDDB(eurostagVersion, modelicaVersion, overwrite);
         } catch (ConversionException e) {
             log.error("Error converting DDB data from eurostag to modelica: " + e.getMessage());
         } finally {
-            if (DDBConverter != null) {
-                DDBConverter.close();
+            if (converter != null) {
+                converter.close();
             }
         }
 

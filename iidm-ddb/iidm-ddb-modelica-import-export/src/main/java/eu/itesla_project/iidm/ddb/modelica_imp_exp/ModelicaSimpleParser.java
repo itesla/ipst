@@ -106,8 +106,8 @@ public class ModelicaSimpleParser implements CommentScannerEventHandler {
         parsingLine = line;
         tokens = line.trim().split("\\s+");
 
-        log.debug("LINE   [" + line + "]");
-        log.debug("TOKENS " + Arrays.toString(tokens));
+        LOGGER.debug("LINE   [" + line + "]");
+        LOGGER.debug("TOKENS " + Arrays.toString(tokens));
     }
 
     void tryParseClassSpecifier() {
@@ -134,7 +134,7 @@ public class ModelicaSimpleParser implements CommentScannerEventHandler {
             // Assume the first quoted in the line is the comment
             comment = getFirstQuoted(parsingLine, 0);
 
-            log.debug("Class specifier, specifier = " + specifier + ", ident = " + ident + ", isComposition = " + isComposition + ", comment = " + comment);
+            LOGGER.debug("Class specifier, specifier = " + specifier + ", ident = " + ident + ", isComposition = " + isComposition + ", comment = " + comment);
         }
     }
 
@@ -208,18 +208,18 @@ public class ModelicaSimpleParser implements CommentScannerEventHandler {
             String expected = param.type;
             String found = matcher.group("type");
             if (!expected.equals(found)) {
-                log.warn("Parameter specifier, type mismatch " + expected + " != " + found + " analyzing line " + parsingLine);
+                LOGGER.warn("Parameter specifier, type mismatch " + expected + " != " + found + " analyzing line " + parsingLine);
                 return -1;
             }
         }
         return p;
     }
 
-    int checkParameterName(ModelicaParameter param, int p) {
+    int checkParameterName(ModelicaParameter param, int position) {
         // Name is obtained from current line at current position
         // Ignoring a potential parenthesized expression (class modification)
         // And up to an equal character, trimming trailing blanks
-
+        int p = position;
         int sp = parsingLine.indexOf(ModelicaGrammar.CLASS_MODIFICATION_START, p);
         int eq = parsingLine.indexOf(ModelicaGrammar.EQ, p);
         // The parenthesis happens before the first equal sign, skip class modification
@@ -227,14 +227,14 @@ public class ModelicaSimpleParser implements CommentScannerEventHandler {
             param.name = parsingLine.substring(p, sp);
             p = parsingLine.indexOf(ModelicaGrammar.CLASS_MODIFICATION_END, sp + 1);
             if (p < 0) {
-                log.warn("Parameter specifier. Unbalanced parenthesis in class modification, line [" + parsingLine + "]");
+                LOGGER.warn("Parameter specifier. Unbalanced parenthesis in class modification, line [" + parsingLine + "]");
                 return -1;
             }
             // Look for first equal sign after parenthesis
             eq = parsingLine.indexOf(ModelicaGrammar.EQ, p);
         }
         if (eq < 0) {
-            log.debug("Parameter specifier. Missing equal in line [" + parsingLine + "]");
+            LOGGER.debug("Parameter specifier. Missing equal in line [" + parsingLine + "]");
             return -1;
         }
         if (param.name == null) {
@@ -252,10 +252,10 @@ public class ModelicaSimpleParser implements CommentScannerEventHandler {
         String value = extractParameterValue(p);
         // Check that value is a proper value (a constant, not an expression)
         if (ModelicaGrammar.isBooleanType(param.type) && !(value.equals(ModelicaGrammar.TRUE) || value.equals(ModelicaGrammar.FALSE))) {
-            log.debug("Parameter specifier. Wrong value [" + value + "] for Boolean in line [" + parsingLine + "]");
+            LOGGER.debug("Parameter specifier. Wrong value [" + value + "] for Boolean in line [" + parsingLine + "]");
             return false;
         } else if (ModelicaGrammar.isNumberType(param.type) && !ModelicaGrammar.NUMBER_REGEX.matcher(value).matches()) {
-            log.debug("Parameter specifier. Wrong value (not a number) [" + value + "] for " + param.type + " in line [" + parsingLine + "]");
+            LOGGER.debug("Parameter specifier. Wrong value (not a number) [" + value + "] for " + param.type + " in line [" + parsingLine + "]");
             return false;
         }
         param.value = value;
@@ -274,14 +274,14 @@ public class ModelicaSimpleParser implements CommentScannerEventHandler {
     static String getFirstQuoted(String line, int p) {
         Matcher q = ModelicaGrammar.QUOTE_REGEX.matcher(line);
         if (!q.find(p)) {
-            log.debug("Get first quoted. Missing quoted start in line [" + line + "]");
+            LOGGER.debug("Get first quoted. Missing quoted start in line [" + line + "]");
             return null;
         }
 
         int qs = q.end();
         int restart = qs > 1 ? qs - 1 : qs;
         if (!q.find(restart)) {
-            log.debug("Get first quoted. Missing quoted end in line [" + line + "]");
+            LOGGER.debug("Get first quoted. Missing quoted end in line [" + line + "]");
             return null;
         }
 
@@ -364,5 +364,5 @@ public class ModelicaSimpleParser implements CommentScannerEventHandler {
     boolean                                isParameter;
     ModelicaParameter                    parameter;
 
-    static final Logger log                    = LoggerFactory.getLogger(ModelicaSimpleParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModelicaSimpleParser.class);
 }

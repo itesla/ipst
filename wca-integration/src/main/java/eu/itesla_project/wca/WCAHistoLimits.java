@@ -20,6 +20,7 @@ import org.joda.time.Interval;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -40,9 +41,9 @@ public class WCAHistoLimits implements AmplConstants, WCAConstants {
 
     private static Range<Float> range(String id, HistoDbAttr attr, HistoDbStats stats) {
         HistoDbAttributeId pAttrId = new HistoDbNetworkAttributeId(id, HistoDbAttr.P);
-        float p_min = stats.getValue(HistoDbStatsType.MIN, pAttrId, INVALID_FLOAT_VALUE);
-        float p_max = stats.getValue(HistoDbStatsType.MAX, pAttrId, INVALID_FLOAT_VALUE);
-        return Range.closed(p_min, p_max);
+        float minP = stats.getValue(HistoDbStatsType.MIN, pAttrId, INVALID_FLOAT_VALUE);
+        float maxP = stats.getValue(HistoDbStatsType.MAX, pAttrId, INVALID_FLOAT_VALUE);
+        return Range.closed(minP, maxP);
     }
 
     public void load(Network network, HistoDbClient histoDbClient) throws IOException, InterruptedException {
@@ -79,16 +80,17 @@ public class WCAHistoLimits implements AmplConstants, WCAConstants {
 
     public void write(DataSource dataSource, StringToIntMapper<AmplSubset> mapper) throws IOException {
 
-        try (TableFormatter formatter = new AmplDatTableFormatter(
-                    new OutputStreamWriter(dataSource.newOutputStream(HISTO_LOADS_FILE_SUFFIX, TXT_EXT, false), StandardCharsets.UTF_8),
-                    "loads historical data " + histoInterval,
-                    INVALID_FLOAT_VALUE,
-                    true,
-                    LOCALE,
-                    new Column("num"),
-                    new Column("min p (MW)"),
-                    new Column("max p (MW)"),
-                    new Column("id"))) {
+        try (Writer writer = new OutputStreamWriter(dataSource.newOutputStream(HISTO_LOADS_FILE_SUFFIX, TXT_EXT, false), StandardCharsets.UTF_8);
+             TableFormatter formatter = new AmplDatTableFormatter(
+                 writer,
+                 "loads historical data " + histoInterval,
+                 INVALID_FLOAT_VALUE,
+                 true,
+                 LOCALE,
+                 new Column("num"),
+                 new Column("min p (MW)"),
+                 new Column("max p (MW)"),
+                 new Column("id"))) {
 
             for (Map.Entry<String, Range<Float>> e : loadLimits.entrySet()) {
                 String id = e.getKey();
@@ -110,16 +112,17 @@ public class WCAHistoLimits implements AmplConstants, WCAConstants {
             }
         }
 
-        try (TableFormatter formatter = new AmplDatTableFormatter(
-                    new OutputStreamWriter(dataSource.newOutputStream(HISTO_GENERATORS_FILE_SUFFIX, TXT_EXT, false), StandardCharsets.UTF_8),
-                    "generators historical data " + histoInterval,
-                    INVALID_FLOAT_VALUE,
-                    true,
-                    LOCALE,
-                    new Column("num"),
-                    new Column("min p (MW)"),
-                    new Column("max p (MW)"),
-                    new Column("id"))) {
+        try (Writer writer = new OutputStreamWriter(dataSource.newOutputStream(HISTO_GENERATORS_FILE_SUFFIX, TXT_EXT, false), StandardCharsets.UTF_8);
+             TableFormatter formatter = new AmplDatTableFormatter(
+                 writer,
+                 "generators historical data " + histoInterval,
+                 INVALID_FLOAT_VALUE,
+                 true,
+                 LOCALE,
+                 new Column("num"),
+                 new Column("min p (MW)"),
+                 new Column("max p (MW)"),
+                 new Column("id"))) {
 
             for (Map.Entry<String, Range<Float>> e : generatorLimits.entrySet()) {
                 String id = e.getKey();

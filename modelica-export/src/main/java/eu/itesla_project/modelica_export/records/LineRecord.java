@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  */
 public class LineRecord extends BranchRecord {
 
-    public LineRecord(Line line, float SNREF) {
+    public LineRecord(Line line, float snref) {
         super(line);
         this.line = line;
 
@@ -42,7 +42,7 @@ public class LineRecord extends BranchRecord {
             super.setDEFAULT_BRANCH_TYPE(DEFAULT_LINE_TYPE);
         }
         super.setDEFAULT_BRANCH_PREFIX(StaticData.PREF_LINE);
-        this.setParameters(SNREF);
+        this.setParameters(snref);
     }
 
     @Override
@@ -89,10 +89,10 @@ public class LineRecord extends BranchRecord {
                 iidmbranchParameters = null;
                 branchParameters = null;
             } else {
-                _log.error(this.getModelicaName() + " not added to grid model.");
+                LOGGER.error(this.getModelicaName() + " not added to grid model.");
             }
         } else {
-            _log.warn("Line " + this.getModelicaName() + " disconnected.");
+            LOGGER.warn("Line " + this.getModelicaName() + " disconnected.");
             this.addValue(StaticData.COMMENT + " Line " + this.getModelicaName() + " disconnected.");
         }
     }
@@ -101,16 +101,16 @@ public class LineRecord extends BranchRecord {
      * Add IIDM parameters to Line Modelica Model in p.u
      */
     @Override
-    public void setParameters(float SNREF) {
+    public void setParameters(float snref) {
         //super.iidmbranchParameters = new ArrayList<IIDMParameter>();
         float tNominalV = ((Line) this.line).getTerminal2().getVoltageLevel().getNominalV();
         float voltage = Float.isNaN(tNominalV) == false ? tNominalV : 0;
-        float Z = (voltage * voltage) / SNREF;
+        float z = (voltage * voltage) / snref;
 
-        super.addParameter(this.iidmbranchParameters, StaticData.R, this.line.getR() / Z);
-        super.addParameter(this.iidmbranchParameters, StaticData.X, this.line.getX() / Z);
-        super.addParameter(this.iidmbranchParameters, StaticData.G, this.line.getG1() * Z);
-        super.addParameter(this.iidmbranchParameters, StaticData.B, this.line.getB1() * Z);
+        super.addParameter(this.iidmbranchParameters, StaticData.R, this.line.getR() / z);
+        super.addParameter(this.iidmbranchParameters, StaticData.X, this.line.getX() / z);
+        super.addParameter(this.iidmbranchParameters, StaticData.G, this.line.getG1() * z);
+        super.addParameter(this.iidmbranchParameters, StaticData.B, this.line.getB1() * z);
     }
 
     @Override
@@ -136,5 +136,5 @@ public class LineRecord extends BranchRecord {
     private String                DEFAULT_OPEN_LINE_TYPE    = EurostagModDefaultTypes.DEFAULT_OPEN_LINE_TYPE;
     private String                DEFAULT_LINE_PREFIX;
 
-    private static final Logger _log                    = LoggerFactory.getLogger(LineRecord.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LineRecord.class);
 }

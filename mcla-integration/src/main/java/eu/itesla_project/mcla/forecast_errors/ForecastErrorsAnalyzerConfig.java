@@ -65,7 +65,7 @@ public class ForecastErrorsAnalyzerConfig {
             double epsilo,
             Integer conditionalSampling,
             Integer tFlags,
-            double histo_estremeQ,
+            double histoEstremeQ,
             double thresGUI,
             String nats,
             Integer rngSeed,
@@ -92,7 +92,7 @@ public class ForecastErrorsAnalyzerConfig {
         this.epsilo = epsilo;
         this.conditionalSampling = conditionalSampling;
         this.tFlags = tFlags;
-        this.histo_estremeQ = histo_estremeQ;
+        this.histo_estremeQ = histoEstremeQ;
         this.thresGUI = thresGUI;
         this.nats = nats;
         this.debug = debug;
@@ -120,11 +120,11 @@ public class ForecastErrorsAnalyzerConfig {
         double epsilo = config.getDoubleProperty("epsilo");
         Integer conditionalSampling = config.getOptionalIntegerProperty("conditionalSampling").orElse(null);
         Integer tFlags = config.getOptionalIntegerProperty("tFlags").orElse(null);
-        double histo_estremeQ = config.getDoubleProperty("histo_estremeQ");
+        double histoEstremeQ = config.getDoubleProperty("histo_estremeQ");
         double thresGUI = config.getDoubleProperty("thresGUI");
         String nats = config.getStringProperty("nats", "All");
 
-        return new ForecastErrorsAnalyzerConfig(binariesDir, runtimeHomeDir, checkModule0, percpuGaussLoad, percpuGaussRes, correlationGauss, tolVar, nMinObsFract, nMinObsInterv, imputationMeth, nGaussians, kOutlier, tolerance, iterations, epsilo, conditionalSampling, tFlags, histo_estremeQ, thresGUI, nats, rngSeed, debug);
+        return new ForecastErrorsAnalyzerConfig(binariesDir, runtimeHomeDir, checkModule0, percpuGaussLoad, percpuGaussRes, correlationGauss, tolVar, nMinObsFract, nMinObsInterv, imputationMeth, nGaussians, kOutlier, tolerance, iterations, epsilo, conditionalSampling, tFlags, histoEstremeQ, thresGUI, nats, rngSeed, debug);
     }
 
     public Path getBinariesDir() {

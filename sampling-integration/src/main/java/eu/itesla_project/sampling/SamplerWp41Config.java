@@ -79,11 +79,11 @@ public class SamplerWp41Config {
 
         int module3Timeout = config.getIntProperty("module3Timeout", MODULE3_DEFAULT_TIMEOUT);
 
-        int par_k = config.getIntProperty("par_k", -1);
+        int parK = config.getIntProperty("par_k", -1);
 
         boolean debug = config.getBooleanProperty("debug", false);
 
-        return new SamplerWp41Config(binariesDir, runtimeHomeDir, validationDir, ir, tflag, rngSeed, module3Timeout, par_k, debug);
+        return new SamplerWp41Config(binariesDir, runtimeHomeDir, validationDir, ir, tflag, rngSeed, module3Timeout, parK, debug);
     }
 
     public SamplerWp41Config(
@@ -94,7 +94,7 @@ public class SamplerWp41Config {
             double tflag,
             Integer rngSeed,
             int module3Timeout,
-            int par_k,
+            int parK,
             boolean debug) {
         this.binariesDir = binariesDir;
         this.runtimeHomeDir = Objects.requireNonNull(runtimeHomeDir, "matlab runtime directory is null");
@@ -103,7 +103,7 @@ public class SamplerWp41Config {
         this.tflag = tflag;
         this.rngSeed = rngSeed;
         this.module3Timeout = module3Timeout;
-        this.par_k = par_k;
+        this.par_k = parK;
         this.debug = debug;
     }
 

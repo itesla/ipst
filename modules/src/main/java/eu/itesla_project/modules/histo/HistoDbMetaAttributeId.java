@@ -14,12 +14,36 @@ import java.util.Objects;
  */
 public class HistoDbMetaAttributeId extends HistoDbAttributeId {
 
-    public static final HistoDbMetaAttributeId cimName = new HistoDbMetaAttributeId(HistoDbMetaAttributeType.cimName);
-    public static final HistoDbMetaAttributeId datetime = new HistoDbMetaAttributeId(HistoDbMetaAttributeType.datetime);
-    public static final HistoDbMetaAttributeId daytime = new HistoDbMetaAttributeId(HistoDbMetaAttributeType.daytime);
-    public static final HistoDbMetaAttributeId month = new HistoDbMetaAttributeId(HistoDbMetaAttributeType.month);
-    public static final HistoDbMetaAttributeId forecastTime = new HistoDbMetaAttributeId(HistoDbMetaAttributeType.forecastTime);
-    public static final HistoDbMetaAttributeId horizon = new HistoDbMetaAttributeId(HistoDbMetaAttributeType.horizon);
+    public static final HistoDbMetaAttributeId CIM_NAME = new HistoDbMetaAttributeId(HistoDbMetaAttributeType.cimName);
+    @Deprecated
+    @SuppressWarnings("checkstyle:constantname")
+    public static final HistoDbMetaAttributeId cimName = CIM_NAME;
+
+    public static final HistoDbMetaAttributeId DATE_TIME = new HistoDbMetaAttributeId(HistoDbMetaAttributeType.datetime);;
+    @Deprecated
+    @SuppressWarnings("checkstyle:constantname")
+    public static final HistoDbMetaAttributeId datetime = DATE_TIME;
+
+    public static final HistoDbMetaAttributeId DAY_TIME = new HistoDbMetaAttributeId(HistoDbMetaAttributeType.daytime);
+    @Deprecated
+    @SuppressWarnings("checkstyle:constantname")
+    public static final HistoDbMetaAttributeId daytime = DATE_TIME;
+
+    public static final HistoDbMetaAttributeId MONTH = new HistoDbMetaAttributeId(HistoDbMetaAttributeType.month);
+    @Deprecated
+    @SuppressWarnings("checkstyle:constantname")
+    public static final HistoDbMetaAttributeId month = MONTH;
+
+    public static final HistoDbMetaAttributeId FORECAST_TIME = new HistoDbMetaAttributeId(HistoDbMetaAttributeType.forecastTime);
+    @Deprecated
+    @SuppressWarnings("checkstyle:constantname")
+    public static final HistoDbMetaAttributeId forecastTime = FORECAST_TIME;
+
+    public static final HistoDbMetaAttributeId HORIZON = new HistoDbMetaAttributeId(HistoDbMetaAttributeType.horizon);
+    @Deprecated
+    @SuppressWarnings("checkstyle:constantname")
+    public static final HistoDbMetaAttributeId horizon = HORIZON;
+
 
     private final HistoDbMetaAttributeType type;
 

@@ -29,7 +29,7 @@ import java.util.*;
  */
 public class DtaParser {
 
-    private static final Logger log = LoggerFactory.getLogger(DtaParser.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DtaParser.class.getName());
 
 
     private DtaParser(final String name) {
@@ -451,7 +451,7 @@ public class DtaParser {
                             try {
                                 out.println(ff.write(new ArrayList<>(Arrays.asList(key, zone.data.get(key))), ADDITIONAL_PARAM_LINE_FORMAT));
                             } catch (ParseException | IOException e) {
-                                log.error(e.getMessage(), e);
+                                LOGGER.error(e.getMessage(), e);
                                 throw new RuntimeException(e.getMessage(), e);
                             }
                         });
@@ -566,17 +566,17 @@ public class DtaParser {
                 //first token identifies the Eurostag component (split on space characters, skip empty lines)
                 String[] tokens = line.split(" ");
                 if ((tokens.length == 0) || (!componentTypeMap.containsKey(tokens[0]))) {
-                    log.debug(" skipped line: " + line);
+                    LOGGER.debug(" skipped line: " + line);
                     continue;
                 }
 
                 String typeId = componentTypeMap.get(tokens[0]);
-                log.debug("recognized component type id " + typeId + "  in line: " + line);
+                LOGGER.debug("recognized component type id " + typeId + "  in line: " + line);
                 HashMap<String, Object> compHash = new HashMap<String, Object>();
                 ArrayList<ArrayList<Object>> compArray = new ArrayList<ArrayList<Object>>();
                 int i = 0;
                 for (String string : componentsDescriptors.get(typeId)) {
-                    log.debug(" inner - line: " + line);
+                    LOGGER.debug(" inner - line: " + line);
                     compArray.add(FortranFormat.read(line, string));
                     i++;
                     if (i < componentsDescriptors.get(typeId).length) {
@@ -589,11 +589,11 @@ public class DtaParser {
                 if ("R".equals(typeId)) {
                     //monitored blocks: just skip them
                     while (((line = reader.readLine()) != null) && (!line.trim().equals(""))) {
-                        log.warn("monitored block record ignored:" + line);
+                        LOGGER.warn("monitored block record ignored:" + line);
                     }
                     //parameter modifications: add each line as a new variable
                     while (((line = reader.readLine()) != null) && (!line.trim().equals(""))) {
-                        log.debug("param line: " + line);
+                        LOGGER.debug("param line: " + line);
                         ArrayList<Object> paramRec = FortranFormat.read(line, ADDITIONAL_PARAM_LINE_FORMAT);
                         if (paramRec.size() == 2) {
                             compHash.put(paramRec.get(0).toString(), paramRec.get(1));
@@ -605,7 +605,7 @@ public class DtaParser {
                 //then  join properties names
                 for (ArrayList<Object> record : compArray) {
                     //System.out.println(" record "+ rcount+" "+record);
-                    log.debug("   record: {}", record);
+                    LOGGER.debug("   record: {}", record);
                     ArrayList<String> varNames = getVarNames(typeId, rcount - 1);
                     int varid = 0;
                     for (Object obj : record) {
@@ -662,7 +662,7 @@ public class DtaParser {
         Map<String, String> retMap = new HashMap<>();
         try (ICsvMapReader mapReader = new CsvMapReader(Files.newBufferedReader(dicoFile, StandardCharsets.UTF_8), CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE)) {
             final String[] header = mapReader.getHeader(true);
-            log.debug(" cvsheader length: " + header.length);
+            LOGGER.debug(" cvsheader length: " + header.length);
             final CellProcessor[] rowProcessors = new CellProcessor[header.length];
             for (int i = 0; i < rowProcessors.length; i++) {
                 if (i == 0) {
@@ -678,18 +678,18 @@ public class DtaParser {
                 String eurostagId = (String) componentMap.get(header[1]);
                 String cimId = (String) componentMap.get(header[0]);
                 if (eurostagId == null) {
-                    log.warn("eurostagId=" + eurostagId + ", cimId=" + cimId);
+                    LOGGER.warn("eurostagId=" + eurostagId + ", cimId=" + cimId);
                 } else {
                     if (retMap.containsKey(eurostagId)) {
-                        log.warn("eurostagId=" + eurostagId + " already in the map");
+                        LOGGER.warn("eurostagId=" + eurostagId + " already in the map");
                     }
                     retMap.put(eurostagId, cimId);
                 }
             }
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("ids map: " + retMap);
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("ids map: " + retMap);
         }
         return retMap;
 
