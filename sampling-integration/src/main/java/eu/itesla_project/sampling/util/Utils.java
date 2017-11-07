@@ -335,7 +335,7 @@ public final class Utils {
         for (int i = 0; i < rowsSize; i++) {
             for (int j = 0; j < colsSize; j++) {
                 Float v = hdTable.get(i, j);
-                matFinal[i][j] = ((v != null) && (v.isNaN() == false)) ? v : 0.0f;
+                matFinal[i][j] = getCleanFloat(v);
             }
         }
         return matFinal;
@@ -350,12 +350,22 @@ public final class Utils {
             int j = 0;
             for (String colkey : hdTable.columnKeyList()) {
                 Float v = hdTable.get(rowKey, colkey);
-                matFinal[i][j] = ((v != null) && (v.isNaN() == false)) ? v : 0.0f;
+                matFinal[i][j] = getCleanFloat(v);
                 j = j + 1;
             }
             i = i + 1;
         }
         return matFinal;
+    }
+
+    private static Float getCleanFloat(Float f) {
+        if (f == null) {
+            return 0.0f;
+        }
+        if (f.isNaN()) {
+            return 0.0f;
+        }
+        return f;
     }
 
     public static float[][] doubleToFloatMatrix(double[][] matrix) {
