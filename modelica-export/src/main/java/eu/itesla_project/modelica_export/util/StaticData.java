@@ -10,7 +10,7 @@ package eu.itesla_project.modelica_export.util;
 /**
  * @author Silvia Machado <machados@aia.es>
  */
-public class StaticData {
+public final class StaticData {
 
     //SOURCE ENGINES
     public final static String        EUROSTAG            = "eurostag";

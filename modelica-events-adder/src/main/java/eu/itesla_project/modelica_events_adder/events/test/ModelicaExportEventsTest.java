@@ -14,7 +14,7 @@ import eu.itesla_project.modelica_events_adder.events.ModEventsExport;
 /**
  * @author Silvia Machado <machados@aia.es>
  */
-public class ModelicaExportEventsTest {
+public final class ModelicaExportEventsTest {
 
     private ModelicaExportEventsTest() {
     }

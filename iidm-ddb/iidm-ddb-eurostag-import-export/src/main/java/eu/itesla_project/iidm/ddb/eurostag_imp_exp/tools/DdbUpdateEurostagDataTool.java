@@ -137,7 +137,7 @@ public class DdbUpdateEurostagDataTool implements Tool {
         Path genPath = ddData.resolve("reguls");
         Path dicoPath = ddData.resolve("dico.txt");
 
-        if ((ddFilePath.toFile().isFile()) == false) {
+        if (!ddFilePath.toFile().isFile()) {
             throw new RuntimeException(DD_FILE + ": " + ddFile + " is not a file!");
         }
 

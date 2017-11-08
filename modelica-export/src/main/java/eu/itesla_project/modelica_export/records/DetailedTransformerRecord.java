@@ -94,10 +94,10 @@ public class DetailedTransformerRecord extends BranchRecord {
 
         float t1NomV = this.transformer.getTerminal1().getVoltageLevel().getNominalV();
         float t2NomV = this.transformer.getTerminal2().getVoltageLevel().getNominalV();
-        float u1Nom = Float.isNaN(t1NomV) == false ? t1NomV : 0;
-        float u2Nom = Float.isNaN(t2NomV) == false ? t2NomV : 0;
-        float v1 = Float.isNaN(this.transformer.getRatedU1()) == false ? this.transformer.getRatedU1() : 0; // [kV]
-        float v2  = Float.isNaN(this.transformer.getRatedU2()) == false ? this.transformer.getRatedU2() : 0; // [kV]
+        float u1Nom = !Float.isNaN(t1NomV) ? t1NomV : 0;
+        float u2Nom = !Float.isNaN(t2NomV) ? t2NomV : 0;
+        float v1 = !Float.isNaN(this.transformer.getRatedU1()) ? this.transformer.getRatedU1() : 0; // [kV]
+        float v2 = !Float.isNaN(this.transformer.getRatedU2()) ? this.transformer.getRatedU2() : 0; // [kV]
         float zBase = (float) Math.pow(u2Nom, 2) / snref;
         float g = this.transformer.getG() * zBase; // [p.u.]
         float b = this.transformer.getB() * zBase; // [p.u.]

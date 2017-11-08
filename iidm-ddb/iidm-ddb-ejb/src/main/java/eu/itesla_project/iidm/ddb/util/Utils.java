@@ -37,7 +37,7 @@ import javax.xml.bind.Unmarshaller;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class Utils {
+public final class Utils {
 
     private Utils() {
     }

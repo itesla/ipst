@@ -21,7 +21,7 @@ import eu.itesla_project.modules.online.OnlineWorkflowResults;
 /**
  * @author Quinary <itesla@quinary.com>
  */
-public class Utils {
+public final class Utils {
 
     private static final String EMPTY_CONTINGENCY_ID = "Empty-Contingency";
 

@@ -20,7 +20,7 @@ import com.powsybl.iidm.network.Terminal;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class NetworkUtils {
+public final class NetworkUtils {
 
     private NetworkUtils() {
     }

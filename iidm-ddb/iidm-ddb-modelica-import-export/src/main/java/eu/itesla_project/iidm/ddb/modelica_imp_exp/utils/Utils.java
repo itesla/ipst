@@ -16,7 +16,7 @@ import java.io.UnsupportedEncodingException;
  * @author Luis Maria Zamarreno <zamarrenolm@aia.com>
  * @author Silvia Machado <machados@aia.es>
  */
-public class Utils {
+public final class Utils {
 
     private Utils() {
     }

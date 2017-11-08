@@ -23,7 +23,7 @@ import java.util.Set;
 /**
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
-public class HistoDbUtil {
+public final class HistoDbUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HistoDbUtil.class);
 

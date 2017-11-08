@@ -22,7 +22,7 @@ import com.csvreader.CsvWriter;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class NetworkDataExporter {
+public final class NetworkDataExporter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NetworkDataExporter.class);
 

@@ -37,7 +37,7 @@ import com.powsybl.simulation.securityindexes.SecurityIndexType;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class OnlineDbMVStoreUtils {
+public final class OnlineDbMVStoreUtils {
 
     private OnlineDbMVStoreUtils() {
     }

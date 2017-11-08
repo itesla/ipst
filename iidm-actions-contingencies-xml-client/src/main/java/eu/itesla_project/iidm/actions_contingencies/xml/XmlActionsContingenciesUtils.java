@@ -30,7 +30,7 @@ import eu.itesla_project.modules.contingencies.ConstraintType;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class XmlActionsContingenciesUtils {
+public final class XmlActionsContingenciesUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlActionsContingenciesUtils.class);
 

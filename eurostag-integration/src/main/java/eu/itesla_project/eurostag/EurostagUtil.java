@@ -30,7 +30,7 @@ import java.util.zip.GZIPInputStream;
 /**
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
-public class EurostagUtil {
+public final class EurostagUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EurostagUtil.class);
 

@@ -20,7 +20,7 @@ import eu.itesla_project.iidm.ddb.model.Parameters;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class Utils {
+public final class Utils {
 
     static Logger log = LoggerFactory.getLogger(Utils.class.getName());
 
