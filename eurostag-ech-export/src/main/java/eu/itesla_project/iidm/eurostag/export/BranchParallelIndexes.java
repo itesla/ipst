@@ -17,7 +17,7 @@ import java.util.*;
 /**
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
-public class BranchParallelIndexes {
+public final class BranchParallelIndexes {
 
     private final Map<String, Character> parallelIndexes;
 

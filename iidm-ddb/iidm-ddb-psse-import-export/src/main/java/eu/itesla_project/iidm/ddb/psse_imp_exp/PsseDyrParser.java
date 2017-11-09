@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class PsseDyrParser {
+public final class PsseDyrParser {
 
     static Logger log = LoggerFactory.getLogger(PsseDyrParser.class);
 

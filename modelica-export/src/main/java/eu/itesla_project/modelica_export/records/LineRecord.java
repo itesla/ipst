@@ -104,7 +104,7 @@ public class LineRecord extends BranchRecord {
     public void setParameters(float snref) {
         //super.iidmbranchParameters = new ArrayList<IIDMParameter>();
         float tNominalV = ((Line) this.line).getTerminal2().getVoltageLevel().getNominalV();
-        float voltage = Float.isNaN(tNominalV) == false ? tNominalV : 0;
+        float voltage = !Float.isNaN(tNominalV) ? tNominalV : 0;
         float z = (voltage * voltage) / snref;
 
         super.addParameter(this.iidmbranchParameters, StaticData.R, this.line.getR() / z);

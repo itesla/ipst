@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Silvia Machado <machados@aia.es>
  */
-public class EventsHelper {
+public final class EventsHelper {
 
     private EventsHelper() {
     }

@@ -19,7 +19,7 @@ import eu.itesla_project.iidm.ddb.model.SimulatorInst;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class Sorter {
+public final class Sorter {
 
     private Sorter() {
     }

@@ -16,7 +16,7 @@ import java.util.*;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class RedispatchUtils {
+public final class RedispatchUtils {
 
     private RedispatchUtils() {
     }

@@ -52,7 +52,7 @@ public class InitializationRunner {
 
                 this.modelName = initData.getModelName();
                 String compString = omc.getComponents(this.modelName);
-                String[] compList = compString.contains("},{") == true ? compString.split("\\},\\{") : null;
+                String[] compList = compString.contains("},{") ? compString.split("\\},\\{") : null;
                 String machine = compList != null ? compList[0].split(",")[1] : compString.split(",")[1];
                 List<String> regsList = new ArrayList<>();
                 List<String> componentsList = Arrays.asList(compList);

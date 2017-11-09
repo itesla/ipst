@@ -137,7 +137,7 @@ public class StandaloneDymolaClient {
         LOGGER.info("running Dymola client: {}", sc.toString());
 
         String simRes = "";
-        if (isFake == true) {
+        if (isFake) {
             simRes = sc.runDymolaFake(Paths.get(workingDir), inputZipFileName, outputZipFileName, modelFileName, modelName, outputDymolaMatFileName);
         } else {
             simRes = sc.runDymola(Paths.get(workingDir), inputZipFileName, outputZipFileName, modelFileName, modelName, outputDymolaMatFileName);

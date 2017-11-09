@@ -134,7 +134,7 @@ public class WCATool implements Tool {
         return COMMAND;
     }
 
-    private static class SynchronizedHistoDbClient extends ForwardingHistoDbClient {
+    private static final class SynchronizedHistoDbClient extends ForwardingHistoDbClient {
 
         private final Lock lock = new ReentrantLock();
 

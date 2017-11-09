@@ -9,7 +9,7 @@ package eu.itesla_project.modelica_events_adder.events.utils;
 /**
  * @author Silvia Machado <machados@aia.es>
  */
-public class StaticData {
+public final class StaticData {
 
     //SOURCE ENGINES
     public final static String        EUROSTAG            = "eurostag";

@@ -26,7 +26,7 @@ import java.util.concurrent.*;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class Master {
+public final class Master {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Master.class);
 

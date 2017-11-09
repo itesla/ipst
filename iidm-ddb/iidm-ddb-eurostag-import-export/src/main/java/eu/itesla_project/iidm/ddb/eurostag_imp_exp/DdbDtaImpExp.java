@@ -328,7 +328,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         }
 
         Equipment eq1 = ddbmanager.findEquipment(cimId);
-        if ((eq1 != null) && (updateFlag == true)) {
+        if ((eq1 != null) && updateFlag) {
             Set<String> connectedInternals = getConnectedInternals(cimId, ddbmanager);
 
             //remove this equipment graph
@@ -422,7 +422,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         }
 
         Equipment eq1 = ddbmanager.findEquipment(cimId);
-        if ((eq1 != null) && (updateFlag == true)) {
+        if ((eq1 != null) && updateFlag) {
             Set<String> connectedInternals = getConnectedInternals(cimId, ddbmanager);
 
             //remove this equipment graph
@@ -532,7 +532,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         }
         //if it does exist, and the update flag is set, delete it
         if (mt1 != null) {
-            if (updateFlag == true) {
+            if (updateFlag) {
                 log.info("--- removing existing Model Template: {}, {}, {}", mt1.getSimulator(), mt1.getTypeName(), mt1.getComment());
                 mtc1.getModelTemplates().remove(mt1);
                 mtc1 = ddbmanager.save(mtc1);
@@ -836,7 +836,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
     }
 
     private boolean filteredGenerator(Generator g) {
-        if (configExport.getGensPQfilter() == true) {
+        if (configExport.getGensPQfilter()) {
             if (!Float.isNaN(g.getTerminal().getP()) && ((-g.getTerminal().getP() > g.getMaxP()) || (-g.getTerminal().getP() < g.getMinP()))) {
                 return true;
             }
@@ -877,7 +877,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         this.network = network;
         this.parallelIndexes = parallelIndexes;
 
-        if (configExport.getGensPQfilter() == true) {
+        if (configExport.getGensPQfilter()) {
             log.warn("Dta export configured to skip generators when their P is outside (MinP, MaxP)");
         }
 
@@ -1121,8 +1121,8 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
                 //keeps track of reg name, pro .pcp, .rcp compiling
                 //skipping those regs that do not have both .rcp and .pcp files
-                if (((foundFRI == true) && (foundFRM == true) && (foundPAR == true))
-                        && ((foundPCP == false) || (foundRCP == false))) {
+                if ((foundFRI && foundFRM && foundPAR)
+                        && ((!foundPCP) || (!foundRCP))) {
                     uniqueRegNamesSet.add(intName);
                 }
                 //keeps track of generators in RST zones
@@ -1486,7 +1486,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                 zm.put("coupling.par9", null);
             }
         } else {
-            if (couplingDataExists == true) {
+            if (couplingDataExists) {
                 log.warn("coupling macroblock data in ddb -  macroblock name: " + zm.get("macroblock.name") + "; machine name: " + machineName);
             }
             zm.put("coupling.par1", null);
@@ -1924,8 +1924,8 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                             }
                             //keeps track of reg name, pro .pcp, .rcp compiling
                             //skipping those regs that do not have both .rcp and .pcp files
-                            if (((foundFRI == true) && (foundFRM == true) && (foundPAR == true))
-                                    && ((foundPCP == false) || (foundRCP == false))) {
+                            if ((foundFRI && foundFRM && foundPAR)
+                                    && (!foundPCP || !foundRCP)) {
                                 uniqueRegNamesSet.add(intName);
                             }
                         }
@@ -2059,8 +2059,8 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                                 }
                                 //keeps track of reg name, pro .pcp, .rcp compiling
                                 //skipping those regs that do not have both .rcp and .pcp files
-                                if (((foundFRI == true) && (foundFRM == true) && (foundPAR == true))
-                                        && ((foundPCP == false) || (foundRCP == false))) {
+                                if ((foundFRI && foundFRM && foundPAR)
+                                        && ((!foundPCP) || (!foundRCP))) {
                                     uniqueRegNamesSet.add(intName);
                                 }
                             }
