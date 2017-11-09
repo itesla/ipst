@@ -1,5 +1,10 @@
 function [numpicchi,massi]=findpeaks2(var,tit,fig)
-
+%
+% Copyright (c) 2017, RTE (http://www.rte-france.com) and RSE (http://www.rse-web.it) 
+% This Source Code Form is subject to the terms of the Mozilla Public
+% License, v. 2.0. If a copy of the MPL was not distributed with this
+% file, You can obtain one at http://mozilla.org/MPL/2.0/.
+%
 % The function finds the peaks in a distribution. 
 % The function throw away the variables with discrete values.
 %
@@ -118,21 +123,19 @@ end
 
 %%
 function [maxtab, mintab]=peakdet(v, delta, x)
-%PEAKDET Detect peaks in a vector
-%        [MAXTAB, MINTAB] = PEAKDET(V, DELTA) finds the local
-%        maxima and minima ("peaks") in the vector V.
-%        MAXTAB and MINTAB consists of two columns. Column 1
-%        contains indices in V, and column 2 the found values.
-%      
-%        With [MAXTAB, MINTAB] = PEAKDET(V, DELTA, X) the indices
-%        in MAXTAB and MINTAB are replaced with the corresponding
-%        X-values.
 %
-%        A point is considered a maximum peak if it has the maximal
-%        value, and was preceded (to the left) by a value lower by
-%        DELTA.
-
-
+% Copyright (c) 2017, RTE (http://www.rte-france.com) and RSE (http://www.rse-web.it) 
+% This Source Code Form is subject to the terms of the Mozilla Public
+% License, v. 2.0. If a copy of the MPL was not distributed with this
+% file, You can obtain one at http://mozilla.org/MPL/2.0/.
+%
+%[MAXTAB, MINTAB] = PEAKDET(v, DELTA) finds the localb maxima and minima
+%("peaks") in the vector v.
+% otuput: 
+%  MAXTAB indices in x,
+%  MINTAB the found values.
+%  A point is considered a maximum peak if it has the maximal value,
+%  and was preceded (to the left) by a value lower by DELTA.
 
 maxtab = [];
 mintab = [];

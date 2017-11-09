@@ -1,5 +1,11 @@
 function [pos99,pos99neg,pos90,pos90neg,pos70,pos70neg]...
     =Correlation(error,wrt,filepath)
+%
+% Copyright (c) 2017, RTE (http://www.rte-france.com) and RSE (http://www.rse-web.it) 
+% This Source Code Form is subject to the terms of the Mozilla Public
+% License, v. 2.0. If a copy of the MPL was not distributed with this
+% file, You can obtain one at http://mozilla.org/MPL/2.0/.
+%
 % The function calculate the linear correlation matrix of all the variables, and
 % then it writes it on a file. (Pearson's index)
 %

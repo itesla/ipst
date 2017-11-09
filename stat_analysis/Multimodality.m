@@ -1,5 +1,10 @@
 function [num_comp,gaussmix] = Multimodality(err)
-
+%
+% Copyright (c) 2017, RTE (http://www.rte-france.com) and RSE (http://www.rse-web.it) 
+% This Source Code Form is subject to the terms of the Mozilla Public
+% License, v. 2.0. If a copy of the MPL was not distributed with this
+% file, You can obtain one at http://mozilla.org/MPL/2.0/.
+%
 % The function finds the Gaussian Mixture that fits each variable
 %
 % INPUT:
@@ -84,7 +89,12 @@ end
 
 %%
 function [numpicchi,massi]=findpeaks(variab,tit,fig)
-
+%
+% Copyright (c) 2017, RTE (http://www.rte-france.com) and RSE (http://www.rse-web.it) 
+% This Source Code Form is subject to the terms of the Mozilla Public
+% License, v. 2.0. If a copy of the MPL was not distributed with this
+% file, You can obtain one at http://mozilla.org/MPL/2.0/.
+%
 % the function finds the peaks in a distribution.
 %
 % INPUT
@@ -168,14 +178,21 @@ end
 
 %%
 function [maxtab, mintab]=peakdet(v, delta, x)
+%
+% Copyright (c) 2017, RTE (http://www.rte-france.com) and RSE (http://www.rse-web.it) 
+% This Source Code Form is subject to the terms of the Mozilla Public
+% License, v. 2.0. If a copy of the MPL was not distributed with this
+% file, You can obtain one at http://mozilla.org/MPL/2.0/.
+%
 %PEAKDET Detect peaks in a vector
-%        [MAXTAB, MINTAB] = PEAKDET(V, DELTA, X) finds the local
-%        maxima and minima ("peaks") in the vector V.
-%        MAXTAB and MINTAB consists of two columns. Column 1
-%        contains indices in V, and column 2 the found values.
-%        A point is considered a maximum peak if it has the maximal
-%        value, and was preceded (to the left) by a value lower by
-%        DELTA.
+%[MAXTAB, MINTAB] = PEAKDET(v, DELTA) finds the local maxima and minima
+%("peaks") in the vector v.
+% otuput: 
+%  MAXTAB indices in x,
+%  MINTAB the found values.
+%  A point is considered a maximum peak if it has the maximal value,
+%  and was preceded (to the left) by a value lower by DELTA.
+
 
 maxtab = [];
 mintab = [];

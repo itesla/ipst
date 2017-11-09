@@ -1,5 +1,10 @@
 function [A,D]=BimodalTest(gaussmix,num)
-% reference = https://en.wikipedia.org/wiki/Multimodal_distribution#Statistical_tests
+%
+% Copyright (c) 2017, RTE (http://www.rte-france.com) and RSE (http://www.rse-web.it) 
+% This Source Code Form is subject to the terms of the Mozilla Public
+% License, v. 2.0. If a copy of the MPL was not distributed with this
+% file, You can obtain one at http://mozilla.org/MPL/2.0/.
+%
 % The Gaussian mixture is subjected to two tests, Shilling and Ashman:
 % if A<0 or D<=2 the distribution is unimodal, otherwise multimodal
 % 

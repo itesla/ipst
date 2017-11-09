@@ -1,4 +1,10 @@
 function [err,errore_outl]=ChoosingOutliers(errore,err,soglia,err_sz_out_q,err_sz_out_c,outlier,ID_in,filepath)
+%
+% Copyright (c) 2017, RTE (http://www.rte-france.com) and RSE (http://www.rse-web.it) 
+% This Source Code Form is subject to the terms of the Mozilla Public
+% License, v. 2.0. If a copy of the MPL was not distributed with this
+% file, You can obtain one at http://mozilla.org/MPL/2.0/.
+%
 % this function eliminates the outliers in those variables that have less then
 % 7% of outliers in both methods
 % INPUT

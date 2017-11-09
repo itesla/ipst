@@ -1,5 +1,10 @@
 function [bicmin,aicmin,bes] = TestDistrib(variab,fig)
-
+%
+% Copyright (c) 2017, RTE (http://www.rte-france.com) and RSE (http://www.rse-web.it) 
+% This Source Code Form is subject to the terms of the Mozilla Public
+% License, v. 2.0. If a copy of the MPL was not distributed with this
+% file, You can obtain one at http://mozilla.org/MPL/2.0/.
+%
 % the function tests the distributions weibull, normal, logistic, gamma, lognormal
 % to fit the data
 %
