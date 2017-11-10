@@ -1266,6 +1266,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
     }
 
     public void processEquipmentData(Network network, String equipmentId, EurostagRecord eurostagRecord) {
+        //default behaviour: inputs are OK
     };
 
     public void dumpData(Internal inst, SimulatorInst simInst, DDBManager ddbmanager, PrintStream out, String machineName, Map<String, String> iidm2eurostagId, Network network, Equipment eq) throws IOException {
