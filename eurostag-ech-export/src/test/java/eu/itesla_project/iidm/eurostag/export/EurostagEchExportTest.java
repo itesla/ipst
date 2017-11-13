@@ -25,13 +25,13 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
-public class EurostagEchExportImplTest {
+public class EurostagEchExportTest {
 
     private void test(Network network, String reference, LocalDate editDate, EsgSpecialParameters specialParameters) throws IOException {
         StringWriter writer = new StringWriter();
         EsgGeneralParameters parameters = new EsgGeneralParameters();
         parameters.setEditDate(editDate);
-        new EurostagEchExportImpl(network).write(writer, parameters, specialParameters);
+        new EurostagEchExport(network).write(writer, parameters, specialParameters);
         writer.close();
         assertEquals(CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream(reference), StandardCharsets.UTF_8)), writer.toString());
     }

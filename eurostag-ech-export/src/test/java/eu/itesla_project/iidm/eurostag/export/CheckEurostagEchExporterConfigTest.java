@@ -22,7 +22,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Christian Biasuzzi <christian.biasuzzi@techrain.it>
  */
-public class CheckEurostagEchExportConfigTest {
+public class CheckEurostagEchExporterConfigTest {
 
     InMemoryPlatformConfig platformConfig;
     FileSystem fileSystem;

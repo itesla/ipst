@@ -11,10 +11,10 @@ import com.powsybl.iidm.network.Network;
 /**
  * @author Christian Biasuzzi <christian.biasuzzi@techrain.it>
  */
-public class EurostagEchExportFactoryImpl implements EurostagEchExportFactory {
+public class EurostagEchExporterFactoryImpl implements EurostagEchExporterFactory {
 
     @Override
-    public EurostagEchExport createEchExport(Network network, EurostagEchExportConfig exportConfig, BranchParallelIndexes parallelIndexes, EurostagDictionary dictionary, EurostagFakeNodes fakeNodes) {
-        return new EurostagEchExportImpl(network, exportConfig, parallelIndexes, dictionary, fakeNodes);
+    public EurostagEchExporter createEchExporter(Network network, EurostagEchExportConfig exportConfig, BranchParallelIndexes parallelIndexes, EurostagDictionary dictionary, EurostagFakeNodes fakeNodes) {
+        return new EurostagEchExport(network, exportConfig, parallelIndexes, dictionary, fakeNodes);
     }
 }

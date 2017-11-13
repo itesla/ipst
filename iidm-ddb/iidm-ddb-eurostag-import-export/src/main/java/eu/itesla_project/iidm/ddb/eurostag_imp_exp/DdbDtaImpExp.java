@@ -520,7 +520,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         }
 
         Equipment eq1 = ddbmanager.findEquipment(cimId);
-        if ((eq1 != null) && (updateFlag == true)) {
+        if ((eq1 != null) && updateFlag) {
             Set<String> connectedInternals = getConnectedInternals(cimId, ddbmanager);
 
             //remove this equipment graph
@@ -1607,7 +1607,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                 zm.put("coupling.par9", null);
             }
         } else {
-            if (couplingDataExists == true) {
+            if (couplingDataExists) {
                 //retrieve the equipment model template 'type'
                 ModelTemplate eqModelTemplate = ddbmanager.findModelTemplate(eq, simInst);
                 //Converter model: fixes DDB coupling parameters with actual ids
