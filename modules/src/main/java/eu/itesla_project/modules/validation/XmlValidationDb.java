@@ -9,6 +9,7 @@ package eu.itesla_project.modules.validation;
 import com.powsybl.commons.datasource.DataSource;
 import com.powsybl.commons.datasource.GzFileDataSource;
 import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.TopologyLevel;
 import com.powsybl.iidm.xml.NetworkXml;
 import com.powsybl.iidm.xml.XMLExportOptions;
 import org.slf4j.Logger;
@@ -68,7 +69,7 @@ class XmlValidationDb implements ValidationDb {
             Files.createDirectories(dir);
             DataSource outputStreamFactory = new GzFileDataSource(dir, name);
             try (OutputStream os = new BufferedOutputStream(outputStreamFactory.newOutputStream(null, "xml", false))) {
-                XMLExportOptions options = new XMLExportOptions(true, false, true, false);
+                XMLExportOptions options = new XMLExportOptions(true, true, false, TopologyLevel.NODE_BREAKER);
                 NetworkXml.write(network, options, os);
             }
         } catch (IOException e) {

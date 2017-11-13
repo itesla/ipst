@@ -39,6 +39,7 @@
 /pclfsim-integration/target/
 /sampling-integration/target/
 /target/
+/uncertainties-analysis/target/
 /wca-integration/target/
 
 # CMake projects
