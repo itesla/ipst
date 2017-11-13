@@ -27,7 +27,7 @@ import java.util.*;
 /**
  * @author Quinary <itesla@quinary.com>
  */
-public class DtaParser {
+public final class DtaParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DtaParser.class.getName());
 

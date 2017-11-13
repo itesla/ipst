@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  * @author Luis Maria Zamarreno <zamarrenolm@aia.com>
  * @author Silvia Machado <machados@aia.es>
  */
-public class ModelicaGrammar {
+public final class ModelicaGrammar {
 
     private ModelicaGrammar() {
     }

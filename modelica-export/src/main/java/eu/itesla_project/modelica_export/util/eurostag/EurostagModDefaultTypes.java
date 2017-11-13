@@ -9,7 +9,7 @@ package eu.itesla_project.modelica_export.util.eurostag;
 /**
  * @author Silvia Machado <machados@aia.es>
  */
-public class EurostagModDefaultTypes {
+public final class EurostagModDefaultTypes {
     //    public final static String PIN_TYPE                            = "iPSL.Connectors.ImPin";
     public final static String PIN_TYPE                            = "PowerSystems.Connectors.ImPin";
     public final static String INPUT_PIN_TYPE                    = "Modelica.Blocks.Interfaces.RealInput";

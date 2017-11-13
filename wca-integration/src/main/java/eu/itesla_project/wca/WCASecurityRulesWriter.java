@@ -62,7 +62,7 @@ public class WCASecurityRulesWriter implements AmplConstants, WCAConstants {
         this.activateFiltering = activateFiltering;
     }
 
-    private static class WCAEntity {
+    private static final class WCAEntity {
         final int type;
         final int num;
         final int sideNum;

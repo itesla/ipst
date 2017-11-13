@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * @author Luis Maria Zamarreno <zamarrenolm@aia.com>
  * @author Silvia Machado <machados@aia.es>
  */
-public class LibUploaderTest {
+public final class LibUploaderTest {
 
     private LibUploaderTest() {
     }

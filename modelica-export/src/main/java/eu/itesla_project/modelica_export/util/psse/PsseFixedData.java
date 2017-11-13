@@ -13,7 +13,7 @@ import java.util.List;
  * @author Silvia Machado <machados@aia.es>
  */
 @SuppressWarnings("checkstyle:constantname")
-public class PsseFixedData {
+public final class PsseFixedData {
     ///Segun la API de IIDM dan por supuesto que la potencia nominal es 100
     public final static float    SNREF_VALUE            = 100;
     public final static String    CONSTANT        = "const(k=0)";
