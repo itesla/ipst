@@ -17,6 +17,10 @@ disp(sprintf('wp5 - FEA STATS FOR FPF - version: %s', mversion));
 disp(sprintf(' m1file:  %s',m1file));
 disp(sprintf(' m2file:  %s',m2file));
 disp(sprintf(' ofile:  %s', ofile));
+disp(sprintf(' isdeterministic:  %s', isdeterministics));
+disp(sprintf(' isuniform:  %s', isuniforms));
+disp(sprintf(' homoths:  %s', homoths));
+disp(sprintf(' opf_FPFs:  %s', opf_FPFs));
 
 isdeterministic=str2double(isdeterministics);
 isuniform=str2double(isuniforms);

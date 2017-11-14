@@ -28,6 +28,7 @@ mversion='1.8.2';
 disp(sprintf('wp5 - module1 - version: %s', mversion));
 disp(sprintf(' ifile:  %s',ifile));
 disp(sprintf(' ofile:  %s',ofile));
+disp(sprintf(' nat:  %s',natS));
 disp(sprintf(' IR:  %s',IRs));
 disp(sprintf(' K:  %s',Ks));
 disp(sprintf(' flagPQ:  %s',s_flagPQ));
@@ -46,7 +47,15 @@ disp(sprintf(' tolerance:  %s',toleranceS));
 disp(sprintf(' iterations:  %s', iterationsS));
 disp(sprintf(' epsilo:  %s', epsiloS));
 disp(sprintf(' conditional_sampling:  %s', conditional_samplingS));
+disp(sprintf(' histo_estremeQ:  %s', histo_estremeQs));
+disp(sprintf(' thresGUI:  %s', thresGUIs));
+disp(sprintf(' unimod:  %s', unimod));
 disp(sprintf(' mode of inversion:  %s', modo_invs));
+disp(sprintf(' isdeterministics:  %s', isdeterministics));
+disp(sprintf(' isuniforms:  %s', isuniforms));
+disp(sprintf(' opt_GUIs:  %s', opt_GUIs));
+disp(sprintf(' opt_FPFs:  %s', opt_FPFs));
+disp(sprintf(' homoths:  %s', homoths));
 
 
 modo_inv=str2double(modo_invs);

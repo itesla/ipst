@@ -59,6 +59,8 @@ public class ForecastErrorsAnalyzerConfig {
     private final double band_uniformQL;
     private final double band_uniformPGEN;
     private final Integer correlation_fict_uniform;
+    private final Integer optFPF;
+    private final Integer homothetic;
 
 
     public ForecastErrorsAnalyzerConfig(
@@ -94,6 +96,8 @@ public class ForecastErrorsAnalyzerConfig {
             double band_uniformQL,
             double band_uniformPGEN,
             Integer correlation_fict_uniform,
+            Integer optFPF,
+            Integer homothetic,
             Integer rngSeed,
             boolean debug
     ) {
@@ -134,6 +138,8 @@ public class ForecastErrorsAnalyzerConfig {
         this.band_uniformQL = band_uniformQL;
         this.band_uniformPGEN = band_uniformPGEN;
         this.correlation_fict_uniform = correlation_fict_uniform;
+        this.optFPF = optFPF;
+        this.homothetic = homothetic;
     }
 
     public static ForecastErrorsAnalyzerConfig load() {
@@ -173,13 +179,15 @@ public class ForecastErrorsAnalyzerConfig {
         double band_uniformQL = config.getDoubleProperty("band_uniformQL");
         double band_uniformPGEN = config.getDoubleProperty("band_uniformPGEN");
         Integer correlation_fict_uniform = config.getOptionalIntegerProperty("correlation_fict_uniform").orElse(null);
+        Integer optFPF = config.getOptionalIntegerProperty("opt_FPF").orElse(null);
+        Integer homothetic = config.getOptionalIntegerProperty("homothetic").orElse(null);
 
         return new ForecastErrorsAnalyzerConfig(binariesDir, runtimeHomeDir, checkModule0, percpuGaussLoad, percpuGaussRes,
                 correlationGauss, tolVar, nMinObsFract, nMinObsInterv, imputationMeth, nGaussians, kOutlier, tolerance,
                 iterations, epsilo, conditionalSampling, tFlags, histo_estremeQ, thresGUI, nats,
                 nnz, unimod, modo_inv, isdeterministic, isuniform, opt_GUI,
                 Pload_deterministic, Qload_deterministic, band_uniformPL, band_uniformQL, band_uniformPGEN, correlation_fict_uniform,
-                rngSeed, debug);
+                optFPF, homothetic, rngSeed, debug);
     }
 
     public Path getBinariesDir() {
@@ -322,6 +330,14 @@ public class ForecastErrorsAnalyzerConfig {
         return correlation_fict_uniform;
     }
 
+    public Integer getOptFPF() {
+        return optFPF;
+    }
+
+    public Integer getHomothetic() {
+        return homothetic;
+    }
+
     @Override
     public String toString() {
         return "ForecastErrorsAnalyzerConfig [binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir
@@ -355,6 +371,8 @@ public class ForecastErrorsAnalyzerConfig {
                 + ", band_uniformQLs=" + band_uniformQL
                 + ", band_uniformPGENs=" + band_uniformPGEN
                 + ", correlation_fict_uniforms=" + correlation_fict_uniform
+                + ", opt_FPF=" + optFPF
+                + ", homothetic=" + homothetic
                 + ", debug=" + debug + "]";
     }
 

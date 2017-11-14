@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -7,6 +8,8 @@
 package eu.itesla_project.mcla.montecarlo.data;
 
 import java.util.Objects;
+
+import com.powsybl.iidm.network.Country;
 
 /**
  *
@@ -40,6 +43,7 @@ public class GeneratorData {
     int renewableEnergySource = -1;
     int fuelType = -1;
     boolean dispatchable;
+    Country country;
 
     public GeneratorData(String generatorId) {
         Objects.requireNonNull(generatorId, "generator id is null");
@@ -128,6 +132,14 @@ public class GeneratorData {
         this.dispatchable = dispatchable;
     }
 
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
+    }
+
     @Override
     public String toString() {
         String generatorData = "generator[id=" + this.getGeneratorId();
@@ -144,6 +156,7 @@ public class GeneratorData {
         generatorData += "; RES=" + this.getRenewableEnergySource();
         generatorData += "; Fuel=" + this.getFuelType();
         generatorData += "; dispch=" + this.isDispatchable();
+        generatorData += "; country=" + this.getCountry();
         generatorData += "]";
         return generatorData;
     }

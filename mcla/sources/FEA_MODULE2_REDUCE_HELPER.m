@@ -26,6 +26,13 @@ disp(sprintf(' k (total number of clusters): %s', s_k));
 disp(sprintf(' ofile: %s', ofile));
 disp(sprintf(' percpu_fict_gauss_load: %s', percpu_fict_gauss_load));
 disp(sprintf(' percpu_fict_gauss_RES: %s', percpu_fict_gauss_RES));
+disp(sprintf(' isdeterministic: %s', isdeterministics));
+disp(sprintf(' Pload_deterministic: %s', Pload_deterministics));
+disp(sprintf(' Qload_deterministic: %s', Qload_deterministics));
+disp(sprintf(' band_uniformPGEN: %s', band_uniformPGENs));
+disp(sprintf(' band_uniformPL: %s', band_uniformPLs));
+disp(sprintf(' band_uniformQL: %s', band_uniformQLs));
+disp(sprintf(' correlation_fict_uniform: %s', correlation_fict_uniforms));
 
 moutput.errmsg='Ok';
 percpu_gau_load=str2double(percpu_fict_gauss_load);
@@ -101,6 +108,6 @@ catch err
     exitcode=-1;
 end
 
-save(ofile, '-struct', 'totmoutput');
+save(ofile, '-struct', 'totmoutput','-v7.3');
 % exit(exitcode);
 end

@@ -61,6 +61,7 @@ public class MontecarloSamplerConfig {
     private final Integer isdeterministic;
     private final Integer full_dependence;
     private final boolean copyFEFile;
+    private final Integer homothetic;
 
     public MontecarloSamplerConfig(
             Path binariesDir,
@@ -71,6 +72,7 @@ public class MontecarloSamplerConfig {
             int isdeterministic,
             int full_dependence,
             boolean copyFEFile,
+            Integer homothetic,
             boolean debug
     ) {
         Objects.requireNonNull(binariesDir, "sampler compiled binaries directory is null");
@@ -85,6 +87,7 @@ public class MontecarloSamplerConfig {
         this.isdeterministic = isdeterministic;
         this.full_dependence = full_dependence;
         this.copyFEFile = copyFEFile;
+        this.homothetic = homothetic;
         this.debug = debug;
     }
 
@@ -99,9 +102,10 @@ public class MontecarloSamplerConfig {
         Integer isdeterministic = config.getOptionalIntegerProperty("isdeterministic").orElse(null);
         Integer full_dependence = config.getOptionalIntegerProperty("full_dependence").orElse(null);
         boolean copyFEFile = config.getBooleanProperty("copyFEFile", true);
+        Integer homothetic = config.getOptionalIntegerProperty("homothetic").orElse(null);
         boolean debug = config.getBooleanProperty("debug", false);
 
-        return new MontecarloSamplerConfig(binariesDir, runtimeHomeDir, tmpDir, optionSign, centering, isdeterministic, full_dependence, copyFEFile, debug);
+        return new MontecarloSamplerConfig(binariesDir, runtimeHomeDir, tmpDir, optionSign, centering, isdeterministic, full_dependence, copyFEFile, homothetic, debug);
     }
 
     public Path getBinariesDir() {
@@ -144,11 +148,15 @@ public class MontecarloSamplerConfig {
         return LOGGER;
     }
 
+    public Integer getHomothetic() {
+        return homothetic;
+    }
+
     @Override
     public String toString() {
         return "MontecarloSamplerConfig [" + ", binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir + ", tmpDir=" + tmpDir
                 + ", optionSign=" + optionSign + ", centering=" + centering + ", isdeterministic=" + isdeterministic + ", full_dependence=" + full_dependence
-                + ", copyFEFile=" + copyFEFile + ", debug=" + debug + "]";
+                + ", copyFEFile=" + copyFEFile + ", homothetic=" + homothetic + ", debug=" + debug + "]";
     }
 
 }
