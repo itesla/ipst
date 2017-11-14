@@ -81,7 +81,7 @@ public class HistoDbPrintVoltageRangeTool implements Tool {
         };
     }
 
-    private static class VoltageStats {
+    private static final class VoltageStats {
         private final Range<Float> range;
         private final int count;
         private final float vnom;

@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author Silvia Machado <machados@aia.es>
  */
-public class EurostagFixedData {
+public final class EurostagFixedData {
     ///Según la API de IIDM dan por supuesto que la potencia nominal es 100
     public final static String        PARAMETER            = "parameter";
 
@@ -63,8 +63,14 @@ public class EurostagFixedData {
     public final static String    V2            = "V2";
     public final static String    U1N            = "U1N";
     public final static String    U2N            = "U2N";
-    public final static String    U1nom        = "U1nom";
-    public final static String    U2nom        = "U2nom";
+    public final static String    U1_NOM = "U1nom";
+    @Deprecated
+    @SuppressWarnings("checkstyle:constantname")
+    public final static String    U1nom        = U1_NOM;
+    public final static String    U2_NOM       = "U2nom";
+    @Deprecated
+    @SuppressWarnings("checkstyle:constantname")
+    public final static String    U2nom        = U2_NOM;
     public final static String    UCC            = "Ucc";
     public final static String    THETA        = "theta";
     public final static String    ESAT        = "ESAT";
@@ -72,6 +78,7 @@ public class EurostagFixedData {
     public final static String    X            = "X";
     public final static String    G            = "G";
     public final static String    B            = "B";
+    @SuppressWarnings("checkstyle:constantname")
     public final static String    r            = "r";
     public final static String    ALPHA        = "alpha";
     public final static String    BETA        = "beta";

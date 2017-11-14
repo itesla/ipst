@@ -43,7 +43,7 @@ import eu.itesla_project.modules.test.AutomaticContingenciesAndActionsDatabaseCl
  * @author Leonel Carvalho - INESC TEC
  */
 
-public class Converter {
+public final class Converter {
 
     private Converter() {
     }
@@ -94,7 +94,7 @@ public class Converter {
     private static String idT3W = "T3W_";
 
     // Seasons
-    private static final String[] seasons = {
+    private static final String[] SEASONS = {
         "Winter", "Winter", "Spring", "Spring", "Summer", "Summer",
         "Summer", "Summer", "Fall", "Fall", "Winter", "Winter"
     };
@@ -975,6 +975,7 @@ public class Converter {
 
 
     // Main
+    @SuppressWarnings("checkstyle:parameterassignment")
     public static void main(String[] args) {
 
         // ********************************** Initializations ********************************** //
@@ -999,7 +1000,7 @@ public class Converter {
 
     // Returns the season of the corresponding month
     public static String getSeason(int month) {
-        return seasons[month - 1];
+        return SEASONS[month - 1];
     }
 
     // Returns the index of the position of the string in the array. If the string is not in the array, then the function returns -1

@@ -62,7 +62,7 @@ public abstract class BranchRecord extends ModelicaRecord {
         ModelTemplateContainer mtc = ddbManager.findModelTemplateContainer(ddbid);
 
         if (mtc == null) {
-//            _log.warn("EUROSTAG Model Template Container does not exist. Searching Default MODELICA Model Template Container in DDB.");
+//            LOGGER.warn("EUROSTAG Model Template Container does not exist. Searching Default MODELICA Model Template Container in DDB.");
             mtc = ddbManager.findModelTemplateContainer(StaticData.MTC_PREFIX_NAME + DEFAULT_BRANCH_TYPE);
         }
 
@@ -77,11 +77,11 @@ public abstract class BranchRecord extends ModelicaRecord {
                 super.setModelicaType(model.getTypeName());
             } else {
                 super.setCorrect(false);
-                _log.error("MODELICA Model Template does not exist in DDB.");
+                LOGGER.error("MODELICA Model Template does not exist in DDB.");
             }
         } else {
             super.setCorrect(false);
-//            _log.error("MODELICA Model Template Container does not exist in DDB.");
+//            LOGGER.error("MODELICA Model Template Container does not exist in DDB.");
         }
     }
 
@@ -89,16 +89,16 @@ public abstract class BranchRecord extends ModelicaRecord {
         return DEFAULT_BRANCH_TYPE;
     }
 
-    public void setDEFAULT_BRANCH_TYPE(String Default_Branch_Type) {
-        DEFAULT_BRANCH_TYPE = Default_Branch_Type;
+    public void setDEFAULT_BRANCH_TYPE(String defaultBranchType) {
+        DEFAULT_BRANCH_TYPE = defaultBranchType;
     }
 
     public String getDEFAULT_BRANCH_PREFIX() {
         return DEFAULT_BRANCH_PREFIX;
     }
 
-    public void setDEFAULT_BRANCH_PREFIX(String Default_Branch_Prefix) {
-        DEFAULT_BRANCH_PREFIX = WordUtils.uncapitalize(Default_Branch_Prefix.substring(0, 1)) + Default_Branch_Prefix.substring(1);
+    public void setDEFAULT_BRANCH_PREFIX(String defaultBranchPrefix) {
+        DEFAULT_BRANCH_PREFIX = WordUtils.uncapitalize(defaultBranchPrefix.substring(0, 1)) + defaultBranchPrefix.substring(1);
     }
 
     @Override
@@ -124,7 +124,7 @@ public abstract class BranchRecord extends ModelicaRecord {
         return parsedName;
     }
 
-    abstract void setParameters(float SNREF);
+    abstract void setParameters(float snref);
 
 //    abstract void addParameter(String name, Object value);
 
@@ -141,5 +141,5 @@ public abstract class BranchRecord extends ModelicaRecord {
     public String                        DEFAULT_BRANCH_TYPE;
     public String                        DEFAULT_BRANCH_PREFIX;
 
-    private static final Logger            _log                        = LoggerFactory.getLogger(BranchRecord.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BranchRecord.class);
 }

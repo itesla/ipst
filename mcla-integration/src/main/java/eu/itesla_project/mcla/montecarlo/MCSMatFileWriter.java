@@ -122,8 +122,8 @@ public class MCSMatFileWriter {
     private void putGeneratorDataIntoMLStructure(GeneratorData generatorData, MLStructure generators, int i) {
         LOGGER.debug("Preparing mat data for generator " + generatorData.getGeneratorId());
         // estremo_ID
-        MLInt64 estremo_ID = new MLInt64("", new long[]{generatorData.getBusIndex() }, 1);
-        generators.setField("estremo_ID", estremo_ID, 0, i);
+        MLInt64 estremoId = new MLInt64("", new long[]{generatorData.getBusIndex() }, 1);
+        generators.setField("estremo_ID", estremoId, 0, i);
         // estremo
         MLChar estremo = new MLChar("", generatorData.getBusId());
         generators.setField("estremo", estremo, 0, i);
@@ -190,8 +190,8 @@ public class MCSMatFileWriter {
     private void putLoadDataIntoMLStructure(LoadData loadData, MLStructure loads, int i) {
         LOGGER.debug("Preparing mat data for load " + loadData.getLoadId());
         // estremo_ID
-        MLInt64 estremo_ID = new MLInt64("", new long[]{loadData.getBusIndex()}, 1);
-        loads.setField("estremo_ID", estremo_ID, 0, i);
+        MLInt64 estremoId = new MLInt64("", new long[]{loadData.getBusIndex()}, 1);
+        loads.setField("estremo_ID", estremoId, 0, i);
         // estremo
         MLChar estremo = new MLChar("", loadData.getBusId());
         loads.setField("estremo", estremo, 0, i);

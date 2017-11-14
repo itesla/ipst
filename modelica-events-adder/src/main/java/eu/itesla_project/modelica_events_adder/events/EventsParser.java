@@ -69,7 +69,7 @@ public class EventsParser {
                 eventsDevices.add(device);
             }
         } catch (IOException e) {
-            _log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -104,5 +104,5 @@ public class EventsParser {
     private List<String> eventsDevices = new ArrayList<String>();
     private File eventsFile;
 
-    private static final Logger _log = LoggerFactory.getLogger(EventsParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventsParser.class);
 }

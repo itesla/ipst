@@ -70,7 +70,7 @@ public class MontecarloSamplerConfig {
             int optionSign,
             int centering,
             int isdeterministic,
-            int full_dependence,
+            int fullDependence,
             boolean copyFEFile,
             Integer homothetic,
             boolean debug
@@ -85,7 +85,7 @@ public class MontecarloSamplerConfig {
         this.optionSign = optionSign;
         this.centering = centering;
         this.isdeterministic = isdeterministic;
-        this.full_dependence = full_dependence;
+        this.full_dependence = fullDependence;
         this.copyFEFile = copyFEFile;
         this.homothetic = homothetic;
         this.debug = debug;
@@ -100,12 +100,12 @@ public class MontecarloSamplerConfig {
         int optionSign = config.getIntProperty("optionSign");
         int centering = config.getIntProperty("centering");
         Integer isdeterministic = config.getOptionalIntegerProperty("isdeterministic").orElse(null);
-        Integer full_dependence = config.getOptionalIntegerProperty("full_dependence").orElse(null);
+        Integer fullDependence = config.getOptionalIntegerProperty("full_dependence").orElse(null);
         boolean copyFEFile = config.getBooleanProperty("copyFEFile", true);
         Integer homothetic = config.getOptionalIntegerProperty("homothetic").orElse(null);
         boolean debug = config.getBooleanProperty("debug", false);
 
-        return new MontecarloSamplerConfig(binariesDir, runtimeHomeDir, tmpDir, optionSign, centering, isdeterministic, full_dependence, copyFEFile, homothetic, debug);
+        return new MontecarloSamplerConfig(binariesDir, runtimeHomeDir, tmpDir, optionSign, centering, isdeterministic, fullDependence, copyFEFile, homothetic, debug);
     }
 
     public Path getBinariesDir() {

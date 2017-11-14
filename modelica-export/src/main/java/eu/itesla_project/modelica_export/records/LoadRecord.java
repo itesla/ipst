@@ -35,7 +35,7 @@ import java.util.List;
  */
 public class LoadRecord extends ModelicaRecord {
 
-    public LoadRecord(Load load, ConnectBusInfo busInfo, float SNREF, SourceEngine sourceEngine) {
+    public LoadRecord(Load load, ConnectBusInfo busInfo, float snref, SourceEngine sourceEngine) {
         this.load = load;
         this.busInfo = busInfo;
         this.loadId = load.getId();
@@ -58,16 +58,16 @@ public class LoadRecord extends ModelicaRecord {
 
             addLfParameters();
         } else {
-            _log.warn("Load " + this.getModelicaName() + " disconnected.");
+            LOGGER.warn("Load " + this.getModelicaName() + " disconnected.");
             this.addValue(StaticData.COMMENT + " Load " + this.getModelicaName() + " disconnected.");
         }
 
         if (this.busVoltage == 0) {
-            _log.info("Voltage 0");
+            LOGGER.info("Voltage 0");
         }
     }
 
-    public LoadRecord(String loadId, float p0, float q0, float busVoltage, float busAngle, float SNREF, SourceEngine sourceEngine) {
+    public LoadRecord(String loadId, float p0, float q0, float busVoltage, float busAngle, float snref, SourceEngine sourceEngine) {
         this.loadId = loadId;
         this.busVoltage = busVoltage;
         this.busAngle = busAngle;
@@ -96,7 +96,7 @@ public class LoadRecord extends ModelicaRecord {
         ModelTemplateContainer mtc = ddbManager.findModelTemplateContainer(ddbid);
 
         if (mtc == null) {
-            _log.info("EUROSTAG Model Template Container does not exist. Searching Default Modelica Model Template Container in DDB.");
+            LOGGER.info("EUROSTAG Model Template Container does not exist. Searching Default Modelica Model Template Container in DDB.");
             mtc = ddbManager.findModelTemplateContainer(StaticData.MTC_PREFIX_NAME + DEFAULT_LOAD_TYPE);
         }
 
@@ -110,11 +110,11 @@ public class LoadRecord extends ModelicaRecord {
             if (model != null) {
                 super.setModelicaType(model.getTypeName());
             } else {
-                _log.warn("MODELICA Model Template does not exist in DDB");
+                LOGGER.warn("MODELICA Model Template does not exist in DDB");
             }
         } else {
             super.setCorrect(false);
-            _log.error("MODELICA Model Template Container does not exist in DDB.");
+            LOGGER.error("MODELICA Model Template Container does not exist in DDB.");
         }
     }
 
@@ -156,10 +156,10 @@ public class LoadRecord extends ModelicaRecord {
                 iidmloadParameters = null;
                 loadParameters = null;
             } else {
-                _log.error(this.getModelicaName() + " not added to grid model.");
+                LOGGER.error(this.getModelicaName() + " not added to grid model.");
             }
         } else {
-            _log.warn("Load " + this.getModelicaName() + " disconnected.");
+            LOGGER.warn("Load " + this.getModelicaName() + " disconnected.");
             this.addValue(StaticData.COMMENT + " Load " + this.getModelicaName() + " disconnected.");
         }
     }
@@ -224,5 +224,5 @@ public class LoadRecord extends ModelicaRecord {
     private List<Parameter>        loadParameters        = new ArrayList<Parameter>();
     private List<IIDMParameter>    iidmloadParameters    = new ArrayList<IIDMParameter>();
 
-    private static final Logger _log                = LoggerFactory.getLogger(LoadRecord.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoadRecord.class);
 }

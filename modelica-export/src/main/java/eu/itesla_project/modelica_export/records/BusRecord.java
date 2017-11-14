@@ -82,7 +82,7 @@ public class BusRecord extends ModelicaRecord {
 
         ModelTemplateContainer mtc = ddbManager.findModelTemplateContainer(ddbid);
         if (mtc == null) {
-//            _log.warn("EUROSTAG Model Template Container does not exist. Searching Default MODELICA Model Template Container in DDB.");
+//            LOGGER.warn("EUROSTAG Model Template Container does not exist. Searching Default MODELICA Model Template Container in DDB.");
             mtc = ddbManager.findModelTemplateContainer(StaticData.MTC_PREFIX_NAME + DEFAULT_BUS_TYPE);
         }
 
@@ -103,11 +103,11 @@ public class BusRecord extends ModelicaRecord {
 //                for(Parameter param : defParameters) busParameters.add(param);
             } else {
                 super.setCorrect(false);
-//                _log.warn("MODELICA Model Template does not exist in DDB");
+//                LOGGER.warn("MODELICA Model Template does not exist in DDB");
             }
         } else {
             super.setCorrect(false);
-            _log.error("MODELICA Model Template Container does not exist in DDB.");
+            LOGGER.error("MODELICA Model Template Container does not exist in DDB.");
         }
     }
 
@@ -146,10 +146,10 @@ public class BusRecord extends ModelicaRecord {
                 iidmbusParameters = null;
                 busParameters = null;
             } else {
-                _log.error(this.getModelicaName() + " not added to grid model.");
+                LOGGER.error(this.getModelicaName() + " not added to grid model.");
             }
         } else {
-            _log.warn("Bus " + this.getModelicaName() + " disconnected.");
+            LOGGER.warn("Bus " + this.getModelicaName() + " disconnected.");
             this.addValue(StaticData.COMMENT + " Bus " + this.getModelicaName() + " disconnected.");
         }
     }
@@ -185,5 +185,5 @@ public class BusRecord extends ModelicaRecord {
     private List<Parameter>        busParameters        = new ArrayList<Parameter>();
     private List<IIDMParameter>    iidmbusParameters    = new ArrayList<IIDMParameter>();
 
-    private static final Logger _log                = LoggerFactory.getLogger(BusRecord.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BusRecord.class);
 }

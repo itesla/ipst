@@ -26,14 +26,14 @@ import org.slf4j.LoggerFactory;
 public class FixedTransformerRecord extends BranchRecord {
 
     public FixedTransformerRecord(TwoWindingsTransformer transformer,
-            float SNREF) {
+            float snref) {
         super(transformer);
         this.transformer = transformer;
         super.setDEFAULT_BRANCH_TYPE(DEFAULT_FIXED_TRAFO_TYPE);
 
         super.setDEFAULT_BRANCH_PREFIX(StaticData.PREF_TRAFO);
 
-        this.setParameters(SNREF);
+        this.setParameters(snref);
     }
 
     @Override
@@ -96,10 +96,10 @@ public class FixedTransformerRecord extends BranchRecord {
                 iidmbranchParameters = null;
                 branchParameters = null;
             } else {
-                _log.error(this.getModelicaName() + " not added to grid model.");
+                LOGGER.error(this.getModelicaName() + " not added to grid model.");
             }
         } else {
-            _log.warn("Fixed transformer " + this.getModelicaName() + " disconnected.");
+            LOGGER.warn("Fixed transformer " + this.getModelicaName() + " disconnected.");
             this.addValue(StaticData.COMMENT + " Fixed transformer " + this.getModelicaName() + " disconnected.");
         }
     }
@@ -108,36 +108,36 @@ public class FixedTransformerRecord extends BranchRecord {
      * Add IIDM parameters to Fixed Transformer Modelica Model in p.u
      */
     @Override
-    void setParameters(float SNREF) {
+    void setParameters(float snref) {
         //super.iidmbranchParameters = new ArrayList<IIDMParameter>();
 
         float t1NomV = this.transformer.getTerminal1().getVoltageLevel().getNominalV();
         float t2NomV = this.transformer.getTerminal2().getVoltageLevel().getNominalV();
-        float U1nom = Float.isNaN(t1NomV) == false ? t1NomV : 0;
-        float U2nom = Float.isNaN(t2NomV) == false ? t2NomV : 0;
-        float V1 = Float.isNaN(this.transformer.getRatedU1()) == false ? this.transformer.getRatedU1() : 0; // [kV]
-        float V2 = Float.isNaN(this.transformer.getRatedU2()) == false ? this.transformer.getRatedU2() : 0; // [kV]
-        float Zbase = (float) Math.pow(U2nom, 2) / SNREF;
+        float u1Nom = !Float.isNaN(t1NomV) ? t1NomV : 0;
+        float u2Nom = !Float.isNaN(t2NomV) ? t2NomV : 0;
+        float v1 = !Float.isNaN(this.transformer.getRatedU1()) ? this.transformer.getRatedU1() : 0; // [kV]
+        float v2 = !Float.isNaN(this.transformer.getRatedU2()) ? this.transformer.getRatedU2() : 0; // [kV]
+        float zBase = (float) Math.pow(u2Nom, 2) / snref;
 
-        float R = this.transformer.getR() / Zbase; // [p.u.]
-        super.addParameter(this.iidmbranchParameters, StaticData.R, R); // p.u.
+        float r = this.transformer.getR() / zBase; // [p.u.]
+        super.addParameter(this.iidmbranchParameters, StaticData.R, r); // p.u.
 
-        float X = this.transformer.getX() / Zbase; // [p.u.]
-        super.addParameter(this.iidmbranchParameters, StaticData.X, X); // p.u.
+        float x = this.transformer.getX() / zBase; // [p.u.]
+        super.addParameter(this.iidmbranchParameters, StaticData.X, x); // p.u.
 
-        float G = this.transformer.getG() * Zbase; // [p.u.]
-        super.addParameter(this.iidmbranchParameters, StaticData.G, G); // p.u.
+        float g = this.transformer.getG() * zBase; // [p.u.]
+        super.addParameter(this.iidmbranchParameters, StaticData.G, g); // p.u.
 
-        float B = this.transformer.getB() * Zbase; // [p.u.]
-        super.addParameter(this.iidmbranchParameters, StaticData.B, B); // p.u.
+        float b = this.transformer.getB() * zBase; // [p.u.]
+        super.addParameter(this.iidmbranchParameters, StaticData.B, b); // p.u.
 
         /*
          * El ratio esta calculado de acuerdo al valor obtenido por HELM FLow
          */
-        float Vend_pu = V1 / U1nom;
-        float Vsource_pu = V2 / U2nom;
-        float RATIO = Vsource_pu / Vend_pu; // ...transformation ratio [p.u.]
-        super.addParameter(this.iidmbranchParameters, EurostagFixedData.r, RATIO); // p.u.
+        float vEndPu = v1 / u1Nom;
+        float vSourcePu = v2 / u2Nom;
+        float ration = vSourcePu / vEndPu; // ...transformation ratio [p.u.]
+        super.addParameter(this.iidmbranchParameters, EurostagFixedData.r, ration); // p.u.
     }
 
     @Override
@@ -150,6 +150,5 @@ public class FixedTransformerRecord extends BranchRecord {
     private String DEFAULT_FIXED_TRAFO_TYPE = EurostagModDefaultTypes.DEFAULT_FIXED_TRAFO_TYPE;
     private String DEFAULT_FIXED_TRAFO_PREFIX;
 
-    private static final Logger _log = LoggerFactory
-            .getLogger(FixedTransformerRecord.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FixedTransformerRecord.class);
 }

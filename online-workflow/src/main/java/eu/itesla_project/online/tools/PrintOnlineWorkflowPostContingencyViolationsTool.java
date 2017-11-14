@@ -184,10 +184,11 @@ public class PrintOnlineWorkflowPostContingencyViolationsTool implements Tool {
     private void printStateContingencyViolations(TableFormatter formatter, Integer stateId, String contingencyId, List<LimitViolation> violations,
                                                  LimitViolationFilter violationsFilter) {
         if (violations != null) {
+            List<LimitViolation> filteredViolations = violations;
             if (violationsFilter != null) {
-                violations = violationsFilter.apply(violations);
+                filteredViolations = violationsFilter.apply(violations);
             }
-            violations
+            filteredViolations
                     .stream()
                     .sorted(Comparator.comparing(o -> o.getSubjectId()))
                     .forEach(violation -> {

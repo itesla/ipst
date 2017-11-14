@@ -10,7 +10,7 @@ package eu.itesla_project.modules.histo;
  *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
-public class HistoDbAttributeIdParser {
+public final class HistoDbAttributeIdParser {
 
     private HistoDbAttributeIdParser() {
     }

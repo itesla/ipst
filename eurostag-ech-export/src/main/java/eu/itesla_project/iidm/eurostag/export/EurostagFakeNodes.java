@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 /**
  * @author Christian Biasuzzi <christian.biasuzzi@techrain.it>
  */
-public class EurostagFakeNodes {
+public final class EurostagFakeNodes {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EurostagFakeNodes.class);
 

@@ -27,7 +27,7 @@ public class ModelicaMainClassExtractor extends ModelicaHierarchyExtractor {
     @Override
     public void onStartClass(String specifier, String ident, String comment, boolean isComposition, String line) {
         super.onStartClass(specifier, ident, comment, isComposition, line);
-        log.debug("Class [" + specifier + "], [" + ident + "]");
+        LOGGER.debug("Class [" + specifier + "], [" + ident + "]");
         checkMainClass();
     }
 
@@ -81,5 +81,5 @@ public class ModelicaMainClassExtractor extends ModelicaHierarchyExtractor {
     String mainClassQualifiedName;
     List<ModelicaParameter> parameters;
 
-    static final Logger log = LoggerFactory.getLogger(ModelicaMainClassExtractor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModelicaMainClassExtractor.class);
 }

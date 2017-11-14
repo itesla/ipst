@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Silvia Machado <machados@aia.es>
  */
-public class EventsHelper {
+public final class EventsHelper {
 
     private EventsHelper() {
     }
@@ -30,7 +30,7 @@ public class EventsHelper {
             writer.append(line);
             writer.append(StaticData.NEW_LINE);
         } catch (IOException e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -60,5 +60,5 @@ public class EventsHelper {
     }
 
 
-    private static final Logger log = LoggerFactory.getLogger(EventsHelper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventsHelper.class);
 }

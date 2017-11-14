@@ -29,7 +29,7 @@ import java.util.Map.Entry;
  */
 public class GeneratorRecord extends ModelicaRecord {
 
-    public GeneratorRecord(Generator generator, ConnectBusInfo busInfo, boolean isInyection, float SNREF, SimulatorInst eurSim, Map<String, Map<String, String>> paramsDictionary, SourceEngine sourceEngine) {
+    public GeneratorRecord(Generator generator, ConnectBusInfo busInfo, boolean isInyection, float snref, SimulatorInst eurSim, Map<String, Map<String, String>> paramsDictionary, SourceEngine sourceEngine) {
         this.generator = generator;
         this.isInyection = isInyection;
         this.sourceSim = eurSim;
@@ -61,7 +61,7 @@ public class GeneratorRecord extends ModelicaRecord {
             }
             DEFAULT_GEN_LOAD_PREFIX = DEFAULT_GEN_LOAD_PREFIX + "_GEN";
         }
-        setParameters(isInyection, SNREF);
+        setParameters(isInyection, snref);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class GeneratorRecord extends ModelicaRecord {
         ModelTemplate model = null;
         if (eq != null) {
             if (this.generator.getEnergySource().name().equals("WIND")) {
-                _log.info("Wind generator!");
+                LOGGER.info("Wind generator!");
             }
 
             model = ddbManager.findModelTemplate(eq, modelicaSim);
@@ -103,11 +103,11 @@ public class GeneratorRecord extends ModelicaRecord {
                     genParameters = getPsseGeneratorParameters(ddbManager, modelicaSim, eq, model);
                 }
             } else {
-                _log.warn("MODELICA Model Template does not exist in DDB");
+                LOGGER.warn("MODELICA Model Template does not exist in DDB");
             }
         } else {
             if (!isInyection) {
-                _log.info("Generator " + this.getModelicaName() + " does not exist in DDB (Equipment).");
+                LOGGER.info("Generator " + this.getModelicaName() + " does not exist in DDB (Equipment).");
             }
             String ddbid;
             if (!isInyection) {
@@ -118,7 +118,7 @@ public class GeneratorRecord extends ModelicaRecord {
             ModelTemplateContainer mtc = ddbManager.findModelTemplateContainer(ddbid);
             String genType = null;
             if (mtc == null) {
-                _log.warn("Source (Eurostag/PSSE) Model Template Container does not exist. Searching Default Modelica Model Template Container in DDB.");
+                LOGGER.warn("Source (Eurostag/PSSE) Model Template Container does not exist. Searching Default Modelica Model Template Container in DDB.");
                 if (!isInyection) {
                     genType = DEFAULT_GEN_TYPE;
                     mtc = ddbManager.findModelTemplateContainer(StaticData.MTC_PREFIX_NAME + DEFAULT_GEN_TYPE);
@@ -143,16 +143,16 @@ public class GeneratorRecord extends ModelicaRecord {
                         if (param.getValue() != null) {
                             genParameters.add(param);
                         } else {
-                            _log.warn("Paramater " + param.getName() + " doesn't have value.");
+                            LOGGER.warn("Paramater " + param.getName() + " doesn't have value.");
                         }
                     }
                 } else {
                     super.setCorrect(false);
-                    _log.warn("MODELICA Model Template does not exist in DDB");
+                    LOGGER.warn("MODELICA Model Template does not exist in DDB");
                 }
             } else {
                 super.setCorrect(false);
-                _log.error("MODELICA Model Template Container does not exist in DDB.");
+                LOGGER.error("MODELICA Model Template Container does not exist in DDB.");
             }
         }
         modContext.dictionary.add(this.generator, modelicaName);
@@ -227,10 +227,10 @@ public class GeneratorRecord extends ModelicaRecord {
                 genParameters = null;
                 iidmgenParameters = null;
             } else {
-                _log.error(this.getModelicaName() + " not added to grid model.");
+                LOGGER.error(this.getModelicaName() + " not added to grid model.");
             }
         } else {
-            _log.warn("Generator " + this.getModelicaName() + " disconnected.");
+            LOGGER.warn("Generator " + this.getModelicaName() + " disconnected.");
             this.addValue(StaticData.COMMENT + " Generator " + this.getModelicaName() + " disconnected.");
         }
     }
@@ -268,12 +268,12 @@ public class GeneratorRecord extends ModelicaRecord {
                             addParamInMap(param.getName(), param.getValue().toString());
                         }
                     } else {
-                        _log.error("Modelica model " + modelTemplate.getTypeName() + " doesn't have default parameters.");
+                        LOGGER.error("Modelica model " + modelTemplate.getTypeName() + " doesn't have default parameters.");
                     }
                 }
             }
         } else {
-            _log.error("Parameters dictionary doesn't have parameters for model " + modelTemplate.getTypeName());
+            LOGGER.error("Parameters dictionary doesn't have parameters for model " + modelTemplate.getTypeName());
         }
         return parametersList;
     }
@@ -359,7 +359,7 @@ public class GeneratorRecord extends ModelicaRecord {
                                 addParamInMap(modParName, parameter.getValue().toString());
                             }
                         } else {
-//                            _log.error("Modelica parameter " + modParName + " doesn't exists in DDB.");
+//                            LOGGER.error("Modelica parameter " + modParName + " doesn't exists in DDB.");
                         }
                     }
                 } else {
@@ -372,12 +372,12 @@ public class GeneratorRecord extends ModelicaRecord {
                             addParamInMap(param.getName(), param.getValue().toString());
                         }
                     } else {
-                        _log.error("Modelica model " + modelTemplate.getTypeName() + " doesn't have default parameters.");
+                        LOGGER.error("Modelica model " + modelTemplate.getTypeName() + " doesn't have default parameters.");
                     }
                 }
             }
         } else {
-            _log.error("Parameters dictionary doesn't have parameters for model " + modelTemplate.getTypeName());
+            LOGGER.error("Parameters dictionary doesn't have parameters for model " + modelTemplate.getTypeName());
         }
         return parametersList;
     }
@@ -388,7 +388,7 @@ public class GeneratorRecord extends ModelicaRecord {
         }
     }
 
-    public void setParameters(boolean isInyection, float SNREF) {
+    public void setParameters(boolean isInyection, float snref) {
         IIDMParameter parameter;
         iidmgenParameters = new ArrayList<IIDMParameter>();
         float voltage = 0;
@@ -431,12 +431,12 @@ public class GeneratorRecord extends ModelicaRecord {
                 addParamInMap(parameter.getName(), parameter.getValue().toString());
 
                 //Before 2015-05-28 the sign of pelec and qelec was not changed but now we change the sign.
-                float pelec = -this.generator.getTerminal().getP() / SNREF;
+                float pelec = -this.generator.getTerminal().getP() / snref;
                 parameter = new IIDMParameter(EurostagFixedData.P, pelec);
                 this.iidmgenParameters.add(parameter);
                 addParamInMap(parameter.getName(), parameter.getValue().toString());
 
-                float qelec = -this.generator.getTerminal().getQ() / SNREF;
+                float qelec = -this.generator.getTerminal().getQ() / snref;
                 parameter = new IIDMParameter(EurostagFixedData.Q, qelec);
                 this.iidmgenParameters.add(parameter);
                 addParamInMap(parameter.getName(),  parameter.getValue().toString());
@@ -543,5 +543,5 @@ public class GeneratorRecord extends ModelicaRecord {
     private boolean changedMbse = false;
     private SourceEngine sourceEngine;
 
-    private static final Logger _log = LoggerFactory.getLogger(GeneratorRecord.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GeneratorRecord.class);
 }

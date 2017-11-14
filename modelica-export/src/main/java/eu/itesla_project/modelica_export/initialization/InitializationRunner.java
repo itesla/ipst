@@ -52,7 +52,7 @@ public class InitializationRunner {
 
                 this.modelName = initData.getModelName();
                 String compString = omc.getComponents(this.modelName);
-                String[] compList = compString.contains("},{") == true ? compString.split("\\},\\{") : null;
+                String[] compList = compString.contains("},{") ? compString.split("\\},\\{") : null;
                 String machine = compList != null ? compList[0].split(",")[1] : compString.split(",")[1];
                 List<String> regsList = new ArrayList<>();
                 List<String> componentsList = Arrays.asList(compList);
@@ -69,7 +69,7 @@ public class InitializationRunner {
                 long init = System.currentTimeMillis();
                 omc.simulate(initData.getModelName(), "0", "1", "dassl");
                 omc.getErrorString();
-                _log.debug("Inicialización (ms) = " + (System.currentTimeMillis() - init));
+                LOGGER.debug("Inicialización (ms) = " + (System.currentTimeMillis() - init));
 
                 /**
                  * Getting initialized generator data in order to put it in the
@@ -162,7 +162,7 @@ public class InitializationRunner {
 //            // Delete .xml, .c, .h, .o and other files created by JavaOMC
 //            deleteInitFiles();
         } catch (Exception ex) {
-            _log.error(ex.getMessage(), ex);
+            LOGGER.error(ex.getMessage(), ex);
         }
     }
 
@@ -180,12 +180,12 @@ public class InitializationRunner {
             try {
                 boolean deleted = Files.deleteIfExists(Paths.get(f.getPath()));
                 if (!deleted) {
-                    _log.error("File " + f + " has not been deleted.");
+                    LOGGER.error("File " + f + " has not been deleted.");
                 } else {
-                    _log.info("Deleted: " + f.getName());
+                    LOGGER.info("Deleted: " + f.getName());
                 }
             } catch (FileSystemException exc) {
-                _log.error(exc.getMessage(), exc);
+                LOGGER.error(exc.getMessage(), exc);
             }
         }
     }
@@ -205,5 +205,5 @@ public class InitializationRunner {
     private Map<String, String> genInitValues = new HashMap<String, String>();
     private Map<String, Map<String, String>> regInitValues = new HashMap<String, Map<String, String>>();
 
-    private static final Logger _log = LoggerFactory.getLogger(InitializationRunner.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InitializationRunner.class);
 }

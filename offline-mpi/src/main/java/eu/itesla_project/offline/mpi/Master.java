@@ -30,7 +30,7 @@ import java.util.concurrent.*;
  *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
-public class Master {
+public final class Master {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Master.class);
 

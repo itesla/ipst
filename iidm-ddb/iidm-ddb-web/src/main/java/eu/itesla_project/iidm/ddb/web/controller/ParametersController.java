@@ -112,8 +112,8 @@ public class ParametersController {
     }
 
 
-    public void setCurrentddbid(String _containerddbid) {
-        this.currentddbid = _containerddbid;
+    public void setCurrentddbid(String containerddbid) {
+        this.currentddbid = containerddbid;
     }
 
 
@@ -500,10 +500,10 @@ public class ParametersController {
         return null;
     }
 
-    private List<ParameterWeb> buildParamsEditableTable(Parameters _params) {
+    private List<ParameterWeb> buildParamsEditableTable(Parameters params) {
         log.log(Level.INFO, " buildParamsEditableTable enter::");
         List<ParameterWeb> pwList = new ArrayList<ParameterWeb>();
-        for (Parameter p : _params.getParameters()) {
+        for (Parameter p : params.getParameters()) {
             log.log(Level.INFO, " _params [Name: " + p.getName() + ", Value: " + p.getValue() + "]");
             ParameterWeb pw = new ParameterWeb();
             pw.setName(p.getName());

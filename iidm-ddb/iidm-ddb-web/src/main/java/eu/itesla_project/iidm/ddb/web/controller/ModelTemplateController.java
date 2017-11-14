@@ -140,8 +140,8 @@ public class ModelTemplateController {
         return currentddbid;
     }
 
-    public void setCurrentddbid(String _containerddbid) {
-        this.currentddbid = _containerddbid;
+    public void setCurrentddbid(String containerDdbId) {
+        this.currentddbid = containerDdbId;
     }
 
     public String getDataName() {
@@ -176,8 +176,8 @@ public class ModelTemplateController {
         return this.modelTemplate;
     }
 
-    public void setModelTemplate(ModelTemplate _modelTemplate) {
-        this.modelTemplate = _modelTemplate;
+    public void setModelTemplate(ModelTemplate modelTemplate) {
+        this.modelTemplate = modelTemplate;
     }
 
     @PostConstruct
@@ -203,11 +203,11 @@ public class ModelTemplateController {
         buildDefParamsEditTable(modelTemplate.getDefaultParameters());
     }
 
-    private void buildDefParamsEditTable(List<DefaultParameters> _defParams) {
+    private void buildDefParamsEditTable(List<DefaultParameters> defParams) {
         log.log(Level.INFO, " buildDefParamsEditableTable enter:: ");
         this.dbDefParams = new TreeMap<Integer, List<DefaultParameterWeb>>();
 
-        for (DefaultParameters dp : _defParams) {
+        for (DefaultParameters dp : defParams) {
 
             List<DefaultParameterWeb> pwList = new ArrayList<DefaultParameterWeb>();
             int setNum = dp.getSetNum();

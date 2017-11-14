@@ -104,34 +104,34 @@ public class OnlineProcessTool implements Tool {
     public void run(CommandLine line, ToolRunningContext context) throws Exception {
         OnlineWorkflowStartParameters startconfig = OnlineWorkflowStartParameters.loadDefault();
         OnlineWorkflowParameters params = OnlineWorkflowParameters.loadDefault();
-        OnlineProcessParameters proc_params = null;
+        OnlineProcessParameters procParams = null;
         if (line.hasOption("config-file")) {
-            proc_params = readParamsFile(line.getOptionValue("config-file"), context.getOutputStream());
+            procParams = readParamsFile(line.getOptionValue("config-file"), context.getOutputStream());
 
         } else {
-            proc_params = new OnlineProcessParameters();
+            procParams = new OnlineProcessParameters();
         }
-        readParams(line, proc_params);
-        if (proc_params == null) {
+        readParams(line, procParams);
+        if (procParams == null) {
             return;
         }
-        if (proc_params.getDate() == null) {
-            proc_params.setDate(new DateTime());
+        if (procParams.getDate() == null) {
+            procParams.setDate(new DateTime());
         }
-        if (proc_params.getCreationDate() == null) {
-            proc_params.setCreationDate(new DateTime());
+        if (procParams.getCreationDate() == null) {
+            procParams.setCreationDate(new DateTime());
         }
-        context.getOutputStream().println("OnlineProcess config: " + proc_params);
-        if (proc_params.getCaseType() != null) {
-            params.setCaseType(CaseType.valueOf(proc_params.getCaseType()));
+        context.getOutputStream().println("OnlineProcess config: " + procParams);
+        if (procParams.getCaseType() != null) {
+            params.setCaseType(CaseType.valueOf(procParams.getCaseType()));
         }
 
         if (params.getCaseType() == null) {
             context.getOutputStream().println("Error: Missing required param 'case-type'");
             return;
         }
-        if (proc_params.getStates() != null) {
-            params.setStates(proc_params.getStates());
+        if (procParams.getStates() != null) {
+            params.setStates(procParams.getStates());
         }
 
         OnlineConfig oConfig = OnlineConfig.load();
@@ -139,12 +139,12 @@ public class OnlineProcessTool implements Tool {
                 .create(context.getComputationManager());
         DateTime[] basecases = null;
         Set<DateTime> baseCasesSet = null;
-        if (proc_params.getBasecasesInterval() != null) {
-            Interval basecasesInterval = Interval.parse(proc_params.getBasecasesInterval());
+        if (procParams.getBasecasesInterval() != null) {
+            Interval basecasesInterval = Interval.parse(procParams.getBasecasesInterval());
             baseCasesSet = caseRepo.dataAvailable(params.getCaseType(), params.getCountries(), basecasesInterval);
             if (baseCasesSet.isEmpty()) {
                 context.getOutputStream().println("No Base cases available for case-type " + params.getCaseType() + " and interval "
-                        + proc_params.getBasecasesInterval());
+                        + procParams.getBasecasesInterval());
                 return;
             }
             context.getOutputStream().println("Base cases available for interval " + basecasesInterval.toString());
@@ -155,11 +155,11 @@ public class OnlineProcessTool implements Tool {
             basecases = baseCasesSet.toArray(basecases);
         } else {
             if (params.getCaseType().equals(CaseType.FO)) {
-                DateTime endOfDay = new DateTime(proc_params.getCreationDate().getYear(),
-                        proc_params.getCreationDate().getMonthOfYear(), proc_params.getCreationDate().getDayOfMonth(),
+                DateTime endOfDay = new DateTime(procParams.getCreationDate().getYear(),
+                        procParams.getCreationDate().getMonthOfYear(), procParams.getCreationDate().getDayOfMonth(),
                         23, 59, 59, 999);
                 DateTime endOfTomorrow = endOfDay.plusDays(1);
-                Interval basecasesInterval = new Interval(proc_params.getCreationDate(), endOfTomorrow);
+                Interval basecasesInterval = new Interval(procParams.getCreationDate(), endOfTomorrow);
                 baseCasesSet = caseRepo.dataAvailable(params.getCaseType(), params.getCountries(), basecasesInterval);
                 basecases = new DateTime[baseCasesSet.size()];
                 basecases = baseCasesSet.toArray(basecases);
@@ -173,10 +173,10 @@ public class OnlineProcessTool implements Tool {
                     context.getOutputStream().println(" " + x);
                 });
             } else if (params.getCaseType().equals(CaseType.SN)) {
-                DateTime startOfDay = new DateTime(proc_params.getCreationDate().getYear(),
-                        proc_params.getCreationDate().getMonthOfYear(), proc_params.getCreationDate().getDayOfMonth(),
+                DateTime startOfDay = new DateTime(procParams.getCreationDate().getYear(),
+                        procParams.getCreationDate().getMonthOfYear(), procParams.getCreationDate().getDayOfMonth(),
                         0, 0, 0, 0);
-                Interval basecasesInterval = new Interval(startOfDay, proc_params.getCreationDate());
+                Interval basecasesInterval = new Interval(startOfDay, procParams.getCreationDate());
                 baseCasesSet = caseRepo.dataAvailable(params.getCaseType(), params.getCountries(), basecasesInterval);
                 if (baseCasesSet.isEmpty()) {
                     context.getOutputStream().println("No Base cases available for case-type " + params.getCaseType()
@@ -222,8 +222,8 @@ public class OnlineProcessTool implements Tool {
         ObjectName objname = new ObjectName(LocalOnlineApplicationMBean.BEAN_NAME);
         LocalOnlineApplicationMBean application = MBeanServerInvocationHandler.newProxyInstance(mbsc, objname,
                 LocalOnlineApplicationMBean.class, false);
-        String processId = application.startProcess(proc_params.getName(), proc_params.getOwner(),
-                proc_params.getDate(), proc_params.getCreationDate(), startconfig, params, basecases);
+        String processId = application.startProcess(procParams.getName(), procParams.getOwner(),
+                procParams.getDate(), procParams.getCreationDate(), startconfig, params, basecases);
         context.getOutputStream().println("processId=" + processId);
     }
 

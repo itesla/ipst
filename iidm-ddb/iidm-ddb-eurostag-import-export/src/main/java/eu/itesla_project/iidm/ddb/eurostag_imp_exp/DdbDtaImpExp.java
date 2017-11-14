@@ -32,7 +32,7 @@ import java.util.*;
  * @author Quinary <itesla@quinary.com>
  */
 public class DdbDtaImpExp implements DynamicDatabaseClient {
-    private static final String PAR_MACROBLOCK__NAME = "macroblock.name";
+    private static final String PAR_MACROBLOCK_NAME = "macroblock.name";
 
     private static final String MTC_PREFIX_NAME = "MTC_";
 
@@ -328,7 +328,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         }
 
         Equipment eq1 = ddbmanager.findEquipment(cimId);
-        if ((eq1 != null) && (updateFlag == true)) {
+        if ((eq1 != null) && updateFlag) {
             Set<String> connectedInternals = getConnectedInternals(cimId, ddbmanager);
 
             //remove this equipment graph
@@ -343,11 +343,11 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
         }
 
-        String mtc_ddbid = MTC_PREFIX_NAME + zone.getKeyName();
+        String mtcDdbId = MTC_PREFIX_NAME + zone.getKeyName();
         ModelTemplateContainer mtc1 = ddbmanager
-                .findModelTemplateContainer(mtc_ddbid);
+                .findModelTemplateContainer(mtcDdbId);
         if (mtc1 == null) {
-            throw new RuntimeException(" template container " + mtc_ddbid
+            throw new RuntimeException(" template container " + mtcDdbId
                     + " not defined! ");
         }
 
@@ -422,7 +422,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         }
 
         Equipment eq1 = ddbmanager.findEquipment(cimId);
-        if ((eq1 != null) && (updateFlag == true)) {
+        if ((eq1 != null) && updateFlag) {
             Set<String> connectedInternals = getConnectedInternals(cimId, ddbmanager);
 
             //remove this equipment graph
@@ -437,11 +437,11 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
         }
 
-        String mtc_ddbid = MTC_PREFIX_NAME + zone.getKeyName();
+        String mtcDdbId = MTC_PREFIX_NAME + zone.getKeyName();
         ModelTemplateContainer mtc1 = ddbmanager
-                .findModelTemplateContainer(mtc_ddbid);
+                .findModelTemplateContainer(mtcDdbId);
         if (mtc1 == null) {
-            throw new RuntimeException(" template container " + mtc_ddbid
+            throw new RuntimeException(" template container " + mtcDdbId
                     + " not defined! ");
         }
 
@@ -499,7 +499,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         log.debug("-Creating DDB component (R) " + zone);
 
         String macroblockName = (String) zone.getData().get(
-                PAR_MACROBLOCK__NAME);
+                PAR_MACROBLOCK_NAME);
         int paramSetNum = (int) zone.getData().get("psetnum");
         String machineName = (String) zone.getData().get("machine.name");
         String nativeId = amap.get(machineName);
@@ -513,13 +513,13 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         addPinNames(nativeId, macroblockName, retrieveActualRegPath(macroblockName + "." + "frm", regsMapping));
 
         //MTC and MT handling
-        String mtc_ddbid = MTC_PREFIX_NAME + macroblockName;
-        ModelTemplateContainer mtc1 = ddbmanager.findModelTemplateContainer(mtc_ddbid);
+        String mtcDdbId = MTC_PREFIX_NAME + macroblockName;
+        ModelTemplateContainer mtc1 = ddbmanager.findModelTemplateContainer(mtcDdbId);
         if (mtc1 != null) {
             log.info("-- Using existing Model Template Container: " + mtc1.getDdbId());
         } else {
-            log.info("-- Creating Model Template Container: " + mtc_ddbid);
-            mtc1 = new ModelTemplateContainer(mtc_ddbid, "");
+            log.info("-- Creating Model Template Container: " + mtcDdbId);
+            mtc1 = new ModelTemplateContainer(mtcDdbId, "");
         }
 
         //find a mt for this mtc and simulator
@@ -532,11 +532,11 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         }
         //if it does exist, and the update flag is set, delete it
         if (mt1 != null) {
-            if (updateFlag == true) {
+            if (updateFlag) {
                 log.info("--- removing existing Model Template: {}, {}, {}", mt1.getSimulator(), mt1.getTypeName(), mt1.getComment());
                 mtc1.getModelTemplates().remove(mt1);
                 mtc1 = ddbmanager.save(mtc1);
-                mtc1 = ddbmanager.findModelTemplateContainer(mtc_ddbid);
+                mtc1 = ddbmanager.findModelTemplateContainer(mtcDdbId);
                 mt1 = null;
                 removePinNames(nativeId, macroblockName);
             } else {
@@ -836,7 +836,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
     }
 
     private boolean filteredGenerator(Generator g) {
-        if (configExport.getGensPQfilter() == true) {
+        if (configExport.getGensPQfilter()) {
             if (!Float.isNaN(g.getTerminal().getP()) && ((-g.getTerminal().getP() > g.getMaxP()) || (-g.getTerminal().getP() < g.getMinP()))) {
                 return true;
             }
@@ -877,7 +877,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         this.network = network;
         this.parallelIndexes = parallelIndexes;
 
-        if (configExport.getGensPQfilter() == true) {
+        if (configExport.getGensPQfilter()) {
             log.warn("Dta export configured to skip generators when their P is outside (MinP, MaxP)");
         }
 
@@ -1052,7 +1052,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                 // dump regulator files start
                 String macroblockName = ddbmanager.getStringParameter(
                         internal, eurostagSim,
-                        PAR_MACROBLOCK__NAME);
+                        PAR_MACROBLOCK_NAME);
                 if (macroblockName == null) {
                     throw new RuntimeException("null macroblock.name for internal " + internal);
                 }
@@ -1121,8 +1121,8 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
                 //keeps track of reg name, pro .pcp, .rcp compiling
                 //skipping those regs that do not have both .rcp and .pcp files
-                if (((foundFRI == true) && (foundFRM == true) && (foundPAR == true))
-                        && ((foundPCP == false) || (foundRCP == false))) {
+                if ((foundFRI && foundFRM && foundPAR)
+                        && ((!foundPCP) || (!foundRCP))) {
                     uniqueRegNamesSet.add(intName);
                 }
                 //keeps track of generators in RST zones
@@ -1486,7 +1486,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                 zm.put("coupling.par9", null);
             }
         } else {
-            if (couplingDataExists == true) {
+            if (couplingDataExists) {
                 log.warn("coupling macroblock data in ddb -  macroblock name: " + zm.get("macroblock.name") + "; machine name: " + machineName);
             }
             zm.put("coupling.par1", null);
@@ -1924,8 +1924,8 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                             }
                             //keeps track of reg name, pro .pcp, .rcp compiling
                             //skipping those regs that do not have both .rcp and .pcp files
-                            if (((foundFRI == true) && (foundFRM == true) && (foundPAR == true))
-                                    && ((foundPCP == false) || (foundRCP == false))) {
+                            if ((foundFRI && foundFRM && foundPAR)
+                                    && (!foundPCP || !foundRCP)) {
                                 uniqueRegNamesSet.add(intName);
                             }
                         }
@@ -1995,7 +1995,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                                     log.error("could not write macro.lis file, due to " + e.getMessage());
                                 }
                                 // dump regulator files start
-                                String macroblockName = ddbmanager.getStringParameter(internal, eurostagSim, PAR_MACROBLOCK__NAME);
+                                String macroblockName = ddbmanager.getStringParameter(internal, eurostagSim, PAR_MACROBLOCK_NAME);
                                 if (macroblockName == null) {
                                     throw new RuntimeException("null macroblock.name for internal " + internal);
                                 }
@@ -2059,8 +2059,8 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                                 }
                                 //keeps track of reg name, pro .pcp, .rcp compiling
                                 //skipping those regs that do not have both .rcp and .pcp files
-                                if (((foundFRI == true) && (foundFRM == true) && (foundPAR == true))
-                                        && ((foundPCP == false) || (foundRCP == false))) {
+                                if ((foundFRI && foundFRM && foundPAR)
+                                        && ((!foundPCP) || (!foundRCP))) {
                                     uniqueRegNamesSet.add(intName);
                                 }
                             }
