@@ -4,7 +4,6 @@
 % License, v. 2.0. If a copy of the MPL was not distributed with this
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
 %
-
 t2=cputime;
 snap_new=snap_filt(:,3:end); %only snapshot fields without datetime and flag 0
 forec_new=forec_filt(:,3:end); %only forecast fields without datetime and flag 1440

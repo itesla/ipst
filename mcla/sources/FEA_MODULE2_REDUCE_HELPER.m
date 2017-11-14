@@ -1,10 +1,9 @@
-%
-% Copyright (c) 2017, Ricerca sul Sistema Energetico – RSE S.p.A. <itesla@rse-web.it>
+% 
+% Copyright (c) 2017, RTE (http://www.rte-france.com) and RSE (http://www.rse-web.it) 
 % This Source Code Form is subject to the terms of the Mozilla Public
 % License, v. 2.0. If a copy of the MPL was not distributed with this
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
 %
-
 % m1file: output of module1
 % mspartspath: directory where module2 partial clusters files results are stored
 % m2fileprefix: string prefix of module2 partial clusters files (e.g. m2_ )
@@ -15,9 +14,10 @@
 % band_uniformPLs,band_uniformQLs,band_uniformPGENs,correlation_fict_uniforms:
 % bands for the uniform distributions of P, Q of loads and P from RES
 % injectors, and the correlation among the two categories (load and RES)
+%
 function exitcode=FEA_MODULE2_REDUCE_HELPER(m1file, m2partspath, m2fileprefix, s_k, ofile,percpu_fict_gauss_load,percpu_fict_gauss_RES,correlationS,isdeterministics,Pload_deterministics,Qload_deterministics,band_uniformPLs,band_uniformQLs,band_uniformPGENs,correlation_fict_uniforms)
 close all;
-mversion='1.8.1';
+mversion='1.8.2';
 disp(sprintf('wp5 - module2 reduce - version: %s', mversion));
 disp(sprintf(' m1 file: %s', m1file));
 disp(sprintf(' m2 parts path: %s', m2partspath));
@@ -26,14 +26,6 @@ disp(sprintf(' k (total number of clusters): %s', s_k));
 disp(sprintf(' ofile: %s', ofile));
 disp(sprintf(' percpu_fict_gauss_load: %s', percpu_fict_gauss_load));
 disp(sprintf(' percpu_fict_gauss_RES: %s', percpu_fict_gauss_RES));
-disp(sprintf(' isdeterministic: %s', isdeterministics));
-disp(sprintf(' Pload_deterministic: %s', Pload_deterministics));
-disp(sprintf(' Qload_deterministic: %s', Qload_deterministics));
-disp(sprintf(' band_uniformPGEN: %s', band_uniformPGENs));
-disp(sprintf(' band_uniformPL: %s', band_uniformPLs));
-disp(sprintf(' band_uniformQL: %s', band_uniformQLs));
-disp(sprintf(' correlation_fict_uniform: %s', correlation_fict_uniforms));
-
 
 moutput.errmsg='Ok';
 percpu_gau_load=str2double(percpu_fict_gauss_load);
@@ -83,6 +75,7 @@ try
             end
             moutput(iout).errmsg=out1(iout).errmsg;
             moutput(iout).module1=out1(iout).module1;
+            moutput(iout).nation=out1(iout).nat_ID;
             moutput(iout).dati_condUNI = out1(iout).dati_condUNI;
             moutput(iout).dati_condMULTI = out1(iout).dati_condMULTI;
             moutput(iout).dati_Q = out1(iout).dati_Q;
@@ -108,6 +101,6 @@ catch err
     exitcode=-1;
 end
 
-save(ofile, '-struct', 'totmoutput','-v7.3');
+save(ofile, '-struct', 'totmoutput');
 % exit(exitcode);
 end

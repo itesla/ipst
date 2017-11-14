@@ -1,10 +1,9 @@
 %
-% Copyright (c) 2017, Ricerca sul Sistema Energetico – RSE S.p.A. <itesla@rse-web.it>
+% Copyright (c) 2017, RTE (http://www.rte-france.com) and RSE (http://www.rse-web.it) 
 % This Source Code Form is subject to the terms of the Mozilla Public
 % License, v. 2.0. If a copy of the MPL was not distributed with this
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
 %
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % function to run the MC sampling like approach
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,14 +79,42 @@
 % - full_dep -> if 1, it allows to account for full correlation among SNs
 % and FOs in the conditioning Gaussian sampling formula. if 0, it accounts
 % only for the correlation for each pair of variables (SN,FO)
-function [PGEN PLOAD QLOAD ] = main_MCLA2PC3(generatore,carico,nodo,scenarios,type_X0,type_X0m,module2,module3,flagPQ,limits_reactive,opt_sign,dati_cond,dati_condMULTI,y0,y0m,conditional_sampling,mod_gauss,centering,mod_unif,full_dep)
+% - nations --> string array of the countries - activated only in case
+% homoths = 1
+% - homoths --> option for homothetic disaggregation of country corrborder
+% error on coutry loads
+function [PGEN PLOAD QLOAD ] = main_MCLA2PC3(generatore,carico,generatore1,carico1,nodo,scenarios,type_X0,type_X0m,module2,module3,flagPQ,limits_reactive,opt_sign,dati_cond,dati_condMULTI,y0,y0m,conditional_sampling,mod_gauss,centering,mod_unif,full_dep,nations,homoths)
 
 %%%% THIS PARAMETER IS ONLY USED FOR VALIDATION PURPOSES, TO PROVIDE PLOTS
 %%%% FOR VALIDATION PHASE
 validation = 0;
 % additional checks: tool generates at most a number of conditional samples
 % equal to unconditioned samples
+%%%% initialization
+n_vars=[];
+    are_snapshots = [];
 
+    idx_RES = [];
+idxq_RES = [];
+idx_carichi = [];
+idx_carichiQ = [];
+ i_RES =  [];
+    iq_RES = [];
+    Pi_carichi =  [];
+    Qi_carichi=[];
+    pres_mc=[];pl_mc=[];ql_mc=[];
+n_varsm=[];
+        are_snapshotsm = [];
+    idx_RESm = [];
+idxq_RESm = [];
+idx_carichim = [];
+idx_carichiQm = [];
+ i_RESm =  [];
+    iq_RESm = [];
+    Pi_carichim =  [];
+    Qi_carichim=[];
+    pres_mcm=[];pl_mcm=[];ql_mcm=[];
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%
 %%% UNIMODALS
 if isempty(type_X0)==0
@@ -114,19 +141,8 @@ else
     Pi_carichi = find(type_X0(1,:)==2);
     Qi_carichi = find(type_X0(1,:)==3);
 end
-else
-    n_vars=[];
-    are_snapshots = [];
 
-    idx_RES = [];
-idxq_RES = [];
-idx_carichi = [];
-idx_carichiQ = [];
- i_RES =  [];
-    iq_RES = [];
-    Pi_carichi =  [];
-    Qi_carichi=[];
-    pres_mc=[];pl_mc=[];ql_mc=[];
+    
 end
 
 if isempty(type_X0m)==0
@@ -154,18 +170,7 @@ else
     Pi_carichim = find(type_X0m(1,:)==2);
     Qi_carichim = find(type_X0m(1,:)==3);
 end
-else
-       n_varsm=[];
-        are_snapshotsm = [];
-    idx_RESm = [];
-idxq_RESm = [];
-idx_carichim = [];
-idx_carichiQm = [];
- i_RESm =  [];
-    iq_RESm = [];
-    Pi_carichim =  [];
-    Qi_carichim=[];
-    pres_mcm=[];pl_mcm=[];ql_mcm=[];
+       
 end
 
 %%%
@@ -277,6 +282,7 @@ else
             scenarios = 1;
         end
         end
+        if homoths == 0
         %%% SAMPLING IN MODULE3 FROM OUTPUTS OF MODULES 1 AND 2
         if conditional_sampling == 1
             if isempty(are_snapshots)==0
@@ -374,14 +380,12 @@ else
                     vectorsGARPm = [vectorsGARPm inh];
                 end
             end
-            %         keyboard
             
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
             numero_RESm = length(idx_RESm);
             pres_mcm=[];pl_mcm=[];ql_mcm=[];
-            % keyboard
             for kRES = 1:length(idx_RESm)
                 if opt_sign == 1
                     pres_mcm(:,kRES) = sign(generatore(idx_RESm(kRES)).P).*max(0,sign(generatore(idx_RESm(kRES)).P).*X_NEWm(:,i_RESm(kRES)));
@@ -405,7 +409,6 @@ else
             end
             end
         else
-            %         keyboard
             %%%% DEACTIVATED CONDITIONAL SAMPLING - UNCONDITIONED SAMPLING OF FORECAST ERRORS FROM C VINES
             [ X_NEW ] = module3.X_NEW(randi(size(module3.X_NEW,1),scenarios,1),:);
             X_NEW1 = X_NEW;
@@ -480,6 +483,195 @@ else
             end
             
         end
+        else
+        % homothetic disaggregation of the countrycross-borders on the
+        % forecast values of the loads
+        if conditional_sampling == 1
+            if isempty(are_snapshots)==0
+            %%%% ACTIVATION OF CONDITIONAL SAMPLING
+            [ X_NEW0 ] = module3.X_NEW;
+            
+            quale_forecast = type_X0(5,dati_cond.idx_err0);
+%             profile on
+            [ X_NEWall  quale_err var_out_of_lim] = conditional_samps_correl_opt(X_NEW0,quale_forecast,y0,dati_cond,centering,full_dep);
+%             profile viewer
+            X_NEW=X_NEWall(randi(size(X_NEWall,1),scenarios,1),:);
+            
+            %%% PRINT SAMPLES of injections FOR OUTPUTS %%%%
+            
+            vectorsGARP = [];
+            for inh = 1:size(X_NEW,2)
+                if ismember(inh,Pi_carichi)
+                    nome{inh}=[carico1(idx_carichi(find(ismember(Pi_carichi,inh)))).codice '_P'];
+                    vectorsGARP = [vectorsGARP inh];
+                elseif ismember(inh,Qi_carichi)
+                    nome{inh}=[carico1(idx_carichiQ(find(ismember(Qi_carichi,inh)))).codice '_Q'];
+                    vectorsGARP = [vectorsGARP inh];
+                elseif ismember(inh,i_RES)
+                    nome{inh}=[generatore1(idx_RES(find(ismember(i_RES,inh)))).codice '_P'];
+                    vectorsGARP = [vectorsGARP inh];
+                elseif ismember(inh,iq_RES)
+                    nome{inh}=[generatore1(idxq_RES(find(ismember(iq_RES,inh)))).codice '_Q'];
+                    vectorsGARP = [vectorsGARP inh];
+                end
+            end
+            %         keyboard
+            csvFileName=sprintf('printSamples.csv');
+            fid = fopen(csvFileName,'w');
+            fmtString = [repmat('%s,',1,length(vectorsGARP)-1),'%s\n'];
+            fprintf(fid,fmtString,nome{vectorsGARP});
+            fclose(fid);
+            dlmwrite(csvFileName,quale_forecast(vectorsGARP),'delimiter',',','-append');
+            for inse = 1:size(X_NEW,1)
+                dlmwrite(csvFileName,X_NEW(inse,vectorsGARP),'delimiter',',','-append');
+            end
+            
+            %%% LOG OF DACFs OUT OF THE DOMAIN OF EXISTENCE
+            for iee = 1:length(var_out_of_lim)
+                if ismember(var_out_of_lim(iee),vectorsGARP)
+                    disp(['*WARNING: DACF (' num2str(quale_forecast(vectorsGARP(ismember(vectorsGARP,var_out_of_lim(iee))))) ') OF VARIABLE ' nome{vectorsGARP(ismember(vectorsGARP,var_out_of_lim(iee)))} ' OUTSIDE THE DOMAIN OF EXISTENCE OF FORECAST PDF: THE PDF IS MOVED BY ' num2str(quale_err(iee)) ' MWs'])
+                end
+            end
+            pres_mc=[];
+            for ina = 1:length(nations)
+               quali_carichi = intersect(find([carico.conn]==1),find(ismember({carico.nation},nations{ina}))); 
+               if isempty(quali_carichi)==0
+             if any(find(ismember(idx_carichi,ina)))  
+               pl_mc(:,quali_carichi) = repmat([carico(quali_carichi).P],size(X_NEW,1),1) - (X_NEW(:,Pi_carichi(ismember(idx_carichi,ina)))-quale_forecast(Pi_carichi(ismember(idx_carichi,ina))))*abs([carico(quali_carichi).P])./max(1e-10,sum(abs([carico(quali_carichi).P])));
+            
+             end
+               end
+               if flagPQ == 1
+                   if isempty(quali_carichi)==0
+            if any(find(ismember(idx_carichiQ,ina))) 
+            ql_mc(:,quali_carichi) = repmat([carico(quali_carichi).Q],size(X_NEW,1),1) - (X_NEW(:,Qi_carichi(ismember(idx_carichiQ,ina))) - quale_forecast(Qi_carichi(ismember(idx_carichiQ,ina))))*abs([carico(quali_carichi).Q])./max(1e-10,sum(abs([carico(quali_carichi).Q])));
+            
+            end
+                   end
+        end
+            end
+            
+            end
+            
+            if isempty(are_snapshotsm)==0
+                [ X_NEWm ] = sampling_multimodals(y0m,type_X0m,dati_condMULTI,conditional_sampling,mod_gauss,mod_unif,scenarios);
+            
+            quale_forecast = type_X0m(5,dati_condMULTI.idx_err_mult);
+            
+                        
+            %%% PRINT SAMPLES of injections FOR OUTPUTS %%%%
+            
+            vectorsGARPm = [];
+            for inh = 1:size(X_NEWm,2)
+                if ismember(inh,Pi_carichim)
+                    nomem{inh}=[carico1(idx_carichim(find(ismember(Pi_carichim,inh)))).codice '_P'];
+                    vectorsGARPm = [vectorsGARPm inh];
+                elseif ismember(inh,Qi_carichi)
+                    nomem{inh}=[carico1(idx_carichiQm(find(ismember(Qi_carichim,inh)))).codice '_Q'];
+                    vectorsGARPm = [vectorsGARPm inh];
+                elseif ismember(inh,i_RES)
+                    nomem{inh}=[generatore1(idx_RESm(find(ismember(i_RESm,inh)))).codice '_P'];
+                    vectorsGARPm = [vectorsGARPm inh];
+                elseif ismember(inh,iq_RES)
+                    nomem{inh}=[generatore1(idxq_RESm(find(ismember(iq_RESm,inh)))).codice '_Q'];
+                    vectorsGARPm = [vectorsGARPm inh];
+                end
+            end
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            for ina = 1:length(nations)
+               quali_carichi = intersect(find([carico.conn]==1),find(ismember({carico.nation},nations{ina}))); 
+             if isempty(quali_carichi)==0
+               if any(find(ismember(idx_carichim,ina)))
+               pl_mc(:,quali_carichi) = repmat([carico(quali_carichi).P],size(X_NEWm,1),1) - (X_NEWm(:,Pi_carichim(ismember(idx_carichim,ina))) - quale_forecast(Pi_carichim(ismember(idx_carichim,ina))))*abs([carico(quali_carichi).P])./max(1e-10,sum(abs([carico(quali_carichi).P])));
+             
+               end
+             end
+               if flagPQ == 1
+                   if isempty(quali_carichi)==0
+            if any(find(ismember(idx_carichiQm,ina)))
+            ql_mc(:,quali_carichi) = repmat([carico(quali_carichi).Q],size(X_NEWm,1),1) - (X_NEWm(:,Qi_carichim(ismember(idx_carichiQm,ina))) - quale_forecast(Qi_carichim(ismember(idx_carichiQm,ina))))*abs([carico(quali_carichi).Q])./max(1e-10,sum(abs([carico(quali_carichi).Q])));
+            
+            end
+                   end
+        end
+            end
+            end
+        else
+            %%%% DEACTIVATED CONDITIONAL SAMPLING - UNCONDITIONED SAMPLING OF FORECAST ERRORS FROM C VINES
+            [ X_NEW ] = module3.X_NEW(randi(size(module3.X_NEW,1),scenarios,1),:);
+            X_NEW1 = X_NEW;
+            
+            %%% PRINT SAMPLES of forecast errors FOR OUTPUTS %%%%
+            vectorsGARP = [];
+            for inh = 1:size(X_NEW,2)
+                if ismember(inh,Pi_carichi)
+                    nome{inh}=[carico1(idx_carichi(find(ismember(Pi_carichi,inh)))).codice '_P'];
+                    vectorsGARP = [vectorsGARP inh];
+                    X_NEW1(:,inh) = carico1(idx_carichi(find(ismember(Pi_carichi,inh)))).P + X_NEW(:,inh);
+                    quale_forecast(inh) = carico1(idx_carichi(find(ismember(Pi_carichi,inh)))).P;
+                elseif ismember(inh,Qi_carichi)
+                    
+                        nome{inh}=[carico1(idx_carichiQ(find(ismember(Qi_carichi,inh)))).codice '_Q'];
+                        vectorsGARP = [vectorsGARP inh];
+                        X_NEW1(:,inh) = carico1(idx_carichiQ(find(ismember(Qi_carichi,inh)))).Q + X_NEW(:,inh);
+                        quale_forecast(inh) = carico1(idx_carichiQ(find(ismember(Qi_carichi,inh)))).Q;
+                    
+                elseif ismember(inh,i_RES)
+                    
+                        nome{inh}=[generatore1(idx_RES(find(ismember(i_RES,inh)))).codice '_P'];
+                    
+                    vectorsGARP = [vectorsGARP inh];
+                    if opt_sign == 1
+                        X_NEW1(:,inh) = sign(generatore1(idx_RES(find(ismember(i_RES,inh)))).P).*max(0,sign(generatore1(idx_RES(find(ismember(i_RES,inh)))).P).*(X_NEW(:,i_RES(find(ismember(i_RES,inh))))+generatore1(idx_RES(find(ismember(i_RES,inh)))).P));
+                    else
+                        X_NEW1(:,inh) = X_NEW(:,i_RES(find(ismember(i_RES,inh))))+generatore1(idx_RES(find(ismember(i_RES,inh)))).P;
+                    end
+                    quale_forecast(inh) = generatore1(idx_RES(find(ismember(i_RES,inh)))).P;
+                elseif ismember(inh,iq_RES)
+                    nome{inh}=[generatore1(idxq_RES(find(ismember(iq_RES,inh)))).codice '_Q'];
+                    vectorsGARP = [vectorsGARP inh];
+                    X_NEW1(:,inh) = X_NEW(:,iq_RES(find(ismember(iq_RES,inh))))+generatore1(idxq_RES(find(ismember(iq_RES,inh)))).Q;
+                    quale_forecast(inh) = generatore1(idxq_RES(find(ismember(iq_RES,inh)))).Q;
+                end
+            end
+            %         keyboard
+            csvFileName=sprintf('printSamples.csv');
+            fid = fopen(csvFileName,'w');
+            fmtString = [repmat('%s,',1,length(vectorsGARP)-1),'%s\n'];
+            fprintf(fid,fmtString,nome{vectorsGARP});
+            fclose(fid);
+            dlmwrite(csvFileName,quale_forecast(vectorsGARP),'delimiter',',','-append');
+            for inse = 1:size(X_NEW1,1)
+                dlmwrite(csvFileName,X_NEW1(inse,vectorsGARP),'delimiter',',','-append');
+            end
+            
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            
+            numero_RES = length(idx_RES);
+            pres_mc=[];pl_mc=[];ql_mc=[];
+            for ina = 1:length(nations)
+               quali_carichi = intersect(find([carico.conn]==1),find(ismember({carico.nation},nations{ina}))); 
+               if isempty(quali_carichi)==0
+             if any(ismember(idx_carichi,ina))
+               pl_mc(:,quali_carichi) = repmat([carico(quali_carichi).P],size(X_NEW,1),1) - (X_NEW(:,Pi_carichi(ismember(idx_carichi,ina))))*abs([carico(quali_carichi).P])/max(1e-10,sum(abs([carico(quali_carichi).P])));
+             else
+               pl_mc(:,quali_carichi) = repmat([carico(quali_carichi).P],size(X_NEW,1),1);  
+             end
+               end
+               if flagPQ == 1
+                   if isempty(quali_carichi)==0
+            if any(ismember(idx_carichiQ,ina))
+            ql_mc(:,quali_carichi) = repmat([carico(quali_carichi).Q],size(X_NEW,1),1) + (X_NEW(:,Qi_carichi(ismember(idx_carichiQ,ina))))*abs([carico(quali_carichi).Q])/max(1e-10,sum(abs([carico(quali_carichi).Q])));
+            else
+            ql_mc(:,quali_carichi) = repmat([carico(quali_carichi).Q],size(X_NEW,1),1);    
+            end
+                   end
+        end
+            end
+            
+        end
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    end
         
     end
 end
@@ -505,21 +697,31 @@ for ns=1:scenarios
     if isempty(pres_mc)==0
         OP(ns).PRES=pres_mc(ns,:);
     end
-    if isempty(pl_mc)==0
+       if isempty(pres_mcm)==0
+        OP(ns).PRESm=pres_mcm(ns,:);
+       end
+       if homoths==0
+       if isempty(pl_mc)==0
         OP(ns).PL=pl_mc(ns,:);
     end
     if flagPQ == 1 && isempty(ql_mc)==0
         OP(ns).QL=ql_mc(ns,:);
     end
-    if isempty(pres_mcm)==0
-        OP(ns).PRESm=pres_mcm(ns,:);
-    end
+ 
     if isempty(pl_mcm)==0
         OP(ns).PLm=pl_mcm(ns,:);
     end
     if flagPQ == 1 && isempty(ql_mcm)==0
         OP(ns).QLm=ql_mcm(ns,:);
     end
+    else
+         if isempty(pl_mc)==0
+        OP(ns).PL=pl_mc(ns,:);
+    end
+    if flagPQ == 1 && isempty(ql_mc)==0
+        OP(ns).QL=ql_mc(ns,:);
+    end 
+end
     generatore=generatore0;
     carico = carico0;
     
@@ -530,6 +732,7 @@ for ns=1:scenarios
         for g=1:length(idx_RESm)
             [generatore(idx_RESm(g)).P] = [OP(ns).PRESm(g)];
         end
+        if homoths == 0
         for il=1:length(idx_carichi)
             [carico(idx_carichi(il)).P] = [OP(ns).PL(il)];
         end
@@ -555,14 +758,30 @@ for ns=1:scenarios
                 [carico(idx_carichim(il)).Q] = [OP(ns).PLm(il)].*tanfi0(idx_carichim(il));%
             end
         end
+        else
     
-    
-    if concentrato == 0
+        
+        if  flagPQ == 1
+            for il=1:length(carico)
+                [carico(il).P] = [OP(ns).PL(il)];
+                [carico(il).Q] = [OP(ns).QL(il)];
+            end
+            
+        else
+            for il=1:length(carico)
+                [carico(il).P] = [OP(ns).PL(il)];
+                [carico(il).Q] = [OP(ns).PL(il)].*tanfi0(il);%
+            end
+        end
+            
+            
+        end
+    if concentrato == 0 && homoths == 0
         
         if isempty(idx_carichi)
-            sbilancio_eolico = sum([generatore(idx_RES).P]) - sum([generatore0(idx_RES).P]);
+            sbilancio_eolico = sum([generatore(idx_RES).P])+sum([generatore(idx_RESm).P]) - sum([generatore0(idx_RES).P]) - sum([generatore0(idx_RESm).P]);
         else
-            sbilancio_eolico = sum([generatore(idx_RES).P]) - sum([generatore0(idx_RES).P]) - (-sum([carico(idx_carichi).P]) + sum([carico0(idx_carichi).P]));
+            sbilancio_eolico = sum([generatore(idx_RES).P])+sum([generatore(idx_RESm).P]) - sum([generatore0(idx_RES).P]) - sum([generatore0(idx_RESm).P]) - (-(sum([carico(idx_carichi).P])+sum([carico(idx_carichim).P])) + (sum([carico0(idx_carichi).P])+sum([carico0(idx_carichim).P])));
         end
         SB(ns)=-sbilancio_eolico;
         
@@ -627,8 +846,11 @@ for ns=1:scenarios
         %%% IN CASE REACTIVE POWERS ARE DERIVED FROM p SAMPLES, THEIR
         %%% SAMPLES ARE LIMITED CONSIDERING THE HISTORICAL LIMIT QUANTILES
         %%% OF THEIR DISTRIBUTIONS
+        if homoths == 0
         if length(idx_carichi)>0
             QLOAD(size(QLOAD,1),find(ismember(idx_loads,idx_carichi)))=min(max([carico(idx_carichi).P].*tanfi0(idx_carichi),limits_reactive(idx_carichi,1)'),limits_reactive(idx_carichi,2)');
+        end
+        
         end
     else
         QLOAD=[QLOAD; [carico(idx_loads).Q]];

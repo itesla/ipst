@@ -1,22 +1,11 @@
-% Copyright (c) 2016, Ricerca sul Sistema Energetico – RSE S.p.A. <itesla@rse-web.it>
+%
+% Copyright (c) 2017, RTE (http://www.rte-france.com) and RSE (http://www.rse-web.it) 
 % This Source Code Form is subject to the terms of the Mozilla Public
 % License, v. 2.0. If a copy of the MPL was not distributed with this
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
 %
-function [Y inj_ID idx_err1 idx_fore1 idx_err idx_fore ] = new_method_imputation(err_new,inj_ID,outliers,Koutliers,tolvar,Nmin_obs_fract,Nnz,Nmin_obs_interv,check_mod0,idx_err0,idx_fore0,cs)
+function [Y inj_ID nat_ID idx_err1 idx_fore1 idx_err idx_fore ] = new_method_imputation(err_new,inj_ID,nat_ID,outliers,Koutliers,tolvar,Nmin_obs_fract,Nnz,Nmin_obs_interv,check_mod0,idx_err0,idx_fore0,cs)
 
-% snap_new=snap_filt(:,3:end); %only snapshot fields without datetime and flag 0
-% forec_new=forec_filt(:,3:end); %only forecast fields without datetime and flag 1440
-% 
-% if flagPQ == 0
-%     forec_new(:,2:2:end)=[]; %odd columns of reactive injections are discarded
-%     snap_new(:,2:2:end)=[];  %odd columns of reactive injections are discarded
-%     inj_ID(:,2:2:end)=[];  %odd columns of reactive injections are discarded
-% end
-% 
-% err_new=zeros(size(snap_new));
-% clear snap_filt forec_filt
-% err_new=snap_new-forec_new;
 
 Y = err_new;
 
@@ -100,6 +89,7 @@ QUANTIVALIDI = QUANTIVALIDI(allowable);
 FY = Y;
 
 inj_ID(:,discarded) = [];
+nat_ID(:,discarded) = [];
 
 Nvars = size(Y,2);
 

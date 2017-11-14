@@ -6,7 +6,7 @@
 % License, v. 2.0. If a copy of the MPL was not distributed with this
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
 %
-
+%
 function [Y_c ] = MODULE3( MOD1, module2, NSam_c,quale)
 %--------------------------------------------------------------
 % MODULE3 samples NSam_c samples from the truncated C-Vine model of module2

@@ -1,10 +1,9 @@
-% Copyright (c) 2017, Ricerca sul Sistema Energetico – RSE S.p.A. <itesla@rse-web.it>
+% 
+% Copyright (c) 2017, RTE (http://www.rte-france.com) and RSE (http://www.rse-web.it) 
 % This Source Code Form is subject to the terms of the Mozilla Public
 % License, v. 2.0. If a copy of the MPL was not distributed with this
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
 %
-function [fo,sn,errore,err,ID_in]=Management_variables(forec_filt,snap_filt,inj_ID)
-
 % INPUT:
 % forec_filt = first two columns contains informations about the data
 % snap_filt = idem. variables are in the same position of forec_filt.
@@ -16,8 +15,7 @@ function [fo,sn,errore,err,ID_in]=Management_variables(forec_filt,snap_filt,inj_
 % errore = fo - sn.
 % err = cell matrix where the nans are eliminated.
 % ID_in = name of the variables selected to the analysis.
-
-
+function [fo,sn,errore,err,ID_in]=Management_variables(forec_filt,snap_filt,inj_ID)
 
 %************* initialization of data vectors *****************************
 fo_in=forec_filt(:,3:end);
@@ -30,34 +28,30 @@ nminobs=0.7;%ratio of minimum observation to keep the column in the analysis
 
 %**************** elimination of NaN and constant variables ***************
 [rf,cf]=size(fo_in);
-i=0;
+col_del_f=[];col_del_s=[];
 for j=1:cf
     fo_nan=isnan(fo_in(:,j));
     perc_nan=sum(fo_nan)/rf;
     if perc_nan>=(1-nminobs)    % delete var with too much nans (>30%)
-        i=i+1;
-        col_del_f(i)=j;
+        
+        col_del_f=[col_del_f j];
     elseif var(fo_in(~fo_nan,j))<=0.1 % delete variables with constant & nans (variance<=1.4901e-8)
-        i=i+1;
-        col_del_f(i)=j;
+        
+       col_del_f=[col_del_f j];
     elseif size(find(fo_in(:,j)==0),1)>(nminobs*rf) % delete element=0 for more than 70%
-        i=i+1;
-        col_del_f(i)=j;
+        
+        col_del_f=[col_del_f j];
     end
 end
-i=0;
 for j=1:cf
     sn_nan=isnan(sn_in(:,j));
     perc_nan=sum(sn_nan)/rf;
     if perc_nan>=(1-nminobs)
-        i=i+1;
-        col_del_s(i)=j;
+        col_del_s=[col_del_s j];
     elseif var(sn_in(~sn_nan,j))<=0.1% delete variables with too many constant & nans (variance<=0.1)
-        i=i+1;
-        col_del_s(i)=j;
+       col_del_s=[col_del_s j];
     elseif size(find(sn_in(:,j)==0),1)>(nminobs*rf) % delete variable=0 for more than 70%
-        i=i+1;
-        col_del_s(i)=j;
+        col_del_s=[col_del_s j];
     end
 end
 col_del=union(col_del_s,col_del_f); %position of the eliminated variables

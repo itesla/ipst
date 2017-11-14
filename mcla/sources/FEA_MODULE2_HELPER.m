@@ -1,5 +1,5 @@
-%
-% Copyright (c) 2017, Ricerca sul Sistema Energetico – RSE S.p.A. <itesla@rse-web.it>
+% 
+% Copyright (c) 2017, RTE (http://www.rte-france.com) and RSE (http://www.rse-web.it) 
 % This Source Code Form is subject to the terms of the Mozilla Public
 % License, v. 2.0. If a copy of the MPL was not distributed with this
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -17,7 +17,6 @@ disp(sprintf(' ofile: %s', ofile));
 disp(sprintf(' cluster number: %s', s_ncluster));
 disp(sprintf(' IR: %s', IRs));
 disp(sprintf(' Tflag: %s', Tflags));
-disp(sprintf(' isDeterministic: %s', isdeterministics));
 
 
 IR = str2double(IRs);
@@ -32,6 +31,7 @@ for iout = 1:length(out1)
     mod_gaussian = out1(iout).modality_gaussian;
     mod_unif = out1(iout).modality_uniform;
     module1 = out1(iout).module1;
+    nation = out1(iout).nat_ID;
     try
         
         %assuming param ncluster starts from 0
@@ -68,11 +68,12 @@ for iout = 1:length(out1)
         end
         moutput(iout).errmsg='Ok';
         moutput(iout).para=MOD2;
+        moutput(iout).nation=nation;
         moutput(iout).ncluster=ncluster;
         moutput(iout).mversion=mversion;
         exitcode=0;
     catch err
-        keyboard
+        
         moutput(iout).errmsg=err.message;
         disp(getReport(err,'extended'));
         exitcode=-1;

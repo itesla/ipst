@@ -1,12 +1,12 @@
-%
-% Copyright (c) 2016, Ricerca sul Sistema Energetico – RSE S.p.A. <itesla@rse-web.it>
+% 
+% Copyright (c) 2017, RTE (http://www.rte-france.com) and RSE (http://www.rse-web.it) 
 % This Source Code Form is subject to the terms of the Mozilla Public
 % License, v. 2.0. If a copy of the MPL was not distributed with this
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
-%
-function [dati_FPF] = calcolo_inv_mat_perFPF(err_filt,forec_filt,inj_ID,flagPQ,method,ofile_forFPF,ofileGUI,par_tolvar,par_Nmin_obs_fract,par_nnz,par_Nmin_obs_interv,par_outliers,Koutliers,par_imputation_meth,par_Ngaussians,check_mod0,percentil,tolerance,iterations,epsilo,negativeThresGUI,modo_inv,tipovar,opt_GUI)
-% keyboard
-[Y inj_ID idx_err idx_fore snapQ inj_IDQ idx_errA idx_foreA YFPF inj_IDFPF tipovar] = MODULE0(err_filt,forec_filt,inj_ID,flagPQ,method,par_tolvar,par_Nmin_obs_fract,par_nnz,par_Nmin_obs_interv,par_outliers,Koutliers,par_imputation_meth,par_Ngaussians,check_mod0,1,tipovar);
+%%%
+function [dati_FPF] = calcolo_inv_mat_perFPF(err_filt,forec_filt,inj_ID,nat_ID,flagPQ,method,ofile_forFPF,ofileGUI,par_tolvar,par_Nmin_obs_fract,par_nnz,par_Nmin_obs_interv,par_outliers,Koutliers,par_imputation_meth,par_Ngaussians,check_mod0,percentil,tolerance,iterations,epsilo,negativeThresGUI,modo_inv,tipovar,opt_GUI,opt_FPF)
+
+[Y inj_ID nat_ID idx_err idx_fore snapQ inj_IDQ idx_errA idx_foreA YFPF inj_IDFPF nat_IDFPF tipovar] = MODULE0(err_filt,forec_filt,inj_ID,nat_ID,flagPQ,method,par_tolvar,par_Nmin_obs_fract,par_nnz,par_Nmin_obs_interv,par_outliers,Koutliers,par_imputation_meth,par_Ngaussians,check_mod0,1,tipovar);
 
 if opt_GUI == 1
     %%%%%%%
@@ -42,7 +42,7 @@ end
 save(ofileGUI, '-struct', 'uncertaintyGUI','-v7.3');
 
 %%%%%%%
-
+if opt_FPF == 1
 inj_ID0 = inj_ID;
 idx_err0 = idx_err;
 idx_fore0 = idx_fore;
@@ -53,7 +53,7 @@ m_y = mean(Y(:,idx_fore),1);
 std_e = std(Y(:,idx_err),0,1);
 std_y = std(Y(:,idx_fore),0,1);
 
-[m_y std_y Y inj_ID tipovar idx_err idx_fore matrice idx_fore0 tipovar0] = FILTERFOREC(m_y, std_y, Y, inj_ID, tipovar, idx_err, idx_fore);
+[m_y std_y Y inj_ID nat_ID tipovar idx_err idx_fore matrice idx_fore0 tipovar0] = FILTERFOREC(m_y, std_y, Y, inj_ID,nat_ID, tipovar, idx_err, idx_fore);
 
 FO=Y(:,idx_fore);
 SN1 = Y(:,idx_err);
@@ -135,11 +135,18 @@ dati_FPF.idx_errA = idx_errA;
 dati_FPF.idx_foreA = idx_foreA;
 dati_FPF.idx_foreAR = idx_foreA;
 dati_FPF.inj_ID = inj_IDFPF;
+dati_FPF.nat_ID = nat_IDFPF;
+
 dati_FPF.invmatr_corryy = invcorr_yy2x;
 dati_FPF.matrice_yy = matrice;
 dati_FPF.idx_err = idx_err;
 dati_FPF.idx_fore = idx_fore;
-
+else
+    statisticals.means = [];
+statisticals.stddevs = [];
+dati_FPF=[];
+inj_IDFPF1{1} = 'null';
+end
 % ofile contains the following information:
 % maxabserr = max absolute error after gap filling; maxrelerr = max
 % relative error after gap filling; means = means of the "completed"

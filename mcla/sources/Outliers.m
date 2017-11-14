@@ -1,10 +1,9 @@
-% Copyright (c) 2017, Ricerca sul Sistema Energetico – RSE S.p.A. <itesla@rse-web.it>
+%
+% Copyright (c) 2017, RTE (http://www.rte-france.com) and RSE (http://www.rse-web.it) 
 % This Source Code Form is subject to the terms of the Mozilla Public
 % License, v. 2.0. If a copy of the MPL was not distributed with this
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
 %
-function [outlier,err_sz_out_q,err_sz_out_c] = Outliers(err,id_in)
-
 %  During the code, there is an important variable,
 %   all_outlier:
 % is a struct variable;
@@ -37,6 +36,7 @@ function [outlier,err_sz_out_q,err_sz_out_c] = Outliers(err,id_in)
 % err_sz_out_c
 %   is a cell array that contains, in each variable, the same values of
 %   the matrix errore, where nans and outliers calculated with chebyshev method are eliminated
+function [outlier,err_sz_out_q,err_sz_out_c] = Outliers(err,id_in)
 
 fig='off';
 no_outl=0;

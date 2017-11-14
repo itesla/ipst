@@ -1,10 +1,9 @@
 %
-% Copyright (c) 2017, Ricerca sul Sistema Energetico – RSE S.p.A. <itesla@rse-web.it>
+% Copyright (c) 2017, RTE (http://www.rte-france.com) and RSE (http://www.rse-web.it) 
 % This Source Code Form is subject to the terms of the Mozilla Public
 % License, v. 2.0. If a copy of the MPL was not distributed with this
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
 %
-function [info,BestDist,comp]=BestFit(variab,compon,bestgm,fig)
 % This function compares some distributions that fit the data and chooses
 % the best one.
 % First, it tests some Gaussian mixtures on the data
@@ -25,6 +24,8 @@ function [info,BestDist,comp]=BestFit(variab,compon,bestgm,fig)
 % distributions selected
 % BestDist = best distribution selected
 % comp = number of components of the best fit
+
+function [info,BestDist,comp]=BestFit(variab,compon,bestgm,fig)
 
 % PHASE 1 : choosing the best number of components in Gaussian Mixture
 if strcmp(bestgm,'on')

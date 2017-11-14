@@ -1,10 +1,9 @@
-% Copyright (c) 2017, Ricerca sul Sistema Energetico – RSE S.p.A. <itesla@rse-web.it>
+%
+% Copyright (c) 2017, RTE (http://www.rte-france.com) and RSE (http://www.rse-web.it) 
 % This Source Code Form is subject to the terms of the Mozilla Public
 % License, v. 2.0. If a copy of the MPL was not distributed with this
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
 %
-function [bicmin,aicmin,bes] = TestDistrib(variab,fig)
-
 % the function tests the distributions weibull, normal, logistic, gamma, lognormal
 % to fit the data
 %
@@ -17,6 +16,8 @@ function [bicmin,aicmin,bes] = TestDistrib(variab,fig)
 % bicmin = minimum bic of the distribution that best fits the data
 % aicmin = minimum aic of the distribution that best fits the data
 % bes = name of the distribution that best fits the data
+function [bicmin,aicmin,bes] = TestDistrib(variab,fig)
+
 
 rng(10);
 [WeiErr] = fitdist(variab-min(variab)+0.1,'weibull');

@@ -1,11 +1,12 @@
-% Copyright (c) 2016, Ricerca sul Sistema Energetico – RSE S.p.A. <itesla@rse-web.it>
+% 
+% Copyright (c) 2017, RTE (http://www.rte-france.com) and RSE (http://www.rse-web.it) 
 % This Source Code Form is subject to the terms of the Mozilla Public
 % License, v. 2.0. If a copy of the MPL was not distributed with this
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
 %
-function [m_y std_y Y inj_ID tipovar idx_err idx_fore matrice idx_fore0 tipovar0] = FILTERFOREC(m_y, std_y, Y, inj_ID, tipovar, idx_err, idx_fore)
 % SCRIPT FOR ELIMINATING LINEAR DEPENDENT ROWS OF CORRELATION MATRIX TO
 % REDUCE CONDITIONING NUMBER OF MATRIX AND MAKE ITS INVERSION EASIER
+function [m_y std_y Y inj_ID nat_ID tipovar idx_err idx_fore matrice idx_fore0 tipovar0] = FILTERFOREC(m_y, std_y, Y, inj_ID, nat_ID, tipovar, idx_err, idx_fore)
 perc = 0.9999;
 corr_yy = corr(Y(:,idx_fore));
 corr_yys = corr_yy - eye(size(corr_yy));
@@ -19,6 +20,7 @@ matrice=eye(length(idx_fore0));
 tipovar0=tipovar;
 % FOR POSITIVELY HIGHLY CORRELATED VARIABLES
 while max_corr > perc
+    disp(['checking POS CORR forecast nr ' num2str(idx_fore(QualeR(1))) ' out of ' num2str(length(idx_fore0))])
     ngro = ngro +1;
     SET(ngro,:)=[idx_fore(QualeR(1)) idx_fore(QualeC(1))];
     Y(:,idx_fore(QualeR(1))) = sum(Y(:,idx_fore([QualeR(1) QualeC(1)])),2);
@@ -37,7 +39,7 @@ while max_corr > perc
     Y(:,idx_fore(QualeC(1))) = [];
 
     inj_ID(idx_fore(QualeC(1)))=[];
-    
+    nat_ID(idx_fore(QualeC(1)))=[];
     tipovar(idx_fore(QualeC(1)))=[];
     
     m_y(QualeC(1)) = [];
@@ -66,8 +68,9 @@ ngro = 0;
 
 % FOR NEGATIVELY HIGHLY CORRELATED VARIABLES
 while min_corr < -1*perc
+    disp(['checking NEG CORR forecast nr ' num2str(idx_fore(QualeR(1))) ' out of ' num2str(length(idx_fore0))])
     ngro = ngro +1;
-    
+    min_corr,idx_fore(QualeRm(1))
     SETM(ngro,:)=[idx_fore(QualeRm(1)) idx_fore(QualeCm(1))];
     
     Y(:,idx_fore(QualeRm(1))) = diff(Y(:,idx_fore([QualeRm(1) QualeCm(1)])),1,2);
@@ -84,6 +87,7 @@ while min_corr < -1*perc
     matrice(QualeRm(1),:) = diff(matrice(([QualeRm(1) QualeCm(1)]),:),1,1);
     Y(:,idx_fore(QualeCm(1))) = [];
    inj_ID(idx_fore(QualeCm(1)))=[];
+   nat_ID(idx_fore(QualeCm(1)))=[];
    tipovar(idx_fore(QualeCm(1)))=[];
     m_y(QualeCm(1)) = [];
     std_y(QualeCm(1)) = [];

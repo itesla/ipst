@@ -1,5 +1,5 @@
-%
-% Copyright (c) 2017, Ricerca sul Sistema Energetico – RSE S.p.A. <itesla@rse-web.it>
+% 
+% Copyright (c) 2017, RTE (http://www.rte-france.com) and RSE (http://www.rse-web.it) 
 % This Source Code Form is subject to the terms of the Mozilla Public
 % License, v. 2.0. If a copy of the MPL was not distributed with this
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -12,12 +12,11 @@
 % 
 function exitcode=SAMPLING_MODULE3_HELPER(m1file, ofile, s_scenarios,isdeterministics,s_rng_seed)
 close all;
-mversion='1.8.1';
+mversion='1.8.2';
 disp(sprintf('wp5 - MCLA - version: %s', mversion));
 disp(sprintf(' m1m2file:  %s',m1file));
 disp(sprintf(' ofile:  %s', ofile));
 disp(sprintf(' unconditioned samples:  %s',s_scenarios));
-disp(sprintf(' isdeterministic:  %s',isdeterministics));
 
 moutput.errmsg='Ok';
 
@@ -66,6 +65,7 @@ try
         end
         moutput(iout).errmsg='Ok';
         moutput(iout).module1=out(iout).module1;
+        moutput(iout).nation=out(iout).nation;
         moutput(iout).dati_condUNI = out(iout).dati_condUNI;
          moutput(iout).dati_condMULTI = out(iout).dati_condMULTI;
         moutput(iout).dati_Q = out(iout).dati_Q;
@@ -91,4 +91,4 @@ catch err
     disp(getReport(err,'extended'));
     exitcode=-1;
 end
-save(ofile, '-struct', 'totmoutput','-v7.3');
+save(ofile, '-struct', 'totmoutput');

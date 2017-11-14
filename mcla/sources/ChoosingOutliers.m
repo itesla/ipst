@@ -1,10 +1,9 @@
 %
-% Copyright (c) 2017, Ricerca sul Sistema Energetico – RSE S.p.A. <itesla@rse-web.it>
+% Copyright (c) 2017, RTE (http://www.rte-france.com) and RSE (http://www.rse-web.it) 
 % This Source Code Form is subject to the terms of the Mozilla Public
 % License, v. 2.0. If a copy of the MPL was not distributed with this
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
 %
-function [err,errore_outl]=ChoosingOutliers(errore,err,soglia,err_sz_out_q,err_sz_out_c,outlier)
 % this function eliminates the outliers in those variables that have less then
 % "soglia" outliers in both methods
 % INPUT
@@ -22,6 +21,7 @@ function [err,errore_outl]=ChoosingOutliers(errore,err,soglia,err_sz_out_q,err_s
     % errore_outl: error matrix where the outliers extracted are
     % substituted by nans elements
     % err: error cell array where the outliers selected are extracted
+function [err,errore_outl]=ChoosingOutliers(errore,err,soglia,err_sz_out_q,err_sz_out_c,outlier)
     
 for i=1:length(err)
     num_outl_q(i,1)=size(outlier(i).quantile,1);
