@@ -50,10 +50,10 @@ public class HistoDataResource {
     @Inject
     private HistoDataService service;
 
-    @GetMapping(value = "/{db}/{datasource_prefix}/{datasource_postfix}/itesla/referenceCIM")
-    public ResponseEntity<String> getReferenceCIM(@PathVariable String db, @PathVariable String datasource_prefix,
-            @PathVariable String datasource_postfix) {
-        try (HistoDataSource hds = HistoDataSourceFactory.getInstance(config, db, datasource_prefix, datasource_postfix)) {
+    @GetMapping(value = "/{db}/{prefix}/{postfix}/itesla/referenceCIM")
+    public ResponseEntity<String> getReferenceCIM(@PathVariable String db, @PathVariable String prefix,
+            @PathVariable String postfix) {
+        try (HistoDataSource hds = HistoDataSourceFactory.getInstance(config, db, prefix, postfix)) {
             String ref = hds.getReferenceNetwork() != null ? hds.getReferenceNetwork().getId() : "";
             return new ResponseEntity<String>(ref, null, HttpStatus.OK);
         } catch (Exception e) {
@@ -62,11 +62,11 @@ public class HistoDataResource {
         }
     }
 
-    @RequestMapping(value = "/{db}/{datasource_prefix}/{datasource_postfix}/itesla/referenceCIM", method = {
+    @RequestMapping(value = "/{db}/{prefix}/{postfix}/itesla/referenceCIM", method = {
             RequestMethod.PUT, RequestMethod.POST })
-    public ResponseEntity<String> setReferenceCIM(@PathVariable String db, @PathVariable String datasource_prefix,
-            @PathVariable String datasource_postfix, WebRequest request) {
-        try (HistoDataSource hds = HistoDataSourceFactory.getInstance(config, db, datasource_prefix, datasource_postfix)) {
+    public ResponseEntity<String> setReferenceCIM(@PathVariable String db, @PathVariable String prefix,
+            @PathVariable String postfix, WebRequest request) {
+        try (HistoDataSource hds = HistoDataSourceFactory.getInstance(config, db, prefix, postfix)) {
             String dir = request.getParameter("dir");
             if (dir == null) {
                 log.error("Missing parameter 'dir'");
@@ -77,16 +77,16 @@ public class HistoDataResource {
             service.importReferenceNetwork(hds, filePath);
             return new ResponseEntity<String>(
                     "Set ReferenceCIM: " + hds.getReferenceNetwork() != null ? hds.getReferenceNetwork().getId()
-                            : "" + " for data source " + datasource_prefix + "/" + datasource_postfix, HttpStatus.OK);
+                            : "" + " for data source " + prefix + "/" + postfix, HttpStatus.OK);
         } catch (Exception e) {
             log.error("Set reference CIM error", e.getMessage());
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
-    @PostMapping("/{db}/{datasource_prefix}/{datasource_postfix}/itesla")
-    public ResponseEntity<String> importNetworks(@PathVariable String db, @PathVariable String datasource_prefix,
-            @PathVariable String datasource_postfix, WebRequest request) {
+    @PostMapping("/{db}/{prefix}/{postfix}/itesla")
+    public ResponseEntity<String> importNetworks(@PathVariable String db, @PathVariable String prefix,
+            @PathVariable String postfix, WebRequest request) {
         String dir = request.getParameter("dir");
         if (dir == null) {
             log.error("Missing parameter 'dir'");
@@ -97,24 +97,24 @@ public class HistoDataResource {
         String parallelStr = request.getParameter("parallel");
         boolean parallel = parallelStr != null ? Boolean.parseBoolean(parallelStr) : true;
 
-        try (HistoDataSource hds = HistoDataSourceFactory.getInstance(config, db, datasource_prefix, datasource_postfix)) {
+        try (HistoDataSource hds = HistoDataSourceFactory.getInstance(config, db, prefix, postfix)) {
             service.importData(hds, importDir, parallel);
         } catch (Exception e) {
             log.error("Import data error", e);
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<String>(
-                "HistoDB Import from " + dir + " for data source " + datasource_prefix + "/" + datasource_postfix,
+                "HistoDB Import from " + dir + " for data source " + prefix + "/" + postfix,
                 null, HttpStatus.OK);
     }
 
-    @RequestMapping("/{db}/{datasource_prefix}/{datasource_postfix}/itesla/{service}")
-    public ResponseEntity<byte[]> getData(@PathVariable String db, @PathVariable String datasource_prefix,
-            @PathVariable String datasource_postfix, @PathVariable String service, WebRequest request) {
+    @RequestMapping("/{db}/{prefix}/{postfix}/itesla/{service}")
+    public ResponseEntity<byte[]> getData(@PathVariable String db, @PathVariable String prefix,
+            @PathVariable String postfix, @PathVariable String service, WebRequest request) {
         log.info("getData " + service);
         String format = (String) request.getAttribute("format", 0);
 
-        try (HistoDataSource hds = HistoDataSourceFactory.getInstance(config, db, datasource_prefix, datasource_postfix)) {
+        try (HistoDataSource hds = HistoDataSourceFactory.getInstance(config, db, prefix, postfix)) {
 
             QueryParams queryParams = new QueryParams(request);
             DataSet data = null;
@@ -144,16 +144,16 @@ public class HistoDataResource {
         }
     }
 
-    @RequestMapping("/{db}/{datasource_prefix}/{datasource_postfix}/itesla/data/{service}")
-    public ResponseEntity<byte[]> forecastDiff(@PathVariable String db, @PathVariable String datasource_prefix,
-            @PathVariable String datasource_postfix, @PathVariable String service, WebRequest request) {
+    @RequestMapping("/{db}/{prefix}/{postfix}/itesla/data/{service}")
+    public ResponseEntity<byte[]> forecastDiff(@PathVariable String db, @PathVariable String prefix,
+            @PathVariable String postfix, @PathVariable String service, WebRequest request) {
         String format = (String) request.getAttribute("format", 0);
 
         if (!service.equals("forecastsDiff")) {
             return new ResponseEntity<byte[]>(service.getBytes(), HttpStatus.NOT_FOUND);
         }
 
-        try (HistoDataSource hds = HistoDataSourceFactory.getInstance(config, db, datasource_prefix, datasource_postfix)) {
+        try (HistoDataSource hds = HistoDataSourceFactory.getInstance(config, db, prefix, postfix)) {
 
             QueryParams queryParams = new QueryParams(request);
 
