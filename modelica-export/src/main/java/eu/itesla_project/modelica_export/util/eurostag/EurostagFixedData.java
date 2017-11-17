@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author Silvia Machado <machados@aia.es>
  */
-public class EurostagFixedData {
+public final class EurostagFixedData {
     ///Según la API de IIDM dan por supuesto que la potencia nominal es 100
     public final static String        PARAMETER            = "parameter";
 

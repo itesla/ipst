@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 /**
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
-public class EurostagDictionary {
+public final class EurostagDictionary {
 
     private static final EurostagNamingStrategy NAMING_STRATEGY = new DicoEurostagNamingStrategyFactory().create();
 

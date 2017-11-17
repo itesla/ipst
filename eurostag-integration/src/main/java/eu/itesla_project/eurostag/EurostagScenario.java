@@ -136,8 +136,7 @@ public class EurostagScenario {
         writer.newLine();
         for (ContingencyElement element : contingency.getElements()) {
             switch (element.getType()) {
-                case BRANCH:
-                case LINE: {
+                case BRANCH: {
                     Line l = network.getLine(element.getId());
                     if (l == null) {
                         throw new RuntimeException("Line '" + element.getId() + "' not found");

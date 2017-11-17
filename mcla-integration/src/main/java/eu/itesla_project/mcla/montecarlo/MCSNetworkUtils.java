@@ -17,7 +17,7 @@ import eu.itesla_project.mcla.montecarlo.data.GeneratorData;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class MCSNetworkUtils {
+public final class MCSNetworkUtils {
 
     private MCSNetworkUtils() {
     }

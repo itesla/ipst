@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
@@ -61,7 +62,7 @@ public class WCASecurityRulesWriter implements AmplConstants, WCAConstants {
         this.activateFiltering = activateFiltering;
     }
 
-    private static class WCAEntity {
+    private static final class WCAEntity {
         final int type;
         final int num;
         final int sideNum;
@@ -136,23 +137,24 @@ public class WCASecurityRulesWriter implements AmplConstants, WCAConstants {
     }
 
     public void write() {
-        try (TableFormatter formatter = new AmplDatTableFormatter(
-                    new OutputStreamWriter(dataSource.newOutputStream(SECURITY_RULES_FILE_SUFFIX, TXT_EXT, false), StandardCharsets.UTF_8),
-                    "Security rules",
-                    INVALID_FLOAT_VALUE,
-                    true,
-                    LOCALE,
-                    new Column("inequality num"),
-                    new Column("convex num"),
-                    new Column("var type (1: P, 2: Q, 3: V)"),
-                    new Column("entity type (1: branch, 2: load, 3: generator, 4: compensator shunt, 5: substation)"),
-                    new Column("entity num"),
-                    new Column("branch side (1 or 2, 0 if NA)"),
-                    new Column("inequality coeff."),
-                    new Column("constant value"),
-                    new Column("contingency num"),
-                    new Column("security index type"),
-                    new Column("attribute set (0: active only, 1: active/reactive)"))) {
+        try (Writer writer = new OutputStreamWriter(dataSource.newOutputStream(SECURITY_RULES_FILE_SUFFIX, TXT_EXT, false), StandardCharsets.UTF_8);
+             TableFormatter formatter = new AmplDatTableFormatter(
+                 writer,
+                 "Security rules",
+                 INVALID_FLOAT_VALUE,
+                 true,
+                 LOCALE,
+                 new Column("inequality num"),
+                 new Column("convex num"),
+                 new Column("var type (1: P, 2: Q, 3: V)"),
+                 new Column("entity type (1: branch, 2: load, 3: generator, 4: compensator shunt, 5: substation)"),
+                 new Column("entity num"),
+                 new Column("branch side (1 or 2, 0 if NA)"),
+                 new Column("inequality coeff."),
+                 new Column("constant value"),
+                 new Column("contingency num"),
+                 new Column("security index type"),
+                 new Column("attribute set (0: active only, 1: active/reactive)"))) {
 
             class Context {
 

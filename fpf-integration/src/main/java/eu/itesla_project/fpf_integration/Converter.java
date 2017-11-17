@@ -43,7 +43,7 @@ import eu.itesla_project.modules.test.AutomaticContingenciesAndActionsDatabaseCl
  * @author Leonel Carvalho - INESC TEC
  */
 
-public class Converter {
+public final class Converter {
 
     private Converter() {
     }
@@ -975,6 +975,7 @@ public class Converter {
 
 
     // Main
+    @SuppressWarnings("checkstyle:parameterassignment")
     public static void main(String[] args) {
 
         // ********************************** Initializations ********************************** //

@@ -21,16 +21,14 @@ public class ConstraintImpl implements Constraint {
     private ConstraintType type;
 
 
-    public ConstraintImpl(String _equipment, Number _value, ConstraintType _type) {
-        this.equipment = _equipment;
-        this.value     = _value;
-        this.type       =  _type;
-
+    public ConstraintImpl(String equipment, Number value, ConstraintType type) {
+        this.equipment = equipment;
+        this.value = value;
+        this.type = type;
     }
 
     @Override
     public String getEquipment() {
-
         return equipment;
     }
 
@@ -49,7 +47,6 @@ public class ConstraintImpl implements Constraint {
         StringBuffer sb = new StringBuffer();
         sb.append(" Equipment: ").append(this.equipment).append(" , Value: ").append(this.value).append(" , Type: ").append(this.type);
         return sb.toString();
-
     }
 
 }

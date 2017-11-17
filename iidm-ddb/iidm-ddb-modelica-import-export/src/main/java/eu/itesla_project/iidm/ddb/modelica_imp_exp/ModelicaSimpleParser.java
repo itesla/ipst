@@ -215,11 +215,11 @@ public class ModelicaSimpleParser implements CommentScannerEventHandler {
         return p;
     }
 
-    int checkParameterName(ModelicaParameter param, int p) {
+    int checkParameterName(ModelicaParameter param, int position) {
         // Name is obtained from current line at current position
         // Ignoring a potential parenthesized expression (class modification)
         // And up to an equal character, trimming trailing blanks
-
+        int p = position;
         int sp = parsingLine.indexOf(ModelicaGrammar.CLASS_MODIFICATION_START, p);
         int eq = parsingLine.indexOf(ModelicaGrammar.EQ, p);
         // The parenthesis happens before the first equal sign, skip class modification

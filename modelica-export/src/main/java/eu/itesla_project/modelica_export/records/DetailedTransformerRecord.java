@@ -24,14 +24,14 @@ import org.slf4j.LoggerFactory;
  */
 public class DetailedTransformerRecord extends BranchRecord {
 
-    public DetailedTransformerRecord(TwoWindingsTransformer transformer, float SNREF) {
+    public DetailedTransformerRecord(TwoWindingsTransformer transformer, float snref) {
         super(transformer);
         this.transformer = transformer;
         super.setDEFAULT_BRANCH_TYPE(DEFAULT_DETAILED_TRAFO_TYPE);
 
         super.setDEFAULT_BRANCH_PREFIX(StaticData.PREF_TRAFO);
 
-        this.setParameters(SNREF);
+        this.setParameters(snref);
     }
 
     @Override
@@ -89,16 +89,16 @@ public class DetailedTransformerRecord extends BranchRecord {
      * Add IIDM parameters to Detailed Transformer Modelica Model
      */
     @Override
-    void setParameters(float SNREF) {
+    void setParameters(float snref) {
         //super.iidmbranchParameters = new ArrayList<IIDMParameter>();
 
         float t1NomV = this.transformer.getTerminal1().getVoltageLevel().getNominalV();
         float t2NomV = this.transformer.getTerminal2().getVoltageLevel().getNominalV();
-        float u1Nom = Float.isNaN(t1NomV) == false ? t1NomV : 0;
-        float u2Nom = Float.isNaN(t2NomV) == false ? t2NomV : 0;
-        float v1 = Float.isNaN(this.transformer.getRatedU1()) == false ? this.transformer.getRatedU1() : 0; // [kV]
-        float v2  = Float.isNaN(this.transformer.getRatedU2()) == false ? this.transformer.getRatedU2() : 0; // [kV]
-        float zBase = (float) Math.pow(u2Nom, 2) / SNREF;
+        float u1Nom = !Float.isNaN(t1NomV) ? t1NomV : 0;
+        float u2Nom = !Float.isNaN(t2NomV) ? t2NomV : 0;
+        float v1 = !Float.isNaN(this.transformer.getRatedU1()) ? this.transformer.getRatedU1() : 0; // [kV]
+        float v2 = !Float.isNaN(this.transformer.getRatedU2()) ? this.transformer.getRatedU2() : 0; // [kV]
+        float zBase = (float) Math.pow(u2Nom, 2) / snref;
         float g = this.transformer.getG() * zBase; // [p.u.]
         float b = this.transformer.getB() * zBase; // [p.u.]
 
@@ -123,8 +123,8 @@ public class DetailedTransformerRecord extends BranchRecord {
         }
         float theta = ptc != null ? ptcs.getAlpha() : 0;
 
-        double rpu2 = (this.transformer.getR() * (1 + dr / 100) * SNREF) / Math.pow(u2Nom, 2); // [p.u.]
-        double xpu2 = (this.transformer.getX() * (1 + dx / 100) * SNREF) / Math.pow(u2Nom, 2); // [p.u.]
+        double rpu2 = (this.transformer.getR() * (1 + dr / 100) * snref) / Math.pow(u2Nom, 2); // [p.u.]
+        double xpu2 = (this.transformer.getX() * (1 + dx / 100) * snref) / Math.pow(u2Nom, 2); // [p.u.]
 
         /*
          * El ratio esta calculado de acuerdo al valor obtenido por HELM FLow

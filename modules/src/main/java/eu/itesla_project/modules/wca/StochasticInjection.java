@@ -40,7 +40,7 @@ public abstract class StochasticInjection {
         }
     }
 
-    private static class GeneratorWrapper extends StochasticInjection {
+    private static final class GeneratorWrapper extends StochasticInjection {
 
         private final Generator generator;
 
@@ -65,7 +65,7 @@ public abstract class StochasticInjection {
 
     }
 
-    private static class LoadWrapper extends StochasticInjection {
+    private static final class LoadWrapper extends StochasticInjection {
 
         private final Load load;
 
@@ -90,7 +90,7 @@ public abstract class StochasticInjection {
 
     }
 
-    private static class DanglingLineWrapper extends StochasticInjection {
+    private static final class DanglingLineWrapper extends StochasticInjection {
 
         private final DanglingLine danglingLine;
 

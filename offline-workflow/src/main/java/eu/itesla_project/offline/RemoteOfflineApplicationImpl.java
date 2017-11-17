@@ -145,7 +145,7 @@ public class RemoteOfflineApplicationImpl implements RemoteOfflineApplication {
 
     private final ScheduledFuture<?> future;
 
-    private static class JMXContext implements AutoCloseable {
+    private static final class JMXContext implements AutoCloseable {
 
         private final NotificationListener listener;
 
