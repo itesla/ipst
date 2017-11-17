@@ -90,7 +90,8 @@ public class HistodbServerApplicationTest {
         String[] countries = {"FR,BE"};
         wr.setParameter("country", countries);
         String[] equip = {"gen,loads,shunts,stations,2wt,3wt,lines,dangling"};
-        wr.setParameter("equip", equip);        
+        wr.setParameter("equip", equip);
+        wr.setParameter("colRange", (String[]) Collections.singletonList("2-5").toArray(new String[1]));
         ResponseEntity <byte[]> resp = resource.getData("iteslasim", "test", "2017", "data", wr);
         assertEquals(200, resp.getStatusCodeValue());
     }
