@@ -334,15 +334,12 @@ public class HistoDataServiceImpl implements HistoDataService {
     }
 
     private Record filterColumns(Map<String, Object> in, QueryParams query, List<Attribute> columns) {
-        List filtered = null;
-        if (query.getColumnStart() >= 0 && query.getColumnEnd() >= 0) {
-            columns = columns.subList(query.getColumnStart(),
-                    query.getColumnEnd() < columns.size() ? query.getColumnEnd() + 1 : columns.size());
-        }
-        filtered = columns.stream().map(k -> k instanceof ComputedAttribute ? new Value(((ComputedAttribute) k).getValue(in)) : new Value(in.get(k.getName()))).collect(Collectors.toList());
-        return new Record(filtered);
+        long start = query.getColumnStart() >= 0 ? query.getColumnStart() : 0;
+        long limit = query.getColumnEnd() >= 0 ? query.getColumnEnd() - query.getColumnStart() + 1 : columns.size();
+        List<Value> values = columns.stream().skip(start).limit(limit)
+                .map(k -> k instanceof ComputedAttribute ? new Value(((ComputedAttribute) k).getValue(in)) : new Value(in.get(k.getName()))).collect(Collectors.toList());
+        return new Record(values);
     }
-
 
     private List<Attribute> findAttributes(Network latestNetwork, QueryParams query, boolean prependDefaults) {
         List<Attribute> attributes = new ArrayList();
