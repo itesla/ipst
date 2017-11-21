@@ -141,6 +141,9 @@ public class StatsCondCalculator {
         args1.add(FPFFORECASTERRORSFILENAME);
         args1.add("" + config.getIsdeterministic()); //added in v1.8.1
         args1.add("" + config.getIsuniform()); //added in v1.8.1
+        args1.add("" + config.getHomothetic()); //added in v1.8.2
+        args1.add("" + config.getOptFPF()); //added in v1.8.2
+
         if (config.getRngSeed() != null) {
             args1.add(Integer.toString(config.getRngSeed()));
         }

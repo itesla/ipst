@@ -59,6 +59,8 @@ public class ForecastErrorsAnalyzerConfig {
     private final double band_uniformQL;
     private final double band_uniformPGEN;
     private final Integer correlation_fict_uniform;
+    private final Integer optFPF;
+    private final Integer homothetic;
 
 
     public ForecastErrorsAnalyzerConfig(
@@ -79,21 +81,23 @@ public class ForecastErrorsAnalyzerConfig {
             double epsilo,
             Integer conditionalSampling,
             Integer tFlags,
-            double histo_estremeQ,
+            double histoEstremeQ,
             double thresGUI,
             String nats,
             double nnz,
             Integer unimod,
-            Integer modo_inv,
+            Integer modoInv,
             Integer isdeterministic,
             Integer isuniform,
-            Integer opt_GUI,
-            double Pload_deterministic,
-            double Qload_deterministic,
-            double band_uniformPL,
-            double band_uniformQL,
-            double band_uniformPGEN,
-            Integer correlation_fict_uniform,
+            Integer optGUI,
+            double pLoadDeterministic,
+            double qLoadDeterministic,
+            double bandUniformPL,
+            double bandUniformQL,
+            double bandUniformPGEN,
+            Integer correlationFictUniform,
+            Integer optFPF,
+            Integer homothetic,
             Integer rngSeed,
             boolean debug
     ) {
@@ -118,22 +122,24 @@ public class ForecastErrorsAnalyzerConfig {
         this.epsilo = epsilo;
         this.conditionalSampling = conditionalSampling;
         this.tFlags = tFlags;
-        this.histo_estremeQ = histo_estremeQ;
+        this.histo_estremeQ = histoEstremeQ;
         this.thresGUI = thresGUI;
         this.nats = nats;
         this.debug = debug;
         this.nnz = nnz;
         this.unimod = unimod;
-        this.modo_inv = modo_inv;
+        this.modo_inv = modoInv;
         this.isdeterministic = isdeterministic;
         this.isuniform = isuniform;
-        this.opt_GUI = opt_GUI;
-        this.Pload_deterministic = Pload_deterministic;
-        this.Qload_deterministic = Qload_deterministic;
-        this.band_uniformPL = band_uniformPL;
-        this.band_uniformQL = band_uniformQL;
-        this.band_uniformPGEN = band_uniformPGEN;
-        this.correlation_fict_uniform = correlation_fict_uniform;
+        this.opt_GUI = optGUI;
+        this.Pload_deterministic = pLoadDeterministic;
+        this.Qload_deterministic = qLoadDeterministic;
+        this.band_uniformPL = bandUniformPL;
+        this.band_uniformQL = bandUniformQL;
+        this.band_uniformPGEN = bandUniformPGEN;
+        this.correlation_fict_uniform = correlationFictUniform;
+        this.optFPF = optFPF;
+        this.homothetic = homothetic;
     }
 
     public static ForecastErrorsAnalyzerConfig load() {
@@ -158,28 +164,30 @@ public class ForecastErrorsAnalyzerConfig {
         double epsilo = config.getDoubleProperty("epsilo");
         Integer conditionalSampling = config.getOptionalIntegerProperty("conditionalSampling").orElse(null);
         Integer tFlags = config.getOptionalIntegerProperty("tFlags").orElse(null);
-        double histo_estremeQ = config.getDoubleProperty("histo_estremeQ");
+        double histoEstremeQ = config.getDoubleProperty("histo_estremeQ");
         double thresGUI = config.getDoubleProperty("thresGUI");
         String nats = config.getStringProperty("nats", "All");
         double nnz = config.getDoubleProperty("nnz");
         Integer unimod = config.getOptionalIntegerProperty("unimod").orElse(null);
-        Integer modo_inv = config.getOptionalIntegerProperty("modo_inv").orElse(null);
+        Integer modoInv = config.getOptionalIntegerProperty("modo_inv").orElse(null);
         Integer isdeterministic = config.getOptionalIntegerProperty("isdeterministic").orElse(null);
         Integer isuniform = config.getOptionalIntegerProperty("isuniform").orElse(null);
-        Integer opt_GUI = config.getOptionalIntegerProperty("opt_GUI").orElse(null);
-        double Pload_deterministic = config.getDoubleProperty("Pload_deterministic");
-        double Qload_deterministic = config.getDoubleProperty("Qload_deterministic");
-        double band_uniformPL = config.getDoubleProperty("band_uniformPL");
-        double band_uniformQL = config.getDoubleProperty("band_uniformQL");
-        double band_uniformPGEN = config.getDoubleProperty("band_uniformPGEN");
-        Integer correlation_fict_uniform = config.getOptionalIntegerProperty("correlation_fict_uniform").orElse(null);
+        Integer optGUI = config.getOptionalIntegerProperty("opt_GUI").orElse(null);
+        double pLoadDeterministic = config.getDoubleProperty("Pload_deterministic");
+        double qLoadDeterministic = config.getDoubleProperty("Qload_deterministic");
+        double bandUniformPL = config.getDoubleProperty("band_uniformPL");
+        double bandUniformQL = config.getDoubleProperty("band_uniformQL");
+        double bandUniformPGEN = config.getDoubleProperty("band_uniformPGEN");
+        Integer correlationFictUniform = config.getOptionalIntegerProperty("correlation_fict_uniform").orElse(null);
+        Integer optFPF = config.getOptionalIntegerProperty("opt_FPF").orElse(null);
+        Integer homothetic = config.getOptionalIntegerProperty("homothetic").orElse(null);
 
         return new ForecastErrorsAnalyzerConfig(binariesDir, runtimeHomeDir, checkModule0, percpuGaussLoad, percpuGaussRes,
                 correlationGauss, tolVar, nMinObsFract, nMinObsInterv, imputationMeth, nGaussians, kOutlier, tolerance,
-                iterations, epsilo, conditionalSampling, tFlags, histo_estremeQ, thresGUI, nats,
-                nnz, unimod, modo_inv, isdeterministic, isuniform, opt_GUI,
-                Pload_deterministic, Qload_deterministic, band_uniformPL, band_uniformQL, band_uniformPGEN, correlation_fict_uniform,
-                rngSeed, debug);
+                iterations, epsilo, conditionalSampling, tFlags, histoEstremeQ, thresGUI, nats,
+                nnz, unimod, modoInv, isdeterministic, isuniform, optGUI,
+                pLoadDeterministic, qLoadDeterministic, bandUniformPL, bandUniformQL, bandUniformPGEN, correlationFictUniform,
+                optFPF, homothetic, rngSeed, debug);
     }
 
     public Path getBinariesDir() {
@@ -322,6 +330,14 @@ public class ForecastErrorsAnalyzerConfig {
         return correlation_fict_uniform;
     }
 
+    public Integer getOptFPF() {
+        return optFPF;
+    }
+
+    public Integer getHomothetic() {
+        return homothetic;
+    }
+
     @Override
     public String toString() {
         return "ForecastErrorsAnalyzerConfig [binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir
@@ -355,6 +371,8 @@ public class ForecastErrorsAnalyzerConfig {
                 + ", band_uniformQLs=" + band_uniformQL
                 + ", band_uniformPGENs=" + band_uniformPGEN
                 + ", correlation_fict_uniforms=" + correlation_fict_uniform
+                + ", opt_FPF=" + optFPF
+                + ", homothetic=" + homothetic
                 + ", debug=" + debug + "]";
     }
 

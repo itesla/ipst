@@ -18,7 +18,7 @@ import java.util.stream.StreamSupport;
  * @author pihan
  *
  */
-public class EchUtil {
+public final class EchUtil {
 
     private EchUtil() {
     }
@@ -85,7 +85,7 @@ public class EchUtil {
         }
     }
 
-    private static class DecoratedBus {
+    private static final class DecoratedBus {
         Bus bus;
         int branch = 0;
         int regulatingGenerator = 0;

@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -7,6 +8,8 @@
 package eu.itesla_project.mcla.montecarlo.data;
 
 import java.util.Objects;
+
+import com.powsybl.iidm.network.Country;
 
 /**
  *
@@ -21,6 +24,7 @@ public class LoadData {
     double reactvePower = Double.NaN;
     double voltage = Double.NaN;
     boolean connected;
+    Country country;
 
     public LoadData(String loadId) {
         Objects.requireNonNull(loadId, "load id is null");
@@ -67,6 +71,15 @@ public class LoadData {
         this.connected = connected;
     }
 
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
+    }
+
+
     @Override
     public String toString() {
         String loadData = "load[id=" + this.getLoadId();
@@ -76,6 +89,7 @@ public class LoadData {
         loadData += "; P=" + this.getActvePower();
         loadData += "; Q=" + this.getReactvePower();
         loadData += "; V=" + this.getVoltage();
+        loadData += "; country=" + this.getCountry();
         loadData += "]";
         return loadData;
     }

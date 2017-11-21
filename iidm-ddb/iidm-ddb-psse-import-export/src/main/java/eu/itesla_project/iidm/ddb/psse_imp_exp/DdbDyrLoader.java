@@ -196,7 +196,7 @@ public class DdbDyrLoader {
                 ListMultimap<String, PsseRegister> groupByBusByType = Multimaps.index(groupsByBus.get(dyrId), new Function<PsseRegister, String>() {
                     @Override
                     public String apply(final PsseRegister s) {
-                        return (PsseRegisterType.isEquipment(s) == true) ? "equipment" : "internal";
+                        return PsseRegisterType.isEquipment(s) ? "equipment" : "internal";
                     }
                 });
                 // check the assumption that for a given dyrId there must be just one machine: if not , ERROR

@@ -124,8 +124,7 @@ public class PrintOnlineWorkflowViolationsTool implements Tool {
             new Column("Type"),
             new Column("Value"),
             new Column("Limit"),
-            new Column("Limit reduction"),
-            new Column("Voltage Level")
+            new Column("Limit reduction")
         };
         Path outputFile = (line.hasOption("output-file")) ? Paths.get(line.getOptionValue("output-file")) : null;
         String outputFormat = (line.hasOption("output-format")) ? line.getOptionValue("output-format") : "ascii";
@@ -184,10 +183,11 @@ public class PrintOnlineWorkflowViolationsTool implements Tool {
     private void printStateStepViolations(TableFormatter formatter, Integer stateId, OnlineStep step, List<LimitViolation> violations,
                                           LimitViolationFilter violationsFilter) {
         if (violations != null) {
+            List<LimitViolation> filteredViolations = violations;
             if (violationsFilter != null) {
-                violations = violationsFilter.apply(violations);
+                filteredViolations = violationsFilter.apply(violations);
             }
-            violations
+            filteredViolations
                     .stream()
                     .sorted((o1, o2) -> o1.getSubjectId().compareTo(o2.getSubjectId()))
                     .forEach(violation -> {
@@ -199,7 +199,6 @@ public class PrintOnlineWorkflowViolationsTool implements Tool {
                             formatter.writeCell(violation.getValue());
                             formatter.writeCell(violation.getLimit());
                             formatter.writeCell(violation.getLimitReduction());
-                            formatter.writeCell(violation.getBaseVoltage());
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }

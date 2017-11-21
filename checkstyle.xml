@@ -16,23 +16,35 @@
         <property name="message" value="Line has trailing spaces."/>
     </module>
 
+    <module name="Translation"/>
+
     <module name="TreeWalker">
         <module name="ArrayTypeStyle"/>
+        <module name="ConstantName"/>
         <module name="EmptyCatchBlock">
             <property name="exceptionVariableName" value="ignored"/>
         </module>
         <module name="EmptyStatement"/>
+        <module name="FinalClass"/>
         <module name="HideUtilityClassConstructor"/>
         <module name="IllegalImport"/>
         <module name="Indentation"/>
         <module name="LeftCurly"/>
+        <module name="LocalFinalVariableName"/>
+        <module name="LocalVariableName"/>
         <module name="MethodParamPad"/>
+        <module name="MutableException"/>
         <module name="NeedBraces"/>
         <module name="NoWhitespaceAfter"/>
         <module name="NoWhitespaceBefore"/>
+        <module name="OuterTypeFilename"/>
+        <module name="ParameterAssignment"/>
+        <module name="ParameterName"/>
         <module name="ParenPad"/>
         <module name="RedundantImport"/>
         <module name="RightCurly"/>
+        <module name="SimplifyBooleanExpression"/>
+        <module name="SimplifyBooleanReturn"/>
         <module name="SuppressWarningsHolder"/>
         <module name="TypecastParenPad"/>
         <module name="WhitespaceAfter"/>

@@ -26,7 +26,7 @@ import java.util.*;
  * @author Philippe Duchesne <ph.duchesne@pepite.be>
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
-public class IIDM2DB {
+public final class IIDM2DB {
 
     private static Logger log = LoggerFactory.getLogger(IIDM2DB.class);
 

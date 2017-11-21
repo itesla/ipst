@@ -18,26 +18,27 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
+import com.powsybl.iidm.network.Branch;
 import com.powsybl.iidm.network.Country;
 import com.powsybl.iidm.network.Network;
+import com.powsybl.security.LimitViolation;
+import com.powsybl.security.LimitViolationType;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
+
 import eu.itesla_project.modules.contingencies.ActionParameterBooleanValue;
 import eu.itesla_project.modules.contingencies.ActionParameterFloatValue;
 import eu.itesla_project.modules.contingencies.ActionParameterIntegerValue;
 import eu.itesla_project.modules.contingencies.ActionParameterStringValue;
 import eu.itesla_project.modules.contingencies.ActionParameters;
 import eu.itesla_project.modules.online.OnlineProcess;
-import com.powsybl.security.LimitViolation;
-import com.powsybl.security.LimitViolationType;
-import com.powsybl.simulation.securityindexes.SecurityIndexType;
+import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
 
 /**
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class OnlineDbMVStoreUtils {
+public final class OnlineDbMVStoreUtils {
 
     private OnlineDbMVStoreUtils() {
     }
@@ -111,10 +112,11 @@ public class OnlineDbMVStoreUtils {
         limitViolation.put("Limit", Float.toString(violation.getLimit()));
         limitViolation.put("LimitReduction", Float.toString(violation.getLimitReduction()));
         limitViolation.put("Value", Float.toString(violation.getValue()));
-        limitViolation.put("Country", violation.getCountry().name());
-        limitViolation.put("BaseVoltage", Float.toString(violation.getBaseVoltage()));
         if (violation.getLimitName() != null) {
             limitViolation.put("LimitName", violation.getLimitName());
+        }
+        if (violation.getSide() != null) {
+            limitViolation.put("Side", violation.getSide().name());
         }
         return JSONSerializer.toJSON(limitViolation).toString();
     }
@@ -122,26 +124,22 @@ public class OnlineDbMVStoreUtils {
     public static LimitViolation jsonToLimitViolation(String json, Network network) {
         JSONObject jsonObj = (JSONObject) JSONSerializer.toJSON(json);
         Map<String, String> limitViolation = (Map<String, String>) JSONObject.toBean(jsonObj, Map.class);
-        Country country = null;
-        if (limitViolation.containsKey("Country")) {
-            country = Country.valueOf(limitViolation.get("Country"));
-        }
-        float baseVoltage = Float.NaN;
-        if (limitViolation.containsKey("BaseVoltage")) {
-            baseVoltage = Float.parseFloat(limitViolation.get("BaseVoltage"));
-        }
         float limitReduction = 1f;
         if (limitViolation.containsKey("LimitReduction")) {
             limitReduction = Float.parseFloat(limitViolation.get("LimitReduction"));
         }
+        LimitViolationType limitType = LimitViolationType.valueOf(limitViolation.get("LimitType"));
+        Branch.Side side = limitType == LimitViolationType.CURRENT ? Branch.Side.ONE : null;
+        if (limitViolation.containsKey("Side")) {
+            side =  Branch.Side.valueOf(limitViolation.get("Side"));
+        }
         return new LimitViolation(limitViolation.get("Subject"),
-                LimitViolationType.valueOf(limitViolation.get("LimitType")),
-                Float.parseFloat(limitViolation.get("Limit")),
+                limitType,
                 limitViolation.get("LimitName"),
+                Float.parseFloat(limitViolation.get("Limit")),
                 limitReduction,
                 Float.parseFloat(limitViolation.get("Value")),
-                country,
-                baseVoltage);
+                side);
     }
 
     public static String actionParametersToJson(ActionParameters actionParameters) {

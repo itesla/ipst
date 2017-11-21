@@ -10,7 +10,7 @@ package eu.itesla_project.iidm.ddb.eurostag;
  *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
-class RecordUtil {
+final class RecordUtil {
 
     private RecordUtil() {
     }

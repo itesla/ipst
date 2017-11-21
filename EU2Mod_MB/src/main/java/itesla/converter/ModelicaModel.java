@@ -59,11 +59,11 @@ public class ModelicaModel {
      * init_friParameters: string list with the name of the parameters in the .fri.
      * init_InterfaceParameters: string list with the name of the initialization variables of the interface variables.
      */
-    public ModelicaModel(Block[] Blocks, Integer[][] Link, String pathEu, Hashtable<Integer, Element> CT, ParParser parData) {
-        this.Blocks = Blocks;
-        this.Link = Link;
+    public ModelicaModel(Block[] blocks, Integer[][] link, String pathEu, Hashtable<Integer, Element> correspondenceTable, ParParser parData) {
+        this.Blocks = blocks;
+        this.Link = link;
         this.pathEu = pathEu;
-        this.CT = CT;
+        this.CT = correspondenceTable;
         this.parData = parData;
         this.outputHeading = "";
         this.outputEnd = "";
@@ -80,7 +80,7 @@ public class ModelicaModel {
         this.interfaceVariables = new HashMap<String, String>();
         this.init_friParameters = new ArrayList<String>();
         this.init_InterfaceParameters = new ArrayList<String>();
-        this.LinksBlocksId1 = new int[Blocks.length][7];
+        this.LinksBlocksId1 = new int[blocks.length][7];
 
         Heading();
         paramDeclaration();
@@ -110,40 +110,40 @@ public class ModelicaModel {
     }
 
     public void Heading() {
-        File EuFile = new File(pathEu);
-        String name = EuFile.getName().split("\\.")[0];
+        File euFile = new File(pathEu);
+        String name = euFile.getName().split("\\.")[0];
         String output = "model " + name;
         outputHeading = output;
     }
 
     public void End() {
-        File EuFile = new File(pathEu);
-        String name = EuFile.getName().split("\\.")[0];
+        File euFile = new File(pathEu);
+        String name = euFile.getName().split("\\.")[0];
         String output = "end " + name;
         outputEnd = output;
     }
 
     public void PositiveImPin() {
-        Boolean TerminalVoltage = false;
-        Boolean FieldCurrent = false;
-        Boolean ActivePower = false;
+        Boolean isTerminalVoltage = false;
+        Boolean isFieldCurrent = false;
+        Boolean isActivePower = false;
         String name;
         String base;
         for (int i = 0; i < Blocks.length; i++) {
             if (Blocks[i].idEu == 27) {
-                TerminalVoltage = true;
+                isTerminalVoltage = true;
                 if (!NamedLinks.contains("TerminalVoltage")) {
                     NamedLinks.add("TerminalVoltage");
                     outputPositiveImPin.add("  Modelica.Blocks.Interfaces.RealInput pin_TerminalVoltage;"); //Terminal Voltage");
                 }
             } else if (Blocks[i].idEu == 50) {
-                FieldCurrent = true;
+                isFieldCurrent = true;
                 if (!NamedLinks.contains("FieldCurrent")) {
                     NamedLinks.add("FieldCurrent");
                     outputPositiveImPin.add("  Modelica.Blocks.Interfaces.RealInput pin_FieldCurrent;");
                 }
             } else if (Blocks[i].idEu == 28) {
-                ActivePower = true;
+                isActivePower = true;
                 base = Blocks[i].param[2].replaceAll("([\\W|[_]])+", "");
                 if (!NamedLinks.contains("ActivePower" + base)) {
                     NamedLinks.add("ActivePower" + base);
@@ -284,7 +284,7 @@ public class ModelicaModel {
     }
 
     public void BlocksDeclaration() {
-        Boolean found_init;
+        Boolean foundInit;
         outputParamDeclaration.add("  parameter Real SNREF;");
         outputParamDeclaration.add("  parameter Real SN;");
         outputParamDeclaration.add("  parameter Real PN;");
@@ -419,13 +419,13 @@ public class ModelicaModel {
                                         modelParameters = modelParameters + model.param.get(j) + "=" + Blocks[i].param[j].substring(1);
                                     }
                                 } else if (Blocks[i].param[j].substring(0, 1).equals("_") || Blocks[i].param[j].substring(0, 1).equals("^")) {
-                                    found_init = false;
+                                    foundInit = false;
                                     for (int k = 0; k < outputParamDeclaration.size(); k++) {
                                         if (outputParamDeclaration.get(k).contains("parameter Real init_" + Blocks[i].param[j].substring(1) + ";")) {
-                                            found_init = true;
+                                            foundInit = true;
                                         }
                                     }
-                                    if (!found_init) {
+                                    if (!foundInit) {
                                         outputParamDeclaration.add("  parameter Real init_" + Blocks[i].param[j].substring(1) + ";");
                                     }
                                     if (Blocks[i].idEu.equals(1) || Blocks[i].idEu.equals(2)) {
@@ -492,74 +492,74 @@ public class ModelicaModel {
 
     public void Connection() {
         Integer nLinks = Link.length;
-        String Conn;
-        String ConnLeft;
-        String ConnRight;
+        String conn;
+        String connLeft;
+        String connRight;
         Element model;
         String base;
         for (int i = 0; i < nLinks; i++) {
-            Conn = "  connect(";
+            conn = "  connect(";
             model = CT.get(Blocks[Link[i][0] - 1].idEu);
             if (Blocks[Link[i][0] - 1].idEu == 27) {
-                ConnLeft = "pin_TerminalVoltage";
+                connLeft = "pin_TerminalVoltage";
             } else if (Blocks[Link[i][0] - 1].idEu == 50) {
-                ConnLeft = "pin_FieldCurrent";
+                connLeft = "pin_FieldCurrent";
             } else if (Blocks[Link[i][0] - 1].idEu == 28) {
                 base = Blocks[Link[i][0] - 1].param[2].replaceAll("([\\W|[_]])+", "");
-                ConnLeft = "pin_ActivePower" + base;
+                connLeft = "pin_ActivePower" + base;
             } else if (Blocks[Link[i][0] - 1].idEu == 31) {
                 base = Blocks[Link[i][0] - 1].param[2].replaceAll("([\\W|[_]])+", "");
-                ConnLeft = "pin_ReactivePower" + base;
+                connLeft = "pin_ReactivePower" + base;
             } else if (Blocks[Link[i][0] - 1].idEu == 49) {
                 base = Blocks[Link[i][0] - 1].param[2].replaceAll("([\\W|[_]])+", "");
-                ConnLeft = "pin_FRZ" + base;
+                connLeft = "pin_FRZ" + base;
             } else if (Blocks[Link[i][0] - 1].idEu == 60) {
                 base = Blocks[Link[i][0] - 1].param[2].replaceAll("([\\W|[_]])+", "");
-                ConnLeft = "pin_Current";
+                connLeft = "pin_Current";
             } else if (Blocks[Link[i][0] - 1].idEu == 22) {
-                ConnLeft = "Min" + "_" + Blocks[Link[i][0] - 1].GraphicalNumber.toString() + ".yMin";
+                connLeft = "Min" + "_" + Blocks[Link[i][0] - 1].GraphicalNumber.toString() + ".yMin";
             } else if (Blocks[Link[i][0] - 1].idEu == 23) {
-                ConnLeft = "Max" + "_" + Blocks[Link[i][0] - 1].GraphicalNumber.toString() + ".yMax";
+                connLeft = "Max" + "_" + Blocks[Link[i][0] - 1].GraphicalNumber.toString() + ".yMax";
 
             } else {
-                ConnLeft = model.nameModelica + "_" + Blocks[Link[i][0] - 1].GraphicalNumber.toString() + ".y";
+                connLeft = model.nameModelica + "_" + Blocks[Link[i][0] - 1].GraphicalNumber.toString() + ".y";
             }
             model = CT.get(Blocks[Link[i][1] - 1].idEu);
             //Before: .p and .n. Now: .y and .u respectively
             if (Blocks[Link[i][1] - 1].UsedInputPins.size() == 1) {
-                ConnRight = model.nameModelica + "_" + Blocks[Link[i][1] - 1].GraphicalNumber.toString() + ".u";
+                connRight = model.nameModelica + "_" + Blocks[Link[i][1] - 1].GraphicalNumber.toString() + ".u";
             } else {
                 if (Blocks[Link[i][1] - 1].idEu.equals(1) || Blocks[Link[i][1] - 1].idEu.equals(2) || Blocks[Link[i][1] - 1].idEu.equals(22) || Blocks[Link[i][1] - 1].idEu.equals(23) || Blocks[Link[i][1] - 1].idEu.equals(13) || Blocks[Link[i][1] - 1].idEu.equals(14)) {
                     if (Blocks[Link[i][1] - 1].idEu.equals(22)) {
-                        ConnRight = "Min" + "_" + Blocks[Link[i][1] - 1].GraphicalNumber.toString() + ".u[" + LinksBlocksId1[Link[i][1] - 1][Link[i][2] - 1] + "]";
+                        connRight = "Min" + "_" + Blocks[Link[i][1] - 1].GraphicalNumber.toString() + ".u[" + LinksBlocksId1[Link[i][1] - 1][Link[i][2] - 1] + "]";
                     } else if (Blocks[Link[i][1] - 1].idEu.equals(23)) {
-                        ConnRight = "Max" + "_" + Blocks[Link[i][1] - 1].GraphicalNumber.toString() + ".u[" + LinksBlocksId1[Link[i][1] - 1][Link[i][2] - 1] + "]";
+                        connRight = "Max" + "_" + Blocks[Link[i][1] - 1].GraphicalNumber.toString() + ".u[" + LinksBlocksId1[Link[i][1] - 1][Link[i][2] - 1] + "]";
                     } else {
-                        ConnRight = model.nameModelica + "_" + Blocks[Link[i][1] - 1].GraphicalNumber.toString() + ".u[" + LinksBlocksId1[Link[i][1] - 1][Link[i][2] - 1] + "]";
+                        connRight = model.nameModelica + "_" + Blocks[Link[i][1] - 1].GraphicalNumber.toString() + ".u[" + LinksBlocksId1[Link[i][1] - 1][Link[i][2] - 1] + "]";
                     }
                 } else if (Blocks[Link[i][1] - 1].idEu.equals(24)) {
                     if (Link[i][2] == 2) {
-                        ConnRight = model.nameModelica + "_" + Blocks[Link[i][1] - 1].GraphicalNumber.toString() + ".u";
+                        connRight = model.nameModelica + "_" + Blocks[Link[i][1] - 1].GraphicalNumber.toString() + ".u";
                     } else if (Link[i][2] == 3) {
-                        ConnRight = model.nameModelica + "_" + Blocks[Link[i][1] - 1].GraphicalNumber.toString() + ".limit2";
+                        connRight = model.nameModelica + "_" + Blocks[Link[i][1] - 1].GraphicalNumber.toString() + ".limit2";
                     } else {
-                        ConnRight = model.nameModelica + "_" + Blocks[Link[i][1] - 1].GraphicalNumber.toString() + ".limit1";
+                        connRight = model.nameModelica + "_" + Blocks[Link[i][1] - 1].GraphicalNumber.toString() + ".limit1";
                     }
                 } else {
-                    ConnRight = model.nameModelica + "_" + Blocks[Link[i][1] - 1].GraphicalNumber.toString() + ".u" + Link[i][2].toString();
+                    connRight = model.nameModelica + "_" + Blocks[Link[i][1] - 1].GraphicalNumber.toString() + ".u" + Link[i][2].toString();
                 }
             }
             Blocks[Link[i][1] - 1].UsedInputPins.set(Link[i][2] - 1, true);
-            Conn = Conn + ConnLeft + ", " + ConnRight + ");";
-            outputConnection.add(Conn);
+            conn = conn + connLeft + ", " + connRight + ");";
+            outputConnection.add(conn);
         }
     }
 
     //Input and output connections. Before: .p and .n. now: .y and .u respectively
     public void InputConnection() {
-        String Conn;
-        String ConnLeft;
-        String ConnRight;
+        String conn;
+        String connLeft;
+        String connRight;
         String nameLink;
         Element model;
         Integer indConnRight;
@@ -570,83 +570,83 @@ public class ModelicaModel {
                 if (!Blocks[i].entries[j].equals("?")) {
                     model = CT.get(Blocks[i].idEu);
                     if (Blocks[i].entries[j].contains("@")) {
-                        ConnLeft = "pin_At_" + Blocks[i].entries[j].replaceAll("([\\W|[_]])+", "");
+                        connLeft = "pin_At_" + Blocks[i].entries[j].replaceAll("([\\W|[_]])+", "");
                     } else {
-                        ConnLeft = "pin_" + Blocks[i].entries[j].replaceAll("([\\W|[_]])+", "");
+                        connLeft = "pin_" + Blocks[i].entries[j].replaceAll("([\\W|[_]])+", "");
                     }
                     indConnRight = j + 1;
                     if (Blocks[i].UsedInputPins.size() == 1) {
-                        ConnRight = model.nameModelica + "_" + Blocks[i].GraphicalNumber.toString() + ".u";
+                        connRight = model.nameModelica + "_" + Blocks[i].GraphicalNumber.toString() + ".u";
                     } else {
                         if (Blocks[i].idEu.equals(1) || Blocks[i].idEu.equals(2) || Blocks[i].idEu.equals(23) || Blocks[i].idEu.equals(22) || Blocks[i].idEu.equals(13) || Blocks[i].idEu.equals(14)) {
                             if (Blocks[i].idEu.equals(22)) {
-                                ConnRight = "Min" + "_" + Blocks[i].GraphicalNumber.toString() + ".u[" + LinksBlocksId1[i][j] + "]";
+                                connRight = "Min" + "_" + Blocks[i].GraphicalNumber.toString() + ".u[" + LinksBlocksId1[i][j] + "]";
                             } else if (Blocks[i].idEu.equals(23)) {
-                                ConnRight = "Max" + "_" + Blocks[i].GraphicalNumber.toString() + ".u[" + LinksBlocksId1[i][j] + "]";
+                                connRight = "Max" + "_" + Blocks[i].GraphicalNumber.toString() + ".u[" + LinksBlocksId1[i][j] + "]";
                             } else {
-                                ConnRight = model.nameModelica + "_" + Blocks[i].GraphicalNumber.toString() + ".u[" + LinksBlocksId1[i][j] + "]";
+                                connRight = model.nameModelica + "_" + Blocks[i].GraphicalNumber.toString() + ".u[" + LinksBlocksId1[i][j] + "]";
                             }
                         } else if (Blocks[i].idEu.equals(24)) {
                             if (indConnRight == 2) {
-                                ConnRight = model.nameModelica + "_" + Blocks[i].GraphicalNumber.toString() + ".u";
+                                connRight = model.nameModelica + "_" + Blocks[i].GraphicalNumber.toString() + ".u";
                             } else if (indConnRight == 3) {
-                                ConnRight = model.nameModelica + "_" + Blocks[i].GraphicalNumber.toString() + ".limit2";
+                                connRight = model.nameModelica + "_" + Blocks[i].GraphicalNumber.toString() + ".limit2";
                             } else if (indConnRight == 1) {
-                                ConnRight = model.nameModelica + "_" + Blocks[i].GraphicalNumber.toString() + ".limit1";
+                                connRight = model.nameModelica + "_" + Blocks[i].GraphicalNumber.toString() + ".limit1";
                             } else {
-                                ConnRight = "fallo";
+                                connRight = "fallo";
                             }
                         } else {
-                            ConnRight = model.nameModelica + "_" + Blocks[i].GraphicalNumber.toString() + ".u" + indConnRight.toString();
+                            connRight = model.nameModelica + "_" + Blocks[i].GraphicalNumber.toString() + ".u" + indConnRight.toString();
                         }
                     }
-                    Conn = "  connect(" + ConnLeft + ", " + ConnRight + ");";
+                    conn = "  connect(" + connLeft + ", " + connRight + ");";
                     Blocks[i].UsedInputPins.set(indConnRight - 1, true);
-                    outputInputConnection.add(Conn);
+                    outputInputConnection.add(conn);
                 }
             }
         }
     }
 
     public void OutputConnection() {
-        String Conn;
-        String ConnLeft;
-        String ConnRight;
+        String conn;
+        String connLeft;
+        String connRight;
         String base;
         Element model;
         for (int i = 0; i < Blocks.length; i++) {
             if (Blocks[i].output.length() > 1) {
                 model = CT.get(Blocks[i].idEu);
                 if (Blocks[i].output.contains("@")) {
-                    ConnLeft = "pin_At_" + Blocks[i].output.replaceAll("([\\W|[_]])+", "");
+                    connLeft = "pin_At_" + Blocks[i].output.replaceAll("([\\W|[_]])+", "");
                 } else {
-                    ConnLeft = "pin_" + Blocks[i].output.replaceAll("([\\W|[_]])+", "");
+                    connLeft = "pin_" + Blocks[i].output.replaceAll("([\\W|[_]])+", "");
                 }
                 if (model.idEu.equals(27)) {
-                    ConnRight = "pin_TerminalVoltage";
+                    connRight = "pin_TerminalVoltage";
                 } else if (model.idEu.equals(50)) {
-                    ConnRight = "pin_FieldCurrent";
+                    connRight = "pin_FieldCurrent";
                 } else if (model.idEu.equals(28)) {
                     base = Blocks[i].param[2].replaceAll("([\\W|[_]])+", "");
-                    ConnRight = "pin_ActivePower" + base;
+                    connRight = "pin_ActivePower" + base;
                 } else if (model.idEu.equals(31)) {
                     base = Blocks[i].param[2].replaceAll("([\\W|[_]])+", "");
-                    ConnRight = "pin_ReactivePower" + base;
+                    connRight = "pin_ReactivePower" + base;
                 } else if (model.idEu.equals(49)) {
                     base = Blocks[i].param[2].replaceAll("([\\W|[_]])+", "");
-                    ConnRight = "pin_FRZ" + base;
+                    connRight = "pin_FRZ" + base;
                 } else if (model.idEu.equals(60)) {
                     base = Blocks[i].param[2].replaceAll("([\\W|[_]])+", "");
-                    ConnRight = "pin_Current";
+                    connRight = "pin_Current";
                 } else if (model.idEu.equals(22)) {
-                    ConnRight = "Min" + "_" + Blocks[Link[i][0] - 1].GraphicalNumber.toString() + ".yMin";
+                    connRight = "Min" + "_" + Blocks[Link[i][0] - 1].GraphicalNumber.toString() + ".yMin";
                 } else if (model.idEu.equals(23)) {
-                    ConnRight = "Max" + "_" + Blocks[Link[i][0] - 1].GraphicalNumber.toString() + ".yMax";
+                    connRight = "Max" + "_" + Blocks[Link[i][0] - 1].GraphicalNumber.toString() + ".yMax";
                 } else {
-                    ConnRight = model.nameModelica + "_" + Blocks[i].GraphicalNumber.toString() + ".y";
+                    connRight = model.nameModelica + "_" + Blocks[i].GraphicalNumber.toString() + ".y";
                 }
-                Conn = "  connect(" + ConnLeft + ", " + ConnRight + ");";
-                outputOutputConnection.add(Conn);
+                conn = "  connect(" + connLeft + ", " + connRight + ");";
+                outputOutputConnection.add(conn);
             }
         }
     }

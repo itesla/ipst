@@ -20,10 +20,10 @@ public final class SecurityAnalysisServiceFactory {
     private SecurityAnalysisServiceFactory() {
     }
 
-    private final static SecurityAnalysisService service = new SecurityAnalysisServiceImpl(
+    private final static SecurityAnalysisService SERVICE = new SecurityAnalysisServiceImpl(
             new SecurityAnalyzer(LocalComputationManager.getDefault(), 0));
 
     public static SecurityAnalysisService getSecurityServiceApi() {
-        return service;
+        return SERVICE;
     }
 }

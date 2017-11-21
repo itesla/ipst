@@ -10,13 +10,14 @@ function exitcode=FEA_MODULE2_HELPER(ifile, ofile, s_ncluster,IRs,Tflags,isdeter
 % 1) added conditions on new input options "uniform distribution" and
 % "deterministic"
 close all; %% delete all figures
-mversion='1.8.1';
+mversion='1.8.2';
 disp(sprintf('wp5 - module2 - version: %s', mversion));
 disp(sprintf(' ifile: %s', ifile));
 disp(sprintf(' ofile: %s', ofile));
 disp(sprintf(' cluster number: %s', s_ncluster));
 disp(sprintf(' IR: %s', IRs));
 disp(sprintf(' Tflag: %s', Tflags));
+disp(sprintf(' isDeterministic: %s', isdeterministics));
 
 
 IR = str2double(IRs);

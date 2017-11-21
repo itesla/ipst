@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -49,6 +50,8 @@ public class FEAMatFileWriter {
         MLCell injections = histoDataHeadersAsMLChar(forecastErrorsHistoricalData.getForecastsData().columnKeyList());
         LOGGER.debug("Preparing injections countries mat data");
         MLCell injectionsCountries =  injectionCountriesAsMLChar(forecastErrorsHistoricalData.getStochasticVariables());
+        LOGGER.debug("Preparing injections types mat data");
+        MLCell injectionsTypes =  injectionTypesAsMLChar(forecastErrorsHistoricalData.getStochasticVariables());
         LOGGER.debug("Preparing forecasts mat data");
         MLDouble forecastsData = histoDataAsMLDouble("forec_filt", forecastErrorsHistoricalData.getForecastsData());
         LOGGER.debug("Preparing snapshots mat data");
@@ -60,6 +63,7 @@ public class FEAMatFileWriter {
         mlarray.add((MLArray) forecastsData);
         mlarray.add((MLArray) snapshotsData);
         mlarray.add((MLArray) injectionsCountries);
+        mlarray.add((MLArray) injectionsTypes);
         MatFileWriter writer = new MatFileWriter();
         writer.write(matFile.toFile(), mlarray);
     }
@@ -110,6 +114,19 @@ public class FEAMatFileWriter {
             i++;
         }
         return injectionsCountries;
+    }
+
+    private MLCell injectionTypesAsMLChar(List<StochasticVariable> stochasticVariables) {
+        int colsSize = stochasticVariables.size() * 2;
+        MLCell injectionsTypes = new MLCell("type_ID", new int[]{1, colsSize});
+        int i = 0;
+        for (StochasticVariable injection : stochasticVariables) {
+            injectionsTypes.set(new MLChar("", StochasticVariable.TYPE_LOAD.equals(injection.getType()) ? "L" : "G"), 0, i);
+            i++;
+            injectionsTypes.set(new MLChar("", StochasticVariable.TYPE_LOAD.equals(injection.getType()) ? "L" : "G"), 0, i); // twice, for P and Q
+            i++;
+        }
+        return injectionsTypes;
     }
 
     private MLDouble histoDataAsMLDouble(String name, ArrayTable<Integer, String, Float> histoData) {

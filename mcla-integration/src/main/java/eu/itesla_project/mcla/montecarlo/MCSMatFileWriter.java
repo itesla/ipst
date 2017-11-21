@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -121,8 +122,8 @@ public class MCSMatFileWriter {
     private void putGeneratorDataIntoMLStructure(GeneratorData generatorData, MLStructure generators, int i) {
         LOGGER.debug("Preparing mat data for generator " + generatorData.getGeneratorId());
         // estremo_ID
-        MLInt64 estremo_ID = new MLInt64("", new long[]{generatorData.getBusIndex() }, 1);
-        generators.setField("estremo_ID", estremo_ID, 0, i);
+        MLInt64 estremoId = new MLInt64("", new long[]{generatorData.getBusIndex() }, 1);
+        generators.setField("estremo_ID", estremoId, 0, i);
         // estremo
         MLChar estremo = new MLChar("", generatorData.getBusId());
         generators.setField("estremo", estremo, 0, i);
@@ -170,6 +171,9 @@ public class MCSMatFileWriter {
         }
         MLInt64 dispacc = new MLInt64("", new long[]{dispatchable}, 1);
         generators.setField("dispacc", dispacc, 0, i);
+        // country
+        MLChar country = new MLChar("", generatorData.getCountry().name());
+        generators.setField("nation", country, 0, i);
     }
 
     private MLStructure loadsDataAsMLStructure(ArrayList<LoadData> loadsData) {
@@ -177,17 +181,17 @@ public class MCSMatFileWriter {
         loads = new MLStructure("carico", new int[]{1, loadsData.size()});
         int i = 0;
         for (LoadData loadData : loadsData) {
-            putGeneratorDataIntoMLStructure(loadData, loads, i);
+            putLoadDataIntoMLStructure(loadData, loads, i);
             i++;
         }
         return loads;
     }
 
-    private void putGeneratorDataIntoMLStructure(LoadData loadData, MLStructure loads, int i) {
+    private void putLoadDataIntoMLStructure(LoadData loadData, MLStructure loads, int i) {
         LOGGER.debug("Preparing mat data for load " + loadData.getLoadId());
         // estremo_ID
-        MLInt64 estremo_ID = new MLInt64("", new long[]{loadData.getBusIndex()}, 1);
-        loads.setField("estremo_ID", estremo_ID, 0, i);
+        MLInt64 estremoId = new MLInt64("", new long[]{loadData.getBusIndex()}, 1);
+        loads.setField("estremo_ID", estremoId, 0, i);
         // estremo
         MLChar estremo = new MLChar("", loadData.getBusId());
         loads.setField("estremo", estremo, 0, i);
@@ -210,6 +214,9 @@ public class MCSMatFileWriter {
         // V
         MLDouble v = new MLDouble("", new double[]{loadData.getVoltage()}, 1);
         loads.setField("V", v, 0, i);
+        // country
+        MLChar country = new MLChar("", loadData.getCountry().name());
+        loads.setField("nation", country, 0, i);
     }
 
 

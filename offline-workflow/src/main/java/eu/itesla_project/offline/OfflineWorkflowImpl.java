@@ -15,6 +15,7 @@ import com.powsybl.loadflow.LoadFlow;
 import com.powsybl.loadflow.LoadFlowFactory;
 import com.powsybl.loadflow.LoadFlowParameters;
 import com.powsybl.loadflow.LoadFlowResult;
+import com.powsybl.security.LimitViolationFilter;
 import eu.itesla_project.merge.MergeOptimizerFactory;
 import eu.itesla_project.modules.*;
 import eu.itesla_project.cases.CaseRepository;
@@ -222,7 +223,7 @@ public class OfflineWorkflowImpl extends AbstractOfflineWorkflow {
 
     protected SimulationState runStabilization(WorkflowContext context, WorkflowStartContext startContext, int sampleId) {
         // before dynamic simualtion, check there is no static constraints
-        String report = Security.printLimitsViolations(context.getNetwork());
+        String report = Security.printLimitsViolations(context.getNetwork(), LimitViolationFilter.load());
         if (report != null) {
             LOGGER.warn("Constraints for sample {}:\n{}", sampleId, report);
         }

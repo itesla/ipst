@@ -24,7 +24,7 @@ import eu.itesla_project.modules.mcla.ForecastErrorsStatistics;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class Utils {
+public final class Utils {
 
     private Utils() {
     }

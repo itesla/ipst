@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author Silvia Machado <machados@aia.es>
  */
-public class PsseModDefaultTypes {
+public final class PsseModDefaultTypes {
     //Machines
     public final static String GENROU                            = "iPSL.Electrical.Machines.PSSE.GENROU.GENROU";
     public final static String GENSAL                            = "iPSL.Electrical.Machines.PSSE.GENSAL.GENSAL";

@@ -17,6 +17,7 @@ disp(sprintf('wp5 - MCLA - version: %s', mversion));
 disp(sprintf(' m1m2file:  %s',m1file));
 disp(sprintf(' ofile:  %s', ofile));
 disp(sprintf(' unconditioned samples:  %s',s_scenarios));
+disp(sprintf(' isdeterministic:  %s',isdeterministics));
 
 moutput.errmsg='Ok';
 
@@ -93,4 +94,4 @@ catch err
     disp(getReport(err,'extended'));
     exitcode=-1;
 end
-save(ofile, '-struct', 'totmoutput');
+save(ofile, '-struct', 'totmoutput','-v7.3');

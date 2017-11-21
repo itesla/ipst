@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * @author Luis Maria Zamarreno <zamarrenolm@aia.com>
  * @author Silvia Machado <machados@aia.es>
  */
-public class LibUploaderTest {
+public final class LibUploaderTest {
 
     private LibUploaderTest() {
     }
@@ -39,9 +39,9 @@ public class LibUploaderTest {
             isRegulator = false;
         }
 
-        _log.info("Power Systems Library Dir = " + libFilePath);
-        _log.info("Models mapper Dir = " + mappingFilePath);
-        _log.info("Element Dir = " + elementsPath);
+        LOGGER.info("Power Systems Library Dir = " + libFilePath);
+        LOGGER.info("Models mapper Dir = " + mappingFilePath);
+        LOGGER.info("Element Dir = " + elementsPath);
 
         PowerSystemsLibLoader pwLibLoader = new PowerSystemsLibLoader(libFilePath, mappingFilePath, elementsPath, jbossHost, jbossPort, jbossUser, jbossPassword, isLibrary, isRegulator);
         //new PowerSystemsLibLoader(libFilePath, mappingFilePath, elementsPath, true);
@@ -49,7 +49,7 @@ public class LibUploaderTest {
         try {
             pwLibLoader.loadPowerSystemsLib();
         } catch (Exception e) {
-            _log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -63,5 +63,5 @@ public class LibUploaderTest {
     private static boolean            isLibrary        = false;
     private static boolean            isRegulator        = false;
 
-    private static final Logger _log                = LoggerFactory.getLogger(LibUploaderTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LibUploaderTest.class);
 }

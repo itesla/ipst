@@ -24,17 +24,16 @@ public class ActionPlanImpl implements ActionPlan {
 
     private String description;
 
-    private  List<String> zones = new ArrayList<String>();
+    private List<String> zones = new ArrayList<String>();
 
-    private  Map<BigInteger, ActionPlanOption> priorityOption = new HashMap<BigInteger, ActionPlanOption>();
+    private Map<BigInteger, ActionPlanOption> priorityOption = new HashMap<BigInteger, ActionPlanOption>();
 
 
-
-    public ActionPlanImpl(String _name, String _description, List<String> _zones, Map<BigInteger, ActionPlanOption> _priorityOptions) {
-        this.name                =          _name;
-        this.description         =          _description;
-        this.zones               =          _zones;
-        this.priorityOption      =          _priorityOptions;
+    public ActionPlanImpl(String name, String description, List<String> zones, Map<BigInteger, ActionPlanOption> priorityOptions) {
+        this.name = name;
+        this.description = description;
+        this.zones = zones;
+        this.priorityOption = priorityOptions;
     }
 
 

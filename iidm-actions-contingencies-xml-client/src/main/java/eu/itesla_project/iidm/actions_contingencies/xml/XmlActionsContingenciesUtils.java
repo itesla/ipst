@@ -30,7 +30,7 @@ import eu.itesla_project.modules.contingencies.ConstraintType;
  *
  * @author Quinary <itesla@quinary.com>
  */
-public class XmlActionsContingenciesUtils {
+public final class XmlActionsContingenciesUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlActionsContingenciesUtils.class);
 
@@ -78,9 +78,9 @@ public class XmlActionsContingenciesUtils {
         Set<Zone>  zones = new HashSet<Zone>();
 
         Zones xmlZones                    = actionContingencies.getZones();
-        Iterable<VoltageLevel> net_vlt    = network.getVoltageLevels();
+        Iterable<VoltageLevel> voltageLevels    = network.getVoltageLevels();
 
-        for (VoltageLevel  vl: net_vlt) {
+        for (VoltageLevel  vl: voltageLevels) {
             String networkVoltagelevelId = vl.getId();
             for (Zone z :xmlZones.getZone()) {
 

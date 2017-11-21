@@ -206,8 +206,8 @@ public class EurostagEchExport {
     private EsgDetailedTwoWindingTransformer.Tap createTap(TwoWindingsTransformer twt, int iplo, float rho, float dr, float dx,
                                                            float dephas, float rate, EsgGeneralParameters parameters) {
         float nomiU2 = twt.getTerminal2().getVoltageLevel().getNominalV();
-        float rho_i = twt.getRatedU2() / twt.getRatedU1() * rho;
-        float uno1 = nomiU2 / rho_i;
+        float rhoI = twt.getRatedU2() / twt.getRatedU1() * rho;
+        float uno1 = nomiU2 / rhoI;
         float uno2 = nomiU2;
         float r = twt.getR() * (1 + dr / 100.0f);
         float x = twt.getX() * (1 + dx / 100.0f);
@@ -278,14 +278,14 @@ public class EurostagEchExport {
             float nomiU2 = twt.getTerminal2().getVoltageLevel().getNominalV();
 
             //...mTrans.getR() = Get the nominal series resistance specified in Ω at the secondary voltage side.
-            float Rpu2 = (twt.getR() * parameters.getSnref()) / nomiU2 / nomiU2;  //...total line resistance  [p.u.](Base snref)
-            float Gpu2 = (twt.getG() / parameters.getSnref()) * nomiU2 * nomiU2;  //...semi shunt conductance [p.u.](Base snref)
-            float Bpu2 = (twt.getB() / parameters.getSnref()) * nomiU2 * nomiU2;  //...semi shunt susceptance [p.u.](Base snref)
+            float rpu2 = (twt.getR() * parameters.getSnref()) / nomiU2 / nomiU2;  //...total line resistance  [p.u.](Base snref)
+            float gpu2 = (twt.getG() / parameters.getSnref()) * nomiU2 * nomiU2;  //...semi shunt conductance [p.u.](Base snref)
+            float bpu2 = (twt.getB() / parameters.getSnref()) * nomiU2 * nomiU2;  //...semi shunt susceptance [p.u.](Base snref)
 
             //...changing base snref -> base rate to compute losses
-            float pcu = Rpu2 * rate * 100f / parameters.getSnref();                  //...base rate (100F -> %)
-            float pfer = 10000f * ((float) Math.sqrt(Gpu2) / rate) * (parameters.getSnref() / 100f);  //...base rate
-            float modgb = (float) Math.sqrt(Math.pow(Gpu2, 2.f) + Math.pow(Bpu2, 2.f));
+            float pcu = rpu2 * rate * 100f / parameters.getSnref();                  //...base rate (100F -> %)
+            float pfer = 10000f * ((float) Math.sqrt(gpu2) / rate) * (parameters.getSnref() / 100f);  //...base rate
+            float modgb = (float) Math.sqrt(Math.pow(gpu2, 2.f) + Math.pow(bpu2, 2.f));
             float cmagn = 10000 * (modgb / rate) * (parameters.getSnref() / 100f);  //...magnetizing current [% base rate]
             float esat = 1.f;
 
@@ -350,19 +350,19 @@ public class EurostagEchExport {
             // but discrepancies will occur if the step is changed.
             if ((ptc != null) || (rtc != null)) {
                 float dr = (rtc != null) ? rtc.getStep(rtc.getTapPosition()).getR() : ptc.getStep(ptc.getTapPosition()).getR();
-                float tap_adjusted_r = twt.getR() * (1 + dr / 100.0f);
-                float rpu2_adjusted = (tap_adjusted_r * parameters.getSnref()) / nomiU2 / nomiU2;
-                pcu = rpu2_adjusted * rate * 100f / parameters.getSnref();
+                float tapAdjustedR = twt.getR() * (1 + dr / 100.0f);
+                float rpu2Adjusted = (tapAdjustedR * parameters.getSnref()) / nomiU2 / nomiU2;
+                pcu = rpu2Adjusted * rate * 100f / parameters.getSnref();
 
                 float dg = (rtc != null) ? rtc.getStep(rtc.getTapPosition()).getG() : ptc.getStep(ptc.getTapPosition()).getG();
-                float tap_adjusted_g = twt.getG() * (1 + dg / 100.0f);
-                float gpu2_adjusted = (tap_adjusted_g / parameters.getSnref()) * nomiU2 * nomiU2;
-                pfer = 10000f * ((float) Math.sqrt(gpu2_adjusted) / rate) * (parameters.getSnref() / 100f);
+                float tapAdjustedG = twt.getG() * (1 + dg / 100.0f);
+                float gpu2Adjusted = (tapAdjustedG / parameters.getSnref()) * nomiU2 * nomiU2;
+                pfer = 10000f * ((float) Math.sqrt(gpu2Adjusted) / rate) * (parameters.getSnref() / 100f);
 
                 float db = (rtc != null) ? rtc.getStep(rtc.getTapPosition()).getB() : ptc.getStep(ptc.getTapPosition()).getB();
-                float tap_adjusted_b = twt.getB() * (1 + db / 100.0f);
-                float bpu2_adjusted = (tap_adjusted_b / parameters.getSnref()) * nomiU2 * nomiU2;
-                modgb = (float) Math.sqrt(Math.pow(gpu2_adjusted, 2.f) + Math.pow(bpu2_adjusted, 2.f));
+                float tapAdjustedB = twt.getB() * (1 + db / 100.0f);
+                float bpu2Adjusted = (tapAdjustedB / parameters.getSnref()) * nomiU2 * nomiU2;
+                modgb = (float) Math.sqrt(Math.pow(gpu2Adjusted, 2.f) + Math.pow(bpu2Adjusted, 2.f));
                 cmagn = 10000 * (modgb / rate) * (parameters.getSnref() / 100f);
             }
 
@@ -497,9 +497,9 @@ public class EurostagEchExport {
             EsgConnectionStatus xsvcst = bus.isConnected() ? EsgConnectionStatus.CONNECTED : EsgConnectionStatus.NOT_CONNECTED;
             Esg8charName znodsvc = new Esg8charName(dictionary.getEsgId(bus.getId()));
             float factor = (float) Math.pow(svc.getTerminal().getVoltageLevel().getNominalV(), 2);
-            float bmin = (config.isSvcAsFixedInjectionInLF() == false) ? svc.getBmin() * factor : -9999999; // [Mvar]
-            float binit = (config.isSvcAsFixedInjectionInLF() == false) ? svc.getReactivePowerSetPoint() : -svc.getTerminal().getQ() * (float) Math.pow(svc.getTerminal().getVoltageLevel().getNominalV() / EchUtil.getBus(svc.getTerminal(), config).getV(), 2); // [Mvar]
-            float bmax = (config.isSvcAsFixedInjectionInLF() == false) ? svc.getBmax() * factor : 9999999; // [Mvar]
+            float bmin = (!config.isSvcAsFixedInjectionInLF()) ? svc.getBmin() * factor : -9999999; // [Mvar]
+            float binit = (!config.isSvcAsFixedInjectionInLF()) ? svc.getReactivePowerSetPoint() : -svc.getTerminal().getQ() * (float) Math.pow(svc.getTerminal().getVoltageLevel().getNominalV() / EchUtil.getBus(svc.getTerminal(), config).getV(), 2); // [Mvar]
+            float bmax = (!config.isSvcAsFixedInjectionInLF()) ? svc.getBmax() * factor : 9999999; // [Mvar]
             EsgRegulatingMode xregsvc = ((svc.getRegulationMode() == StaticVarCompensator.RegulationMode.VOLTAGE) && (!config.isSvcAsFixedInjectionInLF())) ? EsgRegulatingMode.REGULATING : EsgRegulatingMode.NOT_REGULATING;
             float vregsvc = svc.getVoltageSetPoint();
             float qsvsch = 1.0f;

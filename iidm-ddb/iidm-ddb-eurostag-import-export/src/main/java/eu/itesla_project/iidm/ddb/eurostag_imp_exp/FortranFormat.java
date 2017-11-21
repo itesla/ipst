@@ -204,8 +204,9 @@ public class FortranFormat {
             }
 
             @Override
-            public Object parse(final Unit u, String s, final Options options) throws IOException {
+            public Object parse(final Unit u, String str, final Options options) throws IOException {
                 Double returning = null;
+                String s = str;
                 if (s.indexOf('E') == -1) {
                     returning = s.length() == 0 ? null : Double.parseDouble(s) / (s.indexOf('.') == -1 ? Math.pow(10, u.getDecimalLength()) : 1);
                 } else {

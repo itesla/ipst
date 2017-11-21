@@ -198,21 +198,23 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
         args1.add("" + config.getIsdeterministic()); //added in v1.8.1
         args1.add("" + config.getIsuniform()); //added in v1.8.1
         args1.add("" + config.getOpt_GUI()); //added in v1.8.1
+        args1.add("" + config.getOptFPF()); //added in v1.8.2
+        args1.add("" + config.getHomothetic()); //added in v1.8.2
 
         if (config.getRngSeed() != null) {
             args1.add(Integer.toString(config.getRngSeed()));
         }
 
-        String fea_m1;
+        String feaM1;
         if (config.getBinariesDir() != null) {
-            fea_m1 = config.getBinariesDir().resolve(FEA_M1).toAbsolutePath().toString();
+            feaM1 = config.getBinariesDir().resolve(FEA_M1).toAbsolutePath().toString();
         } else {
-            fea_m1 = FEA_M1;
+            feaM1 = FEA_M1;
         }
 
         return new SimpleCommandBuilder()
                 .id("fea_m1")
-                .program(fea_m1)
+                .program(feaM1)
                 .args(args1)
                 .inputFiles(new InputFile(historicalDataMatFile.getFileName().toString()))
                 .outputFiles(new OutputFile(M1OUTPUTFILENAME), new OutputFile(M0OUTPUTFILENAME), new OutputFile(M0OUTPUTFILENAMECSV), new OutputFile(GUIOUTPUTFILENAME))
@@ -220,15 +222,15 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
     }
 
     private Command createMatm2Cmd() {
-        String fea_m2;
+        String feaM2;
         if (config.getBinariesDir() != null) {
-            fea_m2 = config.getBinariesDir().resolve(FEA_M2).toAbsolutePath().toString();
+            feaM2 = config.getBinariesDir().resolve(FEA_M2).toAbsolutePath().toString();
         } else {
-            fea_m2 = FEA_M2;
+            feaM2 = FEA_M2;
         }
         return new SimpleCommandBuilder()
                 .id("fea_m2")
-                .program(fea_m2)
+                .program(feaM2)
                 .args(M1OUTPUTFILENAME,
                         M2OUTPUTFILENAME,
                         Command.EXECUTION_NUMBER_PATTERN,
@@ -242,11 +244,11 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
     }
 
     private Command createMatm2reduceCmd() {
-        String fea_m2_reduce;
+        String feaM2Reduce;
         if (config.getBinariesDir() != null) {
-            fea_m2_reduce = config.getBinariesDir().resolve(FEA_M2_REDUCE).toAbsolutePath().toString();
+            feaM2Reduce = config.getBinariesDir().resolve(FEA_M2_REDUCE).toAbsolutePath().toString();
         } else {
-            fea_m2_reduce = FEA_M2_REDUCE;
+            feaM2Reduce = FEA_M2_REDUCE;
         }
         List<InputFile> m2partsfiles = new ArrayList<InputFile>(parameters.getnClusters() + 1);
         m2partsfiles.add(new InputFile(M1OUTPUTFILENAME));
@@ -255,7 +257,7 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
         }
         return new SimpleCommandBuilder()
                 .id("fea_m2_reduce")
-                .program(fea_m2_reduce)
+                .program(feaM2Reduce)
                 .args(M1OUTPUTFILENAME, ".",
                         M2PATHPREFIX,
                         "" + parameters.getnClusters(),
@@ -277,11 +279,11 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
     }
 
     private Command createMatm3Cmd() {
-        String fea_m3;
+        String feaM3;
         if (config.getBinariesDir() != null) {
-            fea_m3 = config.getBinariesDir().resolve(FEA_M3_SAMPLING).toAbsolutePath().toString();
+            feaM3 = config.getBinariesDir().resolve(FEA_M3_SAMPLING).toAbsolutePath().toString();
         } else {
-            fea_m3 = FEA_M3_SAMPLING;
+            feaM3 = FEA_M3_SAMPLING;
         }
         List<String> args1 = new ArrayList<>();
         args1.add(FEAOUTPUTFILENAME);
@@ -294,7 +296,7 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
 
         return new SimpleCommandBuilder()
                 .id(FEA_M3_SAMPLING)
-                .program(fea_m3)
+                .program(feaM3)
                 .args(args1)
                 .inputFiles(new InputFile(FEAOUTPUTFILENAME))
                 .outputFiles(new OutputFile(FEASAMPLERFILENAME))

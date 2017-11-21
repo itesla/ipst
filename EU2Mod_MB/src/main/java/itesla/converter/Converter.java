@@ -56,10 +56,10 @@ public class Converter {
     private ModelicaModel EUparser() throws IOException {
         String sep = ";";
         String line;
-        Hashtable<Integer, Element> CT = new Hashtable<Integer, Element>(); //correspondance table
+        Hashtable<Integer, Element> correspondenceTable = new Hashtable<Integer, Element>(); //correspondance table
 
-        String[] CTline;
-        Integer CTidEu;
+        String[] lineCT;
+        Integer idEuInLineCT;
         String nameEu;
         String nameModelica;
         Integer nInputPins;
@@ -68,23 +68,23 @@ public class Converter {
         BufferedReader bufferCT = new BufferedReader(reader);
         line = bufferCT.readLine(); //reads headings
         while ((line = bufferCT.readLine()) != null) {
-            CTline = line.split(sep);
-            CTidEu = Integer.parseInt(CTline[0]);
-            nameEu = CTline[1];
+            lineCT = line.split(sep);
+            idEuInLineCT = Integer.parseInt(lineCT[0]);
+            nameEu = lineCT[1];
 
-            if (CTline.length >= 3) {
-                nInputPins = Integer.parseInt(CTline[2]);
-                nameModelica = CTline[3].trim();
+            if (lineCT.length >= 3) {
+                nInputPins = Integer.parseInt(lineCT[2]);
+                nameModelica = lineCT[3].trim();
             } else {
                 nameModelica = "";
                 nInputPins = 0;
             }
             param = new ArrayList<String>();
-            for (int i = 4; i < CTline.length; ++i) {
-                param.add(CTline[i]);
+            for (int i = 4; i < lineCT.length; ++i) {
+                param.add(lineCT[i]);
             }
-            Element elt = new Element(CTidEu, nameEu, nameModelica, param, nInputPins);
-            CT.put(CTidEu, elt);
+            Element elt = new Element(idEuInLineCT, nameEu, nameModelica, param, nInputPins);
+            correspondenceTable.put(idEuInLineCT, elt);
         }
         bufferCT.close();
 
@@ -95,34 +95,34 @@ public class Converter {
         } else {
             inputFile = new File(pathfrm);
         }
-        EU_MBparser EUfile = new EU_MBparser(inputFile);
-        Integer nBlocks = EUfile.getnBlocks();
-        ModelicaModel MO;
+        EU_MBparser euFile = new EU_MBparser(inputFile);
+        Integer nBlocks = euFile.getnBlocks();
+        ModelicaModel modelicaModel;
         File parFile = new File(pathPar);
         ParParser parData = new ParParser(parFile);
         if (nBlocks == 0) {
             isEmpty = true;
-            MO = new ModelicaModel(pathfrm, parData);
+            modelicaModel = new ModelicaModel(pathfrm, parData);
         } else {
-            String[][] paramEu = EUfile.getParamEU();
-            Integer[] GraphicalNumber = EUfile.getGraphicalNumber();
-            String[][] entries = EUfile.getEntries();
-            String[] Blocksoutput = EUfile.getBlocksoutput();
-            Integer[] idEu = EUfile.getIdEu();
-            Integer[][] link = EUfile.getLink();
-            Integer nLinks = EUfile.getnLinks();
+            String[][] paramEu = euFile.getParamEU();
+            Integer[] graphicalNumber = euFile.getGraphicalNumber();
+            String[][] entries = euFile.getEntries();
+            String[] blocksoutput = euFile.getBlocksoutput();
+            Integer[] idEu = euFile.getIdEu();
+            Integer[][] link = euFile.getLink();
+            Integer nLinks = euFile.getnLinks();
 
             //creation of the n blocks
             //counter of the blocks of the same type
-            Block[] Macroblock = new Block[nBlocks];
-            Hashtable<Integer, Integer> CountIdBlock = new Hashtable<Integer, Integer>();
+            Block[] macroblock = new Block[nBlocks];
+            Hashtable<Integer, Integer> countIdBlock = new Hashtable<Integer, Integer>();
             for (int i = 0; i < nBlocks; i++) {
                 String[] paramBlock = new String[8];
                 String[] entriesBlock = new String[5];
-                if (CountIdBlock.containsKey(idEu[i])) {
-                    CountIdBlock.put(idEu[i], CountIdBlock.get(idEu[i]) + 1);
+                if (countIdBlock.containsKey(idEu[i])) {
+                    countIdBlock.put(idEu[i], countIdBlock.get(idEu[i]) + 1);
                 } else {
-                    CountIdBlock.put(idEu[i], 1);
+                    countIdBlock.put(idEu[i], 1);
                 }
                 for (int j = 0; j < 8; j++) {
                     paramBlock[j] = paramEu[j][i];
@@ -130,11 +130,11 @@ public class Converter {
                 for (int j = 0; j < 5; j++) {
                     entriesBlock[j] = entries[j][i];
                 }
-                Macroblock[i] = new Block(paramBlock, entriesBlock, Blocksoutput[i], GraphicalNumber[i], idEu[i], CountIdBlock.get(idEu[i]), CT.get(idEu[i]).nInputPins);
+                macroblock[i] = new Block(paramBlock, entriesBlock, blocksoutput[i], graphicalNumber[i], idEu[i], countIdBlock.get(idEu[i]), correspondenceTable.get(idEu[i]).nInputPins);
             }
-            MO = new ModelicaModel(Macroblock, link, pathfrm, CT, parData);
+            modelicaModel = new ModelicaModel(macroblock, link, pathfrm, correspondenceTable, parData);
         }
-        return MO;
+        return modelicaModel;
     }
 
     public void convert2MO() throws IOException {
