@@ -123,7 +123,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
     @Override
     public String getName() {
-        return "Quinary DDB";
+        return "DDB";
     }
 
     @Override
@@ -1002,8 +1002,14 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                 }
             }
 
-            //adding svc to the equipment list
-            network.getStaticVarCompensators().forEach(svc -> cimIds.add(svc.getId()));
+            //collects SVCs ids, filtering out the regulationMode OFF cases
+            for (StaticVarCompensator svc : Identifiables.sort(network.getStaticVarCompensators())) {
+                if (svc.getRegulationMode() != StaticVarCompensator.RegulationMode.OFF) {
+                    cimIds.add(svc.getId());
+                } else {
+                    log.warn("skipped svc: network: {}, SVC: {}, regulationMode: {}", network.getId(), svc.getId(), svc.getRegulationMode());
+                }
+            }
 
             //add vscConverter stations to the equipment list
             for (HvdcLine hvdcLine : Identifiables.sort(network.getHvdcLines())) {
@@ -1150,7 +1156,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                     substMachineName = iidm2eurostagId.get(eq.getCimId());
                 }
                 try {
-                    dumpData(internal, eurostagSim, ddbmanager, dtaOutStream, substMachineName, iidm2eurostagId, network, eq, cimId);
+                    dumpData(internal, eurostagSim, ddbmanager, dtaOutStream, substMachineName, iidm2eurostagId, network, eq);
                 } catch (Exception e) {
                     log.error("could not write macro.lis file, due to " + e.getMessage());
                 }
@@ -1380,7 +1386,11 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         }
     }
 
-    public void dumpData(Internal inst, SimulatorInst simInst, DDBManager ddbmanager, PrintStream out, String machineName, Map<String, String> iidm2eurostagId, Network network, Equipment eq, String eqCimId) throws IOException {
+    public void processEquipmentData(Network network, String equipmentId, EurostagRecord eurostagRecord) {
+        //default behaviour: inputs are OK
+    };
+
+    public void dumpData(Internal inst, SimulatorInst simInst, DDBManager ddbmanager, PrintStream out, String machineName, Map<String, String> iidm2eurostagId, Network network, Equipment eq) throws IOException {
         if (inst == null) {
             throw new RuntimeException("Internal must be not null");
         }
@@ -1389,6 +1399,12 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         }
         if (ddbmanager == null) {
             throw new RuntimeException("DDBManager must be not null");
+        }
+        if (network == null) {
+            throw new RuntimeException("network must be not null");
+        }
+        if (eq == null) {
+            throw new RuntimeException("Equipment must be not null");
         }
         if (simInst.getSimulator() != Simulator.EUROSTAG) {
             throw new RuntimeException("Simulator must be EUROSTAG");
@@ -1663,6 +1679,8 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         }
 
         EurostagRecord eRecord = new EurostagRecord(zoneTypeName, zm);
+        processEquipmentData(network, eq.getCimId(), eRecord);
+
         try {
             // RST export ?
             if (configExport.getExportRST()
@@ -2149,7 +2167,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                                 log.warn("- internal with nativeId: " + nativeId + " not found !");
                             } else {
                                 try {
-                                    dumpData(internal, eurostagSim, ddbmanager, dtaOutStream, acmcName, iidm2eurostagId, network, eq, acmcName);
+                                    dumpData(internal, eurostagSim, ddbmanager, dtaOutStream, acmcName, iidm2eurostagId, network, eq);
                                 } catch (Exception e) {
                                     log.error("could not write macro.lis file, due to " + e.getMessage());
                                 }
