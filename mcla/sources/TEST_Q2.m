@@ -10,7 +10,7 @@
 
 %% module1
 
-m1_ifile='histoData.mat';%'input_homothetic2'; %'feanalyzerinput.mat';%'input_homothetic'; %'feanalyzerinput.mat';%'input_homothetic'; %'feanalyzerinput.mat';%'input_homothetic'; %'feanalyzerinput.mat';%'feanalyzerinputNEW2.mat';%'fea_input_7busItesla.mat';%'input_EU2.mat';%'feaiteslaFRBE_tutti.mat';%'feanalyzerinput2016';%'feaanalyzeFEB2013';%'feanalyzerinputNEW_NAT';%'feaFRtestMULTIUNI_T2';%'feaiteslaFRBE.mat';%''feaiteslaFRBE_tutti.mat';%'fea_input_7busItesla.mat';%'feaiteslaFRBE_tutti.mat';%'feaiteslaFRBE_tutti.mat';%'feaiteslaFRBE.mat';%'fea_input_7busItesla.mat';%'feanalyzerinput.mat';%'fea_input_7busItesla.mat';%'feanalyzerinput.mat';%'fea_input_7busItesla.mat';%'feaanalyzeinput_400.mat';%'fea_input_7busItesla.mat';%'feaanalyzeinput_400.mat';%'fea_input_7busItesla.mat';%'feanalyzerinput.mat';%'fea_input_7busItesla.mat';%'feanalyzerinput.mat';%% name of the file with forecast data fea_input_7busItesla = 7 bus grid; feanalyzerinput = French grid (latest version from Quinary)
+m1_ifile='histoData.mat';%'feanalyzerinput.mat';%'histoData.mat';%'input_homothetic2'; %'feanalyzerinput.mat';%'input_homothetic'; %'feanalyzerinput.mat';%'input_homothetic'; %'feanalyzerinput.mat';%'input_homothetic'; %'feanalyzerinput.mat';%'feanalyzerinputNEW2.mat';%'fea_input_7busItesla.mat';%'input_EU2.mat';%'feaiteslaFRBE_tutti.mat';%'feanalyzerinput2016';%'feaanalyzeFEB2013';%'feanalyzerinputNEW_NAT';%'feaFRtestMULTIUNI_T2';%'feaiteslaFRBE.mat';%''feaiteslaFRBE_tutti.mat';%'fea_input_7busItesla.mat';%'feaiteslaFRBE_tutti.mat';%'feaiteslaFRBE_tutti.mat';%'feaiteslaFRBE.mat';%'fea_input_7busItesla.mat';%'feanalyzerinput.mat';%'fea_input_7busItesla.mat';%'feanalyzerinput.mat';%'fea_input_7busItesla.mat';%'feaanalyzeinput_400.mat';%'fea_input_7busItesla.mat';%'feaanalyzeinput_400.mat';%'fea_input_7busItesla.mat';%'feanalyzerinput.mat';%'fea_input_7busItesla.mat';%'feanalyzerinput.mat';%% name of the file with forecast data fea_input_7busItesla = 7 bus grid; feanalyzerinput = French grid (latest version from Quinary)
 m1_ofile='feam1output_T1.mat';   %% module1 output file name
 ofile_forFPF = 'fea_stats_for_FPF_T1';
 opt_GUI='0'; % if 1= compute variables for GUI, 0 = not compute variables for GUI
@@ -47,7 +47,7 @@ thresGUI='0.95'; % threshold of vlaue of negative correlation below which the co
 nations = 'all'; % parameter indicates which countries undergo a FEA using histo data. the others are treated as indipendent areas with Gaussian forecast error models. if string = 'all' all the coutnries with available histo data are treated with a unique normal FEA
 %%% new parameters updated Dec 19, 2016
 isuniform = '0'; % 1 = uniform distribution for forecast error model for all nations
-isdeterministic = '0'; % 0 = stochastic sampling; 1 = deterministic variation from basecase
+isdeterministic = '1'; % 0 = stochastic sampling; 1 = deterministic variation from basecase
 Pload_deterministic ='0.02'; % pu value of std dev for the load P, 
 Qload_deterministic ='0.03'; % pu value of std dev for the load Q 
 % general forecast error model with uniform distribution
@@ -60,7 +60,7 @@ modo_invs = '2'; %%% inversion mode for forecast correlation matrix: 1 = adding 
 unimodal_separate = '1'; % 1 = separate analysis uni e multimodals, 0 = all variables as one set
 full_dependence = '1'; % 0 = each injection treated as a pair of vars (SN,FO) and each SN is conditioned only by its own FO, 1 = use of full correlation matrixes (conventional approach)
 %%%% additional parameters added Sept-Oct 2017
-homothetic = '1'; % option to disaggregate the country sample error on the loads of the corresponding nation: 0 = disactivated, 1 = activated.
+homothetic = '0'; % option to disaggregate the country sample error on the loads of the corresponding nation: 0 = disactivated, 1 = activated.
 opt_FPF='0'; % 1 = compute data for FPF, 0= deactivated computation
 
 FEA_MODULE1_HELPER(m1_ifile, m1_ofile,nations,ofile_forFPF,ofileGUI,IRs, Ks, s_flagPQ,s_method,tolvar,Nmin_obs_fract,Nmin_nz_fract,Nmin_obs_interv,outliers,koutlier,imputation_meth,Ngaussians,percentile_historical,check_module0,tolerance,iterations,epsilo,conditional_sampling,histo_estremeQ,thresGUI,unimodal_separate,modo_invs,isdeterministic,isuniform,opt_GUI,opt_FPF,homothetic);
@@ -86,10 +86,10 @@ uncond_nsamples_s='500';
 SAMPLING_MODULE3_HELPER(m2_ofile, m3_ofile,uncond_nsamples_s,isdeterministic, '1');
 
 %%%%%% MCLA SAMPLER
-mcla_ifile='mcsamplerinput_20170201_0030_FO3_FR0.mat';%'mcsamplerinput_20130101_0930_FO2_FR0_8205249616537077299_nat';%'mcsamplerinput_7busItesla';%'mcsamplerinput_20130101_0030_FO2_FR0_1536860294977284421';%'mcsamplerinput_7busItesla';%'mcsamplerinput_20130227_0230_FO3_FR0';%'mcsamplerinput_7busItesla';%'mcsamplerinput_20130227_0230_FO3_FR0';%'mcsamplerinput_7busItesla';%'mcsamplerinput_20130227_0230_FO3_FR0';%'mcsamplerinput_7busItesla';%'mcsamplerinput_20130227_0230_FO3_FR0';%'mcsamplerinput_20130225_0830_FO1_FR0_DACF';%'mcsamplerinput_20130115_1830_FO2_FR0';%'mcsamplerinput_20130227_0730_FO3_FR0.mat';%'mcsamplerinput_20130115_1830_FO2_FR0';%'mcsamplerinput_20130225_0830_FO1_FR0_DACF';%'mcsamplerinput_20130227_0230_FO3_FR0';%'mcsamplerinput_20130225_0830_FO1_FR0_DACF_4986881446631756559';%'mcsamplerinput_20130227_0230_FO3_FR0';%'mcsamplerinput_20130225_0830_FO1_FR0_DACF_4986881446631756559';%'mcsamplerinput_20130115_1830_FO2_FR0';%'mcsamplerinput_20130225_0830_FO1_FR0_DACF_4986881446631756559';%'mcsamplerinput_20130115_1830_FO2_FR0';%'mcsamplerinput_7busItesla';%'mcsamplerinput_20130115_1830_FO2_FR0';%'mcsamplerinput_7busItesla';%'mcsamplerinput_20130115_1830_FO2_FR0';%'mcsamplerinput_7busItesla';%'mcsamplerinput_20130115_1830_FO2_FR0';%'mcsamplerinput_7busItesla';%'mcsamplerinput_20130115_1830_FO2_FR0';%'mcsamplerinput_20130115_1830_FO2_FR0';%'mcsamplerinput_7busItesla';%
+mcla_ifile='mcsamplerinput_20130101_0930_FO2_FR0_8205249616537077299_nat';'mcsamplerinput_20170201_0030_FO3_FR0.mat';%'mcsamplerinput_20130101_0930_FO2_FR0_8205249616537077299_nat';%'mcsamplerinput_7busItesla';%'mcsamplerinput_20130101_0030_FO2_FR0_1536860294977284421';%'mcsamplerinput_7busItesla';%'mcsamplerinput_20130227_0230_FO3_FR0';%'mcsamplerinput_7busItesla';%'mcsamplerinput_20130227_0230_FO3_FR0';%'mcsamplerinput_7busItesla';%'mcsamplerinput_20130227_0230_FO3_FR0';%'mcsamplerinput_7busItesla';%'mcsamplerinput_20130227_0230_FO3_FR0';%'mcsamplerinput_20130225_0830_FO1_FR0_DACF';%'mcsamplerinput_20130115_1830_FO2_FR0';%'mcsamplerinput_20130227_0730_FO3_FR0.mat';%'mcsamplerinput_20130115_1830_FO2_FR0';%'mcsamplerinput_20130225_0830_FO1_FR0_DACF';%'mcsamplerinput_20130227_0230_FO3_FR0';%'mcsamplerinput_20130225_0830_FO1_FR0_DACF_4986881446631756559';%'mcsamplerinput_20130227_0230_FO3_FR0';%'mcsamplerinput_20130225_0830_FO1_FR0_DACF_4986881446631756559';%'mcsamplerinput_20130115_1830_FO2_FR0';%'mcsamplerinput_20130225_0830_FO1_FR0_DACF_4986881446631756559';%'mcsamplerinput_20130115_1830_FO2_FR0';%'mcsamplerinput_7busItesla';%'mcsamplerinput_20130115_1830_FO2_FR0';%'mcsamplerinput_7busItesla';%'mcsamplerinput_20130115_1830_FO2_FR0';%'mcsamplerinput_7busItesla';%'mcsamplerinput_20130115_1830_FO2_FR0';%'mcsamplerinput_7busItesla';%'mcsamplerinput_20130115_1830_FO2_FR0';%'mcsamplerinput_20130115_1830_FO2_FR0';%'mcsamplerinput_7busItesla';%
 mcla_ofile='mcsampleroutput_T1x.mat';
 nsamples_s='300';
-MCLA_HELPER(mcla_ifile,m3_ofile, mcla_ofile,nsamples_s,option_sign,centering,isdeterministic,full_dependence,homothetic);
+MCLA_HELPER(mcla_ifile,m3_ofile, mcla_ofile,nsamples_s,option_sign,centering,full_dependence);
 
 %%%%% FPF HELPER
 fpfc_ofile='fea_stats_cond_for_T1';

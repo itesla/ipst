@@ -80,6 +80,8 @@ try
         moutput(iout).mversion=out(iout).mversion;
         moutput(iout).mod_gaussian=out(iout).mod_gaussian;
         moutput(iout).mod_unif=out(iout).mod_unif;
+        moutput(iout).mod_homoth=out(iout).mod_homoth;
+        moutput(iout).mod_deterministic=out(iout).mod_deterministic;
         moutput(iout).conditional_sampling=out(iout).conditional_sampling;
         totmoutput.out(iout) = moutput(iout);
     end

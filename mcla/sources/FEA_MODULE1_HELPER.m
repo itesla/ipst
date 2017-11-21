@@ -501,6 +501,8 @@ try
         moutput(1).module1=module1;
         moutput(1).modality_gaussian=0;
             moutput(1).modality_uniform=0;
+            moutput(1).modality_deterministic=isdeterministic;
+            moutput(1).modality_homoth=homoth;
         moutput(1).dati_condUNI = dati_condUNI;
         moutput(1).dati_condMULTI = dati_condMULTI;
         moutput(1).dati_Q = dati_Q;
@@ -570,6 +572,8 @@ try
              moutput(k_norm+ino).nat_ID=nat_ID;
             moutput(k_norm+ino).modality_gaussian=1;
             moutput(k_norm+ino).modality_uniform=0;
+             moutput(k_norm+ino).modality_deterministic=isdeterministic;
+             moutput(k_norm+ino).modality_homoth=homoth;
             moutput(k_norm+ino).flagPQ=flagPQ;
             moutput(k_norm+ino).method=method;
             moutput(k_norm+ino).module1=module1;
@@ -645,6 +649,8 @@ try
              moutput(k_norm+ino).nat_ID=nat_ID;
             moutput(k_norm+ino).modality_gaussian=0;
             moutput(k_norm+ino).modality_uniform=1;
+            moutput(k_norm+ino).modality_deterministic=isdeterministic;
+             moutput(k_norm+ino).modality_homoth=homoth;
             moutput(k_norm+ino).flagPQ=flagPQ;
             moutput(k_norm+ino).method=method;
             moutput(k_norm+ino).module1=module1;
@@ -678,6 +684,8 @@ try
             moutput(1).nat_ID=[];
             moutput(1).modality_gaussian=0;
             moutput(1).modality_uniform=0;
+             moutput(1).modality_deterministic=isdeterministic;
+              moutput(1).modality_homoth=homoth;
             moutput(1).flagPQ=0;
             moutput(1).method=method;
             moutput(1).module1=module1;

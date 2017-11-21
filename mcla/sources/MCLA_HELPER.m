@@ -18,7 +18,7 @@
 % UPDATE Sept - OCt 2017:
 % added the homothetic disaggregation of crossborder variables onto the
 % loads of each nation
-function exitcode=MCLA_HELPER(m1file,m3file, ofile, s_scenarios,option_sign,centerings,isdeterministics,full_deps,homoths)
+function exitcode=MCLA_HELPER(m1file,m3file, ofile, s_scenarios,option_sign,centerings,full_deps)
 close all;
 mversion='1.8.2';
 disp(sprintf('wp5 - MCLA - version: %s', mversion));
@@ -29,7 +29,6 @@ disp(sprintf(' scenarios:  %s',s_scenarios));
 disp(sprintf(' option_sign:  %s',option_sign));
 disp(sprintf(' centering:  %s', centerings));
 disp(sprintf(' full correlation in Gaussian cond. sampling:  %s', full_deps));
-disp(sprintf(' omothetic disaggregation of country error on loads:  %s', homoths));
 
 moutput.errmsg='Ok';
 try
@@ -41,8 +40,8 @@ try
     scenarios=str2double(s_scenarios);
     opt_sign = str2double(option_sign);
     centering = str2double(centerings);
-    isdeterministic = str2double(isdeterministics);
-    homoth = str2num(homoths);
+    isdeterministic = out(1).mod_deterministic;
+    homoth = out(1).mod_homoth;
      full_dep = str2double(full_deps);
     %if seed is not specified, 'shuffle'  on current platform time    
     
