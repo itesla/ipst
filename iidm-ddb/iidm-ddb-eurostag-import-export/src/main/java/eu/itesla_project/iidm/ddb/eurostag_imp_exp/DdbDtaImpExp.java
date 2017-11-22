@@ -1628,12 +1628,12 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                 ModelTemplate eqModelTemplate = ddbmanager.findModelTemplate(eq, simInst);
                 //Converter model: fixes DDB coupling parameters with actual ids
                 if (eqModelTemplate.getTypeName().equals("M50")) {
-                    log.debug("Converter id: {}, machine name: {} original macrobloc data: {}", eqCimId, machineName, zm);
+                    log.debug("Converter id: {}, machine name: {} original macrobloc data: {}", eq.getCimId(), machineName, zm);
                     //from eqCimId, find the other vscConverter id, other side of the hvdc line
                     String eqCimId2 = network.getHvdcLineStream()
-                            .filter(hvdcLine -> hvdcLine.getConverterStation1().getId().equals(eqCimId) || hvdcLine.getConverterStation2().getId().equals(eqCimId))
+                            .filter(hvdcLine -> hvdcLine.getConverterStation1().getId().equals(eq.getCimId()) || hvdcLine.getConverterStation2().getId().equals(eq.getCimId()))
                             .findFirst()
-                            .map(hvdcLine -> hvdcLine.getConverterStation1().getId().equals(eqCimId) ? hvdcLine.getConverterStation2().getId() : hvdcLine.getConverterStation1().getId())
+                            .map(hvdcLine -> hvdcLine.getConverterStation1().getId().equals(eq.getCimId()) ? hvdcLine.getConverterStation2().getId() : hvdcLine.getConverterStation1().getId())
                             .orElse(null);
 
                     String machineName2 = iidm2eurostagId.get(eqCimId2);
@@ -1660,7 +1660,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                         }
 
                     }
-                    log.debug("Converter id: {}, machine name: {} fixed macrobloc data: {}", eqCimId, machineName, zm);
+                    log.debug("Converter id: {}, machine name: {} fixed macrobloc data: {}", eq.getCimId(), machineName, zm);
                 } else {
                     zm.put("coupling.par1", null);
                     zm.put("coupling.par2", null);
