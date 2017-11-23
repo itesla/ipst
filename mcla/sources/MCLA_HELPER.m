@@ -28,7 +28,6 @@ disp(sprintf(' ofile:  %s', ofile));
 disp(sprintf(' scenarios:  %s',s_scenarios));
 disp(sprintf(' option_sign:  %s',option_sign));
 disp(sprintf(' centering:  %s', centerings));
-disp(sprintf(' isdeterministic:  %s', isdeterministics));
 disp(sprintf(' full correlation in Gaussian cond. sampling:  %s', full_deps));
 
 moutput.errmsg='Ok';
@@ -47,6 +46,8 @@ try
     %if seed is not specified, 'shuffle'  on current platform time    
     
 disp(sprintf('flagPQ:  %u', out(1).flagPQ));
+disp(sprintf('isdeterministic:  %u', out(1).mod_deterministic));
+disp(sprintf('homoth:  %u', out(1).mod_homoth));
 disp(['preprocessing: type_x, etc.'])
 tic;
 % keyboard

@@ -200,9 +200,7 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
         args1.add("" + nSamples);
         args1.add("" + config.getOptionSign());
         args1.add("" + config.getCentering());
-        args1.add("" + config.getIsdeterministic()); //added in v1.8.1
         args1.add("" + config.getFull_dependence()); //added in v1.8.1
-        args1.add("" + config.getHomothetic()); //added in v1.8.2
 
         if (config.isCopyFEFile()) {
             return new SimpleCommandBuilder()
