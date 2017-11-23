@@ -9,7 +9,6 @@ package eu.itesla_project.online.mpi;
 import com.powsybl.computation.ComputationManager;
 import com.powsybl.computation.mpi.MpiComputationManager;
 import com.powsybl.computation.mpi.MpiExecutorContext;
-import com.powsybl.computation.mpi.MpiStatistics;
 import com.powsybl.computation.mpi.MpiStatisticsFactory;
 import com.powsybl.commons.concurrent.CleanableExecutors;
 import eu.itesla_project.modules.online.OnlineConfig;
@@ -84,8 +83,8 @@ public final class Master {
             ExecutorService executorService = CleanableExecutors.newCachedThreadPool();
             try {
                 MpiStatisticsFactory statisticsFactory = statisticsFactoryClass.asSubclass(MpiStatisticsFactory.class).newInstance();
-                MpiStatistics statistics = statisticsFactory.create(statisticsDbDir, statisticsDbName);
-                try (ComputationManager computationManager = new MpiComputationManager(tmpDir, statistics, mpiExecutorContext, coresPerRank, false, stdOutArchive)) {
+                try (ComputationManager computationManager = new MpiComputationManager(tmpDir, statisticsFactory, statisticsDbDir,
+                        statisticsDbName, mpiExecutorContext, coresPerRank, false, stdOutArchive)) {
                     OnlineConfig config = OnlineConfig.load();
                     try (LocalOnlineApplication application = new LocalOnlineApplication(config, computationManager, scheduledExecutorService, executorService, true)) {
                         switch (mode) {

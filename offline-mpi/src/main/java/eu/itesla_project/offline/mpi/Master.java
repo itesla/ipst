@@ -10,7 +10,6 @@ import com.google.common.base.Joiner;
 import com.powsybl.computation.ComputationManager;
 import com.powsybl.computation.mpi.MpiComputationManager;
 import com.powsybl.computation.mpi.MpiExecutorContext;
-import com.powsybl.computation.mpi.MpiStatistics;
 import com.powsybl.computation.mpi.MpiStatisticsFactory;
 import com.powsybl.commons.concurrent.CleanableExecutors;
 
@@ -131,36 +130,35 @@ public final class Master {
             ExecutorService offlineExecutorService = CleanableExecutors.newSizeLimitedThreadPool("OFFLINE_POOL", 100);
             try {
                 MpiStatisticsFactory statisticsFactory = statisticsFactoryClass.asSubclass(MpiStatisticsFactory.class).newInstance();
-                try (MpiStatistics statistics = statisticsFactory.create(statisticsDbDir, statisticsDbName)) {
-                    try (ComputationManager computationManager = new MpiComputationManager(tmpDir, statistics, mpiExecutorContext, coresPerRank, false, stdOutArchive)) {
-                        OfflineConfig config = OfflineConfig.load();
-                        try (LocalOfflineApplication application = new LocalOfflineApplication(config, computationManager, simulationDbName,
-                                rulesDbName, metricsDbName, scheduledExecutorService,
-                                offlineExecutorService)) {
-                            switch (mode) {
-                                case ui:
-                                    application.await();
-                                    break;
-
-                                case simulations: {
-                                    if (workflowId == null) {
-                                        workflowId = application.createWorkflow(null, OfflineWorkflowCreationParameters.load());
-                                    }
-                                    application.startWorkflowAndWait(workflowId, OfflineWorkflowStartParameters.load());
-                                }
+                try (ComputationManager computationManager = new MpiComputationManager(tmpDir, statisticsFactory, statisticsDbDir, statisticsDbName,
+                        mpiExecutorContext, coresPerRank, false, stdOutArchive)) {
+                    OfflineConfig config = OfflineConfig.load();
+                    try (LocalOfflineApplication application = new LocalOfflineApplication(config, computationManager, simulationDbName,
+                            rulesDbName, metricsDbName, scheduledExecutorService,
+                            offlineExecutorService)) {
+                        switch (mode) {
+                            case ui:
+                                application.await();
                                 break;
 
-                                case rules: {
-                                    if (workflowId == null) {
-                                        throw new RuntimeException("Workflow '" + workflowId + "' not found");
-                                    }
-                                    application.computeSecurityRulesAndWait(workflowId);
+                            case simulations: {
+                                if (workflowId == null) {
+                                    workflowId = application.createWorkflow(null, OfflineWorkflowCreationParameters.load());
                                 }
-                                break;
-
-                                default:
-                                    throw new IllegalArgumentException("Invalid mode " + mode);
+                                application.startWorkflowAndWait(workflowId, OfflineWorkflowStartParameters.load());
                             }
+                            break;
+
+                            case rules: {
+                                if (workflowId == null) {
+                                    throw new RuntimeException("Workflow '" + workflowId + "' not found");
+                                }
+                                application.computeSecurityRulesAndWait(workflowId);
+                            }
+                            break;
+
+                            default:
+                                throw new IllegalArgumentException("Invalid mode " + mode);
                         }
                     }
                 }
