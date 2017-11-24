@@ -207,7 +207,7 @@ public class HistoDataServiceImpl implements HistoDataService {
     public DataSet getForecastDiff(HistoDataSource datasource, QueryParams query) {
         Objects.requireNonNull(datasource);
         Objects.requireNonNull(query);
-
+        log.info("getForecastDiff " + query);
         DataSet result = new DataSet();
 
         BTreeMap<HistoKey, Map<String, Object>> netMap = datasource.getMap();
@@ -244,6 +244,7 @@ public class HistoDataServiceImpl implements HistoDataService {
 
     @Override
     public DataSet getStats(HistoDataSource datasource, QueryParams query) {
+        log.info("getStats " + query);
         DataSet ds = getData(datasource, query);
         DataSet statset = new DataSet();
         List<Attribute> headers = new ArrayList(ds.getHeaders());
