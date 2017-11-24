@@ -1,11 +1,13 @@
-#HistoDB server
+# HistoDB server
 
-##Installation 
+## Installation 
 Put the histodb-server-<VERSION>-exec.jar in the designated folder.
+
 Provide a valid SSL certificate (see key* configuration parameters)
 
-##Configuration
+## Configuration
 Add a histodb-server section to the platform configuration setting the following parameters (example for xml configuration):
+
 
 <histodb-server>
         <persistent>true</persistent>
@@ -23,6 +25,7 @@ Add a histodb-server section to the platform configuration setting the following
 </histodb-server>
 
 
-##Startup
+## Startup
 to start the server execute the following command:
+
 java -jar histodb-server-<VERSION>-exec.jar
