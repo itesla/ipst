@@ -84,7 +84,7 @@ public class QueryParams {
         if (cols == null && range == null) {
             range = new int[2];
             range[0] = 0;
-            range[1] = 100;
+            range[1] = 99;
         }
 
         this.columnStart = range != null ? range[0] : -1;
