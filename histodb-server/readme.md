@@ -6,23 +6,21 @@ Put the histodb-server-<VERSION>-exec.jar in the designated folder.
 Provide a valid SSL certificate (see key* configuration parameters)
 
 ## Configuration
-Add a histodb-server section to the platform configuration setting the following parameters (example for xml configuration):
+Add a "histodb-server" section to the platform configuration setting the following parameters :
 
+	- persistent : true/false
+    - basedir : path to mapdb storage folder
+	- host : server address
+	- port : listening port
+	- username : user login
+	- password : user password
+	- keyStoreType : SSL key store type (i.e. JKS)
+	- keyStore : path of keystore file
+	- keyStorePassword : keystore password
+	- keyAlias: key alias
+	- separator : csv separator char
+	- locale : locale (i.e. fr-FR)	
 
-<histodb-server>
-        <persistent>true</persistent>
-        <basedir>/histodb/mapdb</basedir>
-		<host>localhost</host>
-		<port>8443</port>
-		<username>user</username>
-		<password>password</password>		
-		<keyStoreType>JKS</keyStoreType>
-		<keyStore>/histodb/histodb.jks</keyStore>
-		<keyStorePassword>keypasswd</keyStorePassword>
-		<keyAlias>histokey</keyAlias>
-		<separator>;</separator>
-		<locale>fr-FR</locale>		
-</histodb-server>
 
 
 ## Startup
