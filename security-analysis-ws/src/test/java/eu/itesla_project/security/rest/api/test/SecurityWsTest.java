@@ -10,7 +10,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.InputStream;
 import java.io.ByteArrayInputStream;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,9 +28,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.powsybl.iidm.network.Network;
+import com.powsybl.security.LimitViolationFilter;
 import com.powsybl.security.LimitViolationsResult;
 import com.powsybl.security.SecurityAnalysisResult;
-import com.powsybl.security.SecurityAnalyzer;
+
+import eu.itesla_project.security.rest.api.impl.FilePart;
 import eu.itesla_project.security.rest.api.impl.SecurityAnalysisServiceImpl;
 
 /**
@@ -45,10 +47,10 @@ public class SecurityWsTest {
     @Before
     public void setUp() {
         SecurityAnalysisResult result = new SecurityAnalysisResult(
-                new LimitViolationsResult(true, Collections.emptyList()), Collections.emptyList());  
-        SecurityAnalyzer analyzer = Mockito.mock(SecurityAnalyzer.class);
-        when(analyzer.analyze(any(String.class), any(InputStream.class), any(InputStream.class))).thenReturn(result);
-        service = new SecurityAnalysisServiceImpl(analyzer);
+                new LimitViolationsResult(true, Collections.emptyList()), Collections.emptyList());
+        service = Mockito.mock(SecurityAnalysisServiceImpl.class);
+        when(service.analyze(any(Network.class), any(FilePart.class), any(LimitViolationFilter.class))).thenReturn(result);
+        when(service.analyze(any(MultipartFormDataInput.class))).thenCallRealMethod();
     }
 
     @Test
@@ -59,7 +61,7 @@ public class SecurityWsTest {
         formValues.put("limit-types", Collections.singletonList(new InputPartImpl("CURRENT", MediaType.TEXT_PLAIN_TYPE)));
 
         MultivaluedMap<String, String> headers = new MultivaluedMapImpl<>();
-        headers.putSingle("Content-Disposition", "filename=" + "case-file.xiidm.gz");
+        headers.putSingle("Content-Disposition", "filename=" + "case-file.xiidm");
 
         formValues.put("case-file",
                 Collections.singletonList(new InputPartImpl(
@@ -86,7 +88,7 @@ public class SecurityWsTest {
         formValues.put("format", Collections.singletonList(new InputPartImpl("CSV", MediaType.TEXT_PLAIN_TYPE)));
         formValues.put("limit-types", Collections.singletonList(new InputPartImpl("CURRENT", MediaType.TEXT_PLAIN_TYPE)));
         MultivaluedMap<String, String> headers = new MultivaluedMapImpl<>();
-        headers.putSingle("Content-Disposition", "filename=" + "case-file.xiidm.gz");
+        headers.putSingle("Content-Disposition", "filename=" + "case-file.xiidm");
 
         formValues.put("case-file",
                 Collections.singletonList(new InputPartImpl(
