@@ -414,6 +414,7 @@ public final class EurostagStepUpTransformerInserter {
 
         // skip generators connected to low level voltage
         if (hvNomV < 25) {
+            LOGGER.warn("skipping generator '{}' ('{}') connected to low level voltage '{}': its nominal voltage {} is lower than 25.0", hvGen.getId(), tg.fileName, hvVl.getId(), hvNomV);
             return InsertionStatus.ALREADY_DONE;
         }
 
