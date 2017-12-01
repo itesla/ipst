@@ -138,7 +138,7 @@ public class MontecarloSamplerConfig {
 
     @Override
     public String toString() {
-        return "MontecarloSamplerConfig [" + ", binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir + ", tmpDir=" + tmpDir
+        return "MontecarloSamplerConfig [" + "binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir + ", tmpDir=" + tmpDir
                 + ", optionSign=" + optionSign + ", centering=" + centering + ", full_dependence=" + full_dependence + ", copyFEFile=" + copyFEFile
                 + ", debug=" + debug + "]";
     }
