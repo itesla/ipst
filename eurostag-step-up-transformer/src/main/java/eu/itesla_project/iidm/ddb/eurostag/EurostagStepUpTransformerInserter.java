@@ -7,6 +7,7 @@
  */
 package eu.itesla_project.iidm.ddb.eurostag;
 
+import com.google.common.collect.Sets;
 import com.powsybl.computation.ComputationManager;
 import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.ReactiveCapabilityCurve.Point;
@@ -595,97 +596,107 @@ public final class EurostagStepUpTransformerInserter {
                     continue;
                 }
 
-                if (twtLs.size() != 1) {
-                    throwsUnexpectedTopology(lvBus, "Found more than one TwoWindingTransformer: " + twtLs.stream().map(TwoWindingsTransformer::getId).collect(Collectors.joining(",")));
-                }
+                Set<String> removedGenerators = Sets.newHashSet();
+                Set<String> removedLoads = Sets.newHashSet();
 
-                TwoWindingsTransformer twt = twtLs.get(0);
+                for (TwoWindingsTransformer twt: twtLs) {
 
-                TransformerModel transformerModel = new TransformerModel(SV.getR(twt),
-                                                                         SV.getX(twt),
-                                                                         SV.getG(twt),
-                                                                         SV.getB(twt),
-                                                                         SV.getRatio(twt));
+                    TransformerModel transformerModel = new TransformerModel(SV.getR(twt),
+                            SV.getX(twt),
+                            SV.getG(twt),
+                            SV.getB(twt),
+                            SV.getRatio(twt));
 
-                VoltageLevel hvVl;
-                Bus hvBus;
-                if (twt.getTerminal1().getBusBreakerView().getConnectableBus() == lvBus) {
-                    hvVl = twt.getTerminal2().getVoltageLevel();
-                    hvBus = twt.getTerminal2().getBusBreakerView().getConnectableBus();
-                } else if (twt.getTerminal2().getBusBreakerView().getConnectableBus() == lvBus) {
-                    hvVl = twt.getTerminal1().getVoltageLevel();
-                    hvBus = twt.getTerminal1().getBusBreakerView().getConnectableBus();
-                } else {
-                    throw new RuntimeException("Unexpected stator substation topology");
-                }
-
-                Function<StateVariable, StateVariable> fct = sv -> {
-                    StateVariable otherSideSv;
-                    if (twt.getTerminal2().getBusBreakerView().getConnectableBus() == lvBus) {
-                        otherSideSv = transformerModel.toSv1(new StateVariable(-sv.p, -sv.q, sv.u, sv.theta));
-                    } else if (twt.getTerminal1().getBusBreakerView().getConnectableBus() == lvBus) {
-                        otherSideSv = transformerModel.toSv2(new StateVariable(-sv.p, -sv.q, sv.u, sv.theta));
+                    VoltageLevel hvVl;
+                    Bus hvBus;
+                    if (twt.getTerminal1().getBusBreakerView().getConnectableBus() == lvBus) {
+                        hvVl = twt.getTerminal2().getVoltageLevel();
+                        hvBus = twt.getTerminal2().getBusBreakerView().getConnectableBus();
+                    } else if (twt.getTerminal2().getBusBreakerView().getConnectableBus() == lvBus) {
+                        hvVl = twt.getTerminal1().getVoltageLevel();
+                        hvBus = twt.getTerminal1().getBusBreakerView().getConnectableBus();
                     } else {
                         throw new RuntimeException("Unexpected stator substation topology");
                     }
-                    if (!Float.isNaN(hvBus.getV())) {
-                        otherSideSv.u = hvBus.getV();
+
+                    Function<StateVariable, StateVariable> fct = sv -> {
+                        StateVariable otherSideSv;
+                        if (twt.getTerminal2().getBusBreakerView().getConnectableBus() == lvBus) {
+                            otherSideSv = transformerModel.toSv1(new StateVariable(-sv.p, -sv.q, sv.u, sv.theta));
+                        } else if (twt.getTerminal1().getBusBreakerView().getConnectableBus() == lvBus) {
+                            otherSideSv = transformerModel.toSv2(new StateVariable(-sv.p, -sv.q, sv.u, sv.theta));
+                        } else {
+                            throw new RuntimeException("Unexpected stator substation topology");
+                        }
+                        if (!Float.isNaN(hvBus.getV())) {
+                            otherSideSv.u = hvBus.getV();
+                        }
+                        if (!Float.isNaN(hvBus.getAngle())) {
+                            otherSideSv.theta = hvBus.getAngle();
+                        }
+                        return otherSideSv;
+                    };
+
+                    for (Generator lvGen : genLs) {
+                        if (!removedGenerators.contains(lvGen.getId())) {
+                            LOGGER.trace("Removing step up transformer '{}' of generator '{}'", twt.getId(), lvGen.getId());
+
+                            boolean connected = twt.getTerminal1().isConnected() && twt.getTerminal2().isConnected() && lvGen.getTerminal().isConnected();
+
+                            StateVariable lvGenSv = new StateVariable();
+                            moveGenerator(lvGen, lvGenSv, hvVl, hvBus, connected, fct, config, twt);
+                            removedGenerators.add(lvGen.getId());
+                        } else {
+                            LOGGER.trace("ALREADY REMOVED step up transformer '{}' of generator '{}'", twt.getId(), lvGen.getId());
+                        }
                     }
-                    if (!Float.isNaN(hvBus.getAngle())) {
-                        otherSideSv.theta = hvBus.getAngle();
+
+                    for (Load aux : auxLs) {
+                        if (!removedLoads.contains(aux.getId())) {
+
+                            float v = lvBus.getV();
+                            if (Float.isNaN(v)) {
+                                v = lvVl.getNominalV();
+                            }
+                            float a = lvBus.getAngle();
+                            if (Float.isNaN(a)) {
+                                a = 0;
+                            }
+
+                            StateVariable hlSvAux = fct.apply(new StateVariable(-aux.getP0(), -aux.getQ0(), v, a));
+
+                            float newP0 = (float) -hlSvAux.p;
+                            float newQ0 = (float) -hlSvAux.q;
+
+                            boolean connected = aux.getTerminal().getBusBreakerView().getBus() != null;
+
+                            LOGGER.trace("Moving auxiliary '{}' to high level: (p: {} -> {}, q:{} -> {})",
+                                    aux.getId(), aux.getP0(), newP0, aux.getQ0(), newQ0);
+
+                            LoadType loadType = aux.getLoadType();
+                            if (loadType != LoadType.FICTITIOUS) {
+                                loadType = LoadType.AUXILIARY;
+                            }
+
+                            aux.remove();
+                            removedLoads.add(aux.getId());
+
+                            hvVl.newLoad()
+                                    .setId(aux.getId())
+                                    .setName(aux.getName())
+                                    .setLoadType(loadType)
+                                    .setBus(connected ? hvBus.getId() : null)
+                                    .setConnectableBus(hvBus.getId())
+                                    .setP0(newP0)
+                                    .setQ0(newQ0)
+                                    .add();
+                        } else {
+                            LOGGER.trace("ALREADY MOVED auxiliary '{}'", aux.getId());
+                        }
                     }
-                    return otherSideSv;
-                };
 
-                for (Generator lvGen : genLs) {
-                    LOGGER.trace("Removing step up transformer '{}' of generator '{}'", twt.getId(), lvGen.getId());
-
-                    boolean connected = twt.getTerminal1().isConnected() && twt.getTerminal2().isConnected() && lvGen.getTerminal().isConnected();
-
-                    StateVariable lvGenSv = new StateVariable();
-                    moveGenerator(lvGen, lvGenSv, hvVl, hvBus, connected, fct, config, twt);
+                    twt.remove();
                 }
-
-                for (Load aux : auxLs) {
-
-                    float v = lvBus.getV();
-                    if (Float.isNaN(v)) {
-                        v = lvVl.getNominalV();
-                    }
-                    float a = lvBus.getAngle();
-                    if (Float.isNaN(a)) {
-                        a = 0;
-                    }
-
-                    StateVariable hlSvAux = fct.apply(new StateVariable(-aux.getP0(), -aux.getQ0(), v, a));
-
-                    float newP0 = (float) -hlSvAux.p;
-                    float newQ0 = (float) -hlSvAux.q;
-
-                    boolean connected = aux.getTerminal().getBusBreakerView().getBus() != null;
-
-                    LOGGER.trace("Moving auxiliary '{}' to high level: (p: {} -> {}, q:{} -> {})",
-                            aux.getId(), aux.getP0(), newP0, aux.getQ0(), newQ0);
-
-                    LoadType loadType = aux.getLoadType();
-                    if (loadType != LoadType.FICTITIOUS) {
-                        loadType = LoadType.AUXILIARY;
-                    }
-
-                    aux.remove();
-
-                    hvVl.newLoad()
-                            .setId(aux.getId())
-                            .setName(aux.getName())
-                            .setLoadType(loadType)
-                            .setBus(connected ? hvBus.getId() : null)
-                            .setConnectableBus(hvBus.getId())
-                            .setP0(newP0)
-                            .setQ0(newQ0)
-                            .add();
-                }
-
-                twt.remove();
             }
         }
     }
