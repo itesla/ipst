@@ -30,7 +30,7 @@ public class DicoEurostagNamingStrategy implements EurostagNamingStrategy {
 
     private BiMap<String, String> dicoMap = HashBiMap.create();
 
-    private final CutEurostagNamingStrategy defaultStrategy = new CutEurostagNamingStrategy();
+    private final CutEurostagNamingStrategy defaultStrategy;
 
     class DicoCsvReader {
 
@@ -91,6 +91,7 @@ public class DicoEurostagNamingStrategy implements EurostagNamingStrategy {
                 }
                 dicoMap.put(iidmId, esgId);
             }
+            defaultStrategy = new CutEurostagNamingStrategy(new HashSet(dicoMap.values()));
         }
     }
 

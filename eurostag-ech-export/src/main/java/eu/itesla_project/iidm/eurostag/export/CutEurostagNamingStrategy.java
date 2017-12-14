@@ -9,6 +9,8 @@ package eu.itesla_project.iidm.eurostag.export;
 
 import com.google.common.base.Strings;
 
+import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,6 +19,18 @@ import java.util.regex.Pattern;
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
 public class CutEurostagNamingStrategy implements EurostagNamingStrategy {
+
+    private Set<String> forbiddenEsgIds;
+
+    public CutEurostagNamingStrategy() {
+        forbiddenEsgIds = Collections.emptySet();
+    }
+
+    public CutEurostagNamingStrategy(final Set<String> forbiddenEsgIds) {
+        Objects.requireNonNull(forbiddenEsgIds);
+        this.forbiddenEsgIds = forbiddenEsgIds;
+    }
+
     @Override
     public void fillDictionary(EurostagDictionary dictionary, NameType nameType, Set<String> iidmIds) {
         EurostagEchExportConfig config = dictionary.getConfig();
@@ -40,7 +54,7 @@ public class CutEurostagNamingStrategy implements EurostagNamingStrategy {
             esgId = esgId.replaceAll(regex, repl);
         }
         int counter = 0;
-        while (dictionary.esgIdExists(esgId)) {
+        while (dictionary.esgIdExists(esgId) || forbiddenEsgIds.contains(esgId)) {
             String counterStr = Integer.toString(counter++);
             if (counterStr.length() > nameType.getLength()) {
                 throw new RuntimeException("Renaming fatal error " + iidmId + " -> " + esgId);
