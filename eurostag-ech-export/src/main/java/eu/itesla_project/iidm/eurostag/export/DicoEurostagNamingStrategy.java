@@ -23,6 +23,11 @@ import java.util.stream.Collectors;
 
 /**
  * @author Christian Biasuzzi <christian.biasuzzi@techrain.it>
+ *
+ * Creates Eurostag identifiers based on an explicit mapping defined in a CSV-like file (first line is skipped):
+ *   IIDM_ID;EUROSTAG_ID
+ *
+ * Falls back on a default strategy if no explicit correspondance is found: see {@link CutEurostagNamingStrategy}.
  */
 public class DicoEurostagNamingStrategy implements EurostagNamingStrategy {
 

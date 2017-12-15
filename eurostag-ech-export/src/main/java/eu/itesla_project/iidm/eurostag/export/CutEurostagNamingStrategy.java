@@ -17,6 +17,11 @@ import java.util.regex.Pattern;
 
 /**
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
+ *
+ *  Creates Eurostag identifiers by replacing forbidden characters from IIDM identifers,
+ *  and cutting down the number of characters to comply with Eurostag naming rules.
+ *
+ *  A set of forbidden IDs may be defined to ensure there is no conflict with previously defined IDs.
  */
 public class CutEurostagNamingStrategy implements EurostagNamingStrategy {
 
