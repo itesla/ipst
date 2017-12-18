@@ -25,6 +25,9 @@ import java.util.stream.Collectors;
 
 /**
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
+ *
+ *     Mapping between IIDM identifiers and Eurostage identifiers.
+ *     That mapping will rely in particular on a {@link EurostagNamingStrategy}.
  */
 public final class EurostagDictionary {
 
