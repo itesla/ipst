@@ -545,8 +545,9 @@ public class EurostagEchExport implements EurostagEchExporter {
         for (HvdcLine hvdcLine : Identifiables.sort(network.getHvdcLines())) {
             Esg8charName hvdcNodeName1 = new Esg8charName(getDCNodeName(hvdcLine.getConverterStation1().getId(), 5, dcNodesEsgNames));
             Esg8charName hvdcNodeName2 = new Esg8charName(getDCNodeName(hvdcLine.getConverterStation2().getId(), 5, dcNodesEsgNames));
-            esgNetwork.addDCNode(new EsgDCNode(new Esg2charName("DC"), hvdcNodeName1, hvdcLine.getNominalV(), 1));
-            esgNetwork.addDCNode(new EsgDCNode(new Esg2charName("DC"), hvdcNodeName2, hvdcLine.getNominalV(), 1));
+            float dcVoltage = EchUtil.getHvdcLineDcVoltage(hvdcLine);
+            esgNetwork.addDCNode(new EsgDCNode(new Esg2charName("DC"), hvdcNodeName1, dcVoltage, 1));
+            esgNetwork.addDCNode(new EsgDCNode(new Esg2charName("DC"), hvdcNodeName2, dcVoltage, 1));
 
             //create a dc link, representing the hvdc line
             esgNetwork.addDCLink(new EsgDCLink(hvdcNodeName1, hvdcNodeName2, '1', hvdcLine.getR(), EsgDCLink.LinkStatus.ON));
@@ -590,7 +591,9 @@ public class EurostagEchExport implements EurostagEchExporter {
 
         float pac = zeroIfNanOrValue(hline.getActivePowerSetpoint()); // AC active power setpoint [MW]. Only if DC control mode is 'P'
         pac = isPmode ? pac : -pac; //change sign in case of Q mode side
-        float pvd = hline.getNominalV(); // DC voltage setpoint [MW]. Only if DC control mode is 'V'
+        // multiplying  the line's nominalV by 2 corresponds to the fact that iIDM refers to the cable-ground voltage
+        // while Eurostag regulations to the cable-cable voltage
+        float pvd = EchUtil.getHvdcLineDcVoltage(hline); // DC voltage setpoint [MW]. Only if DC control mode is 'V'
         float pre = vscConv.getReactivePowerSetpoint(); // AC reactive power setpoint [Mvar]. Only if AC control mode is 'Q'
         if ((Float.isNaN(pre)) || (vscConv.isVoltageRegulatorOn())) {
             float terminalQ = vscConv.getTerminal().getQ();
@@ -607,7 +610,9 @@ public class EurostagEchExport implements EurostagEchExporter {
         float pvscmax = hline.getMaxP(); // Maximum AC active power [MW]
         float qvscmin = vscConv.getReactiveLimits().getMinQ(0); // Minimum reactive power injected on AC node [kV]
         float qvscmax = vscConv.getReactiveLimits().getMaxQ(0); // Maximum reactive power injected on AC node [kV]
-        float vsb0 = vscConv.getLossFactor(); // Losses coefficient Beta0 [MW]
+        // iIDM vscConv.getLossFactor() is in % of the MW. As it is, not suitable for vsb0, which is fixed in MW
+        // for now, set  vsb0, vsb1,vsb2 to 0
+        float vsb0 = 0; // Losses coefficient Beta0 [MW]
         float vsb1 = 0; // Losses coefficient Beta1 [kW]
         float vsb2 = 0; // Losses coefficient Beta2 [Ohms]
 
