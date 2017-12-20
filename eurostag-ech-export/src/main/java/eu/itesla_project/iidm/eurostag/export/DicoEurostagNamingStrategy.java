@@ -23,6 +23,11 @@ import java.util.stream.Collectors;
 
 /**
  * @author Christian Biasuzzi <christian.biasuzzi@techrain.it>
+ *
+ * Creates Eurostag identifiers based on an explicit mapping defined in a CSV-like file (first line is skipped):
+ *   IIDM_ID;EUROSTAG_ID
+ *
+ * Falls back on a default strategy if no explicit correspondance is found: see {@link CutEurostagNamingStrategy}.
  */
 public class DicoEurostagNamingStrategy implements EurostagNamingStrategy {
 
@@ -30,7 +35,7 @@ public class DicoEurostagNamingStrategy implements EurostagNamingStrategy {
 
     private BiMap<String, String> dicoMap = HashBiMap.create();
 
-    private final CutEurostagNamingStrategy defaultStrategy = new CutEurostagNamingStrategy();
+    private final CutEurostagNamingStrategy defaultStrategy;
 
     class DicoCsvReader {
 
@@ -91,6 +96,7 @@ public class DicoEurostagNamingStrategy implements EurostagNamingStrategy {
                 }
                 dicoMap.put(iidmId, esgId);
             }
+            defaultStrategy = new CutEurostagNamingStrategy(new HashSet(dicoMap.values()));
         }
     }
 
