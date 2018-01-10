@@ -10,6 +10,8 @@ import java.util.Set;
 
 /**
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
+ *
+ * In charge of creating identifiers to be used in Eurostag, from IIDM identifiers.
  */
 public interface EurostagNamingStrategy {
 
@@ -31,6 +33,12 @@ public interface EurostagNamingStrategy {
         }
     }
 
+    /**
+     * Fills a dictionary with Eurostag identifiers for the IIDM identifiers passed as argument.
+     * @param dictionary the dictionary to be filled
+     * @param nameType   the type of equipment
+     * @param iidmIds    the list of IIDM ids for which Eurostag identifiers must be created.
+     */
     void fillDictionary(EurostagDictionary dictionary, NameType nameType, Set<String> iidmIds);
 
 }
