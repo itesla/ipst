@@ -414,6 +414,7 @@ public final class EurostagStepUpTransformerInserter {
 
         // skip generators connected to low level voltage
         if (hvNomV < 25) {
+            LOGGER.warn("skipping generator '{}' ('{}') connected to low level voltage '{}': its nominal voltage {} is lower than 25.0 so it is guessed that it is the low-voltage end of a step-up transformer", hvGen.getId(), tg.fileName, hvVl.getId(), hvNomV);
             return InsertionStatus.ALREADY_DONE;
         }
 
@@ -512,8 +513,11 @@ public final class EurostagStepUpTransformerInserter {
         return insert(g, ddbFile, auxDict, config, stateBefore);
     }
 
-    private static void throwsUnexpectedTopology() {
-        throw new RuntimeException("Unexpected stator substation topology");
+    private static void throwsUnexpectedTopology(Bus lvBus, String detailsMessage) {
+        Objects.requireNonNull(lvBus);
+        String errorMessage = "Unexpected stator substation topology in connected/connectable equipments for voltage level '" + lvBus.getVoltageLevel() + "', bus '" + lvBus + "' when removing existing step-up transformers (expected one TwoWindingTransformer, one or more Generators, zero or more Loads). " + detailsMessage;
+        LOGGER.error(errorMessage);
+        throw new RuntimeException(errorMessage);
     }
 
     private static void removeStepUpTransformersAlreadyPresents(Network n, List<String> statorVoltageLevels,
@@ -522,6 +526,7 @@ public final class EurostagStepUpTransformerInserter {
         for (String lvVlId : statorVoltageLevels) {
             VoltageLevel lvVl = n.getVoltageLevel(lvVlId);
             if (lvVl == null) {
+                LOGGER.warn("skipping stator voltage level '" + lvVlId + "' when removing existing step-up transformers: id not found in network");
                 continue;
             }
 
@@ -556,27 +561,27 @@ public final class EurostagStepUpTransformerInserter {
 
                     @Override
                     public void visitBusbarSection(BusbarSection section) {
-                        throwsUnexpectedTopology();
+                        throwsUnexpectedTopology(lvBus, "Found a BusbarSection: " + section);
                     }
 
                     @Override
                     public void visitDanglingLine(DanglingLine danglingLine) {
-                        throwsUnexpectedTopology();
+                        throwsUnexpectedTopology(lvBus, "Found a DanglinLine: " + danglingLine);
                     }
 
                     @Override
                     public void visitLine(Line line, Line.Side side) {
-                        throwsUnexpectedTopology();
+                        throwsUnexpectedTopology(lvBus, "Found a Line: " + line);
                     }
 
                     @Override
                     public void visitShuntCompensator(ShuntCompensator sc) {
-                        throwsUnexpectedTopology();
+                        throwsUnexpectedTopology(lvBus, "Found a ShuntCompensator: " + sc);
                     }
 
                     @Override
                     public void visitThreeWindingsTransformer(ThreeWindingsTransformer transformer, ThreeWindingsTransformer.Side side) {
-                        throwsUnexpectedTopology();
+                        throwsUnexpectedTopology(lvBus, "Found a ThreewindingTransformer: " + transformer);
                     }
                 });
 
@@ -591,7 +596,7 @@ public final class EurostagStepUpTransformerInserter {
                 }
 
                 if (twtLs.size() != 1) {
-                    throwsUnexpectedTopology();
+                    throwsUnexpectedTopology(lvBus, "Found more than one TwoWindingTransformer: " + twtLs.stream().map(TwoWindingsTransformer::getId).collect(Collectors.joining(",")));
                 }
 
                 TwoWindingsTransformer twt = twtLs.get(0);

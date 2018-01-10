@@ -33,8 +33,8 @@
         <module>eurostag-step-up-transformer</module>
         <module>file-system-rules-db</module>
         <module>fpf-integration</module>
-        <!-- <module>histoDB</module> -->
         <module>histodb-client</module>
+		<module>histodb-server</module> 
         <module>iidm-actions-contingencies-xml-client</module>
         <module>iidm-ddb</module>
         <module>mcla-integration</module>
@@ -104,6 +104,7 @@
         <jsonlib.version>2.4</jsonlib.version>
         <junit.version>4.12</junit.version>
         <logback.version>1.1.8</logback.version>
+		<mapdb.version>3.0.3</mapdb.version>
         <mockito.version>1.10.19</mockito.version>
         <poi.version>3.15</poi.version>
         <powsybl.version>1.0-SNAPSHOT</powsybl.version>
@@ -112,6 +113,7 @@
         <shrinkwrap.version>1.2.6</shrinkwrap.version>
         <sirocco.version>1.0</sirocco.version>
         <slf4j.version>1.7.22</slf4j.version>
+		<spring-boot.version>1.5.7.RELEASE</spring-boot.version>
         <supercsv.version>2.4.0</supercsv.version>
         <trove4j.version>3.0.3</trove4j.version>
         <xmlunit.version>2.3.0</xmlunit.version>
@@ -425,6 +427,11 @@
                 <version>${powsybl.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.powsybl</groupId>
+                <artifactId>powsybl-ucte-converter</artifactId>
+                <version>${powsybl.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
                 <version>${jodatime.version}</version>
@@ -506,6 +513,11 @@
                 <version>${json.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.mapdb</groupId>
+                <artifactId>mapdb</artifactId>
+                <version>${mapdb.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.ow2.sirocco</groupId>
                 <artifactId>sirocco-text-table-formatter</artifactId>
                 <version>${sirocco.version}</version>
@@ -521,7 +533,21 @@
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-jersey</artifactId>
+                <version>${spring-boot.version}</version>
+                </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-security</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
             <!-- iPST core compilation -->
             <!--
             <dependency>

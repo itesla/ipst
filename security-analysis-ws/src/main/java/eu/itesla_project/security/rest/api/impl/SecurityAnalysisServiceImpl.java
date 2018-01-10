@@ -32,14 +32,20 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.powsybl.commons.io.table.CsvTableFormatterFactory;
+import com.powsybl.commons.config.ComponentDefaultConfig;
+import com.powsybl.computation.local.LocalComputationManager;
+import com.powsybl.contingency.ContingenciesProvider;
+import com.powsybl.contingency.ContingenciesProviderFactory;
+import com.powsybl.contingency.EmptyContingencyListProvider;
+import com.powsybl.iidm.import_.Importers;
+import com.powsybl.iidm.network.Network;
 import com.powsybl.security.LimitViolationFilter;
 import com.powsybl.security.LimitViolationType;
-import com.powsybl.security.Security;
 import com.powsybl.security.SecurityAnalysisResult;
 import com.powsybl.security.SecurityAnalyzer;
 import com.powsybl.security.SecurityAnalyzer.Format;
-import com.powsybl.security.json.SecurityAnalysisResultSerializer;
+import com.powsybl.security.converter.SecurityAnalysisResultExporters;
+
 import eu.itesla_project.security.rest.api.SecurityAnalysisService;
 
 /**
@@ -49,11 +55,11 @@ import eu.itesla_project.security.rest.api.SecurityAnalysisService;
 public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityAnalysisServiceImpl.class);
+    private final ContingenciesProviderFactory contingenciesProviderFactory;
 
-    private final SecurityAnalyzer analyzer;
-
-    public SecurityAnalysisServiceImpl(SecurityAnalyzer securityAnalyzer) {
-        this.analyzer = Objects.requireNonNull(securityAnalyzer);
+    public SecurityAnalysisServiceImpl() {
+        ComponentDefaultConfig defaultConfig = ComponentDefaultConfig.load();
+        this.contingenciesProviderFactory = defaultConfig.newFactoryImpl(ContingenciesProviderFactory.class);
     }
 
     @Override
@@ -100,12 +106,15 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
             if (caseFile == null) {
                 return Response.status(Status.BAD_REQUEST).entity("Missing required case-file parameter").build();
             }
+            Network network = Importers.loadNetwork(caseFile.getFilename(), caseFile.getInputStream());
 
             FilePart contingencies = formParts.get("contingencies-file") != null
                     ? getFilePart(formParts.get("contingencies-file")) : null;
 
-            SecurityAnalysisResult result = analyzer.analyze(caseFile.getFilename(), caseFile.getInputStream(), contingencies != null ? contingencies.getInputStream() : null);
-            return Response.ok(toStream(result, limitViolationFilter, format))
+
+            SecurityAnalysisResult result = analyze(network, contingencies, limitViolationFilter);
+
+            return Response.ok(toStream(result, network, format))
                     .header("Content-Type", format.equals(Format.JSON) ? MediaType.APPLICATION_JSON : "text/csv")
                     .build();
         } catch (IOException e) {
@@ -114,21 +123,21 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
         }
     }
 
-    private StreamingOutput toStream(SecurityAnalysisResult result, LimitViolationFilter limitViolationFilter,
-            Format format) {
+    public SecurityAnalysisResult analyze(Network network, FilePart contingencies, LimitViolationFilter limitViolationFilter) {
+        ContingenciesProvider contingenciesProvider = (contingencies != null && contingencies.getInputStream() != null)
+                ? contingenciesProviderFactory.create(contingencies.getInputStream()) : new EmptyContingencyListProvider();
+        SecurityAnalyzer analyzer = new SecurityAnalyzer(limitViolationFilter, LocalComputationManager.getDefault(), 0);
+        return analyzer.analyze(network, contingenciesProvider);
+    }
+
+    private StreamingOutput toStream(SecurityAnalysisResult result, Network network, Format format) {
         return new StreamingOutput() {
 
             @Override
             public void write(OutputStream out) throws IOException, WebApplicationException {
                 Objects.requireNonNull(out);
-                if (format.equals(Format.JSON)) {
-                    SecurityAnalysisResultSerializer.write(result, limitViolationFilter, out);
-                } else {
-                    try (Writer wr = new OutputStreamWriter(out, StandardCharsets.UTF_8)) {
-                        CsvTableFormatterFactory csvTableFormatterFactory = new CsvTableFormatterFactory();
-                        Security.printPreContingencyViolations(result, wr, csvTableFormatterFactory, limitViolationFilter);
-                        Security.printPostContingencyViolations(result, wr, csvTableFormatterFactory, limitViolationFilter);
-                    }
+                try (Writer wr = new OutputStreamWriter(out, StandardCharsets.UTF_8)) {
+                    SecurityAnalysisResultExporters.export(result, network, wr, format.toString());
                 }
             }
         };
@@ -168,25 +177,6 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
             }
         }
         return null;
-    }
-
-    private static class FilePart {
-
-        private final String filename;
-        private final InputStream inputStream;
-
-        FilePart(String filename, InputStream content) {
-            this.filename = Objects.requireNonNull(filename);
-            this.inputStream = Objects.requireNonNull(content);
-        }
-
-        String getFilename() {
-            return filename;
-        }
-
-        InputStream getInputStream() {
-            return inputStream;
-        }
     }
 
 }

@@ -91,6 +91,13 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- uncertainties -->
+        <dependency>
+            <groupId>eu.itesla_project</groupId>
+            <artifactId>uncertainties-analysis</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- WCA -->
         <dependency>
             <groupId>eu.itesla_project</groupId>
