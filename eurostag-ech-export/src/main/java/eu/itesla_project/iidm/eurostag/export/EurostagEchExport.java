@@ -496,9 +496,19 @@ public class EurostagEchExport {
             Esg8charName znamsvc = new Esg8charName(dictionary.getEsgId(svc.getId()));
             EsgConnectionStatus xsvcst = bus.isConnected() ? EsgConnectionStatus.CONNECTED : EsgConnectionStatus.NOT_CONNECTED;
             Esg8charName znodsvc = new Esg8charName(dictionary.getEsgId(bus.getId()));
-            float factor = (float) Math.pow(svc.getTerminal().getVoltageLevel().getNominalV(), 2);
+            float vlNomVoltage = svc.getTerminal().getVoltageLevel().getNominalV();
+            float factor = (float) Math.pow(vlNomVoltage, 2);
             float bmin = (!config.isSvcAsFixedInjectionInLF()) ? svc.getBmin() * factor : -9999999; // [Mvar]
-            float binit = (!config.isSvcAsFixedInjectionInLF()) ? svc.getReactivePowerSetPoint() : -svc.getTerminal().getQ() * (float) Math.pow(svc.getTerminal().getVoltageLevel().getNominalV() / EchUtil.getBus(svc.getTerminal(), config).getV(), 2); // [Mvar]
+            float binit; // [Mvar]
+            if (!config.isSvcAsFixedInjectionInLF()) {
+                binit = svc.getReactivePowerSetPoint();
+            } else {
+                binit = -svc.getTerminal().getQ();
+                Bus svcBus = EchUtil.getBus(svc.getTerminal(), config);
+                if ((svcBus != null) && (Math.abs(svcBus.getV()) > 0.0f)) {
+                    binit = binit * (float) Math.pow(vlNomVoltage / svcBus.getV(), 2);
+                }
+            }
             float bmax = (!config.isSvcAsFixedInjectionInLF()) ? svc.getBmax() * factor : 9999999; // [Mvar]
             EsgRegulatingMode xregsvc = ((svc.getRegulationMode() == StaticVarCompensator.RegulationMode.VOLTAGE) && (!config.isSvcAsFixedInjectionInLF())) ? EsgRegulatingMode.REGULATING : EsgRegulatingMode.NOT_REGULATING;
             float vregsvc = svc.getVoltageSetPoint();
