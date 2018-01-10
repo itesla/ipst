@@ -606,14 +606,13 @@ public class EurostagEchExport implements EurostagEchExporter {
         float pvd = EchUtil.getHvdcLineDcVoltage(hline); // DC voltage setpoint [MW]. Only if DC control mode is 'V'
         float pre = vscConv.getReactivePowerSetpoint(); // AC reactive power setpoint [Mvar]. Only if AC control mode is 'Q'
         if ((Float.isNaN(pre)) || (vscConv.isVoltageRegulatorOn())) {
-            float terminalQ = vscConv.getTerminal().getQ();
+            float terminalQ = -vscConv.getTerminal().getQ();
             if (Float.isNaN(terminalQ)) {
-                pre = zeroIfNanOrValue(vscConv.getReactivePowerSetpoint());
+                pre = zeroIfNanOrValue(pre);
             } else {
                 pre = terminalQ;
             }
         }
-        pre = isPmode ? -pre : pre; // change sign in case of P mode side
         float pco = Float.NaN; // AC power factor setpoint. Only if AC control mode is 'A'
         float qvscsh = 1; // Reactive sharing cofficient [%]. Only if AC control mode is 'V'
         float pvscmin = -hline.getMaxP(); // Minimum AC active power [MW]
