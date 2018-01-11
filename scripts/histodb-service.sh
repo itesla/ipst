@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# Copyright (c) 2017, RTE (http://www.rte-france.com) This Source Code 
-# Form is subject to the terms of the Mozilla Public License, v. 2.0. If a 
-# copy of the MPL was not distributed with this file, You can obtain one at 
+# Copyright (c) 2017-2018, RTE (http://www.rte-france.com) This Source Code
+# Form is subject to the terms of the Mozilla Public License, v. 2.0. If a
+# copy of the MPL was not distributed with this file, You can obtain one at
 # http://mozilla.org/MPL/2.0/.
 
 installBinDir=$(dirname $(readlink -f $0))
@@ -14,7 +14,11 @@ pidFile=$HOME/.histodb_pid
 
 TIME=`date +%Y-%m-%d_%H_%M_%S`
 
-export CLASSPATH=$installDir/share/java/*:$CLASSPATH
+[ -n "$itools_cache_dir" ] && options+="-Ditools.cache.dir=$itools_cache_dir"
+[ -n "$itools_config_dir" ] && options+=" -Ditools.config.dir=$itools_config_dir"
+[ -n "$itools_config_name" ] && options+=" -Ditools.config.name=$itools_config_name"
+[ -z "$java_xmx" ] && java_xmx=32G
+
 
 usage() {
    echo "`basename $0` {start|stop|restart|status}"
@@ -41,7 +45,7 @@ start() {
         mkdir $logsDir >> /dev/null 2>&1
         mv $logsDir/histodb.log $logsDir/histodb.log_${TIME} >> /dev/null 2>&1
         echo "starting histodb server ( execution details and errors will be logged in file: "$logsDir"/histodb.log )"
-	nohup $JAVA_HOME/bin/java -jar -Xmx32G -Ditools.config.name=config ../share/java/histodb-server-0.1-SNAPSHOT-exec.jar > $logsDir/histodb.log 2>&1&
+        nohup $JAVA_HOME/bin/java -Xmx$java_xmx $options -cp $installDir/share/java -jar $installDir/share/java/histodb-server-0.1-SNAPSHOT-exec.jar > $logsDir/histodb.log 2>&1&
         pid=$!
         [ $? -eq 0 ] && echo $pid > $pidFile
         sleep 5
@@ -87,5 +91,3 @@ case "$1" in
     usage
     ;;
 esac
-
-

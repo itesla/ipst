@@ -5,7 +5,7 @@
 Add a "histodb-server" section to the platform configuration setting the following parameters :
 
 	- persistent : true/false
-    - basedir : path to mapdb storage folder
+	- basedir : path to mapdb storage folder
 	- host : server address
 	- port : listening port
 	- username : user login
@@ -15,7 +15,7 @@ Add a "histodb-server" section to the platform configuration setting the followi
 	- keyStorePassword : keystore password
 	- keyAlias: key alias
 	- separator : csv separator char
-	- locale : locale (i.e. fr-FR)	
+	- locale : locale (i.e. fr-FR)
 
 
 
@@ -38,19 +38,19 @@ The load command can be given making an HTTP POST request to the URL
 
 setting the following parameter:
 
-	- dir :  local folder containing the network files to load 
+	- dir :  local folder containing the network files to load
 
 Example using wget command:
 
 	wget --user=username --password password https://<host>:<port>/histodb/rest/itesladb/<datasource_prefix>/<datasource_postfix>/itesla --post-data='dir=/caserepo/IIDM'
 
-The load of many network files can take a log time to complete. 
-If using wget command be careful to specify a congruous timeout to avoid wget's default behavior of retrying the same request up to 20 times every 900 seconds (default timeout). 
+The load of many network files can take a log time to complete.
+If using wget command be careful to specify a congruous timeout to avoid wget's default behavior of retrying the same request up to 20 times every 900 seconds (default timeout).
 For example:
 
 	wget --timeout 200000 --user=username --password password https://<host>:<port>/histodb/rest/itesladb/<datasource_prefix>/<datasource_postfix>/itesla/ --post-data='dir=/caserepo/test/IIDM'
-	
-To avaoid self-signed SSL certificate validation failures eventually add the "--no-check-certificate" wget option.
+
+To avoid self-signed SSL certificate validation failures eventually add the "--no-check-certificate" wget option.
 
 ### Set reference network
 When loading a set of network data (snapshots and forecasts) the last loaded snapshot will be kept as reference for the list of network attributes.
@@ -60,7 +60,7 @@ However it is possible to load a new reference network making a HTTP POST or PUT
 
 setting the following parameter:
 
-	- dir :  path to the snapshot network file 
+	- dir :  path to the snapshot network file
 
 ### Get Reference Network
 To retrieve the current reference networkId make an HTTP GET the following URL:
@@ -71,21 +71,21 @@ To retrieve the current reference networkId make an HTTP GET the following URL:
 To query historical data it is possible to make an HTTP GET request passing the query parameters on the query string, e.g.:
 
 	/histodb/rest/itesladb/<datasource_prefix>/<datasource_postfix>/itesla/data.<format>?<param1>=<value1>&<param2>=<value2>..
-	
+
 
 ### Response format
 Data can be formatted either as CSV file or as compressed CSV file specifying the requested format in the request URL as follows:
 
 	/histodb/rest/itesladb/<datasource_prefix>/<datasource_postfix>/itesla/data.<format>?<param1>=<value1>&<param2>=<value2>..
-	
-where format=cvs|zip
+
+where format=csv|zip
 
 	/histodb/rest/itesladb/<datasource_prefix>/<datasource_postfix>/itesla/data.csv?<param1>=<value1>&<param2>=<value2>..
-	
-	/histodb/rest/itesladb/<datasource_prefix>/<datasource_postfix>/itesla/data.zip?<param1>=<value1>&<param2>=<value2>..
- 
 
-### Get historical data 
+	/histodb/rest/itesladb/<datasource_prefix>/<datasource_postfix>/itesla/data.zip?<param1>=<value1>&<param2>=<value2>..
+
+
+### Get historical data
 Historical data can be queried using the following URL :
 
 	/histodb/rest/itesladb/<datasource_prefix>/<datasource_postfix>/itesla/data.<format>?<param1>=<value1>&<param2>=<value2>...
@@ -94,8 +94,28 @@ Historical data can be queried using the following URL :
 To retrieve forecasts with matching snapshot use the following URL:
 
 	/histodb/rest/itesladb/<datasource_prefix>/<datasource_postfix>/itesla/data/forecastsDiff.<format>?<param1>=<value1>&<param2>=<value2>...
-	
+
 ### Get statistics
 To get statistics use the following URL:
 
 	/histodb/rest/itesladb/<datasource_prefix>/<datasource_postfix>/itesla/stats.<format>?<param1>=<value1>&<param2>=<value2>...
+
+
+### Query parameters
+The list of possible query parameters contains:
+
+	- headers: whether the result should contain column headers
+	- horizon: time horizon of the request (file type) : SN, ...
+	- count: count of data to be returned (default=50)
+	- start:
+	- cols:
+	- colRange: range of columns, as "min-max" or "*"
+	- forecast: forecast time
+	- time: [isodate,isodate]
+	- daytime: [isotime,isotime]
+	- powerType: comma separated list
+	- equip: comma separated list
+	- attr: comma separated list
+	- region: comma separated list
+	- country: comma separated list
+	- ids: comma separated list
