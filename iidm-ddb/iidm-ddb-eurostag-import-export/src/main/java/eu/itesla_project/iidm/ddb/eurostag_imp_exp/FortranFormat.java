@@ -50,7 +50,7 @@ import java.util.StringTokenizer;
 public class FortranFormat {
 
     /** A hash of the descriptors for easy access. */
-    private final static HashMap<String, EditDescriptor> DESCRIPTOR_HASH = new HashMap<String, EditDescriptor>(EditDescriptor.values().length);
+    private static final HashMap<String, EditDescriptor> DESCRIPTOR_HASH = new HashMap<String, EditDescriptor>(EditDescriptor.values().length);
 
     static {
         for (final EditDescriptor ed : EditDescriptor.values()) {

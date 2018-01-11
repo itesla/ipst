@@ -68,7 +68,7 @@ indexNames=smallsignal,overload,underovervoltage,transient
 
     private final Class<? extends LoadFlowFactory> loadFlowFactoryClass;
 
-    public synchronized static DymolaConfig load() {
+    public static synchronized DymolaConfig load() {
         if (INSTANCE == null) {
             ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("dymola");
             String dymolaSeviceWSDL = config.getStringProperty("dymolaSeviceWSDL", null);

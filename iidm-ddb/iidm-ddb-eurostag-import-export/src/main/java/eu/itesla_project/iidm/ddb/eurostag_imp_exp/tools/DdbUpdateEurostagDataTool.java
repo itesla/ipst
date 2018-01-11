@@ -26,13 +26,13 @@ import java.nio.file.Paths;
 @AutoService(Tool.class)
 public class DdbUpdateEurostagDataTool implements Tool {
 
-    public final static String DATA_DIR = "data-dir";
-    public final static String DD_FILE = "dd-file";
-    public final static String EUROSTAG_VERSION = "eurostag-version";
-    public final static String HOST = "host";
-    public final static String PORT = "port";
-    public final static String USER = "user";
-    public final static String PASSWORD = "password";
+    public static final String DATA_DIR = "data-dir";
+    public static final String DD_FILE = "dd-file";
+    public static final String EUROSTAG_VERSION = "eurostag-version";
+    public static final String HOST = "host";
+    public static final String PORT = "port";
+    public static final String USER = "user";
+    public static final String PASSWORD = "password";
 
     private static Command COMMAND = new Command() {
 

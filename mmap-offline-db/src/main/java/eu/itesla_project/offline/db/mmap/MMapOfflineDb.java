@@ -51,7 +51,7 @@ public class MMapOfflineDb implements OfflineDb {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MMapOfflineDb.class);
 
-    final static Supplier<JsonFactory> JSON_FACTORY = Suppliers.memoize(JsonFactory::new);
+    static final Supplier<JsonFactory> JSON_FACTORY = Suppliers.memoize(JsonFactory::new);
 
     private static final char CSV_SEPARATOR = ';';
     private static final String SECURITY_INDEXES_XML_FILE_NAME = "security-indexes-xml.csv";

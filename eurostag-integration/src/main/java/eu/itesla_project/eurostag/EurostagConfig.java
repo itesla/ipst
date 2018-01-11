@@ -62,11 +62,11 @@ public class EurostagConfig {
 
     private final String eurostagCptCommandName;
 
-    public synchronized static EurostagConfig load() {
+    public static synchronized EurostagConfig load() {
         return load(PlatformConfig.defaultConfig());
     }
 
-    public synchronized static EurostagConfig load(PlatformConfig platformConfig) {
+    public static synchronized EurostagConfig load(PlatformConfig platformConfig) {
         ModuleConfig config = platformConfig.getModuleConfig("eurostag");
         Path eurostagHomeDir = config.getPathProperty("eurostagHomeDir", null);
         Path indexesBinDir = config.getPathProperty("indexesBinDir", null);

@@ -174,7 +174,7 @@ public class EU_MBparser {
         return nLinks;
     }
 
-    static private String[][] Extract(List<String[]> frmFile, Integer ini, Integer rowsPerBlockPars, Integer nDatosPerBlock, Integer nBlocks) {
+    private static String[][] Extract(List<String[]> frmFile, Integer ini, Integer rowsPerBlockPars, Integer nDatosPerBlock, Integer nBlocks) {
         String[][] output = new String[nDatosPerBlock][nBlocks];
         Integer count = 0;
         Integer indexBlock;
