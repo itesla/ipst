@@ -86,7 +86,9 @@ public class CommentScanner {
 
         // Go across the line
         while (p < line.length()) {
-            MatchResult q, bcs, lc;
+            MatchResult q;
+            MatchResult bcs;
+            MatchResult lc;
 
             // From current position find first of occurrence of {string start, block comment start, line comment start}
             q = find(quote, p);
@@ -218,7 +220,10 @@ public class CommentScanner {
     boolean isInsideBlockComment = false;
 
     final CommentScannerEventHandler eventHandler;
-    Pattern quoteRegex, lineCommentRegex, blockCommentStartRegex, blockCommentEndRegex;
+    Pattern quoteRegex;
+    Pattern lineCommentRegex;
+    Pattern blockCommentStartRegex;
+    Pattern blockCommentEndRegex;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommentScanner.class);
 }

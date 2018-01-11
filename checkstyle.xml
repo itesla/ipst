@@ -33,7 +33,9 @@
         <module name="LocalFinalVariableName"/>
         <module name="LocalVariableName"/>
         <module name="MethodParamPad"/>
+        <module name="ModifierOrder"/>
         <module name="MutableException"/>
+        <module name="MultipleVariableDeclarations"/>
         <module name="NeedBraces"/>
         <module name="NoWhitespaceAfter"/>
         <module name="NoWhitespaceBefore"/>
@@ -45,12 +47,13 @@
         <module name="RightCurly"/>
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
+        <module name="StringLiteralEquality"/>
         <module name="SuppressWarningsHolder"/>
         <module name="TypecastParenPad"/>
-        <module name="WhitespaceAfter"/>
-        <module name="WhitespaceAround"/>
         <module name="UnnecessaryParentheses"/>
         <module name="UnusedImports"/>
+        <module name="WhitespaceAfter"/>
+        <module name="WhitespaceAround"/>
     </module>
 
     <module name="SuppressionFilter">
