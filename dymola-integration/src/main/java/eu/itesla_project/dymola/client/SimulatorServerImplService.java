@@ -27,9 +27,9 @@ import javax.xml.ws.WebServiceFeature;
 public class SimulatorServerImplService
     extends Service {
 
-    private final static URL SIMULATORSERVERIMPLSERVICE_WSDL_LOCATION;
-    private final static WebServiceException SIMULATORSERVERIMPLSERVICE_EXCEPTION;
-    private final static QName SIMULATORSERVERIMPLSERVICE_QNAME = new QName("http://service.dymola.itesla_project.eu/", "SimulatorServerImplService");
+    private static final URL SIMULATORSERVERIMPLSERVICE_WSDL_LOCATION;
+    private static final WebServiceException SIMULATORSERVERIMPLSERVICE_EXCEPTION;
+    private static final QName SIMULATORSERVERIMPLSERVICE_QNAME = new QName("http://service.dymola.itesla_project.eu/", "SimulatorServerImplService");
 
     static {
         URL url = null;

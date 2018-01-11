@@ -17,15 +17,15 @@ import com.powsybl.tools.Command;
  */
 public class DdbLoaderCommand implements Command {
 
-    public final static  DdbLoaderCommand INSTANCE = new DdbLoaderCommand();
-    public final static String PSSE_VERSION = "psse-version";
-    public final static String HOST = "host";
-    public final static String PORT = "port";
-    public final static String USER = "user";
-    public final static String PASSWORD = "password";
-    public final static String PSSE_DYRFILEPATH = "dyr-file";
-    public final static String PSSE_MAPPINGFILEPATH = "mapping-file";
-    public final static String OPTION_REMOVE = "remove-data-flag";
+    public static final DdbLoaderCommand INSTANCE = new DdbLoaderCommand();
+    public static final String PSSE_VERSION = "psse-version";
+    public static final String HOST = "host";
+    public static final String PORT = "port";
+    public static final String USER = "user";
+    public static final String PASSWORD = "password";
+    public static final String PSSE_DYRFILEPATH = "dyr-file";
+    public static final String PSSE_MAPPINGFILEPATH = "mapping-file";
+    public static final String OPTION_REMOVE = "remove-data-flag";
 
     @Override
     public String getName() {

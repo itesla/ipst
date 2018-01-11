@@ -38,9 +38,9 @@ public final class EurostagStepUpTransformerInserter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EurostagStepUpTransformerInserter.class);
 
-    private final static float SB = 100;
-    private final static float ACCEPTABLE_VOLTAGE_DIFF = 0.1f;
-    private final static float INFINITE_REACTIVE_LIMIT = 99999f;
+    private static final float SB = 100;
+    private static final float ACCEPTABLE_VOLTAGE_DIFF = 0.1f;
+    private static final float INFINITE_REACTIVE_LIMIT = 99999f;
 
     public enum InsertionStatus {
         OK("ok"),

@@ -23,9 +23,12 @@ public class ConnectionBus {
                 connected = true;
             } else {
                 connected = false;
-                // fake node...
-                String fakeNode = (fakeNodes != null) ? fakeNodes.getEsgIdAndIncCounter(t) : null;
-                return new ConnectionBus(false, fakeNode);
+                bus = t.getBusView().getConnectableBus();
+                if (bus == null) {
+                    // fake node...
+                    String fakeNode = (fakeNodes != null) ? fakeNodes.getEsgIdAndIncCounter(t) : null;
+                    return new ConnectionBus(false, fakeNode);
+                }
             }
             return new ConnectionBus(connected, bus.getId());
         } else {

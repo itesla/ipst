@@ -6,8 +6,6 @@
  */
 package eu.itesla_project.security.rest.api.factories;
 
-import com.powsybl.computation.local.LocalComputationManager;
-import com.powsybl.security.SecurityAnalyzer;
 import eu.itesla_project.security.rest.api.SecurityAnalysisService;
 import eu.itesla_project.security.rest.api.impl.SecurityAnalysisServiceImpl;
 
@@ -20,8 +18,7 @@ public final class SecurityAnalysisServiceFactory {
     private SecurityAnalysisServiceFactory() {
     }
 
-    private final static SecurityAnalysisService SERVICE = new SecurityAnalysisServiceImpl(
-            new SecurityAnalyzer(LocalComputationManager.getDefault(), 0));
+    private static final SecurityAnalysisService SERVICE = new SecurityAnalysisServiceImpl();
 
     public static SecurityAnalysisService getSecurityServiceApi() {
         return SERVICE;

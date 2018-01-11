@@ -42,7 +42,7 @@ public class DymolaSimulationConfig {
     private double tolerance;
     private double outputFixedstepSize;
 
-    public synchronized static DymolaSimulationConfig load() {
+    public static synchronized DymolaSimulationConfig load() {
         if (INSTANCE == null) {
             ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("dymola-simulation");
 
