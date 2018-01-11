@@ -47,6 +47,7 @@
         <module name="RightCurly"/>
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
+        <module name="StringLiteralEquality"/>
         <module name="SuppressWarningsHolder"/>
         <module name="TypecastParenPad"/>
         <module name="UnnecessaryParentheses"/>

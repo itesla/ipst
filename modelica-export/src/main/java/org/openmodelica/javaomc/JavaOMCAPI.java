@@ -540,7 +540,7 @@ public class JavaOMCAPI extends OMCProxy {
     public boolean addComponent(String compname, String comptype, String classname,
                                 String annot) throws ConnectException {
         String retval = "";
-        if (annot != "") {
+        if (!annot.equals("")) {
             retval = sendExpression("addComponent(" + compname + "," + comptype + "," + classname +
                     ",annotate=" + annot + ")");
         } else {
@@ -576,7 +576,7 @@ public class JavaOMCAPI extends OMCProxy {
     public boolean updateComponent(String compname, String comptype,
                                    String classname, String annot) throws ConnectException {
         String retval = "";
-        if (annot != "") {
+        if (!annot.equals("")) {
             retval = sendExpression("updateComponent(" + compname + "," + comptype + "," + classname +
                     ",annotate=" + annot + ")");
         } else {
@@ -769,7 +769,7 @@ public class JavaOMCAPI extends OMCProxy {
     public boolean addConnection(String c1, String c2, String classname,
                                  String annot) throws ConnectException {
         String retval = "";
-        if (annot != "") {
+        if (!annot.equals("")) {
             retval = sendExpression("addConnection(" + c1 + "," + c2 + "," + classname +
                     ",annotate=" + annot + ")");
         } else {
