@@ -45,7 +45,8 @@ public final class OfflineApplicationSecurity {
 
     private static class LoginHandler implements CallbackHandler {
 
-        private final String username, password;
+        private final String username;
+        private final String password;
 
         public LoginHandler(String username, String password) {
             this.username = username;

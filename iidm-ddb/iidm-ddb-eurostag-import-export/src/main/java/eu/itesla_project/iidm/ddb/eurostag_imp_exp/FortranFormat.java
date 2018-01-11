@@ -677,7 +677,11 @@ public class FortranFormat {
     protected static class SpecificationStringInterpreter {
 
         /** Cached strings along each step of the pre-processing. */
-        private final String original, input, withoutParenthesis, multipliedOut, withCommas;
+        private final String original;
+        private final String input;
+        private final String withoutParenthesis;
+        private final String multipliedOut;
+        private final String withCommas;
 
         /**
          * Instantiates a new specification string interpreter.
@@ -912,8 +916,13 @@ public class FortranFormat {
             final ArrayList<Unit> units = new ArrayList<Unit>(st.countTokens());
             while (st.hasMoreTokens()) {
                 final String s = st.nextToken();
-                boolean reachedType = false, hasDecimal = false, hasExponent = false;
-                final StringBuilder before = new StringBuilder(), type = new StringBuilder(), decimal = new StringBuilder(), exponent = new StringBuilder();
+                boolean reachedType = false;
+                boolean hasDecimal = false;
+                boolean hasExponent = false;
+                final StringBuilder before = new StringBuilder();
+                final StringBuilder type = new StringBuilder();
+                final StringBuilder decimal = new StringBuilder();
+                final StringBuilder exponent = new StringBuilder();
                 StringBuilder after = new StringBuilder();
                 for (int i = 0; i < s.length(); i++) {
                     if (s.charAt(i) == '.') {

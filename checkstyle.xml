@@ -35,6 +35,7 @@
         <module name="MethodParamPad"/>
         <module name="ModifierOrder"/>
         <module name="MutableException"/>
+        <module name="MultipleVariableDeclarations"/>
         <module name="NeedBraces"/>
         <module name="NoWhitespaceAfter"/>
         <module name="NoWhitespaceBefore"/>
