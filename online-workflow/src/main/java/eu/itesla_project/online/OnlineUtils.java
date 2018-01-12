@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
- * Copyright (c) 2017, RTE (http://www.rte-france.com)
+ * Copyright (c) 2017-2018, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 /**
  * @author Quinary <itesla@quinary.com>
@@ -65,6 +68,14 @@ public final class OnlineUtils {
             default:
                 throw new IllegalArgumentException();
         }
+    }
+
+    public static DateTime toCetDate(DateTime date) {
+        DateTimeZone cet = DateTimeZone.forID("CET");
+        if (!date.getZone().equals(cet)) {
+            return date.toDateTime(cet);
+        }
+        return date;
     }
 
 }

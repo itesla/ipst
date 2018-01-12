@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
- * Copyright (c) 2016-2017, RTE (http://www.rte-france.com)
+ * Copyright (c) 2016-2018, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -383,7 +383,7 @@ public class OnlineDbMVStore implements OnlineDb {
     @Override
     public List<OnlineWorkflowDetails> listWorkflows(DateTime basecaseDate) {
         LOGGER.info("Getting list of stored workflows run on basecase {}", basecaseDate);
-        String wfNamePrefix = DateTimeFormat.forPattern("yyyyMMdd_HHmm_").print(basecaseDate);
+        String wfNamePrefix = DateTimeFormat.forPattern("yyyyMMdd_HHmm_").print(OnlineUtils.toCetDate(basecaseDate));
         List<OnlineWorkflowDetails> workflowIds = new ArrayList<OnlineWorkflowDetails>();
         File[] files = config.getOnlineDbDir().toFile().listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {

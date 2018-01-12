@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
- * Copyright (c) 2016, RTE (http://www.rte-france.com)
+ * Copyright (c) 2016-2018, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -133,7 +133,7 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
             this.parameters.setCountries(network.getCountries());
             this.parameters.setCaseType((network.getForecastDistance() == 0) ? CaseType.SN : CaseType.FO);
         }
-        this.id = DateTimeFormat.forPattern("yyyyMMdd_HHmm_").print(this.parameters.getBaseCaseDate()) + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
+        this.id = DateTimeFormat.forPattern("yyyyMMdd_HHmm_").print(OnlineUtils.toCetDate(this.parameters.getBaseCaseDate())) + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
         logger.info(this.parameters.toString());
     }
 
