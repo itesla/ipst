@@ -63,6 +63,8 @@ public final class EurostagFakeNodes {
         countUsesMap.getAndIncrement(EchUtil.FAKE_NODE_NAME1);
         fakeNodesMap.put(EchUtil.FAKE_NODE_NAME2, EchUtil.FAKE_NODE_NAME2);
         countUsesMap.getAndIncrement(EchUtil.FAKE_NODE_NAME2);
+        Identifiables.sort(network.getVoltageLevels()).stream().forEach(vl -> {
+        });
 
         Identifiables.sort(network.getVoltageLevels()).stream().map(VoltageLevel::getId).forEach(vlId ->
                 fakeNodesMap.put(vlId, newEsgId(fakeNodesMap, vlId)));
