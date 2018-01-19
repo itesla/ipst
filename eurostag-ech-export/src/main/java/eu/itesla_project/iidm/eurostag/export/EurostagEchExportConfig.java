@@ -23,12 +23,12 @@ public class EurostagEchExportConfig {
 
     private static final String EUROSTAG_ECH_EXPORT_CONFIG = "eurostag-ech-export";
 
-    private final static String DEFAULT_FORBIDDEN_CHARACTERS = "/%()^$,;?";
-    private final static Character DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT = '#';
-    private final static boolean DEFAULT_NOGENERATORMINMAXQ = false;
-    private final static boolean DEFAULT_NOSWITCH = false;
-    private final static boolean DEFAULT_SVC_AS_FIXED_INJECTION_IN_LF = false;
-    private final static boolean DEFAULT_SPECIFIC_COMPATIBILITY = false;
+    private static final String DEFAULT_FORBIDDEN_CHARACTERS = "/%()^$,;?";
+    private static final Character DEFAULT_FORBIDDEN_CHARACTERS_REPLACEMENT = '#';
+    private static final boolean DEFAULT_NOGENERATORMINMAXQ = false;
+    private static final boolean DEFAULT_NOSWITCH = false;
+    private static final boolean DEFAULT_SVC_AS_FIXED_INJECTION_IN_LF = false;
+    private static final boolean DEFAULT_SPECIFIC_COMPATIBILITY = false;
 
     private boolean noGeneratorMinMaxQ;
 

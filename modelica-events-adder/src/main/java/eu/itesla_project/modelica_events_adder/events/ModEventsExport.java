@@ -68,7 +68,9 @@ public class ModEventsExport {
             FileWriter writer = null;
             StringWriter stWriter = null;
             EventRecord eventRecord = null;
-            String modified, eventFileName, eventFilePrefix;
+            String modified;
+            String eventFileName;
+            String eventFilePrefix;
 
             eventFilePrefix = moFileName + "_events_";
 
@@ -264,7 +266,8 @@ public class ModEventsExport {
         String[] data;
         String modelicaType = null;
         String modelicaName = null;
-        String elemF = null, elemT = null;
+        String elemF = null;
+        String elemT = null;
         Map<String, String> paramsMap = new HashMap<>();
 
         while ((line = reader.readLine()) != null) {

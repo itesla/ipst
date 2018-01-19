@@ -39,7 +39,7 @@ import com.powsybl.security.LimitViolation;
  */
 public class WCAReportImpl implements WCAReport {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(WCAReportImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WCAReportImpl.class);
     public static String PRE_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_FILE = "pre-contigency-violations-without-uncertainties-report.csv";
     public static String PRE_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_TITLE = "pre-contigency-violations-without-uncertainties";
     public static String PRE_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_FILE = "pre-contigency-violations-with-uncertainties-report.csv";

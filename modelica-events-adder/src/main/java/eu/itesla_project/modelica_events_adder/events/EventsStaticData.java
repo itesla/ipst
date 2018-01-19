@@ -17,23 +17,23 @@ public final class EventsStaticData {
     private EventsStaticData() {
     }
 
-    public final static String    LINE_MODEL            = "iPSL.Electrical.Events.PwLineFault";
-    public final static String    BUS_MODEL            = "iPSL.Electrical.Events.PwFault";
-    public final static String    BREAKER_MODEL        = "iPSL.Electrical.Events.Breaker";
-    public final static String    LINE_OPEN_REC_MODEL    = "iPSL.Electrical.Branches.PwLinewithOpeningReceiving";
-    public final static String    LINE_2_OPEN_MODEL    = "iPSL.Electrical.Branches.PwLine2Openings";
-    public final static String    BANK_MODIF_MODEL    = "iPSL.Electrical.Banks.PwCapacitorBankWithModification";
-    public final static String    LOAD_VAR_MODEL        = "iPSL.Electrical.Loads.PwLoadwithVariation";
+    public static final String    LINE_MODEL            = "iPSL.Electrical.Events.PwLineFault";
+    public static final String    BUS_MODEL            = "iPSL.Electrical.Events.PwFault";
+    public static final String    BREAKER_MODEL        = "iPSL.Electrical.Events.Breaker";
+    public static final String    LINE_OPEN_REC_MODEL    = "iPSL.Electrical.Branches.PwLinewithOpeningReceiving";
+    public static final String    LINE_2_OPEN_MODEL    = "iPSL.Electrical.Branches.PwLine2Openings";
+    public static final String    BANK_MODIF_MODEL    = "iPSL.Electrical.Banks.PwCapacitorBankWithModification";
+    public static final String    LOAD_VAR_MODEL        = "iPSL.Electrical.Loads.PwLoadwithVariation";
 
-    public final static String        LINE_FAULT            = "LINE_FAULT";
-    public final static String        BUS_FAULT            = "BUS_FAULT";
-    public final static String        LINE_OPEN_REC        = "LINE_OPEN_REC";
-    public final static String        LINE_2_OPEN            = "LINE_2_OPEN";
-    public final static    String        BANK_MODIF            = "BANK_MODIF";
-    public final static    String        LOAD_VAR            = "LOAD_VAR";
-    public final static String        BREAKER                = "BREAKER";
+    public static final String        LINE_FAULT            = "LINE_FAULT";
+    public static final String        BUS_FAULT            = "BUS_FAULT";
+    public static final String        LINE_OPEN_REC        = "LINE_OPEN_REC";
+    public static final String        LINE_2_OPEN            = "LINE_2_OPEN";
+    public static final String        BANK_MODIF            = "BANK_MODIF";
+    public static final String        LOAD_VAR            = "LOAD_VAR";
+    public static final String        BREAKER                = "BREAKER";
 
-    public final static List<String> EVENT_TYPES        =  Arrays.asList(new String[] {BUS_FAULT, LINE_FAULT, LINE_OPEN_REC, BANK_MODIF, LOAD_VAR, BREAKER});
+    public static final List<String> EVENT_TYPES        =  Arrays.asList(new String[] {BUS_FAULT, LINE_FAULT, LINE_OPEN_REC, BANK_MODIF, LOAD_VAR, BREAKER});
 
     //Other parameters of the events
     public static String VO_REAL1    = "Vo_real1";

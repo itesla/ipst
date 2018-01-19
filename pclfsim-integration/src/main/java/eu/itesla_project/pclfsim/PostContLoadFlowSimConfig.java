@@ -38,7 +38,7 @@ public class PostContLoadFlowSimConfig {
 
     private float limitReduction;
 
-    public synchronized static PostContLoadFlowSimConfig load() {
+    public static synchronized PostContLoadFlowSimConfig load() {
         ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("postcont-loadflow-sim");
         Class<? extends LoadFlowFactory> loadFlowFactoryClass = config.getClassProperty("loadFlowFactoryClass", LoadFlowFactory.class);
         boolean baseCaseConstraintsFiltered = config.getBooleanProperty("baseCaseConstraintsFiltered", false);

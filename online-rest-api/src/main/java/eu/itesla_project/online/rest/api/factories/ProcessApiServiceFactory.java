@@ -17,7 +17,7 @@ import eu.itesla_project.online.rest.api.util.OnlineDBUtils;
  */
 public final class ProcessApiServiceFactory {
 
-    private final static ProcessApiService SERVICE = new ProcessApiServiceImpl(
+    private static final ProcessApiService SERVICE = new ProcessApiServiceImpl(
             new OnlineDBUtils(new OnlineDbMVStoreFactory()));
 
     private ProcessApiServiceFactory() {

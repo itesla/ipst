@@ -330,7 +330,8 @@ public class ModelicaExport {
     }
 
     private String calculateOmegaRef(List<Generator> genList) {
-        String omegaRef = "", name = "";
+        String omegaRef = "";
+        String name = "";
         StringBuffer abuff = new StringBuffer();
         StringBuffer bbuff = new StringBuffer();
 

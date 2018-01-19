@@ -18,7 +18,7 @@ public final class SecurityAnalysisServiceFactory {
     private SecurityAnalysisServiceFactory() {
     }
 
-    private final static SecurityAnalysisService SERVICE = new SecurityAnalysisServiceImpl();
+    private static final SecurityAnalysisService SERVICE = new SecurityAnalysisServiceImpl();
 
     public static SecurityAnalysisService getSecurityServiceApi() {
         return SERVICE;
