@@ -1650,15 +1650,17 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                         zm.put("coupling.par2", "M  " + machineName);
                     } else  if (par2.startsWith("N")) {
                         //set par2 to the other converter AC node eurostag name (connected bus)
+                        //AC node name assumed to be mapped in iidm2eurostagId
+                        //"ACNODE_ID_"+vscConv.getId()+"_"+ACNODENAME
                         VscConverterStation vscConv = network.getVscConverterStation(eqCimId2);
-                        Bus conBus = vscConv.getTerminal().getBusBreakerView().getConnectableBus();
-                        if (conBus == null) {
-                            conBus = vscConv.getTerminal().getBusView().getConnectableBus();
+                        String acNodePrefix = "ACNODE_ID_";
+                        String acNodeIdKey = acNodePrefix + vscConv.getId();
+                        String acNode = iidm2eurostagId.containsKey(acNodeIdKey) ? iidm2eurostagId.get(acNodeIdKey).substring(acNodeIdKey.length() + 1) : null;
+                        if (acNode != null) {
+                            zm.put("coupling.par2", "N  " + acNode);
+                        } else {
+                            throw new RuntimeException("VSCConverter " + vscConv.getId() + " : acNode mapping not found");
                         }
-                        if (conBus != null) {
-                            zm.put("coupling.par2", "N  " + iidm2eurostagId.get(conBus.getId()));
-                        }
-
                     }
                     log.debug("Converter id: {}, machine name: {} fixed macrobloc data: {}", eq.getCimId(), machineName, zm);
                 } else {

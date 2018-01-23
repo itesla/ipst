@@ -569,11 +569,11 @@ public class EurostagEchExport implements EurostagEchExporter {
         Objects.requireNonNull(hvdcLine);
         HvdcConverterStation side1Conv = hvdcLine.getConverterStation1();
         HvdcConverterStation side2Conv = hvdcLine.getConverterStation2();
-        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER))
+        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER))
                 && (vscConv.getId().equals(side1Conv.getId()))) {
             return true;
         }
-        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER))
+        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER))
                 && (vscConv.getId().equals(side2Conv.getId()))) {
             return true;
         }
@@ -591,7 +591,12 @@ public class EurostagEchExport implements EurostagEchExporter {
         Esg8charName znamsvc = new Esg8charName(dictionary.getEsgId(vscConv.getId())); // converter station ID
         Esg8charName dcNode1 = new Esg8charName(getDCNodeName(vscConv.getId(), 5, dcNodesEsgNames)); // sending DC node name
         Esg8charName dcNode2 = new Esg8charName("GROUND"); // receiving DC node name; is it always GROUND?
-        Esg8charName acNode = new Esg8charName(dictionary.getEsgId(ConnectionBus.fromTerminal(vscConv.getTerminal(), config, fakeNodes).getId())); // AC node name
+        String acNodeIdKey = EurostagDictionary.ACNODE_PREFIX + vscConv.getId();
+        Esg8charName acNode = dictionary.iidmIdExists(acNodeIdKey) ? new Esg8charName(dictionary.getEsgId(acNodeIdKey).substring(acNodeIdKey.length() + 1))
+                : null;
+        if (acNode == null) {
+            throw new RuntimeException("VSCConverter " + vscConv.getId() + " : acNode mapping not found");
+        }
         EsgACDCVscConverter.ConverterState xstate = EsgACDCVscConverter.ConverterState.ON; // converter state ' ' ON; 'S' OFF
         EsgACDCVscConverter.DCControlMode xregl = isPmode ? EsgACDCVscConverter.DCControlMode.AC_ACTIVE_POWER : EsgACDCVscConverter.DCControlMode.DC_VOLTAGE; // DC control mode 'P' AC_ACTIVE_POWER; 'V' DC_VOLTAGE
         //AC control mode assumed to be "AC reactive power"(Q)

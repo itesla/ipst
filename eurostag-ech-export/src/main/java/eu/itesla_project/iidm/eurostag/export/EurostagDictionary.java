@@ -37,6 +37,8 @@ public final class EurostagDictionary {
 
     private final EurostagEchExportConfig config;
 
+    public static final String ACNODE_PREFIX = "ACNODE_ID_";
+
     public static EurostagDictionary create(Network network, BranchParallelIndexes parallelIndexes, EurostagEchExportConfig config, EurostagFakeNodes fakeNodes) {
         EurostagDictionary dictionary = new EurostagDictionary(config);
 
@@ -97,6 +99,13 @@ public final class EurostagDictionary {
             dictionary.addIfNotExist(twt.getId(), new EsgBranchName(new Esg8charName(dictionary.getEsgId(bus1.getId())),
                     new Esg8charName(dictionary.getEsgId(bus2.getId())),
                     parallelIndexes.getParallelIndex(twt.getId())).toString());
+        }
+
+        for (VscConverterStation vscCc : Identifiables.sort(network.getVscConverterStations())) {
+            Esg8charName acNode = new Esg8charName(dictionary.getEsgId(ConnectionBus.fromTerminal(vscCc.getTerminal(), config, fakeNodes).getId()));
+            if (!dictionary.iidmIdExists(ACNODE_PREFIX + vscCc.getId())) {
+                dictionary.add(ACNODE_PREFIX + vscCc.getId(), ACNODE_PREFIX + vscCc.getId() + "_" + acNode.toString());
+            }
         }
 
         for (ThreeWindingsTransformer twt : Identifiables.sort(network.getThreeWindingsTransformers())) {
