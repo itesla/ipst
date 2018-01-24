@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.powsybl.iidm.network.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -24,11 +25,6 @@ import com.google.common.collect.ImmutableMap;
 import com.powsybl.contingency.Contingency;
 import com.powsybl.contingency.ContingencyImpl;
 import com.powsybl.contingency.BranchContingency;
-import com.powsybl.iidm.network.Country;
-import com.powsybl.iidm.network.Line;
-import com.powsybl.iidm.network.Network;
-import com.powsybl.iidm.network.NetworkFactory;
-import com.powsybl.iidm.network.TopologyKind;
 import eu.itesla_project.modules.contingencies.Action;
 import eu.itesla_project.modules.contingencies.ActionPlan;
 import eu.itesla_project.modules.contingencies.ActionPlanOption;
@@ -55,6 +51,10 @@ import eu.itesla_project.wca.SimpleContingencyDbFacade;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class SimpleContingencyDbFacadeTest {
+
+    private static LimitViolation createMockLimitViolation(String lineId) {
+        return new LimitViolation(lineId, LimitViolationType.CURRENT,null, 0, Float.NaN, Float.NaN, Float.NaN, Branch.Side.ONE);
+    }
 
     @Test
     public void testGetContingencies() throws Exception {
@@ -191,7 +191,7 @@ public class SimpleContingencyDbFacadeTest {
                 .setB2(0)
                 .add();
         // limit violation
-        LimitViolation mockLimitViolation = new LimitViolation(mockLineId, LimitViolationType.CURRENT, Float.NaN, null, Float.NaN);
+        LimitViolation mockLimitViolation = createMockLimitViolation(mockLineId);
         List<LimitViolation> mockLimitViolations = Arrays.asList(mockLimitViolation);
         // contingency
         String mockContingencyId = "mockContingency";
@@ -268,7 +268,7 @@ public class SimpleContingencyDbFacadeTest {
                 .setB2(0)
                 .add();
         // limit violation
-        LimitViolation mockLimitViolation = new LimitViolation(mockLineId, LimitViolationType.CURRENT, Float.NaN, null, Float.NaN);
+        LimitViolation mockLimitViolation = createMockLimitViolation(mockLineId);
         // action
         String mockActionId = "mockAction";
         Action mockAction = new ActionImpl(mockActionId, true, true, new SwitchClosingAction("mockVoltageLevel", "mockSwitch"));

@@ -66,8 +66,8 @@ public class WCAReportImplTest {
     public void setUp() throws Exception {
         fileSystem = Jimfs.newFileSystem(Configuration.unix());
 
-        line1Violation = new LimitViolation(line1Id, LimitViolationType.CURRENT, "20'", 1000f, 1, 1100f, Branch.Side.ONE);
-        line2Violation = new LimitViolation(line2Id, LimitViolationType.CURRENT, "10'", 900f, 1, 950f, Branch.Side.ONE);
+        line1Violation = new LimitViolation(line1Id, LimitViolationType.CURRENT, "20'", 20*60, 1000f, 1f, 1100f, Branch.Side.ONE);
+        line2Violation = new LimitViolation(line2Id, LimitViolationType.CURRENT, "10'", 10*60, 900f, 1f, 950f, Branch.Side.ONE);
 
         Substation substation = Mockito.mock(Substation.class);
         Mockito.when(substation.getCountry()).thenReturn(Country.FR);
