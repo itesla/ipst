@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
+import com.powsybl.iidm.network.Branch;
 import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -184,9 +185,9 @@ public class WCAUtilsTest {
 
     @Test
     public void testContainsViolation() {
-        LimitViolation line1Violation = new LimitViolation("line1", LimitViolationType.CURRENT, 1000f, "10'", 1100f);
-        LimitViolation line2Violation = new LimitViolation("line2", LimitViolationType.CURRENT, 900f, "20'", 950f);
-        LimitViolation line3Violation = new LimitViolation("line3", LimitViolationType.CURRENT, 1000f, "30'", 1300f);
+        LimitViolation line1Violation = new LimitViolation("line1", LimitViolationType.CURRENT, "10'",10*60, 1f, 1000f, 1100f, Branch.Side.ONE);
+        LimitViolation line2Violation = new LimitViolation("line2", LimitViolationType.CURRENT, "20'", 20*60, 1f, 900f, 950f, Branch.Side.ONE);
+        LimitViolation line3Violation = new LimitViolation("line3", LimitViolationType.CURRENT, "30'", 30*60, 1000f, 1f, 1300f, Branch.Side.ONE);
 
         assertFalse(WCAUtils.containsViolation(Arrays.asList(line1Violation, line3Violation), line2Violation));
         assertTrue(WCAUtils.containsViolation(Arrays.asList(line1Violation, line2Violation, line3Violation), line2Violation));
