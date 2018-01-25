@@ -7,6 +7,7 @@
 package eu.itesla_project.iidm.ddb.eurostag_imp_exp;
 
 import com.google.common.collect.Sets;
+import com.powsybl.iidm.network.util.ConnectedComponents;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.utils.Utils;
 import eu.itesla_project.iidm.ddb.model.*;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
@@ -844,6 +845,20 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         return false;
     }
 
+    public Bus getBus(Terminal t, boolean noswitch) {
+        if (noswitch) {
+            return t.getBusView().getBus();
+        } else {
+            return t.getBusBreakerView().getBus();
+        }
+    }
+
+    public boolean isInMainCc(Injection injection, boolean noswitch) {
+        return ConnectedComponents.getCcNum(getBus(injection.getTerminal(), noswitch)) == Component.MAIN_NUM;
+    }
+
+
+
     /**
      * in the workingDir, write eurostag dynamic data (fileName) for a given list of cimIDs, and regulator files (.fri, .frm, .par, .pcp, rcp)
      *      *
@@ -893,8 +908,13 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
             List<String> cimIds = new ArrayList<>(network.getGeneratorCount());
             // collect generators cim ids for the DTA exporter
-            log.warn("Skipping generators: network, generator Id, min P, P, max P");
+            log.warn("Skipped generators: network, generator Id, min P, P, max P");
             for (Generator g : Identifiables.sort(network.getGenerators())) {
+                // skip generators not in the main connected component
+                if (configExport.isExportMainCCOnly() && !isInMainCc(g, configExport.isNoSwitch())) {
+                    log.warn("not in main component, skipping Generator: {}", g.getId());
+                    continue;
+                }
                 if (!filteredGenerator(g)) {
                     cimIds.add(g.getId());
                 } else {
@@ -905,6 +925,11 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
             //collects SVCs ids, filtering out the regulationMode OFF cases
             for (StaticVarCompensator svc : Identifiables.sort(network.getStaticVarCompensators())) {
+                // skip SVCs not in the main connected component
+                if (configExport.isExportMainCCOnly() && !isInMainCc(svc, configExport.isNoSwitch())) {
+                    log.warn("not in main component, skipping StaticVarCompensator: {}", svc.getId());
+                    continue;
+                }
                 if (svc.getRegulationMode() != StaticVarCompensator.RegulationMode.OFF) {
                     cimIds.add(svc.getId());
                 } else {
