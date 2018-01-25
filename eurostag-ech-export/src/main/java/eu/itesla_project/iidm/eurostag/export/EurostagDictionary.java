@@ -9,7 +9,6 @@ package eu.itesla_project.iidm.eurostag.export;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.powsybl.iidm.network.util.ConnectedComponents;
 import eu.itesla_project.eurostag.network.Esg8charName;
 import eu.itesla_project.eurostag.network.EsgBranchName;
 import com.powsybl.iidm.network.*;
@@ -64,7 +63,7 @@ public final class EurostagDictionary {
 
         for (DanglingLine dl : Identifiables.sort(network.getDanglingLines())) {
             // skip if not in the main connected component
-            if (config.isExportMainCCOnly() && (ConnectedComponents.getCcNum(EchUtil.getBus(dl.getTerminal(), config)) != Component.MAIN_NUM)) {
+            if (config.isExportMainCCOnly() && !EchUtil.isInMainCc(dl, config.isNoSwitch())) {
                 continue;
             }
             ConnectionBus bus1 = ConnectionBus.fromTerminal(dl.getTerminal(), config, fakeNodes);
@@ -79,8 +78,7 @@ public final class EurostagDictionary {
                 Bus bus1 = EchUtil.getBus1(vl, sw.getId(), config);
                 Bus bus2 = EchUtil.getBus2(vl, sw.getId(), config);
                 // skip switches not in the main connected component
-                if (config.isExportMainCCOnly() && ((ConnectedComponents.getCcNum(bus1) != Component.MAIN_NUM)
-                        || (ConnectedComponents.getCcNum(bus2) != Component.MAIN_NUM))) {
+                if (config.isExportMainCCOnly() && (!EchUtil.isInMainCc(bus1) || !EchUtil.isInMainCc(bus2))) {
                     continue;
                 }
                 dictionary.addIfNotExist(sw.getId(),
@@ -92,8 +90,7 @@ public final class EurostagDictionary {
 
         for (Line l : Identifiables.sort(network.getLines())) {
             // skip lines not in the main connected component
-            if (config.isExportMainCCOnly() && ((ConnectedComponents.getCcNum(EchUtil.getBus(l.getTerminal1(), config)) != Component.MAIN_NUM)
-                    || (ConnectedComponents.getCcNum(EchUtil.getBus(l.getTerminal2(), config)) != Component.MAIN_NUM))) {
+            if (config.isExportMainCCOnly() && !EchUtil.isInMainCc(l, config.isNoSwitch())) {
                 continue;
             }
             ConnectionBus bus1 = ConnectionBus.fromTerminal(l.getTerminal1(), config, fakeNodes);
@@ -106,8 +103,7 @@ public final class EurostagDictionary {
 
         for (TwoWindingsTransformer twt : Identifiables.sort(network.getTwoWindingsTransformers())) {
             // skip transformers not in the main connected component
-            if (config.isExportMainCCOnly() && ((ConnectedComponents.getCcNum(EchUtil.getBus(twt.getTerminal1(), config)) != Component.MAIN_NUM)
-                    || (ConnectedComponents.getCcNum(EchUtil.getBus(twt.getTerminal2(), config)) != Component.MAIN_NUM))) {
+            if (config.isExportMainCCOnly() && !EchUtil.isInMainCc(twt, config.isNoSwitch())) {
                 continue;
             }
             ConnectionBus bus1 = ConnectionBus.fromTerminal(twt.getTerminal1(), config, fakeNodes);

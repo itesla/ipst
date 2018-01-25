@@ -845,13 +845,18 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         return false;
     }
 
-    public static Bus getBus(Terminal t, DdExportConfig config) {
-        if (config.isNoSwitch()) {
+    public Bus getBus(Terminal t, boolean noswitch) {
+        if (noswitch) {
             return t.getBusView().getBus();
         } else {
             return t.getBusBreakerView().getBus();
         }
     }
+
+    public boolean isInMainCc(Injection injection, boolean noswitch) {
+        return ConnectedComponents.getCcNum(getBus(injection.getTerminal(), noswitch)) == Component.MAIN_NUM;
+    }
+
 
 
     /**
@@ -906,7 +911,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             log.warn("Skipped generators: network, generator Id, min P, P, max P");
             for (Generator g : Identifiables.sort(network.getGenerators())) {
                 // skip generators not in the main connected component
-                if (configExport.isExportMainCCOnly() && (ConnectedComponents.getCcNum(getBus(g.getTerminal(), configExport)) != Component.MAIN_NUM)) {
+                if (configExport.isExportMainCCOnly() && !isInMainCc(g, configExport.isNoSwitch())) {
                     log.warn("not in main component, skipping Generator: {}", g.getId());
                     continue;
                 }
@@ -921,7 +926,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             //collects SVCs ids, filtering out the regulationMode OFF cases
             for (StaticVarCompensator svc : Identifiables.sort(network.getStaticVarCompensators())) {
                 // skip SVCs not in the main connected component
-                if (configExport.isExportMainCCOnly() && (ConnectedComponents.getCcNum(getBus(svc.getTerminal(), configExport)) != Component.MAIN_NUM)) {
+                if (configExport.isExportMainCCOnly() && !isInMainCc(svc, configExport.isNoSwitch())) {
                     log.warn("not in main component, skipping StaticVarCompensator: {}", svc.getId());
                     continue;
                 }
