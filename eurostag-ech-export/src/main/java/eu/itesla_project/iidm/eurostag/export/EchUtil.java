@@ -7,6 +7,7 @@
 package eu.itesla_project.iidm.eurostag.export;
 
 import com.powsybl.iidm.network.*;
+import com.powsybl.iidm.network.util.ConnectedComponents;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -38,12 +39,16 @@ public final class EchUtil {
         return dl.getId() + "_LOAD";
     }
 
-    public static Bus getBus(Terminal t, EurostagEchExportConfig config) {
-        if (config.isNoSwitch()) {
+    public static Bus getBus(Terminal t, boolean noswitch) {
+        if (noswitch) {
             return t.getBusView().getBus();
         } else {
             return t.getBusBreakerView().getBus();
         }
+    }
+
+    public static Bus getBus(Terminal t, EurostagEchExportConfig config) {
+        return EchUtil.getBus(t, config.isNoSwitch());
     }
 
     public static Iterable<Bus> getBuses(Network n, EurostagEchExportConfig config) {
@@ -167,6 +172,19 @@ public final class EchUtil {
                 .orElse(null);
     }
 
+    public static boolean isInMainCc(Bus bus) {
+        return ConnectedComponents.getCcNum(bus) == Component.MAIN_NUM;
+    }
+
+    public static boolean isInMainCc(Injection injection, boolean noswitch) {
+        return ConnectedComponents.getCcNum(EchUtil.getBus(injection.getTerminal(), noswitch)) == Component.MAIN_NUM;
+    }
+
+    public static boolean isInMainCc(Branch branch, boolean noswitch) {
+        return (ConnectedComponents.getCcNum(EchUtil.getBus(branch.getTerminal1(), noswitch)) == Component.MAIN_NUM)
+                && (ConnectedComponents.getCcNum(EchUtil.getBus(branch.getTerminal2(), noswitch)) == Component.MAIN_NUM);
+    }
+
     /**
      * given an iIDM HVDC line , returns its DC voltage to be used with Eurostag
      * Multiplying  the line's nominalV by 2 corresponds to the fact that iIDM refers to the cable-ground voltage
@@ -177,5 +195,4 @@ public final class EchUtil {
         return line.getNominalV() * 2.0f;
 
     }
-
 }

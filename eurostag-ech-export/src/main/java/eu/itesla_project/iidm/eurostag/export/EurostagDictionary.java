@@ -66,6 +66,10 @@ public final class EurostagDictionary {
         NAMING_STRATEGY.fillDictionary(dictionary, EurostagNamingStrategy.NameType.VSC, converterStationsIds);
 
         for (DanglingLine dl : Identifiables.sort(network.getDanglingLines())) {
+            // skip if not in the main connected component
+            if (config.isExportMainCCOnly() && !EchUtil.isInMainCc(dl, config.isNoSwitch())) {
+                continue;
+            }
             ConnectionBus bus1 = ConnectionBus.fromTerminal(dl.getTerminal(), config, fakeNodes);
             ConnectionBus bus2 = new ConnectionBus(true, EchUtil.getBusId(dl));
             dictionary.addIfNotExist(dl.getId(), new EsgBranchName(new Esg8charName(dictionary.getEsgId(bus1.getId())),
@@ -77,6 +81,10 @@ public final class EurostagDictionary {
             for (Switch sw : Identifiables.sort(EchUtil.getSwitches(vl, config))) {
                 Bus bus1 = EchUtil.getBus1(vl, sw.getId(), config);
                 Bus bus2 = EchUtil.getBus2(vl, sw.getId(), config);
+                // skip switches not in the main connected component
+                if (config.isExportMainCCOnly() && (!EchUtil.isInMainCc(bus1) || !EchUtil.isInMainCc(bus2))) {
+                    continue;
+                }
                 dictionary.addIfNotExist(sw.getId(),
                         new EsgBranchName(new Esg8charName(dictionary.getEsgId(bus1.getId())),
                                 new Esg8charName(dictionary.getEsgId(bus2.getId())),
@@ -85,6 +93,10 @@ public final class EurostagDictionary {
         }
 
         for (Line l : Identifiables.sort(network.getLines())) {
+            // skip lines not in the main connected component
+            if (config.isExportMainCCOnly() && !EchUtil.isInMainCc(l, config.isNoSwitch())) {
+                continue;
+            }
             ConnectionBus bus1 = ConnectionBus.fromTerminal(l.getTerminal1(), config, fakeNodes);
             ConnectionBus bus2 = ConnectionBus.fromTerminal(l.getTerminal2(), config, fakeNodes);
             EsgBranchName ebname = new EsgBranchName(new Esg8charName(dictionary.getEsgId(bus1.getId())),
@@ -94,6 +106,10 @@ public final class EurostagDictionary {
         }
 
         for (TwoWindingsTransformer twt : Identifiables.sort(network.getTwoWindingsTransformers())) {
+            // skip transformers not in the main connected component
+            if (config.isExportMainCCOnly() && !EchUtil.isInMainCc(twt, config.isNoSwitch())) {
+                continue;
+            }
             ConnectionBus bus1 = ConnectionBus.fromTerminal(twt.getTerminal1(), config, fakeNodes);
             ConnectionBus bus2 = ConnectionBus.fromTerminal(twt.getTerminal2(), config, fakeNodes);
             dictionary.addIfNotExist(twt.getId(), new EsgBranchName(new Esg8charName(dictionary.getEsgId(bus1.getId())),
