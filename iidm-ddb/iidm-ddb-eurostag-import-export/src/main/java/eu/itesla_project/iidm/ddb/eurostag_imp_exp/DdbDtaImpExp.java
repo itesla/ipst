@@ -7,6 +7,7 @@
 package eu.itesla_project.iidm.ddb.eurostag_imp_exp;
 
 import com.google.common.collect.Sets;
+import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.util.ConnectedComponents;
 import com.powsybl.iidm.network.util.Identifiables;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.utils.Utils;
@@ -1037,6 +1038,11 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
             //add vscConverter stations to the equipment list
             for (HvdcLine hvdcLine : Identifiables.sort(network.getHvdcLines())) {
+                // skip lines with converter stations not in the main connected component
+                if (configExport.isExportMainCCOnly() && (!isInMainCc(hvdcLine.getConverterStation1(), configExport.isNoSwitch()) || !isInMainCc(hvdcLine.getConverterStation2(), configExport.isNoSwitch()))) {
+                    log.warn("skipped HVDC line {}: at least one converter station is not in main component", hvdcLine.getId());
+                    continue;
+                }
                 cimIds.add(hvdcLine.getConverterStation1().getId());
                 cimIds.add(hvdcLine.getConverterStation2().getId());
             }

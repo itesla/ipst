@@ -592,10 +592,6 @@ public class EurostagEchExport implements EurostagEchExporter {
         } else {
             String esgId = "DC_" + (iidmId.length() > idlen ? iidmId.substring(0, idlen)
                     : Strings.padEnd(iidmId, idlen, ' '));
-            //deal with forbidden characters
-//            if (regex != null) {
-//                esgId = esgId.replaceAll(regex, repl);
-//            }
             int counter = 0;
             while (dcNodesEsgNames.inverse().containsKey(esgId)) {
                 String counterStr = Integer.toString(counter++);
@@ -606,20 +602,6 @@ public class EurostagEchExport implements EurostagEchExporter {
             }
             dcNodesEsgNames.put(iidmId, esgId);
             return esgId;
-        }
-    }
-
-    private void createDCNodes(EsgNetwork esgNetwork, BiMap<String, String> dcNodesEsgNames) {
-        //creates 2 DC nodes, for each hvdc line (one node per converter station)
-        for (HvdcLine hvdcLine : Identifiables.sort(network.getHvdcLines())) {
-            Esg8charName hvdcNodeName1 = new Esg8charName(getDCNodeName(hvdcLine.getConverterStation1().getId(), 5, dcNodesEsgNames));
-            Esg8charName hvdcNodeName2 = new Esg8charName(getDCNodeName(hvdcLine.getConverterStation2().getId(), 5, dcNodesEsgNames));
-            float dcVoltage = EchUtil.getHvdcLineDcVoltage(hvdcLine);
-            esgNetwork.addDCNode(new EsgDCNode(new Esg2charName("DC"), hvdcNodeName1, dcVoltage, 1));
-            esgNetwork.addDCNode(new EsgDCNode(new Esg2charName("DC"), hvdcNodeName2, dcVoltage, 1));
-
-            //create a dc link, representing the hvdc line
-            esgNetwork.addDCLink(new EsgDCLink(hvdcNodeName1, hvdcNodeName2, '1', hvdcLine.getR(), EsgDCLink.LinkStatus.ON));
         }
     }
 
@@ -643,13 +625,12 @@ public class EurostagEchExport implements EurostagEchExporter {
         return Float.isNaN(value) ? 0 : value;
     }
 
-    protected EsgACDCVscConverter createACDCVscConverter(VscConverterStation vscConv, HvdcLine hline, BiMap<String, String> dcNodesEsgNames) {
+    protected EsgACDCVscConverter createACDCVscConverter(VscConverterStation vscConv, HvdcLine hline, Esg8charName vscConvDcName) {
         Objects.requireNonNull(vscConv);
         Objects.requireNonNull(hline, "no hvdc line connected to VscConverterStation " + vscConv.getId());
         boolean isPmode = isPMode(vscConv, hline);
         Esg8charName znamsvc = new Esg8charName(dictionary.getEsgId(vscConv.getId())); // converter station ID
-        Esg8charName dcNode1 = new Esg8charName(getDCNodeName(vscConv.getId(), 5, dcNodesEsgNames)); // sending DC node name
-        Esg8charName dcNode2 = new Esg8charName("GROUND"); // receiving DC node name; is it always GROUND?
+        Esg8charName receivingNodeDcName = new Esg8charName("GROUND"); // receiving DC node name; always GROUND
         String acNodeIdKey = EurostagDictionary.ACNODE_PREFIX + vscConv.getId();
         Esg8charName acNode = dictionary.iidmIdExists(acNodeIdKey) ? new Esg8charName(dictionary.getEsgId(acNodeIdKey).substring(acNodeIdKey.length() + 1))
                 : null;
@@ -702,8 +683,8 @@ public class EurostagEchExport implements EurostagEchExporter {
 
         return new EsgACDCVscConverter(
                 znamsvc,
-                dcNode1,
-                dcNode2,
+                vscConvDcName,
+                receivingNodeDcName,
                 acNode,
                 xstate,
                 xregl,
@@ -727,13 +708,36 @@ public class EurostagEchExport implements EurostagEchExporter {
                 mva);
     }
 
-    protected void createACDCVscConverters(EsgNetwork esgNetwork, BiMap<String, String> dcNodesEsgNames) {
-        for (VscConverterStation vscConv : Identifiables.sort(network.getVscConverterStations())) {
-            //retrieve the hvdc line connected to this converter station
-            HvdcLine hline = network.getHvdcLineStream().filter(l -> (vscConv.getId().equals(l.getConverterStation1().getId())) || (vscConv.getId().equals(l.getConverterStation2().getId()))).findFirst().orElse(null);
-            esgNetwork.addACDCVscConverter(createACDCVscConverter(vscConv, hline, dcNodesEsgNames));
+    private void createACDCVscConverters(EsgNetwork esgNetwork) {
+        //DC nodes mapping
+        BiMap<String, String> dcNodesEsgNames = HashBiMap.create();
+
+        //creates 2 DC nodes, for each hvdc line (one node per converter station)
+        for (HvdcLine hvdcLine : Identifiables.sort(network.getHvdcLines())) {
+            // skip lines with converter stations not in the main connected component
+            if (config.isExportMainCCOnly() && (!EchUtil.isInMainCc(hvdcLine.getConverterStation1(), config.isNoSwitch()) || !EchUtil.isInMainCc(hvdcLine.getConverterStation2(), config.isNoSwitch()))) {
+                LOGGER.warn("skipped HVDC line {}: at least one converter station is not in main component", hvdcLine.getId());
+                continue;
+            }
+            HvdcConverterStation convStation1 = hvdcLine.getConverterStation1();
+            HvdcConverterStation convStation2 = hvdcLine.getConverterStation2();
+
+            //create two dc nodes, one for each conv. station
+            Esg8charName hvdcNodeName1 = new Esg8charName(getDCNodeName(convStation1.getId(), 5, dcNodesEsgNames));
+            Esg8charName hvdcNodeName2 = new Esg8charName(getDCNodeName(convStation2.getId(), 5, dcNodesEsgNames));
+            float dcVoltage = EchUtil.getHvdcLineDcVoltage(hvdcLine);
+            esgNetwork.addDCNode(new EsgDCNode(new Esg2charName("DC"), hvdcNodeName1, dcVoltage, 1));
+            esgNetwork.addDCNode(new EsgDCNode(new Esg2charName("DC"), hvdcNodeName2, dcVoltage, 1));
+
+            //create a dc link, representing the hvdc line
+            esgNetwork.addDCLink(new EsgDCLink(hvdcNodeName1, hvdcNodeName2, '1', hvdcLine.getR(), EsgDCLink.LinkStatus.ON));
+
+            //create the two converter stations
+            esgNetwork.addACDCVscConverter(createACDCVscConverter(network.getVscConverterStation(convStation1.getId()), hvdcLine, hvdcNodeName1));
+            esgNetwork.addACDCVscConverter(createACDCVscConverter(network.getVscConverterStation(convStation2.getId()), hvdcLine, hvdcNodeName2));
         }
     }
+
 
     @Override
     public EsgNetwork createNetwork(EsgGeneralParameters parameters) {
@@ -764,14 +768,8 @@ public class EurostagEchExport implements EurostagEchExporter {
         // static VAR compensators
         createStaticVarCompensators(esgNetwork);
 
-        //DC nodes mapping
-        BiMap<String, String> dcNodesEsgNames = HashBiMap.create();
-
-        // DC Nodes and links
-        createDCNodes(esgNetwork, dcNodesEsgNames);
-
         // ACDC VSC Converters
-        createACDCVscConverters(esgNetwork, dcNodesEsgNames);
+        createACDCVscConverters(esgNetwork);
 
         // nodes
         createNodes(esgNetwork);
