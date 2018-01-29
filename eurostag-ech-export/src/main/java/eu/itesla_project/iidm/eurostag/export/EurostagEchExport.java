@@ -9,10 +9,10 @@ package eu.itesla_project.iidm.eurostag.export;
 
 import com.google.common.base.Strings;
 import com.powsybl.commons.PowsyblException;
-import eu.itesla_project.eurostag.network.*;
-import eu.itesla_project.eurostag.network.io.EsgWriter;
 import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.util.Identifiables;
+import eu.itesla_project.eurostag.network.*;
+import eu.itesla_project.eurostag.network.io.EsgWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,9 +102,19 @@ public class EurostagEchExport {
         }
         LOGGER.debug("Slack bus: {} ({})", sb, sb.getVoltageLevel().getId());
         for (Bus b : Identifiables.sort(EchUtil.getBuses(network, config))) {
+            // skip buses not in the main connected component
+            if (config.isExportMainCCOnly() && !EchUtil.isInMainCc(b)) {
+                LOGGER.warn("not in main component, skipping Bus: {}", b.getId());
+                continue;
+            }
             esgNetwork.addNode(createNode(b.getId(), b.getVoltageLevel(), b.getV(), b.getAngle(), sb == b));
         }
         for (DanglingLine dl : Identifiables.sort(network.getDanglingLines())) {
+            // skip DLs not in the main connected component
+            if (config.isExportMainCCOnly() && !EchUtil.isInMainCc(dl, config.isNoSwitch())) {
+                LOGGER.warn("not in main component, skipping DanglingLine: {}", dl.getId());
+                continue;
+            }
             Properties properties = dl.getProperties();
             String strV = properties.getProperty(XNODE_V_PROPERTY);
             String strAngle = properties.getProperty(XNODE_ANGLE_PROPERTY);
@@ -130,6 +140,12 @@ public class EurostagEchExport {
             for (Switch sw : Identifiables.sort(EchUtil.getSwitches(vl, config))) {
                 Bus bus1 = EchUtil.getBus1(vl, sw.getId(), config);
                 Bus bus2 = EchUtil.getBus2(vl, sw.getId(), config);
+                // skip switches not in the main connected component
+                if (config.isExportMainCCOnly() && (!EchUtil.isInMainCc(bus1) || !EchUtil.isInMainCc(bus2))) {
+                    LOGGER.warn("not in main component, skipping Switch: {} {} {}", bus1.getId(), bus2.getId(), sw.getId());
+                    continue;
+                }
+
                 esgNetwork.addCouplingDevice(new EsgCouplingDevice(new EsgBranchName(new Esg8charName(dictionary.getEsgId(bus1.getId())),
                         new Esg8charName(dictionary.getEsgId(bus2.getId())),
                         parallelIndexes.getParallelIndex(sw.getId())),
@@ -173,6 +189,12 @@ public class EurostagEchExport {
 
     private void createLines(EsgNetwork esgNetwork, EsgGeneralParameters parameters) {
         for (Line l : Identifiables.sort(network.getLines())) {
+            // skip lines not in the main connected component
+            if (config.isExportMainCCOnly() && !EchUtil.isInMainCc(l, config.isNoSwitch())) {
+                LOGGER.warn("not in main component, skipping Line: {}", l.getId());
+                continue;
+            }
+
             ConnectionBus bus1 = ConnectionBus.fromTerminal(l.getTerminal1(), config, fakeNodes);
             ConnectionBus bus2 = ConnectionBus.fromTerminal(l.getTerminal2(), config, fakeNodes);
             // if the admittance are the same in the both side of PI line model
@@ -196,6 +218,11 @@ public class EurostagEchExport {
             }
         }
         for (DanglingLine dl : Identifiables.sort(network.getDanglingLines())) {
+            // skip if not in the main connected component
+            if (config.isExportMainCCOnly() && !EchUtil.isInMainCc(dl, config.isNoSwitch())) {
+                LOGGER.warn("not in main component, skipping DanglingLine: {}", dl.getId());
+                continue;
+            }
             ConnectionBus bus1 = ConnectionBus.fromTerminal(dl.getTerminal(), config, fakeNodes);
             ConnectionBus bus2 = new ConnectionBus(true, EchUtil.getBusId(dl));
             esgNetwork.addLine(createLine(dl.getId(), bus1, bus2, dl.getTerminal().getVoltageLevel().getNominalV(),
@@ -263,6 +290,12 @@ public class EurostagEchExport {
         Set<String> additionalBanksIds = new HashSet<>();
 
         for (TwoWindingsTransformer twt : Identifiables.sort(network.getTwoWindingsTransformers())) {
+            // skip transformers not in the main connected component
+            if (config.isExportMainCCOnly() && !EchUtil.isInMainCc(twt, config.isNoSwitch())) {
+                LOGGER.warn("not in main component, skipping TwoWindingsTransformer: {}", twt.getId());
+                continue;
+            }
+
             ConnectionBus bus1 = ConnectionBus.fromTerminal(twt.getTerminal1(), config, fakeNodes);
             ConnectionBus bus2 = ConnectionBus.fromTerminal(twt.getTerminal2(), config, fakeNodes);
 
@@ -425,10 +458,20 @@ public class EurostagEchExport {
 
     private void createLoads(EsgNetwork esgNetwork) {
         for (Load l : Identifiables.sort(network.getLoads())) {
+            // skip loads not in the main connected component
+            if (config.isExportMainCCOnly() && !EchUtil.isInMainCc(l, config.isNoSwitch())) {
+                LOGGER.warn("not in main component, skipping Load: {}", l.getId());
+                continue;
+            }
             ConnectionBus bus = ConnectionBus.fromTerminal(l.getTerminal(), config, fakeNodes);
             esgNetwork.addLoad(createLoad(bus, l.getId(), l.getP0(), l.getQ0()));
         }
         for (DanglingLine dl : Identifiables.sort(network.getDanglingLines())) {
+            // skip dls not in the main connected component
+            if (config.isExportMainCCOnly() && !EchUtil.isInMainCc(dl, config.isNoSwitch())) {
+                LOGGER.warn("not in main component, skipping DanglingLine: {}", dl.getId());
+                continue;
+            }
             ConnectionBus bus = new ConnectionBus(true, EchUtil.getBusId(dl));
             esgNetwork.addLoad(createLoad(bus, EchUtil.getLoadId(dl), dl.getP0(), dl.getQ0()));
         }
@@ -436,6 +479,12 @@ public class EurostagEchExport {
 
     private void createGenerators(EsgNetwork esgNetwork) {
         for (Generator g : Identifiables.sort(network.getGenerators())) {
+            // skip generators not in the main connected component
+            if (config.isExportMainCCOnly() && !EchUtil.isInMainCc(g, config.isNoSwitch())) {
+                LOGGER.warn("not in main component, skipping Generator: {}", g.getId());
+                continue;
+            }
+
             ConnectionBus bus = ConnectionBus.fromTerminal(g.getTerminal(), config, fakeNodes);
 
             EsgConnectionStatus status = bus.isConnected() ? EsgConnectionStatus.CONNECTED : EsgConnectionStatus.NOT_CONNECTED;
@@ -474,6 +523,11 @@ public class EurostagEchExport {
 
     private void createBanks(EsgNetwork esgNetwork) {
         for (ShuntCompensator sc : Identifiables.sort(network.getShunts())) {
+            // skip shunts not in the main connected component
+            if (config.isExportMainCCOnly() && !EchUtil.isInMainCc(sc, config.isNoSwitch())) {
+                LOGGER.warn("not in main component, skipping ShuntCompensator: {}", sc.getId());
+                continue;
+            }
             ConnectionBus bus = ConnectionBus.fromTerminal(sc.getTerminal(), config, fakeNodes);
 
             //...number of steps in service
@@ -491,14 +545,29 @@ public class EurostagEchExport {
 
     private void createStaticVarCompensators(EsgNetwork esgNetwork) {
         for (StaticVarCompensator svc : Identifiables.sort(network.getStaticVarCompensators())) {
+            // skip SVCs not in the main connected component
+            if (config.isExportMainCCOnly() && !EchUtil.isInMainCc(svc, config.isNoSwitch())) {
+                LOGGER.warn("not in main component, skipping StaticVarCompensator: {}", svc.getId());
+                continue;
+            }
             ConnectionBus bus = ConnectionBus.fromTerminal(svc.getTerminal(), config, fakeNodes);
 
             Esg8charName znamsvc = new Esg8charName(dictionary.getEsgId(svc.getId()));
             EsgConnectionStatus xsvcst = bus.isConnected() ? EsgConnectionStatus.CONNECTED : EsgConnectionStatus.NOT_CONNECTED;
             Esg8charName znodsvc = new Esg8charName(dictionary.getEsgId(bus.getId()));
-            float factor = (float) Math.pow(svc.getTerminal().getVoltageLevel().getNominalV(), 2);
+            float vlNomVoltage = svc.getTerminal().getVoltageLevel().getNominalV();
+            float factor = (float) Math.pow(vlNomVoltage, 2);
             float bmin = (!config.isSvcAsFixedInjectionInLF()) ? svc.getBmin() * factor : -9999999; // [Mvar]
-            float binit = (!config.isSvcAsFixedInjectionInLF()) ? svc.getReactivePowerSetPoint() : -svc.getTerminal().getQ() * (float) Math.pow(svc.getTerminal().getVoltageLevel().getNominalV() / EchUtil.getBus(svc.getTerminal(), config).getV(), 2); // [Mvar]
+            float binit; // [Mvar]
+            if (!config.isSvcAsFixedInjectionInLF()) {
+                binit = svc.getReactivePowerSetPoint();
+            } else {
+                binit = -svc.getTerminal().getQ();
+                Bus svcBus = EchUtil.getBus(svc.getTerminal(), config);
+                if ((svcBus != null) && (Math.abs(svcBus.getV()) > 0.0f)) {
+                    binit = binit * (float) Math.pow(vlNomVoltage / svcBus.getV(), 2);
+                }
+            }
             float bmax = (!config.isSvcAsFixedInjectionInLF()) ? svc.getBmax() * factor : 9999999; // [Mvar]
             EsgRegulatingMode xregsvc = ((svc.getRegulationMode() == StaticVarCompensator.RegulationMode.VOLTAGE) && (!config.isSvcAsFixedInjectionInLF())) ? EsgRegulatingMode.REGULATING : EsgRegulatingMode.NOT_REGULATING;
             float vregsvc = svc.getVoltageSetPoint();

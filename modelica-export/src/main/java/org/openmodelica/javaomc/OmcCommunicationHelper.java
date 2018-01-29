@@ -10,7 +10,7 @@ package org.openmodelica.javaomc;
 
 
 // As simple as can be omc communication, sending and recieving of strings.
-abstract public class OmcCommunicationHelper {
+public abstract class OmcCommunicationHelper {
     private static String _id = "IDL:OmcCommunication:1.0";
 
     public static void insert(org.omg.CORBA.Any a, OmcCommunication that) {
@@ -25,7 +25,7 @@ abstract public class OmcCommunicationHelper {
     }
 
     private static org.omg.CORBA.TypeCode __typeCode = null;
-    synchronized public static org.omg.CORBA.TypeCode type() {
+    public static synchronized org.omg.CORBA.TypeCode type() {
         if (__typeCode == null) {
             __typeCode = org.omg.CORBA.ORB.init().create_interface_tc(OmcCommunicationHelper.id(), "OmcCommunication");
         }

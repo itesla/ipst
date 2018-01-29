@@ -167,7 +167,8 @@ public class ParParser {
         Integer nQuotient = (n - 1) / 5;
         Integer nRemainder = ((n - 1) % 5) + 1;
         Integer lengthArrayParameter;
-        String key, value;
+        String key;
+        String value;
 
         try {
             BufferedReader buffer = new BufferedReader(new FileReader(parFile));

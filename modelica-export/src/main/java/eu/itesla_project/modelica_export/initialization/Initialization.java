@@ -258,7 +258,8 @@ public class Initialization {
 
     private void addConnections(GeneratorInitData genInitData, List<RegulatorInitData> regInitData) throws IOException {
         List<String> connectedPins = new ArrayList<String>();
-        String deviceFrom, deviceTo;
+        String deviceFrom;
+        String deviceTo;
 
         // Connect between GEN_INIT and REG_INIT
         for (RegulatorInitData reg : regInitData) {

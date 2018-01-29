@@ -17,12 +17,12 @@ import com.powsybl.tools.Command;
  */
 public class DdbUnloaderCommand implements Command {
 
-    public final static  DdbUnloaderCommand INSTANCE = new DdbUnloaderCommand();
+    public static final DdbUnloaderCommand INSTANCE = new DdbUnloaderCommand();
 
-    public final static String HOST = "host";
-    public final static String PORT = "port";
-    public final static String USER = "user";
-    public final static String PASSWORD = "password";
+    public static final String HOST = "host";
+    public static final String PORT = "port";
+    public static final String USER = "user";
+    public static final String PASSWORD = "password";
 
     @Override
     public String getName() {

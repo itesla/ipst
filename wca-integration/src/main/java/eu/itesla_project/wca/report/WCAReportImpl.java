@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017, RTE (http://www.rte-france.com)
+ * Copyright (c) 2017-2018, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -26,12 +26,15 @@ import com.powsybl.commons.io.table.Column;
 import com.powsybl.commons.io.table.CsvTableFormatterFactory;
 import com.powsybl.commons.io.table.TableFormatter;
 import com.powsybl.commons.io.table.TableFormatterConfig;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.security.LimitViolation;
+import com.powsybl.security.LimitViolationHelper;
+
 import eu.itesla_project.modules.wca.report.WCAActionApplication;
 import eu.itesla_project.modules.wca.report.WCALoadflowResult;
 import eu.itesla_project.modules.wca.report.WCAPostContingencyStatus;
 import eu.itesla_project.modules.wca.report.WCAReport;
 import eu.itesla_project.modules.wca.report.WCASecurityRuleApplication;
-import com.powsybl.security.LimitViolation;
 
 /**
  *
@@ -39,7 +42,7 @@ import com.powsybl.security.LimitViolation;
  */
 public class WCAReportImpl implements WCAReport {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(WCAReportImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WCAReportImpl.class);
     public static String PRE_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_FILE = "pre-contigency-violations-without-uncertainties-report.csv";
     public static String PRE_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_TITLE = "pre-contigency-violations-without-uncertainties";
     public static String PRE_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_FILE = "pre-contigency-violations-with-uncertainties-report.csv";
@@ -59,7 +62,7 @@ public class WCAReportImpl implements WCAReport {
     private static TableFormatterConfig TABLE_FORMATTER_CONFIG = TableFormatterConfig.load();
     private static String LOADFLOW_STEP = "Loadflow";
 
-    private final String basecase;
+    private final Network basecase;
     private WCALoadflowResult baseStateLoadflowResult;
     private List<LimitViolation> preContingencyViolationsWithoutUncertainties = Collections.synchronizedList(new ArrayList<>());
     private WCALoadflowResult baseStateWithUncertaintiesLoadflowResult;
@@ -70,13 +73,13 @@ public class WCAReportImpl implements WCAReport {
     private List<WCASecurityRuleApplication> securityRulesApplication = Collections.synchronizedList(new ArrayList<>());
     private List<WCAPostContingencyStatus> postContingenciesStatus = Collections.synchronizedList(new ArrayList<>());
 
-    public WCAReportImpl(String basecase) {
+    public WCAReportImpl(Network basecase) {
         this.basecase = Objects.requireNonNull(basecase);
     }
 
     @Override
     public String getBasecase() {
-        return basecase;
+        return basecase.getId();
     }
 
     @Override
@@ -197,7 +200,7 @@ public class WCAReportImpl implements WCAReport {
                                  List<LimitViolation> violations) {
         if (loadflowResult != null && !loadflowResult.loadflowConverged()) {
             try {
-                formatter.writeCell(basecase);
+                formatter.writeCell(basecase.getId());
                 if (contingencyId != null) {
                     formatter.writeCell(contingencyId);
                 }
@@ -215,7 +218,7 @@ public class WCAReportImpl implements WCAReport {
         } else if (!violations.isEmpty()) {
             violations.forEach(violation -> {
                 try {
-                    formatter.writeCell(basecase);
+                    formatter.writeCell(basecase.getId());
                     if (contingencyId != null) {
                         formatter.writeCell(contingencyId);
                     }
@@ -225,8 +228,13 @@ public class WCAReportImpl implements WCAReport {
                              .writeCell(violation.getSubjectId())
                              .writeCell(violation.getValue())
                              .writeCell(violation.getLimit())
-                             .writeCell(violation.getCountry().name())
-                             .writeCell(violation.getBaseVoltage());
+                             .writeCell(LimitViolationHelper.getCountry(violation, basecase).name())
+                             .writeCell(LimitViolationHelper.getNominalVoltage(violation, basecase));
+                    if (violation.getSide() != null) {
+                        formatter.writeCell(violation.getSide().name());
+                    } else {
+                        formatter.writeEmptyCell();
+                    }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -246,7 +254,8 @@ public class WCAReportImpl implements WCAReport {
             new Column("Value"),
             new Column("Limit"),
             new Column("Country"),
-            new Column("BaseVoltage")
+            new Column("BaseVoltage"),
+            new Column("Side"),
         };
         CsvTableFormatterFactory factory = new CsvTableFormatterFactory();
         try (Writer writer = Files.newBufferedWriter(violationsPath, StandardCharsets.UTF_8);
@@ -254,6 +263,7 @@ public class WCAReportImpl implements WCAReport {
             writeViolations(formatter, null, loadflowResult, violations);
         }
     }
+
     private void exportPreContingencyViolationsWithoutUncertainties(Path folder) throws IOException {
         LOGGER.info("Exporting pre-contingency violations without uncertainties report of basecase {} to file {}",
                     basecase, folder + File.separator + PRE_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_FILE);
@@ -279,7 +289,7 @@ public class WCAReportImpl implements WCAReport {
         if (!actionsApplication.isEmpty()) {
             actionsApplication.forEach(actionApplication -> {
                 try {
-                    formatter.writeCell(basecase);
+                    formatter.writeCell(basecase.getId());
                     if (contingencyId != null) {
                         formatter.writeCell(contingencyId);
                     }
@@ -363,7 +373,7 @@ public class WCAReportImpl implements WCAReport {
             if (!securityRulesApplication.isEmpty()) {
                 securityRulesApplication.forEach(ruleApplication -> {
                     try {
-                        formatter.writeCell(basecase)
+                        formatter.writeCell(basecase.getId())
                                  .writeCell(ruleApplication.getContingencyId());
                         if (ruleApplication.getSecurityRule() != null) {
                             formatter.writeCell(ruleApplication.getSecurityRule().getId().toString())
@@ -404,7 +414,8 @@ public class WCAReportImpl implements WCAReport {
             new Column("Value"),
             new Column("Limit"),
             new Column("Country"),
-            new Column("BaseVoltage")
+            new Column("BaseVoltage"),
+            new Column("Side")
         };
         CsvTableFormatterFactory factory = new CsvTableFormatterFactory();
         try (Writer writer1 = Files.newBufferedWriter(violationsPath1, StandardCharsets.UTF_8);

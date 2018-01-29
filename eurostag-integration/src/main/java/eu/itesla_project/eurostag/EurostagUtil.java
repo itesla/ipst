@@ -49,7 +49,7 @@ public final class EurostagUtil {
             = Arrays.asList("",
             "    MACHINE            MACROBLOC   VARIABLE    BLOC DE SOR.  INITIA      LIMITE INF.       VALEUR      LIMITE SUP.");
 
-    private final static Supplier<JsonFactory> JSON_FACTORY_SUPPLIER = Suppliers.memoize(() -> new JsonFactory());
+    private static final Supplier<JsonFactory> JSON_FACTORY_SUPPLIER = Suppliers.memoize(() -> new JsonFactory());
 
     private EurostagUtil() {
     }
