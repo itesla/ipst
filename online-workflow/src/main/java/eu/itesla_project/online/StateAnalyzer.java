@@ -60,7 +60,6 @@ public class StateAnalyzer implements Callable<Void> {
     private EnumMap<OnlineTaskType, OnlineTaskStatus> status = new EnumMap<OnlineTaskType, OnlineTaskStatus>(OnlineTaskType.class);
     Map<String, Boolean> loadflowResults = new HashMap<String, Boolean>();
     private ConstraintsModifier constraintsModifier;
-
     private final String logHeader;
 
     public StateAnalyzer(OnlineWorkflowContext context, MontecarloSampler sampler, LoadFlow loadFlow,
@@ -366,13 +365,13 @@ public class StateAnalyzer implements Callable<Void> {
                                     }
                                 }
                             } finally {
-                                if (context.getNetwork().getStateManager().getStateIds().contains(postContingencyStateId)) {
-                                    context.getNetwork().getStateManager().removeState(postContingencyStateId);
+                                if (network.getStateManager().getStateIds().contains(postContingencyStateId)) {
+                                    network.getStateManager().removeState(postContingencyStateId);
                                 }
                             }
-
                             return null;
                         }
+
                     }
             );
         }
@@ -388,7 +387,7 @@ public class StateAnalyzer implements Callable<Void> {
 
     private void computeAndStorePostContingencyViolations(Network network, List<Contingency> contingencies) {
         String stateId = network.getStateManager().getWorkingStateId();
-        logger.info(logHeader + "{}: computing post contingency violations", stateId);
+        logger.info(this.logHeader + "{}: computing post contingency violations", stateId);
         List<Callable<Void>> postContingencyViolationsComputations = new ArrayList<>(contingencies.size());
         for (Contingency contingency : contingencies) {
             postContingencyViolationsComputations.add(
@@ -396,25 +395,28 @@ public class StateAnalyzer implements Callable<Void> {
 
                         @Override
                         public Void call() throws Exception {
-                            List<LimitViolation> violations = new ArrayList<LimitViolation>();
                             // compute post contingency state
                             String postContingencyStateId = OnlineUtils.getPostContingencyId(stateId, contingency.getId());
-                            boolean loadflowConverge = computePostContingencyState(network, stateId, contingency, postContingencyStateId);
-                            if (loadflowConverge) {
-                                logger.info(logHeader + "{}: computing post contingency violations for contingency {}", stateId, contingency.getId());
-                                violations = Security.checkLimits(network, parameters.getLimitReduction());
-
-                                if (violations == null || violations.isEmpty()) {
-                                    logger.info(logHeader + "{}: no post contingency violations for contingency {}", stateId, contingency.getId());
-                                    violations = new ArrayList<LimitViolation>();
+                            try {
+                                boolean loadflowConverge = computePostContingencyState(network, stateId, contingency, postContingencyStateId);
+                                if (loadflowConverge) {
+                                    logger.info(logHeader + "{}: computing post contingency violations for contingency {}", stateId, contingency.getId());
+                                    List<LimitViolation> violations = Security.checkLimits(network, parameters.getLimitReduction());
+                                    if (violations != null && !violations.isEmpty()) {
+                                        logger.info(logHeader + "{}: storing post contingency violations/loadflow results for contingency {} in online db", stateId, contingency.getId());
+                                        onlineDb.storePostContingencyViolations(context.getWorkflowId(), Integer.valueOf(stateId), contingency.getId(), loadflowConverge, violations);
+                                    } else {
+                                        logger.info(logHeader + "{}: no post contingency violations for contingency {}", stateId, contingency.getId());
+                                    }
+                                } else {
+                                    logger.info("{}: post contingency loadflow does not converge for contingency {}, skipping computing post contingency violations", stateId, contingency.getId());
                                 }
-                            } else {
-                                logger.info(logHeader + "{}: post contingency loadflow does not converge for contingency {}, skipping computing post contingency violations", stateId, contingency.getId());
+                                network.getStateManager().setWorkingState(stateId);
+                            } finally {
+                                if (network.getStateManager().getStateIds().contains(postContingencyStateId)) {
+                                    network.getStateManager().removeState(postContingencyStateId);
+                                }
                             }
-                            logger.info(logHeader + "{}: storing post contingency violations/loadflow results for contingency {} in online db", stateId, contingency.getId());
-                            onlineDb.storePostContingencyViolations(context.getWorkflowId(), Integer.valueOf(stateId), contingency.getId(), loadflowConverge, violations);
-                            network.getStateManager().setWorkingState(stateId);
-                            //                            network.getStateManager().removeState(postContingencyStateId);
                             return null;
                         }
                     }
@@ -431,7 +433,7 @@ public class StateAnalyzer implements Callable<Void> {
 
     private boolean computePostContingencyState(Network network, String stateId, Contingency contingency, String postContingencyStateId) {
         boolean loadflowConverge = false;
-        logger.info(logHeader + "{}: computing post contingency state for contingency {}", stateId, contingency.getId());
+        logger.info(this.logHeader + "{}: computing post contingency state for contingency {}", stateId, contingency.getId());
         boolean alreadyProcessed = false;
         synchronized (loadflowResults) {
             if (loadflowResults.containsKey(postContingencyStateId)) {
@@ -441,38 +443,40 @@ public class StateAnalyzer implements Callable<Void> {
         }
         if (alreadyProcessed && network.getStateManager().getStateIds().contains(postContingencyStateId)) {
             // post contingency state already computed, avoid to run the load flow again
-            logger.info("logHeader + {}: post contingency state {} already computed", stateId, postContingencyStateId);
+            logger.info(this.logHeader + "{}: post contingency state {} already computed", stateId, postContingencyStateId);
             network.getStateManager().setWorkingState(postContingencyStateId);
         } else {
             // create post contingency state
-            logger.info(logHeader + "{}: creating post contingency state {}", stateId, postContingencyStateId);
+            logger.info(this.logHeader + "{}: creating post contingency state {}", stateId, postContingencyStateId);
             network.getStateManager().cloneState(stateId, postContingencyStateId);
             network.getStateManager().setWorkingState(postContingencyStateId);
             // apply contingency to post contingency state
-            logger.info(logHeader + "{}: applying contingency {} to post contingency state {}", stateId, contingency.getId(), postContingencyStateId);
+            logger.info(this.logHeader + "{}: applying contingency {} to post contingency state {}", stateId, contingency.getId(), postContingencyStateId);
             contingency.toTask().modify(network, computationManager);
             try {
                 // run load flow on post contingency state
-                logger.info(logHeader + "{}: running load flow on post contingency state {}", stateId, postContingencyStateId);
+                logger.info(this.logHeader + "{}: running load flow on post contingency state {}", stateId, postContingencyStateId);
                 LoadFlowResult result = loadFlow.run();
-                // store post contingency state
-                Integer stateIdInt = Integer.parseInt(stateId);
-                if (parameters.storeStates() || ((parameters.analyseBasecase()) && (stateIdInt == 0))) {
-                    logger.info(logHeader + "{} {}: storing post contingency state in online db", stateIdInt, contingency.getId());
-                    onlineDb.storeState(context.getWorkflowId(), stateIdInt, network, contingency.getId());
-                }
-                if (result.isOk()) {
-                    logger.info(logHeader + "{}: load flow on post contingency state {} converge", stateId, postContingencyStateId);
-                    loadflowConverge = true;
-                } else {
-                    logger.info(logHeader + "{}: load flow on post contingency state {} does not converge", stateId, postContingencyStateId);
-                    loadflowConverge = false;
-                }
-                synchronized (loadflowResults) {
-                    loadflowResults.put(postContingencyStateId, loadflowConverge);
+                if (!alreadyProcessed) {
+                    // store post contingency state
+                    Integer stateIdInt = Integer.parseInt(stateId);
+                    if (parameters.storeStates() || ((parameters.analyseBasecase()) && (stateIdInt == 0))) {
+                        logger.info(this.logHeader + "{} {}: storing post contingency state in online db", stateIdInt, contingency.getId());
+                        onlineDb.storeState(context.getWorkflowId(), stateIdInt, network, contingency.getId());
+                    }
+                    if (result.isOk()) {
+                        logger.info(this.logHeader + "{}: load flow on post contingency state {} converge", stateId, postContingencyStateId);
+                        loadflowConverge = true;
+                    } else {
+                        logger.info(this.logHeader + "{}: load flow on post contingency state {} does not converge", stateId, postContingencyStateId);
+                        loadflowConverge = false;
+                    }
+                    synchronized (loadflowResults) {
+                        loadflowResults.put(postContingencyStateId, loadflowConverge);
+                    }
                 }
             } catch (Exception e) {
-                logger.info(logHeader + "{}: error running load flow on post contingency state {}: {}", stateId, postContingencyStateId, e.getMessage());
+                logger.info(this.logHeader + "{}: error running load flow on post contingency state {}: {}", stateId, postContingencyStateId, e.getMessage());
                 loadflowConverge = false;
             }
         }
@@ -490,7 +494,7 @@ public class StateAnalyzer implements Callable<Void> {
         } else {
             securityIndexesList = simulationResult.getSecurityIndexes().stream().filter(x -> parameters.getSecurityIndexes().contains(x.getId().getSecurityIndexType())).collect(Collectors.toList());
             if (securityIndexesList.isEmpty()) {
-                logger.info(logHeader + "Empty filter security indexes -> using all the indexes");
+                logger.info(this.logHeader + "Empty filter security indexes -> using all the indexes");
                 securityIndexesList = simulationResult.getSecurityIndexes();
             }
         }
@@ -505,10 +509,10 @@ public class StateAnalyzer implements Callable<Void> {
             for (Map.Entry<String, Collection<SecurityIndex>> entry : securityIndexes.asMap().entrySet()) {
                 boolean isSafe = OnlineUtils.isSafe(entry.getValue());
                 if (!isSafe) {
-                    logger.info(logHeader + "{}: unsafe for contingency {} afer time domain simulation", stateId, entry.getKey());
+                    logger.info(this.logHeader + "{}: unsafe for contingency {} afer time domain simulation", stateId, entry.getKey());
                     results.addUnsafeStateWithIndexes(entry.getKey(), stateId, new ArrayList<>(entry.getValue()));
                 } else {
-                    logger.info(logHeader + "{}: safe for contingency {} afer time domain simulation", stateId, entry.getKey());
+                    logger.info(this.logHeader + "{}: safe for contingency {} afer time domain simulation", stateId, entry.getKey());
                     if (parameters.validation()) { // if validation add anyway to results
                         results.addUnsafeStateWithIndexes(entry.getKey(), stateId, new ArrayList<>(entry.getValue()));
                     }
