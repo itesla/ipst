@@ -6,20 +6,23 @@
  */
 package eu.itesla_project.online;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import org.junit.Test;
+import org.mockito.Mockito;
+
 import com.powsybl.contingency.Contingency;
 import com.powsybl.contingency.ContingencyImpl;
 import com.powsybl.security.LimitViolationType;
 import com.powsybl.simulation.securityindexes.SecurityIndex;
-import org.junit.Test;
-import org.mockito.Mockito;
-
-import java.util.*;
-import java.util.stream.Stream;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Mathieu Bague <mathieu.bague at rte-france.com>
@@ -82,8 +85,8 @@ public class OnlineUtilsTest {
     
     @Test
     public void getUnitEnumTest() {        
-        Stream.of( LimitViolationType.values()).forEach( t ->
-            assertNotNull(OnlineUtils.getUnit(t))
-        );       
+        assertEquals(UnitEnum.MW, OnlineUtils.getUnit(LimitViolationType.CURRENT));
+        assertEquals(UnitEnum.KV, OnlineUtils.getUnit(LimitViolationType.LOW_VOLTAGE));
+        assertEquals(UnitEnum.KV, OnlineUtils.getUnit(LimitViolationType.HIGH_VOLTAGE));     
     }
 }
