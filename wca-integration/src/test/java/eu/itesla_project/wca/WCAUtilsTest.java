@@ -40,7 +40,7 @@ import com.powsybl.contingency.Contingency;
 import com.powsybl.contingency.ContingencyElement;
 import com.powsybl.contingency.ContingencyImpl;
 import com.powsybl.commons.datasource.MemDataSource;
-import eu.itesla_project.iidm.export.ampl.AmplSubset;
+import com.powsybl.ampl.converter.AmplSubset;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.StateManager;
 import com.powsybl.iidm.network.test.NetworkTest1Factory;

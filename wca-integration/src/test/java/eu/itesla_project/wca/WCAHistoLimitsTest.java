@@ -18,8 +18,8 @@ import org.mockito.Mockito;
 
 import com.powsybl.commons.util.StringToIntMapper;
 import com.powsybl.commons.datasource.MemDataSource;
-import eu.itesla_project.iidm.export.ampl.AmplSubset;
-import eu.itesla_project.iidm.export.ampl.AmplUtil;
+import com.powsybl.ampl.converter.AmplSubset;
+import com.powsybl.ampl.converter.AmplUtil;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.test.NetworkTest1Factory;
 import eu.itesla_project.modules.histo.HistoDbAttr;
