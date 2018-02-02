@@ -6,12 +6,12 @@
  */
 package eu.itesla_project.security.rest.api.impl;
 
-import java.io.ByteArrayOutputStream;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintStream;
+
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import com.powsybl.action.dsl.ActionDb;
 import com.powsybl.action.dsl.ActionDslLoader;
-import com.powsybl.action.dsl.DefaultActionDslLoaderObserver;
+
 import com.powsybl.action.simulator.ActionSimulator;
 import com.powsybl.action.simulator.loadflow.LoadFlowActionSimulator;
 import com.powsybl.action.simulator.loadflow.LoadFlowActionSimulatorConfig;
@@ -206,8 +206,6 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
 
             Network network = Importers.loadNetwork(caseFile.getFilename(), caseFile.getInputStream());
 
-            boolean verbose = false;
-
             List<String> contingencies = Collections.emptyList();
 
             StringWriter writer = new StringWriter();
@@ -215,8 +213,7 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
             String dslAsString = writer.toString();
 
             // load actions from Groovy DSL
-            ActionDb actionDb = new ActionDslLoader(dslAsString).load(network,
-                    new ActionDslLoaderObserver(new PrintStream(new ByteArrayOutputStream()), verbose));
+            ActionDb actionDb = new ActionDslLoader(dslAsString).load(network);
 
             if (contingencies.isEmpty()) {
                 contingencies = actionDb.getContingencies().stream().map(Contingency::getId)
@@ -264,44 +261,6 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
             this.result = result;
         }
 
-    }
-
-    private static class ActionDslLoaderObserver extends DefaultActionDslLoaderObserver {
-
-        private final PrintStream outputStream;
-
-        private final boolean verbose;
-
-        public ActionDslLoaderObserver(PrintStream outputStream, boolean verbose) {
-            this.outputStream = Objects.requireNonNull(outputStream);
-            this.verbose = verbose;
-        }
-
-        @Override
-        public void begin(String dslFile) {
-            outputStream.println("Loading DSL '" + dslFile + "'");
-        }
-
-        @Override
-        public void contingencyFound(String contingencyId) {
-            if (verbose) {
-                outputStream.println("    Found contingency '" + contingencyId + "'");
-            }
-        }
-
-        @Override
-        public void ruleFound(String ruleId) {
-            if (verbose) {
-                outputStream.println("    Found rule '" + ruleId + "'");
-            }
-        }
-
-        @Override
-        public void actionFound(String actionId) {
-            if (verbose) {
-                outputStream.println("    Found action '" + actionId + "'");
-            }
-        }
     }
 
     private Format getFormat(Map<String, List<InputPart>> formParts) {
