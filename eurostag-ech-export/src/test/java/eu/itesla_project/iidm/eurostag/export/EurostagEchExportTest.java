@@ -7,6 +7,7 @@
 package eu.itesla_project.iidm.eurostag.export;
 
 import com.google.common.io.CharStreams;
+import com.powsybl.iidm.network.test.HvdcTestNetwork;
 import eu.itesla_project.eurostag.network.EsgGeneralParameters;
 import eu.itesla_project.eurostag.network.EsgSpecialParameters;
 import com.powsybl.iidm.network.Network;
@@ -55,4 +56,22 @@ public class EurostagEchExportTest {
         EsgSpecialParameters specialParameters = new EsgSpecialParameters();
         test(network, "/eurostag-svc-test.ech", LocalDate.parse("2016-01-01"), specialParameters);
     }
+
+    @Test
+    public void testHVDC() throws IOException {
+        Network network = HvdcTestNetwork.createVsc();
+        network.getVoltageLevelStream().findFirst().orElse(null)
+                .newGenerator().setId("G1")
+                .setConnectableBus("B1")
+                .setBus("B1")
+                .setVoltageRegulatorOn(true)
+                .setTargetP(100.0F)
+                .setTargetV(400.0F)
+                .setMinP(50.0F)
+                .setMaxP(150.0F)
+                .add();
+        EsgSpecialParameters specialParameters = new EsgSpecialParameters();
+        test(network, "/eurostag-hvdc-test.ech", LocalDate.parse("2016-01-01"), specialParameters);
+    }
+
 }

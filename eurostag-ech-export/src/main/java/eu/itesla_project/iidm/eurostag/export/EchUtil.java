@@ -191,8 +191,7 @@ public final class EchUtil {
      * while Eurostag regulations to the cable-cable voltage
      */
     public static float getHvdcLineDcVoltage(HvdcLine line) {
-        Objects.nonNull(line);
+        Objects.requireNonNull(line);
         return line.getNominalV() * 2.0f;
-
     }
 }

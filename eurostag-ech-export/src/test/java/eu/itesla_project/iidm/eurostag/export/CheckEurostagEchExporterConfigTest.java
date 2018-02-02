@@ -39,10 +39,11 @@ public class CheckEurostagEchExporterConfigTest {
         fileSystem.close();
     }
 
-    private EurostagEchExportConfig getConfigFromFile(FileSystem fileSystem, boolean specificCompatibility) {
+    private EurostagEchExportConfig getConfigFromFile(FileSystem fileSystem, boolean specificCompatibility, boolean mainCcOnly) {
         InMemoryPlatformConfig platformConfig = new InMemoryPlatformConfig(fileSystem);
         MapModuleConfig moduleConfig = platformConfig.createModuleConfig("eurostag-ech-export");
         moduleConfig.setStringProperty("svcAsFixedInjectionInLF", "false");
+        moduleConfig.setStringProperty("exportMainCCOnly", Boolean.toString(mainCcOnly));
 
         moduleConfig = platformConfig.createModuleConfig("load-flow-default-parameters");
         moduleConfig.setStringProperty("specificCompatibility", Boolean.toString(specificCompatibility));
@@ -59,15 +60,26 @@ public class CheckEurostagEchExporterConfigTest {
 
     @Test
     public void testConfigFromFile() throws IOException {
-        EurostagEchExportConfig config = getConfigFromFile(fileSystem, false);
+        EurostagEchExportConfig config = getConfigFromFile(fileSystem, false, false);
         assertEquals(false, config.isSvcAsFixedInjectionInLF());
     }
 
     @Test
     public void testConfigSpecificCompatibility() throws IOException {
-        EurostagEchExportConfig config = getConfigFromFile(fileSystem, true);
+        EurostagEchExportConfig config = getConfigFromFile(fileSystem, true, false);
         assertEquals(true, config.isSvcAsFixedInjectionInLF());
     }
 
+    @Test
+    public void testConfigExportNoMainCC() throws IOException {
+        EurostagEchExportConfig config = getConfigFromFile(fileSystem, true, false);
+        assertEquals(false, config.isExportMainCCOnly());
+    }
+
+    @Test
+    public void testConfigExportMainCC() throws IOException {
+        EurostagEchExportConfig config = getConfigFromFile(fileSystem, true, true);
+        assertEquals(true, config.isExportMainCCOnly());
+    }
 
 }
