@@ -11,9 +11,9 @@ import com.powsybl.commons.io.table.Column;
 import com.powsybl.commons.io.table.TableFormatter;
 import com.powsybl.commons.util.StringToIntMapper;
 import com.powsybl.commons.datasource.DataSource;
-import eu.itesla_project.iidm.export.ampl.AmplConstants;
-import eu.itesla_project.iidm.export.ampl.AmplSubset;
-import eu.itesla_project.iidm.export.ampl.util.AmplDatTableFormatter;
+import com.powsybl.ampl.converter.AmplConstants;
+import com.powsybl.ampl.converter.AmplSubset;
+import com.powsybl.ampl.converter.util.AmplDatTableFormatter;
 import com.powsybl.iidm.network.*;
 import eu.itesla_project.modules.histo.HistoDbAttr;
 import eu.itesla_project.modules.histo.HistoDbNetworkAttributeId;
@@ -36,7 +36,7 @@ import java.util.Objects;
 /**
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
-public class WCASecurityRulesWriter implements AmplConstants, WCAConstants {
+public class WCASecurityRulesWriter implements WCAConstants {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WCASecurityRulesWriter.class);
 
@@ -141,9 +141,9 @@ public class WCASecurityRulesWriter implements AmplConstants, WCAConstants {
              TableFormatter formatter = new AmplDatTableFormatter(
                  writer,
                  "Security rules",
-                 INVALID_FLOAT_VALUE,
+                 AmplConstants.INVALID_FLOAT_VALUE,
                  true,
-                 LOCALE,
+                 AmplConstants.LOCALE,
                  new Column("inequality num"),
                  new Column("convex num"),
                  new Column("var type (1: P, 2: Q, 3: V)"),

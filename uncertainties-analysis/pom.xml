@@ -62,9 +62,8 @@
         </dependency>
 
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>ampl-export</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-ampl-converter</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

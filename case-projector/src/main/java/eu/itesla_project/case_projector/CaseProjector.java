@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableSet;
 import com.powsybl.commons.datasource.FileDataSource;
 import com.powsybl.commons.util.StringToIntMapper;
 import com.powsybl.computation.*;
-import eu.itesla_project.iidm.export.ampl.*;
+import com.powsybl.ampl.converter.*;
 import com.powsybl.iidm.network.Bus;
 import com.powsybl.iidm.network.Generator;
 import com.powsybl.iidm.network.Network;
