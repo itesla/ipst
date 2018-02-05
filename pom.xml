@@ -20,7 +20,6 @@
     <url>http://www.itesla-project.eu/</url>
 
     <modules>
-        <module>ampl-export</module>
         <module>case-projector</module>
         <module>case-repository</module>
         <module>distribution</module>
@@ -429,6 +428,11 @@
             <dependency>
                 <groupId>com.powsybl</groupId>
                 <artifactId>powsybl-ucte-converter</artifactId>
+                <version>${powsybl.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.powsybl</groupId>
+                <artifactId>powsybl-ampl-converter</artifactId>
                 <version>${powsybl.version}</version>
             </dependency>
             <dependency>
