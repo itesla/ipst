@@ -43,6 +43,7 @@ public class OnlineWorkflowCommand implements Command {
     public static final String HANDLE_VIOLATION_IN_N = "handle-violations";
     public static final String CONSTRAINT_MARGIN = "constraint-margin";
     public static final String CASE_FILE = "case-file";
+    public static final String PARALLEL_THREADS = "parallel-threads";
 
     @Override
     public String getName() {
@@ -202,6 +203,11 @@ public class OnlineWorkflowCommand implements Command {
                 .argName(CASE_FILE)
                 .build());
 
+        opts.addOption(Option.builder().longOpt(PARALLEL_THREADS)
+                .desc("Parallel threads number")
+                .hasArg()
+                .argName(PARALLEL_THREADS)
+                .build());
         return opts;
     }
 

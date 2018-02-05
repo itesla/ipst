@@ -202,10 +202,10 @@ public class RemoteOnlineApplication implements OnlineApplication, NotificationL
 
     @Override
     public String startProcess(String name, String owner, DateTime date, DateTime creationDate,
-            OnlineWorkflowStartParameters start, OnlineWorkflowParameters params, DateTime[] basecases)
+            OnlineWorkflowStartParameters start, OnlineWorkflowParameters params, DateTime[] basecases, int numThreads)
                     throws Exception {
         try {
-            return application.startProcess(name, owner, date, creationDate, start, params, basecases);
+            return application.startProcess(name, owner, date, creationDate, start, params, basecases, numThreads);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             notifyDisconnection();
