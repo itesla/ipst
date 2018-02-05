@@ -144,7 +144,7 @@ public class OfflineApplicationMock implements RemoteOfflineApplication {
         }
     }
 
-    private final static int AVAILABLE_CORES = 48;
+    private static final int AVAILABLE_CORES = 48;
 
     private final class OfflineWorkflowMock implements OfflineWorkflow {
 

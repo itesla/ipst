@@ -17,7 +17,7 @@ import com.powsybl.tools.Command;
  */
 public class DataComparatorCommand implements Command {
 
-    public final static  DataComparatorCommand INSTANCE = new DataComparatorCommand();
+    public static final DataComparatorCommand INSTANCE = new DataComparatorCommand();
 
     //public final static String DATA_DIR="data-dir";
 

@@ -31,6 +31,8 @@ public class DdExportConfig {
     private static final float DEFAULT_LOAD_PATTERN_ALPHA = 1;
     private static final float DEFAULT_LOAD_PATTERN_BETA = 2;
     private static final boolean DEFAULT_GENPQFILTER = false;
+    private static final boolean DEFAULT_EXPORT_MAIN_CC_ONLY = false;
+    private static final boolean DEFAULT_NOSWITCH = false;
 
     private boolean automatonA11;
     private boolean automatonA12;
@@ -46,6 +48,8 @@ public class DdExportConfig {
     private float loadPatternAlpha;
     private float loadPatternBeta;
     private boolean gensPQfilter;
+    private boolean exportMainCCOnly;
+    private boolean noSwitch;
 
     public static DdExportConfig load() {
         boolean automatonA11 = DEFAULT_AUTOMATON_A11;
@@ -62,7 +66,8 @@ public class DdExportConfig {
         float loadPatternAlpha = DEFAULT_LOAD_PATTERN_ALPHA;
         float loadPatternBeta = DEFAULT_LOAD_PATTERN_BETA;
         boolean gensPQfilter = DEFAULT_GENPQFILTER;
-
+        boolean exportMainCCOnly = DEFAULT_EXPORT_MAIN_CC_ONLY;
+        boolean noSwitch = DEFAULT_NOSWITCH;
 
         if (PlatformConfig.defaultConfig().moduleExists(MODULE_NAME)) {
             ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig(MODULE_NAME);
@@ -81,21 +86,28 @@ public class DdExportConfig {
             loadPatternBeta = config.getFloatProperty("loadPatternBeta", DEFAULT_LOAD_PATTERN_BETA);
             gensPQfilter = config.getBooleanProperty("gensPQfilter", DEFAULT_GENPQFILTER);
         }
+
+        if (PlatformConfig.defaultConfig().moduleExists("eurostag-ech-export")) {
+            ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("eurostag-ech-export");
+            exportMainCCOnly = config.getBooleanProperty("exportMainCCOnly", DEFAULT_EXPORT_MAIN_CC_ONLY);
+            noSwitch = config.getBooleanProperty("noSwitch", DEFAULT_NOSWITCH);
+        }
+
         return new DdExportConfig(automatonA11, automatonA12, automatonA14, importExportRST, importExportACMC,
                                   lvLoadModeling, rstRegulInjector, rstRegulGenerator, rstRegulGeneratorDelete,
-                                  acmcRegul, rstPilotGenerators, loadPatternAlpha, loadPatternBeta, gensPQfilter);
+                                  acmcRegul, rstPilotGenerators, loadPatternAlpha, loadPatternBeta, gensPQfilter, exportMainCCOnly, noSwitch);
     }
 
     public DdExportConfig() {
         this(DEFAULT_AUTOMATON_A11, DEFAULT_AUTOMATON_A12, DEFAULT_AUTOMATON_A14, DEFAULT_RST, DEFAULT_ACMC,
                 DEFAULT_LV_LOAD_MODELING, DEFAULT_RST_REGUL_INJECTOR, DEFAULT_RST_REGUL_GENERATOR, DEFAULT_RST_REGUL_GENERATOR_DELETE,
-                DEFAULT_ACMC_REGUL, DEFAULT_RST_PILOT_GENERATORS, DEFAULT_LOAD_PATTERN_ALPHA, DEFAULT_LOAD_PATTERN_BETA, DEFAULT_GENPQFILTER);
+                DEFAULT_ACMC_REGUL, DEFAULT_RST_PILOT_GENERATORS, DEFAULT_LOAD_PATTERN_ALPHA, DEFAULT_LOAD_PATTERN_BETA, DEFAULT_GENPQFILTER, DEFAULT_EXPORT_MAIN_CC_ONLY, DEFAULT_NOSWITCH);
     }
 
     public DdExportConfig(boolean automatonA11, boolean automatonA12, boolean automatonA14, boolean importExportRST,
                           boolean importExportACMC, boolean lvLoadModeling, String rstRegulInjector,
                           String rstRegulGenerator, String rstRegulGeneratorDelete, String acmcRegul,
-                          String rstPilotGenerators, float loadPatternAlpha, float loadPatternBeta, boolean gensPQfilter) {
+                          String rstPilotGenerators, float loadPatternAlpha, float loadPatternBeta, boolean gensPQfilter, boolean exportMainCCOnly, boolean noSwitch) {
         this.automatonA11 = automatonA11;
         this.automatonA12 = automatonA12;
         this.automatonA14 = automatonA14;
@@ -110,6 +122,8 @@ public class DdExportConfig {
         this.loadPatternAlpha = loadPatternAlpha;
         this.loadPatternBeta = loadPatternBeta;
         this.gensPQfilter = gensPQfilter;
+        this.exportMainCCOnly = exportMainCCOnly;
+        this.noSwitch = noSwitch;
     }
 
     public boolean getAutomatonA11() {
@@ -230,5 +244,13 @@ public class DdExportConfig {
 
     public void setGensPQfilter(boolean gensPQfilter) {
         this.gensPQfilter = gensPQfilter;
+    }
+
+    public boolean isExportMainCCOnly() {
+        return exportMainCCOnly;
+    }
+
+    public boolean isNoSwitch() {
+        return noSwitch;
     }
 }

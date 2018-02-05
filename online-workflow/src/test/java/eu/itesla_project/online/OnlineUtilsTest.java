@@ -84,9 +84,9 @@ public class OnlineUtilsTest {
     }
     
     @Test
-    public void getUnitEnumTest() {        
+    public void getUnitEnumTest() {
         assertEquals(UnitEnum.MW, OnlineUtils.getUnit(LimitViolationType.CURRENT));
         assertEquals(UnitEnum.KV, OnlineUtils.getUnit(LimitViolationType.LOW_VOLTAGE));
-        assertEquals(UnitEnum.KV, OnlineUtils.getUnit(LimitViolationType.HIGH_VOLTAGE));     
+        assertEquals(UnitEnum.KV, OnlineUtils.getUnit(LimitViolationType.HIGH_VOLTAGE));
     }
 }

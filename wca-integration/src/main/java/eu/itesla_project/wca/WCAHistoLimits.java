@@ -11,9 +11,9 @@ import com.powsybl.commons.io.table.Column;
 import com.powsybl.commons.io.table.TableFormatter;
 import com.powsybl.commons.util.StringToIntMapper;
 import com.powsybl.commons.datasource.DataSource;
-import eu.itesla_project.iidm.export.ampl.AmplConstants;
-import eu.itesla_project.iidm.export.ampl.AmplSubset;
-import eu.itesla_project.iidm.export.ampl.util.AmplDatTableFormatter;
+import com.powsybl.ampl.converter.*;
+import com.powsybl.ampl.converter.AmplSubset;
+import com.powsybl.ampl.converter.util.AmplDatTableFormatter;
 import com.powsybl.iidm.network.*;
 import eu.itesla_project.modules.histo.*;
 import org.joda.time.Interval;
@@ -27,7 +27,7 @@ import java.util.*;
 /**
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
-public class WCAHistoLimits implements AmplConstants, WCAConstants {
+public class WCAHistoLimits implements  WCAConstants {
 
     private final Interval histoInterval;
 
@@ -41,8 +41,8 @@ public class WCAHistoLimits implements AmplConstants, WCAConstants {
 
     private static Range<Float> range(String id, HistoDbAttr attr, HistoDbStats stats) {
         HistoDbAttributeId pAttrId = new HistoDbNetworkAttributeId(id, HistoDbAttr.P);
-        float minP = stats.getValue(HistoDbStatsType.MIN, pAttrId, INVALID_FLOAT_VALUE);
-        float maxP = stats.getValue(HistoDbStatsType.MAX, pAttrId, INVALID_FLOAT_VALUE);
+        float minP = stats.getValue(HistoDbStatsType.MIN, pAttrId, AmplConstants.INVALID_FLOAT_VALUE);
+        float maxP = stats.getValue(HistoDbStatsType.MAX, pAttrId, AmplConstants.INVALID_FLOAT_VALUE);
         return Range.closed(minP, maxP);
     }
 
@@ -84,9 +84,9 @@ public class WCAHistoLimits implements AmplConstants, WCAConstants {
              TableFormatter formatter = new AmplDatTableFormatter(
                  writer,
                  "loads historical data " + histoInterval,
-                 INVALID_FLOAT_VALUE,
+                 AmplConstants.INVALID_FLOAT_VALUE,
                  true,
-                 LOCALE,
+                 AmplConstants.LOCALE,
                  new Column("num"),
                  new Column("min p (MW)"),
                  new Column("max p (MW)"),
@@ -116,9 +116,9 @@ public class WCAHistoLimits implements AmplConstants, WCAConstants {
              TableFormatter formatter = new AmplDatTableFormatter(
                  writer,
                  "generators historical data " + histoInterval,
-                 INVALID_FLOAT_VALUE,
+                 AmplConstants.INVALID_FLOAT_VALUE,
                  true,
-                 LOCALE,
+                 AmplConstants.LOCALE,
                  new Column("num"),
                  new Column("min p (MW)"),
                  new Column("max p (MW)"),

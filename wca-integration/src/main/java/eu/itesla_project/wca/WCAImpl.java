@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
- * Copyright (c) 2016-2017, RTE (http://www.rte-france.com)
+ * Copyright (c) 2016-2018, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -36,10 +36,10 @@ import com.powsybl.commons.util.StringToIntMapper;
 import com.powsybl.contingency.Contingency;
 import com.powsybl.commons.datasource.DataSource;
 import com.powsybl.commons.datasource.FileDataSource;
-import eu.itesla_project.iidm.export.ampl.AmplExportConfig;
-import eu.itesla_project.iidm.export.ampl.AmplNetworkWriter;
-import eu.itesla_project.iidm.export.ampl.AmplSubset;
-import eu.itesla_project.iidm.export.ampl.AmplUtil;
+import com.powsybl.ampl.converter.AmplExportConfig;
+import com.powsybl.ampl.converter.AmplNetworkWriter;
+import com.powsybl.ampl.converter.AmplSubset;
+import com.powsybl.ampl.converter.AmplUtil;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.loadflow.LoadFlow;
 import com.powsybl.loadflow.LoadFlowFactory;
@@ -174,7 +174,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                                           .setMinBaseVoltage(config.getVoltageLevelConstraintFilter())
                                                           .setCountries(config.getCountryConstraintFilter().isEmpty() ? null : config.getCountryConstraintFilter());
 
-        this.wcaReport = new WCAReportImpl(network.getId());
+        this.wcaReport = new WCAReportImpl(network);
 
         env = ImmutableMap.of("XPRESS",  config.getXpressHome().resolve("bin").toString(),
                               "LD_LIBRARY_PATH", config.getXpressHome().resolve("lib").toString());
@@ -491,10 +491,10 @@ public class WCAImpl implements WCA, WCAConstants {
 
                         WCAPostContingencyStatus postContingencyStatus = new WCAPostContingencyStatus(contingency.getId(), new WCALoadflowResult(true, null));
 
-                        List<LimitViolation> contingencyStateLimitViolations = violationsFilter.apply(Security.checkLimits(network));
+                        List<LimitViolation> contingencyStateLimitViolations = violationsFilter.apply(Security.checkLimits(network), network);
                         if (contingencyStateLimitViolations.size() > 0) {
                             LOGGER.warn("Network {}, contingency {}: constraint violantions found in post contingency state:\n{}",
-                                        network.getId(), contingency.getId(), Security.printLimitsViolations(contingencyStateLimitViolations, violationsFilter));
+                                        network.getId(), contingency.getId(), Security.printLimitsViolations(contingencyStateLimitViolations, network, violationsFilter));
                             postContingencyStatus.setPostContingencyViolationsWithoutUncertainties(contingencyStateLimitViolations);
                             filteredClusters.removeClusters(contingency.getId(),
                                                             EnumSet.of(WCAClusterNum.ONE),
@@ -551,7 +551,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                             boolean violationsRemoved = false;
                                             boolean actionApplied = false;
                                             String comment = null;
-                                            List<LimitViolation> curativeStateLimitViolations = violationsFilter.apply(Security.checkLimits(network));
+                                            List<LimitViolation> curativeStateLimitViolations = violationsFilter.apply(Security.checkLimits(network), network);
                                             if (curativeStateLimitViolations.isEmpty()) {
                                                 LOGGER.info("Network {}, contingency {}, curative action {} solves violations: adding curative action to list for 'clusters' task",
                                                             network.getId(), contingency.getId(), curativeActionId);
@@ -562,7 +562,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                                 previousState = curativeStateId;
                                             } else {
                                                 LOGGER.warn("Network {}, contingency {}, curative action {}: violantions found in post curative action state:\n{}",
-                                                            network.getId(), contingency.getId(), curativeActionId, Security.printLimitsViolations(curativeStateLimitViolations, violationsFilter));
+                                                            network.getId(), contingency.getId(), curativeActionId, Security.printLimitsViolations(curativeStateLimitViolations, network, violationsFilter));
                                                 comment = "violantions found in post curative action state";
                                                 if (!filterCurativeActions) {
                                                     LOGGER.info("Network {}, contingency {}, curative action {}: adding anyway curative action to list for 'clusters' task (config filterCurativeActions = false)",
@@ -640,10 +640,10 @@ public class WCAImpl implements WCA, WCAConstants {
                                                             );
                                                         } else {
                                                             postContingencyStatus.setPostContingencyWithUncertaintiesLoadflowResult(new WCALoadflowResult(true, null));
-                                                            List<LimitViolation> clustersLimitViolations = violationsFilter.apply(Security.checkLimits(network));
+                                                            List<LimitViolation> clustersLimitViolations = violationsFilter.apply(Security.checkLimits(network), network);
                                                             if (clustersLimitViolations.size() > 0) {
                                                                 LOGGER.warn("Network {}, contingency {}: constraint violantions found in state with 'clusters' uncertainties:\n{}",
-                                                                            network.getId(), contingency.getId(), Security.printLimitsViolations(clustersLimitViolations, violationsFilter));
+                                                                            network.getId(), contingency.getId(), Security.printLimitsViolations(clustersLimitViolations, network, violationsFilter));
                                                                 postContingencyStatus.setPostContingencyViolationsWithUncertainties(clustersLimitViolations);
                                                             } else {
                                                                 LOGGER.warn("Network {}, contingency {}: no violations found in state with 'clusters' uncertainties",
@@ -713,10 +713,10 @@ public class WCAImpl implements WCA, WCAConstants {
                         });
                     } else {
                         wcaReport.setBaseStateLoadflowResult(new WCALoadflowResult(true, null));
-                        List<LimitViolation> baseStateLimitViolations = violationsFilter.apply(Security.checkLimits(network));
+                        List<LimitViolation> baseStateLimitViolations = violationsFilter.apply(Security.checkLimits(network), network);
                         if (baseStateLimitViolations.size() > 0) {
                             LOGGER.warn("Network {}: constraint violantions found in base state:\n{}",
-                                        network.getId(), Security.printLimitsViolations(baseStateLimitViolations, violationsFilter));
+                                        network.getId(), Security.printLimitsViolations(baseStateLimitViolations, network, violationsFilter));
                             wcaReport.setPreContingencyViolationsWithoutUncertainties(baseStateLimitViolations);
                             contingencies.forEach(contingency -> filteredClusters.removeClusters(contingency.getId(),
                                                                                                  EnumSet.of(WCAClusterNum.ONE, WCAClusterNum.TWO),
@@ -776,10 +776,10 @@ public class WCAImpl implements WCA, WCAConstants {
                                                             wcaReport.setBaseStateWithUncertaintiesLoadflowResult(new WCALoadflowResult(false, "load flow on state with 'domains' uncertainties diverged: metrics = " + loadFlowResult.getMetrics()));
                                                             return CompletableFuture.completedFuture(baseStateLimitViolations);
                                                         } else {
-                                                            List<LimitViolation> domainsLimitViolations = violationsFilter.apply(Security.checkLimits(network));
+                                                            List<LimitViolation> domainsLimitViolations = violationsFilter.apply(Security.checkLimits(network), network);
                                                             if (domainsLimitViolations.size() > 0) {
                                                                 LOGGER.warn("Network {}: constraint violantions found in state with 'domains' uncertainties:\n{}",
-                                                                            network.getId(), Security.printLimitsViolations(domainsLimitViolations, violationsFilter));
+                                                                            network.getId(), Security.printLimitsViolations(domainsLimitViolations, network, violationsFilter));
                                                                 wcaReport.setPreContingencyViolationsWithUncertainties(domainsLimitViolations);
                                                                 contingencies.forEach(contingency -> filteredClusters.removeClusters(contingency.getId(),
                                                                                                                                      EnumSet.of(WCAClusterNum.ONE, WCAClusterNum.TWO),
@@ -798,7 +798,7 @@ public class WCAImpl implements WCA, WCAConstants {
                             network.getStateManager().setWorkingState(baseStateId);
                         }
                         LOGGER.info("Network {}: {} violations to be prevented:\n{}",
-                                    network.getId(), violationsToBePrevented.size(), Security.printLimitsViolations(violationsToBePrevented, violationsFilter));
+                                    network.getId(), violationsToBePrevented.size(), Security.printLimitsViolations(violationsToBePrevented, network, violationsFilter));
                         List<String> preventiveStateIdsForDomains = Collections.synchronizedList(new ArrayList<>());
                         List<String> preventiveActionIdsForDomains  = Collections.synchronizedList(new ArrayList<>());
                         Map<String, List<Action>> possibleActionsToApply = Collections.synchronizedMap(new HashMap<String, List<Action>>());
@@ -838,7 +838,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                         try {
                                             loadFlowResult1 = loadFlow.run(LOAD_FLOW_PARAMETERS);
                                             if (loadFlowResult1.isOk()) {
-                                                List<LimitViolation> preventiveStateLimitViolations = violationsFilter.apply(Security.checkLimits(network));
+                                                List<LimitViolation> preventiveStateLimitViolations = violationsFilter.apply(Security.checkLimits(network), network);
                                                 Optional<LimitViolation> notSolvedLimitViolation = preventiveStateLimitViolations
                                                         .stream()
                                                         .filter(preventiveStateLimitViolation -> preventiveStateLimitViolation.getSubjectId().equals(violationToBePrevented.getSubjectId()))
@@ -862,7 +862,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                                         message = "post preventive action state contains new violations";
                                                     }
                                                     LOGGER.warn("Network {}, preventive action {}: {}:\n{}",
-                                                                network.getId(), preventiveActionId, message, Security.printLimitsViolations(preventiveStateLimitViolations, violationsFilter));
+                                                                network.getId(), preventiveActionId, message, Security.printLimitsViolations(preventiveStateLimitViolations, network, violationsFilter));
                                                     if (!config.filterPreventiveActions()) {
                                                         LOGGER.info("Network {}, preventive action {}: adding anyway preventive action to list (config filterPreventiveActions = false)",
                                                                     network.getId(), preventiveActionId);
@@ -970,7 +970,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                     .thenAccept(ignored -> {
                                         // check that the violations have disappeared? this check has already been done previously
                                         // update basecase remaining violations
-                                        wcaReport.setBaseStateRemainingViolations(violationsFilter.apply(Security.checkLimits(network)));
+                                        wcaReport.setBaseStateRemainingViolations(violationsFilter.apply(Security.checkLimits(network), network));
                                     })
                                     .exceptionally(throwable -> {
                                         if (throwable != null) {
@@ -987,7 +987,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                     wcaReport.setPostPreventiveActionsViolationsWithUncertainties(wcaReport.getBaseStateRemainingViolations());
                                     if (!wcaReport.getBaseStateRemainingViolations().isEmpty()) {
                                         LOGGER.warn("Network {}: loosening the basecase constraints for remaining violations:\n{}",
-                                                    network.getId(), Security.printLimitsViolations(new ArrayList<>(wcaReport.getBaseStateRemainingViolations()), violationsFilter));
+                                                    network.getId(), Security.printLimitsViolations(new ArrayList<>(wcaReport.getBaseStateRemainingViolations()), network, violationsFilter));
                                         ConstraintsModifierConfig constraintsModifierConfig = new ConstraintsModifierConfig(
                                                 config.getCountryConstraintFilter(),
                                                 config.ignoreVoltageConstraints() ? EnumSet.of(LimitViolationType.CURRENT) : EnumSet.allOf(LimitViolationType.class)

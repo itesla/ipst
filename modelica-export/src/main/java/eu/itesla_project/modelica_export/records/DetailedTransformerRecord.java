@@ -105,7 +105,8 @@ public class DetailedTransformerRecord extends BranchRecord {
         RatioTapChanger rtc = this.transformer.getRatioTapChanger();
         PhaseTapChanger ptc = this.transformer.getPhaseTapChanger();
 
-        float dx = 0, dr = 0;
+        float dx = 0;
+        float dr = 0;
 
         if (rtc != null) {
             RatioTapChangerStep rtcs = rtc.getCurrentStep();
