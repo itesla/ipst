@@ -199,7 +199,8 @@ class PostContLoadFlowSimImpactAnalysis implements ImpactAnalysis, PostContLoadF
                         securityIndexes.add(new TsoOvervoltageSecurityIndex(contingency.getId(), equipments.size(), true));
                         break;
                     default:
-                        throw new AssertionError();
+                        //remove throw new AssertionError(); to ignore validation types (e.g. OTHER) not supported by this impact analysis
+                        break;
                 }
             }
         } else {

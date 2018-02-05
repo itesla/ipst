@@ -48,6 +48,7 @@ try
 disp(sprintf('flagPQ:  %u', out(1).flagPQ));
 disp(sprintf('isdeterministic:  %u', out(1).mod_deterministic));
 disp(sprintf('homoth:  %u', out(1).mod_homoth));
+disp(sprintf('conditional_sampling:  %u', out(1).conditional_sampling));
 disp(['preprocessing: type_x, etc.'])
 tic;
 % keyboard
@@ -428,7 +429,7 @@ for iout = 1:length(out)
 % for redispatching
 
 
-gruppi_ridispacciabili = intersect(find([generatore.conn]==1),intersect(find([generatore.fuel]~=4),find([generatore.RES]>0)));
+gruppi_ridispacciabili = intersect(find([generatore.conn]==1),intersect(find([generatore.fuel]~=4),find([generatore.RES]==0)));
 for jgen = 1:length(gruppi_ridispacciabili)
     generatore(gruppi_ridispacciabili(jgen)).dispacc=1;
 end
@@ -446,7 +447,7 @@ if isempty(type_Xm)==0
 quali_gen_stoch = [quali_gen_stoch unique(type_Xm(2,[find(type_Xm(1,:)==1) find(type_Xm(1,:)==4)]))];
 end
 for u=1:length(generatore)
-    if ismember(u,quali_gen_stoch)==0
+    if ismember(u,gruppi_ridispacciabili)
     generatore(u).participationFactor=generatore(u).Pmax;PMAX = generatore(u).Pmax;
     if generatore(u).conn == 1 && (-generatore(u).P < generatore(u).Pmin)
         disp(['*** WARNING: CONNECTED GENERATOR ' generatore(u).codice ' HAS AN ACTIVE POWER SETPOINT LOWER THAN PMIN '])  
@@ -510,8 +511,12 @@ else
     BANDA = 10; % perc of Pmax
     anomalies = [];
     quali_gen_stoch = find([generatore.RES]>0);
+    gruppi_ridispacciabili = intersect(find([generatore.conn]==1),intersect(find([generatore.fuel]~=4),find([generatore.RES]==0)));
+    for jgen = 1:length(gruppi_ridispacciabili)
+        generatore(gruppi_ridispacciabili(jgen)).dispacc=1;
+    end
     for u=1:length(generatore)
-        if ismember(u,quali_gen_stoch)==0
+        if ismember(u,gruppi_ridispacciabili)
             generatore(u).participationFactor=generatore(u).Pmax;PMAX = generatore(u).Pmax;
             if generatore(u).conn == 1 && (-generatore(u).P < generatore(u).Pmin)
                 disp(['*** WARNING: CONNECTED GENERATOR ' generatore(u).codice ' HAS AN ACTIVE POWER SETPOINT LOWER THAN PMIN '])

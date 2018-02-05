@@ -23,7 +23,7 @@
 % %     Pmin (min active power, MW)
 % %     Pmax (maximum active power, MW)
 % %     Anom (MVA of generator)
-% %     RES (1 o 2 = RES, = = conventional units)
+% %     RES (1 o 2 = RES, 0 = conventional units)
 % %     Tavv (starting time of units in second)
 % %     fuel (type of fuel -> 0=RES, 1 = hydro, 2 = gas, 3 = oil, 4 = nuclear, 5 = coal)
 % %     dispacc (1 = dispatchable, 0 = not dispatchable): this field is
