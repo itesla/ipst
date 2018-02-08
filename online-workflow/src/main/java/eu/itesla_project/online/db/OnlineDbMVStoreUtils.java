@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2018, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -224,6 +226,24 @@ public final class OnlineDbMVStoreUtils {
         objectMapper.registerModule(new JodaModule());
         objectMapper.configure(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         return objectMapper.readValue(json, OnlineProcess.class);
+    }
+
+    public static String branchesDataToCsvHeaders(LinkedHashMap<String, Float> branchesData) {
+        return String.join(";",
+                           "stateId",
+                           "contingencyId",
+                           String.join(";", branchesData.keySet()));
+    }
+
+    public static String branchesDataToCsv(Integer stateId, String contingencyId, LinkedHashMap<String, Float> branchesData) {
+        return String.join(";",
+                           Integer.toString(stateId),
+                           contingencyId,
+                           String.join(";", branchesData.values().stream().map(value -> Float.toString(value)).collect(Collectors.toList())));
+    }
+
+    public static String postContingencyStateKey(Integer stateId, String contingencyId) {
+        return String.format("%03d", stateId) + "_" + contingencyId;
     }
 
     // public static void main(String[] args) throws Exception {

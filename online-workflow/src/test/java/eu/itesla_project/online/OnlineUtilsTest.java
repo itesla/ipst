@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017, RTE (http://www.rte-france.com)
+ * Copyright (c) 2017-2018, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -13,14 +13,19 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.google.common.collect.ImmutableMap;
 import com.powsybl.contingency.Contingency;
 import com.powsybl.contingency.ContingencyImpl;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.test.EurostagTutorialExample1Factory;
 import com.powsybl.security.LimitViolationType;
 import com.powsybl.simulation.securityindexes.SecurityIndex;
 
@@ -89,4 +94,42 @@ public class OnlineUtilsTest {
         assertEquals(UnitEnum.KV, OnlineUtils.getUnit(LimitViolationType.LOW_VOLTAGE));
         assertEquals(UnitEnum.KV, OnlineUtils.getUnit(LimitViolationType.HIGH_VOLTAGE));
     }
+
+    @Test
+    public void getBranchesDataTest() {
+        Network network = EurostagTutorialExample1Factory.createWithCurrentLimits();
+        Map<String, Float> expectedBranchesData = ImmutableMap.<String, Float>builder()
+                                                              .put("NHV1_NHV2_1__TO__VLHV1_I", 1192.5631f)
+                                                              .put("NHV1_NHV2_1__TO__VLHV1_P", 560f)
+                                                              .put("NHV1_NHV2_1__TO__VLHV1_IMAX", 500f)
+                                                              .put("NHV1_NHV2_1__TO__VLHV2_I", 1192.5631f)
+                                                              .put("NHV1_NHV2_1__TO__VLHV2_P", 560f)
+                                                              .put("NHV1_NHV2_1__TO__VLHV2_IMAX", 1100f)
+                                                              .put("NHV1_NHV2_2__TO__VLHV1_I", 1192.5631f)
+                                                              .put("NHV1_NHV2_2__TO__VLHV1_P", 560f)
+                                                              .put("NHV1_NHV2_2__TO__VLHV1_IMAX", 1100f)
+                                                              .put("NHV1_NHV2_2__TO__VLHV2_I", 1192.5631f)
+                                                              .put("NHV1_NHV2_2__TO__VLHV2_P", 560f)
+                                                              .put("NHV1_NHV2_2__TO__VLHV2_IMAX", 500f)
+                                                              .put("NGEN_NHV1__TO__VLGEN_I", Float.NaN)
+                                                              .put("NGEN_NHV1__TO__VLGEN_P", Float.NaN)
+                                                              .put("NGEN_NHV1__TO__VLGEN_IMAX", Float.NaN)
+                                                              .put("NGEN_NHV1__TO__VLHV1_I", Float.NaN)
+                                                              .put("NGEN_NHV1__TO__VLHV1_P", Float.NaN)
+                                                              .put("NGEN_NHV1__TO__VLHV1_IMAX", Float.NaN)
+                                                              .put("NHV2_NLOAD__TO__VLHV2_I", Float.NaN)
+                                                              .put("NHV2_NLOAD__TO__VLHV2_P", Float.NaN)
+                                                              .put("NHV2_NLOAD__TO__VLHV2_IMAX", Float.NaN)
+                                                              .put("NHV2_NLOAD__TO__VLLOAD_I", Float.NaN)
+                                                              .put("NHV2_NLOAD__TO__VLLOAD_P", Float.NaN)
+                                                              .put("NHV2_NLOAD__TO__VLLOAD_IMAX", Float.NaN)
+                                                              .build();
+        LinkedHashMap<String, Float> branchesData = OnlineUtils.getBranchesData(network);
+        assertEquals(24, branchesData.values().size(), 0);
+        expectedBranchesData.keySet().forEach(attribute -> {
+            assertTrue(branchesData.containsKey(attribute));
+            assertEquals(expectedBranchesData.get(attribute), branchesData.get(attribute), 0f);
+        });
+    }
+
 }

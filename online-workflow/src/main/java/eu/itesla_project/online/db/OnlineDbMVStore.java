@@ -135,6 +135,8 @@ public class OnlineDbMVStore implements OnlineDb {
     private static final String STORED_WCA_RULES_RESULTS_STATE_RULES_AVAILABLE_MAP_SUFFIX = "_wcarulesavailable";
     private static final String STORED_WCA_RULES_RESULTS_STATE_INVALID_RULES_MAP_SUFFIX = "_wcarulesinvalid";
     private static final String SERIALIZED_STATES_FILENAME = "network-states.csv";
+    private static final String STORED_POST_CONTINGENCY_STATES_MAP_NAME = "wfPostcontinenciesStates";
+    private static final String STORED_POST_CONTINGENCY_STATES_HEADERS_KEY = "PostcontinenciesStatesHeaders";
     private final String[] XIIDMEXTENSIONS = {".xiidm", ".iidm", ".xml"};
 
 
@@ -1069,11 +1071,32 @@ public class OnlineDbMVStore implements OnlineDb {
                 }
                 workflowStates.put(stateId, networkValues);
                 workflowsStates.put(workflowId, workflowStates);
+            } else {
+                storePostcontingencyStateData(workflowId, stateId, contingencyId, network);
             }
         } else {
             String errorMessage = "online db: no state " + stateIdStr + " in network of workflow " + workflowId;
             LOGGER.error(errorMessage);
             throw new RuntimeException(errorMessage);
+        }
+    }
+
+    private void storePostcontingencyStateData(String workflowId, Integer stateId, String contingencyId, Network network) {
+        try {
+            LOGGER.info("Storing post-contingency state data of network {} for wf {}, state {}, contingency {}", network.getId(), workflowId, stateId, contingencyId);
+            MVStore wfMVStore = getStore(workflowId);
+            Map<String, String> postcontingencyStatesMap = wfMVStore.openMap(STORED_POST_CONTINGENCY_STATES_MAP_NAME, mapBuilder);
+            LinkedHashMap<String, Float> branchesData = OnlineUtils.getBranchesData(network);
+            if (!postcontingencyStatesMap.containsKey(STORED_POST_CONTINGENCY_STATES_HEADERS_KEY)) {
+                postcontingencyStatesMap.put(STORED_POST_CONTINGENCY_STATES_HEADERS_KEY, OnlineDbMVStoreUtils.branchesDataToCsvHeaders(branchesData));
+            }
+            postcontingencyStatesMap.put(OnlineDbMVStoreUtils.postContingencyStateKey(stateId, contingencyId), OnlineDbMVStoreUtils.branchesDataToCsv(stateId, contingencyId, branchesData));
+            wfMVStore.commit();
+        } catch (Throwable e) {
+            String errorMessage = "Error storing post-contingency state data of network " + network.getId() + " for wf " + workflowId + ", state " + stateId
+                                  + ", contingency " + contingencyId + " in map " + STORED_POST_CONTINGENCY_STATES_MAP_NAME + ": " + e.getMessage();
+            LOGGER.error(errorMessage);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
