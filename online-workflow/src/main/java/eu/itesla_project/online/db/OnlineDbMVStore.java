@@ -7,29 +7,33 @@
  */
 package eu.itesla_project.online.db;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.google.common.base.Splitter;
-import eu.itesla_project.cases.CaseType;
-import com.powsybl.computation.local.LocalComputationManager;
-import com.powsybl.commons.datasource.DataSource;
-import com.powsybl.commons.datasource.FileDataSource;
-import com.powsybl.iidm.export.Exporters;
-import com.powsybl.iidm.import_.ImportConfig;
-import com.powsybl.iidm.import_.Importers;
-import com.powsybl.iidm.network.Country;
-import com.powsybl.iidm.network.Network;
-import eu.itesla_project.modules.contingencies.ActionParameters;
-import eu.itesla_project.modules.histo.HistoDbAttributeId;
-import eu.itesla_project.modules.histo.IIDM2DB;
-import eu.itesla_project.modules.online.*;
-import eu.itesla_project.modules.optimizer.CCOFinalStatus;
-import eu.itesla_project.online.OnlineUtils;
-import eu.itesla_project.online.db.debug.NetworkData;
-import eu.itesla_project.online.db.debug.NetworkDataExporter;
-import eu.itesla_project.online.db.debug.NetworkDataExtractor;
-import com.powsybl.security.LimitViolation;
-import com.powsybl.simulation.securityindexes.SecurityIndexType;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.h2.mvstore.MVMap;
@@ -44,19 +48,40 @@ import org.slf4j.LoggerFactory;
 import org.supercsv.io.CsvListWriter;
 import org.supercsv.prefs.CsvPreference;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.google.common.base.Splitter;
+import com.powsybl.commons.datasource.DataSource;
+import com.powsybl.commons.datasource.GzFileDataSource;
+import com.powsybl.computation.local.LocalComputationManager;
+import com.powsybl.iidm.export.Exporters;
+import com.powsybl.iidm.import_.ImportConfig;
+import com.powsybl.iidm.import_.Importers;
+import com.powsybl.iidm.network.Country;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.security.LimitViolation;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
+
+import eu.itesla_project.cases.CaseType;
+import eu.itesla_project.modules.contingencies.ActionParameters;
+import eu.itesla_project.modules.histo.HistoDbAttributeId;
+import eu.itesla_project.modules.histo.IIDM2DB;
+import eu.itesla_project.modules.online.OnlineDb;
+import eu.itesla_project.modules.online.OnlineProcess;
+import eu.itesla_project.modules.online.OnlineStep;
+import eu.itesla_project.modules.online.OnlineWorkflowDetails;
+import eu.itesla_project.modules.online.OnlineWorkflowParameters;
+import eu.itesla_project.modules.online.OnlineWorkflowResults;
+import eu.itesla_project.modules.online.OnlineWorkflowRulesResults;
+import eu.itesla_project.modules.online.OnlineWorkflowWcaResults;
+import eu.itesla_project.modules.online.StateProcessingStatus;
+import eu.itesla_project.modules.online.StateStatus;
+import eu.itesla_project.modules.online.TimeHorizon;
+import eu.itesla_project.modules.optimizer.CCOFinalStatus;
+import eu.itesla_project.online.OnlineUtils;
+import eu.itesla_project.online.db.debug.NetworkData;
+import eu.itesla_project.online.db.debug.NetworkDataExporter;
+import eu.itesla_project.online.db.debug.NetworkDataExtractor;
 
 /**
  * @author Quinary <itesla@quinary.com>
@@ -1057,7 +1082,7 @@ public class OnlineDbMVStore implements OnlineDb {
                     throw new RuntimeException(errorMessage, e);
                 }
             }
-            DataSource dataSource = new FileDataSource(stateFolder, network.getId());
+            DataSource dataSource = new GzFileDataSource(stateFolder, network.getId());
             Properties parameters = new Properties();
             parameters.setProperty("iidm.export.xml.indent", "true");
             parameters.setProperty("iidm.export.xml.with-branch-state-variables", "true");
