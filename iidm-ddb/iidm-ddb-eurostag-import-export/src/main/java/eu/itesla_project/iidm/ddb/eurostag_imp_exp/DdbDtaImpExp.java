@@ -7,6 +7,7 @@
  */
 package eu.itesla_project.iidm.ddb.eurostag_imp_exp;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.util.ConnectedComponents;
@@ -611,14 +612,17 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                     //log.info("machine: {} - coupling macroblock parameter: {} = {}", machineName, parName, parValue);
                     switch (couplingtype) {
                         case "M ":
-                            String couplingMachineName = parValue.substring(3);
+                        case "N#":
+                            String couplingMachineName = parValue.substring(3).trim();
                             String iidmCouplingMachineName = amap.get(couplingMachineName);
                             if (iidmCouplingMachineName != null) {
-                                String newparValue = "M " + " " + iidmCouplingMachineName;
+                                String newparValue = couplingtype + " " + iidmCouplingMachineName;
                                 zone.getData().put(parName, newparValue);
                                 log.info("macroblock {} - coupling parameter {} = '{}' - mapped to '{}'", machineName, parName, parValue, newparValue);
                             } else {
-                                log.warn("macroblock {} - coupling parameter {} = '{}'  not mapped", machineName, parName, parValue);
+                                String errMsg = "macroblock " + machineName + " - coupling parameter " + parName + " = " + parValue + "  not mapped";
+                                log.error(errMsg);
+                                throw new RuntimeException(errMsg);
                             }
                             break;
                         case "N ":
@@ -1713,40 +1717,31 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                                 String couplingMachineName = parValue.substring(3);
                                 String iidmCouplingMachineName = iidm2eurostagId.get(couplingMachineName);
                                 if (iidmCouplingMachineName != null) {
-                                    newParValue = "M " + " " + iidmCouplingMachineName;
+                                    newParValue = couplingtype + " " + Strings.padEnd(iidmCouplingMachineName, 8, ' ');
+                                } else {
+                                    throw new RuntimeException("id: " + eq.getCimId() + ", name: " + machineName + ", coupling parameter " + parName + "=" + parValue + " -  could not map to any machine");
+                                }
+                                break;
+                            case "N#":
+                                //in DDB, in this specific case N# (node name coupling), it is stored the iidm ID of the machine whose bus has to be retrieved
+                                String refMachineName = parValue.substring(3);
+                                Injection injection = (Injection) network.getIdentifiable(refMachineName);
+                                if (injection == null) {
+                                    throw new RuntimeException("id: " + eq.getCimId() + ", name: " + machineName + ", coupling parameter " + parName + "=" + parValue + " -  could not find any injection with id: " + refMachineName);
+                                }
+                                Bus coupledBus = getBus(injection.getTerminal(),  configExport.isNoSwitch());
+                                if (coupledBus == null) {
+                                    throw new RuntimeException("id: " + eq.getCimId() + ", name: " + machineName + ", coupling parameter " + parName + "=" + parValue + " - bus not connected to a bus and not connectable");
+                                }
+                                String newBusEsgId = iidm2eurostagId.containsKey(coupledBus.getId()) ? iidm2eurostagId.get(coupledBus.getId()) : null;
+                                if (newBusEsgId != null) {
+                                    newParValue = "N " + " " + Strings.padEnd(newBusEsgId, 8, ' ');
+                                } else {
+                                    throw new RuntimeException("id: " + eq.getCimId() + ", name: " + machineName + ", coupling parameter " + parName + "=" + parValue + " - unknown mapping for bus: " + coupledBus.getId());
                                 }
                                 break;
                             case "N ":
-                                if ((MTC_PREFIX_NAME + "M50").equals(eq.getModelContainer().getDdbId())) {
-                                    //from eqCimId, find the other vscConverter id, other side of the hvdc line
-                                    VscConverterStation vscStation = network.getVscConverterStation(eq.getCimId());
-                                    HvdcLine hvdcLine = getHvdcLineFromConverterStation(vscStation);
-                                    String otherVscStationId = hvdcLine.getConverterStation1().getId() == vscStation.getId() ? hvdcLine.getConverterStation2().getId() : hvdcLine.getConverterStation1().getId();
-
-                                    //set par2 to the other converter AC node eurostag name (connected bus)
-                                    //AC node name assumed to be mapped in iidm2eurostagId
-                                    //"ACNODE_ID_"+vscConv.getId()+"_"+ACNODENAME
-                                    VscConverterStation vscConv = network.getVscConverterStation(otherVscStationId);
-                                    String acNodePrefix = "ACNODE_ID_";
-                                    String acNodeIdKey = acNodePrefix + vscConv.getId();
-                                    String acNodeEsgId = iidm2eurostagId.containsKey(acNodeIdKey) ? iidm2eurostagId.get(acNodeIdKey).substring(acNodeIdKey.length() + 1) : null;
-                                    if (acNodeEsgId != null) {
-                                        newParValue = "N " + " " + acNodeEsgId;
-                                    } else {
-                                        throw new RuntimeException("VSCConverter " + vscConv.getId() + " : acNode mapping not found");
-                                    }
-                                } else {
-                                    // the node ID stored in DDB, might not map to any existing node
-                                    // we assume it's a generator's bus id
-                                    String storedNodeId = parValue.substring(3);
-                                    Generator generator = network.getGenerator(eq.getCimId());
-                                    if (generator != null) {
-                                        Bus bus = generator.getTerminal().getBusBreakerView().getConnectableBus();
-                                        if (bus != null) {
-                                            newParValue = "N " + " " + iidm2eurostagId.getOrDefault(bus.getId(), storedNodeId);
-                                        }
-                                    }
-                                }
+                                log.warn("macroblock {} - coupling parameter {} = {}; coupling type {} not mapped", machineName, parName, parValue, couplingtype);
                                 break;
                             default:
                                 log.error("macroblock {} - coupling parameter {} = {}; coupling type {} not supported", machineName, parName, parValue, couplingtype);

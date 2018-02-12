@@ -631,8 +631,11 @@ public class EurostagEchExport implements EurostagEchExporter {
         boolean isPmode = isPMode(vscConv, hline);
         Esg8charName znamsvc = new Esg8charName(dictionary.getEsgId(vscConv.getId())); // converter station ID
         Esg8charName receivingNodeDcName = new Esg8charName("GROUND"); // receiving DC node name; always GROUND
-        String acNodeIdKey = EurostagDictionary.ACNODE_PREFIX + vscConv.getId();
-        Esg8charName acNode = dictionary.iidmIdExists(acNodeIdKey) ? new Esg8charName(dictionary.getEsgId(acNodeIdKey).substring(acNodeIdKey.length() + 1))
+        Bus vscConvBus = EchUtil.getBus(vscConv.getTerminal(), config);
+        if (vscConvBus == null) {
+            throw new RuntimeException("VSCConverter " + vscConv.getId() + " not connected to a bus and not connectable");
+        }
+        Esg8charName acNode = dictionary.iidmIdExists(vscConvBus.getId()) ? new Esg8charName(dictionary.getEsgId(vscConvBus.getId()))
                 : null;
         if (acNode == null) {
             throw new RuntimeException("VSCConverter " + vscConv.getId() + " : acNode mapping not found");
