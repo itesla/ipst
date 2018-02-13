@@ -52,9 +52,11 @@ public class OnlineDbMVStoreUtilsTest {
 
     @Test
     public void branchesDataToCsv() {
+        String networkId = "network1";
         Integer stateId = 1;
         String contingencyId = "contingency1";
         String csvHeaders = String.join(";", 
+                                        "networkId",
                                         "stateId",
                                         "contingencyId",
                                         "NHV1_NHV2_1__TO__VLHV1_I",
@@ -82,6 +84,7 @@ public class OnlineDbMVStoreUtilsTest {
                                         "NHV2_NLOAD__TO__VLLOAD_P",
                                         "NHV2_NLOAD__TO__VLLOAD_IMAX");
         String csvValues = String.join(";",
+                                       networkId,
                                        Integer.toString(stateId),
                                        contingencyId,
                                        Float.toString(1192.5631f),
@@ -113,14 +116,14 @@ public class OnlineDbMVStoreUtilsTest {
         LinkedHashMap<String, Float> branchesData1 = OnlineUtils.getBranchesData(network1);
         String csvHeaders1 = OnlineDbMVStoreUtils.branchesDataToCsvHeaders(branchesData1);
         assertEquals(csvHeaders, csvHeaders1);
-        String csvValues1 = OnlineDbMVStoreUtils.branchesDataToCsv(stateId, contingencyId, branchesData1);
+        String csvValues1 = OnlineDbMVStoreUtils.branchesDataToCsv(networkId, stateId, contingencyId, branchesData1);
         assertEquals(csvValues, csvValues1);
         // check that with the same network you get the same results (same order)
         Network network2 = EurostagTutorialExample1Factory.createWithCurrentLimits();
         LinkedHashMap<String, Float> branchesData2 = OnlineUtils.getBranchesData(network2);
         String csvHeaders2 = OnlineDbMVStoreUtils.branchesDataToCsvHeaders(branchesData2);
         assertEquals(csvHeaders1, csvHeaders2);
-        String csvValues2 = OnlineDbMVStoreUtils.branchesDataToCsv(stateId, contingencyId, branchesData2);
+        String csvValues2 = OnlineDbMVStoreUtils.branchesDataToCsv(networkId, stateId, contingencyId, branchesData2);
         assertEquals(csvValues1, csvValues2);
     }
 

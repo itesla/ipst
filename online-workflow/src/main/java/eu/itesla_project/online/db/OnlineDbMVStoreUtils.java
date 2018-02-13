@@ -230,13 +230,15 @@ public final class OnlineDbMVStoreUtils {
 
     public static String branchesDataToCsvHeaders(LinkedHashMap<String, Float> branchesData) {
         return String.join(";",
+                           "networkId",
                            "stateId",
                            "contingencyId",
                            String.join(";", branchesData.keySet()));
     }
 
-    public static String branchesDataToCsv(Integer stateId, String contingencyId, LinkedHashMap<String, Float> branchesData) {
+    public static String branchesDataToCsv(String networkId, Integer stateId, String contingencyId, LinkedHashMap<String, Float> branchesData) {
         return String.join(";",
+                           networkId,
                            Integer.toString(stateId),
                            contingencyId,
                            String.join(";", branchesData.values().stream().map(value -> Float.toString(value)).collect(Collectors.toList())));

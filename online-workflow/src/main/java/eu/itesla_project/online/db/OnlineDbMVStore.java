@@ -7,6 +7,7 @@
  */
 package eu.itesla_project.online.db;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -1115,7 +1116,7 @@ public class OnlineDbMVStore implements OnlineDb {
             if (!postcontingencyStatesMap.containsKey(STORED_POST_CONTINGENCY_STATES_HEADERS_KEY)) {
                 postcontingencyStatesMap.put(STORED_POST_CONTINGENCY_STATES_HEADERS_KEY, OnlineDbMVStoreUtils.branchesDataToCsvHeaders(branchesData));
             }
-            postcontingencyStatesMap.put(OnlineDbMVStoreUtils.postContingencyStateKey(stateId, contingencyId), OnlineDbMVStoreUtils.branchesDataToCsv(stateId, contingencyId, branchesData));
+            postcontingencyStatesMap.put(OnlineDbMVStoreUtils.postContingencyStateKey(stateId, contingencyId), OnlineDbMVStoreUtils.branchesDataToCsv(network.getId(), stateId, contingencyId, branchesData));
             wfMVStore.commit();
         } catch (Throwable e) {
             String errorMessage = "Error storing post-contingency state data of network " + network.getId() + " for wf " + workflowId + ", state " + stateId
@@ -2028,6 +2029,40 @@ public class OnlineDbMVStore implements OnlineDb {
         return workflowStatesFolder;
     }
 
+    @Override
+    public void exportPostcontingencyStates(String workflowId, Path file) {
+        Objects.requireNonNull(workflowId, "workflow id is null");
+        Objects.requireNonNull(file, "file is null");
+        if (isWorkflowStored(workflowId)) {
+            LOGGER.info("Exporting post-contingency states for workflow {}", workflowId);
+            MVStore wfMVStore = getStore(workflowId);
+            if (wfMVStore.hasMap(STORED_POST_CONTINGENCY_STATES_MAP_NAME)) {
+                MVMap<String, String> postcontingencyStatesMap = wfMVStore.openMap(STORED_POST_CONTINGENCY_STATES_MAP_NAME, mapBuilder);
+                try (BufferedWriter writer = Files.newBufferedWriter(file)) {
+                    writer.write("workflowId;" + postcontingencyStatesMap.get(STORED_POST_CONTINGENCY_STATES_HEADERS_KEY) + System.lineSeparator());
+                    postcontingencyStatesMap.keySet()
+                                            .stream()
+                                            .sorted()
+                                            .filter(key -> !key.equals(STORED_POST_CONTINGENCY_STATES_HEADERS_KEY))
+                                            .forEach(key -> {
+                                                try {
+                                                    writer.write(workflowId + ";" + postcontingencyStatesMap.get(key) + System.lineSeparator());
+                                                } catch (IOException e) {
+                                                    LOGGER.error("Error writing post-contingency state {} of workflow {} to file {}: {}",
+                                                                 key, workflowId, file.toAbsolutePath().toString(), e.getMessage());
+                                                }
+                                            });
+                } catch (IOException e) {
+                    LOGGER.error("Error writing post-contingency states of workflow {} to file {}: {}", workflowId, file.toAbsolutePath().toString(), e.getMessage());
+                }
+            } else {
+                LOGGER.error("No stored post-contingency states for workflow {}", workflowId);
+            }
+        } else {
+            LOGGER.warn("No data about wf {}", workflowId);
+        }
+    }
+
     /*
      *  support methods
      *  to inspect the content of the online db
@@ -2094,4 +2129,5 @@ public class OnlineDbMVStore implements OnlineDb {
         }
         return storedMapList.toString();
     }
+
 }
