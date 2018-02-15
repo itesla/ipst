@@ -8,10 +8,8 @@ package eu.itesla_project.security.rest.api.impl;
 
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -22,10 +20,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -40,7 +36,6 @@ import org.slf4j.LoggerFactory;
 
 import com.powsybl.action.dsl.ActionDb;
 import com.powsybl.action.dsl.ActionDslLoader;
-
 import com.powsybl.action.simulator.ActionSimulator;
 import com.powsybl.action.simulator.loadflow.LoadFlowActionSimulator;
 import com.powsybl.action.simulator.loadflow.LoadFlowActionSimulatorConfig;
@@ -62,7 +57,7 @@ import com.powsybl.security.SecurityAnalyzer.Format;
 import com.powsybl.security.converter.SecurityAnalysisResultExporters;
 
 import eu.itesla_project.security.rest.api.SecurityAnalysisService;
-
+import eu.itesla_project.security.rest.api.impl.utils.Utils;
 /**
  *
  * @author Giovanni Ferrari <giovanni.ferrari at techrain.it>
@@ -84,14 +79,14 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
         try {
             Map<String, List<InputPart>> formParts = form.getFormDataMap();
 
-            Format format = getFormat(formParts);
+            Format format = Utils.getFormat(formParts);
             if (format == null) {
                 return Response.status(Status.BAD_REQUEST).entity("Missing required format parameter").build();
             }
             String limitTypes = null;
             List<InputPart> limitParts = formParts.get("limit-types");
             if (limitParts != null) {
-                limitTypes = getParameter(limitParts);
+                limitTypes = Utils.getParameter(limitParts);
             }
 
             Set<LimitViolationType> limitViolationTypes;
@@ -105,7 +100,7 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
 
             LimitViolationFilter limitViolationFilter = new LimitViolationFilter(limitViolationTypes);
 
-            FilePart caseFile = formParts.get("case-file") != null ? getFilePart(formParts.get("case-file")) : null;
+            FilePart caseFile = formParts.get("case-file") != null ? Utils.getFilePart(formParts.get("case-file")) : null;
 
             if (caseFile == null) {
                 return Response.status(Status.BAD_REQUEST).entity("Missing required case-file parameter").build();
@@ -113,7 +108,7 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
             Network network = Importers.loadNetwork(caseFile.getFilename(), caseFile.getInputStream());
 
             FilePart contingencies = formParts.get("contingencies-file") != null
-                    ? getFilePart(formParts.get("contingencies-file")) : null;
+                    ? Utils.getFilePart(formParts.get("contingencies-file")) : null;
 
 
             SecurityAnalysisResult result = analyze(network, contingencies, limitViolationFilter);
@@ -147,59 +142,28 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
         };
     }
 
-    private String getParameter(List<InputPart> parts) {
-        try {
-            return parts.stream()
-                    .filter(Objects::nonNull)
-                    .findFirst()
-                    .get()
-                    .getBodyAsString();
-        } catch (IOException e) {
-            LOGGER.error("Error reading parameter", e);
-        }
-        return null;
-    }
 
 
-    private FilePart getFilePart(List<InputPart> parts) throws IOException {
-        Objects.requireNonNull(parts);
 
-        for (InputPart inputPart : parts) {
-            String disposition = inputPart.getHeaders().getFirst("Content-Disposition");
-            if (disposition != null) {
-                Optional<String> filenameHeader = Arrays.stream(disposition.split(";"))
-                        .filter(n -> n.trim().startsWith("filename")).findFirst();
-                if (filenameHeader.isPresent()) {
-                    String[] filenameTokens = filenameHeader.get().split("=");
-                    if (filenameTokens.length > 1) {
-                        String filename = filenameTokens[1].trim().replaceAll("\"", "");
-                        if (!filename.isEmpty()) {
-                            return new FilePart(filename, inputPart.getBody(InputStream.class, null));
-                        }
-                    }
-                }
-            }
-        }
-        return null;
-    }
+
 
     @Override
     public Response actionSimulator(MultipartFormDataInput form) {
         Objects.requireNonNull(form);
         try {
             Map<String, List<InputPart>> formParts = form.getFormDataMap();
-            Format format = getFormat(formParts);
+            Format format = Utils.getFormat(formParts);
 
             if (format == null) {
                 return Response.status(Status.BAD_REQUEST).entity("Missing required format parameter").build();
             }
 
-            FilePart caseFile = formParts.get("case-file") != null ? getFilePart(formParts.get("case-file")) : null;
+            FilePart caseFile = formParts.get("case-file") != null ? Utils.getFilePart(formParts.get("case-file")) : null;
             if (caseFile == null) {
                 return Response.status(Status.BAD_REQUEST).entity("Missing required case-file parameter").build();
             }
 
-            FilePart dslFile = formParts.get("dsl-file") != null ? getFilePart(formParts.get("dsl-file")) : null;
+            FilePart dslFile = formParts.get("dsl-file") != null ? Utils.getFilePart(formParts.get("dsl-file")) : null;
             if (dslFile == null) {
                 return Response.status(Status.BAD_REQUEST).entity("Missing required dsl-file parameter").build();
             }
@@ -263,19 +227,4 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
 
     }
 
-    private Format getFormat(Map<String, List<InputPart>> formParts) {
-        Format format = null;
-        List<InputPart> formatParts = formParts.get("format");
-        if (formatParts != null) {
-            String outFormat = getParameter(formatParts);
-            if (outFormat != null) {
-                try {
-                    format = Format.valueOf(outFormat);
-                } catch (Exception e) {
-                    format = null;
-                }
-            }
-        }
-        return format;
-    }
 }
