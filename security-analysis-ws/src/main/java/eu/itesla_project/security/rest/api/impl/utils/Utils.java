@@ -12,17 +12,48 @@ import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.powsybl.action.simulator.loadflow.LoadFlowActionSimulatorConfig;
+import com.powsybl.commons.PowsyblException;
+import com.powsybl.commons.config.ComponentDefaultConfig;
+import com.powsybl.computation.local.LocalComputationManager;
+import com.powsybl.contingency.ContingenciesProviderFactory;
 import com.powsybl.security.SecurityAnalyzer.Format;
 
 import eu.itesla_project.security.rest.api.impl.FilePart;
 
 public final class Utils {
 
+    private static ComponentDefaultConfig componentDefaultConfig;
+    private static LoadFlowActionSimulatorConfig actionSimulatorConfig;
+    private static ContingenciesProviderFactory contingenciesProviderFactory;
+    private static LocalComputationManager localComputationManager;
+    private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
+
     private Utils() {
         super();
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
+    public static void init() {
+        componentDefaultConfig = ComponentDefaultConfig.load();
+        actionSimulatorConfig = LoadFlowActionSimulatorConfig.load();
+        contingenciesProviderFactory = componentDefaultConfig.newFactoryImpl(ContingenciesProviderFactory.class);
+        try {
+            localComputationManager = new LocalComputationManager();
+        } catch (IOException e) {
+            throw new PowsyblException(e);
+        }
+    }
+
+    public static LocalComputationManager getLocalComputationManager() {
+        try {
+            if (localComputationManager == null) {
+                localComputationManager = new LocalComputationManager();
+            }
+        } catch (IOException e) {
+            throw new PowsyblException(e);
+        }
+        return localComputationManager;
+    }
 
     public static Format getFormat(Map<String, List<InputPart>> formParts) {
         Format format = null;
@@ -70,4 +101,29 @@ public final class Utils {
         }
         return null;
     }
+
+    public static ComponentDefaultConfig getComponentDefaultConfig() {
+        if (componentDefaultConfig == null) {
+            componentDefaultConfig = ComponentDefaultConfig.load();
+        }
+        return componentDefaultConfig;
+    }
+
+    public static LoadFlowActionSimulatorConfig getActionSimulatorConfig() {
+        if (actionSimulatorConfig == null) {
+            actionSimulatorConfig = LoadFlowActionSimulatorConfig.load();
+        }
+        return actionSimulatorConfig;
+    }
+
+    public static ContingenciesProviderFactory getContingenciesProviderFactory() {
+        if (contingenciesProviderFactory == null) {
+            if (componentDefaultConfig == null) {
+                componentDefaultConfig = ComponentDefaultConfig.load();
+            }
+            contingenciesProviderFactory = componentDefaultConfig.newFactoryImpl(ContingenciesProviderFactory.class);
+        }
+        return contingenciesProviderFactory;
+    }
+
 }

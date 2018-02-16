@@ -38,13 +38,9 @@ import com.powsybl.action.dsl.ActionDb;
 import com.powsybl.action.dsl.ActionDslLoader;
 import com.powsybl.action.simulator.ActionSimulator;
 import com.powsybl.action.simulator.loadflow.LoadFlowActionSimulator;
-import com.powsybl.action.simulator.loadflow.LoadFlowActionSimulatorConfig;
 import com.powsybl.action.simulator.loadflow.LoadFlowActionSimulatorObserver;
 import com.powsybl.action.simulator.tools.AbstractSecurityAnalysisResultBuilder;
-import com.powsybl.commons.config.ComponentDefaultConfig;
-import com.powsybl.computation.local.LocalComputationManager;
 import com.powsybl.contingency.ContingenciesProvider;
-import com.powsybl.contingency.ContingenciesProviderFactory;
 import com.powsybl.contingency.Contingency;
 import com.powsybl.contingency.EmptyContingencyListProvider;
 import com.powsybl.iidm.import_.Importers;
@@ -65,12 +61,6 @@ import eu.itesla_project.security.rest.api.impl.utils.Utils;
 public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityAnalysisServiceImpl.class);
-    private final ContingenciesProviderFactory contingenciesProviderFactory;
-
-    public SecurityAnalysisServiceImpl() {
-        ComponentDefaultConfig defaultConfig = ComponentDefaultConfig.load();
-        this.contingenciesProviderFactory = defaultConfig.newFactoryImpl(ContingenciesProviderFactory.class);
-    }
 
     @Override
     public Response analyze(MultipartFormDataInput form) {
@@ -124,8 +114,8 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
 
     public SecurityAnalysisResult analyze(Network network, FilePart contingencies, LimitViolationFilter limitViolationFilter) {
         ContingenciesProvider contingenciesProvider = (contingencies != null && contingencies.getInputStream() != null)
-                ? contingenciesProviderFactory.create(contingencies.getInputStream()) : new EmptyContingencyListProvider();
-        SecurityAnalyzer analyzer = new SecurityAnalyzer(limitViolationFilter, LocalComputationManager.getDefault(), 0);
+                ? Utils.getContingenciesProviderFactory().create(contingencies.getInputStream()) : new EmptyContingencyListProvider();
+        SecurityAnalyzer analyzer = new SecurityAnalyzer(limitViolationFilter, Utils.getLocalComputationManager(), 0);
         return analyzer.analyze(network, contingenciesProvider);
     }
 
@@ -184,14 +174,12 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
                         .collect(Collectors.toList());
             }
 
-            LoadFlowActionSimulatorConfig config = LoadFlowActionSimulatorConfig.load();
-
             List<LoadFlowActionSimulatorObserver> observers = new ArrayList<>();
             AbstractSecurityAnalysisResultBuilderImpl loadFlowActionSimulatorObserver = new AbstractSecurityAnalysisResultBuilderImpl();
             observers.add(loadFlowActionSimulatorObserver);
 
             // action simulator
-            ActionSimulator actionSimulator = new LoadFlowActionSimulator(network, new LocalComputationManager(), config,
+            ActionSimulator actionSimulator = new LoadFlowActionSimulator(network, Utils.getLocalComputationManager(), Utils.getActionSimulatorConfig(),
                     observers);
 
             // start simulator
