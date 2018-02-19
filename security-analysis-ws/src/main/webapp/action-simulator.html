@@ -1,0 +1,40 @@
+<!--
+    Copyright (c) 2018, RTE (http://www.rte-france.com) This Source Code 
+    Form is subject to the terms of the Mozilla Public License, v. 2.0. If a 
+    copy of the MPL was not distributed with this file, You can obtain one at 
+    http://mozilla.org/MPL/2.0/. 
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Action Simulator</title>
+</head>
+<body>
+    <h2>Action Simulator</h2>
+    <form action="api/action-simulator" method="POST"
+        enctype="multipart/form-data">
+        <table>
+            <tr>
+                <td><label>Case File </label></td>
+                <td><input type="file" name="case-file"></td>
+            </tr>
+            <tr>
+                <td><label>Dsl File </label></td>
+                <td><input type="file" name="dsl-file"></td>
+            </tr>
+            <tr>
+                <td><label>Output format </label></td>
+                <td><select name="format">
+                        <option value="JSON">JSON</option>
+                        <option value="CSV">CSV</option>
+                </select></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><button type="submit">Analyse</button></td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>

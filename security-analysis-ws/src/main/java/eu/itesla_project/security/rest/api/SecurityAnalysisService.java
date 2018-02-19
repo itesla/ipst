@@ -17,5 +17,6 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 public interface SecurityAnalysisService {
 
     public Response analyze(MultipartFormDataInput dataInput);
+    public Response actionSimulator(MultipartFormDataInput dataInput);
 
 }
