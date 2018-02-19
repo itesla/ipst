@@ -73,7 +73,16 @@
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-action-simulator</artifactId>
+            <version>${powsybl.version}</version>
+        </dependency>
+       <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+           <version>${slf4j.version}</version>
+       </dependency>
         <!-- Test dependencies -->
         <dependency>
             <groupId>junit</groupId>
