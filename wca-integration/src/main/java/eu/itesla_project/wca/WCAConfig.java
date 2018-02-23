@@ -38,6 +38,7 @@ public class WCAConfig {
     public static final boolean DEFAULT_FILTER_PREVENTIVE_ACTIONS = true;
     public static final boolean DEFAULT_FILTER_CURATIVE_ACTIONS = true;
     public static final boolean DEFAULT_LOOOSEN_CONSTRAINTS = false;
+    public static final boolean DEFAULT_RECONDITION_CORRELATION_MATRIX = false;
 
     private final Path xpressHome;
     private final float reducedVariableRatio;
@@ -56,6 +57,7 @@ public class WCAConfig {
     private final boolean filterPreventiveActions;
     private final boolean filterCurativeActions;
     private final boolean loosenConstraints;
+    private final boolean reconditionCorrelationMatrix;
 
     public static WCAConfig load() {
         return load(PlatformConfig.defaultConfig());
@@ -80,16 +82,17 @@ public class WCAConfig {
         boolean filterPreventiveActions = config.getBooleanProperty("filterPreventiveActions", DEFAULT_FILTER_PREVENTIVE_ACTIONS);
         boolean filterCurativeActions = config.getBooleanProperty("filterCurativeActions", DEFAULT_FILTER_CURATIVE_ACTIONS);
         boolean loosenConstraints = config.getBooleanProperty("loosenConstraints", DEFAULT_LOOOSEN_CONSTRAINTS);
+        boolean reconditionCorrelationMatrix = config.getBooleanProperty("reconditionCorrelationMatrix", DEFAULT_RECONDITION_CORRELATION_MATRIX);
         return new WCAConfig(xpressHome, reducedVariableRatio, debug, exportStates, restrictingThresholdLevels, margin, ignoreVoltageConstraints,
                              activateFiltering, preventiveActionsFilter, preventiveActionsOptimizer, applyPreventiveActions, curativeActionsOptimizer,
-                             voltageLevelConstraintFilter, countryConstraintFilter, filterPreventiveActions, filterCurativeActions, loosenConstraints);
+                             voltageLevelConstraintFilter, countryConstraintFilter, filterPreventiveActions, filterCurativeActions, loosenConstraints, reconditionCorrelationMatrix);
     }
 
     public WCAConfig(Path xpressHome, float reducedVariableRatio, boolean debug, boolean exportStates, Set<WCARestrictingThresholdLevel> restrictingThresholdLevels,
                      float margin, boolean ignoreVoltageConstraints, boolean activateFiltering, WCAPreventiveActionsFilter preventiveActionsFilter,
                      WCAPreventiveActionsOptimizer preventiveActionsOptimizer, boolean applyPreventiveActions, WCACurativeActionsOptimizer curativeActionsOptimizer,
                      float voltageLevelConstraintFilter, Set<Country> countryConstraintFilter, boolean filterPreventiveActions, boolean filterCurativeActions,
-                     boolean loosenConstraints) {
+                     boolean loosenConstraints, boolean reconditionCorrelationMatrix) {
         this.xpressHome = Objects.requireNonNull(xpressHome);
         this.reducedVariableRatio = reducedVariableRatio;
         this.debug = debug;
@@ -107,6 +110,7 @@ public class WCAConfig {
         this.filterPreventiveActions = filterPreventiveActions;
         this.filterCurativeActions = filterCurativeActions;
         this.loosenConstraints = loosenConstraints;
+        this.reconditionCorrelationMatrix = reconditionCorrelationMatrix;
     }
 
     public Path getXpressHome() {
@@ -177,6 +181,10 @@ public class WCAConfig {
         return loosenConstraints;
     }
 
+    public boolean isReconditionCorrelationMatrix() {
+        return reconditionCorrelationMatrix;
+    }
+
     @Override
     public String toString() {
         return getClass().getSimpleName() + " [xpressHome=" + xpressHome +
@@ -196,6 +204,7 @@ public class WCAConfig {
                 ", filterPreventiveActions=" + filterPreventiveActions +
                 ", filterCurativeActions=" + filterCurativeActions +
                 ", loosenConstraints=" + loosenConstraints +
+                ", reconditionCorrelationMatrix=" + reconditionCorrelationMatrix +
                 "]";
     }
 }

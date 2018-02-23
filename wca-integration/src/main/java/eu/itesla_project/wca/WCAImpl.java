@@ -133,6 +133,8 @@ public class WCAImpl implements WCA, WCAConstants {
     private static final String WCA_SENSIBILITIES_FILE = "wca_sensibilities.txt";
     private static final String WCA_INFLUENCE_PST_FILE = "wca_influence_pst.txt";
 
+    private static final String R_RECONDITION_MATRIX_SCRIPT = "recondition_reduction_matrix.R";
+
     private final Network network;
 
     private final ComputationManager computationManager;
@@ -215,6 +217,13 @@ public class WCAImpl implements WCA, WCAConstants {
         Files.copy(WCAImpl.class.getResourceAsStream("/" + REQUIRED_FILE_NAME), workingDir.resolve(REQUIRED_FILE_NAME));
     }
 
+    private static void copyOptional(Path workingDir, WCAConfig config) throws IOException {
+        if (config.isReconditionCorrelationMatrix()) {
+            Files.copy(WCAImpl.class.getResourceAsStream("/R/" + R_RECONDITION_MATRIX_SCRIPT), workingDir.resolve(R_RECONDITION_MATRIX_SCRIPT));
+        }
+    }
+
+
     private CompletableFuture<WCAClustersResult> createClustersTask(Contingency contingency,
                                                                     List<String> curativeActionIds,
                                                                     String baseStateId,
@@ -234,6 +243,8 @@ public class WCAImpl implements WCA, WCAConstants {
                         network.getStateManager().setWorkingState(baseStateId);
 
                         copyRequired(workingDir);
+
+                        copyOptional(workingDir, config);
 
                         DataSource commonDataSource = new FileDataSource(workingDir, COMMONE_FILE_PREFIX);
 
@@ -289,10 +300,17 @@ public class WCAImpl implements WCA, WCAConstants {
                         // write curatives action description associated to the contingency
                         WCAUtils.writeActions(curativeActionIds, dataSource, mapper, "Curative actions", AmplSubset.CURATIVE_ACTION);
 
-                        Command cmd = new SimpleCommandBuilder()
+                        GroupCommandBuilder cmdBuilder = new GroupCommandBuilder()
                                 .id(CLUSTERS_CMD_ID)
+                                .inputFiles(inputFiles(dataSetNum));
+                        if (config.isReconditionCorrelationMatrix()) {
+                            cmdBuilder = cmdBuilder.subCommand()
+                                    .program("R")
+                                    .args("--no-save", "-f", R_RECONDITION_MATRIX_SCRIPT)
+                                    .add();
+                        }
+                        cmdBuilder = cmdBuilder.subCommand()
                                 .program("clusters")
-                                .inputFiles(inputFiles(dataSetNum))
                                 .args(COMMONE_FILE_PREFIX,
                                         FILE_PREFIX + dataSetNum,
                                         REQUIRED_FILE_NAME,
@@ -307,7 +325,8 @@ public class WCAImpl implements WCA, WCAConstants {
                                         WCA_UNDEFINED_PST_FILE,
                                         WCA_SENSIBILITIES_FILE,
                                         WCA_INFLUENCE_PST_FILE)
-                                .build();
+                                .add();
+                        Command cmd = cmdBuilder.build();
                         return Arrays.asList(new CommandExecution(cmd, 1));
                     }
 
@@ -385,10 +404,17 @@ public class WCAImpl implements WCA, WCAConstants {
                         // write security rules corresponding to the contingency
                         new WCASecurityRulesWriter(network, securityRuleExpressions, dataSource, mapper, false, activateFiltering).write();
 
-                        Command cmd = new SimpleCommandBuilder()
+                        GroupCommandBuilder cmdBuilder = new GroupCommandBuilder()
                                 .id(DOMAINS_CMD_ID)
+                                .inputFiles(inputFiles(dataSetNum));
+                        if (config.isReconditionCorrelationMatrix()) {
+                            cmdBuilder = cmdBuilder.subCommand()
+                                    .program("R")
+                                    .args("--no-save", "-f", R_RECONDITION_MATRIX_SCRIPT)
+                                    .add();
+                        }
+                        cmdBuilder = cmdBuilder.subCommand()
                                 .program("domains")
-                                .inputFiles(inputFiles(dataSetNum))
                                 .args(COMMONE_FILE_PREFIX,
                                         FILE_PREFIX + dataSetNum,
                                         REQUIRED_FILE_NAME,
@@ -404,7 +430,8 @@ public class WCAImpl implements WCA, WCAConstants {
                                         WCA_UNDEFINED_PST_FILE,
                                         WCA_SENSIBILITIES_FILE,
                                         WCA_INFLUENCE_PST_FILE)
-                                .build();
+                                .add();
+                        Command cmd = cmdBuilder.build();
                         return Arrays.asList(new CommandExecution(cmd, 1));
                     }
 

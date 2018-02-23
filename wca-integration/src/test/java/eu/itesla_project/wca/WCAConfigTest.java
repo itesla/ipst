@@ -60,7 +60,7 @@ public class WCAConfigTest {
                     WCAConfig.DEFAULT_ACTIVATE_FILTERING, WCAConfig.DEFAULT_PREVENTIVE_ACTIONS_FILTER, WCAConfig.DEFAULT_PREVENTIVE_ACTIONS_OPTIMIZER, 
                     WCAConfig.DEFAULT_APPLY_PREVENTIVE_ACTIONS, WCAConfig.DEFAULT_CURATIVE_ACTIONS_OPTIMIZER, WCAConfig.DEFAULT_VOLTAGE_LEVEL_CONSTRAINTS_FILTER, 
                     WCAConfig.DEFAULT_COUNTRY_CONSTRAINTS_FILTER, WCAConfig.DEFAULT_FILTER_PREVENTIVE_ACTIONS, WCAConfig.DEFAULT_FILTER_CURATIVE_ACTIONS, 
-                    WCAConfig.DEFAULT_LOOOSEN_CONSTRAINTS);
+                    WCAConfig.DEFAULT_LOOOSEN_CONSTRAINTS, WCAConfig.DEFAULT_RECONDITION_CORRELATION_MATRIX);
     }
 
     @Test
@@ -81,6 +81,7 @@ public class WCAConfigTest {
         boolean filterPreventiveActions = false;
         boolean filterCurativeActions = false;
         boolean loosenConstraints = true;
+        boolean reconditionCorrelationMatrix = false;
         
         moduleConfig.setStringListProperty("reducedVariableRatio", Arrays.asList(Float.toString(reducedVariableRatio)));
         moduleConfig.setStringListProperty("debug", Arrays.asList(Boolean.toString(debug)));
@@ -98,13 +99,14 @@ public class WCAConfigTest {
         moduleConfig.setStringListProperty("filterPreventiveActions", Arrays.asList(Boolean.toString(filterPreventiveActions)));
         moduleConfig.setStringListProperty("filterCurativeActions", Arrays.asList(Boolean.toString(filterCurativeActions)));
         moduleConfig.setStringListProperty("loosenConstraints", Arrays.asList(Boolean.toString(loosenConstraints)));
+        moduleConfig.setStringListProperty("reconditionCorrelationMatrix", Arrays.asList(Boolean.toString(reconditionCorrelationMatrix)));
 
         WCAConfig parameters = WCAConfig.load(platformConfig);
 
         checkValues(parameters, xpressHome, reducedVariableRatio, debug, exportStates, restrictingThresholdLevels, margin, 
                     ignoreVoltageConstraints, activateFiltering, preventiveActionsFilter, preventiveActionsOptimizer, 
                     applyPreventiveActions, curativeActionsOptimizer, voltageLevelConstraintFilter, countryConstraintFilter, 
-                    filterPreventiveActions, filterCurativeActions, loosenConstraints);
+                    filterPreventiveActions, filterCurativeActions, loosenConstraints, reconditionCorrelationMatrix);
     }
 
     private void checkValues(WCAConfig config, Path xpressHome, float reducedVariableRatio, boolean debug, boolean exportStates,
@@ -113,7 +115,7 @@ public class WCAConfigTest {
                              WCAPreventiveActionsOptimizer preventiveActionsOptimizer, boolean applyPreventiveActions, 
                              WCACurativeActionsOptimizer curativeActionsOptimizer, float voltageLevelConstraintFilter, 
                              Set<Country> countryConstraintFilter, boolean filterPreventiveActions, boolean filterCurativeActions,
-                             boolean loosenConstraints) {
+                             boolean loosenConstraints, boolean reconditionCorrelationMatrix) {
         assertEquals(xpressHome, config.getXpressHome());
         assertEquals(reducedVariableRatio, config.getReducedVariableRatio(), 0);
         assertEquals(debug, config.isDebug());
@@ -131,6 +133,7 @@ public class WCAConfigTest {
         assertEquals(filterPreventiveActions, config.filterPreventiveActions());
         assertEquals(filterCurativeActions, config.filterCurativeActions());
         assertEquals(loosenConstraints, config.loosenConstraints());
+        assertEquals(reconditionCorrelationMatrix, config.isReconditionCorrelationMatrix());
     }
 
 }
