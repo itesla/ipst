@@ -584,25 +584,37 @@ public class EurostagEchExport implements EurostagEchExporter {
         }
     }
 
-    //simple cut-name mapping for DC node names
-    //prefixes esg id with DC_
-    protected String getDCNodeName(String iidmId, int idlen, BiMap<String, String> dcNodesEsgNames) {
-        if (dcNodesEsgNames.containsKey(iidmId)) {
-            return dcNodesEsgNames.get(iidmId);
+
+    //simple cut-name mapping
+    protected String getNewId(String iidmId, int idlen, final String prefix, BiMap<String, String> idMap) {
+        if (idMap.containsKey(iidmId)) {
+            return idMap.get(iidmId);
         } else {
-            String esgId = "DC_" + (iidmId.length() > idlen ? iidmId.substring(0, idlen)
+            String esgId = prefix + (iidmId.length() > idlen ? iidmId.substring(0, idlen)
                     : Strings.padEnd(iidmId, idlen, ' '));
             int counter = 0;
-            while (dcNodesEsgNames.inverse().containsKey(esgId)) {
+            while (idMap.inverse().containsKey(esgId)) {
                 String counterStr = Integer.toString(counter++);
                 if (counterStr.length() > idlen) {
                     throw new RuntimeException("Renaming fatal error " + iidmId + " -> " + esgId);
                 }
                 esgId = esgId.substring(0, idlen - counterStr.length()) + counterStr;
             }
-            dcNodesEsgNames.put(iidmId, esgId);
+            idMap.put(iidmId, esgId);
             return esgId;
         }
+    }
+
+    //simple cut-name mapping for DC node names:
+    //prefixes esg id with DC_, to avoid conflicts
+    protected String getDCNodeName(String iidmId, int idlen, BiMap<String, String> dcNodesEsgNames) {
+        return getNewId(iidmId, idlen, "DC_", dcNodesEsgNames);
+    }
+
+    //simple cut-name mapping for additional loads:
+    //prefixes esg id with XL_, to avoid conflicts
+    protected String getAdditionalLoadName(String iidmId, int idlen, BiMap<String, String> bmapEsgNames) {
+        return getNewId(iidmId, idlen, "XL_", bmapEsgNames);
     }
 
     protected boolean isPMode(HvdcConverterStation vscConv, HvdcLine hvdcLine) {
@@ -610,11 +622,11 @@ public class EurostagEchExport implements EurostagEchExporter {
         Objects.requireNonNull(hvdcLine);
         HvdcConverterStation side1Conv = hvdcLine.getConverterStation1();
         HvdcConverterStation side2Conv = hvdcLine.getConverterStation2();
-        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER))
+        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER))
                 && (vscConv.getId().equals(side1Conv.getId()))) {
             return true;
         }
-        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER))
+        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER))
                 && (vscConv.getId().equals(side2Conv.getId()))) {
             return true;
         }
@@ -648,13 +660,13 @@ public class EurostagEchExport implements EurostagEchExporter {
         float rxdc = 16; // reactance [Ohms]
 
         float pac = zeroIfNanOrValue(hline.getActivePowerSetpoint()); // AC active power setpoint [MW]. Only if DC control mode is 'P'
-        pac = isPmode ? pac : -pac; //change sign in case of Q mode side
+        pac = isPmode ? pac : -pac; //change sign in case of P mode side
         // multiplying  the line's nominalV by 2 corresponds to the fact that iIDM refers to the cable-ground voltage
         // while Eurostag regulations to the cable-cable voltage
         float pvd = EchUtil.getHvdcLineDcVoltage(hline); // DC voltage setpoint [MW]. Only if DC control mode is 'V'
-        float pre = vscConv.getReactivePowerSetpoint(); // AC reactive power setpoint [Mvar]. Only if AC control mode is 'Q'
+        float pre = -vscConv.getReactivePowerSetpoint(); // AC reactive power setpoint [Mvar]. Only if AC control mode is 'Q'
         if ((Float.isNaN(pre)) || (vscConv.isVoltageRegulatorOn())) {
-            float terminalQ = -vscConv.getTerminal().getQ();
+            float terminalQ = vscConv.getTerminal().getQ();
             if (Float.isNaN(terminalQ)) {
                 pre = zeroIfNanOrValue(pre);
             } else {
@@ -715,6 +727,9 @@ public class EurostagEchExport implements EurostagEchExporter {
         //DC nodes mapping
         BiMap<String, String> dcNodesEsgNames = HashBiMap.create();
 
+        //additional loads
+        BiMap<String, String> dcAdditionalLoadsEsgNames = HashBiMap.create();
+
         //creates 2 DC nodes, for each hvdc line (one node per converter station)
         for (HvdcLine hvdcLine : Identifiables.sort(network.getHvdcLines())) {
             // skip lines with converter stations not in the main connected component
@@ -733,11 +748,34 @@ public class EurostagEchExport implements EurostagEchExporter {
             esgNetwork.addDCNode(new EsgDCNode(new Esg2charName("DC"), hvdcNodeName2, dcVoltage, 1));
 
             //create a dc link, representing the hvdc line
-            esgNetwork.addDCLink(new EsgDCLink(hvdcNodeName1, hvdcNodeName2, '1', hvdcLine.getR(), EsgDCLink.LinkStatus.ON));
+            //Eurostag model requires a resistance of 1 ohm (not hvdcLine.getR())
+            float r = 1.0f;
+            esgNetwork.addDCLink(new EsgDCLink(hvdcNodeName1, hvdcNodeName2, '1', r, EsgDCLink.LinkStatus.ON));
 
             //create the two converter stations
-            esgNetwork.addACDCVscConverter(createACDCVscConverter(network.getVscConverterStation(convStation1.getId()), hvdcLine, hvdcNodeName1));
-            esgNetwork.addACDCVscConverter(createACDCVscConverter(network.getVscConverterStation(convStation2.getId()), hvdcLine, hvdcNodeName2));
+            EsgACDCVscConverter esgConv1 = createACDCVscConverter(network.getVscConverterStation(convStation1.getId()), hvdcLine, hvdcNodeName1);
+            EsgACDCVscConverter esgConv2 = createACDCVscConverter(network.getVscConverterStation(convStation2.getId()), hvdcLine, hvdcNodeName2);
+            esgNetwork.addACDCVscConverter(esgConv1);
+            esgNetwork.addACDCVscConverter(esgConv2);
+
+            //for the rectifier converter station (the one with P>0 that consumes from the grid), define pdc
+            VscConverterStation rectConvStation;
+            EsgACDCVscConverter rectEsgConvStation;
+            if (hvdcLine.getConvertersMode() == HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER) {
+                rectConvStation = network.getVscConverterStation(convStation1.getId());
+                rectEsgConvStation = esgConv1;
+            } else {
+                rectConvStation = network.getVscConverterStation(convStation2.getId());
+                rectEsgConvStation = esgConv2;
+            }
+            float pac = rectEsgConvStation.getPac();
+            //create one load on the node to which the converter station is connected with the following consumption
+            //Eurostag model requires a resistance of 1 ohm
+            float ploss = (float) (Math.abs(pac * rectConvStation.getLossFactor() / 100.0f) + (hvdcLine.getR() / 2.0f - 0.5f) * Math.pow(pac / hvdcLine.getNominalV(), 2));
+            ConnectionBus rectConvBus = ConnectionBus.fromTerminal(rectConvStation.getTerminal(), config, fakeNodes);
+            String newLoadId = getAdditionalLoadName(rectConvStation.getId(), 4, dcAdditionalLoadsEsgNames);
+            dictionary.add(newLoadId, newLoadId);
+            esgNetwork.addLoad(createLoad(rectConvBus, newLoadId, ploss, 0));
         }
     }
 

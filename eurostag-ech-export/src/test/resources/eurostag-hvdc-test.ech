@@ -27,6 +27,8 @@ DA DC
 
 6 VL2_0    VL2_1   1                                                    0.       0.
 
+CH XL_C2    Y VL2_1          0.       0.   0.0308       0.       0.       0.       0.       0.
+
 G  G1       Y B1            50.     100.     150. -2147483          21474836 V     400. B1             1.       0.       0.
 
 DC N DC_C1    DC     800.       1.
@@ -34,8 +36,8 @@ DC N DC_C2    DC     800.       1.
 
 DC L DC_C1    DC_C2    1       1.  
 
-DC V C1       DC_C1    GROUND   B1         P Q       0.      16.     280.     800.              -50.                1.
+DC V C1       DC_C1    GROUND   B1         V Q       0.      16.    -280.     800.               50.                1.
 DC V    -300.     300.       0.      10.       0.       0.       0.                  
-DC V C2       DC_C2    GROUND   VL2_1      V Q       0.      16.    -280.     800.              123.                1.
+DC V C2       DC_C2    GROUND   VL2_1      P Q       0.      16.     280.     800.             -123.                1.
 DC V    -300.     300.       0.      10.       0.       0.       0.                  
 

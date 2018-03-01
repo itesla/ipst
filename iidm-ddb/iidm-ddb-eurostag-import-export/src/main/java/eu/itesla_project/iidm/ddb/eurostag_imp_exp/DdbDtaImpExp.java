@@ -1724,12 +1724,29 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                                 break;
                             case "N#":
                                 //in DDB, in this specific case N# (node name coupling), it is stored the iidm ID of the machine whose bus has to be retrieved
+                                //note that N# is not Eurostag compliant identifier: it must be converted to 'N'
                                 String refMachineName = parValue.substring(3);
                                 Injection injection = (Injection) network.getIdentifiable(refMachineName);
                                 if (injection == null) {
                                     throw new RuntimeException("id: " + eq.getCimId() + ", name: " + machineName + ", coupling parameter " + parName + "=" + parValue + " -  could not find any injection with id: " + refMachineName);
                                 }
-                                Bus coupledBus = getBus(injection.getTerminal(),  configExport.isNoSwitch());
+
+                                Bus coupledBus = null;
+                                //if the referenced machine is a Generator, deal with stepuptransformers
+                                //fetch the high-voltage node of the step-up transformer of the unit
+                                Generator g;
+                                if ((g = network.getGenerator(injection.getId())) != null) {
+                                    VoltageLevel vlGen = g.getTerminal().getVoltageLevel();
+                                    if (vlGen != null) {
+                                        TwoWindingsTransformer twt = network.getTwoWindingsTransformerStream().filter(t -> vlGen.getId().equals(t.getTerminal2().getVoltageLevel().getId())).findFirst().orElse(null);
+                                        if (twt != null) {
+                                            coupledBus = getBus(twt.getTerminal1(), configExport.isNoSwitch());
+                                        }
+                                    }
+                                }
+                                if (coupledBus == null) {
+                                    coupledBus = getBus(injection.getTerminal(), configExport.isNoSwitch());
+                                }
                                 if (coupledBus == null) {
                                     throw new RuntimeException("id: " + eq.getCimId() + ", name: " + machineName + ", coupling parameter " + parName + "=" + parValue + " - bus not connected to a bus and not connectable");
                                 }
@@ -1780,11 +1797,11 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         Objects.requireNonNull(hvdcLine);
         HvdcConverterStation side1Conv = hvdcLine.getConverterStation1();
         HvdcConverterStation side2Conv = hvdcLine.getConverterStation2();
-        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER))
+        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER))
                 && (vscConv.getId().equals(side1Conv.getId()))) {
             return true;
         }
-        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER))
+        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER))
                 && (vscConv.getId().equals(side2Conv.getId()))) {
             return true;
         }
