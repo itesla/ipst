@@ -11,16 +11,18 @@ import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import com.powsybl.commons.config.InMemoryPlatformConfig;
 import com.powsybl.commons.config.MapModuleConfig;
+import com.powsybl.iidm.network.HvdcLine;
 import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.VscConverterStation;
 import com.powsybl.iidm.network.test.EurostagTutorialExample1Factory;
 import com.powsybl.iidm.network.test.HvdcTestNetwork;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.nio.file.FileSystem;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 
 /**
@@ -93,5 +95,13 @@ public class EchUtilsTest {
             });
         });
     }
+
+    @Test
+    public void testIsPmode() throws IOException {
+        HvdcLine hline = networkHvdc.getHvdcLine("L");
+        assertTrue(EchUtil.isPMode(networkHvdc.getVscConverterStation("C2"), hline));
+        assertFalse(EchUtil.isPMode(networkHvdc.getVscConverterStation("C1"), hline));
+    }
+
 
 }

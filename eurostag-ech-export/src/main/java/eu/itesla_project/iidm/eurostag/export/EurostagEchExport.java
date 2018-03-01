@@ -617,22 +617,6 @@ public class EurostagEchExport implements EurostagEchExporter {
         return getNewId(iidmId, idlen, "XL_", bmapEsgNames);
     }
 
-    protected boolean isPMode(HvdcConverterStation vscConv, HvdcLine hvdcLine) {
-        Objects.requireNonNull(vscConv);
-        Objects.requireNonNull(hvdcLine);
-        HvdcConverterStation side1Conv = hvdcLine.getConverterStation1();
-        HvdcConverterStation side2Conv = hvdcLine.getConverterStation2();
-        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER))
-                && (vscConv.getId().equals(side1Conv.getId()))) {
-            return true;
-        }
-        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER))
-                && (vscConv.getId().equals(side2Conv.getId()))) {
-            return true;
-        }
-        return false;
-    }
-
     protected float zeroIfNanOrValue(float value) {
         return Float.isNaN(value) ? 0 : value;
     }
@@ -640,7 +624,7 @@ public class EurostagEchExport implements EurostagEchExporter {
     protected EsgACDCVscConverter createACDCVscConverter(VscConverterStation vscConv, HvdcLine hline, Esg8charName vscConvDcName) {
         Objects.requireNonNull(vscConv);
         Objects.requireNonNull(hline, "no hvdc line connected to VscConverterStation " + vscConv.getId());
-        boolean isPmode = isPMode(vscConv, hline);
+        boolean isPmode = EchUtil.isPMode(vscConv, hline);
         Esg8charName znamsvc = new Esg8charName(dictionary.getEsgId(vscConv.getId())); // converter station ID
         Esg8charName receivingNodeDcName = new Esg8charName("GROUND"); // receiving DC node name; always GROUND
         Bus vscConvBus = EchUtil.getBus(vscConv.getTerminal(), config);

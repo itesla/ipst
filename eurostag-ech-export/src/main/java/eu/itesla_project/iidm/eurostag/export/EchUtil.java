@@ -194,4 +194,21 @@ public final class EchUtil {
         Objects.requireNonNull(line);
         return line.getNominalV() * 2.0f;
     }
+
+    public static boolean isPMode(HvdcConverterStation vscConv, HvdcLine hvdcLine) {
+        Objects.requireNonNull(vscConv);
+        Objects.requireNonNull(hvdcLine);
+        HvdcConverterStation side1Conv = hvdcLine.getConverterStation1();
+        HvdcConverterStation side2Conv = hvdcLine.getConverterStation2();
+        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER))
+                && (vscConv.getId().equals(side1Conv.getId()))) {
+            return true;
+        }
+        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER))
+                && (vscConv.getId().equals(side2Conv.getId()))) {
+            return true;
+        }
+        return false;
+    }
+
 }
