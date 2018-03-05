@@ -8,6 +8,9 @@
 package eu.itesla_project.modules.wca;
 
 import com.google.auto.service.AutoService;
+import com.powsybl.commons.datasource.DataSource;
+import com.powsybl.commons.datasource.GzFileDataSource;
+import com.powsybl.iidm.export.Exporters;
 import com.powsybl.tools.Command;
 import com.powsybl.tools.Tool;
 import com.powsybl.tools.ToolRunningContext;
@@ -119,6 +122,9 @@ public class WCATool implements Tool {
                     .hasArg()
                     .argName("FOLDER")
                     .build());
+            options.addOption(Option.builder().longOpt("skip-post-wca-state-dump")
+                    .desc("do not write a post-WCA state file to reports-folder")
+                    .build());
             return options;
         }
 
@@ -200,6 +206,21 @@ public class WCATool implements Tool {
                 }
                 writer.newLine();
             }
+        }
+    }
+
+    private void exportPostWcaXiidm(Network network, Path destDir) {
+        LOGGER.info("Exporting POST WCA STATE");
+        String currentStateId = network.getStateManager().getWorkingStateId();
+        try {
+            network.getStateManager().setWorkingState("post-cluster-wca");
+            Properties pars = new Properties();
+            pars.setProperty("iidm.export.xml.indent", "true");
+            pars.setProperty("iidm.export.xml.with-branch-state-variables", "true");
+            DataSource dataSource = new GzFileDataSource(destDir, network.getId() + "_" + 0 + "_" + 0 + "_post-WCA");
+            Exporters.export("XIIDM", network, pars, dataSource);
+        } finally {
+            network.getStateManager().setWorkingState(currentStateId);
         }
     }
 
@@ -289,6 +310,10 @@ public class WCATool implements Tool {
                     if (!wca.getReport().exportCsv(reportsFolder)) {
                         context.getOutputStream().println("Could not store reports for network " + network.getId() + " in folder " + reportsFolder);
                     }
+                    // export post-wca xiidm state, unless explicitly told not to
+                    if (!line.hasOption("skip-post-wca-state-dump")) {
+                        exportPostWcaXiidm(network, reportsFolder);
+                    }
                 }
                 context.getOutputStream().println(table.render());
             } else if (Files.isDirectory(caseFile)) {
@@ -335,6 +360,10 @@ public class WCATool implements Tool {
                             Path reportsFolder = Paths.get(line.getOptionValue("reports-folder") + File.separator + network.getId());
                             if (!wca.getReport().exportCsv(reportsFolder)) {
                                 context.getOutputStream().println("Could not store reports for network " + network.getId() + " in folder " + reportsFolder);
+                            }
+                            // export post-wca xiidm state, unless explicitly told not to
+                            if (!line.hasOption("skip-post-wca-state-dump")) {
+                                exportPostWcaXiidm(network, reportsFolder);
                             }
                         }
                     } catch (Exception e) {

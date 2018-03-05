@@ -335,6 +335,7 @@ public class WCAImpl implements WCA, WCAConstants {
                         report.log();
                         WCAClustersResult clustersResult = WCAUtils.readClustersResult(CLUSTERS_CMD_ID, workingDir, WCA_FLOWS_FILE, WCA_UNCERTAINTIES_FILE);
                         LOGGER.info("Network {}, contingency {}: 'clusters' result = {}", network.getId(), contingency.getId(), clustersResult.toString());
+                        WCAUtils.createPostWcaState(network, baseStateId, "post-cluster-wca", workingDir, WCA_UNCERTAINTIES_FILE);
                         return clustersResult;
                     }
                 });

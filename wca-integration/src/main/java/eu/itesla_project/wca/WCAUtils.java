@@ -47,6 +47,9 @@ import com.powsybl.security.LimitViolation;
 public final class WCAUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WCAUtils.class);
+    private static final float EPSILON = 0.000000001f;
+    private static final float TAN_PHI_MAX = 1.0f;
+    private static final float TAN_PHI_MIN = -1.0f;
 
     private WCAUtils() {
     }
@@ -258,5 +261,52 @@ public final class WCAUtils {
                 .findAny();
         return foundLimitViolation.isPresent();
     }
+
+    public static void createPostWcaState(Network network, String baseStateId, String newStateId, Path workingDir, String uncertaintiesFile) throws IOException {
+        Objects.requireNonNull(network);
+        Objects.requireNonNull(baseStateId);
+        Objects.requireNonNull(newStateId);
+        Objects.requireNonNull(workingDir);
+        Objects.requireNonNull(uncertaintiesFile);
+
+        boolean existingPostStateId = network.getStateManager().getStateIds().stream().anyMatch(stateId -> newStateId.equals(stateId));
+        if (existingPostStateId) {
+            String msg = "Network: " + network.getId() + "; cannot create post WCA state: " + newStateId + "; a state with the same name already exists.";
+            LOGGER.error(msg);
+            throw new RuntimeException(msg);
+        }
+        String currentStateId = network.getStateManager().getWorkingStateId();
+        try {
+            network.getStateManager().cloneState(baseStateId, newStateId);
+            network.getStateManager().setWorkingState(newStateId);
+            Map<String, Float> uncertaintiesMap = parseUncertaintiesFile(uncertaintiesFile, workingDir);
+            for (Load load : network.getLoads()) {
+                if (uncertaintiesMap.containsKey(load.getId())) {
+                    float deltaP0 = uncertaintiesMap.get(load.getId());
+                    float newP0 = (!Float.isNaN(load.getP0()) ? load.getP0() : 0.0f) + deltaP0;
+                    load.setP0(newP0);
+
+                    float terminalP = load.getTerminal().getP();
+                    float terminalQ = load.getTerminal().getQ();
+                    float tanPhi = (Float.isNaN(terminalP)) || (Math.abs(terminalP) < EPSILON) ? 0.0f : Math.min(TAN_PHI_MAX, Math.max(TAN_PHI_MIN, terminalQ / terminalP));
+                    if (Float.isNaN(tanPhi)) {
+                        LOGGER.warn("could not compute a new q0 for load: {}, P: {}, Q: {}, uncertainty: {}, p0: {}, q0: {}", load.getId(), terminalP, terminalQ, deltaP0, load.getP0(), load.getQ0());
+                    } else {
+                        float deltaQ0 = deltaP0 * tanPhi;
+                        float newQ0 = load.getQ0() + deltaQ0;
+                        load.setQ0(newQ0);
+                    }
+                }
+            }
+            for (Generator generator : network.getGenerators()) {
+                if (uncertaintiesMap.containsKey(generator.getId())) {
+                    generator.setTargetP(generator.getTargetP() + uncertaintiesMap.get(generator.getId()));
+                }
+            }
+        } finally {
+            network.getStateManager().setWorkingState(currentStateId);
+        }
+    }
+
 
 }
