@@ -88,7 +88,7 @@ public class OfflineWorkflowTest {
                 ByteStreams.copy(OfflineWorkflowTest.class.getResourceAsStream("/config.xml"), os);
             }
 
-            PlatformConfig.setDefaultConfig(new XmlPlatformConfig(cfgDir, "config", fileSystem));
+            PlatformConfig.setDefaultConfig(XmlPlatformConfig.create(fileSystem, cfgDir, cacheDir, "config").get());
             PlatformConfig.setDefaultCacheManager(new CacheManager(cacheDir));
 
             // workflow parameters: topo init is not activated
