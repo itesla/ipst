@@ -8,8 +8,6 @@
 package eu.itesla_project.iidm.eurostag.export;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.util.Identifiables;
@@ -584,37 +582,23 @@ public class EurostagEchExport implements EurostagEchExporter {
         }
     }
 
-
-    //simple cut-name mapping
-    protected String getNewId(String iidmId, int idlen, final String prefix, BiMap<String, String> idMap) {
-        if (idMap.containsKey(iidmId)) {
-            return idMap.get(iidmId);
-        } else {
-            String esgId = prefix + (iidmId.length() > idlen ? iidmId.substring(0, idlen)
-                    : Strings.padEnd(iidmId, idlen, ' '));
-            int counter = 0;
-            while (idMap.inverse().containsKey(esgId)) {
-                String counterStr = Integer.toString(counter++);
-                if (counterStr.length() > idlen) {
-                    throw new RuntimeException("Renaming fatal error " + iidmId + " -> " + esgId);
-                }
-                esgId = esgId.substring(0, idlen - counterStr.length()) + counterStr;
-            }
-            idMap.put(iidmId, esgId);
-            return esgId;
+    //add a new couple (iidmId, esgId). EsgId is built from iidmId using a simple cut-name mapping strategy
+    private String addToDictionary(String iidmId, EurostagDictionary dictionary, EurostagNamingStrategy.NameType nameType) {
+        if (dictionary.iidmIdExists(iidmId)) {
+            throw new RuntimeException("iidmId " + iidmId + " already exists in dictionary");
         }
-    }
-
-    //simple cut-name mapping for DC node names:
-    //prefixes esg id with DC_, to avoid conflicts
-    protected String getDCNodeName(String iidmId, int idlen, BiMap<String, String> dcNodesEsgNames) {
-        return getNewId(iidmId, idlen, "DC_", dcNodesEsgNames);
-    }
-
-    //simple cut-name mapping for additional loads:
-    //prefixes esg id with XL_, to avoid conflicts
-    protected String getAdditionalLoadName(String iidmId, int idlen, BiMap<String, String> bmapEsgNames) {
-        return getNewId(iidmId, idlen, "XL_", bmapEsgNames);
+        String esgId = iidmId.length() > nameType.getLength() ? iidmId.substring(0, nameType.getLength())
+                : Strings.padEnd(iidmId, nameType.getLength(), ' ');
+        int counter = 0;
+        while (dictionary.esgIdExists(esgId)) {
+            String counterStr = Integer.toString(counter++);
+            if (counterStr.length() > nameType.getLength()) {
+                throw new RuntimeException("Renaming fatal error " + iidmId + " -> " + esgId);
+            }
+            esgId = esgId.substring(0, nameType.getLength() - counterStr.length()) + counterStr;
+        }
+        dictionary.add(iidmId, esgId);
+        return esgId;
     }
 
     protected float zeroIfNanOrValue(float value) {
@@ -708,12 +692,6 @@ public class EurostagEchExport implements EurostagEchExporter {
     }
 
     private void createACDCVscConverters(EsgNetwork esgNetwork) {
-        //DC nodes mapping
-        BiMap<String, String> dcNodesEsgNames = HashBiMap.create();
-
-        //additional loads
-        BiMap<String, String> dcAdditionalLoadsEsgNames = HashBiMap.create();
-
         //creates 2 DC nodes, for each hvdc line (one node per converter station)
         for (HvdcLine hvdcLine : Identifiables.sort(network.getHvdcLines())) {
             // skip lines with converter stations not in the main connected component
@@ -725,8 +703,8 @@ public class EurostagEchExport implements EurostagEchExporter {
             HvdcConverterStation convStation2 = hvdcLine.getConverterStation2();
 
             //create two dc nodes, one for each conv. station
-            Esg8charName hvdcNodeName1 = new Esg8charName(getDCNodeName(convStation1.getId(), 5, dcNodesEsgNames));
-            Esg8charName hvdcNodeName2 = new Esg8charName(getDCNodeName(convStation2.getId(), 5, dcNodesEsgNames));
+            Esg8charName hvdcNodeName1 = new Esg8charName(addToDictionary("DC_" + convStation1.getId(), dictionary, EurostagNamingStrategy.NameType.NODE));
+            Esg8charName hvdcNodeName2 = new Esg8charName(addToDictionary("DC_" + convStation2.getId(), dictionary, EurostagNamingStrategy.NameType.NODE));
             float dcVoltage = EchUtil.getHvdcLineDcVoltage(hvdcLine);
             esgNetwork.addDCNode(new EsgDCNode(new Esg2charName("DC"), hvdcNodeName1, dcVoltage, 1));
             esgNetwork.addDCNode(new EsgDCNode(new Esg2charName("DC"), hvdcNodeName2, dcVoltage, 1));
@@ -742,24 +720,23 @@ public class EurostagEchExport implements EurostagEchExporter {
             esgNetwork.addACDCVscConverter(esgConv1);
             esgNetwork.addACDCVscConverter(esgConv2);
 
-            //for the rectifier converter station (the one with P>0 that consumes from the grid), define pdc
-            VscConverterStation rectConvStation;
-            EsgACDCVscConverter rectEsgConvStation;
-            if (hvdcLine.getConvertersMode() == HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER) {
-                rectConvStation = network.getVscConverterStation(convStation1.getId());
-                rectEsgConvStation = esgConv1;
+            //for the V side (inverter) station
+            VscConverterStation vConvStation;
+            EsgACDCVscConverter vEsgConvStation;
+            if (hvdcLine.getConvertersMode() == HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER) {
+                vConvStation = network.getVscConverterStation(convStation1.getId());
+                vEsgConvStation = esgConv1;
             } else {
-                rectConvStation = network.getVscConverterStation(convStation2.getId());
-                rectEsgConvStation = esgConv2;
+                vConvStation = network.getVscConverterStation(convStation2.getId());
+                vEsgConvStation = esgConv2;
             }
-            float pac = rectEsgConvStation.getPac();
-            //create one load on the node to which the converter station is connected with the following consumption
-            //Eurostag model requires a resistance of 1 ohm
-            float ploss = (float) (Math.abs(pac * rectConvStation.getLossFactor() / 100.0f) + (hvdcLine.getR() / 2.0f - 0.5f) * Math.pow(pac / hvdcLine.getNominalV(), 2));
-            ConnectionBus rectConvBus = ConnectionBus.fromTerminal(rectConvStation.getTerminal(), config, fakeNodes);
-            String newLoadId = getAdditionalLoadName(rectConvStation.getId(), 4, dcAdditionalLoadsEsgNames);
-            dictionary.add(newLoadId, newLoadId);
-            esgNetwork.addLoad(createLoad(rectConvBus, newLoadId, ploss, 0));
+            float pac = vEsgConvStation.getPac();
+            //Create one load with prefix "FICT_" on the node to which the V station is connected, with the following consumption:
+            float ploss = (float) (Math.abs(pac * vConvStation.getLossFactor() / 100.0f) + (hvdcLine.getR() - 0.25f) * Math.pow(pac / hvdcLine.getNominalV(), 2)); //Eurostag model requires a fixed resistance of 1 ohm at 640 kV quivalent to 0.25 ohm at 320 kV
+            ConnectionBus rectConvBus = ConnectionBus.fromTerminal(vConvStation.getTerminal(), config, fakeNodes);
+            String fictionalLoadId = "FICT_" + vConvStation.getId();
+            addToDictionary(fictionalLoadId, dictionary, EurostagNamingStrategy.NameType.LOAD);
+            esgNetwork.addLoad(createLoad(rectConvBus, fictionalLoadId, ploss, 0));
         }
     }
 
