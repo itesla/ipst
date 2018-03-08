@@ -734,7 +734,7 @@ public class EurostagEchExport implements EurostagEchExporter {
             //Create one load with prefix "FICT_" on the node to which the V station is connected, with the following consumption:
             float ploss = (float) (Math.abs(pac * vConvStation.getLossFactor() / 100.0f) + (hvdcLine.getR() - 0.25f) * Math.pow(pac / hvdcLine.getNominalV(), 2)); //Eurostag model requires a fixed resistance of 1 ohm at 640 kV quivalent to 0.25 ohm at 320 kV
             ConnectionBus rectConvBus = ConnectionBus.fromTerminal(vConvStation.getTerminal(), config, fakeNodes);
-            String fictionalLoadId = "FICT_" + vConvStation.getId();
+            String fictionalLoadId = "fict_" + vConvStation.getId();
             addToDictionary(fictionalLoadId, dictionary, EurostagNamingStrategy.NameType.LOAD);
             esgNetwork.addLoad(createLoad(rectConvBus, fictionalLoadId, ploss, 0));
         }
