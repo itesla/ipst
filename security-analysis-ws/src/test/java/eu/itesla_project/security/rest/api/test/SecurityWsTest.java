@@ -31,6 +31,7 @@ import org.mockito.Mockito;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.security.LimitViolationFilter;
 import com.powsybl.security.LimitViolationsResult;
+import com.powsybl.security.SecurityAnalysisParameters;
 import com.powsybl.security.SecurityAnalysisResult;
 
 import eu.itesla_project.security.rest.api.impl.FilePart;
@@ -49,7 +50,7 @@ public class SecurityWsTest {
         SecurityAnalysisResult result = new SecurityAnalysisResult(
                 new LimitViolationsResult(true, Collections.emptyList()), Collections.emptyList());
         service = Mockito.mock(SecurityAnalysisServiceImpl.class);
-        when(service.analyze(any(Network.class), any(FilePart.class), any(LimitViolationFilter.class)))
+        when(service.analyze(any(Network.class), any(FilePart.class), any(LimitViolationFilter.class), any(SecurityAnalysisParameters.class)))
                 .thenReturn(result);
         when(service.analyze(any(MultipartFormDataInput.class))).thenCallRealMethod();
     }

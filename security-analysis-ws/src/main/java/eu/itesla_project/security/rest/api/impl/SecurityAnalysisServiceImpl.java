@@ -6,8 +6,8 @@
  */
 package eu.itesla_project.security.rest.api.impl;
 
-
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
@@ -47,13 +47,16 @@ import com.powsybl.iidm.import_.Importers;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.security.LimitViolationFilter;
 import com.powsybl.security.LimitViolationType;
+import com.powsybl.security.SecurityAnalysisParameters;
 import com.powsybl.security.SecurityAnalysisResult;
 import com.powsybl.security.SecurityAnalyzer;
 import com.powsybl.security.SecurityAnalyzer.Format;
 import com.powsybl.security.converter.SecurityAnalysisResultExporters;
+import com.powsybl.security.json.JsonSecurityAnalysisParameters;
 
 import eu.itesla_project.security.rest.api.SecurityAnalysisService;
 import eu.itesla_project.security.rest.api.impl.utils.Utils;
+
 /**
  *
  * @author Giovanni Ferrari <giovanni.ferrari at techrain.it>
@@ -90,7 +93,8 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
 
             LimitViolationFilter limitViolationFilter = new LimitViolationFilter(limitViolationTypes);
 
-            FilePart caseFile = formParts.get("case-file") != null ? Utils.getFilePart(formParts.get("case-file")) : null;
+            FilePart caseFile = formParts.get("case-file") != null ? Utils.getFilePart(formParts.get("case-file"))
+                    : null;
 
             if (caseFile == null) {
                 return Response.status(Status.BAD_REQUEST).entity("Missing required case-file parameter").build();
@@ -98,10 +102,18 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
             Network network = Importers.loadNetwork(caseFile.getFilename(), caseFile.getInputStream());
 
             FilePart contingencies = formParts.get("contingencies-file") != null
-                    ? Utils.getFilePart(formParts.get("contingencies-file")) : null;
+                    ? Utils.getFilePart(formParts.get("contingencies-file"))
+                    : null;
 
+            FilePart parametersFile = formParts.get("parameters-file") != null
+                    ? Utils.getFilePart(formParts.get("parameters-file"))
+                    : null;
 
-            SecurityAnalysisResult result = analyze(network, contingencies, limitViolationFilter);
+            SecurityAnalysisParameters parameters = SecurityAnalysisParameters.load();
+            if (parametersFile != null) {
+                JsonSecurityAnalysisParameters.update(parameters, parametersFile.getInputStream());
+            }
+            SecurityAnalysisResult result = analyze(network, contingencies, limitViolationFilter, parameters);
 
             return Response.ok(toStream(result, network, format))
                     .header("Content-Type", format.equals(Format.JSON) ? MediaType.APPLICATION_JSON : "text/csv")
@@ -112,11 +124,13 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
         }
     }
 
-    public SecurityAnalysisResult analyze(Network network, FilePart contingencies, LimitViolationFilter limitViolationFilter) {
+    public SecurityAnalysisResult analyze(Network network, FilePart contingencies,
+            LimitViolationFilter limitViolationFilter, SecurityAnalysisParameters parameters) {
         ContingenciesProvider contingenciesProvider = (contingencies != null && contingencies.getInputStream() != null)
-                ? Utils.getContingenciesProviderFactory().create(contingencies.getInputStream()) : new EmptyContingencyListProvider();
+                ? Utils.getContingenciesProviderFactory().create(contingencies.getInputStream())
+                : new EmptyContingencyListProvider();
         SecurityAnalyzer analyzer = new SecurityAnalyzer(limitViolationFilter, Utils.getLocalComputationManager(), 0);
-        return analyzer.analyze(network, contingenciesProvider);
+        return analyzer.analyze(network, contingenciesProvider, parameters);
     }
 
     private StreamingOutput toStream(SecurityAnalysisResult result, Network network, Format format) {
@@ -132,11 +146,6 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
         };
     }
 
-
-
-
-
-
     @Override
     public Response actionSimulator(MultipartFormDataInput form) {
         Objects.requireNonNull(form);
@@ -148,7 +157,8 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
                 return Response.status(Status.BAD_REQUEST).entity("Missing required format parameter").build();
             }
 
-            FilePart caseFile = formParts.get("case-file") != null ? Utils.getFilePart(formParts.get("case-file")) : null;
+            FilePart caseFile = formParts.get("case-file") != null ? Utils.getFilePart(formParts.get("case-file"))
+                    : null;
             if (caseFile == null) {
                 return Response.status(Status.BAD_REQUEST).entity("Missing required case-file parameter").build();
             }
@@ -178,9 +188,17 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
             AbstractSecurityAnalysisResultBuilderImpl loadFlowActionSimulatorObserver = new AbstractSecurityAnalysisResultBuilderImpl();
             observers.add(loadFlowActionSimulatorObserver);
 
+            FilePart parametersFile = formParts.get("parameters-file") != null
+                    ? Utils.getFilePart(formParts.get("parameters-file"))
+                    : null;
+            InputStream parametersInputStream = null;
+            if (parametersFile != null) {
+                parametersInputStream = parametersFile.getInputStream();
+            }
             // action simulator
-            ActionSimulator actionSimulator = new LoadFlowActionSimulator(network, Utils.getLocalComputationManager(), Utils.getActionSimulatorConfig(),
-                    observers);
+            //TODO call LoadFlowActionSimulator with parametersInputStream
+            ActionSimulator actionSimulator = new LoadFlowActionSimulator(network, Utils.getLocalComputationManager(),
+                    Utils.getActionSimulatorConfig(), observers);
 
             // start simulator
             actionSimulator.start(actionDb, contingencies);
