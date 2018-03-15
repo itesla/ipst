@@ -21,10 +21,10 @@
 % cross-border powerflows for homothetic disaggregation option
 % 2) assure consistency in FPF and GUI output files
 % s_rng_seed - int seed (optional, default is 'shuffle' on current date)
-function exitcode=FEA_MODULE1_HELPER(ifile, ofile,natS,ofile_forFPF,ofileGUI, IRs, Ks, s_flagPQ,s_method,tolvar,Nmin_obs_fract,Nnz,Nmin_obs_interv,outliers,koutlier,imputation_meth,Ngaussians,percentile_historical,check_module0,toleranceS,iterationsS,epsiloS,conditional_samplingS,histo_estremeQs,thresGUIs,unimod,modo_invs,isdeterministics,isuniforms,opt_GUIs,opt_FPFs,homoths,s_rng_seed)
+function exitcode=FEA_MODULE1_HELPER(ifile, ofile,natS,ofile_forFPF,ofileGUI, IRs, Ks, s_flagPQ,s_method,tolvar,Nmin_obs_fract,Nnz,Nmin_obs_interv,outliers,koutlier,imputation_meth,Ngaussians,percentile_historical,check_module0,toleranceS,iterationsS,epsiloS,conditional_samplingS,histo_estremeQs,thresGUIs,unimod,modo_invs,isdeterministics,isuniforms,opt_GUIs,opt_FPFs,homoths,mod_convs,s_rng_seed)
 
 close all;
-mversion='1.8.2';
+mversion='1.8.3';
 disp(sprintf('wp5 - module1 - version: %s', mversion));
 disp(sprintf(' ifile:  %s',ifile));
 disp(sprintf(' ofile:  %s',ofile));
@@ -56,6 +56,7 @@ disp(sprintf(' isuniforms:  %s', isuniforms));
 disp(sprintf(' opt_GUIs:  %s', opt_GUIs));
 disp(sprintf(' opt_FPFs:  %s', opt_FPFs));
 disp(sprintf(' homoths:  %s', homoths));
+disp(sprintf(' mod_convs:  %s', mod_convs));
 
 
 modo_inv=str2double(modo_invs);
@@ -82,11 +83,12 @@ isdeterministic = str2double(isdeterministics);
 isuniform=str2double(isuniforms);
 opt_GUI = str2num(opt_GUIs);
 opt_FPF = str2num(opt_FPFs);
+mod_conv=str2num(mod_convs);
 homoth = str2num(homoths);
 IR=str2double(IRs);
 K=str2double(Ks);
 % if seed is not specified, 'shuffle'  on current platform time
-if nargin < 33
+if nargin < 34
     rng('shuffle','twister');
     disp(sprintf(' rng seed:  not specified, default is shuffle on current platform time'));
 else
@@ -100,6 +102,16 @@ try
     if isdeterministic == 0
     
     load(ifile);
+        
+    %%%% selection of only RES generators
+    if mod_conv == 0
+        iG = find(ismember(type_ID,'G'));
+        forec_filt(:,2+iG)=[];
+        snap_filt(:,2+iG)=[];
+        inj_ID(iG)=[];
+        type_ID(iG)=[];
+        nat_ID(iG)=[];
+    end
     
     %%%% 
    if homoth == 1
@@ -110,8 +122,8 @@ try
         idx_ = find(strcmp(nat_ID,nationss{iinat}));
         idx_pl = intersect(idx_,intersect(find(strcmp(type_ID,'L')),[1:2:length(inj_ID)]));
         idx_ql = intersect(idx_,intersect(find(strcmp(type_ID,'L')),[2:2:length(inj_ID)]));
-        idx_pg = intersect(idx_,intersect(find(strcmp(type_ID,'G')),[1:2:length(inj_ID)]));
-        idx_qg = intersect(idx_,intersect(find(strcmp(type_ID,'G')),[2:2:length(inj_ID)]));
+        idx_pg = union(intersect(idx_,intersect(find(strcmp(type_ID,'G')),[1:2:length(inj_ID)])),intersect(idx_,intersect(find(strcmp(type_ID,'W')),[1:2:length(inj_ID)])));
+        idx_qg = union(intersect(idx_,intersect(find(strcmp(type_ID,'G')),[2:2:length(inj_ID)])),intersect(idx_,intersect(find(strcmp(type_ID,'W')),[2:2:length(inj_ID)])));
         forec_filt(isnan(forec_filt))=0; 
         snap_filt(isnan(snap_filt))=0;
         

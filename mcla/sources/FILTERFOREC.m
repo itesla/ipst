@@ -20,7 +20,7 @@ matrice=eye(length(idx_fore0));
 tipovar0=tipovar;
 % FOR POSITIVELY HIGHLY CORRELATED VARIABLES
 while max_corr > perc
-    disp(['checking POS CORR forecast nr ' num2str(idx_fore(QualeR(1))) ' out of ' num2str(length(idx_fore0))])
+    disp(['checking POS CORR forecast nr ' num2str((QualeR(1))) ' out of ' num2str(length(idx_fore0))])
     ngro = ngro +1;
     SET(ngro,:)=[idx_fore(QualeR(1)) idx_fore(QualeC(1))];
     Y(:,idx_fore(QualeR(1))) = sum(Y(:,idx_fore([QualeR(1) QualeC(1)])),2);
@@ -68,9 +68,9 @@ ngro = 0;
 
 % FOR NEGATIVELY HIGHLY CORRELATED VARIABLES
 while min_corr < -1*perc
-    disp(['checking NEG CORR forecast nr ' num2str(idx_fore(QualeR(1))) ' out of ' num2str(length(idx_fore0))])
+    disp(['checking NEG CORR forecast nr ' num2str((QualeRm(1))) ' out of ' num2str(length(idx_fore0))])
     ngro = ngro +1;
-    min_corr,idx_fore(QualeRm(1))
+    
     SETM(ngro,:)=[idx_fore(QualeRm(1)) idx_fore(QualeCm(1))];
     
     Y(:,idx_fore(QualeRm(1))) = diff(Y(:,idx_fore([QualeRm(1) QualeCm(1)])),1,2);
