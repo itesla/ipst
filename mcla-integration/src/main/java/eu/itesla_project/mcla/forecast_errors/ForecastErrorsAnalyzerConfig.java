@@ -61,6 +61,7 @@ public class ForecastErrorsAnalyzerConfig {
     private final Integer correlation_fict_uniform;
     private final Integer optFPF;
     private final Integer homothetic;
+    private final Integer modelConv;
 
 
     public ForecastErrorsAnalyzerConfig(
@@ -98,6 +99,7 @@ public class ForecastErrorsAnalyzerConfig {
             Integer correlationFictUniform,
             Integer optFPF,
             Integer homothetic,
+            Integer modelConv,
             Integer rngSeed,
             boolean debug
     ) {
@@ -140,6 +142,7 @@ public class ForecastErrorsAnalyzerConfig {
         this.correlation_fict_uniform = correlationFictUniform;
         this.optFPF = optFPF;
         this.homothetic = homothetic;
+        this.modelConv = modelConv;
     }
 
     public static ForecastErrorsAnalyzerConfig load() {
@@ -181,13 +184,14 @@ public class ForecastErrorsAnalyzerConfig {
         Integer correlationFictUniform = config.getOptionalIntegerProperty("correlation_fict_uniform").orElse(null);
         Integer optFPF = config.getOptionalIntegerProperty("opt_FPF").orElse(null);
         Integer homothetic = config.getOptionalIntegerProperty("homothetic").orElse(null);
+        Integer modelConv = config.getOptionalIntegerProperty("modelConv").orElse(null);
 
         return new ForecastErrorsAnalyzerConfig(binariesDir, runtimeHomeDir, checkModule0, percpuGaussLoad, percpuGaussRes,
                 correlationGauss, tolVar, nMinObsFract, nMinObsInterv, imputationMeth, nGaussians, kOutlier, tolerance,
                 iterations, epsilo, conditionalSampling, tFlags, histoEstremeQ, thresGUI, nats,
                 nnz, unimod, modoInv, isdeterministic, isuniform, optGUI,
                 pLoadDeterministic, qLoadDeterministic, bandUniformPL, bandUniformQL, bandUniformPGEN, correlationFictUniform,
-                optFPF, homothetic, rngSeed, debug);
+                optFPF, homothetic, modelConv, rngSeed, debug);
     }
 
     public Path getBinariesDir() {
@@ -338,6 +342,10 @@ public class ForecastErrorsAnalyzerConfig {
         return homothetic;
     }
 
+    public Integer getModelConv() {
+        return modelConv;
+    }
+
     @Override
     public String toString() {
         return "ForecastErrorsAnalyzerConfig [binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir
@@ -373,6 +381,7 @@ public class ForecastErrorsAnalyzerConfig {
                 + ", correlation_fict_uniforms=" + correlation_fict_uniform
                 + ", opt_FPF=" + optFPF
                 + ", homothetic=" + homothetic
+                + ", modelConv=" + modelConv
                 + ", debug=" + debug + "]";
     }
 

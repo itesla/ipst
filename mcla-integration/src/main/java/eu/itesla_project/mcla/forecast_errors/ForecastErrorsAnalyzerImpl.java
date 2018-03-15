@@ -200,7 +200,7 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
         args1.add("" + config.getOpt_GUI()); //added in v1.8.1
         args1.add("" + config.getOptFPF()); //added in v1.8.2
         args1.add("" + config.getHomothetic()); //added in v1.8.2
-
+        args1.add("" + config.getModelConv()); //added in v1.8.3
         if (config.getRngSeed() != null) {
             args1.add(Integer.toString(config.getRngSeed()));
         }
