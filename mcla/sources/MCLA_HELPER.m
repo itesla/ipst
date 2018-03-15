@@ -81,6 +81,7 @@ for iout = 1:length(out)
     maxvalue = out(iout).maxvalue;
     module2 = out(iout).module2;
      module3 = out(iout).module3;
+     out(iout).module3=[]; %free variable memory
      inj_ID = out(iout).inj_ID;
      type_X = [];
      flagesistenza = out(iout).flagesistenza;
