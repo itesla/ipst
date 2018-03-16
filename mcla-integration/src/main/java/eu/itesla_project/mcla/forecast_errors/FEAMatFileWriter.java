@@ -121,9 +121,21 @@ public class FEAMatFileWriter {
         MLCell injectionsTypes = new MLCell("type_ID", new int[]{1, colsSize});
         int i = 0;
         for (StochasticVariable injection : stochasticVariables) {
-            injectionsTypes.set(new MLChar("", StochasticVariable.TYPE_LOAD.equals(injection.getType()) ? "L" : "G"), 0, i);
+            String type = "";
+            switch (injection.getType()) {
+                case StochasticVariable.TYPE_LOAD:
+                    type = "L";
+                    break;
+                case StochasticVariable.TYPE_DISPATCHABLE_GENERATOR:
+                    type = "G";
+                    break;
+                default:
+                    type = "W";
+                    break;
+            }
+            injectionsTypes.set(new MLChar("", type), 0, i);
             i++;
-            injectionsTypes.set(new MLChar("", StochasticVariable.TYPE_LOAD.equals(injection.getType()) ? "L" : "G"), 0, i); // twice, for P and Q
+            injectionsTypes.set(new MLChar("", type), 0, i); // twice, for P and Q
             i++;
         }
         return injectionsTypes;

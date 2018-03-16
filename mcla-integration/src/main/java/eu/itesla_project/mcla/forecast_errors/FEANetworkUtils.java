@@ -47,7 +47,7 @@ public final class FEANetworkUtils {
                         stochasticVariablesType = StochasticVariable.TYPE_SOLAR_GENERATOR;
                         break;
                     default:
-                        stochasticVariablesType = ""; // it should not happen
+                        stochasticVariablesType = StochasticVariable.TYPE_DISPATCHABLE_GENERATOR;
                         break;
                 }
                 Country country = generator.getTerminal().getVoltageLevel().getSubstation().getCountry();
