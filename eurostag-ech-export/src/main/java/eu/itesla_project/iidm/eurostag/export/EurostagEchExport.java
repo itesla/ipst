@@ -691,6 +691,15 @@ public class EurostagEchExport implements EurostagEchExporter {
                 mva);
     }
 
+    private EsgLoad createConverterStationAdditionalLoad(HvdcLine hvdcLine, HvdcConverterStation convStation, float pac) {
+        float cableLossesEnd = EchUtil.isPMode(convStation, hvdcLine) ? 0.0f : 1.0f;
+        float ploss = (float) (Math.abs(pac * convStation.getLossFactor() / 100.0f) + cableLossesEnd * (hvdcLine.getR() - 0.25f) * Math.pow(pac / hvdcLine.getNominalV(), 2)); //Eurostag model requires a fixed resistance of 1 ohm at 640 kV quivalent to 0.25 ohm at 320 kV
+        ConnectionBus rectConvBus = ConnectionBus.fromTerminal(convStation.getTerminal(), config, fakeNodes);
+        String fictionalLoadId = "fict_" + convStation.getId();
+        addToDictionary(fictionalLoadId, dictionary, EurostagNamingStrategy.NameType.LOAD);
+        return createLoad(rectConvBus, fictionalLoadId, ploss, 0);
+    }
+
     private void createACDCVscConverters(EsgNetwork esgNetwork) {
         //creates 2 DC nodes, for each hvdc line (one node per converter station)
         for (HvdcLine hvdcLine : Identifiables.sort(network.getHvdcLines())) {
@@ -720,26 +729,11 @@ public class EurostagEchExport implements EurostagEchExporter {
             esgNetwork.addACDCVscConverter(esgConv1);
             esgNetwork.addACDCVscConverter(esgConv2);
 
-            //for the V side (inverter) station
-            VscConverterStation vConvStation;
-            EsgACDCVscConverter vEsgConvStation;
-            if (hvdcLine.getConvertersMode() == HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER) {
-                vConvStation = network.getVscConverterStation(convStation1.getId());
-                vEsgConvStation = esgConv1;
-            } else {
-                vConvStation = network.getVscConverterStation(convStation2.getId());
-                vEsgConvStation = esgConv2;
-            }
-            float pac = vEsgConvStation.getPac();
-            //Create one load with prefix "FICT_" on the node to which the V station is connected, with the following consumption:
-            float ploss = (float) (Math.abs(pac * vConvStation.getLossFactor() / 100.0f) + (hvdcLine.getR() - 0.25f) * Math.pow(pac / hvdcLine.getNominalV(), 2)); //Eurostag model requires a fixed resistance of 1 ohm at 640 kV quivalent to 0.25 ohm at 320 kV
-            ConnectionBus rectConvBus = ConnectionBus.fromTerminal(vConvStation.getTerminal(), config, fakeNodes);
-            String fictionalLoadId = "fict_" + vConvStation.getId();
-            addToDictionary(fictionalLoadId, dictionary, EurostagNamingStrategy.NameType.LOAD);
-            esgNetwork.addLoad(createLoad(rectConvBus, fictionalLoadId, ploss, 0));
+            //Create one load on the node to which converters stations are connected
+            esgNetwork.addLoad(createConverterStationAdditionalLoad(hvdcLine, convStation1, esgConv1.getPac()));
+            esgNetwork.addLoad(createConverterStationAdditionalLoad(hvdcLine, convStation2, esgConv2.getPac()));
         }
     }
-
 
     @Override
     public EsgNetwork createNetwork(EsgGeneralParameters parameters) {
