@@ -126,7 +126,7 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
             public void write(OutputStream out) throws IOException {
                 Objects.requireNonNull(out);
                 try (Writer wr = new OutputStreamWriter(out, StandardCharsets.UTF_8)) {
-                    SecurityAnalysisResultExporters.export(result, network, wr, format.toString());
+                    SecurityAnalysisResultExporters.export(result, wr, format.toString());
                 }
             }
         };
