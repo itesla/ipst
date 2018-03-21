@@ -587,10 +587,10 @@ public final class EurostagStepUpTransformerInserter {
 
                 if (twtLs.isEmpty()) {
                     for (Generator g : genLs) {
-                        g.remove();
+                        LOGGER.warn("stator voltage level: {}, bus: {}; no connected two-winding-transformer found, no step up transformer removed for generator: {}", lvVlId, lvBus.getId(), g.getId());
                     }
                     for (Load aux : auxLs) {
-                        aux.remove();
+                        LOGGER.warn("stator voltage level: {}, bus: {}; no connected two-winding-transformer found, no step up transformer removed for load: {}", lvVlId, lvBus.getId(), aux.getId());
                     }
                     continue;
                 }
