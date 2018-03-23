@@ -7,6 +7,7 @@
  */
 package eu.itesla_project.iidm.ddb.eurostag;
 
+import com.google.common.collect.Lists;
 import com.powsybl.computation.ComputationManager;
 import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.ReactiveCapabilityCurve.Point;
@@ -29,6 +30,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  *
@@ -530,7 +532,24 @@ public final class EurostagStepUpTransformerInserter {
                 continue;
             }
 
-            for (Bus lvBus : lvVl.getBusBreakerView().getBuses()) {
+            //iterate in reverse order to not incur in 'bus has been invalidated' errors
+            List<String> lvBusIds = Lists.newArrayList(StreamSupport.stream(lvVl.getBusView().getBuses().spliterator(), false).map(b -> b.getId()).collect(Collectors.toCollection(LinkedList::new)).descendingIterator());
+            for (String lvBusId : lvBusIds) {
+                Bus lvBus = n.getVoltageLevel(lvVlId).getBusView().getBus(lvBusId);
+                if (lvBus == null) {
+                    String errMsg = "lvVlId: " + lvVlId + "; lvBus with id: " + lvBusId + " not found";
+                    LOGGER.error(errMsg);
+                    throw new RuntimeException(errMsg);
+                }
+
+                float v = lvBus.getV();
+                if (Float.isNaN(v)) {
+                    v = lvVl.getNominalV();
+                }
+                float a = lvBus.getAngle();
+                if (Float.isNaN(a)) {
+                    a = 0;
+                }
 
                 // check there is:
                 //    - one two windings transformers
@@ -609,10 +628,10 @@ public final class EurostagStepUpTransformerInserter {
 
                 VoltageLevel hvVl;
                 Bus hvBus;
-                if (twt.getTerminal1().getBusBreakerView().getConnectableBus() == lvBus) {
+                if (twt.getTerminal1().getBusView().getConnectableBus() == lvBus) {
                     hvVl = twt.getTerminal2().getVoltageLevel();
                     hvBus = twt.getTerminal2().getBusBreakerView().getConnectableBus();
-                } else if (twt.getTerminal2().getBusBreakerView().getConnectableBus() == lvBus) {
+                } else if (twt.getTerminal2().getBusView().getConnectableBus() == lvBus) {
                     hvVl = twt.getTerminal1().getVoltageLevel();
                     hvBus = twt.getTerminal1().getBusBreakerView().getConnectableBus();
                 } else {
@@ -621,9 +640,9 @@ public final class EurostagStepUpTransformerInserter {
 
                 Function<StateVariable, StateVariable> fct = sv -> {
                     StateVariable otherSideSv;
-                    if (twt.getTerminal2().getBusBreakerView().getConnectableBus() == lvBus) {
+                    if (twt.getTerminal2().getBusView().getConnectableBus().getId().equals(lvBus.getId())) {
                         otherSideSv = transformerModel.toSv1(new StateVariable(-sv.p, -sv.q, sv.u, sv.theta));
-                    } else if (twt.getTerminal1().getBusBreakerView().getConnectableBus() == lvBus) {
+                    } else if (twt.getTerminal1().getBusView().getConnectableBus().getId().equals(lvBus.getId())) {
                         otherSideSv = transformerModel.toSv2(new StateVariable(-sv.p, -sv.q, sv.u, sv.theta));
                     } else {
                         throw new RuntimeException("Unexpected stator substation topology");
@@ -648,14 +667,6 @@ public final class EurostagStepUpTransformerInserter {
 
                 for (Load aux : auxLs) {
 
-                    float v = lvBus.getV();
-                    if (Float.isNaN(v)) {
-                        v = lvVl.getNominalV();
-                    }
-                    float a = lvBus.getAngle();
-                    if (Float.isNaN(a)) {
-                        a = 0;
-                    }
 
                     StateVariable hlSvAux = fct.apply(new StateVariable(-aux.getP0(), -aux.getQ0(), v, a));
 
