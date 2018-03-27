@@ -103,5 +103,11 @@ public class EchUtilsTest {
         assertFalse(EchUtil.isPMode(networkHvdc.getVscConverterStation("C1"), hline));
     }
 
+    @Test
+    public void testGetPVstation() throws IOException {
+        HvdcLine hline = networkHvdc.getHvdcLine("L");
+        assertTrue(EchUtil.getPStation(hline).getId().equals(networkHvdc.getVscConverterStation("C2").getId()));
+        assertTrue(EchUtil.getVStation(hline).getId().equals(networkHvdc.getVscConverterStation("C1").getId()));
+    }
 
 }

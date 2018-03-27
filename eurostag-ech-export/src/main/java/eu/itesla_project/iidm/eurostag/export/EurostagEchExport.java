@@ -567,7 +567,7 @@ public class EurostagEchExport implements EurostagEchExporter {
             if (!config.isSvcAsFixedInjectionInLF()) {
                 binit = svc.getReactivePowerSetPoint();
             } else {
-                binit = -svc.getTerminal().getQ();
+                binit = svc.getTerminal().getQ();
                 Bus svcBus = EchUtil.getBus(svc.getTerminal(), config);
                 if ((svcBus != null) && (Math.abs(svcBus.getV()) > 0.0f)) {
                     binit = binit * (float) Math.pow(vlNomVoltage / svcBus.getV(), 2);
@@ -627,8 +627,10 @@ public class EurostagEchExport implements EurostagEchExporter {
         float rrdc = 0; // resistance [Ohms]
         float rxdc = 16; // reactance [Ohms]
 
-        float pac = zeroIfNanOrValue(hline.getActivePowerSetpoint()); // AC active power setpoint [MW]. Only if DC control mode is 'P'
-        pac = isPmode ? pac : -pac; //change sign in case of P mode side
+        float activeSetPoint = zeroIfNanOrValue(hline.getActivePowerSetpoint()); // AC active power setpoint [MW]. Only if DC control mode is 'P'
+        //subtracts losses on the P side (even if the station in context is V)
+        float pac = activeSetPoint - Math.abs(activeSetPoint * EchUtil.getPStation(hline).getLossFactor() / 100.0f);
+        pac = isPmode ? pac : -pac; //change sign in case of V mode side
         // multiplying  the line's nominalV by 2 corresponds to the fact that iIDM refers to the cable-ground voltage
         // while Eurostag regulations to the cable-cable voltage
         float pvd = EchUtil.getHvdcLineDcVoltage(hline); // DC voltage setpoint [MW]. Only if DC control mode is 'V'
@@ -691,9 +693,19 @@ public class EurostagEchExport implements EurostagEchExporter {
                 mva);
     }
 
-    private EsgLoad createConverterStationAdditionalLoad(HvdcLine hvdcLine, HvdcConverterStation convStation, float pac) {
+    protected float computeLosses(HvdcLine hvdcLine, HvdcConverterStation convStation, float activeSetPoint) {
         float cableLossesEnd = EchUtil.isPMode(convStation, hvdcLine) ? 0.0f : 1.0f;
-        float ploss = (float) (Math.abs(pac * convStation.getLossFactor() / 100.0f) + cableLossesEnd * (hvdcLine.getR() - 0.25f) * Math.pow(pac / hvdcLine.getNominalV(), 2)); //Eurostag model requires a fixed resistance of 1 ohm at 640 kV quivalent to 0.25 ohm at 320 kV
+        float ploss = (float) (Math.abs(activeSetPoint * convStation.getLossFactor() / 100.0f) + cableLossesEnd * (hvdcLine.getR() - 0.25f) * Math.pow(activeSetPoint / hvdcLine.getNominalV(), 2)); //Eurostag model requires a fixed resistance of 1 ohm at 640 kV quivalent to 0.25 ohm at 320 kV
+        return ploss;
+    }
+
+    protected float computeLosses(HvdcLine hvdcLine, HvdcConverterStation convStation) {
+        float activeSetPoint = zeroIfNanOrValue(hvdcLine.getActivePowerSetpoint());
+        return computeLosses(hvdcLine, convStation, activeSetPoint);
+    }
+
+    private EsgLoad createConverterStationAdditionalLoad(HvdcLine hvdcLine, HvdcConverterStation convStation) {
+        float ploss = computeLosses(hvdcLine, convStation);
         ConnectionBus rectConvBus = ConnectionBus.fromTerminal(convStation.getTerminal(), config, fakeNodes);
         String fictionalLoadId = "fict_" + convStation.getId();
         addToDictionary(fictionalLoadId, dictionary, EurostagNamingStrategy.NameType.LOAD);
@@ -730,8 +742,8 @@ public class EurostagEchExport implements EurostagEchExporter {
             esgNetwork.addACDCVscConverter(esgConv2);
 
             //Create one load on the node to which converters stations are connected
-            esgNetwork.addLoad(createConverterStationAdditionalLoad(hvdcLine, convStation1, esgConv1.getPac()));
-            esgNetwork.addLoad(createConverterStationAdditionalLoad(hvdcLine, convStation2, esgConv2.getPac()));
+            esgNetwork.addLoad(createConverterStationAdditionalLoad(hvdcLine, convStation1));
+            esgNetwork.addLoad(createConverterStationAdditionalLoad(hvdcLine, convStation2));
         }
     }
 

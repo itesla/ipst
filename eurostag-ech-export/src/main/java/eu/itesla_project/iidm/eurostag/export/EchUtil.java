@@ -211,4 +211,26 @@ public final class EchUtil {
         return false;
     }
 
+    public static HvdcConverterStation getPStation(HvdcLine hvdcLine) {
+        Objects.requireNonNull(hvdcLine);
+        if (hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER)) {
+            return hvdcLine.getConverterStation1();
+        }
+        if (hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER)) {
+            return hvdcLine.getConverterStation2();
+        }
+        return null;
+    }
+
+    public static HvdcConverterStation getVStation(HvdcLine hvdcLine) {
+        Objects.requireNonNull(hvdcLine);
+        if (hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER)) {
+            return hvdcLine.getConverterStation2();
+        }
+        if (hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER)) {
+            return hvdcLine.getConverterStation1();
+        }
+        return null;
+    }
+
 }
