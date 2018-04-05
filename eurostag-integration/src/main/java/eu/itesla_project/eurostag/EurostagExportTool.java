@@ -113,7 +113,7 @@ public class EurostagExportTool implements Tool, EurostagConstants {
 
         // export limits
         try (OutputStream os = Files.newOutputStream(outputDir.resolve(LIMITS_ZIP_FILE_NAME))) {
-            EurostagImpactAnalysis.writeLimits(network, dictionary, os);
+            EurostagImpactAnalysis.writeLimits(network, dictionary, os, exportConfig);
         }
     }
 
