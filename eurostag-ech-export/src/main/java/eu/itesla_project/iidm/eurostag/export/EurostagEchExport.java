@@ -198,14 +198,53 @@ public class EurostagEchExport implements EurostagEchExporter {
                 LOGGER.warn("not in main component, skipping Line: {}", l.getId());
                 continue;
             }
-
+            // It is better to model branches as -normal- lines because it is impossible to open dissymmetrical branches and to do short-circuit on them
+            // Therefore, normal lines are created:
+            // - If the G and B are the same on each side of the line, even if the G are not 0
+            // - If the B are not the same but the G are 0
+            // The code could be extended to handle the case where the B are not the same and the G are not the same
             ConnectionBus bus1 = ConnectionBus.fromTerminal(l.getTerminal1(), config, fakeNodes);
             ConnectionBus bus2 = ConnectionBus.fromTerminal(l.getTerminal2(), config, fakeNodes);
-            // if the admittance are the same in the both side of PI line model
-            if (Math.abs(l.getG1() - l.getG2()) < G_EPSILON && Math.abs(l.getB1() - l.getB2()) < B_EPSILON) {
-                //...create a simple line
+            if (Math.abs(l.getG1() - l.getG2()) < G_EPSILON
+                    && (Math.abs(l.getB1() - l.getB2()) < B_EPSILON
+                       || (Math.abs(l.getG1()) < G_EPSILON && Math.abs(l.getG2()) < G_EPSILON))) {
+                ConnectionBus bNode = null;
+                float b;
+                float diffB = 0f;
+                float g = (l.getG1() + l.getG2()) / 2.0f;
+                float vNom = 0f;
+                if (l.getB1() < l.getB2() - B_EPSILON) {
+                    bNode = bus2;
+                    b = l.getB1();
+                    diffB = l.getB2() - l.getB1();
+                    vNom = l.getTerminal2().getVoltageLevel().getNominalV();
+                } else if (l.getB2() < l.getB1() - B_EPSILON) {
+                    bNode = bus1;
+                    b = l.getB2();
+                    diffB = l.getB1() - l.getB2();
+                    vNom = l.getTerminal1().getVoltageLevel().getNominalV();
+                } else {
+                    b = (l.getB1() + l.getB2()) / 2.0f;
+                }
+
                 esgNetwork.addLine(createLine(l.getId(), bus1, bus2, l.getTerminal1().getVoltageLevel().getNominalV(),
-                        l.getR(), l.getX(), l.getG1(), l.getB1(), parameters));
+                        l.getR(), l.getX(), g, b, parameters));
+
+                if (bNode != null) {
+                    //create a dummy shunt attached to bNode
+                    String fictionalShuntId = "FKSH" + l.getId();
+                    addToDictionary(fictionalShuntId, dictionary, EurostagNamingStrategy.NameType.BANK);
+
+                    int ieleba = 1;
+                    float plosba = 0.f;
+                    float rcapba = vNom * vNom * diffB;
+                    int imaxba = 1;
+                    EsgCapacitorOrReactorBank.RegulatingMode xregba = EsgCapacitorOrReactorBank.RegulatingMode.NOT_REGULATING;
+
+                    esgNetwork.addCapacitorsOrReactorBanks(new EsgCapacitorOrReactorBank(new Esg8charName(dictionary.getEsgId(fictionalShuntId)),
+                            new Esg8charName(dictionary.getEsgId(bNode.getId())),
+                            ieleba, plosba, rcapba, imaxba, xregba));
+                }
             } else {
                 EsgBranchConnectionStatus status = getStatus(bus1, bus2);
                 if (status.equals(EsgBranchConnectionStatus.CLOSED_AT_BOTH_SIDE)) {
