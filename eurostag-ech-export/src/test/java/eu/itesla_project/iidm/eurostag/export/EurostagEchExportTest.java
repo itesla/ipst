@@ -7,10 +7,7 @@
 package eu.itesla_project.iidm.eurostag.export;
 
 import com.google.common.io.CharStreams;
-import com.powsybl.iidm.network.Bus;
-import com.powsybl.iidm.network.Network;
-import com.powsybl.iidm.network.TopologyKind;
-import com.powsybl.iidm.network.VoltageLevel;
+import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.test.EurostagTutorialExample1Factory;
 import com.powsybl.iidm.network.test.HvdcTestNetwork;
 import com.powsybl.iidm.network.test.SvcTestCaseFactory;
@@ -131,6 +128,33 @@ public class EurostagEchExportTest {
 
         EsgSpecialParameters specialParameters = new EsgSpecialParameters();
         test(network, "/eurostag-tutorial-example1_lines.ech", LocalDate.parse("2016-03-01"), specialParameters);
+    }
+
+
+    @Test
+    public void testCptRpt() throws IOException {
+        Network network = EurostagTutorialExample1Factory.create();
+        TwoWindingsTransformer nhv2Nload = network.getTwoWindingsTransformer("NHV2_NLOAD");
+
+        //adds a phase tap changer to the NHV2_NLOAD TwoWindingTransformer (it has already a ratio tap changer)
+        //so that both tap changers adjust rho
+        nhv2Nload.newPhaseTapChanger()
+                .setTapPosition(0)
+                .setRegulationTerminal(nhv2Nload.getTerminal2())
+                .setRegulationMode(PhaseTapChanger.RegulationMode.FIXED_TAP)
+                .setRegulationValue(200)
+                .beginStep()
+                .setAlpha(-20f)
+                .setRho(0.96f)
+                .setR(0f)
+                .setX(0f)
+                .setG(0f)
+                .setB(0f)
+                .endStep()
+                .add();
+
+        EsgSpecialParameters specialParameters = new EsgSpecialParameters();
+        test(network, "/eurostag-tutorial-example1_cptrpt.ech", LocalDate.parse("2016-03-01"), specialParameters);
     }
 
 }

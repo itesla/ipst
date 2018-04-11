@@ -276,16 +276,13 @@ public class EurostagEchExport implements EurostagEchExporter {
     private EsgDetailedTwoWindingTransformer.Tap createTap(TwoWindingsTransformer twt, int iplo, float rho, float dr, float dx,
                                                            float dephas, float rate, EsgGeneralParameters parameters) {
         float nomiU2 = twt.getTerminal2().getVoltageLevel().getNominalV();
-        float rhoI = twt.getRatedU2() / twt.getRatedU1() * rho;
-        float uno1 = nomiU2 / rhoI;
+        float uno1 = nomiU2 / rho;
         float uno2 = nomiU2;
-        float r = twt.getR() * (1 + dr / 100.0f);
-        float x = twt.getX() * (1 + dx / 100.0f);
 
         //...mTrans.getR() = Get the nominal series resistance specified in Ω at the secondary voltage side.
         float zb2 = (float) (Math.pow(nomiU2, 2) / parameters.getSnref());
-        float rpu2 = r / zb2;  //...total line resistance  [p.u.](Base snref)
-        float xpu2 = x / zb2;  //...total line reactance   [p.u.](Base snref)
+        float rpu2 = dr / zb2;  //...total line resistance  [p.u.](Base snref)
+        float xpu2 = dx / zb2;  //...total line reactance   [p.u.](Base snref)
 
         //...leakage impedance [%] (base rate)
         float ucc;
@@ -327,6 +324,74 @@ public class EurostagEchExport implements EurostagEchExporter {
             esgNetwork.addCapacitorsOrReactorBanks(new EsgCapacitorOrReactorBank(new Esg8charName(newBankName), new Esg8charName(nodeName), 1, plosba, rcapba, 1, EsgCapacitorOrReactorBank.RegulatingMode.NOT_REGULATING));
         }
 
+    }
+
+    private float getRtcRho1(TwoWindingsTransformer twt, int p) {
+        float rho1 = twt.getRatedU2() / twt.getRatedU1();
+        if (twt.getRatioTapChanger() != null) {
+            rho1 *= twt.getRatioTapChanger().getStep(p).getRho();
+        }
+        if (twt.getPhaseTapChanger() != null) {
+            rho1 *= twt.getPhaseTapChanger().getCurrentStep().getRho();
+        }
+        return rho1;
+    }
+
+    private float getPtcRho1(TwoWindingsTransformer twt, int p) {
+        float rho1 = twt.getRatedU2() / twt.getRatedU1();
+        if (twt.getRatioTapChanger() != null) {
+            rho1 *= twt.getRatioTapChanger().getCurrentStep().getRho();
+        }
+        if (twt.getPhaseTapChanger() != null) {
+            rho1 *= twt.getPhaseTapChanger().getStep(p).getRho();
+        }
+        return rho1;
+    }
+
+    private float getValue(float initialValue, float rtcStepValue, float ptcStepValue) {
+        return initialValue * (1 + rtcStepValue / 100) * (1 + ptcStepValue / 100);
+    }
+
+    private float getRtcR(TwoWindingsTransformer twt, int p) {
+        return getValue(twt.getR(),
+                twt.getRatioTapChanger() != null ? twt.getRatioTapChanger().getStep(p).getR() : 0,
+                twt.getPhaseTapChanger() != null ? twt.getPhaseTapChanger().getCurrentStep().getR() : 0);
+    }
+
+    private float getPtcR(TwoWindingsTransformer twt, int p) {
+        return getValue(twt.getR(),
+                twt.getRatioTapChanger() != null ? twt.getRatioTapChanger().getCurrentStep().getR() : 0,
+                twt.getPhaseTapChanger() != null ? twt.getPhaseTapChanger().getStep(p).getR() : 0);
+    }
+
+    private float getRtcX(TwoWindingsTransformer twt, int p) {
+        return getValue(twt.getX(),
+                twt.getRatioTapChanger() != null ? twt.getRatioTapChanger().getStep(p).getX() : 0,
+                twt.getPhaseTapChanger() != null ? twt.getPhaseTapChanger().getCurrentStep().getX() : 0);
+    }
+
+    private float getPtcX(TwoWindingsTransformer twt, int p) {
+        return getValue(twt.getX(),
+                twt.getRatioTapChanger() != null ? twt.getRatioTapChanger().getCurrentStep().getX() : 0,
+                twt.getPhaseTapChanger() != null ? twt.getPhaseTapChanger().getStep(p).getX() : 0);
+    }
+
+    private float getR(TwoWindingsTransformer twt) {
+        return getValue(twt.getR(),
+                twt.getRatioTapChanger() != null ? twt.getRatioTapChanger().getCurrentStep().getR() : 0,
+                twt.getPhaseTapChanger() != null ? twt.getPhaseTapChanger().getCurrentStep().getR() : 0);
+    }
+
+    private float getG1(TwoWindingsTransformer twt) {
+        return getValue(config.isSpecificCompatibility() ? twt.getG() / 2 : twt.getG(),
+                twt.getRatioTapChanger() != null ? twt.getRatioTapChanger().getCurrentStep().getG() : 0,
+                twt.getPhaseTapChanger() != null ? twt.getPhaseTapChanger().getCurrentStep().getG() : 0);
+    }
+
+    private float getB1(TwoWindingsTransformer twt) {
+        return getValue(config.isSpecificCompatibility() ? twt.getB() / 2 : twt.getB(),
+                twt.getRatioTapChanger() != null ? twt.getRatioTapChanger().getCurrentStep().getB() : 0,
+                twt.getPhaseTapChanger() != null ? twt.getPhaseTapChanger().getCurrentStep().getB() : 0);
     }
 
     private void createTransformers(EsgNetwork esgNetwork, EsgGeneralParameters parameters) {
@@ -372,13 +437,16 @@ public class EurostagEchExport implements EurostagEchExporter {
             EsgDetailedTwoWindingTransformer.RegulatingMode regulatingMode = EsgDetailedTwoWindingTransformer.RegulatingMode.NOT_REGULATING;
             Esg8charName zbusr = null; //...regulated node name (if empty, no tap change)
             float voltr = Float.NaN;
-            int ktpnom; //...nominal tap number is not available in IIDM. Take th median plot by default
-            int ktap8;  //...initial tap position (tap number) (Ex: 10)
+            int ktpnom = 1; //...nominal tap number is not available in IIDM. Take th median plot by default
+            int ktap8 = 1;  //...initial tap position (tap number) (Ex: 10)
             List<EsgDetailedTwoWindingTransformer.Tap> taps = new ArrayList<>();
 
             RatioTapChanger rtc = twt.getRatioTapChanger();
             PhaseTapChanger ptc = twt.getPhaseTapChanger();
-            if (rtc != null && ptc == null) {
+            if ((rtc != null && ptc == null) || (rtc != null && ptc != null && rtc.isRegulating() && !ptc.isRegulating())) {
+                if (rtc != null && ptc != null) {
+                    LOGGER.warn("both ptc and rtc exist on two winding transformer {}. Only the rtc is kept because it is regulating.", twt.getId());
+                }
                 if (rtc.isRegulating()) {
                     ConnectionBus regulatingBus = ConnectionBus.fromTerminal(rtc.getRegulationTerminal(), config, null);
                     if (regulatingBus.getId() != null) {
@@ -391,10 +459,14 @@ public class EurostagEchExport implements EurostagEchExporter {
                 ktpnom = rtc.getStepCount() / 2 + 1;
                 for (int p = rtc.getLowTapPosition(); p <= rtc.getHighTapPosition(); p++) {
                     int iplo = p - rtc.getLowTapPosition() + 1;
-                    taps.add(createTap(twt, iplo, rtc.getStep(p).getRho(), rtc.getStep(p).getR(), rtc.getStep(p).getX(), 0f, rate, parameters));
+                    taps.add(createTap(twt, iplo, getRtcRho1(twt, p), getRtcR(twt, p), getRtcX(twt, p), 0f, rate, parameters));
                 }
 
-            } else if (ptc != null && rtc == null) {
+            } else if (ptc != null || rtc != null) {
+                if (rtc != null && ptc != null) {
+                    LOGGER.warn("both ptc and rtc exist on two winding transformer {}. Only the ptc is kept.", twt.getId());
+                }
+
                 if (ptc.getRegulationMode() == PhaseTapChanger.RegulationMode.CURRENT_LIMITER && ptc.isRegulating()) {
                     String regulbus = EchUtil.getBus(ptc.getRegulationTerminal(), config).getId();
                     if (regulbus.equals(bus1.getId())) {
@@ -411,32 +483,25 @@ public class EurostagEchExport implements EurostagEchExporter {
                 ktpnom = ptc.getStepCount() / 2 + 1;
                 for (int p = ptc.getLowTapPosition(); p <= ptc.getHighTapPosition(); p++) {
                     int iplo = p - ptc.getLowTapPosition() + 1;
-                    taps.add(createTap(twt, iplo, ptc.getStep(p).getRho(), ptc.getStep(p).getR(), ptc.getStep(p).getX(), ptc.getStep(p).getAlpha(), rate, parameters));
+                    taps.add(createTap(twt, iplo, getPtcRho1(twt, p), getPtcR(twt, p), getPtcX(twt, p), ptc.getStep(p).getAlpha(), rate, parameters));
                 }
             } else if (rtc == null && ptc == null) {
-                ktap8 = 1;
-                ktpnom = 1;
-                taps.add(createTap(twt, 1, 1f, 0f, 0f, 0f, rate, parameters));
-            } else {
-                throw new RuntimeException("Transformer " + twt.getId() + "  with voltage and phase tap changer not yet supported");
+                taps.add(createTap(twt, 1, twt.getRatedU2() / twt.getRatedU1(), twt.getR(), twt.getX(), 0f, rate, parameters));
             }
 
             // trick to handle the fact that Eurostag model allows only the impedance to change and not the resistance.
             // As an approximation, the resistance is fixed to the value it has for the initial step,
             // but discrepancies will occur if the step is changed.
             if ((ptc != null) || (rtc != null)) {
-                float dr = (rtc != null) ? rtc.getStep(rtc.getTapPosition()).getR() : ptc.getStep(ptc.getTapPosition()).getR();
-                float tapAdjustedR = twt.getR() * (1 + dr / 100.0f);
+                float tapAdjustedR = getR(twt);
                 float rpu2Adjusted = (tapAdjustedR * parameters.getSnref()) / nomiU2 / nomiU2;
                 pcu = rpu2Adjusted * rate * 100f / parameters.getSnref();
 
-                float dg = (rtc != null) ? rtc.getStep(rtc.getTapPosition()).getG() : ptc.getStep(ptc.getTapPosition()).getG();
-                float tapAdjustedG = twt.getG() * (1 + dg / 100.0f);
+                float tapAdjustedG = getG1(twt);
                 float gpu2Adjusted = (tapAdjustedG / parameters.getSnref()) * nomiU2 * nomiU2;
                 pfer = 10000f * ((float) Math.sqrt(gpu2Adjusted) / rate) * (parameters.getSnref() / 100f);
 
-                float db = (rtc != null) ? rtc.getStep(rtc.getTapPosition()).getB() : ptc.getStep(ptc.getTapPosition()).getB();
-                float tapAdjustedB = twt.getB() * (1 + db / 100.0f);
+                float tapAdjustedB = getB1(twt);
                 float bpu2Adjusted = (tapAdjustedB / parameters.getSnref()) * nomiU2 * nomiU2;
                 modgb = (float) Math.sqrt(Math.pow(gpu2Adjusted, 2.f) + Math.pow(bpu2Adjusted, 2.f));
                 cmagn = 10000 * (modgb / rate) * (parameters.getSnref() / 100f);
