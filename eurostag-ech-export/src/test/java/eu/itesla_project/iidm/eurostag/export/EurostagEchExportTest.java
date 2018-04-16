@@ -28,14 +28,19 @@ import static org.junit.Assert.assertEquals;
  */
 public class EurostagEchExportTest {
 
-    private void test(Network network, String reference, LocalDate editDate, EsgSpecialParameters specialParameters) throws IOException {
+    private void test(Network network, String reference, LocalDate editDate, EsgSpecialParameters specialParameters, EurostagEchExportConfig config) throws IOException {
         StringWriter writer = new StringWriter();
         EsgGeneralParameters parameters = new EsgGeneralParameters();
         parameters.setEditDate(editDate);
-        new EurostagEchExport(network).write(writer, parameters, specialParameters);
+        new EurostagEchExport(network, config).write(writer, parameters, specialParameters);
         writer.close();
         assertEquals(CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream(reference), StandardCharsets.UTF_8)), writer.toString());
     }
+
+    private void test(Network network, String reference, LocalDate editDate, EsgSpecialParameters specialParameters) throws IOException {
+        test(network, reference, editDate, specialParameters, new EurostagEchExportConfig());
+    }
+
 
     @Test
     public void test() throws IOException {
@@ -155,6 +160,24 @@ public class EurostagEchExportTest {
 
         EsgSpecialParameters specialParameters = new EsgSpecialParameters();
         test(network, "/eurostag-tutorial-example1_cptrpt.ech", LocalDate.parse("2016-03-01"), specialParameters);
+    }
+
+    @Test
+    public void testVoltageRegulationException() throws IOException {
+        Network network = EurostagTutorialExample1Factory.create();
+
+        //voltage regulator exception:  if specificCompatibility && (g.getTargetP() < 0.0001) && (g.getMinP() > 0.0001)
+        // turn off g's voltage regulation
+        Generator g = network.getGenerator("GEN");
+        g.setMinP(300f);
+        g.setTargetP(0);
+
+        EsgSpecialParameters specialParameters = new EsgSpecialParameters();
+        EurostagEchExportConfig exTemp = new EurostagEchExportConfig();
+        EurostagEchExportConfig exportConfig= new EurostagEchExportConfig(exTemp.isNoGeneratorMinMaxQ(), exTemp.isNoSwitch(), exTemp.getForbiddenCharactersString(),
+                exTemp.getForbiddenCharactersReplacement(), exTemp.isSvcAsFixedInjectionInLF(), true, exTemp.isExportMainCCOnly());
+
+        test(network, "/eurostag-tutorial-example1_vre.ech", LocalDate.parse("2016-03-01"), specialParameters, exportConfig);
     }
 
 }
