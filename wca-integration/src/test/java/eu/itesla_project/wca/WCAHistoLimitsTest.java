@@ -18,8 +18,8 @@ import org.mockito.Mockito;
 
 import com.powsybl.commons.util.StringToIntMapper;
 import com.powsybl.commons.datasource.MemDataSource;
-import eu.itesla_project.iidm.export.ampl.AmplSubset;
-import eu.itesla_project.iidm.export.ampl.AmplUtil;
+import com.powsybl.ampl.converter.AmplSubset;
+import com.powsybl.ampl.converter.AmplUtil;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.test.NetworkTest1Factory;
 import eu.itesla_project.modules.histo.HistoDbAttr;
@@ -72,4 +72,35 @@ public class WCAHistoLimitsTest {
         assertEquals(fileContent, new String(dataSource.getData(WCAConstants.HISTO_GENERATORS_FILE_SUFFIX, WCAConstants.TXT_EXT), StandardCharsets.UTF_8).trim());
     }
 
+    @Test
+    public void testLoad() throws IOException, InterruptedException {
+        Interval histoInterval = Interval.parse("2013-01-01T00:00:00+01:00/2013-01-31T23:59:00+01:00");
+
+        Network network = NetworkTest1Factory.create();
+
+        HistoDbClient histoDbClient = Mockito.mock(HistoDbClient.class);
+        HistoDbStats histoDbStats = new HistoDbStats();
+        histoDbStats.setValue(HistoDbStatsType.MIN, new HistoDbNetworkAttributeId(network.getLoads().iterator().next().getId(), HistoDbAttr.P), 0f);
+        histoDbStats.setValue(HistoDbStatsType.MAX, new HistoDbNetworkAttributeId(network.getLoads().iterator().next().getId(), HistoDbAttr.P), 20f);
+        histoDbStats.setValue(HistoDbStatsType.MIN, new HistoDbNetworkAttributeId(network.getGenerators().iterator().next().getId(), HistoDbAttr.P), 200f);
+        histoDbStats.setValue(HistoDbStatsType.MAX, new HistoDbNetworkAttributeId(network.getGenerators().iterator().next().getId(), HistoDbAttr.P), 900f);
+        Mockito.when(histoDbClient.queryStats(Matchers.anySet(), Matchers.eq(histoInterval), Matchers.eq(HistoDbHorizon.SN), Matchers.eq(true)))
+               .thenReturn(histoDbStats);
+
+        StringToIntMapper<AmplSubset> mapper = new StringToIntMapper<>(AmplSubset.class);
+        AmplUtil.fillMapper(mapper, network);
+
+        WCAHistoLimits histoLimits = new WCAHistoLimits(histoInterval);
+        histoLimits.load(network, histoDbClient);
+        String fileContent = String.join(System.lineSeparator(),
+                "#loads historical data " + histoInterval,
+                "#\"num\" \"min p (MW)\" \"max p (MW)\" \"id\"",
+                "1 0.00000 20.0000 \""+ network.getLoads().iterator().next().getId() + "\"");
+        String fileContentexpected = String.join(System.lineSeparator(),
+                "#loads historical data " + histoInterval,
+                "#\"num\" \"min p (MW)\" \"max p (MW)\" \"id\"",
+                "1 0.00000 20.0000 \""+ "load1" + "\"");
+        assertEquals(fileContent, fileContentexpected);
+
+    }
 }

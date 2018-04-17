@@ -6,36 +6,42 @@
  */
 package eu.itesla_project.security.rest.api.impl;
 
+
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
 
+import org.apache.commons.io.IOUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.powsybl.commons.config.ComponentDefaultConfig;
-import com.powsybl.computation.local.LocalComputationManager;
+import com.powsybl.action.dsl.ActionDb;
+import com.powsybl.action.dsl.ActionDslLoader;
+import com.powsybl.action.simulator.ActionSimulator;
+import com.powsybl.action.simulator.loadflow.LoadFlowActionSimulator;
+import com.powsybl.action.simulator.loadflow.LoadFlowActionSimulatorObserver;
+import com.powsybl.action.simulator.tools.AbstractSecurityAnalysisResultBuilder;
 import com.powsybl.contingency.ContingenciesProvider;
-import com.powsybl.contingency.ContingenciesProviderFactory;
+import com.powsybl.contingency.Contingency;
 import com.powsybl.contingency.EmptyContingencyListProvider;
 import com.powsybl.iidm.import_.Importers;
 import com.powsybl.iidm.network.Network;
@@ -47,7 +53,7 @@ import com.powsybl.security.SecurityAnalyzer.Format;
 import com.powsybl.security.converter.SecurityAnalysisResultExporters;
 
 import eu.itesla_project.security.rest.api.SecurityAnalysisService;
-
+import eu.itesla_project.security.rest.api.impl.utils.Utils;
 /**
  *
  * @author Giovanni Ferrari <giovanni.ferrari at techrain.it>
@@ -55,12 +61,6 @@ import eu.itesla_project.security.rest.api.SecurityAnalysisService;
 public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityAnalysisServiceImpl.class);
-    private final ContingenciesProviderFactory contingenciesProviderFactory;
-
-    public SecurityAnalysisServiceImpl() {
-        ComponentDefaultConfig defaultConfig = ComponentDefaultConfig.load();
-        this.contingenciesProviderFactory = defaultConfig.newFactoryImpl(ContingenciesProviderFactory.class);
-    }
 
     @Override
     public Response analyze(MultipartFormDataInput form) {
@@ -69,25 +69,14 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
         try {
             Map<String, List<InputPart>> formParts = form.getFormDataMap();
 
-            Format format = null;
-            List<InputPart> formatParts = formParts.get("format");
-            if (formatParts != null) {
-                try {
-                    String outFormat = getParameter(formatParts);
-                    if (outFormat != null) {
-                        format = Format.valueOf(outFormat);
-                    }
-                } catch (IllegalArgumentException ie) {
-                    return Response.status(Status.BAD_REQUEST).entity("Wrong format parameter").build();
-                }
-            }
+            Format format = Utils.getFormat(formParts);
             if (format == null) {
                 return Response.status(Status.BAD_REQUEST).entity("Missing required format parameter").build();
             }
             String limitTypes = null;
             List<InputPart> limitParts = formParts.get("limit-types");
             if (limitParts != null) {
-                limitTypes = getParameter(limitParts);
+                limitTypes = Utils.getParameter(limitParts);
             }
 
             Set<LimitViolationType> limitViolationTypes;
@@ -101,7 +90,7 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
 
             LimitViolationFilter limitViolationFilter = new LimitViolationFilter(limitViolationTypes);
 
-            FilePart caseFile = formParts.get("case-file") != null ? getFilePart(formParts.get("case-file")) : null;
+            FilePart caseFile = formParts.get("case-file") != null ? Utils.getFilePart(formParts.get("case-file")) : null;
 
             if (caseFile == null) {
                 return Response.status(Status.BAD_REQUEST).entity("Missing required case-file parameter").build();
@@ -109,7 +98,7 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
             Network network = Importers.loadNetwork(caseFile.getFilename(), caseFile.getInputStream());
 
             FilePart contingencies = formParts.get("contingencies-file") != null
-                    ? getFilePart(formParts.get("contingencies-file")) : null;
+                    ? Utils.getFilePart(formParts.get("contingencies-file")) : null;
 
 
             SecurityAnalysisResult result = analyze(network, contingencies, limitViolationFilter);
@@ -125,8 +114,8 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
 
     public SecurityAnalysisResult analyze(Network network, FilePart contingencies, LimitViolationFilter limitViolationFilter) {
         ContingenciesProvider contingenciesProvider = (contingencies != null && contingencies.getInputStream() != null)
-                ? contingenciesProviderFactory.create(contingencies.getInputStream()) : new EmptyContingencyListProvider();
-        SecurityAnalyzer analyzer = new SecurityAnalyzer(limitViolationFilter, LocalComputationManager.getDefault(), 0);
+                ? Utils.getContingenciesProviderFactory().create(contingencies.getInputStream()) : new EmptyContingencyListProvider();
+        SecurityAnalyzer analyzer = new SecurityAnalyzer(limitViolationFilter, Utils.getLocalComputationManager(), 0);
         return analyzer.analyze(network, contingenciesProvider);
     }
 
@@ -134,49 +123,96 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
         return new StreamingOutput() {
 
             @Override
-            public void write(OutputStream out) throws IOException, WebApplicationException {
+            public void write(OutputStream out) throws IOException {
                 Objects.requireNonNull(out);
                 try (Writer wr = new OutputStreamWriter(out, StandardCharsets.UTF_8)) {
-                    SecurityAnalysisResultExporters.export(result, network, wr, format.toString());
+                    SecurityAnalysisResultExporters.export(result, wr, format.toString());
                 }
             }
         };
     }
 
-    private String getParameter(List<InputPart> parts) {
+
+
+
+
+
+    @Override
+    public Response actionSimulator(MultipartFormDataInput form) {
+        Objects.requireNonNull(form);
         try {
-            return parts.stream()
-                    .filter(Objects::nonNull)
-                    .findFirst()
-                    .get()
-                    .getBodyAsString();
-        } catch (IOException e) {
-            LOGGER.error("Error reading parameter", e);
+            Map<String, List<InputPart>> formParts = form.getFormDataMap();
+            Format format = Utils.getFormat(formParts);
+
+            if (format == null) {
+                return Response.status(Status.BAD_REQUEST).entity("Missing required format parameter").build();
+            }
+
+            FilePart caseFile = formParts.get("case-file") != null ? Utils.getFilePart(formParts.get("case-file")) : null;
+            if (caseFile == null) {
+                return Response.status(Status.BAD_REQUEST).entity("Missing required case-file parameter").build();
+            }
+
+            FilePart dslFile = formParts.get("dsl-file") != null ? Utils.getFilePart(formParts.get("dsl-file")) : null;
+            if (dslFile == null) {
+                return Response.status(Status.BAD_REQUEST).entity("Missing required dsl-file parameter").build();
+            }
+
+            Network network = Importers.loadNetwork(caseFile.getFilename(), caseFile.getInputStream());
+
+            List<String> contingencies = Collections.emptyList();
+
+            StringWriter writer = new StringWriter();
+            IOUtils.copy(dslFile.getInputStream(), writer, StandardCharsets.UTF_8);
+            String dslAsString = writer.toString();
+
+            // load actions from Groovy DSL
+            ActionDb actionDb = new ActionDslLoader(dslAsString).load(network);
+
+            if (contingencies.isEmpty()) {
+                contingencies = actionDb.getContingencies().stream().map(Contingency::getId)
+                        .collect(Collectors.toList());
+            }
+
+            List<LoadFlowActionSimulatorObserver> observers = new ArrayList<>();
+            AbstractSecurityAnalysisResultBuilderImpl loadFlowActionSimulatorObserver = new AbstractSecurityAnalysisResultBuilderImpl();
+            observers.add(loadFlowActionSimulatorObserver);
+
+            // action simulator
+            ActionSimulator actionSimulator = new LoadFlowActionSimulator(network, Utils.getLocalComputationManager(), Utils.getActionSimulatorConfig(),
+                    observers);
+
+            // start simulator
+            actionSimulator.start(actionDb, contingencies);
+
+            SecurityAnalysisResult securityAnalysisResult = loadFlowActionSimulatorObserver.getResult();
+
+            return Response.ok(toStream(securityAnalysisResult, network, format))
+                    .header("Content-Type", format.equals(Format.JSON) ? MediaType.APPLICATION_JSON : "text/csv")
+                    .build();
+
+        } catch (Exception e) {
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Internal server error").build();
         }
-        return null;
     }
 
+    private static class AbstractSecurityAnalysisResultBuilderImpl extends AbstractSecurityAnalysisResultBuilder {
 
-    private FilePart getFilePart(List<InputPart> parts) throws IOException {
-        Objects.requireNonNull(parts);
+        private SecurityAnalysisResult result;
 
-        for (InputPart inputPart : parts) {
-            String disposition = inputPart.getHeaders().getFirst("Content-Disposition");
-            if (disposition != null) {
-                Optional<String> filenameHeader = Arrays.stream(disposition.split(";"))
-                        .filter(n -> n.trim().startsWith("filename")).findFirst();
-                if (filenameHeader.isPresent()) {
-                    String[] filenameTokens = filenameHeader.get().split("=");
-                    if (filenameTokens.length > 1) {
-                        String filename = filenameTokens[1].trim().replaceAll("\"", "");
-                        if (!filename.isEmpty()) {
-                            return new FilePart(filename, inputPart.getBody(InputStream.class, null));
-                        }
-                    }
-                }
-            }
+        @Override
+        public void onFinalStateResult(SecurityAnalysisResult result) {
+            this.setResult(result);
         }
-        return null;
+
+        public SecurityAnalysisResult getResult() {
+            return result;
+        }
+
+        public void setResult(SecurityAnalysisResult result) {
+            this.result = result;
+        }
+
     }
 
 }

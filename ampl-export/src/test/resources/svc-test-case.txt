@@ -1,3 +1,0 @@
-#Static VAR compensators (svcTestCase/InitialState)
-#"num" "fault" "curative" "id"
-1 0 0 "SVC2"

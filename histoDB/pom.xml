@@ -23,7 +23,7 @@
         <version.slf4j>1.6.0</version.slf4j>
         <version.spring>3.1.0.RELEASE</version.spring>
         <ipst.version>0.1-SNAPSHOT</ipst.version>
-        <powsybl.version>1.0-SNAPSHOT</powsybl.version>
+        <powsybl.version>1.0.0</powsybl.version>
     </properties>
 
     <modules>

@@ -33,4 +33,10 @@ public class SecurityAnalysisApi {
         return delegate.analyze(form);
     }
 
+    @POST
+    @Path("/action-simulator")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response actionSimulator(MultipartFormDataInput form, @Context SecurityContext securityContext) {
+        return delegate.actionSimulator(form);
+    }
 }
