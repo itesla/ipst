@@ -8,6 +8,8 @@
 package eu.itesla_project.iidm.eurostag.export;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.util.Identifiables;
@@ -26,7 +28,7 @@ import java.util.*;
 /**
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
-public class EurostagEchExport {
+public class EurostagEchExport implements EurostagEchExporter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EurostagEchExport.class);
 
@@ -38,16 +40,16 @@ public class EurostagEchExport {
     /**
      * epsilon value for susceptance
      */
-    public static final float B_EPSILON = 0.00001f;
+    public static final float B_EPSILON = 0.000001f;
 
     private static final String XNODE_V_PROPERTY = "xnode_v";
     private static final String XNODE_ANGLE_PROPERTY = "xnode_angle";
 
-    private final Network network;
-    private final EurostagEchExportConfig config;
-    private final BranchParallelIndexes parallelIndexes;
-    private final EurostagDictionary dictionary;
-    private final EurostagFakeNodes fakeNodes;
+    protected final Network network;
+    protected final EurostagEchExportConfig config;
+    protected final BranchParallelIndexes parallelIndexes;
+    protected final EurostagDictionary dictionary;
+    protected final EurostagFakeNodes fakeNodes;
 
     public EurostagEchExport(Network network, EurostagEchExportConfig config, BranchParallelIndexes parallelIndexes, EurostagDictionary dictionary, EurostagFakeNodes fakeNodes) {
         this.network = Objects.requireNonNull(network);
@@ -73,6 +75,10 @@ public class EurostagEchExport {
         esgNetwork.addArea(new EsgArea(new Esg2charName(EchUtil.FAKE_AREA), EsgArea.Type.AC));
         for (Country c : network.getCountries()) {
             esgNetwork.addArea(new EsgArea(new Esg2charName(c.toString()), EsgArea.Type.AC));
+        }
+
+        if (network.getHvdcLineCount() > 0) {
+            esgNetwork.addArea(new EsgArea(new Esg2charName("DC"), EsgArea.Type.DC));
         }
     }
 
@@ -495,6 +501,7 @@ public class EurostagEchExport {
             boolean isQminQmaxInverted = g.getReactiveLimits().getMinQ(pgen) > g.getReactiveLimits().getMaxQ(pgen);
             if (isQminQmaxInverted) {
                 LOGGER.warn("inverted qmin {} and qmax {} values for generator {}", g.getReactiveLimits().getMinQ(pgen), g.getReactiveLimits().getMaxQ(pgen), g.getId());
+                qgen = -g.getTerminal().getQ();
             }
             // in case qmin and qmax are inverted, take out the unit from the voltage regulation if it has a target Q
             // and open widely the Q interval
@@ -577,6 +584,162 @@ public class EurostagEchExport {
         }
     }
 
+    //simple cut-name mapping for DC node names
+    //prefixes esg id with DC_
+    protected String getDCNodeName(String iidmId, int idlen, BiMap<String, String> dcNodesEsgNames) {
+        if (dcNodesEsgNames.containsKey(iidmId)) {
+            return dcNodesEsgNames.get(iidmId);
+        } else {
+            String esgId = "DC_" + (iidmId.length() > idlen ? iidmId.substring(0, idlen)
+                    : Strings.padEnd(iidmId, idlen, ' '));
+            int counter = 0;
+            while (dcNodesEsgNames.inverse().containsKey(esgId)) {
+                String counterStr = Integer.toString(counter++);
+                if (counterStr.length() > idlen) {
+                    throw new RuntimeException("Renaming fatal error " + iidmId + " -> " + esgId);
+                }
+                esgId = esgId.substring(0, idlen - counterStr.length()) + counterStr;
+            }
+            dcNodesEsgNames.put(iidmId, esgId);
+            return esgId;
+        }
+    }
+
+    protected boolean isPMode(HvdcConverterStation vscConv, HvdcLine hvdcLine) {
+        Objects.requireNonNull(vscConv);
+        Objects.requireNonNull(hvdcLine);
+        HvdcConverterStation side1Conv = hvdcLine.getConverterStation1();
+        HvdcConverterStation side2Conv = hvdcLine.getConverterStation2();
+        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER))
+                && (vscConv.getId().equals(side1Conv.getId()))) {
+            return true;
+        }
+        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER))
+                && (vscConv.getId().equals(side2Conv.getId()))) {
+            return true;
+        }
+        return false;
+    }
+
+    protected float zeroIfNanOrValue(float value) {
+        return Float.isNaN(value) ? 0 : value;
+    }
+
+    protected EsgACDCVscConverter createACDCVscConverter(VscConverterStation vscConv, HvdcLine hline, Esg8charName vscConvDcName) {
+        Objects.requireNonNull(vscConv);
+        Objects.requireNonNull(hline, "no hvdc line connected to VscConverterStation " + vscConv.getId());
+        boolean isPmode = isPMode(vscConv, hline);
+        Esg8charName znamsvc = new Esg8charName(dictionary.getEsgId(vscConv.getId())); // converter station ID
+        Esg8charName receivingNodeDcName = new Esg8charName("GROUND"); // receiving DC node name; always GROUND
+        String acNodeIdKey = EurostagDictionary.ACNODE_PREFIX + vscConv.getId();
+        Esg8charName acNode = dictionary.iidmIdExists(acNodeIdKey) ? new Esg8charName(dictionary.getEsgId(acNodeIdKey).substring(acNodeIdKey.length() + 1))
+                : null;
+        if (acNode == null) {
+            throw new RuntimeException("VSCConverter " + vscConv.getId() + " : acNode mapping not found");
+        }
+        EsgACDCVscConverter.ConverterState xstate = EsgACDCVscConverter.ConverterState.ON; // converter state ' ' ON; 'S' OFF
+        EsgACDCVscConverter.DCControlMode xregl = isPmode ? EsgACDCVscConverter.DCControlMode.AC_ACTIVE_POWER : EsgACDCVscConverter.DCControlMode.DC_VOLTAGE; // DC control mode 'P' AC_ACTIVE_POWER; 'V' DC_VOLTAGE
+        //AC control mode assumed to be "AC reactive power"(Q)
+        EsgACDCVscConverter.ACControlMode xoper = EsgACDCVscConverter.ACControlMode.AC_REACTIVE_POWER; // AC control mode 'V' AC_VOLTAGE; 'Q' AC_REACTIVE_POWER; 'A' AC_POWER_FACTOR
+        float rrdc = 0; // resistance [Ohms]
+        float rxdc = 16; // reactance [Ohms]
+
+        float pac = zeroIfNanOrValue(hline.getActivePowerSetpoint()); // AC active power setpoint [MW]. Only if DC control mode is 'P'
+        pac = isPmode ? pac : -pac; //change sign in case of Q mode side
+        // multiplying  the line's nominalV by 2 corresponds to the fact that iIDM refers to the cable-ground voltage
+        // while Eurostag regulations to the cable-cable voltage
+        float pvd = EchUtil.getHvdcLineDcVoltage(hline); // DC voltage setpoint [MW]. Only if DC control mode is 'V'
+        float pre = vscConv.getReactivePowerSetpoint(); // AC reactive power setpoint [Mvar]. Only if AC control mode is 'Q'
+        if ((Float.isNaN(pre)) || (vscConv.isVoltageRegulatorOn())) {
+            float terminalQ = -vscConv.getTerminal().getQ();
+            if (Float.isNaN(terminalQ)) {
+                pre = zeroIfNanOrValue(pre);
+            } else {
+                pre = terminalQ;
+            }
+        }
+        float pco = Float.NaN; // AC power factor setpoint. Only if AC control mode is 'A'
+        float qvscsh = 1; // Reactive sharing cofficient [%]. Only if AC control mode is 'V'
+        float pvscmin = -hline.getMaxP(); // Minimum AC active power [MW]
+        float pvscmax = hline.getMaxP(); // Maximum AC active power [MW]
+        float qvscmin = vscConv.getReactiveLimits().getMinQ(0); // Minimum reactive power injected on AC node [kV]
+        float qvscmax = vscConv.getReactiveLimits().getMaxQ(0); // Maximum reactive power injected on AC node [kV]
+        // iIDM vscConv.getLossFactor() is in % of the MW. As it is, not suitable for vsb0, which is fixed in MW
+        // for now, set  vsb0, vsb1,vsb2 to 0
+        float vsb0 = 0; // Losses coefficient Beta0 [MW]
+        float vsb1 = 0; // Losses coefficient Beta1 [kW]
+        float vsb2 = 0; // Losses coefficient Beta2 [Ohms]
+
+        Bus connectedBus = vscConv.getTerminal().getBusBreakerView().getConnectableBus();
+        if (connectedBus == null) {
+            connectedBus = vscConv.getTerminal().getBusView().getConnectableBus();
+            if (connectedBus == null) {
+                throw new RuntimeException("VSCConverter " + vscConv.getId() + " : connected bus not found!");
+            }
+        }
+        float mvm = connectedBus.getV() / connectedBus.getVoltageLevel().getNominalV(); // Initial AC modulated voltage magnitude [p.u.]
+        float mva = connectedBus.getAngle(); // Initial AC modulated voltage angle [deg]
+        float pva = connectedBus.getV(); // AC voltage setpoint [kV]. Only if AC control mode is 'V'
+
+        return new EsgACDCVscConverter(
+                znamsvc,
+                vscConvDcName,
+                receivingNodeDcName,
+                acNode,
+                xstate,
+                xregl,
+                xoper,
+                rrdc,
+                rxdc,
+                pac,
+                pvd,
+                pva,
+                pre,
+                pco,
+                qvscsh,
+                pvscmin,
+                pvscmax,
+                qvscmin,
+                qvscmax,
+                vsb0,
+                vsb1,
+                vsb2,
+                mvm,
+                mva);
+    }
+
+    private void createACDCVscConverters(EsgNetwork esgNetwork) {
+        //DC nodes mapping
+        BiMap<String, String> dcNodesEsgNames = HashBiMap.create();
+
+        //creates 2 DC nodes, for each hvdc line (one node per converter station)
+        for (HvdcLine hvdcLine : Identifiables.sort(network.getHvdcLines())) {
+            // skip lines with converter stations not in the main connected component
+            if (config.isExportMainCCOnly() && (!EchUtil.isInMainCc(hvdcLine.getConverterStation1(), config.isNoSwitch()) || !EchUtil.isInMainCc(hvdcLine.getConverterStation2(), config.isNoSwitch()))) {
+                LOGGER.warn("skipped HVDC line {}: at least one converter station is not in main component", hvdcLine.getId());
+                continue;
+            }
+            HvdcConverterStation convStation1 = hvdcLine.getConverterStation1();
+            HvdcConverterStation convStation2 = hvdcLine.getConverterStation2();
+
+            //create two dc nodes, one for each conv. station
+            Esg8charName hvdcNodeName1 = new Esg8charName(getDCNodeName(convStation1.getId(), 5, dcNodesEsgNames));
+            Esg8charName hvdcNodeName2 = new Esg8charName(getDCNodeName(convStation2.getId(), 5, dcNodesEsgNames));
+            float dcVoltage = EchUtil.getHvdcLineDcVoltage(hvdcLine);
+            esgNetwork.addDCNode(new EsgDCNode(new Esg2charName("DC"), hvdcNodeName1, dcVoltage, 1));
+            esgNetwork.addDCNode(new EsgDCNode(new Esg2charName("DC"), hvdcNodeName2, dcVoltage, 1));
+
+            //create a dc link, representing the hvdc line
+            esgNetwork.addDCLink(new EsgDCLink(hvdcNodeName1, hvdcNodeName2, '1', hvdcLine.getR(), EsgDCLink.LinkStatus.ON));
+
+            //create the two converter stations
+            esgNetwork.addACDCVscConverter(createACDCVscConverter(network.getVscConverterStation(convStation1.getId()), hvdcLine, hvdcNodeName1));
+            esgNetwork.addACDCVscConverter(createACDCVscConverter(network.getVscConverterStation(convStation2.getId()), hvdcLine, hvdcNodeName2));
+        }
+    }
+
+
+    @Override
     public EsgNetwork createNetwork(EsgGeneralParameters parameters) {
 
         EsgNetwork esgNetwork = new EsgNetwork();
@@ -604,6 +767,9 @@ public class EurostagEchExport {
 
         // static VAR compensators
         createStaticVarCompensators(esgNetwork);
+
+        // ACDC VSC Converters
+        createACDCVscConverters(esgNetwork);
 
         // nodes
         createNodes(esgNetwork);

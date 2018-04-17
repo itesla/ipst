@@ -11,6 +11,7 @@ import com.powsybl.iidm.network.util.ConnectedComponents;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.StreamSupport;
 
@@ -182,5 +183,15 @@ public final class EchUtil {
     public static boolean isInMainCc(Branch branch, boolean noswitch) {
         return (ConnectedComponents.getCcNum(EchUtil.getBus(branch.getTerminal1(), noswitch)) == Component.MAIN_NUM)
                 && (ConnectedComponents.getCcNum(EchUtil.getBus(branch.getTerminal2(), noswitch)) == Component.MAIN_NUM);
+    }
+
+    /**
+     * given an iIDM HVDC line , returns its DC voltage to be used with Eurostag
+     * Multiplying  the line's nominalV by 2 corresponds to the fact that iIDM refers to the cable-ground voltage
+     * while Eurostag regulations to the cable-cable voltage
+     */
+    public static float getHvdcLineDcVoltage(HvdcLine line) {
+        Objects.requireNonNull(line);
+        return line.getNominalV() * 2.0f;
     }
 }
