@@ -1,0 +1,152 @@
+/*
+ * Copyright (c) 2018, RTE (http://www.rte-france.com)
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+package eu.itesla_project.case_projector;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.powsybl.ampl.converter.*;
+import com.powsybl.commons.datasource.FileDataSource;
+import com.powsybl.commons.util.StringToIntMapper;
+import com.powsybl.computation.*;
+import com.powsybl.iidm.network.Bus;
+import com.powsybl.iidm.network.Generator;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.Terminal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+
+/**
+ * @author Geoffroy Jamgotchian <geoffroy.jamgotchian@rte-france.com>
+ */
+public final class CaseProjectorUtils {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CaseProjectorUtils.class);
+
+    private static final Set<String> AMPL_MODEL_FILE_NAMES = ImmutableSet.<String>builder()
+            .add("projector.run")
+            .add("projector.mod")
+            .add("projector.dat")
+            .add("projectorOutput.run")
+            .build();
+
+    private static final String WORKING_DIR_PREFIX = "itesla_projector_";
+
+    private static final String AMPL_GENERATORS_DOMAINS_FILE_NAME = "ampl_generators_domains.txt";
+
+    private CaseProjectorUtils() {
+
+    }
+
+    protected static CompletableFuture<Boolean> createAmplTask(ComputationManager computationManager, Network network, String workingStateId, CaseProjectorConfig config, Path generatorsDomains) {
+        return computationManager.execute(new ExecutionEnvironment(ImmutableMap.of("PATH", config.getAmplHomeDir().toString()), WORKING_DIR_PREFIX, config.isDebug()),
+                new AbstractExecutionHandler<Boolean>() {
+
+                    private StringToIntMapper<AmplSubset> mapper;
+
+                    @Override
+                    public List<CommandExecution> before(Path workingDir) throws IOException {
+                        network.getStateManager().setWorkingState(workingStateId);
+
+                        // copy AMPL model
+                        for (String amplModelFileName : AMPL_MODEL_FILE_NAMES) {
+                            Files.copy(getClass().getResourceAsStream("/ampl/projector/" + amplModelFileName), workingDir.resolve(amplModelFileName));
+                        }
+
+                        // copy the generators domains file
+                        Files.copy(generatorsDomains, workingDir.resolve(AMPL_GENERATORS_DOMAINS_FILE_NAME));
+
+                        // write input data
+                        mapper = AmplUtil.createMapper(network);
+                        mapper.dump(workingDir.resolve("mapper.csv"));
+
+                        new AmplNetworkWriter(network,
+                                new FileDataSource(workingDir, "ampl"), // "ampl_network_"
+                                mapper,
+                                new AmplExportConfig(AmplExportConfig.ExportScope.ALL, true, AmplExportConfig.ExportActionType.CURATIVE))
+                                .write();
+
+                        Command command = new SimpleCommandBuilder()
+                                .id("projector")
+                                .program(config.getAmplHomeDir().resolve("ampl").toString())
+                                .args("projector.run")
+                                .build();
+                        return Arrays.asList(new CommandExecution(command, 1, 0));
+                    }
+
+                    @Override
+                    public Boolean after(Path workingDir, ExecutionReport report) throws IOException {
+                        report.log();
+
+                        if (report.getErrors().isEmpty()) {
+                            network.getStateManager().setWorkingState(workingStateId);
+
+                            Map<String, String> metrics = new HashMap<>();
+                            new AmplNetworkReader(new FileDataSource(workingDir, "projector_results"/*"ampl_network_"*/), network, mapper)
+                                    .readGenerators()
+                                    .readMetrics(metrics);
+
+                            LOGGER.debug("Projector metrics: {}", metrics);
+                        }
+
+                        return report.getErrors().isEmpty();
+                    }
+                });
+    }
+
+    protected static class StopException extends RuntimeException {
+        public StopException(String message) {
+            super(message);
+        }
+    }
+
+    protected static void reintegrateLfState(Network network, String workingStateId) {
+        reintegrateLfState(network, workingStateId, false);
+    }
+
+    protected static void reintegrateLfState(Network network, String workingStateId, boolean onlyVoltage) {
+        network.getStateManager().setWorkingState(workingStateId);
+        for (Generator g : network.getGenerators()) {
+            Terminal t = g.getTerminal();
+            if (!onlyVoltage) {
+                if (!Float.isNaN(t.getP())) {
+                    float oldTargetP = g.getTargetP();
+                    float newTargetP = -t.getP();
+                    if (oldTargetP != newTargetP) {
+                        g.setTargetP(newTargetP);
+                        LOGGER.debug("LF result reintegration: targetP {} -> {}", oldTargetP, newTargetP);
+                    }
+                }
+                if (!Float.isNaN(t.getQ())) {
+                    float oldTargetQ = g.getTargetQ();
+                    float newTargetQ = -t.getQ();
+                    if (oldTargetQ != newTargetQ) {
+                        g.setTargetQ(newTargetQ);
+                        LOGGER.debug("LF result reintegration: targetQ {} -> {}", oldTargetQ, newTargetQ);
+                    }
+                }
+            }
+            Bus b = t.getBusView().getBus();
+            if (b != null) {
+                if (!Float.isNaN(b.getV())) {
+                    float oldV = g.getTargetV();
+                    float newV = b.getV();
+                    if (oldV != newV) {
+                        g.setTargetV(newV);
+                        LOGGER.debug("LF result reintegration: targetV {} -> {}", oldV, newV);
+                    }
+                }
+            }
+        }
+    }
+
+}
