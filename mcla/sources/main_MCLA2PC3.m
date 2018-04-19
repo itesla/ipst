@@ -390,7 +390,7 @@ else
                 if opt_sign == 1
                     pres_mcm(:,kRES) = sign(generatore(idx_RESm(kRES)).P).*max(0,sign(generatore(idx_RESm(kRES)).P).*X_NEWm(:,i_RESm(kRES)));
                 else
-                    pres_mcm(:,kRES) = X_NEWm(:,i_RES(kRES));
+                    pres_mcm(:,kRES) = X_NEWm(:,i_RESm(kRES));
                 end
                 pres_mcm(:,kRES) = max(-generatore(idx_RESm(kRES)).Pmax,min(-generatore(idx_RESm(kRES)).Pmin,pres_mcm(:,kRES)));
             end

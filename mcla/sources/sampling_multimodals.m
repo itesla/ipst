@@ -47,8 +47,8 @@ FO=FO1(prese(ii));
 X=[];
 if abs(FO)<=1e-4
     % apply CTG TABLE
-   N_sa_nz = floor(CTG_table(prese(ii),2,1)*Ns/(sum(CTG_table(prese(ii),2,:))));
-   N_sa_z = ceil(CTG_table(prese(ii),2,2)*Ns/(sum(CTG_table(prese(ii),2,:))));
+   N_sa_nz = round(CTG_table(prese(ii),2,1)*Ns/(sum(CTG_table(prese(ii),2,:))));
+   N_sa_z = Ns - N_sa_nz;
 %    try
        if isnan(N_sa_z) ||  isnan(N_sa_nz)
            X = [zeros(Ns,1)];
@@ -69,7 +69,7 @@ else
    
    
    N_sa_nz = round(CTG_table(prese(ii),1,1)*Ns/(sum(CTG_table(prese(ii),1,:))));
-   N_sa_z = round(CTG_table(prese(ii),1,2)*Ns/(sum(CTG_table(prese(ii),1,:))));
+   N_sa_z = Ns - N_sa_nz;
    X = [zeros(N_sa_z,1)];
    obj = BIV_UU{prese(ii)};
    try
