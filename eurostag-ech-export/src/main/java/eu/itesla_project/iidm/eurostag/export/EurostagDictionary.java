@@ -13,6 +13,8 @@ import eu.itesla_project.eurostag.network.Esg8charName;
 import eu.itesla_project.eurostag.network.EsgBranchName;
 import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.util.Identifiables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -30,6 +32,8 @@ import java.util.stream.Collectors;
  *     That mapping will rely in particular on a {@link EurostagNamingStrategy}.
  */
 public final class EurostagDictionary {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(EurostagDictionary.class);
 
     private static final EurostagNamingStrategy NAMING_STRATEGY = new DicoEurostagNamingStrategyFactory().create();
 
@@ -54,16 +58,19 @@ public final class EurostagDictionary {
         Set<String> generatorIds = Identifiables.sort(network.getGenerators()).stream().map(Generator::getId).collect(Collectors.toSet());
         Set<String> shuntIds = Identifiables.sort(network.getShunts()).stream().map(ShuntCompensator::getId).collect(Collectors.toSet());
         Set<String> svcIds = Identifiables.sort(network.getStaticVarCompensators()).stream().map(StaticVarCompensator::getId).collect(Collectors.toSet());
+        Set<String> converterStationsIds = Identifiables.sort(network.getVscConverterStations()).stream().map(VscConverterStation::getId).collect(Collectors.toSet());
 
         NAMING_STRATEGY.fillDictionary(dictionary, EurostagNamingStrategy.NameType.NODE, busIds);
         NAMING_STRATEGY.fillDictionary(dictionary, EurostagNamingStrategy.NameType.GENERATOR, generatorIds);
         NAMING_STRATEGY.fillDictionary(dictionary, EurostagNamingStrategy.NameType.LOAD, loadIds);
         NAMING_STRATEGY.fillDictionary(dictionary, EurostagNamingStrategy.NameType.BANK, shuntIds);
         NAMING_STRATEGY.fillDictionary(dictionary, EurostagNamingStrategy.NameType.SVC, svcIds);
+        NAMING_STRATEGY.fillDictionary(dictionary, EurostagNamingStrategy.NameType.VSC, converterStationsIds);
 
         for (DanglingLine dl : Identifiables.sort(network.getDanglingLines())) {
             // skip if not in the main connected component
             if (config.isExportMainCCOnly() && !EchUtil.isInMainCc(dl, config.isNoSwitch())) {
+                LOGGER.trace("dangling line not mapped, not in main component: {}", dl.getId());
                 continue;
             }
             ConnectionBus bus1 = ConnectionBus.fromTerminal(dl.getTerminal(), config, fakeNodes);
@@ -79,6 +86,7 @@ public final class EurostagDictionary {
                 Bus bus2 = EchUtil.getBus2(vl, sw.getId(), config);
                 // skip switches not in the main connected component
                 if (config.isExportMainCCOnly() && (!EchUtil.isInMainCc(bus1) || !EchUtil.isInMainCc(bus2))) {
+                    LOGGER.trace("switch not mapped, not in main component: {}", sw.getId());
                     continue;
                 }
                 dictionary.addIfNotExist(sw.getId(),
@@ -91,6 +99,7 @@ public final class EurostagDictionary {
         for (Line l : Identifiables.sort(network.getLines())) {
             // skip lines not in the main connected component
             if (config.isExportMainCCOnly() && !EchUtil.isInMainCc(l, config.isNoSwitch())) {
+                LOGGER.trace("line not mapped, not in main component: {}", l.getId());
                 continue;
             }
             ConnectionBus bus1 = ConnectionBus.fromTerminal(l.getTerminal1(), config, fakeNodes);
@@ -104,6 +113,7 @@ public final class EurostagDictionary {
         for (TwoWindingsTransformer twt : Identifiables.sort(network.getTwoWindingsTransformers())) {
             // skip transformers not in the main connected component
             if (config.isExportMainCCOnly() && !EchUtil.isInMainCc(twt, config.isNoSwitch())) {
+                LOGGER.trace("two windings transformer not mapped, not in main component: {}", twt.getId());
                 continue;
             }
             ConnectionBus bus1 = ConnectionBus.fromTerminal(twt.getTerminal1(), config, fakeNodes);
@@ -114,6 +124,7 @@ public final class EurostagDictionary {
         }
 
         for (ThreeWindingsTransformer twt : Identifiables.sort(network.getThreeWindingsTransformers())) {
+            LOGGER.error("NOT YET IMPLEMENTED");
             throw new AssertionError("TODO");
         }
 
@@ -133,7 +144,9 @@ public final class EurostagDictionary {
 
     public void add(String iidmId, String esgId) {
         if (iidmId2esgId.containsKey(iidmId)) {
-            throw new RuntimeException("IIDM id '" + iidmId + "' already exists in the dictionary");
+            String errorMsg = "IIDM id '" + iidmId + "' already exists in the dictionary";
+            LOGGER.error(errorMsg);
+            throw new RuntimeException(errorMsg);
         }
         iidmId2esgId.put(iidmId, esgId);
     }
@@ -141,8 +154,10 @@ public final class EurostagDictionary {
     public void addIfNotExist(String iidmId, String esgId) {
         if (!iidmId2esgId.containsKey(iidmId)) {
             if (iidmId2esgId.inverse().containsKey(esgId)) {
-                throw new RuntimeException("Esg id '" + esgId + "' is already associated to IIDM id '"
-                        + iidmId2esgId.inverse().get(esgId) + "' impossible to associate it to IIDM id '" + iidmId + "'");
+                String errorMsg = "Esg id '" + esgId + "' is already associated to IIDM id '"
+                        + iidmId2esgId.inverse().get(esgId) + "' impossible to associate it to IIDM id '" + iidmId + "'";
+                LOGGER.error(errorMsg);
+                throw new RuntimeException(errorMsg);
             }
             iidmId2esgId.put(iidmId, esgId);
         }
@@ -150,14 +165,18 @@ public final class EurostagDictionary {
 
     public String getEsgId(String iidmId) {
         if (!iidmId2esgId.containsKey(iidmId)) {
-            throw new RuntimeException("IIDM id '" + iidmId + "' + not found in the dictionary");
+            String errorMsg = "IIDM id '" + iidmId + "' + not found in the dictionary";
+            LOGGER.error(errorMsg);
+            throw new RuntimeException(errorMsg);
         }
         return iidmId2esgId.get(iidmId);
     }
 
     public String getIidmId(String esgId) {
         if (!iidmId2esgId.containsValue(esgId)) {
-            throw new RuntimeException("ESG id '" + esgId + "' + not found in the dictionary");
+            String errorMsg = "ESG id '" + esgId + "' + not found in the dictionary";
+            LOGGER.error(errorMsg);
+            throw new RuntimeException(errorMsg);
         }
         return iidmId2esgId.inverse().get(esgId);
     }
@@ -187,6 +206,7 @@ public final class EurostagDictionary {
                 }
             }
         } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
@@ -200,6 +220,7 @@ public final class EurostagDictionary {
                 }
             }
         } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
