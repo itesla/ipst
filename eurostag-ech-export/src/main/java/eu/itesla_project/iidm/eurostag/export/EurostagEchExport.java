@@ -518,12 +518,6 @@ public class EurostagEchExport implements EurostagEchExporter {
                 if (config.isSpecificCompatibility()) {
                     createAdditionalBank(esgNetwork, twt, twt.getTerminal2(), dictionary.getEsgId(bus2.getId()), additionalBanksIds);
                 }
-                //if (twt.getG() < 0) {
-                //    pfer = 0.0f;
-                //}
-                //if (-twt.getB() < 0) {
-                //    cmagn = pfer;
-                //}
             }
 
 
