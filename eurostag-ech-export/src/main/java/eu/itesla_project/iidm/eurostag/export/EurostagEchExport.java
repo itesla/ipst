@@ -207,7 +207,7 @@ public class EurostagEchExport implements EurostagEchExporter {
             ConnectionBus bus2 = ConnectionBus.fromTerminal(l.getTerminal2(), config, fakeNodes);
             if (Math.abs(l.getG1() - l.getG2()) < G_EPSILON
                     && (Math.abs(l.getB1() - l.getB2()) < B_EPSILON
-                       || (Math.abs(l.getG1()) < G_EPSILON && Math.abs(l.getG2()) < G_EPSILON))) {
+                    || (Math.abs(l.getG1()) < G_EPSILON && Math.abs(l.getG2()) < G_EPSILON))) {
                 ConnectionBus bNode = null;
                 float b;
                 float diffB = 0f;
@@ -420,14 +420,16 @@ public class EurostagEchExport implements EurostagEchExporter {
 
             //...mTrans.getR() = Get the nominal series resistance specified in Ω at the secondary voltage side.
             float rpu2 = (twt.getR() * parameters.getSnref()) / nomiU2 / nomiU2;  //...total line resistance  [p.u.](Base snref)
-            float gpu2 = (twt.getG() / parameters.getSnref()) * nomiU2 * nomiU2;  //...semi shunt conductance [p.u.](Base snref)
-            float bpu2 = (twt.getB() / parameters.getSnref()) * nomiU2 * nomiU2;  //...semi shunt susceptance [p.u.](Base snref)
+            float gpu2 = ((config.isSpecificCompatibility() ? twt.getG() / 2 : twt.getG()) / parameters.getSnref()) * nomiU2 * nomiU2;  //...semi shunt conductance [p.u.](Base snref)
+            float bpu2 = ((config.isSpecificCompatibility() ? twt.getB() / 2 : twt.getB()) / parameters.getSnref()) * nomiU2 * nomiU2;  //...semi shunt susceptance [p.u.](Base snref)
+            float gpu2plus = Math.max(0, gpu2);
+            float bpu2minus = Math.min(0, bpu2);
 
             //...changing base snref -> base rate to compute losses
             float pcu = rpu2 * rate * 100f / parameters.getSnref();                  //...base rate (100F -> %)
-            float pfer = 10000f * ((float) Math.sqrt(gpu2) / rate) * (parameters.getSnref() / 100f);  //...base rate
-            float modgb = (float) Math.sqrt(Math.pow(gpu2, 2.f) + Math.pow(bpu2, 2.f));
-            float cmagn = 10000 * (modgb / rate) * (parameters.getSnref() / 100f);  //...magnetizing current [% base rate]
+            float pfer = 10000f * (gpu2plus / rate) * (parameters.getSnref() / 100f);  //...base rate
+            float modgb = (float) Math.sqrt(Math.pow(gpu2plus, 2.f) + Math.pow(bpu2minus, 2.f));
+            float cmagn = 10000f * (modgb / rate) * (parameters.getSnref() / 100f);  //...magnetizing current [% base rate]
             float esat = 1.f;
 
             //***************************
@@ -497,14 +499,14 @@ public class EurostagEchExport implements EurostagEchExporter {
                 float rpu2Adjusted = (tapAdjustedR * parameters.getSnref()) / nomiU2 / nomiU2;
                 pcu = rpu2Adjusted * rate * 100f / parameters.getSnref();
 
-                float tapAdjustedG = getG1(twt);
+                float tapAdjustedG = Math.max(getG1(twt), 0);
                 float gpu2Adjusted = (tapAdjustedG / parameters.getSnref()) * nomiU2 * nomiU2;
-                pfer = 10000f * ((float) Math.sqrt(gpu2Adjusted) / rate) * (parameters.getSnref() / 100f);
+                pfer = 10000f * (gpu2Adjusted / rate) * (parameters.getSnref() / 100f);
 
-                float tapAdjustedB = getB1(twt);
+                float tapAdjustedB = Math.min(getB1(twt), 0);
                 float bpu2Adjusted = (tapAdjustedB / parameters.getSnref()) * nomiU2 * nomiU2;
                 modgb = (float) Math.sqrt(Math.pow(gpu2Adjusted, 2.f) + Math.pow(bpu2Adjusted, 2.f));
-                cmagn = 10000 * (modgb / rate) * (parameters.getSnref() / 100f);
+                cmagn = 10000f * (modgb / rate) * (parameters.getSnref() / 100f);
             }
 
             float pregmin = Float.NaN; //...?
@@ -515,12 +517,6 @@ public class EurostagEchExport implements EurostagEchExporter {
                 createAdditionalBank(esgNetwork, twt, twt.getTerminal1(), dictionary.getEsgId(bus1.getId()), additionalBanksIds);
                 if (config.isSpecificCompatibility()) {
                     createAdditionalBank(esgNetwork, twt, twt.getTerminal2(), dictionary.getEsgId(bus2.getId()), additionalBanksIds);
-                }
-                if (twt.getG() < 0) {
-                    pfer = 0.0f;
-                }
-                if (-twt.getB() < 0) {
-                    cmagn = pfer;
                 }
             }
 
