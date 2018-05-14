@@ -1,17 +1,23 @@
-%
-% Copyright (c) 2016, Ricerca sul Sistema Energetico – RSE S.p.A. <itesla@rse-web.it>
+% 
+% Copyright (c) 2017, RTE (http://www.rte-france.com) and RSE (http://www.rse-web.it) 
 % This Source Code Form is subject to the terms of the Mozilla Public
 % License, v. 2.0. If a copy of the MPL was not distributed with this
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
 %
-
-function exitcode=SAMPLING_MODULE3_HELPER(m1file, ofile, s_scenarios, s_rng_seed)
+% inputs:
+% m1file: output file of module 1
+% ofile: ouput file with unconditioned samples from module 3
+% s_scenario: nr of unconditioned samples genertaed by module 3
+% isdeterministics: deterministic variation of P and Q? yes = 1, no=0
+% 
+function exitcode=SAMPLING_MODULE3_HELPER(m1file, ofile, s_scenarios,isdeterministics,s_rng_seed)
 close all;
-mversion='1.8.0';
+mversion='1.8.2';
 disp(sprintf('wp5 - MCLA - version: %s', mversion));
 disp(sprintf(' m1m2file:  %s',m1file));
 disp(sprintf(' ofile:  %s', ofile));
 disp(sprintf(' unconditioned samples:  %s',s_scenarios));
+disp(sprintf(' isdeterministic:  %s',isdeterministics));
 
 moutput.errmsg='Ok';
 
@@ -21,7 +27,7 @@ load(m1file);
 % s_scenarios: number of samples to generate
 scenarios=str2double(s_scenarios);
 %if seed is not specified, 'shuffle'  on current platform time
-if nargin < 4
+if nargin < 5
     rng('shuffle','twister');
     rng_data = rng;
     disp(sprintf(' rng seed:  not specified, default is shuffle on current platform time'));
@@ -33,24 +39,36 @@ end
 
 disp(sprintf('flagPQ:  %u', out(1).flagPQ));
 disp(['preprocessing: type_x, etc.'])
+isdeterministic = str2double(isdeterministics);
 
 try
     
     for iout = 1:length(out)
         mod_gaussian = out(iout).mod_gaussian;
+        mod_unif = out(iout).mod_unif;
         module1 = out(iout).module1;
         module2 = out(iout).module2;
-        if mod_gaussian == 0
-            [ X_NEW ] = run_module3(module1,module2,scenarios);
-            
+        if mod_gaussian == 0 && mod_unif == 0
+            if isdeterministic
+                module3 = [];
+            else
+                if isempty(module1)==0
+                    scenarios_ = max(scenarios,ceil(100/min([module1.w])));
+                    [ X_NEW ] = run_module3(module1,module2,scenarios_);
             
             module3.X_NEW=X_NEW;
+                else
+                    module3=[];
+                end
+            end
         else
             module3 = [];
         end
         moutput(iout).errmsg='Ok';
         moutput(iout).module1=out(iout).module1;
-        moutput(iout).dati_cond = out(iout).dati_cond;
+        moutput(iout).nation=out(iout).nation;
+        moutput(iout).dati_condUNI = out(iout).dati_condUNI;
+         moutput(iout).dati_condMULTI = out(iout).dati_condMULTI;
         moutput(iout).dati_Q = out(iout).dati_Q;
         moutput(iout).dati_FPF = out(iout).dati_FPF;
         moutput(iout).flagesistenza=out(iout).flagesistenza;
@@ -62,6 +80,9 @@ try
         moutput(iout).maxvalue=out(iout).maxvalue;
         moutput(iout).mversion=out(iout).mversion;
         moutput(iout).mod_gaussian=out(iout).mod_gaussian;
+        moutput(iout).mod_unif=out(iout).mod_unif;
+        moutput(iout).mod_homoth=out(iout).mod_homoth;
+        moutput(iout).mod_deterministic=out(iout).mod_deterministic;
         moutput(iout).conditional_sampling=out(iout).conditional_sampling;
         totmoutput.out(iout) = moutput(iout);
     end
@@ -73,4 +94,4 @@ catch err
     disp(getReport(err,'extended'));
     exitcode=-1;
 end
-save(ofile, '-struct', 'totmoutput');
+save(ofile, '-struct', 'totmoutput','-v7.3');

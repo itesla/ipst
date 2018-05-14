@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
- * Copyright (c) 2016-2017, RTE (http://www.rte-france.com)
+ * Copyright (c) 2016-2018, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -25,7 +25,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /*
-   MCLA code 1.8
+   MCLA code 1.8.1
 */
 /**
  *
@@ -49,10 +49,10 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
     private static final String GUIOUTPUTFILENAME = "feaguioutput.mat";
     private static final String M2OUTPUTFILENAME = M2PATHPREFIX + Command.EXECUTION_NUMBER_PATTERN + MATPATHSUFFIX;
 
-    private static final String WP5_M1 = "wp5fea_m1";
-    private static final String WP5_M2 = "wp5fea_m2";
-    private static final String WP5_M2_REDUCE = "wp5fea_m2_reduce";
-    private static final String WP5_M3_SAMPLING = "wp5fea_m3_sampling";
+    private static final String FEA_M1 = "fea_m1";
+    private static final String FEA_M2 = "fea_m2";
+    private static final String FEA_M2_REDUCE = "fea_m2_reduce";
+    private static final String FEA_M3_SAMPLING = "fea_m3_sampling";
 
 
     private final ComputationManager computationManager;
@@ -95,7 +95,7 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
     public void init(ForecastErrorsAnalyzerParameters parameters) {
         Objects.requireNonNull(parameters, "forecast errors analizer parameters value is null");
         this.parameters = parameters;
-        generatorsIds = NetworkUtils.getRenewableGeneratorsIds(network);
+        generatorsIds = parameters.isAllInjections() ? NetworkUtils.getGeneratorsIds(network) : NetworkUtils.getRenewableGeneratorsIds(network);
         loadsIds = NetworkUtils.getLoadsIds(network);
     }
 
@@ -178,6 +178,7 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
         args1.add("" + parameters.getMethod());
         args1.add("" + config.getTolVar());
         args1.add("" + config.getnMinObsFract());
+        args1.add("" + config.getNnz()); //added in v1.8.1
         args1.add("" + config.getnMinObsInterv());
         args1.add("" + parameters.getOutliers());
         args1.add("" + config.getkOutlier());
@@ -192,21 +193,28 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
         args1.add("" + parameters.getConditionalSampling());
         args1.add("" + config.getHisto_estremeQ()); //added in v1.8
         args1.add("" + config.getThresGUI()); //added in v1.8
-
+        args1.add("" + config.getUnimod()); //added in v1.8.1
+        args1.add("" + config.getModo_inv()); //added in v1.8.1
+        args1.add("" + config.getIsdeterministic()); //added in v1.8.1
+        args1.add("" + config.getIsuniform()); //added in v1.8.1
+        args1.add("" + config.getOpt_GUI()); //added in v1.8.1
+        args1.add("" + config.getOptFPF()); //added in v1.8.2
+        args1.add("" + config.getHomothetic()); //added in v1.8.2
+        args1.add("" + config.getModelConv()); //added in v1.8.3
         if (config.getRngSeed() != null) {
             args1.add(Integer.toString(config.getRngSeed()));
         }
 
-        String wp5M1;
+        String feaM1;
         if (config.getBinariesDir() != null) {
-            wp5M1 = config.getBinariesDir().resolve(WP5_M1).toAbsolutePath().toString();
+            feaM1 = config.getBinariesDir().resolve(FEA_M1).toAbsolutePath().toString();
         } else {
-            wp5M1 = WP5_M1;
+            feaM1 = FEA_M1;
         }
 
         return new SimpleCommandBuilder()
-                .id("wp5_m1")
-                .program(wp5M1)
+                .id("fea_m1")
+                .program(feaM1)
                 .args(args1)
                 .inputFiles(new InputFile(historicalDataMatFile.getFileName().toString()))
                 .outputFiles(new OutputFile(M1OUTPUTFILENAME), new OutputFile(M0OUTPUTFILENAME), new OutputFile(M0OUTPUTFILENAMECSV), new OutputFile(GUIOUTPUTFILENAME))
@@ -214,32 +222,33 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
     }
 
     private Command createMatm2Cmd() {
-        String wp5M2;
+        String feaM2;
         if (config.getBinariesDir() != null) {
-            wp5M2 = config.getBinariesDir().resolve(WP5_M2).toAbsolutePath().toString();
+            feaM2 = config.getBinariesDir().resolve(FEA_M2).toAbsolutePath().toString();
         } else {
-            wp5M2 = WP5_M2;
+            feaM2 = FEA_M2;
         }
         return new SimpleCommandBuilder()
-                .id("wp5_m2")
-                .program(wp5M2)
+                .id("fea_m2")
+                .program(feaM2)
                 .args(M1OUTPUTFILENAME,
                         M2OUTPUTFILENAME,
                         Command.EXECUTION_NUMBER_PATTERN,
                         // ""+parameters.getModalityGaussian(), removed in v1.8
                         "" + parameters.getIr(),
-                        "" + config.gettFlags())
+                        "" + config.gettFlags(),
+                        "" + config.getIsdeterministic()) //added in v1.8.1
                 .inputFiles(new InputFile(M1OUTPUTFILENAME))
                 .outputFiles(new OutputFile(M2OUTPUTFILENAME))
                 .build();
     }
 
     private Command createMatm2reduceCmd() {
-        String wp5M2Reduce;
+        String feaM2Reduce;
         if (config.getBinariesDir() != null) {
-            wp5M2Reduce = config.getBinariesDir().resolve(WP5_M2_REDUCE).toAbsolutePath().toString();
+            feaM2Reduce = config.getBinariesDir().resolve(FEA_M2_REDUCE).toAbsolutePath().toString();
         } else {
-            wp5M2Reduce = WP5_M2_REDUCE;
+            feaM2Reduce = FEA_M2_REDUCE;
         }
         List<InputFile> m2partsfiles = new ArrayList<InputFile>(parameters.getnClusters() + 1);
         m2partsfiles.add(new InputFile(M1OUTPUTFILENAME));
@@ -247,8 +256,8 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
             m2partsfiles.add(new InputFile(M2PATHPREFIX + i + MATPATHSUFFIX));
         }
         return new SimpleCommandBuilder()
-                .id("wp5_m2_reduce")
-                .program(wp5M2Reduce)
+                .id("fea_m2_reduce")
+                .program(feaM2Reduce)
                 .args(M1OUTPUTFILENAME, ".",
                         M2PATHPREFIX,
                         "" + parameters.getnClusters(),
@@ -256,37 +265,44 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
                         //  ""+parameters.getModalityGaussian(),  removed in v1.8
                         "" + config.getPercpuGaussLoad(),
                         "" + config.getPercpuGaussRes(),
-                        "" + config.getCorrelationGauss())
+                        "" + config.getCorrelationGauss(),
+                        "" + config.getIsdeterministic(), //added in v1.8.1
+                        "" + config.getPload_deterministic(), //added in v1.8.1
+                        "" + config.getQload_deterministic(), //added in v1.8.1
+                        "" + config.getBand_uniformPL(), //added in v1.8.1
+                        "" + config.getBand_uniformQL(), //added in v1.8.1
+                        "" + config.getBand_uniformPGEN(), //added in v1.8.1
+                        "" + config.getCorrelation_fict_uniform()) //added in v1.8.1
                 .inputFiles(m2partsfiles)
                 .outputFiles(new OutputFile(FEAOUTPUTFILENAME))
                 .build();
     }
 
     private Command createMatm3Cmd() {
-        String wp5M3;
+        String feaM3;
         if (config.getBinariesDir() != null) {
-            wp5M3 = config.getBinariesDir().resolve(WP5_M3_SAMPLING).toAbsolutePath().toString();
+            feaM3 = config.getBinariesDir().resolve(FEA_M3_SAMPLING).toAbsolutePath().toString();
         } else {
-            wp5M3 = WP5_M3_SAMPLING;
+            feaM3 = FEA_M3_SAMPLING;
         }
         List<String> args1 = new ArrayList<>();
         args1.add(FEAOUTPUTFILENAME);
         args1.add(FEASAMPLERFILENAME);
         args1.add("" + parameters.getnSamples());
+        args1.add("" + config.getIsdeterministic()); //added in v1.8.1
         if (config.getRngSeed() != null) {
             args1.add(Integer.toString(config.getRngSeed()));
         }
 
         return new SimpleCommandBuilder()
-                .id(WP5_M3_SAMPLING)
-                .program(wp5M3)
+                .id(FEA_M3_SAMPLING)
+                .program(feaM3)
                 .args(args1)
                 .inputFiles(new InputFile(FEAOUTPUTFILENAME))
                 .outputFiles(new OutputFile(FEASAMPLERFILENAME))
                 .build();
 
     }
-
 
 
     private Map<String, String> createEnv() {

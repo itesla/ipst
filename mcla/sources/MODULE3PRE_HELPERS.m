@@ -4,7 +4,6 @@
 % License, v. 2.0. If a copy of the MPL was not distributed with this
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
 %
-
 function exitcode = MODULE3PRE_HELPERS(opath1, ofile, K_s, NSam_s, s_rng_seed_s)
 disp('wp4.1 - pre - module3 - v6.4');
 disp(sprintf(' opath1: %s', opath1));

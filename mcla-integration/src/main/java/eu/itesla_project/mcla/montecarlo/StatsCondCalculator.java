@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
- * Copyright (c) 2016, RTE (http://www.rte-france.com)
+ * Copyright (c) 2016-2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -35,7 +35,7 @@ public class StatsCondCalculator {
     private static final String MCSINPUTFILEPREFIX = "mcsamplerinput_";
     private static final String MCSOUTPUTFILENAME = "mcsampleroutput.mat";
     private static final String FPFFORECASTERRORSFILENAME = "fea_stats_cond_for_FPF.mat";
-    private static final String WP5_FPF = "wp5fpf";
+    private static final String WP5_FPF = "fpf";
 
     private final ComputationManager computationManager;
     private final ForecastErrorsDataStorage forecastErrorsDataStorage;
@@ -139,6 +139,11 @@ public class StatsCondCalculator {
         args1.add(localForecastErrorsDataFile.toAbsolutePath().toString());
         args1.add(localNetworkDataMatFile.toAbsolutePath().toString());
         args1.add(FPFFORECASTERRORSFILENAME);
+        args1.add("" + config.getIsdeterministic()); //added in v1.8.1
+        args1.add("" + config.getIsuniform()); //added in v1.8.1
+        args1.add("" + config.getHomothetic()); //added in v1.8.2
+        args1.add("" + config.getOptFPF()); //added in v1.8.2
+
         if (config.getRngSeed() != null) {
             args1.add(Integer.toString(config.getRngSeed()));
         }
@@ -152,7 +157,6 @@ public class StatsCondCalculator {
                 .outputFiles(new OutputFile(MCSOUTPUTFILENAME), new OutputFile(MCSOUTPUTFILENAME + ".csv"))
                 .build();
     }
-
 
 
 }

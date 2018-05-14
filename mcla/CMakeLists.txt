@@ -23,141 +23,176 @@ set(MATLAB_WARNING_OPTIONS
 	enable:demo_license
 )
 
-set(WP5FEA_M1_SOURCES
-	sources/FEA_MODULE1_HELPER.m 
-	sources/analysis.m 
-	sources/bisection.m 
-	sources/carica_DB.m 
-	sources/check_distrizuione.m 
-	sources/chi_pval.m 
-	sources/closest_corr.m 
-	sources/conditional_samps.m 
-	sources/copulaName.m 
-	sources/copulachoose.m 
-	sources/datacorrige2.m 
-	sources/estract_cdf.m 
-	sources/funzioneB.m 
-	sources/funzione.m 
-	sources/gausmix3.m 
-	sources/gaussian_conditional.m 
-	sources/gaussian_mixture.m 
-	sources/h_gumbel.m 
-	sources/h_inv_ex.m 
-	sources/h_inv.m 
-	sources/h.m 
-	sources/h_pit.m 
-	sources/inversion_with_verify2.m 
-	sources/invfunzioneB.m 
-	sources/licols.m 
-	sources/main.m 
-	sources/main_MCLA2PC3.m 
-	sources/map_ecdf.m 
-	sources/MCLA_HELPER.m 
-	sources/mod_data.m 
-	sources/modelSummary.m 
-	sources/modR.m 
-	sources/MODULE0.m 
-	sources/MODULE1_HELPER.m 
-	sources/MODULE1_HELPERS.m 
-	sources/MODULE1.m 
-	sources/MODULE2_HELPER.m 
-	sources/MODULE2_HELPERS.m 
-	sources/MODULE2.m 
-	sources/MODULE2_OUTPUT2.m 
-	sources/MODULE2_OUTPUT.m 
+set(FEA_M1_SOURCES
+	sources/FEA_MODULE1_HELPER.m
+	sources/analysis.m
+	sources/BestFit.m
+	sources/BimodalTest.m
+	sources/bisection.m
+	sources/carica_DB.m
+	sources/check_distrizuione.m
+	sources/ChoosingOutliers.m
+	sources/chi_pval.m
+	sources/closest_corr.m
+	sources/conditional_samps_correl_opt.m
+	sources/copulaName.m
+	sources/copulachoose.m
+	sources/datacorrige2.m
+	sources/estract_cdf.m
+	sources/FILTERFOREC.m
+	sources/find_unimodals.m
+	sources/findpeaks.m
+	sources/funzioneB.m
+	sources/funzione.m
+	sources/gausmix3.m
+	sources/gaussian_conditional.m
+	sources/gaussian_mixture.m
+	sources/h_gumbel.m
+	sources/h_inv_ex.m
+	sources/h_inv.m
+	sources/h.m
+	sources/h_pit.m
+	sources/inversion_with_verify2.m
+	sources/inversione_ncond.m
+	sources/invfunzioneB.m
+	sources/licols.m
+	sources/main.m
+	sources/main_det_var.m
+	sources/main_MCLA2PC3.m
+	sources/Management_variables.m
+	sources/map_ecdf.m
+	sources/MCLA_HELPER.m
+	sources/mod_data.m
+	sources/modelSummary.m
+	sources/modR.m
+	sources/MODULE0.m
+	sources/MODULE1_HELPER.m
+	sources/MODULE1_HELPERS.m
+	sources/MODULE1.m
+	sources/MODULE2_HELPER.m
+	sources/MODULE2_HELPERS.m
+	sources/MODULE2.m
+	sources/MODULE2_OUTPUT2.m
+	sources/MODULE2_OUTPUT.m
 	sources/MODULE3_HELPER.m
-	sources/MODULE3_HELPERS.m 
-	sources/MODULE3.m 
-	sources/MODULE3PRE_HELPERS.m 
-	sources/MODULE3_SINGLE.m 
-	sources/modU.m 
-	sources/new_method_imputation4.m 
-	sources/new_method_imputation.m 
-	sources/NEW_PIT.m 
-	sources/pictures.m 
-	sources/rand_gen.m 
-	sources/run_module3.m 
-	sources/sQuantile.m 
-	sources/stimaposdef.m 
-	sources/testfilterings2.m 
+	sources/MODULE3_HELPERS.m
+	sources/MODULE3.m
+	sources/MODULE3PRE_HELPERS.m
+	sources/MODULE3_SINGLE.m
+	sources/modU.m
+	sources/multimodal_treatment.m
+	sources/Multimodality.m
+	sources/new_method_imputation4.m
+	sources/new_method_imputation.m
+	sources/NEW_PIT.m
+	sources/Outliers.m
+	sources/pictures.m
+	sources/rand_gen.m
+	sources/run_module3.m
+	sources/sampling_multimodals.m
+	sources/sQuantile.m
+	sources/stimaposdef.m
+	sources/TestDistrib.m
+	sources/testfilterings2.m
 	sources/trova_closest.m
 )
-add_matlab_executable(wp5fea_m1 "${WP5FEA_M1_SOURCES}")
+add_matlab_executable(fea_m1 "${FEA_M1_SOURCES}")
 
-set(WP5FEA_M2_SOURCES
-	sources/FEA_MODULE2_HELPER.m 
-	sources/analysis.m 
-	sources/bisection.m 
-	sources/carica_DB.m 
-	sources/check_distrizuione.m 
-	sources/chi_pval.m 
-	sources/closest_corr.m 
-	sources/conditional_samps.m 
-	sources/copulaName.m 
-	sources/copulachoose.m 
-	sources/datacorrige2.m 
-	sources/estract_cdf.m 
-	sources/funzioneB.m 
-	sources/funzione.m 
-	sources/gausmix3.m 
-	sources/gaussian_conditional.m 
-	sources/gaussian_mixture.m 
-	sources/h_gumbel.m 
-	sources/h_inv_ex.m 
-	sources/h_inv.m 
-	sources/h.m 
-	sources/h_pit.m 
-	sources/inversion_with_verify2.m 
-	sources/invfunzioneB.m 
-	sources/licols.m 
-	sources/main.m 
-	sources/main_MCLA2PC3.m 
-	sources/map_ecdf.m 
-	sources/MCLA_HELPER.m 
-	sources/mod_data.m 
-	sources/modelSummary.m 
-	sources/modR.m 
-	sources/MODULE0.m 
-	sources/MODULE1_HELPER.m 
-	sources/MODULE1_HELPERS.m 
-	sources/MODULE1.m 
-	sources/MODULE2_HELPER.m 
-	sources/MODULE2_HELPERS.m 
-	sources/MODULE2.m 
-	sources/MODULE2_OUTPUT2.m 
-	sources/MODULE2_OUTPUT.m 
+set(FEA_M2_SOURCES
+	sources/FEA_MODULE2_HELPER.m
+	sources/analysis.m
+	sources/BestFit.m
+	sources/BimodalTest.m
+	sources/bisection.m
+	sources/carica_DB.m
+	sources/check_distrizuione.m
+	sources/ChoosingOutliers.m
+	sources/chi_pval.m
+	sources/closest_corr.m
+	sources/conditional_samps_correl_opt.m
+	sources/copulaName.m
+	sources/copulachoose.m
+	sources/datacorrige2.m
+	sources/estract_cdf.m
+	sources/FILTERFOREC.m
+	sources/find_unimodals.m
+	sources/findpeaks.m
+	sources/funzioneB.m
+	sources/funzione.m
+	sources/gausmix3.m
+	sources/gaussian_conditional.m
+	sources/gaussian_mixture.m
+	sources/h_gumbel.m
+	sources/h_inv_ex.m
+	sources/h_inv.m
+	sources/h.m
+	sources/h_pit.m
+	sources/inversion_with_verify2.m
+	sources/inversione_ncond.m
+	sources/invfunzioneB.m
+	sources/licols.m
+	sources/main.m
+	sources/main_det_var.m
+	sources/main_MCLA2PC3.m
+	sources/Management_variables.m
+	sources/map_ecdf.m
+	sources/MCLA_HELPER.m
+	sources/mod_data.m
+	sources/modelSummary.m
+	sources/modR.m
+	sources/MODULE0.m
+	sources/MODULE1_HELPER.m
+	sources/MODULE1_HELPERS.m
+	sources/MODULE1.m
+	sources/MODULE2_HELPER.m
+	sources/MODULE2_HELPERS.m
+	sources/MODULE2.m
+	sources/MODULE2_OUTPUT2.m
+	sources/MODULE2_OUTPUT.m
 	sources/MODULE3_HELPER.m
-	sources/MODULE3_HELPERS.m 
-	sources/MODULE3.m 
-	sources/MODULE3PRE_HELPERS.m 
-	sources/MODULE3_SINGLE.m 
-	sources/modU.m 
-	sources/new_method_imputation4.m 
-	sources/new_method_imputation.m 
-	sources/NEW_PIT.m 
-	sources/pictures.m 
-	sources/rand_gen.m 
-	sources/run_module3.m 
-	sources/sQuantile.m 
-	sources/stimaposdef.m 
-	sources/testfilterings2.m 
+	sources/MODULE3_HELPERS.m
+	sources/MODULE3.m
+	sources/MODULE3PRE_HELPERS.m
+	sources/MODULE3_SINGLE.m
+	sources/modU.m
+	sources/multimodal_treatment.m
+	sources/Multimodality.m
+	sources/new_method_imputation4.m
+	sources/new_method_imputation.m
+	sources/NEW_PIT.m
+	sources/Outliers.m
+	sources/pictures.m
+	sources/rand_gen.m
+	sources/run_module3.m
+	sources/sampling_multimodals.m
+	sources/sQuantile.m
+	sources/stimaposdef.m
+	sources/TestDistrib.m
+	sources/testfilterings2.m
 	sources/trova_closest.m
-)
-add_matlab_executable(wp5fea_m2 "${WP5FEA_M2_SOURCES}")
 
-set(WP5FEA_M2_REDUCE_SOURCES
+)
+add_matlab_executable(fea_m2 "${FEA_M2_SOURCES}")
+
+set(FEA_M2_REDUCE_SOURCES
 	sources/FEA_MODULE2_REDUCE_HELPER.m
 	sources/analysis.m
+	sources/BestFit.m
+	sources/BimodalTest.m
 	sources/bisection.m
 	sources/carica_DB.m
 	sources/check_distrizuione.m
+	sources/ChoosingOutliers.m
 	sources/chi_pval.m
 	sources/closest_corr.m
-	sources/conditional_samps.m
+	sources/conditional_samps_correl_opt.m
 	sources/copulaName.m
 	sources/copulachoose.m
 	sources/datacorrige2.m
 	sources/estract_cdf.m
+	sources/FILTERFOREC.m
+	sources/find_unimodals.m
+	sources/findpeaks.m
 	sources/funzioneB.m
 	sources/funzione.m
 	sources/gausmix3.m
@@ -169,10 +204,13 @@ set(WP5FEA_M2_REDUCE_SOURCES
 	sources/h.m
 	sources/h_pit.m
 	sources/inversion_with_verify2.m
+	sources/inversione_ncond.m
 	sources/invfunzioneB.m
 	sources/licols.m
 	sources/main.m
+	sources/main_det_var.m
 	sources/main_MCLA2PC3.m
+	sources/Management_variables.m
 	sources/map_ecdf.m
 	sources/MCLA_HELPER.m
 	sources/mod_data.m
@@ -193,32 +231,43 @@ set(WP5FEA_M2_REDUCE_SOURCES
 	sources/MODULE3PRE_HELPERS.m
 	sources/MODULE3_SINGLE.m
 	sources/modU.m
+	sources/multimodal_treatment.m
+	sources/Multimodality.m
 	sources/new_method_imputation4.m
 	sources/new_method_imputation.m
 	sources/NEW_PIT.m
+	sources/Outliers.m
 	sources/pictures.m
 	sources/rand_gen.m
 	sources/run_module3.m
+	sources/sampling_multimodals.m
 	sources/sQuantile.m
 	sources/stimaposdef.m
+	sources/TestDistrib.m
 	sources/testfilterings2.m
 	sources/trova_closest.m
 )
-add_matlab_executable(wp5fea_m2_reduce "${WP5FEA_M2_REDUCE_SOURCES}")
+add_matlab_executable(fea_m2_reduce "${FEA_M2_REDUCE_SOURCES}")
 
-set(WP5FEA_M3_SAMPLING_SOURCES
+set(FEA_M3_SAMPLING_SOURCES
 	sources/SAMPLING_MODULE3_HELPER.m
 	sources/analysis.m
+	sources/BestFit.m
+	sources/BimodalTest.m
 	sources/bisection.m
 	sources/carica_DB.m
 	sources/check_distrizuione.m
+	sources/ChoosingOutliers.m
 	sources/chi_pval.m
 	sources/closest_corr.m
-	sources/conditional_samps.m
+	sources/conditional_samps_correl_opt.m
 	sources/copulaName.m
 	sources/copulachoose.m
 	sources/datacorrige2.m
 	sources/estract_cdf.m
+	sources/FILTERFOREC.m
+	sources/find_unimodals.m
+	sources/findpeaks.m
 	sources/funzioneB.m
 	sources/funzione.m
 	sources/gausmix3.m
@@ -230,10 +279,13 @@ set(WP5FEA_M3_SAMPLING_SOURCES
 	sources/h.m
 	sources/h_pit.m
 	sources/inversion_with_verify2.m
+	sources/inversione_ncond.m
 	sources/invfunzioneB.m
 	sources/licols.m
 	sources/main.m
+	sources/main_det_var.m
 	sources/main_MCLA2PC3.m
+	sources/Management_variables.m
 	sources/map_ecdf.m
 	sources/MCLA_HELPER.m
 	sources/mod_data.m
@@ -254,32 +306,43 @@ set(WP5FEA_M3_SAMPLING_SOURCES
 	sources/MODULE3PRE_HELPERS.m
 	sources/MODULE3_SINGLE.m
 	sources/modU.m
+	sources/multimodal_treatment.m
+	sources/Multimodality.m
 	sources/new_method_imputation4.m
 	sources/new_method_imputation.m
 	sources/NEW_PIT.m
+	sources/Outliers.m
 	sources/pictures.m
 	sources/rand_gen.m
 	sources/run_module3.m
+	sources/sampling_multimodals.m
 	sources/sQuantile.m
 	sources/stimaposdef.m
+	sources/TestDistrib.m
 	sources/testfilterings2.m
 	sources/trova_closest.m
 )
-add_matlab_executable(wp5fea_m3_sampling "${WP5FEA_M3_SAMPLING_SOURCES}")
+add_matlab_executable(fea_m3_sampling "${FEA_M3_SAMPLING_SOURCES}")
 
-set(WP5MCLA_SOURCES
+set(MCLA_SOURCES
 	sources/MCLA_HELPER.m
 	sources/analysis.m
+	sources/BestFit.m
+	sources/BimodalTest.m
 	sources/bisection.m
 	sources/carica_DB.m
 	sources/check_distrizuione.m
+	sources/ChoosingOutliers.m
 	sources/chi_pval.m
 	sources/closest_corr.m
-	sources/conditional_samps.m
+	sources/conditional_samps_correl_opt.m
 	sources/copulaName.m
 	sources/copulachoose.m
 	sources/datacorrige2.m
 	sources/estract_cdf.m
+	sources/FILTERFOREC.m
+	sources/find_unimodals.m
+	sources/findpeaks.m
 	sources/funzioneB.m
 	sources/funzione.m
 	sources/gausmix3.m
@@ -291,10 +354,13 @@ set(WP5MCLA_SOURCES
 	sources/h.m
 	sources/h_pit.m
 	sources/inversion_with_verify2.m
+	sources/inversione_ncond.m
 	sources/invfunzioneB.m
 	sources/licols.m
 	sources/main.m
+	sources/main_det_var.m
 	sources/main_MCLA2PC3.m
+	sources/Management_variables.m
 	sources/map_ecdf.m
 	sources/MCLA_HELPER.m
 	sources/mod_data.m
@@ -315,32 +381,43 @@ set(WP5MCLA_SOURCES
 	sources/MODULE3PRE_HELPERS.m
 	sources/MODULE3_SINGLE.m
 	sources/modU.m
+	sources/multimodal_treatment.m
+	sources/Multimodality.m
 	sources/new_method_imputation4.m
 	sources/new_method_imputation.m
 	sources/NEW_PIT.m
+	sources/Outliers.m
 	sources/pictures.m
 	sources/rand_gen.m
 	sources/run_module3.m
+	sources/sampling_multimodals.m
 	sources/sQuantile.m
 	sources/stimaposdef.m
+	sources/TestDistrib.m
 	sources/testfilterings2.m
 	sources/trova_closest.m
 )
-add_matlab_executable(wp5mcla "${WP5MCLA_SOURCES}")
+add_matlab_executable(mcla "${MCLA_SOURCES}")
 
-set(WP5FPF_SOURCES
+set(FPF_SOURCES
 	sources/FPF_HELPER.m
 	sources/analysis.m
+	sources/BestFit.m
+	sources/BimodalTest.m
 	sources/bisection.m
 	sources/carica_DB.m
 	sources/check_distrizuione.m
+	sources/ChoosingOutliers.m
 	sources/chi_pval.m
 	sources/closest_corr.m
-	sources/conditional_samps.m
+	sources/conditional_samps_correl_opt.m
 	sources/copulaName.m
 	sources/copulachoose.m
 	sources/datacorrige2.m
 	sources/estract_cdf.m
+	sources/FILTERFOREC.m
+	sources/find_unimodals.m
+	sources/findpeaks.m
 	sources/funzioneB.m
 	sources/funzione.m
 	sources/gausmix3.m
@@ -352,10 +429,13 @@ set(WP5FPF_SOURCES
 	sources/h.m
 	sources/h_pit.m
 	sources/inversion_with_verify2.m
+	sources/inversione_ncond.m
 	sources/invfunzioneB.m
 	sources/licols.m
 	sources/main.m
+	sources/main_det_var.m
 	sources/main_MCLA2PC3.m
+	sources/Management_variables.m
 	sources/map_ecdf.m
 	sources/MCLA_HELPER.m
 	sources/mod_data.m
@@ -376,26 +456,31 @@ set(WP5FPF_SOURCES
 	sources/MODULE3PRE_HELPERS.m
 	sources/MODULE3_SINGLE.m
 	sources/modU.m
+	sources/multimodal_treatment.m
+	sources/Multimodality.m
 	sources/new_method_imputation4.m
 	sources/new_method_imputation.m
 	sources/NEW_PIT.m
+	sources/Outliers.m
 	sources/pictures.m
 	sources/rand_gen.m
 	sources/run_module3.m
+	sources/sampling_multimodals.m
 	sources/sQuantile.m
 	sources/stimaposdef.m
+	sources/TestDistrib.m
 	sources/testfilterings2.m
 	sources/trova_closest.m
 )
-add_matlab_executable(wp5fpf "${WP5FPF_SOURCES}")
+add_matlab_executable(fpf "${FPF_SOURCES}")
 
-add_custom_target(mcla ALL
+add_custom_target(mcla_target ALL
      COMMENT "building MCLA matlab binaries to ${EXECUTABLE_OUTPUT_PATH}"
-     DEPENDS wp5fea_m1 wp5fea_m2 wp5fea_m2_reduce wp5fea_m3_sampling wp5mcla wp5fpf
-     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/wp5fea_m1 ${EXECUTABLE_OUTPUT_PATH}
-     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/wp5fea_m2 ${EXECUTABLE_OUTPUT_PATH}
-     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/wp5fea_m2_reduce ${EXECUTABLE_OUTPUT_PATH}
-     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/wp5fea_m3_sampling ${EXECUTABLE_OUTPUT_PATH}
-     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/wp5mcla ${EXECUTABLE_OUTPUT_PATH}
-     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/wp5fpf ${EXECUTABLE_OUTPUT_PATH}
+     DEPENDS fea_m1 fea_m2 fea_m2_reduce fea_m3_sampling mcla fpf
+     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/fea_m1 ${EXECUTABLE_OUTPUT_PATH}
+     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/fea_m2 ${EXECUTABLE_OUTPUT_PATH}
+     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/fea_m2_reduce ${EXECUTABLE_OUTPUT_PATH}
+     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/fea_m3_sampling ${EXECUTABLE_OUTPUT_PATH}
+     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/mcla ${EXECUTABLE_OUTPUT_PATH}
+     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/fpf ${EXECUTABLE_OUTPUT_PATH}
 )

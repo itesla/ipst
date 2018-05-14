@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
- * Copyright (c) 2017, RTE (http://www.rte-france.com)
+ * Copyright (c) 2017-2018, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -35,11 +35,12 @@ public class ForecastErrorsAnalyzerParameters {
     private final Integer outliers;
     private final Integer conditionalSampling;
     private final Integer nSamples;
-
+    private final boolean allInjections;
 
     public ForecastErrorsAnalyzerParameters(Interval histoInterval, String feAnalysisId, double ir, Integer flagPQ,
                                             Integer method, Integer nClusters, double percentileHistorical,
-                                             Integer modalityGaussian, Integer outliers, Integer conditionalSampling, Integer nSamples) {
+                                            Integer modalityGaussian, Integer outliers, Integer conditionalSampling,
+                                            Integer nSamples, boolean allInjections) {
         this.histoInterval = histoInterval;
         this.feAnalysisId = feAnalysisId;
         this.ir = ir;
@@ -51,6 +52,7 @@ public class ForecastErrorsAnalyzerParameters {
         this.outliers = outliers;
         this.conditionalSampling = conditionalSampling;
         this.nSamples = nSamples;
+        this.allInjections = allInjections;
     }
 
     public Interval getHistoInterval() {
@@ -97,6 +99,10 @@ public class ForecastErrorsAnalyzerParameters {
         return nSamples;
     }
 
+    public boolean isAllInjections() {
+        return allInjections;
+    }
+
     public void toFile(Path file) throws FileNotFoundException, IOException {
         Properties properties = new Properties();
         try (OutputStream output = new FileOutputStream(file.toFile())) {
@@ -111,6 +117,7 @@ public class ForecastErrorsAnalyzerParameters {
             properties.setProperty("outliers", Integer.toString(outliers));
             properties.setProperty("conditionalSampling", Integer.toString(conditionalSampling));
             properties.setProperty("nSamples", Integer.toString(nSamples));
+            properties.setProperty("allInjections", Boolean.toString(allInjections));
             properties.store(output, null);
         }
     }
@@ -130,7 +137,8 @@ public class ForecastErrorsAnalyzerParameters {
                     Integer.parseInt(properties.getProperty("modalityGaussian")),
                     Integer.parseInt(properties.getProperty("outliers")),
                     Integer.parseInt(properties.getProperty("conditionalSampling")),
-                    Integer.parseInt((properties.getProperty("nSamples") != null) ? properties.getProperty("nSamples") : "-1")
+                    Integer.parseInt((properties.getProperty("nSamples") != null) ? properties.getProperty("nSamples") : "-1"),
+                    properties.containsKey("allInjections") ? Boolean.parseBoolean(properties.getProperty("allInjections")) : false
             );
         }
     }
@@ -148,7 +156,8 @@ public class ForecastErrorsAnalyzerParameters {
                 + "modalityGaussian=" + modalityGaussian + ","
                 + "outliers=" + outliers + ","
                 + "conditionalSampling=" + conditionalSampling + ","
-                + "nSamples=" + nSamples
+                + "nSamples=" + nSamples + ","
+                + "allInjections=" + allInjections
                 + "]";
     }
 

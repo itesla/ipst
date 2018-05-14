@@ -106,7 +106,7 @@ public class CreateMclaMat implements Tool {
     }
 
     private void createMat(Network network, Path outputFolder) throws IOException {
-        System.out.println("creating mat file for network" + network.getId());
+        System.out.println("creating mat file for network " + network.getId());
         ArrayList<String> generatorsIds = NetworkUtils.getGeneratorsIds(network);
         ArrayList<String> loadsIds = NetworkUtils.getLoadsIds(network);
         SamplingNetworkData samplingNetworkData = new SamplingDataCreator(network, generatorsIds, loadsIds).createSamplingNetworkData();

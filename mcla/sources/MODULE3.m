@@ -1,12 +1,12 @@
 %
-% Copyright (c) 2016, Ioannis Konstantelos <i.konstantelos@imperial.ac.uk>
+% Copyright (c) 2017, Ioannis Konstantelos <i.konstantelos@imperial.ac.uk>
 % and Mingyang Sun <mingyang.sun11@imperial.ac.uk> – Imperial College London,
 % Ricerca sul Sistema Energetico – RSE S.p.A. <itesla@rse-web.it>
 % This Source Code Form is subject to the terms of the Mozilla Public
 % License, v. 2.0. If a copy of the MPL was not distributed with this
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
 %
-
+%
 function [Y_c ] = MODULE3( MOD1, module2, NSam_c,quale)
 %--------------------------------------------------------------
 % MODULE3 samples NSam_c samples from the truncated C-Vine model of module2
