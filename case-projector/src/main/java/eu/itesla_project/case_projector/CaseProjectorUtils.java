@@ -16,6 +16,9 @@ import com.powsybl.iidm.network.Bus;
 import com.powsybl.iidm.network.Generator;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.Terminal;
+import com.powsybl.loadflow.LoadFlow;
+import com.powsybl.loadflow.LoadFlowParameters;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 /**
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian@rte-france.com>
@@ -43,11 +47,16 @@ public final class CaseProjectorUtils {
 
     private static final String AMPL_GENERATORS_DOMAINS_FILE_NAME = "ampl_generators_domains.txt";
 
+    private static final LoadFlowParameters LOAD_FLOW_PARAMETERS = LoadFlowParameters.load();
+
+    private static final LoadFlowParameters LOAD_FLOW_PARAMETERS2 = LoadFlowParameters.load().setNoGeneratorReactiveLimits(true);
+
+
     private CaseProjectorUtils() {
 
     }
 
-    protected static CompletableFuture<Boolean> createAmplTask(ComputationManager computationManager, Network network, String workingStateId, CaseProjectorConfig config, Path generatorsDomains) {
+    protected static CompletableFuture<Boolean> createAmplTask(ComputationManager computationManager, Network network, String workingStateId, CaseProjectorConfig config) {
         return computationManager.execute(new ExecutionEnvironment(ImmutableMap.of("PATH", config.getAmplHomeDir().toString()), WORKING_DIR_PREFIX, config.isDebug()),
                 new AbstractExecutionHandler<Boolean>() {
 
@@ -63,7 +72,7 @@ public final class CaseProjectorUtils {
                         }
 
                         // copy the generators domains file
-                        Files.copy(generatorsDomains, workingDir.resolve(AMPL_GENERATORS_DOMAINS_FILE_NAME));
+                        Files.copy(config.getGeneratorsDomainsFile(), workingDir.resolve(AMPL_GENERATORS_DOMAINS_FILE_NAME));
 
                         // write input data
                         mapper = AmplUtil.createMapper(network);
@@ -108,6 +117,38 @@ public final class CaseProjectorUtils {
             super(message);
         }
     }
+
+    protected static CompletableFuture<Boolean> project(ComputationManager computationManager, Network network, LoadFlow loadFlow, String workingStateId, CaseProjectorConfig config) throws Exception {
+        return loadFlow.runAsync(workingStateId, LOAD_FLOW_PARAMETERS)
+                .thenComposeAsync(loadFlowResult -> {
+                    LOGGER.debug("Pre-projector load flow metrics: {}", loadFlowResult.getMetrics());
+                    if (!loadFlowResult.isOk()) {
+                        throw new StopException("Pre-projector load flow diverged");
+                    }
+                    return createAmplTask(computationManager, network, workingStateId, config);
+                }, computationManager.getExecutor())
+                .thenComposeAsync(ok -> {
+                    if (!Boolean.TRUE.equals(ok)) {
+                        throw new StopException("Projector failed");
+                    }
+                    return loadFlow.runAsync(workingStateId, LOAD_FLOW_PARAMETERS2);
+                }, computationManager.getExecutor())
+                .thenApplyAsync(loadFlowResult -> {
+                    LOGGER.debug("Post-projector load flow metrics: {}", loadFlowResult.getMetrics());
+                    if (!loadFlowResult.isOk()) {
+                        throw new StopException("Post-projector load flow diverged");
+                    }
+                    CaseProjectorUtils.reintegrateLfState(network, workingStateId);
+                    return Boolean.TRUE;
+                }, computationManager.getExecutor())
+                .exceptionally(throwable -> {
+                    if (!(throwable instanceof CompletionException && throwable.getCause() instanceof StopException)) {
+                        LOGGER.error(throwable.toString(), throwable);
+                    }
+                    return Boolean.FALSE;
+                });
+    }
+
 
     protected static void reintegrateLfState(Network network, String workingStateId) {
         reintegrateLfState(network, workingStateId, false);

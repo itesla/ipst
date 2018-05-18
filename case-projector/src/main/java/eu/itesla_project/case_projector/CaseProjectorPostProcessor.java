@@ -9,7 +9,6 @@ package eu.itesla_project.case_projector;
 
 import com.google.auto.service.AutoService;
 import com.powsybl.commons.config.ComponentDefaultConfig;
-import com.powsybl.commons.config.ModuleConfig;
 import com.powsybl.commons.config.PlatformConfig;
 import com.powsybl.computation.ComputationManager;
 import com.powsybl.iidm.import_.ImportPostProcessor;
@@ -19,10 +18,6 @@ import com.powsybl.loadflow.LoadFlowFactory;
 import com.powsybl.loadflow.LoadFlowParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.nio.file.Path;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 
 /**
  * implements post processor 'case-proj'.
@@ -44,9 +39,6 @@ public class CaseProjectorPostProcessor implements ImportPostProcessor {
 
     private final CaseProjectorConfig config;
 
-    private final Path generatorsDomains;
-
-
     public CaseProjectorPostProcessor() {
         this(PlatformConfig.defaultConfig());
     }
@@ -56,9 +48,6 @@ public class CaseProjectorPostProcessor implements ImportPostProcessor {
         loadFlowFactory = defaultConfig.newFactoryImpl(LoadFlowFactory.class);
         loadFlowParameters = new LoadFlowParameters(LoadFlowParameters.VoltageInitMode.UNIFORM_VALUES);
         config = CaseProjectorConfig.load();
-        //retrieve the generators domains file from the caseProjector config section
-        ModuleConfig config = platformConfig.getModuleConfig("caseProjector");
-        generatorsDomains = config.getPathProperty("generatorsDomainsFile");
     }
 
     @Override
@@ -69,43 +58,7 @@ public class CaseProjectorPostProcessor implements ImportPostProcessor {
     @Override
     public void process(Network network, ComputationManager computationManager) throws Exception {
         LoadFlow loadFlow = loadFlowFactory.create(network, computationManager, 0);
-        project(computationManager, network, loadFlow, network.getStateManager().getWorkingStateId()).join();
+        CaseProjectorUtils.project(computationManager, network, loadFlow, network.getStateManager().getWorkingStateId(), config).join();
     }
-
-    private static final LoadFlowParameters LOAD_FLOW_PARAMETERS = LoadFlowParameters.load();
-
-    private static final LoadFlowParameters LOAD_FLOW_PARAMETERS2 = LoadFlowParameters.load().setNoGeneratorReactiveLimits(true);
-
-    public CompletableFuture<Boolean> project(ComputationManager computationManager, Network network, LoadFlow loadFlow, String workingStateId) throws Exception {
-        return loadFlow.runAsync(workingStateId, LOAD_FLOW_PARAMETERS)
-                .thenComposeAsync(loadFlowResult -> {
-                    LOGGER.debug("Pre-projector load flow metrics: {}", loadFlowResult.getMetrics());
-                    if (!loadFlowResult.isOk()) {
-                        throw new CaseProjectorUtils.StopException("Pre-projector load flow diverged");
-                    }
-                    return CaseProjectorUtils.createAmplTask(computationManager, network, workingStateId, config, generatorsDomains);
-                }, computationManager.getExecutor())
-                .thenComposeAsync(ok -> {
-                    if (!Boolean.TRUE.equals(ok)) {
-                        throw new CaseProjectorUtils.StopException("Projector failed");
-                    }
-                    return loadFlow.runAsync(workingStateId, LOAD_FLOW_PARAMETERS2);
-                }, computationManager.getExecutor())
-                .thenApplyAsync(loadFlowResult -> {
-                    LOGGER.debug("Post-projector load flow metrics: {}", loadFlowResult.getMetrics());
-                    if (!loadFlowResult.isOk()) {
-                        throw new CaseProjectorUtils.StopException("Post-projector load flow diverged");
-                    }
-                    CaseProjectorUtils.reintegrateLfState(network, workingStateId);
-                    return Boolean.TRUE;
-                }, computationManager.getExecutor())
-                .exceptionally(throwable -> {
-                    if (!(throwable instanceof CompletionException && throwable.getCause() instanceof CaseProjectorUtils.StopException)) {
-                        LOGGER.error(throwable.toString(), throwable);
-                    }
-                    return Boolean.FALSE;
-                });
-    }
-
 
 }
