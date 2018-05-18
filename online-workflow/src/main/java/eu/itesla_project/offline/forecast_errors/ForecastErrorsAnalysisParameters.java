@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2018, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -71,6 +72,7 @@ public class ForecastErrorsAnalysisParameters implements Serializable {
 
     public static final Set<Country> DEFAULT_COUNTRIES = EnumSet.of(Country.FR);
     public static final CaseType DEFAULT_CASE_TYPE = CaseType.FO;
+    public static final boolean DEFAULT_ALL_INJECTIONS = false;
 
     private final DateTime baseCaseDate;
     private final Interval histoInterval;
@@ -86,10 +88,11 @@ public class ForecastErrorsAnalysisParameters implements Serializable {
     private final Integer nSamples;
     private final Set<Country> countries;
     private final CaseType caseType;
+    private final boolean allInjections;
 
     public ForecastErrorsAnalysisParameters(DateTime baseCaseDate, Interval histoInterval, String feAnalysisId, double ir, Integer flagPQ,
                                             Integer method, Integer nClusters, double percentileHistorical, Integer modalityGaussian, Integer outliers,
-                                            Integer conditionalSampling, Integer nSamples, Set<Country> countries, CaseType caseType) {
+                                            Integer conditionalSampling, Integer nSamples, Set<Country> countries, CaseType caseType, boolean allInjections) {
         this.baseCaseDate = baseCaseDate;
         this.histoInterval = histoInterval;
         this.feAnalysisId = feAnalysisId;
@@ -104,6 +107,7 @@ public class ForecastErrorsAnalysisParameters implements Serializable {
         this.nSamples = nSamples;
         this.countries = countries;
         this.caseType = caseType;
+        this.allInjections = allInjections;
     }
 
     public static ForecastErrorsAnalysisParameters load() {
@@ -123,9 +127,10 @@ public class ForecastErrorsAnalysisParameters implements Serializable {
         Integer nSamples = config.getIntProperty("nSamples");
         Set<Country> countries = config.getEnumSetProperty("countries", Country.class, DEFAULT_COUNTRIES);
         CaseType caseType = config.getEnumProperty("caseType", CaseType.class, DEFAULT_CASE_TYPE);
+        boolean allInjections = config.getBooleanProperty("all-injections", DEFAULT_ALL_INJECTIONS);
 
         return new ForecastErrorsAnalysisParameters(baseCaseDate, histoInterval, feAnalysisId, ir, flagPQ, method, nClusters, percentileHistorical,
-                                                    modalityGaussian, outliers, conditionalSampling, nSamples, countries, caseType);
+                                                    modalityGaussian, outliers, conditionalSampling, nSamples, countries, caseType, allInjections);
     }
 
     public DateTime getBaseCaseDate() {
@@ -184,6 +189,10 @@ public class ForecastErrorsAnalysisParameters implements Serializable {
         return caseType;
     }
 
+    public boolean isAllInjections() {
+        return allInjections;
+    }
+
     @Override
     public String toString() {
         return "ForecastErrorsAnalsysParameters [baseCaseDate=" + baseCaseDate
@@ -200,6 +209,7 @@ public class ForecastErrorsAnalysisParameters implements Serializable {
                 + ", nSamples=" + nSamples
                 + ", countries=" + countries
                 + ", caseType=" + caseType
+                + ", allInjections=" + allInjections
                 + "]";
     }
 

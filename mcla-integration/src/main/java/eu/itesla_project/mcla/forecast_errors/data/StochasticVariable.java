@@ -18,6 +18,7 @@ public class StochasticVariable {
 
     public static final String TYPE_SOLAR_GENERATOR = "solar";
     public static final String TYPE_WIND_GENERATOR = "wind";
+    public static final String TYPE_DISPATCHABLE_GENERATOR = "dispatchable";
     public static final String TYPE_LOAD = "load";
 
     final String id;

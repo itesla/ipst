@@ -160,7 +160,7 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
 
     @Override
     public String startProcess(String name, String owner, DateTime date, DateTime creationDate,
-            OnlineWorkflowStartParameters start, OnlineWorkflowParameters params, DateTime[] basecases)
+            OnlineWorkflowStartParameters start, OnlineWorkflowParameters params, DateTime[] basecases, int numThreads)
                     throws Exception {
         Objects.requireNonNull(date);
         Objects.requireNonNull(creationDate);
@@ -171,13 +171,26 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
         String processId = DateTimeFormat.forPattern("yyyyMMddHHmmSSS").print(new DateTime());
         LOGGER.info("Starting process: " + processId);
         OnlineProcess proc = new OnlineProcess(processId, name, owner, params.getCaseType().toString(), date, creationDate);
-        for (DateTime bcase : basecases) {
-            params.setBaseCaseDate(bcase);
-            String id = startWorkflow(start, params);
-            org.joda.time.format.DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
-            String basecaseString = fmt.print(bcase);
-            proc.addWorkflow(basecaseString, id);
+
+        ExecutorService taskExecutor = Executors.newFixedThreadPool(numThreads);
+        List<Callable<Void>> tasks = new ArrayList<>(numThreads);
+
+        for (DateTime basecase : basecases) {
+            tasks.add(new Callable() {
+                @Override
+                public Object call() throws Exception {
+                    OnlineWorkflowParameters pars = new OnlineWorkflowParameters(basecase, params.getStates(), params.getHistoInterval(), params.getOfflineWorkflowId(), params.getTimeHorizon(), params.getFeAnalysisId(), params.getRulesPurityThreshold(), params.storeStates(), params.analyseBasecase(), params.validation(), params.getSecurityIndexes(), params.getCaseType(), params.getCountries(), params.isMergeOptimized(), params.getLimitReduction(), params.isHandleViolationsInN(), params.getConstraintMargin());
+                    String workflowId = startWorkflow(start, pars);
+                    org.joda.time.format.DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
+                    String basecaseString = fmt.print(basecase);
+                    proc.addWorkflow(basecaseString, workflowId);
+                    return workflowId;
+                } });
+
         }
+        taskExecutor.invokeAll(tasks);
+        taskExecutor.shutdown();
+
         onlineDb.storeProcess(proc);
         LOGGER.info("End of process: " + processId);
         return processId;

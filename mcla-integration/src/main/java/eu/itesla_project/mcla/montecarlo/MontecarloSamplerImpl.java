@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
- * Copyright (c) 2016, RTE (http://www.rte-france.com)
+ * Copyright (c) 2016-2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -39,7 +39,7 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
     private static final String MCSINPUTFILEPREFIX = "mcsamplerinput_";
     private static final String MCSOUTPUTFILENAME = "mcsampleroutput.mat";
     private static final String MCS_CSV_OUTPUTFILENAME = "printSamples.csv";
-    private static final String WP5_MCLA = "wp5mcla";
+    private static final String MCLA = "mcla";
 
     private final ComputationManager computationManager;
     private final ForecastErrorsDataStorage forecastErrorsDataStorage;
@@ -65,7 +65,7 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
         Objects.requireNonNull(computationManager, "computationManager is null");
         Objects.requireNonNull(forecastErrorsDataStorage, "forecast errors data storage is null");
         Objects.requireNonNull(config, "config is null");
-        LOGGER.info(config.toString());
+        LOGGER.info("Network {}: {}", network.getId(), config.toString());
         this.network = network;
         this.computationManager = computationManager;
         this.forecastErrorsDataStorage = forecastErrorsDataStorage;
@@ -99,10 +99,10 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
             throw new Exception("Montecarlo sampler not ready to be used: No forecast offline samples data available, for " + network.getId() + " network, " + timeHorizon.getName() + " time horizon.");
         }
         feaParams = forecastErrorsDataStorage.getParameters(feAnalysisId, timeHorizon);
-        LOGGER.info("forecast errors analysis - Id: {},  time horizon: {}, number of samples available: {}, number of samples requested: {}.", feAnalysisId, timeHorizon.getName(), feaParams.getnSamples(), nSamples);
+        LOGGER.info("Network {}: forecast errors analysis - Id: {},  time horizon: {}, number of samples available: {}, number of samples requested: {}.", network.getId(), feAnalysisId, timeHorizon.getName(), feaParams.getnSamples(), nSamples);
         if ((nSamples <= 0) || (nSamples > feaParams.getnSamples())) {
-            LOGGER.error("Not enough/incorrect number of samples available from FEA ( id {}, time horizon {} ): requested {} samples, available {} samples", feAnalysisId, timeHorizon.getName(), nSamples, feaParams.getnSamples());
-            throw new Exception("Not enough/incorrect number of samples available from FEA (Id: " + feAnalysisId + ", time horizon: " + timeHorizon.getName() + "): requested " + nSamples + " samples, available " + feaParams.getnSamples() + " samples.");
+            LOGGER.error("Network {}: Not enough/incorrect number of samples available from FEA ( id {}, time horizon {} ): requested {} samples, available {} samples", network.getId(), feAnalysisId, timeHorizon.getName(), nSamples, feaParams.getnSamples());
+            throw new Exception("Network " + network.getId() + ": Not enough/incorrect number of samples available from FEA (Id: " + feAnalysisId + ", time horizon: " + timeHorizon.getName() + "): requested " + nSamples + " samples, available " + feaParams.getnSamples() + " samples.");
         }
         // I put the generators and loads in a specific order, the same used when producing the matrix of historical data,
         // for the forecast errors analysis
@@ -130,15 +130,15 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
 
     private synchronized SampleData nextSample() throws Exception {
         if (currentSampleIndex == -1) {
-            LOGGER.info("Executing Montecarlo sampler, getting {} samples", nSamples);
+            LOGGER.info("Network {}: executing Montecarlo sampler, getting {} samples", network.getId(), nSamples);
             sampledData = runMontecarloSampler();
         }
         currentSampleIndex++;
         if (currentSampleIndex >= nSamples) {
-            LOGGER.error("reached max number of samples: {} - FEA id: {}", feaParams.getnSamples(), feaParams.getFeAnalysisId());
-            throw new Exception("reached max number of samples: " + feaParams.getnSamples() + " - FEA id: " + feaParams.getFeAnalysisId());
+            LOGGER.error("Network {}: reached max number of samples: {} - FEA id: {}", network.getId(), feaParams.getnSamples(), feaParams.getFeAnalysisId());
+            throw new Exception("Network " + network.getId() + ": reached max number of samples: " + feaParams.getnSamples() + " - FEA id: " + feaParams.getFeAnalysisId());
         }
-        LOGGER.debug(" -> current sample index: " + currentSampleIndex);
+        LOGGER.debug("Network {} -> current sample index: {}", network.getId(), currentSampleIndex);
         float[] generatorsActivePower = null;
         if (sampledData.getGeneratorsActivePower() != null) {
             generatorsActivePower = Utils.toFloatArray(sampledData.getGeneratorsActivePower()[currentSampleIndex]);
@@ -160,18 +160,23 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
                 createEnv(), WORKING_DIR_PREFIX, config.isDebug())) {
 
             final Path workingDir = executor.getWorkingDir();
-            // put mat files in working dir
-            Path localForecastOfflineSamplesDataFile = Paths.get(workingDir.toString(), MCSINPUTFILEPREFIX + "forecast_offline_samples_" + timeHorizon.getLabel() + ".mat");
-            forecastErrorsDataStorage.getForecastOfflineSamplesFile(feAnalysisId, timeHorizon, localForecastOfflineSamplesDataFile);
+            // put mat file(s) in working dir
+            Path forecastOfflineSamplesDataFile = null;
+            if (config.isCopyFEFile()) {
+                forecastOfflineSamplesDataFile = Paths.get(workingDir.toString(), MCSINPUTFILEPREFIX + "forecast_offline_samples_" + timeHorizon.getLabel() + ".mat");
+                forecastErrorsDataStorage.getForecastOfflineSamplesFile(feAnalysisId, timeHorizon, forecastOfflineSamplesDataFile);
+            } else {
+                forecastOfflineSamplesDataFile = forecastErrorsDataStorage.getForecastOfflineSamplesFilePath(feAnalysisId, timeHorizon);
+            }
             Path localNetworkDataMatFile = Paths.get(workingDir.toString(), MCSINPUTFILEPREFIX + network.getId().replaceAll(" ", "_") + ".mat");
             Files.copy(networkDataMatFile, localNetworkDataMatFile);
 
             LOGGER.info("Running montecarlo sampler on {} network, asking for {} samples", network.getId(), nSamples);
-            Command cmd = createCommand(localForecastOfflineSamplesDataFile, localNetworkDataMatFile);
+            Command cmd = createCommand(forecastOfflineSamplesDataFile, localNetworkDataMatFile);
             ExecutionReport report = executor.start(new CommandExecution(cmd, 1, Integer.MAX_VALUE));
             report.log();
 
-            LOGGER.debug("Retrieving sampling results from file {}", MCSOUTPUTFILENAME);
+            LOGGER.debug("Network {}: retrieving sampling results from file {}", network.getId(), MCSOUTPUTFILENAME);
             SampledData sampledData = new MCSMatFileReader(workingDir.resolve(MCSOUTPUTFILENAME)).getSampledData();
             return sampledData;
         }
@@ -187,28 +192,39 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
     }
 
 
-    private Command createCommand(Path localForecastErrorsDataFile, Path localNetworkDataMatFile) {
+    private Command createCommand(Path forecastErrorsDataFile, Path localNetworkDataMatFile) {
         List<String> args1 = new ArrayList<>();
-        args1.add(localNetworkDataMatFile.toAbsolutePath().toString());
-        args1.add(localForecastErrorsDataFile.toAbsolutePath().toString());
+        args1.add(localNetworkDataMatFile.getFileName().toString());
+        args1.add(config.isCopyFEFile() ? forecastErrorsDataFile.getFileName().toString() : forecastErrorsDataFile.toAbsolutePath().toString());
         args1.add(MCSOUTPUTFILENAME);
         args1.add("" + nSamples);
         args1.add("" + config.getOptionSign());
         args1.add("" + config.getCentering());
+        args1.add("" + config.getFull_dependence()); //added in v1.8.1
 
-        return new SimpleCommandBuilder()
-                .id("matmcs")
-                .program(config.getBinariesDir().resolve(WP5_MCLA).toAbsolutePath().toString())
-                .args(args1)
-                .inputFiles(new InputFile(localNetworkDataMatFile.getFileName().toString()),
-                        new InputFile(localForecastErrorsDataFile.getFileName().toString()))
-                .outputFiles(new OutputFile(MCSOUTPUTFILENAME),  new OutputFile(MCS_CSV_OUTPUTFILENAME))
-                .build();
+        if (config.isCopyFEFile()) {
+            return new SimpleCommandBuilder()
+                    .id("matmcs")
+                    .program(config.getBinariesDir().resolve(MCLA).toAbsolutePath().toString())
+                    .args(args1)
+                    .inputFiles(new InputFile(localNetworkDataMatFile.getFileName().toString()),
+                                new InputFile(forecastErrorsDataFile.getFileName().toString()))
+                    .outputFiles(new OutputFile(MCSOUTPUTFILENAME), new OutputFile(MCS_CSV_OUTPUTFILENAME))
+                    .build();
+        } else {
+            return new SimpleCommandBuilder()
+                    .id("matmcs")
+                    .program(config.getBinariesDir().resolve(MCLA).toAbsolutePath().toString())
+                    .args(args1)
+                    .inputFiles(new InputFile(localNetworkDataMatFile.getFileName().toString()))
+                    .outputFiles(new OutputFile(MCSOUTPUTFILENAME), new OutputFile(MCS_CSV_OUTPUTFILENAME))
+                    .build();
+        }
     }
 
     private void putSampleDataIntoNetwork(SampleData sample) {
         LOGGER.debug("Storing new sample in the working state {} of {} network", network.getStateManager().getWorkingStateId(), network.getId());
-        LOGGER.debug("connected network generators = " + connectedGeneratorsIds.size() + " - sampled generators = " + sample.getGeneratorsActivePower().length);
+        LOGGER.debug("Network {}: connected network generators = {} - sampled generators = {}", network.getId(), connectedGeneratorsIds.size(), sample.getGeneratorsActivePower().length);
         float qThreshold = 1000;
         float totalPGenBS = 0;
         float totalPGenAS = 0;
@@ -224,26 +240,26 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
                 float oldActivePower = network.getGenerator(generatorId).getTerminal().getP();
                 totalPGenBS += oldActivePower;
                 totalPGenAS += newActivePower;
-                LOGGER.debug("{}: generator {} - P:{} -> P:{} - limits[{},{}]",
-                        network.getStateManager().getWorkingStateId(), generatorId, oldActivePower, newActivePower,
+                LOGGER.debug("Network {} state {}: generator {} - P:{} -> P:{} - limits[{},{}]",
+                        network.getId(), network.getStateManager().getWorkingStateId(), generatorId, oldActivePower, newActivePower,
                         network.getGenerator(generatorId).getMinP(), network.getGenerator(generatorId).getMaxP());
                 if (network.getGenerator(generatorId).getMaxP() < -newActivePower) {
-                    LOGGER.warn("{}: generator {} - new P ({}) > max P ({})",
-                            network.getStateManager().getWorkingStateId(), generatorId, -newActivePower, network.getGenerator(generatorId).getMaxP());
+                    LOGGER.warn("Network {} state {}: generator {} - new P ({}) > max P ({})",
+                            network.getId(), network.getStateManager().getWorkingStateId(), generatorId, -newActivePower, network.getGenerator(generatorId).getMaxP());
                 }
                 if (network.getGenerator(generatorId).getMinP() > -newActivePower) {
-                    LOGGER.warn("{}: generator {} - new P ({}) < min P ({})",
-                            network.getStateManager().getWorkingStateId(), generatorId, -newActivePower, network.getGenerator(generatorId).getMinP());
+                    LOGGER.warn("Network {} state {}: generator {} - new P ({}) < min P ({})",
+                            network.getId(), network.getStateManager().getWorkingStateId(), generatorId, -newActivePower, network.getGenerator(generatorId).getMinP());
                 }
                 if (!Float.isNaN(newActivePower)) {
                     network.getGenerator(generatorId).setTargetP(-newActivePower);
                     network.getGenerator(generatorId).getTerminal().setP(newActivePower);
                 } else {
-                    LOGGER.debug("{}: new sampled P for generator {} is NaN: skipping assignment", network.getStateManager().getWorkingStateId(), generatorId);
+                    LOGGER.debug("Network {} state {}: new sampled P for generator {} is NaN: skipping assignment", network.getId(), network.getStateManager().getWorkingStateId(), generatorId);
                 }
             }
         }
-        LOGGER.debug("connected network loads = " + connectedLoadsIds.size() + " - sampled loads = [" + sample.getLoadsActivePower().length + "," + sample.getLoadsReactivePower().length + "]");
+        LOGGER.debug("Network {}: connected network loads = {} - sampled loads = [{},{}]", network.getId(), connectedLoadsIds.size(), sample.getLoadsActivePower().length, sample.getLoadsReactivePower().length);
         if (sample.getLoadsActivePower() != null || sample.getLoadsReactivePower() != null) {
             for (int i = 0; i < connectedLoadsIds.size(); i++) {
                 String loadId = connectedLoadsIds.get(i);
@@ -253,12 +269,12 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
                     float oldActivePower = network.getLoad(loadId).getTerminal().getP();
                     totalPLoadBS += oldActivePower;
                     totalPLoadAS += newActivePower;
-                    LOGGER.debug("{}: load {} - P:{} -> P:{} ", network.getStateManager().getWorkingStateId(), loadId, oldActivePower, newActivePower);
+                    LOGGER.debug("Network {} state {}: load {} - P:{} -> P:{} ", network.getId(), network.getStateManager().getWorkingStateId(), loadId, oldActivePower, newActivePower);
                     if (!Float.isNaN(newActivePower)) {
                         network.getLoad(loadId).setP0(newActivePower);
                         network.getLoad(loadId).getTerminal().setP(newActivePower);
                     } else {
-                        LOGGER.debug("{}: new sampled P for load {} is NaN: skipping assignment", network.getStateManager().getWorkingStateId(), loadId);
+                        LOGGER.debug("Network {} state {}: new sampled P for load {} is NaN: skipping assignment", network.getId(), network.getStateManager().getWorkingStateId(), loadId);
                     }
                 }
                 if (sample.getLoadsReactivePower() != null) {
@@ -270,23 +286,23 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
                     // it is necessary to have consistent data (to make the load flow converge) when Q is computed based on P
                     if (Math.abs(newReactivePower) <= qThreshold) {
                         totalQLoadAS += newReactivePower;
-                        LOGGER.debug("{}: load {} - Q:{} -> Q:{} ", network.getStateManager().getWorkingStateId(), loadId, oldReactivePower, newReactivePower);
+                        LOGGER.debug("Network {} state {}: load {} - Q:{} -> Q:{} ", network.getId(), network.getStateManager().getWorkingStateId(), loadId, oldReactivePower, newReactivePower);
                         if (!Float.isNaN(newReactivePower)) {
                             network.getLoad(loadId).setQ0(newReactivePower);
                             network.getLoad(loadId).getTerminal().setQ(newReactivePower);
                         } else {
-                            LOGGER.debug("{}: new sampled Q for load {} is NaN: skipping assignment", network.getStateManager().getWorkingStateId(), loadId);
+                            LOGGER.debug("Network {} state {}: new sampled Q for load {} is NaN: skipping assignment", network.getId(), network.getStateManager().getWorkingStateId(), loadId);
                         }
                     } else {
                         totalQLoadAS += oldReactivePower;
-                        LOGGER.warn("{}: load {} - |new Q({})| > {}: skipping assignment and keeping old Q({})",
-                                network.getStateManager().getWorkingStateId(), loadId, newReactivePower, qThreshold, oldReactivePower);
+                        LOGGER.warn("Network {} state {}: load {} - |new Q({})| > {}: skipping assignment and keeping old Q({})",
+                                network.getId(), network.getStateManager().getWorkingStateId(), loadId, newReactivePower, qThreshold, oldReactivePower);
                     }
                 }
             }
         }
-        LOGGER.debug("{}: gen total P:{} -> total P:{} ", network.getStateManager().getWorkingStateId(), totalPGenBS, totalPGenAS);
-        LOGGER.debug("{}: load total P:{} -> total P:{} ", network.getStateManager().getWorkingStateId(), totalPLoadBS, totalPLoadAS);
-        LOGGER.debug("{}: load total Q:{} -> total Q:{} ", network.getStateManager().getWorkingStateId(), totalQLoadBS, totalQLoadAS);
+        LOGGER.debug("Network {} state {}: gen total P:{} -> total P:{} ", network.getId(), network.getStateManager().getWorkingStateId(), totalPGenBS, totalPGenAS);
+        LOGGER.debug("Network {} state {}: load total P:{} -> total P:{} ", network.getId(), network.getStateManager().getWorkingStateId(), totalPLoadBS, totalPLoadAS);
+        LOGGER.debug("Network {} state {}: load total Q:{} -> total Q:{} ", network.getId(), network.getStateManager().getWorkingStateId(), totalQLoadBS, totalQLoadAS);
     }
 }

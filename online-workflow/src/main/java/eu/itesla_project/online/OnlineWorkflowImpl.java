@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
- * Copyright (c) 2016, RTE (http://www.rte-france.com)
+ * Copyright (c) 2016-2018, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -70,7 +70,8 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
     private final MergeOptimizerFactory mergeOptimizerFactory;
     private final RulesFacadeFactory rulesFacadeFactory;
     private final OnlineWorkflowStartParameters startParameters;
-    private String id;
+    private final String id;
+    private final String logHeader;
 
     public OnlineWorkflowImpl(
             ComputationManager computationManager,
@@ -133,8 +134,9 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
             this.parameters.setCountries(network.getCountries());
             this.parameters.setCaseType((network.getForecastDistance() == 0) ? CaseType.SN : CaseType.FO);
         }
-        this.id = DateTimeFormat.forPattern("yyyyMMdd_HHmm_").print(this.parameters.getBaseCaseDate()) + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
-        logger.info(this.parameters.toString());
+        this.id = DateTimeFormat.forPattern("yyyyMMdd_HHmm_").print(OnlineUtils.toCetDate(this.parameters.getBaseCaseDate())) + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
+        this.logHeader = " [WorkflowId=" + id + "] ";
+        logger.info(this.logHeader + this.parameters.toString());
     }
 
     /* (non-Javadoc)
@@ -150,7 +152,7 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
      */
     @Override
     public void start(OnlineWorkflowContext oCtx) throws Exception {
-        logger.info("{} Online workflow processing, started.", id);
+        logger.info(this.logHeader + "Online workflow processing, started.");
         for (OnlineApplicationListener l : listeners) {
             l.onWorkflowUpdate(new StatusSynthesis(id, WorkflowStatusEnum.RUNNING));
         }
@@ -166,8 +168,8 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
                     loadFlowFactory, 0, mergeOptimizerFactory, computationManager, parameters.isMergeOptimized());
         }
 
-        logger.info("- Network id: " + network.getId());
-        logger.info("- Network name: " + network.getName());
+        logger.info(this.logHeader + "- Network id: " + network.getId());
+        logger.info(this.logHeader + "- Network name: " + network.getName());
 
         // needed in order to correctly handle multithreading access to network
         network.getStateManager().allowStateMultiThreadAccess(true);
@@ -186,7 +188,7 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
             oCtx.setWcaSecurityRulesResults(new SecurityRulesApplicationResults(this.getId(), oCtx.getTimeHorizon()));
         }
 
-        logger.info(" - WCA processing......");
+        logger.info(this.logHeader + " - WCA processing......");
         for (OnlineApplicationListener l : listeners) {
             l.onWcaUpdate(new RunningSynthesis(id, true));
         }
@@ -202,7 +204,7 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
         // ArrayList<String> stables = new ArrayList<String>();
 
         for (WCACluster cluster : result.getClusters()) {
-            logger.info("WCA: contingency {} in cluster {}", cluster.getContingency().getId(), cluster.getNum().toString());
+            logger.info(this.logHeader + "WCA: contingency {} in cluster {}", cluster.getContingency().getId(), cluster.getNum().toString());
             oCtx.getWcaResults().addContingencyWithCluster(cluster.getContingency().getId(), cluster);
             if (parameters.validation()) { // if validation
                 // do not filter out the contingencies
@@ -222,7 +224,7 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
         }
 
 
-        logger.info("{} Online workflow - Analysis of states, started.", id);
+        logger.info(this.logHeader + "{} Online workflow - Analysis of states, started.", id);
 
         // create modules used in the states analysis
         MontecarloSampler sampler = montecarloSamplerFactory.create(oCtx.getNetwork(), computationManager, feDataStorage);
@@ -265,13 +267,13 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
         ExecutorService taskExecutor = Executors.newFixedThreadPool(startParameters.getThreads());
         taskExecutor.invokeAll(tasks);
         taskExecutor.shutdown();
-        logger.info("{} Online workflow - Analysis of states, terminated.", id);
+        logger.info(this.logHeader + "{} Online workflow - Analysis of states, terminated.", id);
 
-        logger.info("{} Online workflow processing, terminated.", id);
+        logger.info(this.logHeader + "{} Online workflow processing, terminated.", id);
 
-        logger.info("WCA Results:\n" + oCtx.getWcaResults().toString());
-        logger.info("Security Rules Application Results:\n" + oCtx.getSecurityRulesResults().toString());
-        logger.info("Results:\n" + oCtx.getResults().toString());
+        logger.info(this.logHeader + "WCA Results:\n" + oCtx.getWcaResults().toString());
+        logger.info(this.logHeader + "Security Rules Application Results:\n" + oCtx.getSecurityRulesResults().toString());
+        logger.info(this.logHeader + "Results:\n" + oCtx.getResults().toString());
 
         for (OnlineApplicationListener l : listeners) {
             l.onWorkflowUpdate(new StatusSynthesis(id, WorkflowStatusEnum.DONE));

@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -14,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.nio.file.Path;
 import java.util.Objects;
 /*
-   MCLA code 1.8
+   MCLA code 1.8.1
 */
 
 /**
@@ -46,6 +47,22 @@ public class ForecastErrorsAnalyzerConfig {
     private final double histo_estremeQ;
     private final double thresGUI;
     private final String nats;
+    private final double nnz;
+    private final Integer unimod;
+    private final Integer modo_inv;
+    private final Integer isdeterministic;
+    private final Integer isuniform;
+    private final Integer opt_GUI;
+    private final double Pload_deterministic;
+    private final double Qload_deterministic;
+    private final double band_uniformPL;
+    private final double band_uniformQL;
+    private final double band_uniformPGEN;
+    private final Integer correlation_fict_uniform;
+    private final Integer optFPF;
+    private final Integer homothetic;
+    private final Integer modelConv;
+
 
     public ForecastErrorsAnalyzerConfig(
             Path binariesDir,
@@ -68,6 +85,21 @@ public class ForecastErrorsAnalyzerConfig {
             double histoEstremeQ,
             double thresGUI,
             String nats,
+            double nnz,
+            Integer unimod,
+            Integer modoInv,
+            Integer isdeterministic,
+            Integer isuniform,
+            Integer optGUI,
+            double pLoadDeterministic,
+            double qLoadDeterministic,
+            double bandUniformPL,
+            double bandUniformQL,
+            double bandUniformPGEN,
+            Integer correlationFictUniform,
+            Integer optFPF,
+            Integer homothetic,
+            Integer modelConv,
             Integer rngSeed,
             boolean debug
     ) {
@@ -96,6 +128,21 @@ public class ForecastErrorsAnalyzerConfig {
         this.thresGUI = thresGUI;
         this.nats = nats;
         this.debug = debug;
+        this.nnz = nnz;
+        this.unimod = unimod;
+        this.modo_inv = modoInv;
+        this.isdeterministic = isdeterministic;
+        this.isuniform = isuniform;
+        this.opt_GUI = optGUI;
+        this.Pload_deterministic = pLoadDeterministic;
+        this.Qload_deterministic = qLoadDeterministic;
+        this.band_uniformPL = bandUniformPL;
+        this.band_uniformQL = bandUniformQL;
+        this.band_uniformPGEN = bandUniformPGEN;
+        this.correlation_fict_uniform = correlationFictUniform;
+        this.optFPF = optFPF;
+        this.homothetic = homothetic;
+        this.modelConv = modelConv;
     }
 
     public static ForecastErrorsAnalyzerConfig load() {
@@ -123,8 +170,28 @@ public class ForecastErrorsAnalyzerConfig {
         double histoEstremeQ = config.getDoubleProperty("histo_estremeQ");
         double thresGUI = config.getDoubleProperty("thresGUI");
         String nats = config.getStringProperty("nats", "All");
+        double nnz = config.getDoubleProperty("nnz");
+        Integer unimod = config.getOptionalIntegerProperty("unimod").orElse(null);
+        Integer modoInv = config.getOptionalIntegerProperty("modo_inv").orElse(null);
+        Integer isdeterministic = config.getOptionalIntegerProperty("isdeterministic").orElse(null);
+        Integer isuniform = config.getOptionalIntegerProperty("isuniform").orElse(null);
+        Integer optGUI = config.getOptionalIntegerProperty("opt_GUI").orElse(null);
+        double pLoadDeterministic = config.getDoubleProperty("Pload_deterministic");
+        double qLoadDeterministic = config.getDoubleProperty("Qload_deterministic");
+        double bandUniformPL = config.getDoubleProperty("band_uniformPL");
+        double bandUniformQL = config.getDoubleProperty("band_uniformQL");
+        double bandUniformPGEN = config.getDoubleProperty("band_uniformPGEN");
+        Integer correlationFictUniform = config.getOptionalIntegerProperty("correlation_fict_uniform").orElse(null);
+        Integer optFPF = config.getOptionalIntegerProperty("opt_FPF").orElse(null);
+        Integer homothetic = config.getOptionalIntegerProperty("homothetic").orElse(null);
+        Integer modelConv = config.getOptionalIntegerProperty("modelConv").orElse(null);
 
-        return new ForecastErrorsAnalyzerConfig(binariesDir, runtimeHomeDir, checkModule0, percpuGaussLoad, percpuGaussRes, correlationGauss, tolVar, nMinObsFract, nMinObsInterv, imputationMeth, nGaussians, kOutlier, tolerance, iterations, epsilo, conditionalSampling, tFlags, histoEstremeQ, thresGUI, nats, rngSeed, debug);
+        return new ForecastErrorsAnalyzerConfig(binariesDir, runtimeHomeDir, checkModule0, percpuGaussLoad, percpuGaussRes,
+                correlationGauss, tolVar, nMinObsFract, nMinObsInterv, imputationMeth, nGaussians, kOutlier, tolerance,
+                iterations, epsilo, conditionalSampling, tFlags, histoEstremeQ, thresGUI, nats,
+                nnz, unimod, modoInv, isdeterministic, isuniform, optGUI,
+                pLoadDeterministic, qLoadDeterministic, bandUniformPL, bandUniformQL, bandUniformPGEN, correlationFictUniform,
+                optFPF, homothetic, modelConv, rngSeed, debug);
     }
 
     public Path getBinariesDir() {
@@ -219,6 +286,66 @@ public class ForecastErrorsAnalyzerConfig {
         return debug;
     }
 
+    public double getNnz() {
+        return nnz;
+    }
+
+    public Integer getUnimod() {
+        return unimod;
+    }
+
+    public Integer getModo_inv() {
+        return modo_inv;
+    }
+
+    public Integer getIsdeterministic() {
+        return isdeterministic;
+    }
+
+    public Integer getIsuniform() {
+        return isuniform;
+    }
+
+    public Integer getOpt_GUI() {
+        return opt_GUI;
+    }
+
+    public double getPload_deterministic() {
+        return Pload_deterministic;
+    }
+
+    public double getQload_deterministic() {
+        return Qload_deterministic;
+    }
+
+    public double getBand_uniformPL() {
+        return band_uniformPL;
+    }
+
+    public double getBand_uniformQL() {
+        return band_uniformQL;
+    }
+
+    public double getBand_uniformPGEN() {
+        return band_uniformPGEN;
+    }
+
+    public Integer getCorrelation_fict_uniform() {
+        return correlation_fict_uniform;
+    }
+
+    public Integer getOptFPF() {
+        return optFPF;
+    }
+
+    public Integer getHomothetic() {
+        return homothetic;
+    }
+
+    public Integer getModelConv() {
+        return modelConv;
+    }
+
     @Override
     public String toString() {
         return "ForecastErrorsAnalyzerConfig [binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir
@@ -240,6 +367,21 @@ public class ForecastErrorsAnalyzerConfig {
                 + ", histo_estremeQ=" + histo_estremeQ
                 + ", thresGUI=" + thresGUI
                 + ", nats=" + nats
+                + ", nnz=" + nnz
+                + ", unimod=" + unimod
+                + ", modo_invs=" + modo_inv
+                + ", isdeterministics=" + isdeterministic
+                + ", isuniforms=" + isuniform
+                + ", opt_GUIs=" + opt_GUI
+                + ", Pload_deterministics=" + Pload_deterministic
+                + ", Qload_deterministics=" + Qload_deterministic
+                + ", band_uniformPLs=" + band_uniformPL
+                + ", band_uniformQLs=" + band_uniformQL
+                + ", band_uniformPGENs=" + band_uniformPGEN
+                + ", correlation_fict_uniforms=" + correlation_fict_uniform
+                + ", opt_FPF=" + optFPF
+                + ", homothetic=" + homothetic
+                + ", modelConv=" + modelConv
                 + ", debug=" + debug + "]";
     }
 

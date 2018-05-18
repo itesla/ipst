@@ -63,6 +63,13 @@ public class EurostagNamingStrategyTest {
                 .thenReturn(Collections.emptyList());
         Mockito.when(net.getThreeWindingsTransformers())
                 .thenReturn(Collections.emptyList());
+        Mockito.when(net.getVscConverterStations())
+                .thenReturn(Collections.emptyList());
+        Mockito.when(net.getHvdcLines())
+                .thenReturn(Collections.emptyList());
+        Mockito.when(net.getHvdcConverterStations())
+                .thenReturn(Collections.emptyList());
+
 
         List<Generator> genList = genNames.stream().map(x -> {
             Generator g = Mockito.mock(Generator.class);

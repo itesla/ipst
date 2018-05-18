@@ -86,6 +86,8 @@ public class OnlineProcessTool implements Tool {
             options.addOption(Option.builder().longOpt("date").desc("Process date").hasArg().argName("DATE").build());
             options.addOption(Option.builder().longOpt("creation-date").desc("Process creation date").hasArg()
                     .argName("CREATION_DATE").build());
+            options.addOption(Option.builder().longOpt("parallel-threads").desc("Parallel threads number").hasArg()
+                    .argName("PARALLEL_THREADS").build());
             return options;
         }
 
@@ -213,6 +215,9 @@ public class OnlineProcessTool implements Tool {
             }
         }
 
+        String parallelThreads = line.getOptionValue("parallel-threads");
+        int numThreads =  parallelThreads != null ? Integer.parseInt(parallelThreads) : 1;
+
         String urlString = "service:jmx:rmi:///jndi/rmi://" + startconfig.getJmxHost() + ":" + startconfig.getJmxPort()
                 + "/jmxrmi";
         JMXServiceURL serviceURL = new JMXServiceURL(urlString);
@@ -223,7 +228,7 @@ public class OnlineProcessTool implements Tool {
         LocalOnlineApplicationMBean application = MBeanServerInvocationHandler.newProxyInstance(mbsc, objname,
                 LocalOnlineApplicationMBean.class, false);
         String processId = application.startProcess(procParams.getName(), procParams.getOwner(),
-                procParams.getDate(), procParams.getCreationDate(), startconfig, params, basecases);
+                procParams.getDate(), procParams.getCreationDate(), startconfig, params, basecases, numThreads);
         context.getOutputStream().println("processId=" + processId);
     }
 

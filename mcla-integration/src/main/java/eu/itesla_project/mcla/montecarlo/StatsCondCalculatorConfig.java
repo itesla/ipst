@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -41,11 +42,19 @@ public class StatsCondCalculatorConfig {
     private Path tmpDir;
     private final Integer rngSeed;
     private final boolean debug;
+    private final Integer isdeterministic;
+    private final Integer isuniform;
+    private final Integer optFPF;
+    private final Integer homothetic;
 
     public StatsCondCalculatorConfig(
             Path binariesDir,
             Path runtimeHomeDir,
             Path tmpDir,
+            Integer isdeterministic,
+            Integer isuniform,
+            Integer optFPF,
+            Integer homothetic,
             Integer rngSeed,
             boolean debug
     ) {
@@ -58,6 +67,10 @@ public class StatsCondCalculatorConfig {
         this.tmpDir = tmpDir;
         this.rngSeed = rngSeed;
         this.debug = debug;
+        this.isdeterministic = isdeterministic;
+        this.isuniform = isuniform;
+        this.optFPF = optFPF;
+        this.homothetic = homothetic;
     }
 
     public static StatsCondCalculatorConfig load() {
@@ -68,8 +81,12 @@ public class StatsCondCalculatorConfig {
         Path tmpDir = config.getPathProperty("tmpDir");
         Integer rngSeed = config.getOptionalIntegerProperty("rngSeed").orElse(null);
         boolean debug = config.getBooleanProperty("debug", false);
+        Integer isdeterministic = config.getOptionalIntegerProperty("isdeterministic").orElse(null);
+        Integer isuniform = config.getOptionalIntegerProperty("isuniform").orElse(null);
+        Integer optFPF = config.getOptionalIntegerProperty("opt_FPF").orElse(null);
+        Integer homothetic = config.getOptionalIntegerProperty("homothetic").orElse(null);
 
-        return new StatsCondCalculatorConfig(binariesDir, runtimeHomeDir, tmpDir, rngSeed, debug);
+        return new StatsCondCalculatorConfig(binariesDir, runtimeHomeDir, tmpDir, isdeterministic, isuniform, optFPF, homothetic, rngSeed, debug);
     }
 
     public Path getBinariesDir() {
@@ -97,9 +114,29 @@ public class StatsCondCalculatorConfig {
         return LOGGER;
     }
 
+    public Integer getIsdeterministic() {
+        return isdeterministic;
+    }
+
+    public Integer getIsuniform() {
+        return isuniform;
+    }
+
+    public Integer getOptFPF() {
+        return optFPF;
+    }
+
+    public Integer getHomothetic() {
+        return homothetic;
+    }
+
     @Override
     public String toString() {
         return "StatsCondCalculatorConfig [" + ", binariesDir=" + binariesDir + ", runtimeHomeDir=" + runtimeHomeDir + ", tmpDir=" + tmpDir
+                + ", isdeterministic=" + isdeterministic
+                + ", isuniform=" + isuniform
+                + ", opt_FPF=" + optFPF
+                + ", homothetic=" + homothetic
                 + ", rngSeed=" + rngSeed + ", debug=" + debug + "]";
     }
 

@@ -25,6 +25,7 @@ import com.powsybl.iidm.network.util.Networks;
 import com.powsybl.simulation.*;
 import com.powsybl.simulation.securityindexes.SecurityIndex;
 import com.powsybl.simulation.securityindexes.SecurityIndexParser;
+import eu.itesla_project.iidm.eurostag.export.EurostagEchExportConfig;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalINIConfiguration;
 import org.apache.commons.configuration.SubnodeConfiguration;
@@ -43,6 +44,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import static com.powsybl.computation.FilePostProcessor.FILE_GZIP;
 import static com.powsybl.computation.FilePreProcessor.ARCHIVE_UNZIP;
@@ -125,6 +127,8 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
 
     private final EurostagConfig config;
 
+    private final EurostagEchExportConfig exportConfig;
+
     private final Command allCmd;
 
     private final List<Contingency> allContingencies = new ArrayList<>();
@@ -137,11 +141,11 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
 
     public EurostagImpactAnalysis(Network network, ComputationManager computationManager, int priority,
                                   ContingenciesProvider contingenciesProvider) {
-        this(network, computationManager, priority, contingenciesProvider, EurostagConfig.load());
+        this(network, computationManager, priority, contingenciesProvider, EurostagConfig.load(), EurostagEchExportConfig.load());
     }
 
     public EurostagImpactAnalysis(Network network, ComputationManager computationManager, int priority,
-                                  ContingenciesProvider contingenciesProvider, EurostagConfig config) {
+                                  ContingenciesProvider contingenciesProvider, EurostagConfig config, EurostagEchExportConfig exportConfig) {
         Objects.requireNonNull(network, "network is null");
         Objects.requireNonNull(computationManager, "computation manager is null");
         Objects.requireNonNull(contingenciesProvider, "contingencies provider is null");
@@ -151,6 +155,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
         this.priority = priority;
         this.contingenciesProvider = contingenciesProvider;
         this.config = config;
+        this.exportConfig = exportConfig;
         allCmd = createCommand(ALL_SCENARIOS_ZIP_FILE_NAME, WP43_ALL_CONFIGS_ZIP_FILE_NAME);
         subsetCmd = createCommand(PARTIAL_SCENARIOS_ZIP_FILE_NAME, WP43_PARTIAL_CONFIGS_ZIP_FILE_NAME);
     }
@@ -202,11 +207,13 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
 
     //needed by wp43 integration
     //contains lines, only
-    private static void dumpLinesDictionary(Network network, EurostagDictionary dictionary, Path dir) throws IOException {
+    private static void dumpLinesDictionary(Network network, EurostagDictionary dictionary, Path dir, EurostagEchExportConfig exportConfig) throws IOException {
         try (BufferedWriter os = Files.newBufferedWriter(dir.resolve("dict_lines.csv"), StandardCharsets.UTF_8)) {
-            for (Identifiable obj : Identifiables.sort(Iterables.concat(network.getLines(),
-                    network.getTwoWindingsTransformers(),
-                    network.getDanglingLines()))) {
+            for (Identifiable obj : Identifiables.sort(Iterables.concat(
+                    network.getLineStream().filter(line -> !(exportConfig.isExportMainCCOnly() && !EchUtil.isInMainCc(line, exportConfig.isNoSwitch()))).collect(Collectors.toList()),
+                    network.getTwoWindingsTransformerStream().filter(twt -> !(exportConfig.isExportMainCCOnly() && !EchUtil.isInMainCc(twt, exportConfig.isNoSwitch()))).collect(Collectors.toList()),
+                    network.getDanglingLineStream().filter(dl -> !(exportConfig.isExportMainCCOnly() && !EchUtil.isInMainCc(dl, exportConfig.isNoSwitch()))).collect(Collectors.toList())
+            ))) {
                 os.write(obj.getId() + ";" + dictionary.getEsgId(obj.getId()));
                 os.newLine();
             }
@@ -218,11 +225,13 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
 
     //needed by wp43 integration
     //contains buses, only
-    private static void dumpBusesDictionary(Network network, EurostagDictionary dictionary, Path dir) throws IOException {
+    private static void dumpBusesDictionary(Network network, EurostagDictionary dictionary, Path dir, EurostagEchExportConfig exportConfig) throws IOException {
         try (BufferedWriter os = Files.newBufferedWriter(dir.resolve("dict_buses.csv"), StandardCharsets.UTF_8)) {
             for (Bus bus : Identifiables.sort(EchUtil.getBuses(network, dictionary.getConfig()))) {
-                os.write(bus.getId() + ";" + dictionary.getEsgId(bus.getId()));
-                os.newLine();
+                if (!(exportConfig.isExportMainCCOnly() && (!EchUtil.isInMainCc(bus)))) {
+                    os.write(bus.getId() + ";" + dictionary.getEsgId(bus.getId()));
+                    os.newLine();
+                }
             }
         }
     }
@@ -251,19 +260,28 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
         writer.newLine();
     }
 
-    private static void writeLimits(Network network, EurostagDictionary dictionary, Domain domain, OutputStream os) throws IOException {
+    protected static void writeLimits(Network network, EurostagDictionary dictionary, Domain domain, OutputStream os, EurostagEchExportConfig exportConfig) throws IOException {
         GenericArchive archive = domain.getArchiveFactory().create(GenericArchive.class);
         try (FileSystem fileSystem = ShrinkWrapFileSystems.newFileSystem(archive)) {
             Path rootDir = fileSystem.getPath("/");
             // dump first current limits for each of the branches
             try (BufferedWriter writer = Files.newBufferedWriter(rootDir.resolve(CURRENT_LIMITS_CSV), StandardCharsets.UTF_8)) {
                 for (Line l : network.getLines()) {
+                    if (exportConfig.isExportMainCCOnly() && !EchUtil.isInMainCc(l, exportConfig.isNoSwitch())) {
+                        continue;
+                    }
                     dumpLimits(dictionary, writer, l);
                 }
                 for (TwoWindingsTransformer twt : network.getTwoWindingsTransformers()) {
+                    if (exportConfig.isExportMainCCOnly() && !EchUtil.isInMainCc(twt, exportConfig.isNoSwitch())) {
+                        continue;
+                    }
                     dumpLimits(dictionary, writer, twt);
                 }
                 for (DanglingLine dl : network.getDanglingLines()) {
+                    if (exportConfig.isExportMainCCOnly() && !EchUtil.isInMainCc(dl, exportConfig.isNoSwitch())) {
+                        continue;
+                    }
                     dumpLimits(dictionary, writer, dl.getId(),
                             dl.getCurrentLimits(),
                             null,
@@ -273,6 +291,9 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
             }
             try (BufferedWriter writer = Files.newBufferedWriter(rootDir.resolve(VOLTAGE_LIMITS_CSV), StandardCharsets.UTF_8)) {
                 for (Bus b : EchUtil.getBuses(network, dictionary.getConfig())) {
+                    if (exportConfig.isExportMainCCOnly() && !(EchUtil.isInMainCc(b))) {
+                        continue;
+                    }
                     VoltageLevel vl = b.getVoltageLevel();
                     if (!Float.isNaN(vl.getLowVoltageLimit()) && !Float.isNaN(vl.getHighVoltageLimit())) {
                         writer.write(dictionary.getEsgId(b.getId()));
@@ -288,20 +309,17 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
             }
 
             //dump lines dictionary, for WP43 integration
-            dumpLinesDictionary(network, dictionary, rootDir);
+            dumpLinesDictionary(network, dictionary, rootDir, exportConfig);
             //dump buses dictionary, for WP43 integration
-            dumpBusesDictionary(network, dictionary, rootDir);
+            dumpBusesDictionary(network, dictionary, rootDir, exportConfig);
         }
 
         archive.as(ZipExporter.class).exportTo(os);
     }
 
-    private void writeLimits(Domain domain, OutputStream os) throws IOException {
-        writeLimits(network, dictionary, domain, os);
-    }
 
-    static void writeLimits(Network network, EurostagDictionary dictionary, OutputStream os) throws IOException {
-        writeLimits(network, dictionary, ShrinkWrap.createDomain(), os);
+    protected static void writeLimits(Network network, EurostagDictionary dictionary, OutputStream os, EurostagEchExportConfig exportConfig) throws IOException {
+        writeLimits(network, dictionary, ShrinkWrap.createDomain(), os, exportConfig);
     }
 
     private void writeScenarios(Domain domain, List<Contingency> contingencies, OutputStream os) throws IOException {
@@ -425,7 +443,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
                 writeAllWp43Configs(domain, os);
             }
             try (OutputStream os = computationManager.newCommonFile(LIMITS_ZIP_FILE_NAME)) {
-                writeLimits(domain, os);
+                writeLimits(network, dictionary, domain, os, exportConfig);
             }
         }
     }
@@ -457,7 +475,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
             Files.write(workingDir.resolve(DDB_DICT_GENS_CSV), ((EurostagState) state).getDictGensCsv());
 
             try (OutputStream os = Files.newOutputStream(workingDir.resolve(LIMITS_ZIP_FILE_NAME))) {
-                writeLimits(domain.get(), os);
+                writeLimits(network, dictionary, domain.get(), os, exportConfig);
             }
         }
 

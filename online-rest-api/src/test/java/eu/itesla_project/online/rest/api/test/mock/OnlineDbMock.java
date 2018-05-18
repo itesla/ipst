@@ -437,4 +437,9 @@ public class OnlineDbMock implements OnlineDb {
         return null;
     }
 
+    @Override
+    public void exportPostcontingencyStates(String workflowId, Path file) {
+        
+    }
+
 }
