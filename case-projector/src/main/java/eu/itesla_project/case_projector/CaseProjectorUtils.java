@@ -47,11 +47,6 @@ public final class CaseProjectorUtils {
 
     private static final String AMPL_GENERATORS_DOMAINS_FILE_NAME = "ampl_generators_domains.txt";
 
-    private static final LoadFlowParameters LOAD_FLOW_PARAMETERS = LoadFlowParameters.load();
-
-    private static final LoadFlowParameters LOAD_FLOW_PARAMETERS2 = LoadFlowParameters.load().setNoGeneratorReactiveLimits(true);
-
-
     private CaseProjectorUtils() {
 
     }
@@ -119,7 +114,10 @@ public final class CaseProjectorUtils {
     }
 
     protected static CompletableFuture<Boolean> project(ComputationManager computationManager, Network network, LoadFlow loadFlow, String workingStateId, CaseProjectorConfig config) throws Exception {
-        return loadFlow.runAsync(workingStateId, LOAD_FLOW_PARAMETERS)
+        LoadFlowParameters loadFlowParameters = LoadFlowParameters.load();
+        LoadFlowParameters loadFlowParameters2 = LoadFlowParameters.load().setNoGeneratorReactiveLimits(true);
+
+        return loadFlow.runAsync(workingStateId, loadFlowParameters)
                 .thenComposeAsync(loadFlowResult -> {
                     LOGGER.debug("Pre-projector load flow metrics: {}", loadFlowResult.getMetrics());
                     if (!loadFlowResult.isOk()) {
@@ -131,7 +129,7 @@ public final class CaseProjectorUtils {
                     if (!Boolean.TRUE.equals(ok)) {
                         throw new StopException("Projector failed");
                     }
-                    return loadFlow.runAsync(workingStateId, LOAD_FLOW_PARAMETERS2);
+                    return loadFlow.runAsync(workingStateId, loadFlowParameters2);
                 }, computationManager.getExecutor())
                 .thenApplyAsync(loadFlowResult -> {
                     LOGGER.debug("Post-projector load flow metrics: {}", loadFlowResult.getMetrics());

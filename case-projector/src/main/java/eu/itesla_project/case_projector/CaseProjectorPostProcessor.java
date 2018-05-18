@@ -15,7 +15,6 @@ import com.powsybl.iidm.import_.ImportPostProcessor;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.loadflow.LoadFlow;
 import com.powsybl.loadflow.LoadFlowFactory;
-import com.powsybl.loadflow.LoadFlowParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,8 +33,7 @@ public class CaseProjectorPostProcessor implements ImportPostProcessor {
 
     public static final String NAME = "case-proj";
 
-    LoadFlowFactory loadFlowFactory;
-    LoadFlowParameters loadFlowParameters;
+    private final LoadFlowFactory loadFlowFactory;
 
     private final CaseProjectorConfig config;
 
@@ -46,7 +44,6 @@ public class CaseProjectorPostProcessor implements ImportPostProcessor {
     public CaseProjectorPostProcessor(PlatformConfig platformConfig) {
         ComponentDefaultConfig defaultConfig = ComponentDefaultConfig.load();
         loadFlowFactory = defaultConfig.newFactoryImpl(LoadFlowFactory.class);
-        loadFlowParameters = new LoadFlowParameters(LoadFlowParameters.VoltageInitMode.UNIFORM_VALUES);
         config = CaseProjectorConfig.load();
     }
 
