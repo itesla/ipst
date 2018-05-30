@@ -6,44 +6,26 @@
  */
 package eu.itesla_project.online.rest.api.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import com.powsybl.iidm.network.Network;
+import com.powsybl.security.LimitViolation;
+import com.powsybl.security.LimitViolationType;
+import eu.itesla_project.modules.online.*;
+import eu.itesla_project.online.OnlineUtils;
+import eu.itesla_project.online.UnitEnum;
+import eu.itesla_project.online.rest.api.DateTimeParameter;
+import eu.itesla_project.online.rest.model.*;
+import eu.itesla_project.online.rest.model.Process;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import eu.itesla_project.modules.online.OnlineDb;
-import eu.itesla_project.modules.online.OnlineDbFactory;
-import eu.itesla_project.modules.online.OnlineProcess;
-import eu.itesla_project.modules.online.OnlineStep;
-import eu.itesla_project.modules.online.OnlineWorkflowParameters;
-import eu.itesla_project.modules.online.OnlineWorkflowResults;
-import eu.itesla_project.modules.online.StateProcessingStatus;
-import eu.itesla_project.online.OnlineUtils;
-import eu.itesla_project.online.UnitEnum;
-import eu.itesla_project.online.rest.api.DateTimeParameter;
-import eu.itesla_project.online.rest.model.Indicator;
-import eu.itesla_project.online.rest.model.IndicatorEnum;
-import eu.itesla_project.online.rest.model.PostContingencyResult;
-import eu.itesla_project.online.rest.model.PreContingencyResult;
-import eu.itesla_project.online.rest.model.Process;
-import eu.itesla_project.online.rest.model.ProcessSynthesis;
-import eu.itesla_project.online.rest.model.SimulationResult;
-import eu.itesla_project.online.rest.model.StateSynthesis;
-import eu.itesla_project.online.rest.model.TimeValue;
-import eu.itesla_project.online.rest.model.Violation;
-import eu.itesla_project.online.rest.model.ViolationSynthesis;
-import eu.itesla_project.online.rest.model.WorkflowInfo;
-import eu.itesla_project.online.rest.model.WorkflowResult;
-import com.powsybl.security.LimitViolation;
-import com.powsybl.security.LimitViolationType;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.powsybl.security.LimitViolationHelper.getCountry;
+import static com.powsybl.security.LimitViolationHelper.getNominalVoltage;
 
 /**
  *
@@ -140,12 +122,13 @@ public class OnlineDBUtils implements ProcessDBUtils {
 
                     violations.forEach((state, viols) -> {
                         StateProcessingStatus sp = onlinedb.getStatesProcessingStatus(workflowId).get(state);
+                        Network network = onlinedb.getState(workflowId, state);
                         String status = sp.getStatus().get("LOAD_FLOW");
                         PreContingencyResult pcr = new PreContingencyResult(state, viols.isEmpty(),
                                 status != null && "SUCCESS".equals(status));
                         viols.forEach(lv -> {
-                            pcr.addViolation(new Violation(lv.getCountry().toString(), lv.getSubjectId(),
-                                    lv.getLimitType().name(), lv.getLimit(), lv.getValue(), (int) lv.getBaseVoltage()));
+                            pcr.addViolation(new Violation(getCountry(lv, network).toString(), lv.getSubjectId(),
+                                    lv.getLimitType().name(), lv.getLimit(), lv.getValue(), (int) getNominalVoltage(lv, network)));
                         });
                         res.addPreContingency(pcr);
                     });
@@ -188,11 +171,11 @@ public class OnlineDBUtils implements ProcessDBUtils {
                             if (!srMap.containsKey(state)) {
                                 srMap.put(state, sr);
                             }
-
+                            Network network = onlinedb.getState(workflowId, state, cont);
                             contViols.forEach(lv -> {
-                                sr.addViolation(new Violation(lv.getCountry().toString(), lv.getSubjectId(),
+                                sr.addViolation(new Violation(getCountry(lv, network).toString(), lv.getSubjectId(),
                                         lv.getLimitType().name(), lv.getLimit(), lv.getValue(),
-                                        (int) lv.getBaseVoltage()));
+                                        (int) getNominalVoltage(lv, network)));
                             });
                         });
 
@@ -247,7 +230,8 @@ public class OnlineDBUtils implements ProcessDBUtils {
                                 statesynt = new StateSynthesis(state);
                                 statesMap.put(state, statesynt);
                             }
-                            fillViolationSynthesis(dateTime, statesynt.getPreContingencyViolations(), limitList);
+                            Network network = onlinedb.getState(workflowId, state);
+                            fillViolationSynthesis(dateTime, statesynt.getPreContingencyViolations(), limitList, network);
                         });
                     }
 
@@ -270,7 +254,8 @@ public class OnlineDBUtils implements ProcessDBUtils {
                                     violationList = new ArrayList();
                                     contingencyMap.put(cont, violationList);
                                 }
-                                fillViolationSynthesis(dateTime, violationList, limitList);
+                                Network network = onlinedb.getState(workflowId, state, cont);
+                                fillViolationSynthesis(dateTime, violationList, limitList, network);
                             });
                         });
                     }
@@ -285,7 +270,7 @@ public class OnlineDBUtils implements ProcessDBUtils {
         return null;
     }
 
-    private void fillViolationSynthesis(DateTime dateTime, List<ViolationSynthesis> violationList, List<LimitViolation> limitList)  {
+    private void fillViolationSynthesis(DateTime dateTime, List<ViolationSynthesis> violationList, List<LimitViolation> limitList, Network network)  {
         limitList.forEach(lv -> {
             LimitViolationType violationType = lv.getLimitType();
             String equipment = lv.getSubjectId();
@@ -298,7 +283,7 @@ public class OnlineDBUtils implements ProcessDBUtils {
             if (searchSynt.isPresent()) {
                 synt = searchSynt.get();
             } else {
-                synt = new ViolationSynthesis(equipment, lv.getBaseVoltage(), violationType, limit, lv.getLimitName());
+                synt = new ViolationSynthesis(equipment, getNominalVoltage(lv, network), violationType, limit, lv.getLimitName());
                 violationList.add(synt);
             }
 
