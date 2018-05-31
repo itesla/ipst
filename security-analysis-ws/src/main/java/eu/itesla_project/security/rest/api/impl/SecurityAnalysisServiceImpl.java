@@ -7,39 +7,13 @@
 package eu.itesla_project.security.rest.api.impl;
 
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.StreamingOutput;
-
-import org.apache.commons.io.IOUtils;
-import org.jboss.resteasy.plugins.providers.multipart.InputPart;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.powsybl.action.dsl.ActionDb;
 import com.powsybl.action.dsl.ActionDslLoader;
 import com.powsybl.action.simulator.ActionSimulator;
 import com.powsybl.action.simulator.loadflow.LoadFlowActionSimulator;
 import com.powsybl.action.simulator.loadflow.LoadFlowActionSimulatorObserver;
 import com.powsybl.action.simulator.tools.AbstractSecurityAnalysisResultBuilder;
+import com.powsybl.computation.ComputationManager;
 import com.powsybl.contingency.ContingenciesProvider;
 import com.powsybl.contingency.Contingency;
 import com.powsybl.contingency.EmptyContingencyListProvider;
@@ -51,9 +25,22 @@ import com.powsybl.security.SecurityAnalysisResult;
 import com.powsybl.security.SecurityAnalyzer;
 import com.powsybl.security.SecurityAnalyzer.Format;
 import com.powsybl.security.converter.SecurityAnalysisResultExporters;
-
 import eu.itesla_project.security.rest.api.SecurityAnalysisService;
 import eu.itesla_project.security.rest.api.impl.utils.Utils;
+import org.apache.commons.io.IOUtils;
+import org.jboss.resteasy.plugins.providers.multipart.InputPart;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.StreamingOutput;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.stream.Collectors;
 /**
  *
  * @author Giovanni Ferrari <giovanni.ferrari at techrain.it>
@@ -178,18 +165,20 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
             AbstractSecurityAnalysisResultBuilderImpl loadFlowActionSimulatorObserver = new AbstractSecurityAnalysisResultBuilderImpl();
             observers.add(loadFlowActionSimulatorObserver);
 
-            // action simulator
-            ActionSimulator actionSimulator = new LoadFlowActionSimulator(network, Utils.getLocalComputationManager(), Utils.getActionSimulatorConfig(),
-                    observers);
+            try (ComputationManager computationManager = Utils.getLocalComputationManager()) {
+                // action simulator
+                ActionSimulator actionSimulator = new LoadFlowActionSimulator(network, computationManager, Utils.getActionSimulatorConfig(),
+                        false, observers);
 
-            // start simulator
-            actionSimulator.start(actionDb, contingencies);
+                // start simulator
+                actionSimulator.start(actionDb, contingencies);
 
-            SecurityAnalysisResult securityAnalysisResult = loadFlowActionSimulatorObserver.getResult();
+                SecurityAnalysisResult securityAnalysisResult = loadFlowActionSimulatorObserver.getResult();
 
-            return Response.ok(toStream(securityAnalysisResult, network, format))
-                    .header("Content-Type", format.equals(Format.JSON) ? MediaType.APPLICATION_JSON : "text/csv")
-                    .build();
+                return Response.ok(toStream(securityAnalysisResult, network, format))
+                        .header("Content-Type", format.equals(Format.JSON) ? MediaType.APPLICATION_JSON : "text/csv")
+                        .build();
+            }
 
         } catch (Exception e) {
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Internal server error").build();

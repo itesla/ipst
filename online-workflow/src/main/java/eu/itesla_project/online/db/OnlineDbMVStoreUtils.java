@@ -138,6 +138,7 @@ public final class OnlineDbMVStoreUtils {
         return new LimitViolation(limitViolation.get("Subject"),
                 limitType,
                 limitViolation.get("LimitName"),
+                Integer.MAX_VALUE,
                 Float.parseFloat(limitViolation.get("Limit")),
                 limitReduction,
                 Float.parseFloat(limitViolation.get("Value")),

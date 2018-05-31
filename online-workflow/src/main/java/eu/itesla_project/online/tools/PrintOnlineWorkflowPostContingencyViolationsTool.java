@@ -11,14 +11,15 @@ import com.google.auto.service.AutoService;
 import com.powsybl.commons.io.table.Column;
 import com.powsybl.commons.io.table.TableFormatter;
 import com.powsybl.commons.io.table.TableFormatterConfig;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.security.LimitViolation;
+import com.powsybl.security.LimitViolationFilter;
+import com.powsybl.security.LimitViolationType;
 import com.powsybl.tools.Command;
 import com.powsybl.tools.Tool;
 import com.powsybl.tools.ToolRunningContext;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.online.OnlineDb;
-import com.powsybl.security.LimitViolation;
-import com.powsybl.security.LimitViolationFilter;
-import com.powsybl.security.LimitViolationType;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -128,10 +129,11 @@ public class PrintOnlineWorkflowPostContingencyViolationsTool implements Tool {
             if (line.hasOption("state") && line.hasOption("contingency")) {
                 Integer stateId = Integer.parseInt(line.getOptionValue("state"));
                 String contingencyId = line.getOptionValue("contingency");
+                Network network = onlinedb.getState(workflowId, stateId, contingencyId);
                 List<LimitViolation> violations = onlinedb.getPostContingencyViolations(workflowId, stateId, contingencyId);
                 if (violations != null && !violations.isEmpty()) {
                     try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, outputFormat, outputFile, TABLE_TITLE, tableColumns)) {
-                        printStateContingencyViolations(formatter, stateId, contingencyId, violations, violationsFilter);
+                        printStateContingencyViolations(formatter, stateId, contingencyId, violations, violationsFilter, network);
                     }
                 } else {
                     context.getErrorStream().println("\nNo post contingency violations for workflow " + workflowId + ", contingency " + contingencyId + " and state " + stateId);
@@ -141,8 +143,10 @@ public class PrintOnlineWorkflowPostContingencyViolationsTool implements Tool {
                 Map<String, List<LimitViolation>> stateViolationsByStateId = onlinedb.getPostContingencyViolations(workflowId, stateId);
                 if (stateViolationsByStateId != null && !stateViolationsByStateId.keySet().isEmpty()) {
                     try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, outputFormat, outputFile, TABLE_TITLE, tableColumns)) {
-                        new TreeMap<>(stateViolationsByStateId).forEach((contingencyId, violations) ->
-                                printStateContingencyViolations(formatter, stateId, contingencyId, violations, violationsFilter));
+                        new TreeMap<>(stateViolationsByStateId).forEach((contingencyId, violations) -> {
+                            Network network = onlinedb.getState(workflowId, stateId, contingencyId);
+                            printStateContingencyViolations(formatter, stateId, contingencyId, violations, violationsFilter, network);
+                        });
                     }
                 } else {
                     context.getErrorStream().println("\nNo post contingency violations for workflow " + workflowId + " and state " + stateId);
@@ -153,8 +157,10 @@ public class PrintOnlineWorkflowPostContingencyViolationsTool implements Tool {
                     Map<Integer, List<LimitViolation>> contingencyViolationsByContingencyId = onlinedb.getPostContingencyViolations(workflowId, contingencyId);
                     if (contingencyViolationsByContingencyId != null && !contingencyViolationsByContingencyId.keySet().isEmpty()) {
                         try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, outputFormat, outputFile, TABLE_TITLE, tableColumns)) {
-                            new TreeMap<>(contingencyViolationsByContingencyId).forEach((stateId, violations) ->
-                                    printStateContingencyViolations(formatter, stateId, contingencyId, violations, violationsFilter));
+                            new TreeMap<>(contingencyViolationsByContingencyId).forEach((stateId, violations) -> {
+                                Network network = onlinedb.getState(workflowId, stateId, contingencyId);
+                                printStateContingencyViolations(formatter, stateId, contingencyId, violations, violationsFilter, network);
+                            });
                         }
                     } else {
                         context.getErrorStream().println("\nNo post contingency violations for workflow " + workflowId + " and contingency " + contingencyId);
@@ -166,7 +172,8 @@ public class PrintOnlineWorkflowPostContingencyViolationsTool implements Tool {
                             new TreeMap<>(wfViolations).forEach((stateId, stateViolations) -> {
                                 if (stateViolations != null) {
                                     new TreeMap<>(stateViolations).forEach((contingencyId, violations) -> {
-                                        printStateContingencyViolations(formatter, stateId, contingencyId, violations, violationsFilter);
+                                        Network network = onlinedb.getState(workflowId, stateId, contingencyId);
+                                        printStateContingencyViolations(formatter, stateId, contingencyId, violations, violationsFilter, network);
                                     });
                                 }
                             });
@@ -181,11 +188,11 @@ public class PrintOnlineWorkflowPostContingencyViolationsTool implements Tool {
     }
 
     private void printStateContingencyViolations(TableFormatter formatter, Integer stateId, String contingencyId, List<LimitViolation> violations,
-                                                 LimitViolationFilter violationsFilter) {
+                                                 LimitViolationFilter violationsFilter, Network network) {
         if (violations != null) {
             List<LimitViolation> filteredViolations = violations;
             if (violationsFilter != null) {
-                filteredViolations = violationsFilter.apply(violations);
+                filteredViolations = violationsFilter.apply(violations, network);
             }
             filteredViolations
                     .stream()

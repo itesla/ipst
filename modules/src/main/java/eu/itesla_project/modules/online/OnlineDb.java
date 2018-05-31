@@ -227,7 +227,7 @@ public interface OnlineDb extends AutoCloseable {
      *
      * @param workflowId    the id of the workflow
      * @param stateId       the id of the state
-     * @param contingencyId the id of the state
+     * @param contingencyId the id of the contingency
      * @return the network state
      */
     Network getState(String workflowId, Integer stateId, String contingencyId);

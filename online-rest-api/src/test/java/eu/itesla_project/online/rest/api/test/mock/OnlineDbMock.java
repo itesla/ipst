@@ -11,13 +11,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.powsybl.iidm.network.*;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
 import eu.itesla_project.cases.CaseType;
-import com.powsybl.iidm.network.Country;
-import com.powsybl.iidm.network.Network;
-import com.powsybl.iidm.network.NetworkFactory;
 import eu.itesla_project.modules.contingencies.ActionParameters;
 import eu.itesla_project.modules.online.OnlineDb;
 import eu.itesla_project.modules.online.OnlineProcess;
@@ -41,7 +39,38 @@ public class OnlineDbMock implements OnlineDb {
 
     public OnlineDbMock() {
         network = NetworkFactory.create("test", "test");
-        network.newSubstation().setId("sub1").setName("substation1").setCountry(Country.FR).add();
+        Substation sub = network.newSubstation().setId("sub1").setName("substation1").setCountry(Country.FR).add();
+        VoltageLevel vlhv1 = sub.newVoltageLevel()
+                .setId("VLHV1")
+                .setNominalV(380)
+                .setTopologyKind(TopologyKind.BUS_BREAKER)
+                .add();
+        VoltageLevel vlhv2 = sub.newVoltageLevel()
+                .setId("VLHV2")
+                .setNominalV(380)
+                .setTopologyKind(TopologyKind.BUS_BREAKER)
+                .add();
+        Bus nhv1 = vlhv1.getBusBreakerView().newBus()
+                .setId("NHV1")
+                .add();
+        Bus nhv2 = vlhv2.getBusBreakerView().newBus()
+                .setId("NHV2")
+                .add();
+        network.newLine()
+                .setId("NHV1_NHV2_1")
+                .setVoltageLevel1(vlhv1.getId())
+                .setBus1(nhv1.getId())
+                .setConnectableBus1(nhv1.getId())
+                .setVoltageLevel2(vlhv2.getId())
+                .setBus2(nhv2.getId())
+                .setConnectableBus2(nhv2.getId())
+                .setR(3)
+                .setX(33)
+                .setG1(0)
+                .setB1(386E-6f / 2)
+                .setG2(0f)
+                .setB2(386E-6f / 2)
+                .add();
 
         processMap = new HashMap<String, OnlineProcess>();
         DateTime dt = new DateTime(2016, 1, 15, 01, 0, 0, 0);
@@ -279,7 +308,7 @@ public class OnlineDbMock implements OnlineDb {
 
     @Override
     public Network getState(String workflowId, Integer stateId) {
-        return null;
+        return network;
     }
 
     @Override
@@ -324,7 +353,7 @@ public class OnlineDbMock implements OnlineDb {
             return null;
         Map<Integer, List<LimitViolation>> res = new HashMap<Integer, List<LimitViolation>>();
         List<LimitViolation> viols = new ArrayList<>();
-        LimitViolation lv = new LimitViolation("sub1", LimitViolationType.CURRENT, 100, "HIGH_CURRENT", 0, 110, Country.FR, 240);
+        LimitViolation lv = new LimitViolation("NHV1_NHV2_1", LimitViolationType.CURRENT, "HIGH_CURRENT", Integer.MAX_VALUE, 100f, 0f, 110f, Branch.Side.ONE);
         viols.add(lv);
         res.put(0, viols);
         return res;
@@ -373,7 +402,7 @@ public class OnlineDbMock implements OnlineDb {
         Map<Integer, Map<String, List<LimitViolation>>> res = new HashMap<>();
         Map<String, List<LimitViolation>> mmap = new HashMap<>();
         List<LimitViolation> viols = new ArrayList<>();
-        LimitViolation lv = new LimitViolation("sub1", LimitViolationType.CURRENT, 100, "HIGH_CURRENT", 0, 200, Country.FR, 120);
+        LimitViolation lv = new LimitViolation("NHV1_NHV2_1", LimitViolationType.CURRENT, "HIGH_CURRENT", Integer.MAX_VALUE, 100, 0, 200, Branch.Side.ONE);
         viols.add(lv);
         mmap.put("test_contingency", viols);
         res.put(0, mmap);
@@ -434,7 +463,7 @@ public class OnlineDbMock implements OnlineDb {
 
     @Override
     public Network getState(String workflowId, Integer stateId, String contingencyId) {
-        return null;
+        return network;
     }
 
     @Override

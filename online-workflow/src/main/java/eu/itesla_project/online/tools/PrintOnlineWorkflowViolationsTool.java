@@ -11,15 +11,16 @@ import com.google.auto.service.AutoService;
 import com.powsybl.commons.io.table.Column;
 import com.powsybl.commons.io.table.TableFormatter;
 import com.powsybl.commons.io.table.TableFormatterConfig;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.security.LimitViolation;
+import com.powsybl.security.LimitViolationFilter;
+import com.powsybl.security.LimitViolationType;
 import com.powsybl.tools.Command;
 import com.powsybl.tools.Tool;
 import com.powsybl.tools.ToolRunningContext;
 import eu.itesla_project.modules.online.OnlineConfig;
 import eu.itesla_project.modules.online.OnlineDb;
 import eu.itesla_project.modules.online.OnlineStep;
-import com.powsybl.security.LimitViolation;
-import com.powsybl.security.LimitViolationFilter;
-import com.powsybl.security.LimitViolationType;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -133,9 +134,10 @@ public class PrintOnlineWorkflowViolationsTool implements Tool {
                 Integer stateId = Integer.parseInt(line.getOptionValue("state"));
                 OnlineStep step = OnlineStep.valueOf(line.getOptionValue("step"));
                 List<LimitViolation> violationsByStateAndStep = onlinedb.getViolations(workflowId, stateId, step);
+                Network network = onlinedb.getState(workflowId, stateId);
                 if (violationsByStateAndStep != null && !violationsByStateAndStep.isEmpty()) {
                     try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, outputFormat, outputFile, TABLE_TITLE, tableColumns)) {
-                        printStateStepViolations(formatter, stateId, step, violationsByStateAndStep, violationsFilter);
+                        printStateStepViolations(formatter, stateId, step, violationsByStateAndStep, violationsFilter, network);
                     }
                 } else {
                     context.getErrorStream().println("\nNo violations for workflow " + workflowId + ", step " + step.name() + " and state " + stateId);
@@ -145,8 +147,9 @@ public class PrintOnlineWorkflowViolationsTool implements Tool {
                 Map<OnlineStep, List<LimitViolation>> stateViolations = onlinedb.getViolations(workflowId, stateId);
                 if (stateViolations != null && !stateViolations.keySet().isEmpty()) {
                     try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, outputFormat, outputFile, TABLE_TITLE, tableColumns)) {
+                        Network network = onlinedb.getState(workflowId, stateId);
                         new TreeMap<>(stateViolations).forEach((onlineStep, violations) ->
-                                printStateStepViolations(formatter, stateId, onlineStep, violations, violationsFilter));
+                                printStateStepViolations(formatter, stateId, onlineStep, violations, violationsFilter, network));
                     }
                 } else {
                     context.getErrorStream().println("\nNo violations for workflow " + workflowId + " and state " + stateId);
@@ -156,8 +159,10 @@ public class PrintOnlineWorkflowViolationsTool implements Tool {
                 Map<Integer, List<LimitViolation>> stepViolations = onlinedb.getViolations(workflowId, step);
                 if (stepViolations != null && !stepViolations.keySet().isEmpty()) {
                     try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, outputFormat, outputFile, TABLE_TITLE, tableColumns)) {
-                        new TreeMap<>(stepViolations).forEach((stateId, violations) ->
-                                printStateStepViolations(formatter, stateId, step, violations, violationsFilter));
+                        new TreeMap<>(stepViolations).forEach((stateId, violations) -> {
+                            Network network = onlinedb.getState(workflowId, stateId);
+                            printStateStepViolations(formatter, stateId, step, violations, violationsFilter, network);
+                        });
                     }
                 } else {
                     context.getErrorStream().println("\nNo violations for workflow " + workflowId + " and step " + step);
@@ -168,8 +173,10 @@ public class PrintOnlineWorkflowViolationsTool implements Tool {
                     try (TableFormatter formatter = PrintOnlineWorkflowUtils.createFormatter(tableFormatterConfig, outputFormat, outputFile, TABLE_TITLE, tableColumns)) {
                         new TreeMap<>(workflowViolations).forEach((stateId, stateViolations) -> {
                             if (stateViolations != null) {
-                                new TreeMap<>(stateViolations).forEach((step, violations) ->
-                                        printStateStepViolations(formatter, stateId, step, violations, violationsFilter));
+                                new TreeMap<>(stateViolations).forEach((step, violations) -> {
+                                    Network network = onlinedb.getState(workflowId, stateId);
+                                    printStateStepViolations(formatter, stateId, step, violations, violationsFilter, network);
+                                });
                             }
                         });
                     }
@@ -181,11 +188,11 @@ public class PrintOnlineWorkflowViolationsTool implements Tool {
     }
 
     private void printStateStepViolations(TableFormatter formatter, Integer stateId, OnlineStep step, List<LimitViolation> violations,
-                                          LimitViolationFilter violationsFilter) {
+                                          LimitViolationFilter violationsFilter, Network network) {
         if (violations != null) {
             List<LimitViolation> filteredViolations = violations;
             if (violationsFilter != null) {
-                filteredViolations = violationsFilter.apply(violations);
+                filteredViolations = violationsFilter.apply(violations, network);
             }
             filteredViolations
                     .stream()

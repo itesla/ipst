@@ -28,7 +28,7 @@ public class OnlineDbMVStoreUtilsTest {
 
     @Test
     public void jsonLimitViolation() {
-        LimitViolation lineViolation = new LimitViolation("LINE", LimitViolationType.CURRENT, "10", 1000f, 1, 1100f, Branch.Side.ONE);
+        LimitViolation lineViolation = new LimitViolation("LINE", LimitViolationType.CURRENT, "10", Integer.MAX_VALUE, 1000f, 1.0f, 1100f, Branch.Side.ONE);
         String jsonLineViolation = OnlineDbMVStoreUtils.limitViolationToJson(lineViolation);
         LimitViolation storedLineViolation = OnlineDbMVStoreUtils.jsonToLimitViolation(jsonLineViolation, null);
         checkViolation(lineViolation, storedLineViolation);

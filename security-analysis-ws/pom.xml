@@ -65,7 +65,7 @@
         <!-- Compilation dependencies -->
         <dependency>
             <groupId>com.powsybl</groupId>
-            <artifactId>powsybl-security-analysis</artifactId>
+            <artifactId>powsybl-security-analysis-api</artifactId>
         </dependency>
 
         <!-- Runtime dependencies -->
