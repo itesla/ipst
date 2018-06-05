@@ -144,6 +144,11 @@ public class EurostagEchExport implements EurostagEchExporter {
             for (Switch sw : Identifiables.sort(EchUtil.getSwitches(vl, config))) {
                 Bus bus1 = EchUtil.getBus1(vl, sw.getId(), config);
                 Bus bus2 = EchUtil.getBus2(vl, sw.getId(), config);
+                //do not export the Switch if bus1==bus2
+                if ((bus1 == bus2) || ((bus1 != null) && (bus2 != null) && (bus1.getId().equals(bus2.getId())))) {
+                    LOGGER.warn("skipping Switch: {}; bus1 is equal to bus2: {}", sw.getId(), bus1 != null ? bus1.getId() : bus1);
+                    continue;
+                }
                 // skip switches not in the main connected component
                 if (config.isExportMainCCOnly() && (!EchUtil.isInMainCc(bus1) || !EchUtil.isInMainCc(bus2))) {
                     LOGGER.warn("not in main component, skipping Switch: {} {} {}", bus1.getId(), bus2.getId(), sw.getId());
@@ -205,6 +210,11 @@ public class EurostagEchExport implements EurostagEchExporter {
             // The code could be extended to handle the case where the B are not the same and the G are not the same
             ConnectionBus bus1 = ConnectionBus.fromTerminal(l.getTerminal1(), config, fakeNodes);
             ConnectionBus bus2 = ConnectionBus.fromTerminal(l.getTerminal2(), config, fakeNodes);
+            //do not export the line if bus1==bus2
+            if ((bus1 == bus2) || ((bus1 != null) && (bus2 != null) && (bus1.getId().equals(bus2.getId())))) {
+                LOGGER.warn("skipping Line: {};  bus1 is equal to bus2: {}", l, bus1 != null ? bus1.getId() : bus1);
+                continue;
+            }
             if (Math.abs(l.getG1() - l.getG2()) < G_EPSILON
                     && (Math.abs(l.getB1() - l.getB2()) < B_EPSILON
                     || (Math.abs(l.getG1()) < G_EPSILON && Math.abs(l.getG2()) < G_EPSILON))) {
@@ -406,6 +416,12 @@ public class EurostagEchExport implements EurostagEchExporter {
 
             ConnectionBus bus1 = ConnectionBus.fromTerminal(twt.getTerminal1(), config, fakeNodes);
             ConnectionBus bus2 = ConnectionBus.fromTerminal(twt.getTerminal2(), config, fakeNodes);
+            //do not export the Transformet if bus1==bus2
+            if ((bus1 == bus2) || ((bus1 != null) && (bus2 != null) && (bus1.getId().equals(bus2.getId())))) {
+                LOGGER.warn("skipping Transformer: {};  bus1 is equal to bus2: {}", twt, bus1 != null ? bus1.getId() : bus1);
+                continue;
+            }
+
 
             EsgBranchConnectionStatus status = getStatus(bus1, bus2);
 
