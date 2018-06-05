@@ -86,6 +86,8 @@ param unit_fault   {UNIT};
 param unit_curative{UNIT};
 param unit_id      {UNIT} symbolic;
 param unit_nom     {UNIT} symbolic; # description
+param unit_P0      {UNIT}; # Initial value of P (if relevant)
+param unit_Q0      {UNIT}; # Initial value of Q (if relevant)
 
 set UNIT_ID := setof{(g,n) in UNIT}g;
 
@@ -123,7 +125,7 @@ param domain_idinternal {DOMAIN} symbolic;
 
 
 ###############################################################################
-# Donnees consos
+# Donnees consos (translation: conso is brief for consommation, which means load)
 ###############################################################################
 
 set CONSO dimen 2; # [conso, noeud]
@@ -134,6 +136,8 @@ param conso_fault     {CONSO};
 param conso_curative  {CONSO};
 param conso_id        {CONSO} symbolic;
 param conso_nom       {CONSO} symbolic;
+param conso_p         {CONSO};
+param conso_q         {CONSO};
 
 #
 # Consistance
@@ -157,6 +161,9 @@ param shunt_fault         {SHUNT};
 param shunt_curative      {SHUNT};
 param shunt_id            {SHUNT} symbolic;
 param shunt_nom           {SHUNT} symbolic;
+param shunt_P0            {SHUNT};
+param shunt_Q0            {SHUNT};
+param shunt_sections_count {SHUNT} integer;
 
 #
 # Consistance
@@ -296,8 +303,8 @@ set NOEUDCC := {n in NOEUD : noeud_CC[n] == 0};
 set CONSOCC := {(c,n) in CONSO  : n in NOEUDCC};
 set SHUNTCC := {(s,n) in SHUNT  : n in NOEUDCC};
 set QUADCC  := {(qq,m,n) in QUAD : m in NOEUDCC && n in NOEUDCC};
-set QUADCC_REGL := {(qq,m,n) in QUAD : quad_ptrRegl[qq,m,n] != -1 };
-set QUADCC_DEPH := {(qq,m,n) in QUAD : quad_ptrDeph[qq,m,n] != -1 };
+set QUADCC_REGL := {(qq,m,n) in QUADCC : quad_ptrRegl[qq,m,n] != -1 };
+set QUADCC_DEPH := {(qq,m,n) in QUADCC : quad_ptrDeph[qq,m,n] != -1 };
 
 # Groupes demarres : on refuse les cas Pc=Qc=0
 set UNITCC  :=
