@@ -22,16 +22,16 @@ param: SUBSTATIONS: substation_horizon substation_fodist substation_Vnomi substa
 param: NOEUD: noeud_poste noeud_CC noeud_V0 noeud_angl0 noeud_injA  noeud_injR noeud_fault noeud_curative noeud_id := include ampl_network_buses.txt;
 
 # ampl_network_generators.txt
-#"num" "bus" "con. bus" "substation" "minP (MW)" "maxP (MW)" "minQmaxP (MVar)" "minQminP (MVar)" "maxQmaxP (MVar)" "maxQminP (MVar)" "v regul." "targetV (pu)" "targetP (MW)" "targetQ (MVar)" "fault" "curative" "id" "description" 
-param: UNIT: unit_noeudpossible unit_substation unit_Pmin unit_Pmax unit_qP unit_qp unit_QP unit_Qp unit_PV unit_Vc unit_Pc unit_Qc unit_fault unit_curative unit_id unit_nom := include ampl_network_generators.txt;
+#"num" "bus" "con. bus" "substation" "minP (MW)" "maxP (MW)" "minQmaxP (MVar)" "minQminP (MVar)" "maxQmaxP (MVar)" "maxQminP (MVar)" "v regul." "targetV (pu)" "targetP (MW)" "targetQ (MVar)" "fault" "curative" "id" "description" "P (MW)" "Q (MVar)"
+param: UNIT: unit_noeudpossible unit_substation unit_Pmin unit_Pmax unit_qP unit_qp unit_QP unit_Qp unit_PV unit_Vc unit_Pc unit_Qc unit_fault unit_curative unit_id unit_nom unit_P0 unit_Q0 := include ampl_network_generators.txt;
 
 # ampl_network_loads.txt
-#"num" "bus" "substation" "p (MW)" "q (MVar)" "fault" "curative" "id" "description" 
-param: CONSO: conso_substation conso_PFix conso_QFix conso_fault conso_curative conso_id conso_nom := include ampl_network_loads.txt;
+#"num" "bus" "substation" "p (MW)" "q (MVar)" "fault" "curative" "id" "description" "p (MW)" "q (MVar)"
+param: CONSO: conso_substation conso_PFix conso_QFix conso_fault conso_curative conso_id conso_nom conso_p conso_q := include ampl_network_loads.txt;
 
 # ampl_network_shunts.txt
-#"num" "bus" "con. bus" "substation" "minB (pu)" "maxB (pu)" "inter. points" "b (pu)" "fault" "curative" "id" "description" 
-param: SHUNT: shunt_noeudpossible shunt_substation shunt_valmin shunt_valmax shunt_interPoints shunt_valnom shunt_fault shunt_curative shunt_id shunt_nom := include ampl_network_shunts.txt;
+#"num" "bus" "con. bus" "substation" "minB (pu)" "maxB (pu)" "inter. points" "b (pu)" "fault" "curative" "id" "description" "P (MW)" "Q (MVar)" "sections count"
+param: SHUNT: shunt_noeudpossible shunt_substation shunt_valmin shunt_valmax shunt_interPoints shunt_valnom shunt_fault shunt_curative shunt_id shunt_nom shunt_P0 shunt_Q0 shunt_sections_count := include ampl_network_shunts.txt;
 
 # ampl_network_tct.txt
 #"num" "tap" "var ratio" "x (pu)" "angle (rad)" "fault" "curative" 

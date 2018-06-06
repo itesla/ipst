@@ -187,7 +187,27 @@ display card(NOEUDCC),card(NOEUDCC_V0),
   DOMAIN_ID
   ;
 
+printf "Nombre de noeuds dans la composante connexe pincipale (i.e. la composante connexe numero 0) : %i\n",card(NOEUDCC);
+printf "Nombre de noeuds de la composante connexe pincipale ayant une V0 renseignee : %i\n",card(NOEUDCC_V0);
+printf "Nombre de groupes decrits : %i\n",card(UNIT);
+printf "Nombre de groupes sur la composante connexe principale : %i\n",card(UNITCC);
+printf "Nombre de groupes decrits comme PV : %i\n",card({(g,n) in UNITCC: unit_PV[g,n]=="true"});
+printf "Nombre de groupes decrits comme PQ : %i\n",card({(g,n) in UNITCC: unit_PV[g,n]!="true"});
+printf "Nombre de groupes ayant un domaine dynamique : %i\n",card(DOMAIN_IDENTIFIANTS);
+printf "Nombre de groupes connectes et demarres et ayant un domaine dynamique : %i\n",card(UNIT_DOMAIN);
+printf "Nombre groupes pour lesquels il y a un mismatch de tension entre l'etat de reseau et les domaines : %i\n",
+  card({(g,n,gid) in UNIT_DOMAIN : gen_vnom_mismatch[g,n,unit_id[g,n]]!=0});
+printf "Nombre groupes pour lesquels on va vraiment faire varier P Q V : %i\n",card(UNIT_PQV);
 
+
+###############################################################################
+# Si tous les groupes ont P et Q fixes, ca ne sert a rien de faire tourner le projecteur
+# On pourrait directement mettre ici un 'exit'
+###############################################################################
+if card(UNIT_PQV) == 0 then
+  print "\n*** ERREUR : aucun groupe ne peut etre modifie par le projecteur, tous les groupes ont P et Q fixes\n";
+
+printf "\n";
 
 ###############################################################################
 # Scaling
@@ -243,7 +263,6 @@ option knitro_options
 param nb_solve_max = 6;
 param nb_solve;
 let nb_solve := 0; 
-display solve_result_num;
 
 repeat {
   solve;
