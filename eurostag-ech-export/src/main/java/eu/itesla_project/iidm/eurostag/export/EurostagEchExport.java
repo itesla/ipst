@@ -145,7 +145,7 @@ public class EurostagEchExport implements EurostagEchExporter {
                 Bus bus1 = EchUtil.getBus1(vl, sw.getId(), config);
                 Bus bus2 = EchUtil.getBus2(vl, sw.getId(), config);
                 //do not export the Switch if bus1==bus2
-                if ((bus1 == bus2) || ((bus1 != null) && (bus2 != null) && (bus1.getId().equals(bus2.getId())))) {
+                if (EchUtil.isSameBus(bus1, bus2)) {
                     LOGGER.warn("skipping Switch: {}; bus1 is equal to bus2: {}", sw.getId(), bus1 != null ? bus1.getId() : bus1);
                     continue;
                 }
@@ -211,7 +211,7 @@ public class EurostagEchExport implements EurostagEchExporter {
             ConnectionBus bus1 = ConnectionBus.fromTerminal(l.getTerminal1(), config, fakeNodes);
             ConnectionBus bus2 = ConnectionBus.fromTerminal(l.getTerminal2(), config, fakeNodes);
             //do not export the line if bus1==bus2
-            if ((bus1 == bus2) || ((bus1 != null) && (bus2 != null) && (bus1.getId().equals(bus2.getId())))) {
+            if (EchUtil.isSameConnectionBus(bus1, bus2)) {
                 LOGGER.warn("skipping Line: {};  bus1 is equal to bus2: {}", l, bus1 != null ? bus1.getId() : bus1);
                 continue;
             }
@@ -308,32 +308,25 @@ public class EurostagEchExport implements EurostagEchExporter {
 
 
     private void createAdditionalBank(EsgNetwork esgNetwork, TwoWindingsTransformer twt, Terminal terminal, String nodeName, Set<String> additionalBanksIds) {
-        float rcapba = 0.0f;
-        if (-twt.getB() < 0) {
-            rcapba = twt.getB() * (float) Math.pow(terminal.getVoltageLevel().getNominalV(), 2) / (config.isSpecificCompatibility() ? 2 : 1);
-        }
-        float plosba = 0.0f;
-        if (twt.getG() < 0) {
-            plosba = twt.getG() * (float) Math.pow(terminal.getVoltageLevel().getNominalV(), 2) / (config.isSpecificCompatibility() ? 2 : 1);
-        }
-        if ((Math.abs(plosba) > G_EPSILON) || (rcapba > B_EPSILON)) {
-            //simple new bank naming: 5 first letters of the node name, 7th letter of the node name, 'C', order code
+        float rcapba = twt.getB() * (float) Math.pow(terminal.getVoltageLevel().getNominalV(), 2) / (config.isSpecificCompatibility() ? 2 : 1);
+        float plosba = twt.getG() * (float) Math.pow(terminal.getVoltageLevel().getNominalV(), 2) / (config.isSpecificCompatibility() ? 2 : 1);
+        if ((Math.abs(plosba) > G_EPSILON) || (Math.abs(rcapba) > B_EPSILON)) {
+            //simple new bank naming: 4 first letters of the node name, 7th letter of the node name, 'C', 2 digits order code
             String nnodeName = Strings.padEnd(nodeName, 8, ' ');
-            String newBankNamePrefix = nnodeName.substring(0, 5) + nnodeName.charAt(6) + 'C';
-            String newBankName = newBankNamePrefix + '0';
+            String newBankNamePrefix = nnodeName.substring(0, 4) + nnodeName.charAt(6) + 'C';
+            String newBankName = newBankNamePrefix + "00";
             int counter = 1;
             while (additionalBanksIds.contains(newBankName)) {
-                String newCounter = Integer.toString(counter++);
-                if (newCounter.length() > 1) {
+                String newCounter = String.format("%02d", counter++);
+                if (newCounter.length() > 2) {
                     throw new RuntimeException("Renaming error " + nodeName + " -> " + newBankName);
                 }
                 newBankName = newBankNamePrefix + newCounter;
             }
             additionalBanksIds.add(newBankName);
-            LOGGER.info("create additional bank: {}, node: {}", newBankName, nodeName);
+            LOGGER.info("create additional bank with id: {} at node: {}, for twt: {} ( B={}, G={} ); rcapba={}, plosba={}", newBankName, nodeName, twt, twt.getB(), twt.getG(), rcapba, plosba);
             esgNetwork.addCapacitorsOrReactorBanks(new EsgCapacitorOrReactorBank(new Esg8charName(newBankName), new Esg8charName(nodeName), 1, plosba, rcapba, 1, EsgCapacitorOrReactorBank.RegulatingMode.NOT_REGULATING));
         }
-
     }
 
     private float getRtcRho1(TwoWindingsTransformer twt, int p) {
@@ -416,8 +409,8 @@ public class EurostagEchExport implements EurostagEchExporter {
 
             ConnectionBus bus1 = ConnectionBus.fromTerminal(twt.getTerminal1(), config, fakeNodes);
             ConnectionBus bus2 = ConnectionBus.fromTerminal(twt.getTerminal2(), config, fakeNodes);
-            //do not export the Transformet if bus1==bus2
-            if ((bus1 == bus2) || ((bus1 != null) && (bus2 != null) && (bus1.getId().equals(bus2.getId())))) {
+            //do not export the Transformer if bus1==bus2
+            if (EchUtil.isSameConnectionBus(bus1, bus2)) {
                 LOGGER.warn("skipping Transformer: {};  bus1 is equal to bus2: {}", twt, bus1 != null ? bus1.getId() : bus1);
                 continue;
             }
@@ -529,13 +522,13 @@ public class EurostagEchExport implements EurostagEchExporter {
             float pregmax = Float.NaN; //...?
 
             //handling of the cases where cmagn should be negative and where pfer should be negative
-            if ((-twt.getB() < 0) || (twt.getG() < 0) || (config.isSpecificCompatibility())) {
+            if ((-twt.getB() < 0) || (twt.getG() < 0)) {
                 createAdditionalBank(esgNetwork, twt, twt.getTerminal1(), dictionary.getEsgId(bus1.getId()), additionalBanksIds);
-                if (config.isSpecificCompatibility()) {
-                    createAdditionalBank(esgNetwork, twt, twt.getTerminal2(), dictionary.getEsgId(bus2.getId()), additionalBanksIds);
-                }
             }
 
+            if (config.isSpecificCompatibility()) {
+                createAdditionalBank(esgNetwork, twt, twt.getTerminal2(), dictionary.getEsgId(bus2.getId()), additionalBanksIds);
+            }
 
             EsgDetailedTwoWindingTransformer esgTransfo = new EsgDetailedTwoWindingTransformer(
                     new EsgBranchName(new Esg8charName(dictionary.getEsgId(bus1.getId())),
