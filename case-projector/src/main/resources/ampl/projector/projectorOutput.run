@@ -196,6 +196,14 @@ printf {(s,n) in SHUNTCC}
 
 printf '#"num" "bus" "v_regul" "targetV(pu)" "Q(MVar)"\n'
   > projector_results_static_var_compensators.txt;
+printf {(s,n) in SVCCC}
+  "%i %i %s %f %f\n",
+  s,n,
+  if (s,n) in SVC_V then "true" else "false",
+  if (s,n) in SVC_V then V[n]   else svc_targetV[s,n],
+  if (s,n) in SVC_V then 100*svc_b[s,n]*V[n]^2
+  else if (s,n) in SVC_FIXE then svc_Q0[s,n]
+  > projector_results_static_var_compensators.txt;
 
 
 ###########################################################################
@@ -205,7 +213,7 @@ printf '#"num" "bus" "v_regul" "targetV(pu)" "Q(MVar)"\n'
 ###########################################################################
 
 printf '#"num" "bus" "P(MW)" "Q(MVar)"\n'
-  > projector_results_static_lcc_converter_stations.txt;
+  > projector_results_lcc_converter_stations.txt;
 
 
 ###########################################################################
@@ -215,8 +223,11 @@ printf '#"num" "bus" "P(MW)" "Q(MVar)"\n'
 ###########################################################################
 
 printf '#"num" "bus" "v_regul" "targetV(pu)" "targetQ(MVar)" "P(MW)" "Q(MVar)"\n'
-  > projector_results_static_vsc_converter_stations.txt;
-
+  > projector_results_vsc_converter_stations.txt;
+printf {(sc,n) in VSCCONV}
+  "%i %i %s %f %f %f %f\n",
+  sc,n,vscconv_vregul[sc,n],V[n],vscconv_Q[sc,n],vscconv_P[sc,n],vscconv_Q[sc,n]
+  > projector_results_vsc_converter_stations.txt;
 
 
 ###########################################################################
@@ -345,3 +356,4 @@ for {(g,n) in UNITCC : unit_PV[g,n]=="true" and abs(V[n]-unit_Vc[g,n])*substatio
 # Fin du fichier
 ###############################################################################
 print "Fin du fichier projectorOutput.run";
+
