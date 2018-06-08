@@ -307,9 +307,16 @@ public class EurostagEchExport implements EurostagEchExporter {
     }
 
 
-    private void createAdditionalBank(EsgNetwork esgNetwork, TwoWindingsTransformer twt, Terminal terminal, String nodeName, Set<String> additionalBanksIds) {
-        float rcapba = twt.getB() * (float) Math.pow(terminal.getVoltageLevel().getNominalV(), 2) / (config.isSpecificCompatibility() ? 2 : 1);
-        float plosba = twt.getG() * (float) Math.pow(terminal.getVoltageLevel().getNominalV(), 2) / (config.isSpecificCompatibility() ? 2 : 1);
+    private void createAdditionalBank(EsgNetwork esgNetwork, TwoWindingsTransformer twt, String nodeName, Set<String> additionalBanksIds, boolean isSide2) {
+        float v2 = (float) Math.pow(twt.getTerminal2().getVoltageLevel().getNominalV(), 2);
+        float rcapba = 0.0f;
+        if (-twt.getB() < 0 || isSide2) {
+            rcapba = twt.getB() * v2 / (config.isSpecificCompatibility() ? 2 : 1);
+        }
+        float plosba = 0.0f;
+        if (twt.getG() < 0 || isSide2) {
+            plosba = 1000 * twt.getG() * v2 / (config.isSpecificCompatibility() ? 2 : 1);
+        }
         if ((Math.abs(plosba) > G_EPSILON) || (Math.abs(rcapba) > B_EPSILON)) {
             //simple new bank naming: 4 first letters of the node name, 7th letter of the node name, 'C', 2 digits order code
             String nnodeName = Strings.padEnd(nodeName, 8, ' ');
@@ -324,7 +331,7 @@ public class EurostagEchExport implements EurostagEchExporter {
                 newBankName = newBankNamePrefix + newCounter;
             }
             additionalBanksIds.add(newBankName);
-            LOGGER.info("create additional bank with id: {} at node: {}, for twt: {} ( B={}, G={} ); rcapba={}, plosba={}", newBankName, nodeName, twt, twt.getB(), twt.getG(), rcapba, plosba);
+            LOGGER.info("create additional bank with id: {} at node: {}, for twt: {} ( B={}, G={} ); rcapba={}, plosba={}, isSide2: {}", newBankName, nodeName, twt, twt.getB(), twt.getG(), rcapba, plosba, isSide2);
             esgNetwork.addCapacitorsOrReactorBanks(new EsgCapacitorOrReactorBank(new Esg8charName(newBankName), new Esg8charName(nodeName), 1, plosba, rcapba, 1, EsgCapacitorOrReactorBank.RegulatingMode.NOT_REGULATING));
         }
     }
@@ -522,12 +529,11 @@ public class EurostagEchExport implements EurostagEchExporter {
             float pregmax = Float.NaN; //...?
 
             //handling of the cases where cmagn should be negative and where pfer should be negative
-            if ((-twt.getB() < 0) || (twt.getG() < 0)) {
-                createAdditionalBank(esgNetwork, twt, twt.getTerminal1(), dictionary.getEsgId(bus1.getId()), additionalBanksIds);
-            }
-
-            if (config.isSpecificCompatibility()) {
-                createAdditionalBank(esgNetwork, twt, twt.getTerminal2(), dictionary.getEsgId(bus2.getId()), additionalBanksIds);
+            if ((-twt.getB() < 0) || (twt.getG() < 0) || (config.isSpecificCompatibility())) {
+                createAdditionalBank(esgNetwork, twt, dictionary.getEsgId(bus1.getId()), additionalBanksIds, false);
+                if (config.isSpecificCompatibility()) {
+                    createAdditionalBank(esgNetwork, twt, dictionary.getEsgId(bus2.getId()), additionalBanksIds, true);
+                }
             }
 
             EsgDetailedTwoWindingTransformer esgTransfo = new EsgDetailedTwoWindingTransformer(
@@ -652,8 +658,8 @@ public class EurostagEchExport implements EurostagEchExporter {
 
             //...number of steps in service
             int ieleba = bus.isConnected() ? sc.getCurrentSectionCount() : 0; // not really correct, because it can be connected with zero section, EUROSTAG should be modified...
-            float plosba = 0.f; // no active lost in the iidm shunt compensator
             float vnom = sc.getTerminal().getVoltageLevel().getNominalV();
+            float plosba = 1000 * vnom * vnom * 0.f; // no active lost in the iidm shunt compensator. Expressed in kw
             float rcapba = vnom * vnom * sc.getbPerSection();
             int imaxba = sc.getMaximumSectionCount();
             EsgCapacitorOrReactorBank.RegulatingMode xregba = EsgCapacitorOrReactorBank.RegulatingMode.NOT_REGULATING;
