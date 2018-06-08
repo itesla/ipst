@@ -8,7 +8,6 @@ package eu.itesla_project.case_projector;
 
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
@@ -43,13 +42,21 @@ public class CaseProjectorLoadFlow implements LoadFlow {
     }
 
     @Override
-    public LoadFlowResult run(LoadFlowParameters params) throws Exception {
-        CaseProjectorLoadFlowParameters amplParams = params.getExtension(CaseProjectorLoadFlowParameters.class);
+    public LoadFlowResult run(LoadFlowParameters parameters) throws Exception {
+        Boolean wres = runAmplTask(network.getStateManager().getWorkingStateId(), parameters).join();
+        return new LoadFlowResultImpl(wres, new HashMap<>(), null);
+    }
+
+    @Override
+    public CompletableFuture<LoadFlowResult> runAsync(String workingStateId, LoadFlowParameters parameters) {
+        return runAmplTask(workingStateId, parameters)
+                .thenApply(x -> new LoadFlowResultImpl(x, new HashMap<>(), null));
+    }
+
+    private CompletableFuture<Boolean> runAmplTask(String workingStateId, LoadFlowParameters parameters) {
+        CaseProjectorLoadFlowParameters amplParams = parameters.getExtension(CaseProjectorLoadFlowParameters.class);
         Path generatorsDomains = amplParams.getGeneratorsDomainsFile();
-        Map<String, String> metrics = new HashMap<>();
-        CompletableFuture<Boolean> result = CaseProjectorUtils.createAmplTask(computationManager, network, network.getStateManager().getWorkingStateId(), new CaseProjectorConfig(amplParams.getAmplHomeDir(), generatorsDomains, amplParams.isDebug()));
-        Boolean wres = result.join();
-        return new LoadFlowResultImpl(wres, metrics, null);
+        return CaseProjectorUtils.createAmplTask(computationManager, network, workingStateId, new CaseProjectorConfig(amplParams.getAmplHomeDir(), generatorsDomains, amplParams.isDebug()));
     }
 
 }
