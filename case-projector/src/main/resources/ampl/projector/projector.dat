@@ -42,7 +42,6 @@ param: TAPS: tap_ratio tap_x tap_angle tap_fault tap_curative := include ampl_ne
 #param: REGL: regl_tap0 regl_table regl_onLoad regl_V regl_fault regl_curative regl_id := include ampl_network_rtc.txt;
 param: REGL: regl_tap0 regl_table regl_onLoad regl_V regl_fault regl_id := include ampl_network_rtc.txt;
 
-
 # ampl_network_ptc.txt
 #"num" "tap" "table" "fault" "curative" "id" 
 param: DEPH: deph_tap0 deph_table deph_fault deph_curative deph_id := include ampl_network_ptc.txt;
@@ -51,6 +50,18 @@ param: DEPH: deph_tap0 deph_table deph_fault deph_curative deph_id := include am
 #"num" "bus1" "bus2" "3wt num" "sub.1" "sub.2" "r (pu)" "x (pu)" "g1 (pu)" "g2 (pu)" "b1 (pu)" "b2 (pu)" "cst ratio (pu)" "ratio tc" "phase tc" "p1 (MW)" "p2 (MW)" "q1 (MVar)" "q2 (MVar)" "patl1 (A)" "patl2 (A)" "merged" "fault" "curative" "id" "description" 
 param: QUAD: quad_3wt quad_subor quad_subex quad_R quad_X quad_Gor quad_Gex quad_Bor quad_Bex quad_cstratio quad_ptrRegl quad_ptrDeph quad_Por quad_Pex quad_Qor quad_Qex quad_patl1 quad_patl2 quad_merged quad_fault quad_curative quad_id quad_nom := include ampl_network_branches.txt;
 
+# ampl_network_static_var_compensators.txt
+#"num" "bus" "con. bus" "substation" "minB (S)" "maxB (S)" "v regul." "targetV (pu)" "fault" "curative" "id" "description" "P (MW)" "Q (MVar)"
+param: SVC: svc_noeudpossible svc_substation svc_bmin svc_bmax svc_vregul svc_targetV svc_fault svc_curative svc_id svc_description svc_P0 svc_Q0 := include ampl_network_static_var_compensators.txt;
+
+#ampl_network_hvdc.txt
+#"num" "type" "converterStation1" "converterStation2" "r(ohm)" "nomV(KV)" "convertersMode" "targetP(MW)" "maxP(MW)" "fault" "curative" "id" "description"
+param: HVDC: hvdc_type hvdc_conv1 hvdc_conv2 hvdc_r hvdc_Vnom hvdc_convertersMode hvdc_targetP hvdc_Pmax hvdc_fault hvdc_curative hvdc_id hvdc_description := include ampl_network_hvdc.txt;
+
+#ampl_network_vsc_converter_stations.txt
+#"num" "bus" "con. bus" "substation" "minP(MW)" "maxP(MW)" "minQmaxP(MVar)" "minQ0(MVar)" "minQminP(MVar)" "maxQmaxP(MVar)" "maxQ0(MVar)" "maxQminP(MVar)" "v regul." "targetV(pu)" "targetQ(MVar)" "lossFactor(%PDC)" "fault" "curative" "id" "description" "P(MW)" "Q(MVar)"
+param: VSCCONV: vscconv_noeudpossible vscconv_substation vscconv_Pmin vscconv_Pmax vscconv_qP vscconv_qp0 vscconv_qp vscconv_QP vscconv_Qp0 vscconv_Qp vscconv_vregul vscconv_targetV vscconv_targetQ vscconv_lossFactor vscconv_fault vscconv_curative  vscconv_id vscconv_description vscconv_P0 vscconv_Q0 := include ampl_network_vsc_converter_stations.txt;
+
 
 # ampl_generators_domains.txt
 #num id P(MW) Q(MVar) V(kV) RHS(lt) Vnominal(kV) id_internal
@@ -58,4 +69,6 @@ param: DOMAIN: domain_coeffP domain_coeffQ domain_coeffV domain_RHS domain_Vnomi
 
 # ampl_network_limits.txt
 #"num" "branch" "side" "limit (A)" "accept. duration (s)" "fault" "curative" 
-# Fichier non lu
+# Fichier non lu par le porjecteur
+
+

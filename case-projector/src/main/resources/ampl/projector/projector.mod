@@ -22,6 +22,15 @@ param tempo;
 
 
 ###############################################################################
+#
+# Autres parametres
+#
+###############################################################################
+param epsilon_tension_min = 0.5; # On considere qu'une Vmin ou Vmax < 0.5 ne vaut rien (exemple -99999)
+
+
+
+###############################################################################
 # Donnees postes
 ###############################################################################
 
@@ -173,6 +182,32 @@ check {(s,n) in SHUNT}: shunt_substation[s,n] in SUBSTATIONS;
 
 
 ###############################################################################
+# Donnees Static Var Compensator (== CSPR)
+###############################################################################
+
+set SVC dimen 2; # [svc, noeud]
+param svc_noeudpossible {SVC} integer;
+param svc_substation    {SVC} integer;
+param svc_bmin          {SVC}; # Susceptance B en p.u. : faire B*100*V^2 pour obtenir des MVAr
+param svc_bmax          {SVC}; # Susceptance B en p.u. : faire B*100*V^2 pour obtenir des MVAr
+param svc_vregul        {SVC} symbolic; # Indique si le svc est en mode de regulation de la tension
+param svc_targetV       {SVC}; # Cible pour la regulation de tension
+param svc_fault         {SVC};
+param svc_curative      {SVC};
+param svc_id            {SVC} symbolic;
+param svc_description   {SVC} symbolic;
+param svc_P0            {SVC};
+param svc_Q0            {SVC}; # Valeur fixe a utiliser si le svc ne regule pas la tension (e-mail Nicolas Omont 30 mai 2018)
+
+#
+# Consistance
+#
+check {(s,n) in SVC}: n  in NOEUD union {-1};
+check {(s,n) in SVC}: svc_substation[s,n] in SUBSTATIONS;
+
+
+
+###############################################################################
 # Donnees Tables des prises
 ###############################################################################
 
@@ -293,6 +328,68 @@ param noeud_Ytot {k in NOEUD} =
   );# Fin de la somme
 
 
+###############################################################################
+# Donnees stations de conversion de type VSC / VSC converter station data
+###############################################################################
+set VSCCONV dimen 2; # num, bus
+param vscconv_noeudpossible{VSCCONV} integer;
+param vscconv_substation  {VSCCONV} integer;
+param vscconv_Pmin        {VSCCONV};
+param vscconv_Pmax        {VSCCONV};
+param vscconv_qP          {VSCCONV};
+param vscconv_qp0         {VSCCONV};
+param vscconv_qp          {VSCCONV};
+param vscconv_QP          {VSCCONV};
+param vscconv_Qp0         {VSCCONV};
+param vscconv_Qp          {VSCCONV};
+param vscconv_vregul      {VSCCONV} symbolic;
+param vscconv_targetV     {VSCCONV};
+param vscconv_targetQ     {VSCCONV};
+param vscconv_lossFactor  {VSCCONV};
+param vscconv_fault       {VSCCONV};
+param vscconv_curative    {VSCCONV};
+param vscconv_id          {VSCCONV} symbolic;
+param vscconv_description {VSCCONV} symbolic;
+param vscconv_P0           {VSCCONV};
+param vscconv_Q0           {VSCCONV};
+
+#
+# Consistance
+#
+check {(cs,n) in VSCCONV}: n  in NOEUD union {-1};
+check {(cs,n) in VSCCONV}: vscconv_substation[cs,n] in SUBSTATIONS;
+check {(cs,n) in VSCCONV}: vscconv_Pmin[cs,n] <= vscconv_Pmax[cs,n];
+check {(cs,n) in VSCCONV}: vscconv_qp[cs,n]   <= vscconv_Qp[cs,n]; # Qmin et Qmax a Pmin
+check {(cs,n) in VSCCONV}: vscconv_qp0[cs,n]  <= vscconv_Qp0[cs,n]; # Qmin et Qmax a P=0
+check {(cs,n) in VSCCONV}: vscconv_qP[cs,n]   <= vscconv_QP[cs,n]; # Qmin et Qmax a Pmax
+check {(cs,n) in VSCCONV: vscconv_vregul[cs,n] == "true"}: vscconv_targetV[cs,n] >= epsilon_tension_min;
+
+
+###############################################################################
+# Donnees HVDC
+# Rq: si on utilise les injections des stations VSC fixes, les donnees de la hvdc ne sont pas utilisees
+###############################################################################
+set HVDC dimen 1;
+param hvdc_type           {HVDC} integer; # 1->vscConverterStation, 2->lccConverterStation
+param hvdc_conv1          {HVDC} integer;
+param hvdc_conv2          {HVDC} integer;
+param hvdc_r              {HVDC};
+param hvdc_Vnom           {HVDC};
+param hvdc_convertersMode {HVDC} symbolic;
+param hvdc_targetP        {HVDC};
+param hvdc_Pmax           {HVDC};
+param hvdc_fault          {HVDC};
+param hvdc_curative       {HVDC};
+param hvdc_id             {HVDC} symbolic;
+param hvdc_description    {HVDC} symbolic;
+
+check {h in HVDC}: hvdc_type[h] == 1; # Doit valoir 1 ou 2 mais le type 2 n'est pas encore developpe ici
+check {h in HVDC}: hvdc_conv1[h] != hvdc_conv2[h];
+check {h in HVDC}: hvdc_Vnom[h] >= epsilon_tension_min;
+check {h in HVDC}: hvdc_convertersMode[h] == "SIDE_1_RECTIFIER_SIDE_2_INVERTER" or hvdc_convertersMode[h] == "SIDE_1_INVERTER_SIDE_2_RECTIFIER";
+check {h in HVDC}: hvdc_targetP[h] >= 0.0;
+check {h in HVDC}: hvdc_targetP[h] <= hvdc_Pmax[h];
+
 
 ###############################################################################
 # Definition d'ensembles supplementaires
@@ -377,7 +474,7 @@ param quad_dephex {(qq,m,n) in QUADCC} = 0;
 # Bornes en tension
 ###############################################################################
 
-param epsilon_tension_min = 0.5; # On considere qu'une Vmin ou Vmax < 0.5 ne vaut rien (exemple -99999)
+#param epsilon_tension_min = 0.5; # On considere qu'une Vmin ou Vmax < 0.5 ne vaut rien (exemple -99999)
 param Vmin_defaut_horsgroupe := 0.80;
 param Vmax_defaut_horsgroupe := 1.15;
 param Vmin_defaut_groupe := 0.95;
@@ -468,6 +565,7 @@ check{(g,n) in UNITCC} : Qmin[g,n] <= Qmax[g,n];
 set UNITHORSPMIN := setof {(g,n) in UNITCC : unit_Pc[g,n] < unit_Pmin[g,n]} unit_id[g,n] ;
 set UNITHORSPMAX := setof {(g,n) in UNITCC : unit_Pc[g,n] > unit_Pmax[g,n]} unit_id[g,n];
 
+
 ###############################################################################
 # Variables de production
 ###############################################################################
@@ -493,6 +591,62 @@ subject to ctr_domain{(numero,g,n,gid) in UNIT_DOMAIN_CTR : gen_vnom_mismatch[g,
   + domain_coeffQ[numero,gid] * unit_Q[g,n]
   + domain_coeffV[numero,gid] * substation_Vnomi[unit_substation[g,n]] * V[n]
   <= domain_RHS[numero,gid];
+
+
+###############################################################################
+# Static Var Compensators (==CSPR)
+###############################################################################
+
+# SVC sur la composante connexe principale
+set SVCCC := {(s,n) in SVC : n in NOEUDCC};
+
+# SVC qui regulent une tension
+set SVC_V := {(s,n) in SVCCC : svc_vregul[s,n]=="true" && svc_targetV[s,n] >= epsilon_tension_min };
+
+# SVC qui regulent une valeur reactive
+# Mai 2018 : donnees pas encore disponibles pour le reglage d'une consigne reactive
+set SVC_Q dimen 2; # Vide
+
+# SVC avec Q fixe
+set SVC_FIXE := {(s,n) in SVCCC : (s,n) not in SVC_V};# && (s,n) not in SVC_Q};
+
+
+# Variable "b" dans ses bornes
+var svc_b{(s,n) in SVC_V} >= svc_bmin[s,n], <= svc_bmax[s,n];
+
+# Dans Hades, la production de reactif est limitee par bmin*Vnominale^2 et bmax*Vnominale^2. On veut garder ces limitations ici.
+subject to limites_reactif_hades{(s,n) in SVC_V}:
+  svc_bmin[s,n] <= svc_b[s,n] * V[n]^2 <= svc_bmax[s,n]; # Vnominale est egale a 1kV
+
+
+###############################################################################
+# Stations de conversion VSC
+###############################################################################
+
+# Injection active de la station de conversion VSC
+var vscconv_P{(sc,n) in VSCCONV} >= vscconv_Pmin[sc,n], <= vscconv_Pmax[sc,n];
+
+# Injection reactive de la station de conversion VSC
+var vscconv_Q{(sc,n) in VSCCONV}
+  >= min( vscconv_qp[sc,n], vscconv_qp0[sc,n], vscconv_qP[sc,n] ),
+  <= max( vscconv_Qp[sc,n], vscconv_Qp0[sc,n], vscconv_QP[sc,n] );
+
+# Diagrammes : contraintes trapezoidales reliant P et Q
+# La forme generale des droites definissant le diagramme est: Q=q1+*(q2-q1)/(p2-p1)*P
+# S'il s'agit d'une limite superieure, on remplace = par <=
+# S'il s'agit d'une limite inferieure, on remplace = par >=
+
+# Limites entre P=0 et Pmax
+subject to limites_sup_reactif_Ppositif{(sc,n) in VSCCONV}:
+  vscconv_Q[sc,n] <= vscconv_Qp0[sc,n] + (vscconv_QP[sc,n]-vscconv_Qp0[sc,n])/(vscconv_Pmax[sc,n]-0.0)*vscconv_P[sc,n];
+subject to limites_inf_reactif_Ppositif{(sc,n) in VSCCONV}:
+  vscconv_Q[sc,n] >= vscconv_qp0[sc,n] + (vscconv_qP[sc,n]-vscconv_qp0[sc,n])/(vscconv_Pmax[sc,n]-0.0)*vscconv_P[sc,n];
+
+# Limites entre Pmin et P=0
+subject to limites_sup_reactif_Pnegatif{(sc,n) in VSCCONV}:
+  vscconv_Q[sc,n] <= vscconv_Qp0[sc,n] + (vscconv_Qp[sc,n]-vscconv_Qp0[sc,n])/(vscconv_Pmin[sc,n]-0.0)*vscconv_P[sc,n];
+subject to limites_inf_reactif_Pnegatif{(sc,n) in VSCCONV}:
+  vscconv_Q[sc,n] >= vscconv_qp0[sc,n] + (vscconv_qp[sc,n]-vscconv_qp0[sc,n])/(vscconv_Pmin[sc,n]-0.0)*vscconv_P[sc,n];
 
 
 ###############################################################################
@@ -552,27 +706,37 @@ var term_bilan_P_noeud_nul{k in NOEUDCC} =
 # Sauf si gros probleme numerique, il faut mettre shunt_noeud[k] * V[k]^2
 
 subject to bilan_Q_noeud {k in NOEUDCC}: 
-	- 100 * noeud_Ytot[k]  * V[k]^2  
-	- sum{(shunt,k) in SHUNTCC} 100 * shunt_valnom[shunt,k] * V[k]^2	
-	+ sum{(qq,k,n)  in QUADCC}  100 * V[k] * Red_Tran_Rea_Dir[qq,k,n] 
-	+ sum{(qq,m,k)  in QUADCC}  100 * V[k] * Red_Tran_Rea_Inv[qq,m,k] 
-	- sum{(g,k) in UNITCC} unit_Q[g,k]
-	=
-	- sum{(c,k) in CONSOCC} conso_QFix[c,k];
+  - 100 * noeud_Ytot[k]  * V[k]^2  
+  - sum{(shunt,k) in SHUNTCC } 100 * shunt_valnom[shunt,k] * V[k]^2
+  - sum{(svc,k)   in SVC_V   } 100 * svc_b[svc,k]          * V[k]^2
+  - sum{(svc,k)   in SVC_FIXE} svc_Q0[svc,k]
+  - sum{(sc,k)    in VSCCONV } vscconv_Q[sc,k]
+  + sum{(qq,k,n)  in QUADCC}  100 * V[k] * Red_Tran_Rea_Dir[qq,k,n] 
+  + sum{(qq,m,k)  in QUADCC}  100 * V[k] * Red_Tran_Rea_Inv[qq,m,k] 
+  - sum{(g,k) in UNITCC} unit_Q[g,k]
+  =
+  - sum{(c,k) in CONSOCC} conso_QFix[c,k];
 
 var term_bilan_Q_noeud {k in NOEUDCC} =
-	- 100 * noeud_Ytot[k]  * V[k]^2  
-	- sum{(shunt,k) in SHUNTCC} 100 * shunt_valnom[shunt,k] * V[k]^2	
-	+ sum{(qq,k,n)  in QUADCC}  100 * V[k] * Red_Tran_Rea_Dir[qq,k,n] 
-	+ sum{(qq,m,k)  in QUADCC}  100 * V[k] * Red_Tran_Rea_Inv[qq,m,k] 
-	- sum{(g,k) in UNITCC} unit_Q[g,k];
+  - 100 * noeud_Ytot[k]  * V[k]^2  
+  - sum{(shunt,k) in SHUNTCC } 100 * shunt_valnom[shunt,k] * V[k]^2	
+  - sum{(svc,k)   in SVC_V   } 100 * svc_b[svc,k]          * V[k]^2
+  - sum{(svc,k)   in SVC_FIXE} svc_Q0[svc,k]
+  - sum{(sc,k)    in VSCCONV } vscconv_Q[sc,k]
+  + sum{(qq,k,n)  in QUADCC}  100 * V[k] * Red_Tran_Rea_Dir[qq,k,n] 
+  + sum{(qq,m,k)  in QUADCC}  100 * V[k] * Red_Tran_Rea_Inv[qq,m,k] 
+  - sum{(g,k) in UNITCC} unit_Q[g,k];
+
 var term_bilan_Q_noeud_nul {k in NOEUDCC} =
-	- 100 * noeud_Ytot[k]  * V[k]^2  
-	- sum{(shunt,k) in SHUNTCC} 100 * shunt_valnom[shunt,k] * V[k]^2	
-	+ sum{(qq,k,n)  in QUADCC}  100 * V[k] * Red_Tran_Rea_Dir[qq,k,n] 
-	+ sum{(qq,m,k)  in QUADCC}  100 * V[k] * Red_Tran_Rea_Inv[qq,m,k] 
-	- sum{(g,k) in UNITCC} unit_Q[g,k]
-	+ sum{(c,k) in CONSOCC} conso_QFix[c,k];
+  - 100 * noeud_Ytot[k]  * V[k]^2  
+  - sum{(shunt,k) in SHUNTCC } 100 * shunt_valnom[shunt,k] * V[k]^2	
+  - sum{(svc,k)   in SVC_V   } 100 * svc_b[svc,k]          * V[k]^2
+  - sum{(svc,k)   in SVC_FIXE} svc_Q0[svc,k]
+  - sum{(sc,k)    in VSCCONV } vscconv_Q[sc,k]
+  + sum{(qq,k,n)  in QUADCC}  100 * V[k] * Red_Tran_Rea_Dir[qq,k,n] 
+  + sum{(qq,m,k)  in QUADCC}  100 * V[k] * Red_Tran_Rea_Inv[qq,m,k] 
+  - sum{(g,k) in UNITCC} unit_Q[g,k]
+  + sum{(c,k) in CONSOCC} conso_QFix[c,k];
 
 
 ###############################################################################
@@ -582,4 +746,9 @@ var term_bilan_Q_noeud_nul {k in NOEUDCC} =
 minimize somme_ecarts_quadratiques :
     sum {(g,n) in UNIT_PQV} ( unit_P[g,n] - unit_Pc[g,n] )^2
   + sum {(g,n) in UNIT_PQV} ( unit_Q[g,n] - unit_Qc[g,n] )^2
-  + 10 * sum {(g,n) in UNIT_PV inter UNIT_PQV } ( unit_Pmax[g,n] * (V[n] - unit_Vc[g,n]) )^2;
+  + 10 * sum {(g,n) in UNIT_PV inter UNIT_PQV } ( unit_Pmax[g,n] * (V[n] - unit_Vc[g,n]) )^2
+  + 10 * sum {(s,n) in SVC_V  } 100 * (V[n] - svc_targetV[s,n])^2 # Ici le 100 signifie qu'en general les VSC ont une capacite de l'ordre de 100MVAr
+  + 1.0e+8 * sum{(sc,n) in VSCCONV}  (V[n] - vscconv_targetV[sc,n])^2
+  ;
+
+
