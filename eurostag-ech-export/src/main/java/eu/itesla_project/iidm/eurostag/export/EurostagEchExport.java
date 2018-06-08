@@ -307,16 +307,7 @@ public class EurostagEchExport implements EurostagEchExporter {
     }
 
 
-    private void createAdditionalBank(EsgNetwork esgNetwork, TwoWindingsTransformer twt, String nodeName, Set<String> additionalBanksIds, boolean isSide2) {
-        float v2 = (float) Math.pow(twt.getTerminal2().getVoltageLevel().getNominalV(), 2);
-        float rcapba = 0.0f;
-        if (-twt.getB() < 0 || isSide2) {
-            rcapba = twt.getB() * v2 / (config.isSpecificCompatibility() ? 2 : 1);
-        }
-        float plosba = 0.0f;
-        if (twt.getG() < 0 || isSide2) {
-            plosba = 1000 * twt.getG() * v2 / (config.isSpecificCompatibility() ? 2 : 1);
-        }
+    private void createAdditionalBank(EsgNetwork esgNetwork, TwoWindingsTransformer twt, String nodeName, Set<String> additionalBanksIds, float rcapba, float plosba) {
         if ((Math.abs(plosba) > G_EPSILON) || (Math.abs(rcapba) > B_EPSILON)) {
             //simple new bank naming: 4 first letters of the node name, 7th letter of the node name, 'C', 2 digits order code
             String nnodeName = Strings.padEnd(nodeName, 8, ' ');
@@ -331,7 +322,7 @@ public class EurostagEchExport implements EurostagEchExporter {
                 newBankName = newBankNamePrefix + newCounter;
             }
             additionalBanksIds.add(newBankName);
-            LOGGER.info("create additional bank with id: {} at node: {}, for twt: {} ( B={}, G={} ); rcapba={}, plosba={}, isSide2: {}", newBankName, nodeName, twt, twt.getB(), twt.getG(), rcapba, plosba, isSide2);
+            LOGGER.info("create additional bank with id: {} at node: {}, for twt: {} ( B={}, G={} ); rcapba={}, plosba={}", newBankName, nodeName, twt, twt.getB(), twt.getG(), rcapba, plosba);
             esgNetwork.addCapacitorsOrReactorBanks(new EsgCapacitorOrReactorBank(new Esg8charName(newBankName), new Esg8charName(nodeName), 1, plosba, rcapba, 1, EsgCapacitorOrReactorBank.RegulatingMode.NOT_REGULATING));
         }
     }
@@ -530,9 +521,12 @@ public class EurostagEchExport implements EurostagEchExporter {
 
             //handling of the cases where cmagn should be negative and where pfer should be negative
             if ((-twt.getB() < 0) || (twt.getG() < 0) || (config.isSpecificCompatibility())) {
-                createAdditionalBank(esgNetwork, twt, dictionary.getEsgId(bus1.getId()), additionalBanksIds, false);
+                float rcapba = twt.getB() * nomiU2 * nomiU2 / (config.isSpecificCompatibility() ? 2 : 1);
+                float plosba = 1000f * twt.getG() * nomiU2 * nomiU2 / (config.isSpecificCompatibility() ? 2 : 1);
+                createAdditionalBank(esgNetwork, twt, dictionary.getEsgId(bus1.getId()), additionalBanksIds, (-twt.getB() < 0) ? rcapba : 0.0f, (twt.getG() < 0) ? plosba : 0.0f);
                 if (config.isSpecificCompatibility()) {
-                    createAdditionalBank(esgNetwork, twt, dictionary.getEsgId(bus2.getId()), additionalBanksIds, true);
+                    //always create a new bank on side2
+                    createAdditionalBank(esgNetwork, twt, dictionary.getEsgId(bus2.getId()), additionalBanksIds, rcapba, plosba);
                 }
             }
 
