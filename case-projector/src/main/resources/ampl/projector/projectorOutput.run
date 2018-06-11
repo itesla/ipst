@@ -8,7 +8,7 @@
 # author: Jean Maeght
 #
 # Projecteur
-# Ecriture des reultats
+# Ecriture des resultats
 # 
 ###############################################################################
 print "Debut du fichier projectorOutput.run";
@@ -34,6 +34,30 @@ else
 #
 ###########################################################################
 
+#
+# A partir de mai 2018, nouveau format
+#
+
+if final_status = "projector_OK" then {
+printf '#"num" "bus" "v_regul" "targetV(pu)" "targetP(MW)" "targetQ(MVar)" "P(MW)" "Q(MVar)"\n' > projector_results_generators.txt;
+printf {(g,n) in UNIT: n in NOEUDCC}
+  "%i %i %s %f %f %f %f %f\n",
+  g,
+  n,
+  # unit_PV[g,n] -> ce qu'il y a dans la situation en entree
+  if (g,n) in UNIT_PV then "true" else "false", # Voir definition de UNIT_PV
+  V[n],         # Tension issue du calcul. La tension de consigne de la situation en entree n'est pas ecrite ici
+  unit_Pc[g,n], # -> ce qu'il y a dans la situation en entree
+  unit_Qc[g,n], # -> ce qu'il y a dans la situation en entree
+  if (g,n) in UNITCC then unit_P[g,n] else 0, # On peut avoir un groupe raccorde mais avec consignes nulles
+  if (g,n) in UNITCC then unit_Q[g,n] else 0  # On peut avoir un groupe raccorde mais avec consignes nulles
+  > projector_results_generators.txt;
+}
+
+#
+# Jusqu'a mai 2018, on ecrit simplement trois colonnes V P Q
+#
+/* Attention, le signe '/*' marque le debut d'un commentaire long comme en C ou en C++
 param unit_P_out{UNIT} default 0;
 param unit_Q_out{UNIT} default 0;
 
@@ -54,6 +78,156 @@ printf {(g,n) in UNIT: n in NOEUDCC}
   unit_Q_out[g,n]
   > projector_results_generators.txt;
 }
+*/
+
+
+###########################################################################
+# 
+# Ecriture des noeuds
+#
+###########################################################################
+
+printf '#"num" "v(pu)" "theta(rad)"\n'
+  > projector_results_buses.txt;
+printf {n in NOEUDCC}
+  "%i %f %f\n",
+  n,V[n],Ph[n]
+   > projector_results_buses.txt;
+
+
+###########################################################################
+# 
+# Ecriture des branches
+#
+###########################################################################
+
+printf '#"num" "bus1" "bus2" "p1(MW)" "p2(MW)" "q1(MVar)" "q2(MVar)"\n'
+  > projector_results_branches.txt;
+printf {(qq,n,m) in QUADCC}
+  "%i %i %i %f %f %f %f\n",
+  qq,n,m,
+  100 * V[n] * Red_Tran_Act_Dir[qq,n,m],
+  100 * V[m] * Red_Tran_Act_Inv[qq,n,m],
+  100 * V[n] * Red_Tran_Rea_Dir[qq,n,m],
+  100 * V[m] * Red_Tran_Rea_Inv[qq,n,m]
+  > projector_results_branches.txt;
+
+
+###########################################################################
+# 
+# Ecriture des regleurs
+#
+###########################################################################
+
+printf '#"num" "tap"\n'
+  > projector_results_rtc.txt;
+printf {(qq,m,n) in QUADCC_REGL}
+  "%i %i\n",
+  quad_ptrRegl[qq,m,n],
+  regl_tap0[quad_ptrRegl[qq,m,n]]
+  > projector_results_rtc.txt;
+
+
+###########################################################################
+# 
+# Ecriture des dephaseurs
+#
+###########################################################################
+
+printf '#"num" "tap"\n'
+  > projector_results_ptc.txt;
+printf {(qq,m,n) in QUADCC_DEPH}
+  "%i %i\n",
+  quad_ptrDeph[qq,m,n],
+  deph_tap0[quad_ptrDeph[qq,m,n]]
+  > projector_results_ptc.txt;
+
+
+###########################################################################
+# 
+# Ecriture des HVDC
+#
+###########################################################################
+
+printf '#"num" "convertersMode" "targetP(MW)"\n'
+  > projector_results_hvdc.txt;
+
+
+###########################################################################
+# 
+# Ecriture des conso
+#
+###########################################################################
+
+printf '#"num" "bus" "p(MW)" "q(MVar)" "p0(MW)" "q0(MVar)"\n'
+  > projector_results_loads.txt;
+printf {(c,n) in CONSOCC}
+  "%i %i %f %f %f %f\n",
+  c,n,
+  conso_PFix[c,n],
+  conso_QFix[c,n],
+  conso_p[c,n],
+  conso_q[c,n]
+  > projector_results_loads.txt;
+
+
+###########################################################################
+# 
+# Ecriture des shunts
+#
+###########################################################################
+
+printf '#"num" "bus" "b(pu)" "Q(MVar)" "sections_count"\n'
+  > projector_results_shunts.txt;
+printf {(s,n) in SHUNTCC}
+  "%i %i %f %f %i\n",
+  s,n,
+  shunt_valnom[s,n],
+  -shunt_valnom[s,n]*100*V[n]^2, # Dans le fichier ampl_networks_shunts.txt, Q est de signe oppose a celui de b (b==valnom)
+  shunt_sections_count[s,n]
+  > projector_results_shunts.txt;
+
+
+###########################################################################
+# 
+# Ecriture des static var compensators
+#
+###########################################################################
+
+printf '#"num" "bus" "v_regul" "targetV(pu)" "Q(MVar)"\n'
+  > projector_results_static_var_compensators.txt;
+printf {(s,n) in SVCCC}
+  "%i %i %s %f %f\n",
+  s,n,
+  if (s,n) in SVC_V then "true" else "false",
+  if (s,n) in SVC_V then V[n]   else svc_targetV[s,n],
+  if (s,n) in SVC_V then 100*svc_b[s,n]*V[n]^2
+  else if (s,n) in SVC_FIXE then svc_Q0[s,n]
+  > projector_results_static_var_compensators.txt;
+
+
+###########################################################################
+# 
+# Ecriture des lcc converter stations
+#
+###########################################################################
+
+printf '#"num" "bus" "P(MW)" "Q(MVar)"\n'
+  > projector_results_lcc_converter_stations.txt;
+
+
+###########################################################################
+# 
+# Ecriture des vsc converter stations
+#
+###########################################################################
+
+printf '#"num" "bus" "v_regul" "targetV(pu)" "targetQ(MVar)" "P(MW)" "Q(MVar)"\n'
+  > projector_results_vsc_converter_stations.txt;
+printf {(sc,n) in VSCCONV}
+  "%i %i %s %f %f %f %f\n",
+  sc,n,vscconv_vregul[sc,n],V[n],vscconv_Q[sc,n],vscconv_P[sc,n],vscconv_Q[sc,n]
+  > projector_results_vsc_converter_stations.txt;
 
 
 ###########################################################################
@@ -68,6 +242,7 @@ printf {(g,n) in UNIT: n in NOEUDCC}
 #
 printf "%s %s\n","final_status", final_status > projector_results_indic.txt;
 printf "%s %s\n","solve_result_num",solve_result_num > projector_results_indic.txt;
+
 # Fermeture du fichier pour autoriser l'ecriture directement par le shell
 close;
 
@@ -181,3 +356,4 @@ for {(g,n) in UNITCC : unit_PV[g,n]=="true" and abs(V[n]-unit_Vc[g,n])*substatio
 # Fin du fichier
 ###############################################################################
 print "Fin du fichier projectorOutput.run";
+

@@ -112,6 +112,26 @@ let {(g,n) in UNIT} unit_QP[g,n]:=tmp[g,n];
 check;
 
 
+
+###############################################################################
+# Correction des valeurs bmin et bmax des CSPR
+###############################################################################
+# 31 mai 2018 : les conversions pour les CSPR sont erronnees dans Powsybl, donc on doit modifier les valeurs ici
+for {(s,n) in SVCCC} {
+  if ( abs(svc_bmin[s,n]) + abs(svc_bmax[s,n]) ) < 0.1
+  then {
+    printf "Poste %s : valeur bmin du VSC '%s' trop faible, corrigee par %f * %i^2 / 100 = %.2f\n",
+      substation_id[noeud_poste[n]],svc_id[s,n],svc_bmin[s,n],substation_Vnomi[noeud_poste[n]],
+      svc_bmin[s,n] * 0.01 * substation_Vnomi[noeud_poste[n]]^2;
+    printf "Poste %s : valeur bmax du VSC '%s' trop faible, corrigee par  %f * %i^2 / 100 =  %.2f\n",
+      substation_id[noeud_poste[n]],svc_id[s,n],svc_bmax[s,n],substation_Vnomi[noeud_poste[n]],
+      svc_bmax[s,n] * 0.01 * substation_Vnomi[noeud_poste[n]]^2;
+    let svc_bmin[s,n] := svc_bmin[s,n] * 0.01 * substation_Vnomi[noeud_poste[n]]^2;
+    let svc_bmax[s,n] := svc_bmax[s,n] * 0.01 * substation_Vnomi[noeud_poste[n]]^2;
+  }
+}
+
+
 ################################################################################
 # Calcul du noeud qui aura la phase fixee
 ################################################################################
@@ -166,6 +186,10 @@ fix {(g,n) in UNITCC diff UNIT_PQV} unit_Q[g,n];
 # On ne peut pas en plus fixer la tension, sinon risque de non realisabilite pour question numerique (si on veut fixer P Q V en meme temps, il y a risque d'erreur numerique)
 
 
+# Fonctionnement des stations de conversion HVDC mode VSC : injection fisee
+fix {(sc,n) in VSCCONV} vscconv_P[sc,n] := vscconv_P0[sc,n];
+
+
 ###############################################################################
 # Descriptifs
 ###############################################################################
@@ -184,10 +208,31 @@ display card(NOEUDCC),card(NOEUDCC_V0),
   UNITHORSPMIN,UNITHORSPMAX,
   card(UNIT_DOMAIN_CTR),
   UNIT_DOMAIN,
-  DOMAIN_ID
+  DOMAIN_ID,
+  SVC,SVC_V,SVC_FIXE
   ;
 
+printf "Nombre de noeuds dans la composante connexe pincipale (i.e. la composante connexe numero 0) : %i\n",card(NOEUDCC);
+printf "Nombre de noeuds de la composante connexe pincipale ayant une V0 renseignee : %i\n",card(NOEUDCC_V0);
+printf "Nombre de groupes decrits : %i\n",card(UNIT);
+printf "Nombre de groupes sur la composante connexe principale : %i\n",card(UNITCC);
+printf "Nombre de groupes decrits comme PV : %i\n",card({(g,n) in UNITCC: unit_PV[g,n]=="true"});
+printf "Nombre de groupes decrits comme PQ : %i\n",card({(g,n) in UNITCC: unit_PV[g,n]!="true"});
+printf "Nombre de groupes ayant un domaine dynamique : %i\n",card(DOMAIN_IDENTIFIANTS);
+printf "Nombre de groupes connectes et demarres et ayant un domaine dynamique : %i\n",card(UNIT_DOMAIN);
+printf "Nombre groupes pour lesquels il y a un mismatch de tension entre l'etat de reseau et les domaines : %i\n",
+  card({(g,n,gid) in UNIT_DOMAIN : gen_vnom_mismatch[g,n,unit_id[g,n]]!=0});
+printf "Nombre groupes pour lesquels on va vraiment faire varier P Q V : %i\n",card(UNIT_PQV);
 
+
+###############################################################################
+# Si tous les groupes ont P et Q fixes, ca ne sert a rien de faire tourner le projecteur
+# On pourrait directement mettre ici un 'exit'
+###############################################################################
+if card(UNIT_PQV) == 0 then
+  print "\n*** ERREUR : aucun groupe ne peut etre modifie par le projecteur, tous les groupes ont P et Q fixes\n";
+
+printf "\n";
 
 ###############################################################################
 # Scaling
@@ -202,7 +247,7 @@ let {(g,n) in UNIT_PQV} ctr_trapeze_qmax[g,n].cscalefactor := 1/max(1.0,abs(ctr_
 let {(g,n) in UNIT_PQV} ctr_trapeze_qmin[g,n].cscalefactor := 1/max(1.0,abs(ctr_trapeze_qmin_rhs[g,n]));
 let {(numero,g,n,gid) in UNIT_DOMAIN_CTR} ctr_domain[numero,g,n,gid].cscalefactor := 
   1/max(1.0,abs(domain_RHS[numero,gid]));
-
+#let {(s,n) in SVC_V} svc_b[s,n].xscalefactor := (svc_bmax[s,n] - svc_bmin[s,n]); # Semble ralentir le calcul. A retester
 
 
 ###############################################################################
@@ -217,6 +262,7 @@ let {n in NOEUDCC} bilan_Q_noeud[n].cfeastol := 0.01;
 let {(g,n) in UNIT_PQV} ctr_trapeze_qmax[g,n].cfeastol := 0.01;
 let {(g,n) in UNIT_PQV} ctr_trapeze_qmin[g,n].cfeastol := 0.01;
 let {(numero,g,n,gid) in UNIT_DOMAIN_CTR} ctr_domain[numero,g,n,gid].cfeastol := 0.01;
+let {(s,n) in SVC_V} limites_reactif_hades[s,n].cfeastol := 0.001;
 
 
 ###############################################################################
@@ -230,8 +276,8 @@ display bilan_P_noeud,
   term_bilan_Q_noeud,
   term_bilan_Q_noeud_nul
   > bilan_P_noeud.txt;
+expand limites_sup_reactif_Ppositif,limites_inf_reactif_Ppositif,limites_sup_reactif_Pnegatif,limites_inf_reactif_Pnegatif ;
 */
-
 
 ###############################################################################
 # Resolution
@@ -243,7 +289,6 @@ option knitro_options
 param nb_solve_max = 6;
 param nb_solve;
 let nb_solve := 0; 
-display solve_result_num;
 
 repeat {
   solve;
@@ -251,7 +296,6 @@ repeat {
   printf "*** Iteration de solve numero %i, solve_result_num=%i\n\n",nb_solve,solve_result_num;
   }
 while ( ( solve_result_num >= 100 and solve_result_num < 400 ) or solve_result_num >= 410 ) and nb_solve<nb_solve_max;
-
 
 
 ###############################################################################
