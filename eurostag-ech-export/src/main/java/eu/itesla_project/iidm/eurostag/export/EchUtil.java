@@ -233,4 +233,12 @@ public final class EchUtil {
         return null;
     }
 
+    public static boolean isSameConnectionBus(ConnectionBus bus1, ConnectionBus bus2) {
+        return (bus1 == null || bus2 == null) ? bus1 == bus2 : (bus1.getId() == null ? bus2.getId() == null : bus1.getId().equals(bus2.getId()));
+    }
+
+    public static boolean isSameBus(Bus bus1, Bus bus2) {
+        return (bus1 == null || bus2 == null) ? bus1 == bus2 : (bus1.getId() == null ? bus2.getId() == null : bus1.getId().equals(bus2.getId()));
+    }
+
 }
