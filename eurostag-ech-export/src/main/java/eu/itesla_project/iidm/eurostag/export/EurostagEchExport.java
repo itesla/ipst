@@ -144,6 +144,11 @@ public class EurostagEchExport implements EurostagEchExporter {
             for (Switch sw : Identifiables.sort(EchUtil.getSwitches(vl, config))) {
                 Bus bus1 = EchUtil.getBus1(vl, sw.getId(), config);
                 Bus bus2 = EchUtil.getBus2(vl, sw.getId(), config);
+                //do not export the Switch if bus1==bus2
+                if (EchUtil.isSameBus(bus1, bus2)) {
+                    LOGGER.warn("skipping Switch: {}; bus1 is equal to bus2: {}", sw.getId(), bus1 != null ? bus1.getId() : bus1);
+                    continue;
+                }
                 // skip switches not in the main connected component
                 if (config.isExportMainCCOnly() && (!EchUtil.isInMainCc(bus1) || !EchUtil.isInMainCc(bus2))) {
                     LOGGER.warn("not in main component, skipping Switch: {} {} {}", bus1.getId(), bus2.getId(), sw.getId());
@@ -205,6 +210,11 @@ public class EurostagEchExport implements EurostagEchExporter {
             // The code could be extended to handle the case where the B are not the same and the G are not the same
             ConnectionBus bus1 = ConnectionBus.fromTerminal(l.getTerminal1(), config, fakeNodes);
             ConnectionBus bus2 = ConnectionBus.fromTerminal(l.getTerminal2(), config, fakeNodes);
+            //do not export the line if bus1==bus2
+            if (EchUtil.isSameConnectionBus(bus1, bus2)) {
+                LOGGER.warn("skipping Line: {};  bus1 is equal to bus2: {}", l, bus1 != null ? bus1.getId() : bus1);
+                continue;
+            }
             if (Math.abs(l.getG1() - l.getG2()) < G_EPSILON
                     && (Math.abs(l.getB1() - l.getB2()) < B_EPSILON
                     || (Math.abs(l.getG1()) < G_EPSILON && Math.abs(l.getG2()) < G_EPSILON))) {
@@ -297,33 +307,24 @@ public class EurostagEchExport implements EurostagEchExporter {
     }
 
 
-    private void createAdditionalBank(EsgNetwork esgNetwork, TwoWindingsTransformer twt, Terminal terminal, String nodeName, Set<String> additionalBanksIds) {
-        float rcapba = 0.0f;
-        if (-twt.getB() < 0) {
-            rcapba = twt.getB() * (float) Math.pow(terminal.getVoltageLevel().getNominalV(), 2) / (config.isSpecificCompatibility() ? 2 : 1);
-        }
-        float plosba = 0.0f;
-        if (twt.getG() < 0) {
-            plosba = twt.getG() * (float) Math.pow(terminal.getVoltageLevel().getNominalV(), 2) / (config.isSpecificCompatibility() ? 2 : 1);
-        }
-        if ((Math.abs(plosba) > G_EPSILON) || (rcapba > B_EPSILON)) {
-            //simple new bank naming: 5 first letters of the node name, 7th letter of the node name, 'C', order code
+    private void createAdditionalBank(EsgNetwork esgNetwork, TwoWindingsTransformer twt, String nodeName, Set<String> additionalBanksIds, float rcapba, float plosba) {
+        if ((Math.abs(plosba) > G_EPSILON) || (Math.abs(rcapba) > B_EPSILON)) {
+            //simple new bank naming: 4 first letters of the node name, 7th letter of the node name, 'C', 2 digits order code
             String nnodeName = Strings.padEnd(nodeName, 8, ' ');
-            String newBankNamePrefix = nnodeName.substring(0, 5) + nnodeName.charAt(6) + 'C';
-            String newBankName = newBankNamePrefix + '0';
+            String newBankNamePrefix = nnodeName.substring(0, 4) + nnodeName.charAt(6) + 'C';
+            String newBankName = newBankNamePrefix + "00";
             int counter = 1;
             while (additionalBanksIds.contains(newBankName)) {
-                String newCounter = Integer.toString(counter++);
-                if (newCounter.length() > 1) {
+                String newCounter = String.format("%02d", counter++);
+                if (newCounter.length() > 2) {
                     throw new RuntimeException("Renaming error " + nodeName + " -> " + newBankName);
                 }
                 newBankName = newBankNamePrefix + newCounter;
             }
             additionalBanksIds.add(newBankName);
-            LOGGER.info("create additional bank: {}, node: {}", newBankName, nodeName);
+            LOGGER.info("create additional bank with id: {} at node: {}, for twt: {} ( B={}, G={} ); rcapba={}, plosba={}", newBankName, nodeName, twt, twt.getB(), twt.getG(), rcapba, plosba);
             esgNetwork.addCapacitorsOrReactorBanks(new EsgCapacitorOrReactorBank(new Esg8charName(newBankName), new Esg8charName(nodeName), 1, plosba, rcapba, 1, EsgCapacitorOrReactorBank.RegulatingMode.NOT_REGULATING));
         }
-
     }
 
     private float getRtcRho1(TwoWindingsTransformer twt, int p) {
@@ -406,6 +407,12 @@ public class EurostagEchExport implements EurostagEchExporter {
 
             ConnectionBus bus1 = ConnectionBus.fromTerminal(twt.getTerminal1(), config, fakeNodes);
             ConnectionBus bus2 = ConnectionBus.fromTerminal(twt.getTerminal2(), config, fakeNodes);
+            //do not export the Transformer if bus1==bus2
+            if (EchUtil.isSameConnectionBus(bus1, bus2)) {
+                LOGGER.warn("skipping Transformer: {};  bus1 is equal to bus2: {}", twt, bus1 != null ? bus1.getId() : bus1);
+                continue;
+            }
+
 
             EsgBranchConnectionStatus status = getStatus(bus1, bus2);
 
@@ -514,12 +521,14 @@ public class EurostagEchExport implements EurostagEchExporter {
 
             //handling of the cases where cmagn should be negative and where pfer should be negative
             if ((-twt.getB() < 0) || (twt.getG() < 0) || (config.isSpecificCompatibility())) {
-                createAdditionalBank(esgNetwork, twt, twt.getTerminal1(), dictionary.getEsgId(bus1.getId()), additionalBanksIds);
+                float rcapba = twt.getB() * nomiU2 * nomiU2 / (config.isSpecificCompatibility() ? 2 : 1);
+                float plosba = 1000f * twt.getG() * nomiU2 * nomiU2 / (config.isSpecificCompatibility() ? 2 : 1);
+                createAdditionalBank(esgNetwork, twt, dictionary.getEsgId(bus1.getId()), additionalBanksIds, (-twt.getB() < 0) ? rcapba : 0.0f, (twt.getG() < 0) ? plosba : 0.0f);
                 if (config.isSpecificCompatibility()) {
-                    createAdditionalBank(esgNetwork, twt, twt.getTerminal2(), dictionary.getEsgId(bus2.getId()), additionalBanksIds);
+                    //always create a new bank on side2
+                    createAdditionalBank(esgNetwork, twt, dictionary.getEsgId(bus2.getId()), additionalBanksIds, rcapba, plosba);
                 }
             }
-
 
             EsgDetailedTwoWindingTransformer esgTransfo = new EsgDetailedTwoWindingTransformer(
                     new EsgBranchName(new Esg8charName(dictionary.getEsgId(bus1.getId())),
@@ -643,8 +652,8 @@ public class EurostagEchExport implements EurostagEchExporter {
 
             //...number of steps in service
             int ieleba = bus.isConnected() ? sc.getCurrentSectionCount() : 0; // not really correct, because it can be connected with zero section, EUROSTAG should be modified...
-            float plosba = 0.f; // no active lost in the iidm shunt compensator
             float vnom = sc.getTerminal().getVoltageLevel().getNominalV();
+            float plosba = 1000 * vnom * vnom * 0.f; // no active lost in the iidm shunt compensator. Expressed in kw
             float rcapba = vnom * vnom * sc.getbPerSection();
             int imaxba = sc.getMaximumSectionCount();
             EsgCapacitorOrReactorBank.RegulatingMode xregba = EsgCapacitorOrReactorBank.RegulatingMode.NOT_REGULATING;
