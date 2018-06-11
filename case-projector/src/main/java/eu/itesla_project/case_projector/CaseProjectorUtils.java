@@ -96,8 +96,18 @@ public final class CaseProjectorUtils {
 
                             Map<String, String> metrics = new HashMap<>();
                             new AmplNetworkReader(new FileDataSource(workingDir, "projector_results"/*"ampl_network_"*/), network, mapper)
-                                    .readGenerators()
-                                    .readMetrics(metrics);
+                                .readBuses()
+                                .readGenerators()
+                                .readBranches()
+                                .readLoads()
+                                .readPhaseTapChangers()
+                                .readRatioTapChangers()
+                                .readShunts()
+                                .readStaticVarcompensator()
+                                .readHvdcLines()
+                                .readLccConverterStations()
+                                .readVscConverterStations()
+                                .readMetrics(metrics);
 
                             LOGGER.debug("Projector metrics: {}", metrics);
                         }
