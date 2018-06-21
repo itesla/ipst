@@ -29,10 +29,12 @@ matrice_yy = dati_cond.matrice_yy;
 invcorr_yy = dati_cond.invmatr_corryy;
 corr_ee = dati_cond.corr_ee;
 corr_ey = dati_cond.corr_ey;
+match_snap_to_fore = dati_cond.match_snap_to_fore;
 y0 = matrice_yy*y00';
 % cov_ey2 = dati_cond.cov_ey;
 idx_err = dati_cond.idx_err;
 idx_fore = dati_cond.idx_fore;
+clear dati_cond
 % OPTION TO SAMPLE CONDITIONAL SNAPSHOTS (NOT INTERESTING FOR PLATFORM
 % USERS)
 solution = 1; % 1 = MODIFYING SAMPLES APPLYING GAUSSIAN CONDITIONAL SAMPLING; 2 = CALCULATE CONDITIONED MEAN AND COVARIANCE OF MULTIVARIATE NORMAL DISTRIBUTION AND USE MVNRND TO SAMPLE NATAF VARIABLES
@@ -46,7 +48,7 @@ std_y = std(FO,0,1);
 % keyboard
 Nsa = size(Y0,1);
 tol = min(5e-2,10/Nsa);
-quale_err = zeros(1,length(dati_cond.idx_err));
+quale_err = zeros(1,length(idx_err));
 % NORMALISE FORECASTS AND SNAPSHOTS
 
 FO = (FO - repmat(m_y,size(FO,1),1))./repmat(std_y,size(FO,1),1);
@@ -66,15 +68,18 @@ xsn = cell(size(SNN,2),1);
 outoflimit = [];
 % NATAF TRANSFORMATION FOR THE FORECASTS
 try
-esiste_var= zeros(1,length(dati_cond.idx_err));
-quale_err = zeros(1,length(dati_cond.idx_err));
-var_out_of_lim = zeros(1,length(dati_cond.idx_err));
+esiste_var= zeros(1,length(idx_err));
+quale_err = zeros(1,length(idx_err));
+var_out_of_lim = zeros(1,length(idx_err));
 
 for iy = 1:size(FO,2)
  
 %     yp = y0(iy);
-    [CDF_Y{iy} xfo{iy}] = ecdf(FO(:,iy));
-    A = [xfo{iy},CDF_Y{iy}];
+%     [CDF_Y{iy} xfo{iy}] = ecdf(FO(:,iy));
+    CDF_Y{iy}=[0:0.01:1];
+    xfo{iy} = quantile(FO(:,iy),CDF_Y{iy});
+    
+    A = [xfo{iy}',CDF_Y{iy}'];
     
     [dummy1, uniq,dummy3]=unique(A(:,1));
     
@@ -87,7 +92,7 @@ for iy = 1:size(FO,2)
     idxfor = find(matrice_yy(iy,:)>0);
     
     if cdf_yp == tol || cdf_yp == 1-tol
-        quale_var = [dati_cond.match_snap_to_fore(idxfor)];
+        quale_var = [match_snap_to_fore(idxfor)];
         outoflimit = [outoflimit iy];
         if cdf_yp == 1- tol
         dyS(iy) = y0(iy) - (m_y(iy)+std_y(iy)*interp1(A(uniq,2),A(uniq,1),1-tol,'linear','extrap'));
@@ -113,9 +118,11 @@ end
 % NATAF TRANSFORMATION FOR THE SNAPSHOTS
 for ie = 1:length(idx_err)
 
-[CDF_SN{ie} xsn{ie}] = ecdf(SNN(:,ie));
+CDF_SN{ie}=[0:0.01:1];
+% [CDF_SN{ie} xsn{ie}] = ecdf(SNN(:,ie));
+ xsn{ie} = quantile(SNN(:,ie),CDF_SN{ie});
 
-    A = [xsn{ie},CDF_SN{ie}];
+    A = [xsn{ie}',CDF_SN{ie}'];
     
     [dummy1, uniq,dummy3]=unique(A(:,1));
     
@@ -129,6 +136,7 @@ catch err
 end
 X_NEW2S(:,idx_err)=INVG_E_NEW1;
 X_NEW2S(:,idx_fore)=INVG_Y_NEW1;
+clear INVG_Y_NEW1 CDF_E_NEW1 CDF_Y_NEW1 CDF_Y SNN FO SN1
 
 % EVALUATE UPDATED COVARIANCE MATRIX
 cov_tot = cov(X_NEW2S);
@@ -137,6 +145,7 @@ cov_ee2 = cov_tot(idx_err,idx_err);
 covs_yy2 = diag(cov_yy2);
 covs_ee2 = diag(cov_ee2);
 %
+clear X_NEW2S cov_tot
 switch solution
     case 1
         % SOLUTION PREFERRED: CONDITIONING THE SAMPLES FROM m3 TAKING INTO ACCOUNT
@@ -146,7 +155,7 @@ switch solution
             invcorr_yy = eye(size(cov_yy2));
             B1 = ( diag(covs_yy2.^(-0.5)))*invcorr_yy*( diag(covs_yy2.^(-0.5)));
             cov_ey2 = ( diag(covs_ee2.^(0.5)))*corr_ey*( diag(covs_yy2.^(0.5)));
-            cov_ey2 = cov_ey2.*((dati_cond.matrice_yy)');
+            cov_ey2 = cov_ey2.*((matrice_yy)');
         else
             B1 = ( diag(covs_yy2.^(-0.5)))*invcorr_yy*( diag(covs_yy2.^(-0.5)));
             cov_ey2 = ( diag(covs_ee2.^(0.5)))*corr_ey*( diag(covs_yy2.^(0.5)));
@@ -171,7 +180,7 @@ end
 %%%%%%%%
 
 for ie = 1:length(idx_err)
-    A = [CDF_SN{ie},xsn{ie}];
+    A = [CDF_SN{ie}',xsn{ie}'];
     
     [dummy1, uniq,dummy3]=unique(A(:,1));
     
@@ -189,52 +198,40 @@ for ie = 1:length(idx_err)
     
 end
 % keyboard
-%%%%% CHECK VALIDATION
-if validation
-Y = dati_cond.Y;T=5;
-SSNAP = Y(:,idx_err);
-FOREE = dati_cond.FORE0;
-
-for jsnap = 1:size(SSNAP,2)
-   idx = find(abs(FOREE(:,jsnap)-y00(jsnap))<T);
-   SSNAPC{jsnap} = SSNAP(idx,jsnap);
-  meansO(jsnap)=mean(SSNAPC{jsnap} );
-  stddevO(jsnap)=std(SSNAPC{jsnap} );
-end
-meansX = mean(snap_new1,1);
-stddevX = std(snap_new1,0,1);
-
-figure
-interv5sigX_UP = meansX + 5.*stddevX;
-interv5sigX_DWN = meansX - 5.*stddevX;
-interv5sigO_UP = meansO + 5.*stddevO;
-interv5sigO_DWN = meansO - 5.*stddevO;
-
-plot(interv5sigX_UP,'bs')
-hold on
-plot(interv5sigX_DWN,'bs')
-hold on
-plot(interv5sigO_UP,'r+')
-hold on
-plot(interv5sigO_DWN,'r+')
-
-
-outputnataf.xs = snap_new1;
-
-for jvar = 1:size(outputnataf.xs,2)
-    [fN,xN] = ecdf(outputnataf.xs(:,jvar));
-    [fB,xB] = ecdf(outputbruteforce.xs(:,jvar));
-    A = [xN fN];
-    [A1, index] = sort(A(:,1));
-    A2          = A(index, 2);
-    uniq        = find([diff(A1) ~= 0]);
-    fBN = min(max(0,interp1(A(uniq,1),A(uniq,2),xB,'linear','extrap')),1);
-   
-    ARMS_N(jvar) = sqrt(sum((fBN-fB).^2))/length(xB);
-    end
-    
-%     for jvar = 1:size(outputkern.statistiche_marg{1},2)
-%     [fN,xN] = ecdf(outputkern.xs{jset}(:,jvar));
+% %%%%% CHECK VALIDATION
+% if validation
+% Y = dati_cond.Y;T=5;
+% SSNAP = Y(:,idx_err);
+% FOREE = dati_cond.FORE0;
+% 
+% for jsnap = 1:size(SSNAP,2)
+%    idx = find(abs(FOREE(:,jsnap)-y00(jsnap))<T);
+%    SSNAPC{jsnap} = SSNAP(idx,jsnap);
+%   meansO(jsnap)=mean(SSNAPC{jsnap} );
+%   stddevO(jsnap)=std(SSNAPC{jsnap} );
+% end
+% meansX = mean(snap_new1,1);
+% stddevX = std(snap_new1,0,1);
+% 
+% figure
+% interv5sigX_UP = meansX + 5.*stddevX;
+% interv5sigX_DWN = meansX - 5.*stddevX;
+% interv5sigO_UP = meansO + 5.*stddevO;
+% interv5sigO_DWN = meansO - 5.*stddevO;
+% 
+% plot(interv5sigX_UP,'bs')
+% hold on
+% plot(interv5sigX_DWN,'bs')
+% hold on
+% plot(interv5sigO_UP,'r+')
+% hold on
+% plot(interv5sigO_DWN,'r+')
+% 
+% 
+% outputnataf.xs = snap_new1;
+% 
+% for jvar = 1:size(outputnataf.xs,2)
+%     [fN,xN] = ecdf(outputnataf.xs(:,jvar));
 %     [fB,xB] = ecdf(outputbruteforce.xs(:,jvar));
 %     A = [xN fN];
 %     [A1, index] = sort(A(:,1));
@@ -242,13 +239,26 @@ for jvar = 1:size(outputnataf.xs,2)
 %     uniq        = find([diff(A1) ~= 0]);
 %     fBN = min(max(0,interp1(A(uniq,1),A(uniq,2),xB,'linear','extrap')),1);
 %    
-%     ARMS_K(jvar) = sqrt(sum((fBN-fB).^2))/length(xB);
+%     ARMS_N(jvar) = sqrt(sum((fBN-fB).^2))/length(xB);
 %     end
     
-    figure
-    bar([ARMS_N])
-    xlabel('var nr'),title('Average Root Mean Square Errors on marginal CDFs')
-    legend({'Nataf vs Brute Force' })
-
-end
+%     
+% %     for jvar = 1:size(outputkern.statistiche_marg{1},2)
+% %     [fN,xN] = ecdf(outputkern.xs{jset}(:,jvar));
+% %     [fB,xB] = ecdf(outputbruteforce.xs(:,jvar));
+% %     A = [xN fN];
+% %     [A1, index] = sort(A(:,1));
+% %     A2          = A(index, 2);
+% %     uniq        = find([diff(A1) ~= 0]);
+% %     fBN = min(max(0,interp1(A(uniq,1),A(uniq,2),xB,'linear','extrap')),1);
+% %    
+% %     ARMS_K(jvar) = sqrt(sum((fBN-fB).^2))/length(xB);
+% %     end
+%     
+%     figure
+%     bar([ARMS_N])
+%     xlabel('var nr'),title('Average Root Mean Square Errors on marginal CDFs')
+%     legend({'Nataf vs Brute Force' })
+% 
+% end
 %%%%%%%%%%%%%%%%%%%%%%%%%

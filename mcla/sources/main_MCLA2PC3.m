@@ -291,6 +291,7 @@ else
             
             quale_forecast = type_X0(5,dati_cond.idx_err0);
             [ X_NEWall  quale_err var_out_of_lim] = conditional_samps_correl_opt(X_NEW0,quale_forecast,y0,dati_cond,centering,full_dep);
+            clear dati_cond
             X_NEW=X_NEWall(randi(size(X_NEWall,1),scenarios,1),:);
             
             %%% PRINT SAMPLES of injections FOR OUTPUTS %%%%
@@ -494,6 +495,7 @@ else
             quale_forecast = type_X0(5,dati_cond.idx_err0);
 %             profile on
             [ X_NEWall  quale_err var_out_of_lim] = conditional_samps_correl_opt(X_NEW0,quale_forecast,y0,dati_cond,centering,full_dep);
+            clear dati_cond
 %             profile viewer
             X_NEW=X_NEWall(randi(size(X_NEWall,1),scenarios,1),:);
             

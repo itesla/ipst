@@ -478,6 +478,7 @@ tic;
 % keyboard
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 [PGENS PLOADS QLOADS ] = main_MCLA2PC3(generatore,carico,generatore1,carico1,nodo,scenarios,type_X,type_Xm,module2,module3,flagPQ,limits_reactive,opt_sign,dati_condUNI,dati_condMULTI,y0,y0m,conditional_sampling,mod_gaussian,centering,mod_unif,full_dep,nations,homoth);
+    clear dati_condUNI dati_condMULTI
     
     if iout == 1
           PGEN=PGENS;
