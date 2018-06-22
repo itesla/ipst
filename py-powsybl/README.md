@@ -1,8 +1,8 @@
-#Py-powsybl:  how-to use the powsybl APIs from Python
+# Py-powsybl:  how-to use the powsybl APIs from Python
 
 py-powsybl module uses [py4j](https://www.py4j.org) to call the Powsybl java APIs, from a Python environment.
  
-###Runtime requirements:
+### Runtime requirements:
 Py4j enables Python programs running in a Python interpreter to dynamically access Java objects in a Java Virtual Machine.
 
 Py4j documentation states that it has been tested with Python 2.6, 2.7, 3.4, 3.5, and 3.6
@@ -16,19 +16,19 @@ or
  
 Note: when it comes to experimenting with multiple Python extensions, it might be a good idea to create first an isolated python environment with [virtualenv](https://virtualenv.pypa.io/en/stable/)
        
-###Execute py-powsybl
+### Execute py-powsybl
 
 Start the py-powsybl 'server' in a console. 
 
     itools py-powsybl
    
-###Run some python code:
+### Run some python code:
 
 Demo1.py demostrates what can be done (it executes a loadflow on a network, opens a switch, exports a network to a file in xiidm format)
 
     python Demo1.py     
 
-###Stop py-powsybl
+### Stop py-powsybl
 To stop the py-powsybl 'server',  CTRL+C in the itools console. 
  
 
