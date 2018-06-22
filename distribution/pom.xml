@@ -167,6 +167,13 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- py-powsybl -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>py-powsybl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>

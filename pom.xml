@@ -50,6 +50,7 @@
         <module>online-server</module>
         <module>online-workflow</module>
         <module>pclfsim-integration</module>
+        <module>py-powsybl</module>
         <module>sampling-integration</module>
         <module>security-analysis-ws</module>
         <module>uncertainties-analysis</module>
