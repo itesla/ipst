@@ -8,8 +8,9 @@
 package eu.itesla_project.case_projector;
 
 import com.google.auto.service.AutoService;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.powsybl.commons.config.ComponentDefaultConfig;
-import com.powsybl.commons.config.PlatformConfig;
 import com.powsybl.computation.ComputationManager;
 import com.powsybl.iidm.import_.ImportPostProcessor;
 import com.powsybl.iidm.network.Network;
@@ -33,18 +34,11 @@ public class CaseProjectorPostProcessor implements ImportPostProcessor {
 
     public static final String NAME = "case-proj";
 
-    private final LoadFlowFactory loadFlowFactory;
+    private final Supplier<CaseProjectorConfig> caseProjectorConfigSupplier = Suppliers.memoize(CaseProjectorConfig::load);
 
-    private final CaseProjectorConfig config;
+    private final Supplier<ComponentDefaultConfig> defaultConfigSupplier = Suppliers.memoize(ComponentDefaultConfig::load);
 
     public CaseProjectorPostProcessor() {
-        this(PlatformConfig.defaultConfig());
-    }
-
-    public CaseProjectorPostProcessor(PlatformConfig platformConfig) {
-        ComponentDefaultConfig defaultConfig = ComponentDefaultConfig.load();
-        loadFlowFactory = defaultConfig.newFactoryImpl(LoadFlowFactory.class);
-        config = CaseProjectorConfig.load();
     }
 
     @Override
@@ -54,8 +48,9 @@ public class CaseProjectorPostProcessor implements ImportPostProcessor {
 
     @Override
     public void process(Network network, ComputationManager computationManager) throws Exception {
+        LoadFlowFactory loadFlowFactory = defaultConfigSupplier.get().newFactoryImpl(LoadFlowFactory.class);
         LoadFlow loadFlow = loadFlowFactory.create(network, computationManager, 0);
-        CaseProjectorUtils.project(computationManager, network, loadFlow, network.getStateManager().getWorkingStateId(), config).join();
+        CaseProjectorUtils.project(computationManager, network, loadFlow, network.getStateManager().getWorkingStateId(), caseProjectorConfigSupplier.get()).join();
     }
 
 }
