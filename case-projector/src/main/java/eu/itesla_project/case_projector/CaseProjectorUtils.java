@@ -41,6 +41,7 @@ public final class CaseProjectorUtils {
             .add("projector.mod")
             .add("projector.dat")
             .add("projectorOutput.run")
+            .add("ampl_network_coupledgen.txt")
             .build();
 
     private static final String WORKING_DIR_PREFIX = "itesla_projector_";
