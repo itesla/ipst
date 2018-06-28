@@ -44,8 +44,8 @@ printf {(g,n) in UNIT: n in NOEUDCC}
   "%i %i %s %f %f %f %f %f\n",
   g,
   n,
-  # unit_PV[g,n] -> ce qu'il y a dans la situation en entree
-  if (g,n) in UNIT_PV then "true" else "false", # Voir definition de UNIT_PV
+  # unit_vregul[g,n] -> ce qu'il y a dans la situation en entree
+  if (g,n) in UNITCC_PV then "true" else "false", # Voir definition de UNITCC_PV
   V[n],         # Tension issue du calcul. La tension de consigne de la situation en entree n'est pas ecrite ici
   unit_Pc[g,n], # -> ce qu'il y a dans la situation en entree
   unit_Qc[g,n], # -> ce qu'il y a dans la situation en entree
@@ -182,8 +182,9 @@ printf '#"num" "bus" "b(pu)" "Q(MVar)" "sections_count"\n'
 printf {(s,n) in SHUNTCC}
   "%i %i %f %f %i\n",
   s,n,
-  shunt_valnom[s,n],
+  shunt_valnom[s,n], # Homogene a une production de reactif
   -shunt_valnom[s,n]*100*V[n]^2, # Dans le fichier ampl_networks_shunts.txt, Q est de signe oppose a celui de b (b==valnom)
+                                 # Homogene a une consommation de reactif
   shunt_sections_count[s,n]
   > projector_results_shunts.txt;
 
@@ -201,7 +202,7 @@ printf {(s,n) in SVCCC}
   s,n,
   if (s,n) in SVC_V then "true" else "false",
   if (s,n) in SVC_V then V[n]   else svc_targetV[s,n],
-  if (s,n) in SVC_V then 100*svc_b[s,n]*V[n]^2
+  if (s,n) in SVC_V then -100*svc_b[s,n]*V[n]^2 # signe '-' car homogene a une consommation de reactif
   else if (s,n) in SVC_FIXE then svc_Q0[s,n]
   > projector_results_static_var_compensators.txt;
 
@@ -291,11 +292,11 @@ printf "%s %.2f\n", "variationMoyenneP", tempo * sum {(g,n) in UNITCC} abs(unit_
 printf "%s %.2f\n", "variationMoyenneQ", tempo * sum {(g,n) in UNITCC} abs(unit_Q[g,n] - unit_Qc[g,n]) > projector_results_indic.txt;
 
 # Moyennes Tensions
-let tempo := card({(g,n) in UNITCC: unit_PV[g,n]=="true"});
+let tempo := card({(g,n) in UNITCC: unit_vregul[g,n]=="true"});
 if tempo > 0 then {
   let tempo := 1.0 / tempo;
-  printf "%s %.4f\n", "moyenneVnoeudsPVavant", tempo * sum {(g,n) in UNITCC: unit_PV[g,n]=="true"} unit_Vc[g,n] > projector_results_indic.txt;
-  printf "%s %.4f\n", "moyenneVnoeudsPVapres", tempo * sum {(g,n) in UNITCC: unit_PV[g,n]=="true"} V[n] > projector_results_indic.txt;
+  printf "%s %.4f\n", "moyenneVnoeudsPVavant", tempo * sum {(g,n) in UNITCC: unit_vregul[g,n]=="true"} unit_Vc[g,n] > projector_results_indic.txt;
+  printf "%s %.4f\n", "moyenneVnoeudsPVapres", tempo * sum {(g,n) in UNITCC: unit_vregul[g,n]=="true"} V[n] > projector_results_indic.txt;
 }
 
 # Nombre de groupes modifies P
@@ -312,16 +313,16 @@ printf "%s %i\n", "nbGroupesQmodifie100Mvar", card({(g,n) in UNITCC : abs(unit_Q
 
 # Nombre de groupes modifies V
 printf "%s %i\n", "nbGroupesVmodifie01kV",
-  card( {(g,n) in UNITCC: unit_PV[g,n]=="true" and abs(V[n]-unit_Vc[g,n])*substation_Vnomi[unit_substation[g,n]] >= 0.1 })
+  card( {(g,n) in UNITCC: unit_vregul[g,n]=="true" and abs(V[n]-unit_Vc[g,n])*substation_Vnomi[unit_substation[g,n]] >= 0.1 })
   > projector_results_indic.txt;
 printf "%s %i\n", "nbGroupesVmodifie1kV",
-  card( {(g,n) in UNITCC: unit_PV[g,n]=="true" and abs(V[n]-unit_Vc[g,n])*substation_Vnomi[unit_substation[g,n]] >= 1 })
+  card( {(g,n) in UNITCC: unit_vregul[g,n]=="true" and abs(V[n]-unit_Vc[g,n])*substation_Vnomi[unit_substation[g,n]] >= 1 })
   > projector_results_indic.txt;
 printf "%s %i\n", "nbGroupesVmodifie2kV",
-  card( {(g,n) in UNITCC: unit_PV[g,n]=="true" and abs(V[n]-unit_Vc[g,n])*substation_Vnomi[unit_substation[g,n]] >= 2 })
+  card( {(g,n) in UNITCC: unit_vregul[g,n]=="true" and abs(V[n]-unit_Vc[g,n])*substation_Vnomi[unit_substation[g,n]] >= 2 })
   > projector_results_indic.txt;
 printf "%s %i\n", "nbGroupesVmodifie5kV",
-  card( {(g,n) in UNITCC: unit_PV[g,n]=="true" and abs(V[n]-unit_Vc[g,n])*substation_Vnomi[unit_substation[g,n]] >= 5 })
+  card( {(g,n) in UNITCC: unit_vregul[g,n]=="true" and abs(V[n]-unit_Vc[g,n])*substation_Vnomi[unit_substation[g,n]] >= 5 })
   > projector_results_indic.txt;
 
 
@@ -340,16 +341,133 @@ for {(g,n) in UNITCC : abs(unit_Q[g,n] - unit_Qc[g,n]) >= tempo } {
   }
 
 # Groupe ayant le plus varie en V
-let tempo := max {(g,n) in UNITCC : unit_PV[g,n]=="true"} abs(V[n]-unit_Vc[g,n]);
+let tempo := max {(g,n) in UNITCC : unit_vregul[g,n]=="true"} abs(V[n]-unit_Vc[g,n]);
 printf "%s %.4f\n", "variationMaximaleVpu", tempo > projector_results_indic.txt;
-for {(g,n) in UNITCC : unit_PV[g,n]=="true" and abs(V[n]-unit_Vc[g,n]) >= tempo } {
+for {(g,n) in UNITCC : unit_vregul[g,n]=="true" and abs(V[n]-unit_Vc[g,n]) >= tempo } {
   printf "%s %s\n", "groupeVariationMaximaleVpu", unit_id[g,n] > projector_results_indic.txt;
   }
-let tempo := max {(g,n) in UNITCC : unit_PV[g,n]=="true"} abs(V[n]-unit_Vc[g,n])*substation_Vnomi[unit_substation[g,n]];
+let tempo := max {(g,n) in UNITCC : unit_vregul[g,n]=="true"} abs(V[n]-unit_Vc[g,n])*substation_Vnomi[unit_substation[g,n]];
 printf "%s %.4f\n", "variationMaximaleVkV", tempo > projector_results_indic.txt;
-for {(g,n) in UNITCC : unit_PV[g,n]=="true" and abs(V[n]-unit_Vc[g,n])*substation_Vnomi[unit_substation[g,n]] >= tempo } {
+for {(g,n) in UNITCC : unit_vregul[g,n]=="true" and abs(V[n]-unit_Vc[g,n])*substation_Vnomi[unit_substation[g,n]] >= tempo } {
   printf "%s %s\n", "groupeVariationMaximaleVkV", unit_id[g,n] > projector_results_indic.txt;
   }
+
+
+###############################################################################
+# Ecriture de fichiers de debug pour les groupes, SVC et VSC
+###############################################################################
+
+printf "#num;bus;type;name;substation;Vnom;type;Pmin;Pmax;Pmin2;Pmax2;Pcons;P;|P-Pcons|;Qmin;Qmax;Qmin2;Qmax2;Qcons;Q;|Q-Qcons|;Vmin;Vmax;Vmin2;Vmax2;targetV;V;|V-targetV|;nbCuts;\n"
+  #                                             P                                       Q                                       V 
+  > projector_debug_voltageregulators.csv;
+
+# Groupes de production
+printf {(g,n) in UNITCC: n in NOEUDCC}
+  "%i;%i;%s;%s;%s;%.1f;%s;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%f;%f;%f;%f;%f;%f;%f;%i;\n",
+  #                       P                                  Q                                  V              
+  g,n,"unit",
+  unit_id[g,n],
+  substation_id[noeud_poste[n]],
+  substation_Vnomi[noeud_poste[n]],
+  # Statut du groupe
+  if unit_id[g,n] in DOMAIN_IDENTIFIANTS and gen_vnom_mismatch[g,n,unit_id[g,n]]!=0 then "V_mismatch"
+  else if (g,n) in UNITCC_PQV then "UNITCC_PQV"
+  else if unit_vregul[g,n]=="true" then "PV_nodomain_PQ"
+  else if unit_vregul[g,n]!="true" then "PQ_nodomain_PQ"
+  else "empty",
+  unit_Pmin[g,n],
+  unit_Pmax[g,n],
+  Pmin[g,n],
+  Pmax[g,n],
+  unit_Pc[g,n],
+  unit_P[g,n],
+  abs(unit_P[g,n] - unit_Pc[g,n]),
+  min(unit_qp[g,n],unit_qP[g,n]),
+  min(unit_Qp[g,n],unit_QP[g,n]),
+  Qmin[g,n],
+  Qmax[g,n],
+  unit_Qc[g,n],
+  unit_Q[g,n],
+  abs(unit_Q[g,n] - unit_Qc[g,n]),
+  substation_Vmin[noeud_poste[n]],
+  substation_Vmax[noeud_poste[n]],
+  min_noeud_V[n],
+  max_noeud_V[n],
+  unit_Vc[g,n],
+  V[n],
+  abs(unit_Vc[g,n]-V[n]),
+  if unit_id[g,n] in DOMAIN_IDENTIFIANTS then card({(numero,g,n,gid) in UNIT_DOMAIN_CTR})
+  else 0
+  > projector_debug_voltageregulators.csv;
+
+# SVC - static var compensator - CSPR
+printf {(s,n) in SVCCC}
+  "%i;%i;%s;%s;%s;%.1f;%s;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%f;%f;%f;%f;%f;%f;%f;%i;\n",
+  #                       P                                  Q                                  V              
+  s,n,"svc",
+  svc_id[s,n],
+  substation_id[noeud_poste[n]],
+  substation_Vnomi[noeud_poste[n]],
+  # Statut
+  if (s,n) in SVC_V then "regulV"
+  else "Qfixe",
+  0,0,0,0,0,0,0, #P
+  svc_bmin[s,n]*100,
+  svc_bmax[s,n]*100,
+  svc_bmin[s,n]*100,
+  svc_bmax[s,n]*100,
+  svc_Q0[s,n],
+  if (s,n) in SVC_V then svc_b[s,n]*100*V[n]^2
+  else svc_Q0[s,n],
+  if (s,n) in SVC_V then abs(svc_b[s,n]*100*V[n]^2-svc_Q0[s,n])
+  else 0,
+  substation_Vmin[noeud_poste[n]],
+  substation_Vmax[noeud_poste[n]],
+  min_noeud_V[n],
+  max_noeud_V[n],
+  svc_targetV[s,n],
+  V[n],
+  if (s,n) in SVC_V then abs(svc_targetV[s,n]-V[n])
+  else 0,
+  0
+  > projector_debug_voltageregulators.csv;
+
+# Stations de conversion VSC
+printf {(sc,n) in VSCCONV}
+  "%i;%i;%s;%s;%s;%.1f;%s;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%f;%f;%f;%f;%f;%f;%f;%i;\n",
+  #                       P                                  Q                                  V              
+  sc,n,"station_vsc",
+  vscconv_id[sc,n],
+  substation_id[noeud_poste[n]],
+  substation_Vnomi[noeud_poste[n]],
+  # Statut
+  if vscconv_vregul[sc,n]=="true" then "regulV"
+  else "regulQ",
+  vscconv_Pmin[sc,n],
+  vscconv_Pmax[sc,n],
+  vscconv_Pmin[sc,n],
+  vscconv_Pmax[sc,n],
+  vscconv_P0[sc,n],
+  vscconv_P[sc,n],
+  abs(vscconv_P0[sc,n] - vscconv_P[sc,n]),
+  min( vscconv_qp[sc,n], vscconv_qp0[sc,n], vscconv_qP[sc,n] ),
+  max( vscconv_Qp[sc,n], vscconv_Qp0[sc,n], vscconv_QP[sc,n] ),
+  min( vscconv_qp[sc,n], vscconv_qp0[sc,n], vscconv_qP[sc,n] ),
+  max( vscconv_Qp[sc,n], vscconv_Qp0[sc,n], vscconv_QP[sc,n] ),
+  vscconv_targetQ[sc,n],
+  vscconv_Q[sc,n],
+  if vscconv_vregul[sc,n]=="true" then 0
+  else abs(vscconv_targetQ[sc,n] - vscconv_Q[sc,n]),
+  substation_Vmin[noeud_poste[n]],
+  substation_Vmax[noeud_poste[n]],
+  min_noeud_V[n],
+  max_noeud_V[n],
+  vscconv_targetV[sc,n],
+  V[n],
+  if vscconv_vregul[sc,n]=="true" then abs(V[n] - vscconv_targetV[sc,n])
+  else 0,
+  0
+  > projector_debug_voltageregulators.csv;
 
 
 ###############################################################################

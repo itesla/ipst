@@ -26,7 +26,7 @@ param tempo;
 # Autres parametres
 #
 ###############################################################################
-param epsilon_tension_min = 0.5; # On considere qu'une Vmin ou Vmax < 0.5 ne vaut rien (exemple -99999)
+param epsilon_tension_min = 0.5; # On considere qu'une Vmin ou Vmax < 0.5 ne vaut rien (exemple -99999). Idem pour une targetV
 
 
 
@@ -87,7 +87,7 @@ param unit_qP      {UNIT};
 param unit_qp      {UNIT};
 param unit_QP      {UNIT};
 param unit_Qp      {UNIT};
-param unit_PV      {UNIT} symbolic; # Indique si le groupe est en reglage de tension
+param unit_vregul  {UNIT} symbolic; # Indique si le groupe est en reglage de tension
 param unit_Vc      {UNIT}; # Tension de consigne
 param unit_Pc      {UNIT}; # Puisssance   active de consigne
 param unit_Qc      {UNIT}; # Puisssance reactive de consigne
@@ -165,13 +165,13 @@ param shunt_substation    {SHUNT} integer;
 param shunt_valmin        {SHUNT}; # Susceptance B en p.u. : faire B*100*V^2 pour obtenir des MVAr
 param shunt_valmax        {SHUNT}; # Susceptance B en p.u. : faire B*100*V^2 pour obtenir des MVAr
 param shunt_interPoints   {SHUNT}; # Points intermediaires : s'il y en a 0 c'est qu'on est soit sur min, soit sur max
-param shunt_valnom        {SHUNT}; # Susceptance B en p.u. : faire B*100*V^2 pour obtenir des MVAr
+param shunt_valnom        {SHUNT}; # Susceptance B en p.u. : faire B*100*V^2 pour obtenir des MVAr. Homogene a une production de reactif
 param shunt_fault         {SHUNT};
 param shunt_curative      {SHUNT};
 param shunt_id            {SHUNT} symbolic;
 param shunt_nom           {SHUNT} symbolic;
 param shunt_P0            {SHUNT};
-param shunt_Q0            {SHUNT};
+param shunt_Q0            {SHUNT}; # Homogene a une consommation de reactif : valnom positif correspond a Q0 negatif
 param shunt_sections_count {SHUNT} integer;
 
 #
@@ -198,6 +198,7 @@ param svc_id            {SVC} symbolic;
 param svc_description   {SVC} symbolic;
 param svc_P0            {SVC};
 param svc_Q0            {SVC}; # Valeur fixe a utiliser si le svc ne regule pas la tension (e-mail Nicolas Omont 30 mai 2018)
+                               # Homogene a une consommation de reactif
 
 #
 # Consistance
@@ -350,8 +351,8 @@ param vscconv_fault       {VSCCONV};
 param vscconv_curative    {VSCCONV};
 param vscconv_id          {VSCCONV} symbolic;
 param vscconv_description {VSCCONV} symbolic;
-param vscconv_P0           {VSCCONV};
-param vscconv_Q0           {VSCCONV};
+param vscconv_P0          {VSCCONV}; # Positif : ce qui va du reseau AC vers la ligne DC (homogene a une conso)
+param vscconv_Q0          {VSCCONV};
 
 #
 # Consistance
@@ -362,7 +363,7 @@ check {(cs,n) in VSCCONV}: vscconv_Pmin[cs,n] <= vscconv_Pmax[cs,n];
 check {(cs,n) in VSCCONV}: vscconv_qp[cs,n]   <= vscconv_Qp[cs,n]; # Qmin et Qmax a Pmin
 check {(cs,n) in VSCCONV}: vscconv_qp0[cs,n]  <= vscconv_Qp0[cs,n]; # Qmin et Qmax a P=0
 check {(cs,n) in VSCCONV}: vscconv_qP[cs,n]   <= vscconv_QP[cs,n]; # Qmin et Qmax a Pmax
-check {(cs,n) in VSCCONV: vscconv_vregul[cs,n] == "true"}: vscconv_targetV[cs,n] >= epsilon_tension_min;
+check {(cs,n) in VSCCONV: vscconv_vregul[cs,n]=="true" } : vscconv_targetV[cs,n] >= epsilon_tension_min;
 
 
 ###############################################################################
@@ -392,6 +393,14 @@ check {h in HVDC}: hvdc_targetP[h] <= hvdc_Pmax[h];
 
 
 ###############################################################################
+# Couplage de groupes de production
+###############################################################################
+# Les CCG sont representees par deux groupes, la puissance de l'un doit etre superieure a celle de l'autre
+set COUPLEDGEN dimen 2;
+param coupledgen_control{COUPLEDGEN} symbolic;
+
+
+###############################################################################
 # Definition d'ensembles supplementaires
 ###############################################################################
 
@@ -411,7 +420,7 @@ set UNITCC  :=
   };
 
 # Groupes qui sont en reglage de tension
-set UNIT_PV  := setof {(g,n) in UNITCC: unit_PV[g,n]=="true" and unit_Vc[g,n]>0 } (g,n);
+set UNITCC_PV  := setof {(g,n) in UNITCC: unit_vregul[g,n]=="true" and unit_Vc[g,n]>epsilon_tension_min } (g,n);
 
 #
 # Ensembles relatifs aux coupes definissant les domaines dynamiques
@@ -434,22 +443,42 @@ set UNIT_DOMAIN_CTR     := setof{(g,n,gid) in UNIT_DOMAIN,(numero,gid) in DOMAIN
 # Ensemble des groupes pour lesquels on faire varier P Q V :
 # Jean Maeght + Nicolas Omont le 29 aout 2016 :
 # Si aucun domaine dynamique n'a été fourni, alors on ne modifie pas le groupe
-set UNIT_PQV := setof {(g,n) in UNITCC: unit_id[g,n] in DOMAIN_IDENTIFIANTS and gen_vnom_mismatch[g,n,unit_id[g,n]]==0} (g,n);
+set UNITCC_PQV := setof {(g,n) in UNITCC: unit_id[g,n] in DOMAIN_IDENTIFIANTS and gen_vnom_mismatch[g,n,unit_id[g,n]]==0} (g,n);
+
+
+# Ensembles pour retrouver (g,n) d'un groupe a partir de son identifiant
+set UNITCC_IDENTIFIANTS := setof{(g,n) in UNITCC} unit_id[g,n];
+param UNITCC_G{id in UNITCC_IDENTIFIANTS} = max{(g,n) in UNITCC: unit_id[g,n]==id}g;
+param UNITCC_N{id in UNITCC_IDENTIFIANTS} = max{(g,n) in UNITCC: unit_id[g,n]==id}n;
+check{(g,n) in UNITCC}: UNITCC_G[unit_id[g,n]]==g;
+check{(g,n) in UNITCC}: UNITCC_N[unit_id[g,n]]==n;
+check{id in UNITCC_IDENTIFIANTS}: id == unit_id[UNITCC_G[id],UNITCC_N[id]];
 
 
 ###############################################################################
 # Prise en compte des parametres des regleurs et des dephaseurs
 ###############################################################################
 
+# Reactance variable selon la prise
+param quad_Xdeph{(qq,m,n) in QUADCC_DEPH} = tap_x[deph_table[quad_ptrDeph[qq,m,n]],deph_tap0[quad_ptrDeph[qq,m,n]]];
+
+# Resistance variable selon la prise
+# Comme on ne dispose pas de valeurs variables de R dans les tables des lois des TDs, on fait varier R proportionellement a X
+param quad_Rdeph{(qq,m,n) in QUADCC_DEPH} =
+  if abs(quad_X[qq,m,n]) > 1.0E-7
+  then quad_R[qq,m,n]*quad_Xdeph[qq,m,n]/quad_X[qq,m,n]
+  else quad_R[qq,m,n]
+  ;
+
 param quad_angper {(qq,m,n) in QUADCC} =
   if (qq,m,n) in QUADCC_DEPH
-  then atan2(quad_R[qq,m,n], tap_x[deph_table[quad_ptrDeph[qq,m,n]],deph_tap0[quad_ptrDeph[qq,m,n]]])
-	else atan2(quad_R[qq,m,n], quad_X[qq,m,n]);
+  then atan2(quad_Rdeph[qq,m,n], quad_Xdeph[qq,m,n])
+	else atan2(quad_R[qq,m,n],     quad_X[qq,m,n]);
 
 param quad_admi {(qq,m,n) in QUADCC} = 
   if (qq,m,n) in QUADCC_DEPH
-  then 1./sqrt(quad_R[qq,m,n]^2 + tap_x[deph_table[quad_ptrDeph[qq,m,n]],deph_tap0[quad_ptrDeph[qq,m,n]]]^2)
-  else 1./sqrt(quad_R[qq,m,n]^2 + quad_X[qq,m,n]^2);
+  then 1./sqrt(quad_Rdeph[qq,m,n]^2 + quad_Xdeph[qq,m,n]^2)
+  else 1./sqrt(quad_R[qq,m,n]^2     + quad_X[qq,m,n]^2    );
 
 param quad_Ror {(qq,m,n) in QUADCC} = 
 	  ( if ((qq,m,n) in QUADCC_REGL)
@@ -467,7 +496,7 @@ param quad_dephor {(qq,m,n) in QUADCC} =
   if ((qq,m,n) in QUADCC_DEPH)
   then tap_angle [deph_table[quad_ptrDeph[qq,m,n]],deph_tap0[quad_ptrDeph[qq,m,n]]]
   else 0;
-param quad_dephex {(qq,m,n) in QUADCC} = 0;
+param quad_dephex {(qq,m,n) in QUADCC} = 0; # Par convention dans iTesla, tout est cote 1, rien cote 2
 
 
 ###############################################################################
@@ -480,11 +509,11 @@ param Vmax_defaut_horsgroupe := 1.15;
 param Vmin_defaut_groupe := 0.95;
 param Vmax_defaut_groupe := 1.05;
 param Vmin_defaut{n in NOEUDCC} :=
-  if card({(g,n) in UNIT_PV}) > 0
+  if card({(g,n) in UNITCC_PV}) > 0
   then Vmin_defaut_groupe
   else Vmin_defaut_horsgroupe;
 param Vmax_defaut{n in NOEUDCC} :=
-  if card({(g,n) in UNIT_PV}) > 0
+  if card({(g,n) in UNITCC_PV}) > 0
   then Vmax_defaut_groupe
   else Vmax_defaut_horsgroupe;
 
@@ -574,13 +603,13 @@ var unit_Q {(g,n) in UNITCC} >= Qmin[g,n], <= Qmax[g,n];
 
 
 # Inclusion dans un diagramme trapezoidal
-param ctr_trapeze_qmax_rhs{(g,n) in UNIT_PQV} = Pmax[g,n] * unit_Qp[g,n] - Pmin[g,n] * unit_QP[g,n];
-param ctr_trapeze_qmin_rhs{(g,n) in UNIT_PQV} = Pmin[g,n] * unit_qP[g,n] - Pmax[g,n] * unit_qp[g,n];
-subject to ctr_trapeze_qmax{(g,n) in UNIT_PQV} :
+param ctr_trapeze_qmax_rhs{(g,n) in UNITCC_PQV} = Pmax[g,n] * unit_Qp[g,n] - Pmin[g,n] * unit_QP[g,n];
+param ctr_trapeze_qmin_rhs{(g,n) in UNITCC_PQV} = Pmin[g,n] * unit_qP[g,n] - Pmax[g,n] * unit_qp[g,n];
+subject to ctr_trapeze_qmax{(g,n) in UNITCC_PQV} :
     ( unit_Qp[g,n] - unit_QP[g,n] ) * unit_P[g,n]
   + ( Pmax[g,n]    - Pmin[g,n]    ) * unit_Q[g,n]
   <= ctr_trapeze_qmax_rhs[g,n];
-subject to ctr_trapeze_qmin{(g,n) in UNIT_PQV} :
+subject to ctr_trapeze_qmin{(g,n) in UNITCC_PQV} :
     ( unit_qP[g,n] - unit_qp[g,n] ) * unit_P[g,n]
   - ( Pmax[g,n]    - Pmin[g,n]    ) * unit_Q[g,n]
   <= ctr_trapeze_qmin_rhs[g,n];
@@ -591,6 +620,15 @@ subject to ctr_domain{(numero,g,n,gid) in UNIT_DOMAIN_CTR : gen_vnom_mismatch[g,
   + domain_coeffQ[numero,gid] * unit_Q[g,n]
   + domain_coeffV[numero,gid] * substation_Vnomi[unit_substation[g,n]] * V[n]
   <= domain_RHS[numero,gid];
+
+# Definition des couplages entre les deux groupes d'une CCG
+# La puissance du premier doit etre superieure a celle du second, en proportion de leurs Pmax
+subject to ctr_couplages_gen{(id1,id2) in COUPLEDGEN: 
+  coupledgen_control[id1,id2]=="true" 
+  && id1 in UNITCC_IDENTIFIANTS 
+  && id2 in UNITCC_IDENTIFIANTS } :
+     unit_P[UNITCC_G[id1],UNITCC_N[id1]] / unit_Pmax[UNITCC_G[id1],UNITCC_N[id1]]
+  >= unit_P[UNITCC_G[id2],UNITCC_N[id2]] / unit_Pmax[UNITCC_G[id2],UNITCC_N[id2]];
 
 
 ###############################################################################
@@ -678,22 +716,12 @@ var Red_Tran_Rea_Inv{(qq,m,n) in QUADCC} =
 ###############################################################################
 
 subject to bilan_P_noeud {k in NOEUDCC}: 
-	  sum {(qq,k,n) in QUADCC} 100 * V[k] * Red_Tran_Act_Dir[qq,k,n]
-	+ sum {(qq,m,k) in QUADCC} 100 * V[k] * Red_Tran_Act_Inv[qq,m,k]
-	- sum {(g,k) in UNITCC} unit_P[g,k]
+	  sum{(qq,k,n) in QUADCC} 100 * V[k] * Red_Tran_Act_Dir[qq,k,n]
+	+ sum{(qq,m,k) in QUADCC} 100 * V[k] * Red_Tran_Act_Inv[qq,m,k]
+	- sum{(g,k) in UNITCC} unit_P[g,k]
+  + sum{(sc,k) in VSCCONV} vscconv_P[sc,k] # Homogene a une conso
 	= 
 	- sum{(c,k) in CONSOCC} conso_PFix[c,k];
-
-var term_bilan_P_noeud{k in NOEUDCC} =
-	  sum {(qq,k,n) in QUADCC} 100 * V[k] * Red_Tran_Act_Dir[qq,k,n]
-	+ sum {(qq,m,k) in QUADCC} 100 * V[k] * Red_Tran_Act_Inv[qq,m,k]
-	- sum {(g,k) in UNITCC} unit_P[g,k];
-var term_bilan_P_noeud_nul{k in NOEUDCC} =
-	  sum {(qq,k,n) in QUADCC} 100 * V[k] * Red_Tran_Act_Dir[qq,k,n]
-	+ sum {(qq,m,k) in QUADCC} 100 * V[k] * Red_Tran_Act_Inv[qq,m,k]
-	- sum {(g,k) in UNITCC} unit_P[g,k]
-	+ sum{(c,k) in CONSOCC} conso_PFix[c,k];
-
 
 
 ###############################################################################
@@ -709,34 +737,13 @@ subject to bilan_Q_noeud {k in NOEUDCC}:
   - 100 * noeud_Ytot[k]  * V[k]^2  
   - sum{(shunt,k) in SHUNTCC } 100 * shunt_valnom[shunt,k] * V[k]^2
   - sum{(svc,k)   in SVC_V   } 100 * svc_b[svc,k]          * V[k]^2
-  - sum{(svc,k)   in SVC_FIXE} svc_Q0[svc,k]
-  - sum{(sc,k)    in VSCCONV } vscconv_Q[sc,k]
+  + sum{(svc,k)   in SVC_FIXE} svc_Q0[svc,k]   # Homogene a une conso
+  + sum{(sc,k)    in VSCCONV } vscconv_Q[sc,k] # Homogene a une conso
   + sum{(qq,k,n)  in QUADCC}  100 * V[k] * Red_Tran_Rea_Dir[qq,k,n] 
   + sum{(qq,m,k)  in QUADCC}  100 * V[k] * Red_Tran_Rea_Inv[qq,m,k] 
   - sum{(g,k) in UNITCC} unit_Q[g,k]
   =
   - sum{(c,k) in CONSOCC} conso_QFix[c,k];
-
-var term_bilan_Q_noeud {k in NOEUDCC} =
-  - 100 * noeud_Ytot[k]  * V[k]^2  
-  - sum{(shunt,k) in SHUNTCC } 100 * shunt_valnom[shunt,k] * V[k]^2	
-  - sum{(svc,k)   in SVC_V   } 100 * svc_b[svc,k]          * V[k]^2
-  - sum{(svc,k)   in SVC_FIXE} svc_Q0[svc,k]
-  - sum{(sc,k)    in VSCCONV } vscconv_Q[sc,k]
-  + sum{(qq,k,n)  in QUADCC}  100 * V[k] * Red_Tran_Rea_Dir[qq,k,n] 
-  + sum{(qq,m,k)  in QUADCC}  100 * V[k] * Red_Tran_Rea_Inv[qq,m,k] 
-  - sum{(g,k) in UNITCC} unit_Q[g,k];
-
-var term_bilan_Q_noeud_nul {k in NOEUDCC} =
-  - 100 * noeud_Ytot[k]  * V[k]^2  
-  - sum{(shunt,k) in SHUNTCC } 100 * shunt_valnom[shunt,k] * V[k]^2	
-  - sum{(svc,k)   in SVC_V   } 100 * svc_b[svc,k]          * V[k]^2
-  - sum{(svc,k)   in SVC_FIXE} svc_Q0[svc,k]
-  - sum{(sc,k)    in VSCCONV } vscconv_Q[sc,k]
-  + sum{(qq,k,n)  in QUADCC}  100 * V[k] * Red_Tran_Rea_Dir[qq,k,n] 
-  + sum{(qq,m,k)  in QUADCC}  100 * V[k] * Red_Tran_Rea_Inv[qq,m,k] 
-  - sum{(g,k) in UNITCC} unit_Q[g,k]
-  + sum{(c,k) in CONSOCC} conso_QFix[c,k];
 
 
 ###############################################################################
@@ -744,11 +751,12 @@ var term_bilan_Q_noeud_nul {k in NOEUDCC} =
 ###############################################################################
 
 minimize somme_ecarts_quadratiques :
-    sum {(g,n) in UNIT_PQV} ( unit_P[g,n] - unit_Pc[g,n] )^2
-  + sum {(g,n) in UNIT_PQV} ( unit_Q[g,n] - unit_Qc[g,n] )^2
-  + 10 * sum {(g,n) in UNIT_PV inter UNIT_PQV } ( unit_Pmax[g,n] * (V[n] - unit_Vc[g,n]) )^2
-  + 10 * sum {(s,n) in SVC_V  } 100 * (V[n] - svc_targetV[s,n])^2 # Ici le 100 signifie qu'en general les VSC ont une capacite de l'ordre de 100MVAr
-  + 1.0e+8 * sum{(sc,n) in VSCCONV}  (V[n] - vscconv_targetV[sc,n])^2
+    sum {(g,n) in UNITCC_PQV} ( unit_P[g,n] - unit_Pc[g,n] )^2
+  + sum {(g,n) in UNITCC_PQV} ( unit_Q[g,n] - unit_Qc[g,n] )^2
+  + sum {(sc,n) in VSCCONV : vscconv_vregul[sc,n]!="true"}  ( vscconv_Q[sc,n] - vscconv_targetQ[sc,n] )^2
+  + 10 * sum {(g,n) in UNITCC_PV inter UNITCC_PQV } ( unit_Pmax[g,n] * (V[n] - unit_Vc[g,n]) )^2
+  + 1.0e+5 * sum {(s,n)  in SVC_V  } (V[n] - svc_targetV[s,n])^2
+  + 1.0e+7 * sum {(sc,n) in VSCCONV : vscconv_vregul[sc,n]=="true"}  (V[n] - vscconv_targetV[sc,n])^2
   ;
 
 
