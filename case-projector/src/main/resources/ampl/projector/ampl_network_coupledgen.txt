@@ -1,0 +1,6 @@
+# Coupled generators: power generation of the first must be larger than power generation of the second (in percentage of their respective Pmax)
+#id1 id2 control
+"BLENO.TG51" "BLENO.TG52" true
+"M.PON.TG51" "M.PON.TG52" true
+"M.PON.TG61" "M.PON.TG62" true
+

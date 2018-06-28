@@ -23,7 +23,7 @@ param: NOEUD: noeud_poste noeud_CC noeud_V0 noeud_angl0 noeud_injA  noeud_injR n
 
 # ampl_network_generators.txt
 #"num" "bus" "con. bus" "substation" "minP (MW)" "maxP (MW)" "minQmaxP (MVar)" "minQminP (MVar)" "maxQmaxP (MVar)" "maxQminP (MVar)" "v regul." "targetV (pu)" "targetP (MW)" "targetQ (MVar)" "fault" "curative" "id" "description" "P (MW)" "Q (MVar)"
-param: UNIT: unit_noeudpossible unit_substation unit_Pmin unit_Pmax unit_qP unit_qp unit_QP unit_Qp unit_PV unit_Vc unit_Pc unit_Qc unit_fault unit_curative unit_id unit_nom unit_P0 unit_Q0 := include ampl_network_generators.txt;
+param: UNIT: unit_noeudpossible unit_substation unit_Pmin unit_Pmax unit_qP unit_qp unit_QP unit_Qp unit_vregul unit_Vc unit_Pc unit_Qc unit_fault unit_curative unit_id unit_nom unit_P0 unit_Q0 := include ampl_network_generators.txt;
 
 # ampl_network_loads.txt
 #"num" "bus" "substation" "p (MW)" "q (MVar)" "fault" "curative" "id" "description" "p (MW)" "q (MVar)"
@@ -63,12 +63,16 @@ param: HVDC: hvdc_type hvdc_conv1 hvdc_conv2 hvdc_r hvdc_Vnom hvdc_convertersMod
 param: VSCCONV: vscconv_noeudpossible vscconv_substation vscconv_Pmin vscconv_Pmax vscconv_qP vscconv_qp0 vscconv_qp vscconv_QP vscconv_Qp0 vscconv_Qp vscconv_vregul vscconv_targetV vscconv_targetQ vscconv_lossFactor vscconv_fault vscconv_curative  vscconv_id vscconv_description vscconv_P0 vscconv_Q0 := include ampl_network_vsc_converter_stations.txt;
 
 
+#ampl_network_coupledgen.txt
+#id1 id2 control
+param: COUPLEDGEN: coupledgen_control := include ampl_network_coupledgen.txt;
+
 # ampl_generators_domains.txt
 #num id P(MW) Q(MVar) V(kV) RHS(lt) Vnominal(kV) id_internal
 param: DOMAIN: domain_coeffP domain_coeffQ domain_coeffV domain_RHS domain_Vnomi domain_idinternal := include ampl_generators_domains.txt;
 
 # ampl_network_limits.txt
 #"num" "branch" "side" "limit (A)" "accept. duration (s)" "fault" "curative" 
-# Fichier non lu par le porjecteur
+# Fichier non lu par le projecteur
 
 
