@@ -196,7 +196,7 @@ printf {(s,n) in SHUNTCC}
 ###########################################################################
 
 printf '#"num" "bus" "v_regul" "targetV(pu)" "Q(MVar)"\n'
-  > projector_results_static_var_compensators.txt;
+  > projector_results_svcs.txt;
 printf {(s,n) in SVCCC}
   "%i %i %s %f %f\n",
   s,n,
