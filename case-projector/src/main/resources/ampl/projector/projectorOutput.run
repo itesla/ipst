@@ -27,16 +27,11 @@ else
   let final_status := "projector_NOK";
 
 
-
-###########################################################################
+##########################################################################
 # 
 # Ecriture des groupes
 #
 ###########################################################################
-
-#
-# A partir de mai 2018, nouveau format
-#
 
 if final_status = "projector_OK" then {
 printf '#"num" "bus" "v_regul" "targetV(pu)" "targetP(MW)" "targetQ(MVar)" "P(MW)" "Q(MVar)"\n' > projector_results_generators.txt;
@@ -46,39 +41,14 @@ printf {(g,n) in UNIT: n in NOEUDCC}
   n,
   # unit_vregul[g,n] -> ce qu'il y a dans la situation en entree
   if (g,n) in UNITCC_PV then "true" else "false", # Voir definition de UNITCC_PV
-  V[n],         # Tension issue du calcul. La tension de consigne de la situation en entree n'est pas ecrite ici
-  unit_Pc[g,n], # -> ce qu'il y a dans la situation en entree
-  unit_Qc[g,n], # -> ce qu'il y a dans la situation en entree
-  if (g,n) in UNITCC then unit_P[g,n] else 0, # On peut avoir un groupe raccorde mais avec consignes nulles
-  if (g,n) in UNITCC then unit_Q[g,n] else 0  # On peut avoir un groupe raccorde mais avec consignes nulles
-  > projector_results_generators.txt;
-}
-
-#
-# Jusqu'a mai 2018, on ecrit simplement trois colonnes V P Q
-#
-/* Attention, le signe '/*' marque le debut d'un commentaire long comme en C ou en C++
-param unit_P_out{UNIT} default 0;
-param unit_Q_out{UNIT} default 0;
-
-let {(g,n) in UNITCC: n in NOEUDCC} unit_P_out[g,n] := unit_P[g,n];
-let {(g,n) in UNITCC: n in NOEUDCC} unit_Q_out[g,n] := unit_Q[g,n]; 
-
-if final_status = "projector_OK" then {
-# Pas d'espace entre '#' et 'num', pas d'espace en debut de colonne
-printf
-  "#%s %s %s %s\n",
-  "num", "V(pu)", "P(MW)", "Q(MVAR)"
-  > projector_results_generators.txt;
-printf {(g,n) in UNIT: n in NOEUDCC}
-  "%i %f %f %f\n",
-  g,
   V[n],
-  unit_P_out[g,n],
-  unit_Q_out[g,n]
+  if (g,n) in UNITCC then unit_P[g,n] else 0, # On peut avoir un groupe raccorde mais avec consignes nulles
+  if (g,n) in UNITCC then unit_Q[g,n] else 0, # On peut avoir un groupe raccorde mais avec consignes nulles
+  if (g,n) in UNITCC then -unit_P[g,n] else 0, # On peut avoir un groupe raccorde mais avec consignes nulles # Homogene a une conso
+  if (g,n) in UNITCC then -unit_Q[g,n] else 0  # On peut avoir un groupe raccorde mais avec consignes nulles # Homogene a une conso
   > projector_results_generators.txt;
 }
-*/
+
 
 
 ###########################################################################
@@ -90,7 +60,7 @@ printf {(g,n) in UNIT: n in NOEUDCC}
 printf '#"num" "v(pu)" "theta(rad)"\n'
   > projector_results_buses.txt;
 printf {n in NOEUDCC}
-  "%i %f %f\n",
+  "%i %.10f %.10f\n",
   n,V[n],Ph[n]
    > projector_results_buses.txt;
 
@@ -201,7 +171,7 @@ printf {(s,n) in SVCCC}
   "%i %i %s %f %f\n",
   s,n,
   if (s,n) in SVC_V then "true" else "false",
-  if (s,n) in SVC_V then V[n]   else svc_targetV[s,n],
+  V[n],
   if (s,n) in SVC_V then -100*svc_b[s,n]*V[n]^2 # signe '-' car homogene a une consommation de reactif
   else if (s,n) in SVC_FIXE then svc_Q0[s,n]
   > projector_results_svc.txt;
@@ -357,14 +327,14 @@ for {(g,n) in UNITCC : unit_vregul[g,n]=="true" and abs(V[n]-unit_Vc[g,n])*subst
 # Ecriture de fichiers de debug pour les groupes, SVC et VSC
 ###############################################################################
 
-printf "#num;bus;type;name;substation;Vnom;type;Pmin;Pmax;Pmin2;Pmax2;Pcons;P;|P-Pcons|;Qmin;Qmax;Qmin2;Qmax2;Qcons;Q;|Q-Qcons|;Vmin;Vmax;Vmin2;Vmax2;targetV;V;|V-targetV|;nbCuts;\n"
-  #                                             P                                       Q                                       V 
+printf "#num;bus;type;name;substation;Vnom;type;Pmin;Pmax;Pmin2;Pmax2;Pc=P0;P;|P-P0|;Qmin;Qmax;Qmin2;Qmax2;Qc=Q0;Q;|Q-Q0|;Vmin;Vmax;Vmin2;Vmax2;Vc=targetV=V0;V;|V-V0|;nbCuts;directory;\n"
+  #                                             P                                    Q                                    V 
   > projector_debug_voltageregulators.csv;
 
 # Groupes de production
 printf {(g,n) in UNITCC: n in NOEUDCC}
-  "%i;%i;%s;%s;%s;%.1f;%s;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%f;%f;%f;%f;%f;%f;%f;%i;\n",
-  #                       P                                  Q                                  V              
+  "%i;%i;%s;%s;%s;%.1f;%s;%.1f;%.1f;%.1f;%.1f;%f;%f;%f;%.1f;%.1f;%.1f;%.1f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%i;%s;\n",
+  #                       P                            Q                            V              
   g,n,"unit",
   unit_id[g,n],
   substation_id[noeud_poste[n]],
@@ -372,38 +342,41 @@ printf {(g,n) in UNITCC: n in NOEUDCC}
   # Statut du groupe
   if unit_id[g,n] in DOMAIN_IDENTIFIANTS and gen_vnom_mismatch[g,n,unit_id[g,n]]!=0 then "V_mismatch"
   else if (g,n) in UNITCC_PQV then "UNITCC_PQV"
-  else if unit_vregul[g,n]=="true" then "PV_nodomain_PQ"
-  else if unit_vregul[g,n]!="true" then "PQ_nodomain_PQ"
+  else if unit_vregul[g,n]=="true" then "PV_nodomain"
+  else if unit_vregul[g,n]!="true" then "PQ_nodomain"
   else "empty",
   unit_Pmin[g,n],
   unit_Pmax[g,n],
   Pmin[g,n],
   Pmax[g,n],
-  unit_Pc[g,n],
+  -unit_P0[g,n],
   unit_P[g,n],
-  abs(unit_P[g,n] - unit_Pc[g,n]),
+  abs(unit_P[g,n] + unit_P0[g,n]),
   min(unit_qp[g,n],unit_qP[g,n]),
   min(unit_Qp[g,n],unit_QP[g,n]),
   Qmin[g,n],
   Qmax[g,n],
-  unit_Qc[g,n],
+  -unit_Q0[g,n],
   unit_Q[g,n],
-  abs(unit_Q[g,n] - unit_Qc[g,n]),
+  abs(unit_Q[g,n] + unit_Q0[g,n]),
   substation_Vmin[noeud_poste[n]],
   substation_Vmax[noeud_poste[n]],
   min_noeud_V[n],
   max_noeud_V[n],
-  unit_Vc[g,n],
+  noeud_V0[n],
   V[n],
-  abs(unit_Vc[g,n]-V[n]),
+  abs(noeud_V0[n]-V[n]),
   if unit_id[g,n] in DOMAIN_IDENTIFIANTS then card({(numero,g,n,gid) in UNIT_DOMAIN_CTR})
-  else 0
+  else 0,
+  _cd
   > projector_debug_voltageregulators.csv;
 
 # SVC - static var compensator - CSPR
 printf {(s,n) in SVCCC}
-  "%i;%i;%s;%s;%s;%.1f;%s;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%f;%f;%f;%f;%f;%f;%f;%i;\n",
+  #"%i;%i;%s;%s;%s;%.1f;%s;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%f;%f;%f;%f;%f;%f;%f;%i;%s;\n",
   #                       P                                  Q                                  V              
+  "%i;%i;%s;%s;%s;%.1f;%s;%.1f;%.1f;%.1f;%.1f;%f;%f;%f;%.1f;%.1f;%.1f;%.1f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%i;%s;\n",
+  #                       P                            Q                            V              
   s,n,"svc",
   svc_id[s,n],
   substation_id[noeud_poste[n]],
@@ -416,33 +389,36 @@ printf {(s,n) in SVCCC}
   svc_bmax[s,n]*100,
   svc_bmin[s,n]*100,
   svc_bmax[s,n]*100,
-  svc_Q0[s,n],
-  if (s,n) in SVC_V then svc_b[s,n]*100*V[n]^2
+  svc_Q0[s,n], # homogene a une consomation
+  if (s,n) in SVC_V then - svc_b[s,n]*100*V[n]^2
   else svc_Q0[s,n],
-  if (s,n) in SVC_V then abs(svc_b[s,n]*100*V[n]^2-svc_Q0[s,n])
+  if (s,n) in SVC_V then abs(svc_b[s,n]*100*V[n]^2+svc_Q0[s,n])
   else 0,
   substation_Vmin[noeud_poste[n]],
   substation_Vmax[noeud_poste[n]],
   min_noeud_V[n],
   max_noeud_V[n],
-  svc_targetV[s,n],
+  noeud_V0[n],
   V[n],
-  if (s,n) in SVC_V then abs(svc_targetV[s,n]-V[n])
+  if (s,n) in SVC_V then abs(noeud_V0[n]-V[n])
   else 0,
-  0
+  0,
+  _cd
   > projector_debug_voltageregulators.csv;
 
 # Stations de conversion VSC
 printf {(sc,n) in VSCCONV}
-  "%i;%i;%s;%s;%s;%.1f;%s;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%f;%f;%f;%f;%f;%f;%f;%i;\n",
+  #"%i;%i;%s;%s;%s;%.1f;%s;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%f;%f;%f;%f;%f;%f;%f;%i;%s;\n",
   #                       P                                  Q                                  V              
+  "%i;%i;%s;%s;%s;%.1f;%s;%.1f;%.1f;%.1f;%.1f;%f;%f;%f;%.1f;%.1f;%.1f;%.1f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%i;%s;\n",
+  #                       P                            Q                            V              
   sc,n,"station_vsc",
   vscconv_id[sc,n],
   substation_id[noeud_poste[n]],
   substation_Vnomi[noeud_poste[n]],
   # Statut
   if vscconv_vregul[sc,n]=="true" then "regulV"
-  else "regulQ",
+  else "Qfixe",
   vscconv_Pmin[sc,n],
   vscconv_Pmax[sc,n],
   vscconv_Pmin[sc,n],
@@ -454,19 +430,18 @@ printf {(sc,n) in VSCCONV}
   max( vscconv_Qp[sc,n], vscconv_Qp0[sc,n], vscconv_QP[sc,n] ),
   min( vscconv_qp[sc,n], vscconv_qp0[sc,n], vscconv_qP[sc,n] ),
   max( vscconv_Qp[sc,n], vscconv_Qp0[sc,n], vscconv_QP[sc,n] ),
-  vscconv_targetQ[sc,n],
+  vscconv_Q0[sc,n],
   vscconv_Q[sc,n],
-  if vscconv_vregul[sc,n]=="true" then 0
-  else abs(vscconv_targetQ[sc,n] - vscconv_Q[sc,n]),
+  abs(vscconv_Q0[sc,n] - vscconv_Q[sc,n]),
   substation_Vmin[noeud_poste[n]],
   substation_Vmax[noeud_poste[n]],
   min_noeud_V[n],
   max_noeud_V[n],
-  vscconv_targetV[sc,n],
+  noeud_V0[n],
   V[n],
-  if vscconv_vregul[sc,n]=="true" then abs(V[n] - vscconv_targetV[sc,n])
-  else 0,
-  0
+  abs(V[n] - noeud_V0[n]),
+  0,
+  _cd
   > projector_debug_voltageregulators.csv;
 
 

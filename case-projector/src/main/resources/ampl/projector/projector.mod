@@ -13,6 +13,7 @@
 ###############################################################################
 
 
+
 ###############################################################################
 # Parametre temporaire pour calculs intermediaires
 # (il est souvent utile de disposer d'une petite variable pour un calcul,
@@ -21,12 +22,14 @@
 param tempo;
 
 
+
 ###############################################################################
 #
 # Autres parametres
 #
 ###############################################################################
 param epsilon_tension_min = 0.5; # On considere qu'une Vmin ou Vmax < 0.5 ne vaut rien (exemple -99999). Idem pour une targetV
+param PQmax = 9000; # Toute valeur Pmin Pmax Qmin Qmax au dela de cette valeur sera invalidee
 
 
 
@@ -72,6 +75,7 @@ check {n in NOEUD}: noeud_poste[n] in SUBSTATIONS;
 #
 param noeud_type{NOEUD} default 1; # PQ par defaut
 param noeud_phase_nulle; # Noeud qui aura la phase fixee a zero. Prendre le noeud 400kV le plus maille
+
 
 
 ###############################################################################
@@ -121,6 +125,7 @@ param unit_Qmax{UNIT};
 param unit_Qmin{UNIT};
 
 
+
 ###############################################################################
 # Definition de domaines PQV pour les groupes
 ###############################################################################
@@ -131,6 +136,7 @@ param domain_coeffV {DOMAIN};
 param domain_RHS    {DOMAIN};
 param domain_Vnomi  {DOMAIN};
 param domain_idinternal {DOMAIN} symbolic;
+
 
 
 ###############################################################################
@@ -153,6 +159,7 @@ param conso_q         {CONSO};
 #
 check {(c,n) in CONSO}: n in NOEUD union {-1};
 check {(c,n) in CONSO}: conso_substation[c,n] in SUBSTATIONS;
+
 
 
 ###############################################################################
@@ -179,6 +186,7 @@ param shunt_sections_count {SHUNT} integer;
 #
 check {(s,n) in SHUNT}: n  in NOEUD union {-1};
 check {(s,n) in SHUNT}: shunt_substation[s,n] in SUBSTATIONS;
+
 
 
 ###############################################################################
@@ -229,6 +237,7 @@ set TAPTABLES := setof {(l,t) in TAPS} l;
 check {(l,t) in TAPS}: l > 0 && t >= 0;
 
 
+
 ###############################################################################
 # Donnees Ratio tap changers
 ###############################################################################
@@ -265,6 +274,7 @@ param deph_id       {DEPH} symbolic;
 #
 check {d in DEPH}: deph_table[d] in TAPTABLES;
 check {d in DEPH}: (deph_table[d], deph_tap0[d]) in TAPS;
+
 
 
 ###############################################################################
@@ -329,6 +339,7 @@ param noeud_Ytot {k in NOEUD} =
   );# Fin de la somme
 
 
+
 ###############################################################################
 # Donnees stations de conversion de type VSC / VSC converter station data
 ###############################################################################
@@ -366,6 +377,7 @@ check {(cs,n) in VSCCONV}: vscconv_qP[cs,n]   <= vscconv_QP[cs,n]; # Qmin et Qma
 check {(cs,n) in VSCCONV: vscconv_vregul[cs,n]=="true" } : vscconv_targetV[cs,n] >= epsilon_tension_min;
 
 
+
 ###############################################################################
 # Donnees HVDC
 # Rq: si on utilise les injections des stations VSC fixes, les donnees de la hvdc ne sont pas utilisees
@@ -392,12 +404,14 @@ check {h in HVDC}: hvdc_targetP[h] >= 0.0;
 check {h in HVDC}: hvdc_targetP[h] <= hvdc_Pmax[h];
 
 
+
 ###############################################################################
 # Couplage de groupes de production
 ###############################################################################
 # Les CCG sont representees par deux groupes, la puissance de l'un doit etre superieure a celle de l'autre
 set COUPLEDGEN dimen 2;
 param coupledgen_control{COUPLEDGEN} symbolic;
+
 
 
 ###############################################################################
@@ -416,7 +430,8 @@ set QUADCC_DEPH := {(qq,m,n) in QUADCC : quad_ptrDeph[qq,m,n] != -1 };
 set UNITCC  :=
   {(g,n) in UNIT : 
     n in NOEUDCC 
-    and ( abs(unit_Pc[g,n]) > 0.0001 or abs(unit_Qc[g,n]) > 0.0001 ) 
+    and ( abs(unit_Pc[g,n]) > 0.0001 or  abs(unit_Qc[g,n]) > 0.0001 ) # On refuse les groupes qui ont Pc=Qc=0
+    and ( abs(unit_P0[g,n]) < PQmax  and abs(unit_Q0[g,n]) < PQmax  ) # On refuse les groupes qui ont P0 ou Q0 à de trop grandes valeurs (exemple -999999)
   };
 
 # Groupes qui sont en reglage de tension
@@ -441,8 +456,8 @@ set UNIT_DOMAIN_CTR     := setof{(g,n,gid) in UNIT_DOMAIN,(numero,gid) in DOMAIN
 
 
 # Ensemble des groupes pour lesquels on faire varier P Q V :
-# Jean Maeght + Nicolas Omont le 29 aout 2016 :
-# Si aucun domaine dynamique n'a été fourni, alors on ne modifie pas le groupe
+# Jean Maeght + Nicolas Omont le 29 aout 2016 : si aucun domaine dynamique n'a été fourni, alors on ne modifie pas le groupe
+# Jean Maeght + Nicolas Omont le 27 juin 2018 : autre choix
 set UNITCC_PQV := setof {(g,n) in UNITCC: unit_id[g,n] in DOMAIN_IDENTIFIANTS and gen_vnom_mismatch[g,n,unit_id[g,n]]==0} (g,n);
 
 
@@ -453,6 +468,7 @@ param UNITCC_N{id in UNITCC_IDENTIFIANTS} = max{(g,n) in UNITCC: unit_id[g,n]==i
 check{(g,n) in UNITCC}: UNITCC_G[unit_id[g,n]]==g;
 check{(g,n) in UNITCC}: UNITCC_N[unit_id[g,n]]==n;
 check{id in UNITCC_IDENTIFIANTS}: id == unit_id[UNITCC_G[id],UNITCC_N[id]];
+
 
 
 ###############################################################################
@@ -497,6 +513,7 @@ param quad_dephor {(qq,m,n) in QUADCC} =
   then tap_angle [deph_table[quad_ptrDeph[qq,m,n]],deph_tap0[quad_ptrDeph[qq,m,n]]]
   else 0;
 param quad_dephex {(qq,m,n) in QUADCC} = 0; # Par convention dans iTesla, tout est cote 1, rien cote 2
+
 
 
 ###############################################################################
@@ -564,35 +581,34 @@ var V {n in NOEUDCC} <= max_noeud_V[n], >= min_noeud_V[n];
 ###############################################################################
 # Bornes productions active et reactive
 ###############################################################################
-param PQmax = 9000; # Toute valeur Pmin Pmax Qmin Qmax au dela de cette valeur sera invalidee
 param Pmin_defaut := 0;
 param Pmax_defaut := 200;
 param ratioPmaxQmax := 0.4;
 
 param Pmin {(g,n) in UNITCC} = 
   if abs(unit_Pmin[g,n]) > PQmax
-  then min( unit_Pc[g,n], Pmin_defaut)
-  #else unit_Pmin[g,n];
-  else min( unit_Pc[g,n], unit_Pmin[g,n]);
+  then min( -unit_P0[g,n], Pmin_defaut)
+  else min( -unit_P0[g,n], unit_Pmin[g,n]);
 param Pmax {(g,n) in UNITCC} = 
   if abs(unit_Pmax[g,n]) > PQmax
-  then max( unit_Pc[g,n], Pmax_defaut)
-  else max( unit_Pc[g,n], unit_Pmax[g,n]);
+  then max( -unit_P0[g,n], Pmax_defaut)
+  else max( -unit_P0[g,n], unit_Pmax[g,n]);
 
 param Qmin {(g,n) in UNITCC} = 
   if abs(unit_qP[g,n]) > PQmax or abs(unit_qp[g,n]) > PQmax
-  then min( unit_Qc[g,n], - ratioPmaxQmax * Pmax_defaut)
-  else min( unit_Qc[g,n], unit_qP[g,n], unit_qp[g,n]);
+  then min( -unit_Q0[g,n], - ratioPmaxQmax * Pmax_defaut)
+  else min( -unit_Q0[g,n], unit_qP[g,n], unit_qp[g,n]);
 param Qmax {(g,n) in UNITCC} = 
   if abs(unit_QP[g,n]) > PQmax or abs(unit_Qp[g,n]) > PQmax
-  then max( unit_Qc[g,n], ratioPmaxQmax * Pmax_defaut)
-  else max( unit_Qc[g,n], unit_QP[g,n], unit_Qp[g,n]);
+  then max( -unit_Q0[g,n], ratioPmaxQmax * Pmax_defaut)
+  else max( -unit_Q0[g,n], unit_QP[g,n], unit_Qp[g,n]);
 
 check{(g,n) in UNITCC} : Pmin[g,n] <= Pmax[g,n];
 check{(g,n) in UNITCC} : Qmin[g,n] <= Qmax[g,n];
 
-set UNITHORSPMIN := setof {(g,n) in UNITCC : unit_Pc[g,n] < unit_Pmin[g,n]} unit_id[g,n] ;
-set UNITHORSPMAX := setof {(g,n) in UNITCC : unit_Pc[g,n] > unit_Pmax[g,n]} unit_id[g,n];
+set UNITHORSPMIN := setof {(g,n) in UNITCC : -unit_P0[g,n] < unit_Pmin[g,n]} unit_id[g,n] ;
+set UNITHORSPMAX := setof {(g,n) in UNITCC : -unit_P0[g,n] > unit_Pmax[g,n]} unit_id[g,n];
+
 
 
 ###############################################################################
@@ -631,6 +647,7 @@ subject to ctr_couplages_gen{(id1,id2) in COUPLEDGEN:
   >= unit_P[UNITCC_G[id2],UNITCC_N[id2]] / unit_Pmax[UNITCC_G[id2],UNITCC_N[id2]];
 
 
+
 ###############################################################################
 # Static Var Compensators (==CSPR)
 ###############################################################################
@@ -646,7 +663,7 @@ set SVC_V := {(s,n) in SVCCC : svc_vregul[s,n]=="true" && svc_targetV[s,n] >= ep
 set SVC_Q dimen 2; # Vide
 
 # SVC avec Q fixe
-set SVC_FIXE := {(s,n) in SVCCC : (s,n) not in SVC_V};# && (s,n) not in SVC_Q};
+set SVC_FIXE := {(s,n) in SVCCC : (s,n) not in SVC_V}; # && (s,n) not in SVC_Q};
 
 
 # Variable "b" dans ses bornes
@@ -655,6 +672,7 @@ var svc_b{(s,n) in SVC_V} >= svc_bmin[s,n], <= svc_bmax[s,n];
 # Dans Hades, la production de reactif est limitee par bmin*Vnominale^2 et bmax*Vnominale^2. On veut garder ces limitations ici.
 subject to limites_reactif_hades{(s,n) in SVC_V}:
   svc_bmin[s,n] <= svc_b[s,n] * V[n]^2 <= svc_bmax[s,n]; # Vnominale est egale a 1kV
+
 
 
 ###############################################################################
@@ -685,6 +703,7 @@ subject to limites_sup_reactif_Pnegatif{(sc,n) in VSCCONV}:
   vscconv_Q[sc,n] <= vscconv_Qp0[sc,n] + (vscconv_Qp[sc,n]-vscconv_Qp0[sc,n])/(vscconv_Pmin[sc,n]-0.0)*vscconv_P[sc,n];
 subject to limites_inf_reactif_Pnegatif{(sc,n) in VSCCONV}:
   vscconv_Q[sc,n] >= vscconv_qp0[sc,n] + (vscconv_qp[sc,n]-vscconv_qp0[sc,n])/(vscconv_Pmin[sc,n]-0.0)*vscconv_P[sc,n];
+
 
 
 ###############################################################################
@@ -751,12 +770,16 @@ subject to bilan_Q_noeud {k in NOEUDCC}:
 ###############################################################################
 
 minimize somme_ecarts_quadratiques :
-    sum {(g,n) in UNITCC_PQV} ( unit_P[g,n] - unit_Pc[g,n] )^2
-  + sum {(g,n) in UNITCC_PQV} ( unit_Q[g,n] - unit_Qc[g,n] )^2
-  + sum {(sc,n) in VSCCONV : vscconv_vregul[sc,n]!="true"}  ( vscconv_Q[sc,n] - vscconv_targetQ[sc,n] )^2
-  + 10 * sum {(g,n) in UNITCC_PV inter UNITCC_PQV } ( unit_Pmax[g,n] * (V[n] - unit_Vc[g,n]) )^2
-  + 1.0e+5 * sum {(s,n)  in SVC_V  } (V[n] - svc_targetV[s,n])^2
-  + 1.0e+7 * sum {(sc,n) in VSCCONV : vscconv_vregul[sc,n]=="true"}  (V[n] - vscconv_targetV[sc,n])^2
+  # Tous les groupes
+    sum {(g,n) in UNITCC} ( unit_P[g,n] + unit_P0[g,n] )^2
+  # Groupes avec domaine dynamique
+  + sum {(g,n) in UNITCC_PQV} ( unit_Q[g,n] + unit_Q0[g,n] )^2
+  # Groupes avec domaine dynamique et groupes PV
+  + 1000 * sum {(g,n) in UNITCC_PV union UNITCC_PQV} unit_Pmax[g,n] * (V[n] - noeud_V0[n])^2
+  # SVC en reglage de tension
+  + 1.0e+6 * sum {(s,n)  in SVC_V  } (V[n] - noeud_V0[n])^2
+  # Sations SVC en reglage de tension
+  + 1.0e+6 * sum {(sc,n) in VSCCONV : vscconv_vregul[sc,n]=="true"}  (V[n] - noeud_V0[n])^2
   ;
 
 
