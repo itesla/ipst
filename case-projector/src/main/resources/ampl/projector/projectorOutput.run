@@ -353,7 +353,7 @@ printf {(g,n) in UNITCC: n in NOEUDCC}
   unit_P[g,n],
   abs(unit_P[g,n] + unit_P0[g,n]),
   min(unit_qp[g,n],unit_qP[g,n]),
-  min(unit_Qp[g,n],unit_QP[g,n]),
+  max(unit_Qp[g,n],unit_QP[g,n]),
   Qmin[g,n],
   Qmax[g,n],
   -unit_Q0[g,n],
