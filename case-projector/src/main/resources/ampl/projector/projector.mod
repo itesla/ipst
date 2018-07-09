@@ -118,12 +118,6 @@ check {(g,n) in UNIT}:
 #  && unit_Qp[g,n] >= unit_qP[g,n] # Pour prendre un rectangle inclu dans le trapeze, on doit verifier qP<=Qp (c'est necessaire mais pas suffisant)
   ;
 
-#
-# Donnees creees
-#
-param unit_Qmax{UNIT};
-param unit_Qmin{UNIT};
-
 
 
 ###############################################################################
@@ -617,17 +611,32 @@ set UNITHORSPMAX := setof {(g,n) in UNITCC : -unit_P0[g,n] > unit_Pmax[g,n]} uni
 var unit_P {(g,n) in UNITCC} >= Pmin[g,n], <= Pmax[g,n];
 var unit_Q {(g,n) in UNITCC} >= Qmin[g,n], <= Qmax[g,n];
 
+# Ensemble des groupes pour lesquels un diagramme en trapeze doit etre utilise
+# Il s'agit des groupes avec domaine dynamique, ainsi que des groupes PV sans domaine dynamique.
+# C'est inutile pour les groupes PQ sans domaine dynamique, car ils ont Q fixe
+# Il est necessaire que les 4 valeurs unit_Qp unit_QP unit_qP unit_qp soient 
+# definies, c'est-a-dire de valeur absolue inferieure a PQmax
+set UNIT_TRAPEZE :=
+  { (g,n) in UNITCC :
+  ( (g,n) in UNITCC_PQV or unit_vregul[g,n]=="true" )
+  and abs(unit_Qp[g,n]) < PQmax
+  and abs(unit_QP[g,n]) < PQmax
+  and abs(unit_qP[g,n]) < PQmax
+  and abs(unit_qp[g,n]) < PQmax
+  and abs(unit_Pmax[g,n]) < PQmax
+  and abs(unit_Pmin[g,n]) < PQmax
+  };
 
 # Inclusion dans un diagramme trapezoidal
-param ctr_trapeze_qmax_rhs{(g,n) in UNITCC_PQV} = Pmax[g,n] * unit_Qp[g,n] - Pmin[g,n] * unit_QP[g,n];
-param ctr_trapeze_qmin_rhs{(g,n) in UNITCC_PQV} = Pmin[g,n] * unit_qP[g,n] - Pmax[g,n] * unit_qp[g,n];
-subject to ctr_trapeze_qmax{(g,n) in UNITCC_PQV} :
-    ( unit_Qp[g,n] - unit_QP[g,n] ) * unit_P[g,n]
-  + ( Pmax[g,n]    - Pmin[g,n]    ) * unit_Q[g,n]
+param ctr_trapeze_qmax_rhs{(g,n) in UNIT_TRAPEZE} = unit_Pmax[g,n] * unit_Qp[g,n] - unit_Pmin[g,n] * unit_QP[g,n];
+param ctr_trapeze_qmin_rhs{(g,n) in UNIT_TRAPEZE} = unit_Pmin[g,n] * unit_qP[g,n] - unit_Pmax[g,n] * unit_qp[g,n];
+subject to ctr_trapeze_qmax{(g,n) in UNIT_TRAPEZE} :
+    ( unit_Qp[g,n]   - unit_QP[g,n]   ) * unit_P[g,n]
+  + ( unit_Pmax[g,n] - unit_Pmin[g,n] ) * unit_Q[g,n]
   <= ctr_trapeze_qmax_rhs[g,n];
-subject to ctr_trapeze_qmin{(g,n) in UNITCC_PQV} :
-    ( unit_qP[g,n] - unit_qp[g,n] ) * unit_P[g,n]
-  - ( Pmax[g,n]    - Pmin[g,n]    ) * unit_Q[g,n]
+subject to ctr_trapeze_qmin{(g,n) in UNIT_TRAPEZE} :
+    ( unit_qP[g,n]   - unit_qp[g,n]   ) * unit_P[g,n]
+  - ( unit_Pmax[g,n] - unit_Pmin[g,n] ) * unit_Q[g,n]
   <= ctr_trapeze_qmin_rhs[g,n];
 
 # Definitions des domaines en (P,Q,V) pour la stabilite des modeles dynamiques
