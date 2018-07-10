@@ -20,8 +20,6 @@ import py4j.GatewayServer;
 @AutoService(Tool.class)
 public class PyPowsybl implements Tool {
 
-    final GatewayServer server = new GatewayServer();
-
     @Override
     public Command getCommand() {
         return new Command() {
@@ -57,6 +55,8 @@ public class PyPowsybl implements Tool {
 
     @Override
     public void run(CommandLine line, ToolRunningContext context) throws Exception {
+
+        GatewayServer server = new GatewayServer();
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
