@@ -33,6 +33,9 @@ import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import java.io.PrintStream;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
@@ -212,6 +215,9 @@ public class OnlineWorkflowTool implements Tool {
             params.setConstraintMargin(Float.parseFloat(constraintMargin));
         }
 
+        String parallelThreads = line.getOptionValue(OnlineWorkflowCommand.PARALLEL_THREADS);
+        int numThreads =  parallelThreads != null ? Integer.parseInt(parallelThreads) : 1;
+
         String urlString = "service:jmx:rmi:///jndi/rmi://" + startconfig.getJmxHost() + ":" + startconfig.getJmxPort()
                 + "/jmxrmi";
 
@@ -229,14 +235,24 @@ public class OnlineWorkflowTool implements Tool {
                 context.getOutputStream().println("starting Online Workflow, caseFile " + params.getCaseFile());
                 String workflowId = application.startWorkflow(startconfig, params);
                 context.getOutputStream().println("workflowId=" + workflowId);
-
             } else {
+                ExecutorService taskExecutor = Executors.newFixedThreadPool(numThreads);
+                List<Callable<Void>> tasks = new ArrayList<>(numThreads);
+
                 for (DateTime basecase : baseCasesSet) {
-                    params.setBaseCaseDate(basecase);
-                    context.getOutputStream().println("starting Online Workflow, basecase " + basecase.toString());
-                    String workflowId = application.startWorkflow(startconfig, params);
-                    context.getOutputStream().println("workflowId=" + workflowId);
+                    tasks.add(new Callable() {
+                        @Override
+                        public Object call() throws Exception {
+                            context.getOutputStream().println("starting Online Workflow, basecase " + basecase.toString());
+                            OnlineWorkflowParameters pars = new OnlineWorkflowParameters(basecase, params.getStates(), params.getHistoInterval(), params.getOfflineWorkflowId(), params.getTimeHorizon(), params.getFeAnalysisId(), params.getRulesPurityThreshold(), params.storeStates(), params.analyseBasecase(), params.validation(), params.getSecurityIndexes(), params.getCaseType(), params.getCountries(), params.isMergeOptimized(), params.getLimitReduction(), params.isHandleViolationsInN(), params.getConstraintMargin());
+                            String workflowId = application.startWorkflow(startconfig, pars);
+                            context.getOutputStream().println("workflowId=" + workflowId);
+                            return workflowId;
+                        } });
+
                 }
+                taskExecutor.invokeAll(tasks);
+                taskExecutor.shutdown();
             }
         } else if (line.hasOption(OnlineWorkflowCommand.SHUTDOWN_CMD)) {
             application.shutdown();

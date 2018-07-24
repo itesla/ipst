@@ -25,6 +25,7 @@ public class CaseProjectorConfigTest {
     private InMemoryPlatformConfig platformConfig;
     private MapModuleConfig moduleConfig;
     private Path amplHome;
+    private Path generatorsDomainsFile;
     private boolean debug;
 
     @Before
@@ -33,9 +34,11 @@ public class CaseProjectorConfigTest {
         platformConfig = new InMemoryPlatformConfig(fileSystem);
         moduleConfig = platformConfig.createModuleConfig("caseProjector");
         amplHome = fileSystem.getPath("/ampl-home");
+        generatorsDomainsFile  = fileSystem.getPath("/tmp/generatorsDomainsFile.txt");
         debug = true;
         moduleConfig.setStringProperty("amplHomeDir", amplHome.toString());
         moduleConfig.setStringProperty("debug", Boolean.toString(debug));
+        moduleConfig.setStringProperty("generatorsDomainsFile", generatorsDomainsFile.toString());
     }
 
     @After
@@ -46,12 +49,13 @@ public class CaseProjectorConfigTest {
     @Test
     public void testBasicConfig() throws Exception {
         CaseProjectorConfig config = CaseProjectorConfig.load(platformConfig);
-        checkValues(config, amplHome, debug);
+        checkValues(config, amplHome, generatorsDomainsFile, debug);
     }
 
-    private void checkValues(CaseProjectorConfig config, Path amplHome, boolean debug) {
+    private void checkValues(CaseProjectorConfig config, Path amplHome, Path generatorsDomainsFile, boolean debug) {
         assertEquals(amplHome, config.getAmplHomeDir());
         assertEquals(debug, config.isDebug());
+        assertEquals(generatorsDomainsFile, config.getGeneratorsDomainsFile());
     }
 
 

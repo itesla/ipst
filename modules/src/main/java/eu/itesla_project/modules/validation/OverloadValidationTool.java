@@ -7,22 +7,19 @@
 package eu.itesla_project.modules.validation;
 
 import com.google.auto.service.AutoService;
-import com.powsybl.tools.Command;
-import com.powsybl.tools.Tool;
-import com.powsybl.tools.ToolRunningContext;
 import com.powsybl.contingency.Contingency;
 import com.powsybl.iidm.import_.Importer;
 import com.powsybl.iidm.import_.Importers;
+import com.powsybl.iidm.network.StateManager;
 import com.powsybl.loadflow.LoadFlowFactory;
+import com.powsybl.security.*;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
+import com.powsybl.tools.Command;
+import com.powsybl.tools.Tool;
+import com.powsybl.tools.ToolRunningContext;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
 import eu.itesla_project.modules.offline.OfflineConfig;
 import eu.itesla_project.modules.rules.*;
-import com.powsybl.security.LimitViolationsResult;
-import com.powsybl.security.PostContingencyResult;
-import com.powsybl.security.SecurityAnalysis;
-import com.powsybl.security.SecurityAnalysisImpl;
-import com.powsybl.security.SecurityAnalysisResult;
-import com.powsybl.simulation.securityindexes.SecurityIndexType;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -236,8 +233,8 @@ public class OverloadValidationTool implements Tool {
 
                     context.getOutputStream().println("running security analysis...");
 
-                    SecurityAnalysis securityAnalysis = new SecurityAnalysisImpl(network, context.getComputationManager(), loadFlowFactory);
-                    SecurityAnalysisResult securityAnalysisResult = securityAnalysis.runAsync(network1 -> contingencies).join();
+                    SecurityAnalysis securityAnalysis = new SecurityAnalysisImpl(network, context.getShortTimeExecutionComputationManager(), loadFlowFactory);
+                    SecurityAnalysisResult securityAnalysisResult = securityAnalysis.runAsync(network1 -> contingencies, StateManager.INITIAL_STATE_ID, SecurityAnalysisParameters.load()).join();
 
                     context.getOutputStream().println("checking rules...");
 

@@ -1,19 +1,21 @@
 /**
- * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2016 All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2018, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 package eu.itesla_project.iidm.ddb.eurostag_imp_exp;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.util.ConnectedComponents;
+import com.powsybl.iidm.network.util.Identifiables;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.utils.Utils;
 import eu.itesla_project.iidm.ddb.model.*;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
 import eu.itesla_project.iidm.ejbclient.EjbClientCtx;
-import com.powsybl.iidm.network.*;
-import com.powsybl.iidm.network.util.Identifiables;
 import itesla.converter.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.ParseException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -80,7 +83,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             //              {"M22D", "I-PHI injector - type Fortescue"},
             //              {"M23",  "IR-II injector"},
             //              {"M23D", "IR-II injector - type Fortescue"},
-            //              {"M50",  "Converter"},
+            {"M50",  "Converter"},
             //              {"M50D", "Converter - type Fortescue"},
             {"MA",  "Macro-Automaton"},
             ////          {"R",    "Macroblock"}
@@ -295,6 +298,9 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                 case "M21":
                     dbId = populateDDB_M21(zone, dicoMap, ddbmanager, eurostagSim);
                     break;
+                case "M50":
+                    dbId = populateDDB_M50(zone, dicoMap, ddbmanager, eurostagSim);
+                    break;
                 case "R":
                     dbId = populateDDB_R(zone, dicoMap, ddbmanager, eurostagSim, regsMapping);
                     break;
@@ -493,16 +499,144 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
         return cimId;
     }
+
+    public String populateDDB_M50(EurostagRecord zone, Map<String, String> amap,
+                                  DDBManager ddbmanager, SimulatorInst eurostagSim) {
+        // here we assume that the simulator with the required version already
+        // exists
+        if (eurostagSim == null) {
+            throw new RuntimeException("Eurostag simulator could not be null");
+        }
+
+        if (!"M50".equals(zone.getTypeName())) {
+            throw new RuntimeException("not expected type M50: " + zone);
+        }
+
+        log.debug("-Creating DDB component {} ", zone.getTypeName());
+        String mName = (String) zone.getData().get("machine.name");
+        String cimId = amap.get(mName);
+        if ((cimId == null) || ("".equals(cimId))) {
+            throw new RuntimeException(mName + ": cimId not found in mapping.");
+        }
+
+        if (!equipmentsTypeMap.contains(cimId)) {
+            equipmentsTypeMap.put(cimId, zone.getTypeName());
+        }
+
+        Equipment eq1 = ddbmanager.findEquipment(cimId);
+        if ((eq1 != null) && updateFlag) {
+            Set<String> connectedInternals = getConnectedInternals(cimId, ddbmanager);
+
+            //remove this equipment graph
+            log.info("- removing existing equipment {}", cimId);
+            removeEquipment(cimId, ddbmanager);
+            eq1 = null;
+
+            for (String internalId : connectedInternals) {
+                log.info("- removing existing connected internal {}", internalId);
+                removeInternal(internalId, ddbmanager);
+            }
+
+        }
+
+        String mtcDdbid = MTC_PREFIX_NAME + zone.getKeyName();
+        ModelTemplateContainer mtc1 = ddbmanager
+                .findModelTemplateContainer(mtcDdbid);
+        if (mtc1 == null) {
+            throw new RuntimeException(" template container " + mtcDdbid
+                    + " not defined! ");
+        }
+
+        ParametersContainer pc1 = ddbmanager.findParametersContainer(mName);
+        if (pc1 == null) {
+            log.debug("-- creating Parameters Container " + mName + " plus parameters.");
+            pc1 = new ParametersContainer(mName);
+            Parameters pars = new Parameters(eurostagSim);
+            for (String varName : zone.getData().keySet()) {
+                String varFType = DtaParser.getVarFType(zone.typeName, varName);
+                Object varValue = zone.getData().get(varName);
+                if (log.isDebugEnabled()) {
+                    log.trace("----" + varName + " = " + varValue + ", " + varFType);
+                }
+                if (varFType.startsWith("F")) {
+                    if (varValue != null) {
+                        pars.addParameter(new ParameterFloat(varName,
+                                new Float((Double) varValue)));
+                    } else {
+                        pars.addParameter(new ParameterFloat(varName, null));
+                    }
+                } else if (varFType.startsWith("A")) {
+                    pars.addParameter(new ParameterString(varName,
+                            (String) varValue));
+                } else {
+                    log.error(varFType + " not handled");
+                }
+            }
+            pc1.getParameters().add(pars);
+            pc1 = ddbmanager.save(pc1);
+        } else {
+            log.debug("-- Parameters Container container " + mName
+                    + " already defined, id: " + pc1.getId());
+            // ddbmanager.delete(pc1);
+        }
+
+        if (eq1 == null) {
+            log.info("-- creating Equipment " + cimId + "; eurostag name is: "
+                    + mName);
+            eq1 = new Equipment(cimId);
+            eq1.setModelContainer(mtc1);
+            eq1.setParametersContainer(pc1);
+            eq1 = ddbmanager.save(eq1);
+        } else {
+            log.warn("-- Equipment  " + cimId + " already defined, id: "
+                    + eq1.getId());
+        }
+
+        return cimId;
+    }
+
     private String populateDDB_R(EurostagRecord zone, Map<String, String> amap,
             DDBManager ddbmanager, SimulatorInst eurostagSim, Map<String, Path> regsMapping) {
 
 
         log.debug("-Creating DDB component (R) " + zone);
 
+        String machineName = (String) zone.getData().get("machine.name");
+
+        //macroblock's coupling parameters - map machine IDs to iidm IDs
+        zone.getData().keySet().stream()
+                .filter(parName -> parName.startsWith("coupling.par") && (zone.getData().get(parName) != null) && (!"".equals(zone.getData().get(parName))))
+                .forEach(parName -> {
+                    String parValue = zone.getData().get(parName).toString();
+                    String couplingtype = parValue.substring(0, 2);
+                    //log.info("machine: {} - coupling macroblock parameter: {} = {}", machineName, parName, parValue);
+                    switch (couplingtype) {
+                        case "M ":
+                        case "N#":
+                            String couplingMachineName = parValue.substring(3).trim();
+                            String iidmCouplingMachineName = amap.get(couplingMachineName);
+                            if (iidmCouplingMachineName != null) {
+                                String newparValue = couplingtype + " " + iidmCouplingMachineName;
+                                zone.getData().put(parName, newparValue);
+                                log.info("macroblock {} - coupling parameter {} = '{}' - mapped to '{}'", machineName, parName, parValue, newparValue);
+                            } else {
+                                String errMsg = "macroblock " + machineName + " - coupling parameter " + parName + " = " + parValue + "  not mapped";
+                                log.error(errMsg);
+                                throw new RuntimeException(errMsg);
+                            }
+                            break;
+                        case "N ":
+                            log.warn("macroblock {} - coupling parameter: {} = {} - coupling type {} not stored in DDB", machineName, parName, parValue, couplingtype);
+                            break;
+                        default:
+                            log.warn("macroblock {} - coupling parameter: {} = {} coupling type {} not supported !", machineName, parName, parValue, couplingtype);
+                    }
+                });
+
         String macroblockName = (String) zone.getData().get(
                 PAR_MACROBLOCK_NAME);
         int paramSetNum = (int) zone.getData().get("psetnum");
-        String machineName = (String) zone.getData().get("machine.name");
+
         String nativeId = amap.get(machineName);
 
         if ((nativeId == null) || ("".equals(nativeId))) {
@@ -937,6 +1071,17 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                 }
             }
 
+            //add vscConverter stations to the equipment list
+            for (HvdcLine hvdcLine : Identifiables.sort(network.getHvdcLines())) {
+                // skip lines with converter stations not in the main connected component
+                if (configExport.isExportMainCCOnly() && (!isInMainCc(hvdcLine.getConverterStation1(), configExport.isNoSwitch()) || !isInMainCc(hvdcLine.getConverterStation2(), configExport.isNoSwitch()))) {
+                    log.warn("skipped HVDC line {}: at least one converter station is not in main component", hvdcLine.getId());
+                    continue;
+                }
+                cimIds.add(hvdcLine.getConverterStation1().getId());
+                cimIds.add(hvdcLine.getConverterStation2().getId());
+            }
+
             // writing a .dta
             DtaParser.dumpHeader(new Date(), eurostagVersion, dtaOutStream);
 
@@ -1216,6 +1361,9 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             case "M21":
                 zoneTypeName = "M21";
                 break;
+            case "M50":
+                zoneTypeName = "M50";
+                break;
             case "R":
                 zoneTypeName = "R";
                 break;
@@ -1273,6 +1421,19 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                     //                        log.trace(" connection.node.name mapped to new eurostag id: " +substTerminalName);
                     //                    }
                     //                }
+                }
+                break;
+            case "M50":
+                if (iidm2eurostagId != null) {
+                    String substMachineName = iidm2eurostagId.get(inst.getCimId());
+                    if ((substMachineName != null) && (!"".equals(substMachineName))) {
+                        zm.put("machine.name", substMachineName);
+                    }
+
+                    if (log.isDebugEnabled()) {
+                        log.debug(" machine.name mapped to new eurostag id: " + substMachineName);
+                    }
+
                 }
                 break;
             default:
@@ -1527,21 +1688,86 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                 zm.put("coupling.par9", null);
             }
         } else {
-            if (couplingDataExists) {
-                log.warn("coupling macroblock data in ddb -  macroblock name: " + zm.get("macroblock.name") + "; machine name: " + machineName);
+            //handle specific M50 model template (VSC)
+            if ((MTC_PREFIX_NAME + "M50").equals(eq.getModelContainer().getDdbId())) {
+                if (isMacroblockIncluded(network.getVscConverterStation(eq.getCimId()), zm)) {
+                    //filter out meta-parameters (i.e. #PMODE #VMODE)
+                    HashMap<String, Object> zmFiltered = zm.entrySet().stream()
+                            .filter(p -> !p.getKey().startsWith("#"))
+                            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (key, value) -> key, HashMap::new));
+                    zm = zmFiltered;
+                } else {
+                    //just skip this macroblock section
+                    return;
+                }
             }
-            zm.put("coupling.par1", null);
-            zm.put("coupling.par2", null);
-            zm.put("coupling.par3", null);
-            zm.put("coupling.par4", null);
-            zm.put("coupling.par5", null);
-            zm.put("coupling.par6", null);
-            zm.put("coupling.par7", null);
-            zm.put("coupling.par8", null);
-            zm.put("coupling.par9", null);
-            if (log.isDebugEnabled()) {
-                log.trace(" coupling.par(s) mapped to empty string");
-            }
+
+            // set coupling macroblock parameters
+            log.debug("Fixing macroblock's coupling parameters - id: {}, machine name: {} original macrobloc data: {}", eq.getCimId(), machineName, zm);
+            HashMap<String, Object> zmap = zm;
+            zm.keySet().stream()
+                    .filter(parName -> parName.startsWith("coupling.par") && (zmap.get(parName) != null) && (!"".equals(zmap.get(parName))))
+                    .forEach(parName -> {
+                        String parValue = zmap.get(parName).toString();
+                        String couplingtype = parValue.substring(0, 2);
+                        String newParValue = null;
+                        switch (couplingtype) {
+                            case "M ":
+                                //in DDB, in this specific case (machine name coupling), it is stored the iidm ID of the machine (set at DDB's loading time)
+                                String couplingMachineName = parValue.substring(3);
+                                String iidmCouplingMachineName = iidm2eurostagId.get(couplingMachineName);
+                                if (iidmCouplingMachineName != null) {
+                                    newParValue = couplingtype + " " + Strings.padEnd(iidmCouplingMachineName, 8, ' ');
+                                } else {
+                                    throw new RuntimeException("id: " + eq.getCimId() + ", name: " + machineName + ", coupling parameter " + parName + "=" + parValue + " -  could not map to any machine");
+                                }
+                                break;
+                            case "N#":
+                                //in DDB, in this specific case N# (node name coupling), it is stored the iidm ID of the machine whose bus has to be retrieved
+                                //note that N# is not Eurostag compliant identifier: it must be converted to 'N'
+                                String refMachineName = parValue.substring(3);
+                                Injection injection = (Injection) network.getIdentifiable(refMachineName);
+                                if (injection == null) {
+                                    throw new RuntimeException("id: " + eq.getCimId() + ", name: " + machineName + ", coupling parameter " + parName + "=" + parValue + " -  could not find any injection with id: " + refMachineName);
+                                }
+
+                                Bus coupledBus = null;
+                                //if the referenced machine is a Generator, deal with stepuptransformers
+                                //fetch the high-voltage node of the step-up transformer of the unit
+                                Generator g;
+                                if ((g = network.getGenerator(injection.getId())) != null) {
+                                    VoltageLevel vlGen = g.getTerminal().getVoltageLevel();
+                                    if (vlGen != null) {
+                                        TwoWindingsTransformer twt = network.getTwoWindingsTransformerStream().filter(t -> vlGen.getId().equals(t.getTerminal2().getVoltageLevel().getId())).findFirst().orElse(null);
+                                        if (twt != null) {
+                                            coupledBus = getBus(twt.getTerminal1(), configExport.isNoSwitch());
+                                        }
+                                    }
+                                }
+                                if (coupledBus == null) {
+                                    coupledBus = getBus(injection.getTerminal(), configExport.isNoSwitch());
+                                }
+                                if (coupledBus == null) {
+                                    throw new RuntimeException("id: " + eq.getCimId() + ", name: " + machineName + ", coupling parameter " + parName + "=" + parValue + " - bus not connected to a bus and not connectable");
+                                }
+                                String newBusEsgId = iidm2eurostagId.containsKey(coupledBus.getId()) ? iidm2eurostagId.get(coupledBus.getId()) : null;
+                                if (newBusEsgId != null) {
+                                    newParValue = "N " + " " + Strings.padEnd(newBusEsgId, 8, ' ');
+                                } else {
+                                    throw new RuntimeException("id: " + eq.getCimId() + ", name: " + machineName + ", coupling parameter " + parName + "=" + parValue + " - unknown mapping for bus: " + coupledBus.getId());
+                                }
+                                break;
+                            case "N ":
+                                log.warn("macroblock {} - coupling parameter {} = {}; coupling type {} not mapped", machineName, parName, parValue, couplingtype);
+                                break;
+                            default:
+                                log.error("macroblock {} - coupling parameter {} = {}; coupling type {} not supported", machineName, parName, parValue, couplingtype);
+                                throw new RuntimeException("macroblock " + machineName + " coupling parameter " + parName + " =  " + parValue + "; coupling type " + couplingtype + "not supported");
+                        }
+                        zmap.put(parName, newParValue);
+                        log.info("macroblock {} - coupling parameter: {} = {}  mapped to  {}", machineName, parName, parValue, newParValue);
+                    });
+            log.debug("Fixing macroblock's coupling parameters - id: {}, machine name: {} fixed macrobloc data: {}", eq.getCimId(), machineName, zm);
         }
 
         EurostagRecord eRecord = new EurostagRecord(zoneTypeName, zm);
@@ -1557,6 +1783,47 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
         } catch (ParseException e) {
             log.error(e.getMessage(), e);
         }
+    }
+
+    protected HvdcLine getHvdcLineFromConverterStation(VscConverterStation vscStation) {
+        return  network.getHvdcLineStream()
+                .filter(hLine -> hLine.getConverterStation1().getId().equals(vscStation.getId()) || hLine.getConverterStation2().getId().equals(vscStation.getId()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    protected boolean isPMode(HvdcConverterStation vscConv, HvdcLine hvdcLine) {
+        Objects.requireNonNull(vscConv);
+        Objects.requireNonNull(hvdcLine);
+        HvdcConverterStation side1Conv = hvdcLine.getConverterStation1();
+        HvdcConverterStation side2Conv = hvdcLine.getConverterStation2();
+        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER))
+                && (vscConv.getId().equals(side1Conv.getId()))) {
+            return true;
+        }
+        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER))
+                && (vscConv.getId().equals(side2Conv.getId()))) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isMacroblockIncluded(VscConverterStation cvStation, HvdcLine hvdcLine, HashMap<String, Object> zm) {
+        Objects.requireNonNull(cvStation);
+        Objects.requireNonNull(hvdcLine);
+        Objects.requireNonNull(zm);
+        boolean isPmode = isPMode(cvStation, hvdcLine);
+        boolean metaP = zm.get("#PMODE") != null;
+        boolean metaV = zm.get("#VMODE") != null;
+        boolean retVal = (isPmode && metaP) || (!isPmode && metaV) || (!metaP && !metaV);
+        log.debug("VscConverterStation: {}, HvdcLine: {}, machine name: {}, macroblock name: {}, output macroblock: {}", cvStation.getId(), hvdcLine.getId(), zm.get("machine.name"), zm.get("macroblock.name"), retVal);
+        return retVal;
+    }
+
+    private boolean isMacroblockIncluded(VscConverterStation cvStation, HashMap<String, Object> zm) {
+        Objects.requireNonNull(cvStation);
+        Objects.requireNonNull(zm);
+        return isMacroblockIncluded(cvStation, getHvdcLineFromConverterStation(cvStation), zm);
     }
 
     // Dump data without DDB parameters

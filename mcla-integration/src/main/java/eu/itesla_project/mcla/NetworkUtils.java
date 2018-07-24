@@ -13,6 +13,7 @@ import java.util.Objects;
 import com.powsybl.iidm.network.Bus;
 import com.powsybl.iidm.network.Generator;
 import com.powsybl.iidm.network.Load;
+import com.powsybl.iidm.network.LoadType;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.Terminal;
 
@@ -73,7 +74,9 @@ public final class NetworkUtils {
         Objects.requireNonNull(network, "network is null");
         ArrayList<String> loadsIds = new ArrayList<String>();
         for (Load load : network.getLoads()) {
-            loadsIds.add(load.getId());
+            if (load.getLoadType() != LoadType.FICTITIOUS) {
+                loadsIds.add(load.getId());
+            }
         }
         Collections.sort(loadsIds);
         return loadsIds;
@@ -83,7 +86,7 @@ public final class NetworkUtils {
         Objects.requireNonNull(network, "network is null");
         ArrayList<String> loadsIds = new ArrayList<String>();
         for (Load load : network.getLoads()) {
-            if (isConnected(load)) {
+            if (isConnected(load) && load.getLoadType() != LoadType.FICTITIOUS) {
                 loadsIds.add(load.getId());
             }
         }
@@ -92,9 +95,9 @@ public final class NetworkUtils {
     }
 
     public static boolean isConnected(Load load) {
-        Bus generatorBus = load.getTerminal().getBusBreakerView().getBus();
+        Bus loadBus = load.getTerminal().getBusBreakerView().getBus();
         float voltage = getV(load.getTerminal());
-        if (generatorBus != null && !Float.isNaN(voltage)) {
+        if (loadBus != null && !Float.isNaN(voltage)) {
             // load is connected
             return true;
         }
@@ -102,7 +105,7 @@ public final class NetworkUtils {
     }
 
     private static float getV(Terminal t) {
-        Bus b = t.getBusView().getBus();
+        Bus b = t.getBusBreakerView().getBus();
         return b != null ? b.getV() : Float.NaN;
     }
 

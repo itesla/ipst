@@ -1,0 +1,44 @@
+HEADER     01/01/16 5.1     
+
+B
+
+9 1 0 0 1 1 20    0.005                                 4             100. 1 1
+
+SP INPVPQ            2
+SP THMAX     0.100000 
+SP EMAXF     0.100000 
+SP ZMIN      0.000200 
+SP RAMIN     0.800000 
+SP RAMAX     1.200000 
+SP TOLPLO    0.001000 
+
+GC hvdctest/InitialState                                                        
+
+AA FA               
+AA FR               
+DA DC               
+
+1FAFAKENOD1                                                                             380.            1.       0.       0.       0.
+1FAFAKENOD2                                                                             380.            1.       0.       0.       0.
+1FRB1                                                                                   400.            1.       0.       0.       0.
+5  B1                                        0.
+1FRVL2_0                                                                                400.            1.       0.       0.       0.
+1FRVL2_1                                                                                400.            1.       0.       0.       0.
+
+6 VL2_0    VL2_1   1                                                    0.       0.
+
+CH fict_C1  Y B1             0.       0.   0.3983       0.       0.       0.       0.       0.
+CH fict_C2  Y VL2_1          0.       0.   0.0308       0.       0.       0.       0.       0.
+
+G  G1       Y B1            50.     100.     150. -2147483          21474836 V     400. B1             1.       0.       0.
+
+DC N DC_C1    DC     800.       1.
+DC N DC_C2    DC     800.       1.
+
+DC L DC_C1    DC_C2    1       1.  
+
+DC V C1       DC_C1    GROUND   B1         V Q       0.      16. -279.969     800.               50.                1.
+DC V    -300.     300.       0.      10.       0.       0.       0.                  
+DC V C2       DC_C2    GROUND   VL2_1      P Q       0.      16. 279.9692     800.             -123.                1.
+DC V    -300.     300.       0.      10.       0.       0.       0.                  
+

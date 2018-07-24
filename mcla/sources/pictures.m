@@ -1,10 +1,9 @@
 %
-% Copyright (c) 2016, Ricerca sul Sistema Energetico – RSE S.p.A. <itesla@rse-web.it>
+% Copyright (c) 2017, RTE (http://www.rte-france.com) and RSE (http://www.rse-web.it) 
 % This Source Code Form is subject to the terms of the Mozilla Public
 % License, v. 2.0. If a copy of the MPL was not distributed with this
 % file, You can obtain one at http://mozilla.org/MPL/2.0/.
 %
-
 %***************pu on max snap ********************************************
 weighted_sigma_err_pu_ms=sum(sigma_err_pu_ms(inj_OK).*max_snap(inj_OK))/sum(max_snap(inj_OK));
 disp(' average of sigma [pu of max snapshot] weighted on maximum snapshots')

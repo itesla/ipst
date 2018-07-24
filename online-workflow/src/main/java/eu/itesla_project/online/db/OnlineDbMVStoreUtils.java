@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2018, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,20 +20,21 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
+import com.powsybl.iidm.network.Branch;
 import com.powsybl.iidm.network.Country;
 import com.powsybl.iidm.network.Network;
+import com.powsybl.security.LimitViolation;
+import com.powsybl.security.LimitViolationType;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
+
 import eu.itesla_project.modules.contingencies.ActionParameterBooleanValue;
 import eu.itesla_project.modules.contingencies.ActionParameterFloatValue;
 import eu.itesla_project.modules.contingencies.ActionParameterIntegerValue;
 import eu.itesla_project.modules.contingencies.ActionParameterStringValue;
 import eu.itesla_project.modules.contingencies.ActionParameters;
 import eu.itesla_project.modules.online.OnlineProcess;
-import com.powsybl.security.LimitViolation;
-import com.powsybl.security.LimitViolationType;
-import com.powsybl.simulation.securityindexes.SecurityIndexType;
+import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
 
 /**
  *
@@ -111,10 +114,11 @@ public final class OnlineDbMVStoreUtils {
         limitViolation.put("Limit", Float.toString(violation.getLimit()));
         limitViolation.put("LimitReduction", Float.toString(violation.getLimitReduction()));
         limitViolation.put("Value", Float.toString(violation.getValue()));
-        limitViolation.put("Country", violation.getCountry().name());
-        limitViolation.put("BaseVoltage", Float.toString(violation.getBaseVoltage()));
         if (violation.getLimitName() != null) {
             limitViolation.put("LimitName", violation.getLimitName());
+        }
+        if (violation.getSide() != null) {
+            limitViolation.put("Side", violation.getSide().name());
         }
         return JSONSerializer.toJSON(limitViolation).toString();
     }
@@ -122,26 +126,23 @@ public final class OnlineDbMVStoreUtils {
     public static LimitViolation jsonToLimitViolation(String json, Network network) {
         JSONObject jsonObj = (JSONObject) JSONSerializer.toJSON(json);
         Map<String, String> limitViolation = (Map<String, String>) JSONObject.toBean(jsonObj, Map.class);
-        Country country = null;
-        if (limitViolation.containsKey("Country")) {
-            country = Country.valueOf(limitViolation.get("Country"));
-        }
-        float baseVoltage = Float.NaN;
-        if (limitViolation.containsKey("BaseVoltage")) {
-            baseVoltage = Float.parseFloat(limitViolation.get("BaseVoltage"));
-        }
         float limitReduction = 1f;
         if (limitViolation.containsKey("LimitReduction")) {
             limitReduction = Float.parseFloat(limitViolation.get("LimitReduction"));
         }
+        LimitViolationType limitType = LimitViolationType.valueOf(limitViolation.get("LimitType"));
+        Branch.Side side = limitType == LimitViolationType.CURRENT ? Branch.Side.ONE : null;
+        if (limitViolation.containsKey("Side")) {
+            side =  Branch.Side.valueOf(limitViolation.get("Side"));
+        }
         return new LimitViolation(limitViolation.get("Subject"),
-                LimitViolationType.valueOf(limitViolation.get("LimitType")),
-                Float.parseFloat(limitViolation.get("Limit")),
+                limitType,
                 limitViolation.get("LimitName"),
+                Integer.MAX_VALUE,
+                Float.parseFloat(limitViolation.get("Limit")),
                 limitReduction,
                 Float.parseFloat(limitViolation.get("Value")),
-                country,
-                baseVoltage);
+                side);
     }
 
     public static String actionParametersToJson(ActionParameters actionParameters) {
@@ -226,6 +227,26 @@ public final class OnlineDbMVStoreUtils {
         objectMapper.registerModule(new JodaModule());
         objectMapper.configure(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         return objectMapper.readValue(json, OnlineProcess.class);
+    }
+
+    public static String branchesDataToCsvHeaders(LinkedHashMap<String, Float> branchesData) {
+        return String.join(";",
+                           "networkId",
+                           "stateId",
+                           "contingencyId",
+                           String.join(";", branchesData.keySet()));
+    }
+
+    public static String branchesDataToCsv(String networkId, Integer stateId, String contingencyId, LinkedHashMap<String, Float> branchesData) {
+        return String.join(";",
+                           networkId,
+                           Integer.toString(stateId),
+                           contingencyId,
+                           String.join(";", branchesData.values().stream().map(value -> Float.toString(value)).collect(Collectors.toList())));
+    }
+
+    public static String postContingencyStateKey(Integer stateId, String contingencyId) {
+        return String.format("%03d", stateId) + "_" + contingencyId;
     }
 
     // public static void main(String[] args) throws Exception {

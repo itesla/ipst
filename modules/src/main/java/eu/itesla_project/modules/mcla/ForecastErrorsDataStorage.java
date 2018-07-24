@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -27,6 +28,7 @@ public interface ForecastErrorsDataStorage {
     void getForecastOfflineSamplesFile(String analysisId, TimeHorizon timeHorizon, Path destinationFile) throws IOException;
     void storeForecastOfflineSamplesFile(String analysisId, TimeHorizon timeHorizon, Path originFile) throws IOException;
     boolean deleteForecastOfflineSamplesData(String analysisId, TimeHorizon timeHorizon);
+    Path getForecastOfflineSamplesFilePath(String analysisId, TimeHorizon timeHorizon);
 
     boolean areStatisticsAvailable(String analysisId, TimeHorizon timeHorizon);
     void getStatisticsFile(String analysisId, TimeHorizon timeHorizon, Path destinationFile) throws IOException;

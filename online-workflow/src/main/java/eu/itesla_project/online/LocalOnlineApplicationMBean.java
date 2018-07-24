@@ -62,6 +62,6 @@ public interface LocalOnlineApplicationMBean {
             String emptyContingencyS, String outputFolderS);
 
     String startProcess(String name, String owner, DateTime date, DateTime creationDate,
-            OnlineWorkflowStartParameters start, OnlineWorkflowParameters params, DateTime[] basecases)
+            OnlineWorkflowStartParameters start, OnlineWorkflowParameters params, DateTime[] basecases, int numThreads)
                     throws Exception;
 }

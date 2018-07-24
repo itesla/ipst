@@ -1,35 +1,40 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
- * Copyright (c) 2016-2017, RTE (http://www.rte-france.com)
+ * Copyright (c) 2016-2018, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 package eu.itesla_project.online.db;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.google.common.base.Splitter;
-import eu.itesla_project.cases.CaseType;
-import com.powsybl.computation.local.LocalComputationManager;
-import com.powsybl.commons.datasource.DataSource;
-import com.powsybl.commons.datasource.FileDataSource;
-import com.powsybl.iidm.export.Exporters;
-import com.powsybl.iidm.import_.ImportConfig;
-import com.powsybl.iidm.import_.Importers;
-import com.powsybl.iidm.network.Country;
-import com.powsybl.iidm.network.Network;
-import eu.itesla_project.modules.contingencies.ActionParameters;
-import eu.itesla_project.modules.histo.HistoDbAttributeId;
-import eu.itesla_project.modules.histo.IIDM2DB;
-import eu.itesla_project.modules.online.*;
-import eu.itesla_project.modules.optimizer.CCOFinalStatus;
-import eu.itesla_project.online.OnlineUtils;
-import eu.itesla_project.online.db.debug.NetworkData;
-import eu.itesla_project.online.db.debug.NetworkDataExporter;
-import eu.itesla_project.online.db.debug.NetworkDataExtractor;
-import com.powsybl.security.LimitViolation;
-import com.powsybl.simulation.securityindexes.SecurityIndexType;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.h2.mvstore.MVMap;
@@ -44,19 +49,40 @@ import org.slf4j.LoggerFactory;
 import org.supercsv.io.CsvListWriter;
 import org.supercsv.prefs.CsvPreference;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.google.common.base.Splitter;
+import com.powsybl.commons.datasource.DataSource;
+import com.powsybl.commons.datasource.GzFileDataSource;
+import com.powsybl.computation.local.LocalComputationManager;
+import com.powsybl.iidm.export.Exporters;
+import com.powsybl.iidm.import_.ImportConfig;
+import com.powsybl.iidm.import_.Importers;
+import com.powsybl.iidm.network.Country;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.security.LimitViolation;
+import com.powsybl.simulation.securityindexes.SecurityIndexType;
+
+import eu.itesla_project.cases.CaseType;
+import eu.itesla_project.modules.contingencies.ActionParameters;
+import eu.itesla_project.modules.histo.HistoDbAttributeId;
+import eu.itesla_project.modules.histo.IIDM2DB;
+import eu.itesla_project.modules.online.OnlineDb;
+import eu.itesla_project.modules.online.OnlineProcess;
+import eu.itesla_project.modules.online.OnlineStep;
+import eu.itesla_project.modules.online.OnlineWorkflowDetails;
+import eu.itesla_project.modules.online.OnlineWorkflowParameters;
+import eu.itesla_project.modules.online.OnlineWorkflowResults;
+import eu.itesla_project.modules.online.OnlineWorkflowRulesResults;
+import eu.itesla_project.modules.online.OnlineWorkflowWcaResults;
+import eu.itesla_project.modules.online.StateProcessingStatus;
+import eu.itesla_project.modules.online.StateStatus;
+import eu.itesla_project.modules.online.TimeHorizon;
+import eu.itesla_project.modules.optimizer.CCOFinalStatus;
+import eu.itesla_project.online.OnlineUtils;
+import eu.itesla_project.online.db.debug.NetworkData;
+import eu.itesla_project.online.db.debug.NetworkDataExporter;
+import eu.itesla_project.online.db.debug.NetworkDataExtractor;
 
 /**
  * @author Quinary <itesla@quinary.com>
@@ -135,6 +161,8 @@ public class OnlineDbMVStore implements OnlineDb {
     private static final String STORED_WCA_RULES_RESULTS_STATE_RULES_AVAILABLE_MAP_SUFFIX = "_wcarulesavailable";
     private static final String STORED_WCA_RULES_RESULTS_STATE_INVALID_RULES_MAP_SUFFIX = "_wcarulesinvalid";
     private static final String SERIALIZED_STATES_FILENAME = "network-states.csv";
+    private static final String STORED_POST_CONTINGENCY_STATES_MAP_NAME = "wfPostcontinenciesStates";
+    private static final String STORED_POST_CONTINGENCY_STATES_HEADERS_KEY = "PostcontinenciesStatesHeaders";
     private final String[] XIIDMEXTENSIONS = {".xiidm", ".iidm", ".xml"};
 
 
@@ -383,7 +411,7 @@ public class OnlineDbMVStore implements OnlineDb {
     @Override
     public List<OnlineWorkflowDetails> listWorkflows(DateTime basecaseDate) {
         LOGGER.info("Getting list of stored workflows run on basecase {}", basecaseDate);
-        String wfNamePrefix = DateTimeFormat.forPattern("yyyyMMdd_HHmm_").print(basecaseDate);
+        String wfNamePrefix = DateTimeFormat.forPattern("yyyyMMdd_HHmm_").print(OnlineUtils.toCetDate(basecaseDate));
         List<OnlineWorkflowDetails> workflowIds = new ArrayList<OnlineWorkflowDetails>();
         File[] files = config.getOnlineDbDir().toFile().listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
@@ -1055,7 +1083,7 @@ public class OnlineDbMVStore implements OnlineDb {
                     throw new RuntimeException(errorMessage, e);
                 }
             }
-            DataSource dataSource = new FileDataSource(stateFolder, network.getId());
+            DataSource dataSource = new GzFileDataSource(stateFolder, network.getId());
             Properties parameters = new Properties();
             parameters.setProperty("iidm.export.xml.indent", "true");
             parameters.setProperty("iidm.export.xml.with-branch-state-variables", "true");
@@ -1069,11 +1097,32 @@ public class OnlineDbMVStore implements OnlineDb {
                 }
                 workflowStates.put(stateId, networkValues);
                 workflowsStates.put(workflowId, workflowStates);
+            } else {
+                storePostcontingencyStateData(workflowId, stateId, contingencyId, network);
             }
         } else {
             String errorMessage = "online db: no state " + stateIdStr + " in network of workflow " + workflowId;
             LOGGER.error(errorMessage);
             throw new RuntimeException(errorMessage);
+        }
+    }
+
+    private void storePostcontingencyStateData(String workflowId, Integer stateId, String contingencyId, Network network) {
+        try {
+            LOGGER.info("Storing post-contingency state data of network {} for wf {}, state {}, contingency {}", network.getId(), workflowId, stateId, contingencyId);
+            MVStore wfMVStore = getStore(workflowId);
+            Map<String, String> postcontingencyStatesMap = wfMVStore.openMap(STORED_POST_CONTINGENCY_STATES_MAP_NAME, mapBuilder);
+            LinkedHashMap<String, Float> branchesData = OnlineUtils.getBranchesData(network);
+            if (!postcontingencyStatesMap.containsKey(STORED_POST_CONTINGENCY_STATES_HEADERS_KEY)) {
+                postcontingencyStatesMap.put(STORED_POST_CONTINGENCY_STATES_HEADERS_KEY, OnlineDbMVStoreUtils.branchesDataToCsvHeaders(branchesData));
+            }
+            postcontingencyStatesMap.put(OnlineDbMVStoreUtils.postContingencyStateKey(stateId, contingencyId), OnlineDbMVStoreUtils.branchesDataToCsv(network.getId(), stateId, contingencyId, branchesData));
+            wfMVStore.commit();
+        } catch (Throwable e) {
+            String errorMessage = "Error storing post-contingency state data of network " + network.getId() + " for wf " + workflowId + ", state " + stateId
+                                  + ", contingency " + contingencyId + " in map " + STORED_POST_CONTINGENCY_STATES_MAP_NAME + ": " + e.getMessage();
+            LOGGER.error(errorMessage);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
@@ -1980,6 +2029,40 @@ public class OnlineDbMVStore implements OnlineDb {
         return workflowStatesFolder;
     }
 
+    @Override
+    public void exportPostcontingencyStates(String workflowId, Path file) {
+        Objects.requireNonNull(workflowId, "workflow id is null");
+        Objects.requireNonNull(file, "file is null");
+        if (isWorkflowStored(workflowId)) {
+            LOGGER.info("Exporting post-contingency states for workflow {}", workflowId);
+            MVStore wfMVStore = getStore(workflowId);
+            if (wfMVStore.hasMap(STORED_POST_CONTINGENCY_STATES_MAP_NAME)) {
+                MVMap<String, String> postcontingencyStatesMap = wfMVStore.openMap(STORED_POST_CONTINGENCY_STATES_MAP_NAME, mapBuilder);
+                try (BufferedWriter writer = Files.newBufferedWriter(file)) {
+                    writer.write("workflowId;" + postcontingencyStatesMap.get(STORED_POST_CONTINGENCY_STATES_HEADERS_KEY) + System.lineSeparator());
+                    postcontingencyStatesMap.keySet()
+                                            .stream()
+                                            .sorted()
+                                            .filter(key -> !key.equals(STORED_POST_CONTINGENCY_STATES_HEADERS_KEY))
+                                            .forEach(key -> {
+                                                try {
+                                                    writer.write(workflowId + ";" + postcontingencyStatesMap.get(key) + System.lineSeparator());
+                                                } catch (IOException e) {
+                                                    LOGGER.error("Error writing post-contingency state {} of workflow {} to file {}: {}",
+                                                                 key, workflowId, file.toAbsolutePath().toString(), e.getMessage());
+                                                }
+                                            });
+                } catch (IOException e) {
+                    LOGGER.error("Error writing post-contingency states of workflow {} to file {}: {}", workflowId, file.toAbsolutePath().toString(), e.getMessage());
+                }
+            } else {
+                LOGGER.error("No stored post-contingency states for workflow {}", workflowId);
+            }
+        } else {
+            LOGGER.warn("No data about wf {}", workflowId);
+        }
+    }
+
     /*
      *  support methods
      *  to inspect the content of the online db
@@ -2046,4 +2129,5 @@ public class OnlineDbMVStore implements OnlineDb {
         }
         return storedMapList.toString();
     }
+
 }

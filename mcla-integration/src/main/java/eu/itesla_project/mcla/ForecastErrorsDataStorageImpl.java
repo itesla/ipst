@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -102,6 +103,20 @@ public class ForecastErrorsDataStorageImpl implements ForecastErrorsDataStorage 
         }
         Path forecastErrorsFile = Paths.get(config.getForecastErrorsDir().toString() + File.separator + analysisId.replaceAll(" ", "_"), forecastErrorsFileName);
         Files.copy(forecastErrorsFile, destinationFile);
+    }
+
+    @Override
+    public Path getForecastOfflineSamplesFilePath(String analysisId, TimeHorizon timeHorizon) {
+        Objects.requireNonNull(analysisId);
+        Objects.requireNonNull(timeHorizon);
+        LOGGER.debug("Getting forecast offline samples file path for " + analysisId + " analysis, " + timeHorizon.getName() + " time horizon");
+        String samplesFileName = samplesFileName(timeHorizon);
+        if (!isForecastErrorsFileAvailable(analysisId, timeHorizon, samplesFileName)) {
+            String errorMessage = "No forecast offline samples file " + samplesFileName + " for " + analysisId + " analysis and " + timeHorizon.getName() + " time horizon";
+            LOGGER.error(errorMessage);
+            throw new RuntimeException(errorMessage);
+        }
+        return Paths.get(config.getForecastErrorsDir().toString() + File.separator + analysisId.replaceAll(" ", "_"), samplesFileName);
     }
 
     public void storeForecastErrorsFile(String analysisId, TimeHorizon timeHorizon, Path originFile) throws IOException {

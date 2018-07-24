@@ -42,7 +42,7 @@ public class WCAConfigTest {
         platformConfig = new InMemoryPlatformConfig(fileSystem);
         moduleConfig = platformConfig.createModuleConfig("wca");
         xpressHome = fileSystem.getPath("/xpress-home");
-        moduleConfig.setStringListProperty("xpressHome", Arrays.asList(xpressHome.toString()));
+        moduleConfig.setStringProperty("xpressHome", xpressHome.toString());
         
     }
 
@@ -83,23 +83,24 @@ public class WCAConfigTest {
         boolean loosenConstraints = true;
         boolean reconditionCorrelationMatrix = false;
         
-        moduleConfig.setStringListProperty("reducedVariableRatio", Arrays.asList(Float.toString(reducedVariableRatio)));
-        moduleConfig.setStringListProperty("debug", Arrays.asList(Boolean.toString(debug)));
-        moduleConfig.setStringListProperty("exportStates", Arrays.asList(Boolean.toString(exportStates)));
-        moduleConfig.setStringListProperty("restrictingThresholdLevels", Arrays.asList(WCARestrictingThresholdLevel.NO_FOREIGN_THRESHOLDS.name()));
-        moduleConfig.setStringListProperty("margin", Arrays.asList(Float.toString(margin)));
-        moduleConfig.setStringListProperty("ignoreVoltageConstraints", Arrays.asList(Boolean.toString(ignoreVoltageConstraints)));
-        moduleConfig.setStringListProperty("activateFiltering", Arrays.asList(Boolean.toString(activateFiltering)));
-        moduleConfig.setStringListProperty("preventiveActionsFilter", Arrays.asList(preventiveActionsFilter.name()));
-        moduleConfig.setStringListProperty("preventiveActionsOptimizer", Arrays.asList(preventiveActionsOptimizer.name()));
-        moduleConfig.setStringListProperty("applyPreventiveActions", Arrays.asList(Boolean.toString(applyPreventiveActions)));
-        moduleConfig.setStringListProperty("curativeActionsOptimizer", Arrays.asList(curativeActionsOptimizer.name()));
-        moduleConfig.setStringListProperty("voltageLevelConstraintFilter", Arrays.asList(Float.toString(voltageLevelConstraintFilter)));
-        moduleConfig.setStringListProperty("countryConstraintFilter", Arrays.asList(Country.FR.name()));
-        moduleConfig.setStringListProperty("filterPreventiveActions", Arrays.asList(Boolean.toString(filterPreventiveActions)));
-        moduleConfig.setStringListProperty("filterCurativeActions", Arrays.asList(Boolean.toString(filterCurativeActions)));
-        moduleConfig.setStringListProperty("loosenConstraints", Arrays.asList(Boolean.toString(loosenConstraints)));
-        moduleConfig.setStringListProperty("reconditionCorrelationMatrix", Arrays.asList(Boolean.toString(reconditionCorrelationMatrix)));
+        
+        moduleConfig.setStringProperty("reducedVariableRatio", Float.toString(reducedVariableRatio));
+        moduleConfig.setStringProperty("debug", Boolean.toString(debug));
+        moduleConfig.setStringProperty("exportStates", Boolean.toString(exportStates));
+        moduleConfig.setStringProperty("restrictingThresholdLevels", WCARestrictingThresholdLevel.NO_FOREIGN_THRESHOLDS.name());
+        moduleConfig.setStringProperty("margin", Float.toString(margin));
+        moduleConfig.setStringProperty("ignoreVoltageConstraints", Boolean.toString(ignoreVoltageConstraints));
+        moduleConfig.setStringProperty("activateFiltering", Boolean.toString(activateFiltering));
+        moduleConfig.setStringProperty("preventiveActionsFilter", preventiveActionsFilter.name());
+        moduleConfig.setStringProperty("preventiveActionsOptimizer", preventiveActionsOptimizer.name());
+        moduleConfig.setStringProperty("applyPreventiveActions", Boolean.toString(applyPreventiveActions));
+        moduleConfig.setStringProperty("curativeActionsOptimizer", curativeActionsOptimizer.name());
+        moduleConfig.setStringProperty("voltageLevelConstraintFilter", Float.toString(voltageLevelConstraintFilter));
+        moduleConfig.setStringProperty("countryConstraintFilter", Country.FR.name());
+        moduleConfig.setStringProperty("filterPreventiveActions", Boolean.toString(filterPreventiveActions));
+        moduleConfig.setStringProperty("filterCurativeActions", Boolean.toString(filterCurativeActions));
+        moduleConfig.setStringProperty("loosenConstraints", Boolean.toString(loosenConstraints));
+        moduleConfig.setStringProperty("reconditionCorrelationMatrix", Boolean.toString(reconditionCorrelationMatrix));
 
         WCAConfig parameters = WCAConfig.load(platformConfig);
 

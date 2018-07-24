@@ -11,6 +11,7 @@ import com.powsybl.iidm.network.util.ConnectedComponents;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.StreamSupport;
 
@@ -183,4 +184,61 @@ public final class EchUtil {
         return (ConnectedComponents.getCcNum(EchUtil.getBus(branch.getTerminal1(), noswitch)) == Component.MAIN_NUM)
                 && (ConnectedComponents.getCcNum(EchUtil.getBus(branch.getTerminal2(), noswitch)) == Component.MAIN_NUM);
     }
+
+    /**
+     * given an iIDM HVDC line , returns its DC voltage to be used with Eurostag
+     * Multiplying  the line's nominalV by 2 corresponds to the fact that iIDM refers to the cable-ground voltage
+     * while Eurostag regulations to the cable-cable voltage
+     */
+    public static float getHvdcLineDcVoltage(HvdcLine line) {
+        Objects.requireNonNull(line);
+        return line.getNominalV() * 2.0f;
+    }
+
+    public static boolean isPMode(HvdcConverterStation vscConv, HvdcLine hvdcLine) {
+        Objects.requireNonNull(vscConv);
+        Objects.requireNonNull(hvdcLine);
+        HvdcConverterStation side1Conv = hvdcLine.getConverterStation1();
+        HvdcConverterStation side2Conv = hvdcLine.getConverterStation2();
+        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER))
+                && (vscConv.getId().equals(side1Conv.getId()))) {
+            return true;
+        }
+        if ((hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER))
+                && (vscConv.getId().equals(side2Conv.getId()))) {
+            return true;
+        }
+        return false;
+    }
+
+    public static HvdcConverterStation getPStation(HvdcLine hvdcLine) {
+        Objects.requireNonNull(hvdcLine);
+        if (hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER)) {
+            return hvdcLine.getConverterStation1();
+        }
+        if (hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER)) {
+            return hvdcLine.getConverterStation2();
+        }
+        return null;
+    }
+
+    public static HvdcConverterStation getVStation(HvdcLine hvdcLine) {
+        Objects.requireNonNull(hvdcLine);
+        if (hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER)) {
+            return hvdcLine.getConverterStation2();
+        }
+        if (hvdcLine.getConvertersMode().equals(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER)) {
+            return hvdcLine.getConverterStation1();
+        }
+        return null;
+    }
+
+    public static boolean isSameConnectionBus(ConnectionBus bus1, ConnectionBus bus2) {
+        return (bus1 == null || bus2 == null) ? bus1 == bus2 : (bus1.getId() == null ? bus2.getId() == null : bus1.getId().equals(bus2.getId()));
+    }
+
+    public static boolean isSameBus(Bus bus1, Bus bus2) {
+        return (bus1 == null || bus2 == null) ? bus1 == bus2 : (bus1.getId() == null ? bus2.getId() == null : bus1.getId().equals(bus2.getId()));
+    }
+
 }

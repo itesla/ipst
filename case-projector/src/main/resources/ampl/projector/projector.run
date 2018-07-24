@@ -19,12 +19,51 @@
 # Prerequis pas certain : les tensions sont dans leurs bornes
 #
 ###############################################################################
+
+
+
+###############################################################################
+# 
+# Choix de modelisation
+#
+# Jean Maeght + Nicolas Omont, 27 juin 2018
+#
+###############################################################################
+/*
+                  Valeur modelisee :   P        Q        V
+ Groupes PV avec domaine dynamique : optimise optimise optimise
+ Groupes PQ avec domaine dynamique : optimise optimise optimise
+ Groupes PV sans domaine dynamique : optimise libre    optimise
+ Groupes PQ sans domaine dynamique : optimise fixe     libre	
+         SVC en reglage de tension : 0        libre    optimise
+                    SVC les autres : 0        fixe     libre
+Stations VSC en reglage de tension : fixe     libre    optimise
+          Stations VSC avec Q fixe : fixe     fixe     libre
+"libre" signifie absent de la fonction objectif
+"optimise" signifie present dans la fonction objectif
+"fixe" signifie que la valeur presente dans la situation est utilisse comme valeur fixe
+optimise -> le resultat est ecrit comme target
+Pour V optimise, la cible est le V du dernier load flow
+Ecrire aussi les valeurs non optimisees dans les targets
+Verifier tenue de tension groupes etrangers lorsqu'ils sont modifies ; enlever les bornes en reactif
+*/
+
+
+
+###############################################################################
+# Debut des traitements
+###############################################################################
+
 print "Debut du fichier projector.run";
 
 # Effacement des parametres, variable, contraintes et modeles anterieurs
 reset;
 # Fermeture de tous les fichiers precedemment ouverts
 close;
+
+# La commande ci-dessous permet ce creer des fichirs vides s'ils sont inexistants
+shell 'touch ampl_generators_domains.txt';
+shell 'touch ampl_network_coupledgen.txt';
 
 
 ###############################################################################
@@ -38,6 +77,7 @@ printf "%s %s\n","final_status", final_status > projector_results_indic.txt;
 close projector_results_indic.txt;
 
 
+
 ###############################################################################
 # Options generales
 ###############################################################################
@@ -45,6 +85,7 @@ option dual_initial_guesses 0;
 option presolve 10;
 option show_boundtol 0;
 option solver knitroampl;
+
 
 
 ###############################################################################
@@ -72,6 +113,7 @@ suffix knitro_niter OUT;
 model "projector.mod";
 data  "projector.dat";
 
+
 ###############################################################################
 # Correction des donnees reactives des groupes : si Qmin>Qmax on echange Qmin et Qmax
 ###############################################################################
@@ -95,21 +137,33 @@ for {(g,n) in UNIT} {
   }
 }
 
-/* # Version Nicolas Omont Juin 2017
-param tmp{UNIT};
-let {(g,n) in UNIT } tmp[g,n]    := if unit_Qp[g,n] < unit_qp[g,n] then unit_qp[g,n] else unit_Qp[g,n];
-let {(g,n) in UNIT } unit_qp[g,n]:= if unit_Qp[g,n] < unit_qp[g,n] then unit_Qp[g,n] else unit_qp[g,n];
-let {(g,n) in UNIT} unit_Qp[g,n]:=tmp[g,n];
-let {(g,n) in UNIT } tmp[g,n]    := if unit_QP[g,n] < unit_qP[g,n] then unit_qP[g,n] else unit_QP[g,n];
-let {(g,n) in UNIT } unit_qP[g,n]:= if unit_QP[g,n] < unit_qP[g,n] then unit_QP[g,n] else unit_qP[g,n];
-let {(g,n) in UNIT} unit_QP[g,n]:=tmp[g,n];
-*/
 
 
 ###############################################################################
 # C'est la commande "check" ci-dessous qui realise veritablement les checks du fichier .mod
 ###############################################################################
 check;
+
+
+
+###############################################################################
+# Correction des valeurs bmin et bmax des CSPR
+###############################################################################
+# 31 mai 2018 : les conversions pour les CSPR sont erronnees dans Powsybl, donc on doit modifier les valeurs ici
+for {(s,n) in SVCCC} {
+  if ( abs(svc_bmin[s,n]) + abs(svc_bmax[s,n]) ) < 0.1
+  then {
+    printf "Poste %s : valeur bmin du VSC '%s' trop faible, corrigee par %f * %i^2 / 100 = %.2f\n",
+      substation_id[noeud_poste[n]],svc_id[s,n],svc_bmin[s,n],substation_Vnomi[noeud_poste[n]],
+      svc_bmin[s,n] * 0.01 * substation_Vnomi[noeud_poste[n]]^2;
+    printf "Poste %s : valeur bmax du VSC '%s' trop faible, corrigee par  %f * %i^2 / 100 =  %.2f\n",
+      substation_id[noeud_poste[n]],svc_id[s,n],svc_bmax[s,n],substation_Vnomi[noeud_poste[n]],
+      svc_bmax[s,n] * 0.01 * substation_Vnomi[noeud_poste[n]]^2;
+    let svc_bmin[s,n] := svc_bmin[s,n] * 0.01 * substation_Vnomi[noeud_poste[n]]^2;
+    let svc_bmax[s,n] := svc_bmax[s,n] * 0.01 * substation_Vnomi[noeud_poste[n]]^2;
+  }
+}
+
 
 
 ################################################################################
@@ -132,6 +186,7 @@ if ( tempo == 0 ) then
   noeud_phase_nulle;
 
 
+
 ###############################################################################
 # Verification coherence des tensions nominales
 ###############################################################################
@@ -150,20 +205,44 @@ for {(g,n,gid) in UNIT_DOMAIN} {
   }
   
 
+
 ###############################################################################
 # Point initial
 ###############################################################################
 let {n in NOEUDCC} Ph[n] := noeud_angl0[n];
 fix Ph[noeud_phase_nulle]; # On ne le fixe pas a zero mais a sa valeur initiale
 let {n in NOEUDCC} V[n]  := noeud_V0[n];
-let {(g,n) in UNITCC} unit_P[g,n] := unit_Pc[g,n];
-let {(g,n) in UNITCC} unit_Q[g,n] := unit_Qc[g,n];
+let {(g,n) in UNITCC} unit_P[g,n] := -unit_P0[g,n]; # On initialise sur la valeur issue d'hades, mais la 
+let {(g,n) in UNITCC} unit_Q[g,n] := -unit_Q0[g,n]; # convention de signe est inversee
+let {(sc,n) in VSCCONV} vscconv_Q[sc,n] := vscconv_Q0[sc,n]; # Homogene a une consommation
+
 
 # Jean Maeght + Nicolas Omont le 29 aout 2016 :
 # Si aucun domaine dynamique n'a été fourni, alors on ne modifie pas le groupe
-fix {(g,n) in UNITCC diff UNIT_PQV} unit_P[g,n];
-fix {(g,n) in UNITCC diff UNIT_PQV} unit_Q[g,n];
-# On ne peut pas en plus fixer la tension, sinon risque de non realisabilite pour question numerique (si on veut fixer P Q V en meme temps, il y a risque d'erreur numerique)
+# Tous les groupes qui n'ont pas de domaine dynamique sont donc consideres comme des groupes PQ
+# 27 juin 2018 : on change d'approche. Cf paragraphe "modelisation" en debut de fichier
+#fix {(g,n) in UNITCC diff UNITCC_PQV} unit_P[g,n];
+#fix {(g,n) in UNITCC diff UNITCC_PQV} unit_Q[g,n];
+# On ne peut pas en plus fixer la tension, sinon risque de non realisabilite pour 
+# question numerique (si on veut fixer P Q V en meme temps, il y a risque d'erreur numerique)
+
+
+
+###############################################################################
+# Valeurs fixee (voir paragraphe modelisation en debut de fichier)
+###############################################################################
+
+# Groupes sans domaine dynamique
+#                  Valeur modelisee :   P        Q        V
+# Groupes PV sans domaine dynamique : optimise libre    optimise
+# Groupes PQ sans domaine dynamique : optimise fixe     libre	
+fix {(g,n) in UNITCC diff (UNITCC_PV union UNITCC_PQV) } unit_Q[g,n] := -unit_Q0[g,n];
+
+# Fonctionnement des stations de conversion HVDC mode VSC : injection active fixee
+fix {(sc,n) in VSCCONV} vscconv_P[sc,n] := vscconv_P0[sc,n];
+
+# Fonctionnement des stations de conversion HVDC mode VSC sans regulation de tension : injection reactive fixee
+fix {(sc,n) in VSCCONV : vscconv_vregul[sc,n]!="true"} vscconv_Q[sc,n] := vscconv_Q0[sc,n];
 
 
 ###############################################################################
@@ -172,22 +251,41 @@ fix {(g,n) in UNITCC diff UNIT_PQV} unit_Q[g,n];
 display card(NOEUDCC),card(NOEUDCC_V0),
   Ph_min, Ph_max, Ph[noeud_phase_nulle],
   card(UNIT),
-  card({(g,n) in UNITCC: unit_PV[g,n]!="true"}),
-  card({(g,n) in UNITCC: unit_PV[g,n]=="true"}),
-  card(UNIT_PV),
-  card(UNIT_PQV),
-  card(UNITCC  diff UNIT_PQV),
-  card(UNIT_PV diff UNIT_PQV),
+  card({(g,n) in UNITCC: unit_vregul[g,n]!="true"}),
+  card({(g,n) in UNITCC: unit_vregul[g,n]=="true"}),
+  card(UNITCC_PV),
+  card(UNITCC_PQV),
+  card(UNITCC  diff UNITCC_PQV),
+  card(UNITCC_PV diff UNITCC_PQV),
   card(UNITHORSPMIN),card(UNITHORSPMAX),
-  card({(g,n) in UNIT_PQV : unit_id[g,n] in UNITHORSPMIN}),
-  card({(g,n) in UNIT_PQV : unit_id[g,n] in UNITHORSPMAX}),
+  card({(g,n) in UNITCC_PQV : unit_id[g,n] in UNITHORSPMIN}),
+  card({(g,n) in UNITCC_PQV : unit_id[g,n] in UNITHORSPMAX}),
   UNITHORSPMIN,UNITHORSPMAX,
   card(UNIT_DOMAIN_CTR),
-  UNIT_DOMAIN,
-  DOMAIN_ID
+#  UNIT_DOMAIN,
+#  DOMAIN_ID,
+  SVC,SVC_V,SVC_FIXE
   ;
+if card(COUPLEDGEN) > 0 then {
+  display coupledgen_control;
+  expand ctr_couplages_gen;
+}
 
+printf "Nombre de noeuds dans la composante connexe pincipale (i.e. la composante connexe numero 0) : %i\n",card(NOEUDCC);
+printf "Nombre de noeuds de la composante connexe pincipale ayant une V0 renseignee : %i\n",card(NOEUDCC_V0);
+printf "Nombre de groupes decrits : %i\n",card(UNIT);
+printf "Nombre de groupes sur la composante connexe principale : %i\n",card(UNITCC);
+printf "Nombre de groupes decrits comme PV : %i\n",card({(g,n) in UNITCC: unit_vregul[g,n]=="true"});
+printf "Nombre de groupes decrits comme PQ : %i\n",card({(g,n) in UNITCC: unit_vregul[g,n]!="true"});
+printf "Nombre de groupes ayant un domaine dynamique : %i\n",card(DOMAIN_IDENTIFIANTS);
+printf "Nombre de groupes connectes et demarres et ayant un domaine dynamique : %i\n",card(UNIT_DOMAIN);
+printf "Nombre groupes pour lesquels il y a un mismatch de tension entre l'etat de reseau et les domaines : %i\n",
+  card({(g,n,gid) in UNIT_DOMAIN : gen_vnom_mismatch[g,n,unit_id[g,n]]!=0});
+printf "Nombre groupes que l'on va projeter dans leur domaine P Q V : %i\n",card(UNITCC_PQV);
 
+if card(UNITCC_PQV) == 0 then printf "\n*** Aucun groupe avec domaine dynamique%s\n\n"," ";
+
+printf "\n";
 
 ###############################################################################
 # Scaling
@@ -198,11 +296,11 @@ let {(g,n) in UNITCC} unit_P[g,n].xscalefactor := max(1,abs(unit_P[g,n].ub2-unit
 let {(g,n) in UNITCC} unit_Q[g,n].xscalefactor := max(1,abs(unit_Q[g,n].ub2-unit_Q[g,n].lb2));
 let {n in NOEUDCC} bilan_P_noeud[n].cscalefactor := 1/max(1e-0,abs(sum{(c,n) in CONSOCC} conso_PFix[c,n]));
 let {n in NOEUDCC} bilan_Q_noeud[n].cscalefactor := 1/max(1e-0,abs(sum{(c,n) in CONSOCC} conso_QFix[c,n]));
-let {(g,n) in UNIT_PQV} ctr_trapeze_qmax[g,n].cscalefactor := 1/max(1.0,abs(ctr_trapeze_qmax_rhs[g,n]));
-let {(g,n) in UNIT_PQV} ctr_trapeze_qmin[g,n].cscalefactor := 1/max(1.0,abs(ctr_trapeze_qmin_rhs[g,n]));
+let {(g,n) in UNITCC_PQV} ctr_trapeze_qmax[g,n].cscalefactor := 1/max(1.0,abs(ctr_trapeze_qmax_rhs[g,n]));
+let {(g,n) in UNITCC_PQV} ctr_trapeze_qmin[g,n].cscalefactor := 1/max(1.0,abs(ctr_trapeze_qmin_rhs[g,n]));
 let {(numero,g,n,gid) in UNIT_DOMAIN_CTR} ctr_domain[numero,g,n,gid].cscalefactor := 
   1/max(1.0,abs(domain_RHS[numero,gid]));
-
+#let {(s,n) in SVC_V} svc_b[s,n].xscalefactor := (svc_bmax[s,n] - svc_bmin[s,n]); # Semble ralentir le calcul. A retester
 
 
 ###############################################################################
@@ -214,24 +312,33 @@ let {(g,n) in UNITCC} unit_P[g,n].xfeastol := 0.1;
 let {(g,n) in UNITCC} unit_Q[g,n].xfeastol := 0.1;
 let {n in NOEUDCC} bilan_P_noeud[n].cfeastol := 0.01;
 let {n in NOEUDCC} bilan_Q_noeud[n].cfeastol := 0.01;
-let {(g,n) in UNIT_PQV} ctr_trapeze_qmax[g,n].cfeastol := 0.01;
-let {(g,n) in UNIT_PQV} ctr_trapeze_qmin[g,n].cfeastol := 0.01;
+let {(g,n) in UNITCC_PQV} ctr_trapeze_qmax[g,n].cfeastol := 0.01;
+let {(g,n) in UNITCC_PQV} ctr_trapeze_qmin[g,n].cfeastol := 0.01;
 let {(numero,g,n,gid) in UNIT_DOMAIN_CTR} ctr_domain[numero,g,n,gid].cfeastol := 0.01;
+let {(s,n) in SVC_V} limites_reactif_hades[s,n].cfeastol := 0.001;
 
 
 ###############################################################################
 # Display debug
 ###############################################################################
 /*
-display bilan_P_noeud,
-  term_bilan_P_noeud,
-  term_bilan_P_noeud_nul,
-  bilan_Q_noeud,
-  term_bilan_Q_noeud,
-  term_bilan_Q_noeud_nul
-  > bilan_P_noeud.txt;
+expand limites_sup_reactif_Ppositif,limites_inf_reactif_Ppositif,
+limites_sup_reactif_Pnegatif,limites_inf_reactif_Pnegatif ;
 */
 
+/*
+display
+quad_R[9321,2765,2768],
+quad_X[9321,2765,2768],
+quad_ptrDeph[9321,2765,2768],
+deph_table[quad_ptrDeph[9321,2765,2768]],
+deph_tap0 [quad_ptrDeph[9321,2765,2768]],
+tap_x[deph_table[quad_ptrDeph[9321,2765,2768]],deph_tap0[quad_ptrDeph[9321,2765,2768]]],
+tap_ratio[deph_table[quad_ptrDeph[9321,2765,2768]],deph_tap0[quad_ptrDeph[9321,2765,2768]]],
+tap_angle[deph_table[quad_ptrDeph[9321,2765,2768]],deph_tap0[quad_ptrDeph[9321,2765,2768]]],
+quad_Ror[9321,2765,2768],
+quad_dephor[9321,2765,2768];
+*/
 
 ###############################################################################
 # Resolution
@@ -243,15 +350,13 @@ option knitro_options
 param nb_solve_max = 6;
 param nb_solve;
 let nb_solve := 0; 
-display solve_result_num;
 
 repeat {
   solve;
   let nb_solve := nb_solve + 1;
   printf "*** Iteration de solve numero %i, solve_result_num=%i\n\n",nb_solve,solve_result_num;
   }
-while ( ( solve_result_num >= 100 and solve_result_num < 400 ) or solve_result_num >= 410 ) and nb_solve<nb_solve_max;
-
+while ( ( solve_result_num >= 100 and solve_result_num < 400 ) or solve_result_num >= 400 ) and nb_solve<nb_solve_max;
 
 
 ###############################################################################

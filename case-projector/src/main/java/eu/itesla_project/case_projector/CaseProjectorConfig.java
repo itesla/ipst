@@ -19,6 +19,8 @@ public class CaseProjectorConfig {
 
     private final Path amplHomeDir;
 
+    private final Path generatorsDomainsFile;
+
     private final boolean debug;
 
     public static CaseProjectorConfig load() {
@@ -28,12 +30,14 @@ public class CaseProjectorConfig {
     public static CaseProjectorConfig load(PlatformConfig platformConfig) {
         ModuleConfig config = platformConfig.getModuleConfig("caseProjector");
         Path amplHomeDir = config.getPathProperty("amplHomeDir");
+        Path generatorsDomainsFile =  config.getPathProperty("generatorsDomainsFile");
         boolean debug = config.getBooleanProperty("debug", false);
-        return new CaseProjectorConfig(amplHomeDir, debug);
+        return new CaseProjectorConfig(amplHomeDir, generatorsDomainsFile, debug);
     }
 
-    public CaseProjectorConfig(Path amplHomeDir, boolean debug) {
+    public CaseProjectorConfig(Path amplHomeDir, Path generatorsDomainsFile, boolean debug) {
         this.amplHomeDir = Objects.requireNonNull(amplHomeDir);
+        this.generatorsDomainsFile = Objects.requireNonNull(generatorsDomainsFile);
         this.debug = debug;
     }
 
@@ -45,10 +49,14 @@ public class CaseProjectorConfig {
         return debug;
     }
 
+    public Path getGeneratorsDomainsFile() {
+        return generatorsDomainsFile;
+    }
+
     @Override
     public String toString() {
         return getClass().getSimpleName() + " [amplHomeDir=" + amplHomeDir +
-                ", debug=" + debug +
+                ", generatorsDomainsFile=" + generatorsDomainsFile + ", debug=" + debug +
                 "]";
     }
 

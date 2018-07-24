@@ -61,7 +61,6 @@ public class CaseProjectorTool implements Tool {
                         .desc("the generators domains file path")
                         .hasArg()
                         .argName("FILE")
-                        .required()
                         .build());
                 return options;
             }
@@ -76,7 +75,7 @@ public class CaseProjectorTool implements Tool {
     @Override
     public void run(CommandLine line, ToolRunningContext context) throws Exception {
         Path caseFile = Paths.get(line.getOptionValue("case-file"));
-        Path generatorsDomains = Paths.get(line.getOptionValue("generators-domains-file"));
+
         Network network = Importers.loadNetwork(caseFile);
         if (network == null) {
             throw new RuntimeException("Case " + caseFile + " not found");
@@ -85,7 +84,10 @@ public class CaseProjectorTool implements Tool {
         LoadFlowFactory loadFlowFactory = config.newFactoryImpl(LoadFlowFactory.class);
         SimulatorFactory simulatorFactory = config.newFactoryImpl(SimulatorFactory.class);
         CaseProjectorConfig caseProjectorConfig = CaseProjectorConfig.load();
-        new CaseProjector(network, LocalComputationManager.getDefault(), loadFlowFactory, simulatorFactory, caseProjectorConfig, generatorsDomains)
+        if (line.hasOption("generators-domains-file")) {
+            caseProjectorConfig = new CaseProjectorConfig(caseProjectorConfig.getAmplHomeDir(), Paths.get(line.getOptionValue("generators-domains-file")), caseProjectorConfig.isDebug());
+        }
+        new CaseProjector(network, LocalComputationManager.getDefault(), loadFlowFactory, simulatorFactory, caseProjectorConfig)
                 .project(StateManager.INITIAL_STATE_ID).join();
     }
 }

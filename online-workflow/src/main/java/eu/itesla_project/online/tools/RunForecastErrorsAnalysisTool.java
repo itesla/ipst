@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2018, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -132,6 +133,9 @@ public class RunForecastErrorsAnalysisTool implements Tool {
                     .hasArg()
                     .argName("case-type")
                     .build());
+            options.addOption(Option.builder().longOpt("all-injections")
+                    .desc("include all injections in the FEA, including dispatchable units")
+                    .build());
             return options;
         }
 
@@ -189,10 +193,13 @@ public class RunForecastErrorsAnalysisTool implements Tool {
         CaseType caseType = line.hasOption("case-type")
                 ? CaseType.valueOf(line.getOptionValue("case-type"))
                 : getDefaultParameters().getCaseType();
+        boolean allInjections = line.hasOption("all-injections")
+                ? true
+                : getDefaultParameters().isAllInjections();
 
         ForecastErrorsAnalysisParameters parameters = new ForecastErrorsAnalysisParameters(baseCaseDate, histoInterval, analysisId, ir, flagPQ, method, nClusters,
                                                                                            percentileHistorical, modalityGaussian, outliers, conditionalSampling,
-                                                                                           nSamples, countries, caseType);
+                                                                                           nSamples, countries, caseType, allInjections);
         ForecastErrorsAnalysis feAnalysis = new ForecastErrorsAnalysis(context.getComputationManager(), ForecastErrorsAnalysisConfig.load(), parameters);
         context.getOutputStream().println("Starting Forecast Errors Analysis");
         if (line.hasOption("time-horizon")) {
