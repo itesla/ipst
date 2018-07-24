@@ -309,10 +309,25 @@ colnames(bis_matrice_txt_R)<-c("inj. type","inj. num","var. num","coeff.")
 
 ##Output path
 
-export_bis_matrix_PC_equip="./cor_matrice.txt"
+#export_bis_matrix_PC_equip="./cor_matrice.txt"
 
-write.table(bis_matrice_txt_R, file = export_bis_matrix_PC_equip, append = FALSE, quote = FALSE, sep = " ", eol = "\n", na = "NaN", dec = ".", row.names = FALSE, col.names = TRUE )
+#write.table(bis_matrice_txt_R, file = export_bis_matrix_PC_equip, append = FALSE, quote = FALSE, sep = " ", eol = "\n", na = "NaN", dec = ".", row.names = FALSE, col.names = TRUE )
 
+##
+## integration section:  rename the initial 'wca_reduction_matrix.txt' to 'wca_reduction_matrix_not_reconditioned.txt'
+##                       and write the reconditioned matrix to 'wca_reduction_matrix.txt' (with the original wca_reduction_matrix.txt header)
+##
+
+## backup the input matrice_path file to ./wca_reduction_matrix_not_reconditioned.txt
+matrice_not_reconditioned_path = "./wca_reduction_matrix_not_reconditioned.txt"
+file.rename(matrice_path, matrice_not_reconditioned_path)
+
+## dump the reconditioned matrix, overwriting matrice_path file
+cat("#Reconditioned reduction matrix\n#\"inj. type\" \"inj. num\" \"var. num\" \"coeff.\"\n",file=matrice_path)
+write.table(bis_matrice_txt_R, file = matrice_path, append = TRUE, quote = FALSE, sep = " ", eol = "\n", na = "NaN", dec = ".", row.names = FALSE, col.names = FALSE )
+
+
+## is this file used?
 export_cor_matrix_PC_equip="./cor_matrice.csv"
 
 write.table(cor_matrix_PC_equip, export_cor_matrix_PC_equip,append = FALSE, quote = FALSE, sep = " ",  na = "NaN", dec = ".", row.names = FALSE, col.names = TRUE,qmethod = "double"  )
