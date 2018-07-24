@@ -360,6 +360,8 @@ public class WCAImpl implements WCA, WCAConstants {
 
                         copyRequired(workingDir);
 
+                        copyOptional(workingDir, config);
+
                         DataSource commonDataSource = new FileDataSource(workingDir, COMMONE_FILE_PREFIX);
 
                         // write uncertainies
