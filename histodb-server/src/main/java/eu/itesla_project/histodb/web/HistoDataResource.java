@@ -6,14 +6,16 @@
  */
 package eu.itesla_project.histodb.web;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.StringWriter;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.zip.GZIPOutputStream;
 import javax.inject.Inject;
+
+import org.mapdb.DBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -27,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
 import eu.itesla_project.histodb.QueryParams;
 import eu.itesla_project.histodb.config.HistoDbConfiguration;
 import eu.itesla_project.histodb.domain.DataSet;
@@ -48,7 +52,7 @@ public class HistoDataResource {
     private HistoDbConfiguration config;
 
     @Inject
-    private HistoDataService service;
+    private HistoDataService histoDataService;
 
     @GetMapping(value = "/{db}/{prefix}/{postfix}/itesla/referenceCIM")
     public ResponseEntity<String> getReferenceCIM(@PathVariable String db, @PathVariable String prefix,
@@ -56,6 +60,9 @@ public class HistoDataResource {
         try (HistoDataSource hds = HistoDataSourceFactory.getInstance(config, db, prefix, postfix)) {
             String ref = hds.getReferenceNetwork() != null ? hds.getReferenceNetwork().getId() : "";
             return new ResponseEntity<String>(ref, null, HttpStatus.OK);
+        }  catch (DBException.FileLocked e) {
+            log.error("DBFile is locked ", e.getMessage());
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
         } catch (Exception e) {
             log.error("Get reference CIM error", e);
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -74,12 +81,15 @@ public class HistoDataResource {
             }
             log.info("Set reference CIM from path " + dir);
             Path filePath = Paths.get(dir);
-            service.importReferenceNetwork(hds, filePath);
+            histoDataService.importReferenceNetwork(hds, filePath);
             return new ResponseEntity<String>(
                     "Set ReferenceCIM: " + hds.getReferenceNetwork() != null ? hds.getReferenceNetwork().getId()
                             : "" + " for data source " + prefix + "/" + postfix, HttpStatus.OK);
+        } catch (DBException.FileLocked e) {
+            log.error("DBFile is locked ", e.getMessage());
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
         } catch (Exception e) {
-            log.error("Set reference CIM error", e.getMessage());
+            log.error("Set reference CIM error", e);
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
@@ -98,7 +108,10 @@ public class HistoDataResource {
         boolean parallel = parallelStr != null ? Boolean.parseBoolean(parallelStr) : true;
 
         try (HistoDataSource hds = HistoDataSourceFactory.getInstance(config, db, prefix, postfix)) {
-            service.importData(hds, importDir, parallel);
+            histoDataService.importData(hds, importDir, parallel);
+        } catch (DBException.FileLocked e) {
+            log.error("DBFile is locked ", e.getMessage());
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
         } catch (Exception e) {
             log.error("Import data error", e);
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -109,48 +122,51 @@ public class HistoDataResource {
     }
 
     @RequestMapping("/{db}/{prefix}/{postfix}/itesla/{service}")
-    public ResponseEntity<byte[]> getData(@PathVariable String db, @PathVariable String prefix,
+    public ResponseEntity<StreamingResponseBody> getData(@PathVariable String db, @PathVariable String prefix,
             @PathVariable String postfix, @PathVariable String service, WebRequest request) {
-        log.info("getData " + service);
-        String format = (String) request.getAttribute("format", 0);
 
+        String format = (String) request.getAttribute("format", 0);
+        log.info("get " + service + " format " + format);
         try (HistoDataSource hds = HistoDataSourceFactory.getInstance(config, db, prefix, postfix)) {
 
             QueryParams queryParams = new QueryParams(request);
+
             DataSet data = null;
             if (service.equals("data")) {
-                data = this.service.getData(hds, queryParams);
+                data = histoDataService.getData(hds, queryParams);
             } else if (service.equals("stats")) {
-                data = this.service.getStats(hds, queryParams);
+                data = histoDataService.getStats(hds, queryParams);
             } else {
-                return new ResponseEntity<byte[]>(service.getBytes(), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<StreamingResponseBody>(getErrorStreamingResponse(service), HttpStatus.NOT_FOUND);
             }
-            StringWriter wr = new StringWriter();
-            data.writeCsv(wr, new Locale(config.getFormatter().getLocale()), config.getFormatter().getSeparator(),
-                    queryParams.isHeaders());
-            byte[] bytes = wr.toString().getBytes();
-            HttpHeaders header = new HttpHeaders();
 
-            if (format != null && format.equalsIgnoreCase("zip")) {
-                bytes = gzip(bytes);
+            boolean zipped = format != null && format.equalsIgnoreCase("zip");
+
+            StreamingResponseBody responseBody = getStreamingResponse(data, queryParams.isHeaders(), zipped);
+
+            HttpHeaders header = new HttpHeaders();
+            if (zipped) {
                 header.add("Content-Encoding", "gzip");
             }
 
             header.setContentType(new MediaType("text", "csv"));
-            return new ResponseEntity<byte[]>(bytes, header, HttpStatus.OK);
+            return new ResponseEntity<StreamingResponseBody>(responseBody, header, HttpStatus.OK);
+        } catch (DBException.FileLocked e) {
+            log.error("DBFile is locked ", e.getMessage());
+            return new ResponseEntity<StreamingResponseBody>(getErrorStreamingResponse(e.getMessage()), HttpStatus.SERVICE_UNAVAILABLE);
         } catch (Exception e) {
             log.error("getData error ", e);
-            return new ResponseEntity<byte[]>(e.getMessage() != null ? e.getMessage().getBytes() : null, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<StreamingResponseBody>(getErrorStreamingResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
     @RequestMapping("/{db}/{prefix}/{postfix}/itesla/data/{service}")
-    public ResponseEntity<byte[]> forecastDiff(@PathVariable String db, @PathVariable String prefix,
+    public ResponseEntity<StreamingResponseBody> forecastDiff(@PathVariable String db, @PathVariable String prefix,
             @PathVariable String postfix, @PathVariable String service, WebRequest request) {
         String format = (String) request.getAttribute("format", 0);
-
+        log.info("get " + service + " format " + format);
         if (!service.equals("forecastsDiff")) {
-            return new ResponseEntity<byte[]>(service.getBytes(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<StreamingResponseBody>(getErrorStreamingResponse(service), HttpStatus.NOT_FOUND);
         }
 
         try (HistoDataSource hds = HistoDataSourceFactory.getInstance(config, db, prefix, postfix)) {
@@ -158,35 +174,52 @@ public class HistoDataResource {
             QueryParams queryParams = new QueryParams(request);
 
             if (queryParams.getForecastTime() < 0 && (queryParams.getHorizon() == null ||  queryParams.getHorizon().equals("SN"))) {
-                return new ResponseEntity<byte[]>("ForecastsDiff operation must be used with either a positive 'forecast' value or a non-snapshot 'horizon'".getBytes(), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<StreamingResponseBody>(getErrorStreamingResponse("ForecastsDiff operation must be used with either a positive 'forecast' value or a non-snapshot 'horizon'"), HttpStatus.BAD_REQUEST);
             }
 
-            DataSet data = this.service.getForecastDiff(hds, queryParams);
-            StringWriter wr = new StringWriter();
-            data.writeCsv(wr, new Locale(config.getFormatter().getLocale()), config.getFormatter().getSeparator(),
-                    queryParams.isHeaders());
-            byte[] bytes = wr.toString().getBytes();
+            DataSet data = this.histoDataService.getForecastDiff(hds, queryParams);
+
+            boolean zipped = format != null && format.equalsIgnoreCase("zip");
+
+            StreamingResponseBody responseBody = getStreamingResponse(data, queryParams.isHeaders(), zipped);
+
             HttpHeaders header = new HttpHeaders();
 
-            if (format != null && format.equalsIgnoreCase("zip")) {
-                bytes = gzip(bytes);
+            if (zipped) {
                 header.add("Content-Encoding", "gzip");
             }
 
             header.setContentType(new MediaType("text", "csv"));
-            return new ResponseEntity<byte[]>(bytes, header, HttpStatus.OK);
+            return new ResponseEntity<StreamingResponseBody>(responseBody, header, HttpStatus.OK);
+        } catch (DBException.FileLocked e) {
+            log.error("DBFile is locked ", e.getMessage());
+            return new ResponseEntity<StreamingResponseBody>(getErrorStreamingResponse(e.getMessage()), HttpStatus.SERVICE_UNAVAILABLE);
         } catch (Exception e) {
             log.error("Forecastdiff error ", e);
-            return new ResponseEntity<byte[]>(e.getMessage() != null ? e.getMessage().getBytes() : null, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<StreamingResponseBody>(getErrorStreamingResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
-    private byte[] gzip(byte[] in) throws IOException {
-        ByteArrayOutputStream bao = new ByteArrayOutputStream();
-        GZIPOutputStream out = new GZIPOutputStream(bao);
-        out.write(in);
-        out.close();
-        return bao.toByteArray();
+    private StreamingResponseBody getStreamingResponse(DataSet data, boolean headers, boolean zipped) {
+        return new StreamingResponseBody() {
+
+            @Override
+            public void writeTo(OutputStream out) throws IOException {
+                OutputStreamWriter ow = zipped ? new OutputStreamWriter(new GZIPOutputStream(out, true)) : new OutputStreamWriter(out);
+                data.writeCsv(ow, new Locale(config.getFormatter().getLocale()), config.getFormatter().getSeparator(),
+                        headers);
+            }
+        };
+    }
+
+    private StreamingResponseBody getErrorStreamingResponse(String message) {
+        return new StreamingResponseBody() {
+
+            @Override
+            public void writeTo(OutputStream out) throws IOException {
+                out.write(message != null ? message.getBytes() : "".getBytes());
+            }
+        };
     }
 
     public void setConfig(HistoDbConfiguration config) {
@@ -194,6 +227,6 @@ public class HistoDataResource {
     }
 
     public void setService(HistoDataService service) {
-        this.service = service;
+        this.histoDataService = service;
     }
 }

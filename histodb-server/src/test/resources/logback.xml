@@ -9,8 +9,8 @@
 
     <logger name="com.powsybl" level="OFF" />
     <logger name="eu.itesla_project.histodb" level="OFF" />
-    
+
     <root level="ERROR">
-    	<appender-ref ref="STDOUT" />
-    </root>    
+        <appender-ref ref="STDOUT"/>
+    </root>
 </configuration>

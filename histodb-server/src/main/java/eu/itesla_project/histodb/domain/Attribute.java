@@ -23,4 +23,10 @@ public class Attribute {
     public String getName() {
         return name;
     }
+
+    @Override
+    public String toString() {
+        return "Attribute [name=" + name + "]";
+    }
+
 }

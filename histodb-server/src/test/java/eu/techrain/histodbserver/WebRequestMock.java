@@ -9,15 +9,15 @@ import java.util.Map;
 import org.springframework.web.context.request.WebRequest;
 
 public class WebRequestMock implements WebRequest {
-    
+
     private final Map<String, Object> attributes = new HashMap();
     private final Map<String, String[]> parameters = new HashMap();
-    
-    
-    public void setParameter(String name, String[] values){
+
+
+    public void setParameter(String name, String[] values) {
         parameters.put(name,  values);
     }
-    
+
     @Override
     public Object getAttribute(String name, int scope) {
         return attributes.get(name);
