@@ -36,14 +36,19 @@ public class HistodbServerApplicationTest {
         config.getFormatter().setSeparator(';');
         resource.setConfig(config);
         resource.setService(new HistoDataServiceImpl());
+        importNetworksMissingDir();
         importNetworks();
         setWrongReferenceCIM();
+        setReferenceCIMMissing();
         setReferenceCIM();
         getReferenceCIM();
         getData();
+        getDataZip();
         getFilteredData();
         getDataByIds();
         getForecastsDiff();
+        getForecastsDiffZip();
+        getForecastsDiffError();
         getStats();
     }
 
@@ -61,6 +66,12 @@ public class HistodbServerApplicationTest {
         assertEquals(404, resp.getStatusCodeValue());
     }
 
+    public void setReferenceCIMMissing() {
+        WebRequestMock wr = new WebRequestMock();
+        ResponseEntity<String> resp = resource.setReferenceCIM("iteslasim", "test", "2017", wr);
+        assertEquals(400, resp.getStatusCodeValue());
+    }
+
     public void getReferenceCIM() {
         ResponseEntity<String> resp = resource.getReferenceCIM("iteslasim", "test", "2017");
         assertEquals(200, resp.getStatusCodeValue());
@@ -73,9 +84,23 @@ public class HistodbServerApplicationTest {
         assertEquals(200, resp.getStatusCodeValue());
     }
 
+    public void importNetworksMissingDir() throws IOException {
+        WebRequestMock wr = new WebRequestMock();
+        ResponseEntity <String> resp = (ResponseEntity<String>) resource.importNetworks("iteslasim", "test", "2017", wr);
+        assertEquals(400, resp.getStatusCodeValue());
+    }
+
     public void getData() throws IOException {
         WebRequestMock wr = new WebRequestMock();
         wr.setAttribute("format", "csv", 0);
+        wr.setParameter("headers", (String[]) Collections.singletonList("true").toArray(new String[1]));
+        ResponseEntity <StreamingResponseBody> resp = resource.getData("iteslasim", "test", "2017", "data", wr);
+        assertEquals(200, resp.getStatusCodeValue());
+    }
+
+    public void getDataZip() throws IOException {
+        WebRequestMock wr = new WebRequestMock();
+        wr.setAttribute("format", "zip", 0);
         wr.setParameter("headers", (String[]) Collections.singletonList("true").toArray(new String[1]));
         ResponseEntity <StreamingResponseBody> resp = resource.getData("iteslasim", "test", "2017", "data", wr);
         assertEquals(200, resp.getStatusCodeValue());
@@ -116,6 +141,15 @@ public class HistodbServerApplicationTest {
     }
 
     public void getForecastsDiff() throws IOException {
+        WebRequestMock wr = new WebRequestMock();
+        wr.setAttribute("format", "csv", 0);
+        wr.setParameter("headers", (String[]) Collections.singletonList("true").toArray(new String[1]));
+        wr.setParameter("forecast", (String[]) Collections.singletonList("540").toArray(new String[1]));
+        ResponseEntity <StreamingResponseBody> resp = resource.forecastDiff("iteslasim", "test", "2017", "forecastsDiff", wr);
+        assertEquals(200, resp.getStatusCodeValue());
+    }
+
+    public void getForecastsDiffZip() throws IOException {
         WebRequestMock wr = new WebRequestMock();
         wr.setAttribute("format", "csv", 0);
         wr.setParameter("headers", (String[]) Collections.singletonList("true").toArray(new String[1]));
