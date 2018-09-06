@@ -448,22 +448,22 @@ public class EsgWriter {
         recordWriter.addValue(toChar(vscConverter.getXoper()), 46, 46);
         recordWriter.addValue(vscConverter.getRrdc(), 48, 55);
         recordWriter.addValue(vscConverter.getRxdc(), 57, 64);
-        if (!Float.isNaN(vscConverter.getPac())) {
+        if (!Double.isNaN(vscConverter.getPac())) {
             recordWriter.addValue(vscConverter.getPac(), 66, 73);
         }
-        if (!Float.isNaN(vscConverter.getPvd())) {
+        if (!Double.isNaN(vscConverter.getPvd())) {
             recordWriter.addValue(vscConverter.getPvd(), 75, 82);
         }
-        if (!Float.isNaN(vscConverter.getPva())) {
+        if (!Double.isNaN(vscConverter.getPva())) {
             recordWriter.addValue(vscConverter.getPva(), 84, 91);
         }
-        if (!Float.isNaN(vscConverter.getPre())) {
+        if (!Double.isNaN(vscConverter.getPre())) {
             recordWriter.addValue(vscConverter.getPre(), 93, 100);
         }
-        if (!Float.isNaN(vscConverter.getPco())) {
+        if (!Double.isNaN(vscConverter.getPco())) {
             recordWriter.addValue(vscConverter.getPco(), 102, 109);
         }
-        if (!Float.isNaN(vscConverter.getQvscsh())) {
+        if (!Double.isNaN(vscConverter.getQvscsh())) {
             recordWriter.addValue(vscConverter.getQvscsh(), 111, 118);
         }
         recordWriter.newLine();

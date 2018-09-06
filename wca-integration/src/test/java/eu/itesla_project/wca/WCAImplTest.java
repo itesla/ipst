@@ -121,12 +121,12 @@ public class WCAImplTest {
         histoDbClient = Mockito.mock(HistoDbClient.class);
         HistoDbStats histoDbStats = new HistoDbStats();
         network.getLoads().forEach( load -> {
-            histoDbStats.setValue(HistoDbStatsType.MIN, new HistoDbNetworkAttributeId(load.getId(), HistoDbAttr.P), load.getP0() - (load.getP0()*20/110));
-            histoDbStats.setValue(HistoDbStatsType.MAX, new HistoDbNetworkAttributeId(load.getId(), HistoDbAttr.P), load.getP0() + (load.getP0()*20/110));
+            histoDbStats.setValue(HistoDbStatsType.MIN, new HistoDbNetworkAttributeId(load.getId(), HistoDbAttr.P), (float) (load.getP0() - (load.getP0()*20/110)));
+            histoDbStats.setValue(HistoDbStatsType.MAX, new HistoDbNetworkAttributeId(load.getId(), HistoDbAttr.P), (float) (load.getP0() + (load.getP0()*20/110)));
         });
         network.getGenerators().forEach( generator -> {
-            histoDbStats.setValue(HistoDbStatsType.MIN, new HistoDbNetworkAttributeId(generator.getId(), HistoDbAttr.P), generator.getTargetP() - (generator.getTargetP()*20/110));
-            histoDbStats.setValue(HistoDbStatsType.MAX, new HistoDbNetworkAttributeId(generator.getId(), HistoDbAttr.P), generator.getTargetP() + (generator.getTargetP()*20/110));
+            histoDbStats.setValue(HistoDbStatsType.MIN, new HistoDbNetworkAttributeId(generator.getId(), HistoDbAttr.P), (float) (generator.getTargetP() - (generator.getTargetP()*20/110)));
+            histoDbStats.setValue(HistoDbStatsType.MAX, new HistoDbNetworkAttributeId(generator.getId(), HistoDbAttr.P), (float) (generator.getTargetP() + (generator.getTargetP()*20/110)));
         });        
         Mockito.when(histoDbClient.queryStats(Matchers.anySet(), Matchers.eq(histoInterval), Matchers.eq(HistoDbHorizon.SN), Matchers.eq(true)))
                .thenReturn(histoDbStats);

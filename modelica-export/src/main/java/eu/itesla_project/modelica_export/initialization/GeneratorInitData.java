@@ -63,20 +63,20 @@ public class GeneratorInitData {
         params.put(EurostagFixedData.TRAFOINCLUDED, this.genRecord.getGenParamsMap().get(EurostagFixedData.TRAFOINCLUDED.toUpperCase()));
 
 
-        float voltage = 0;
-        float angle = 0;
+        double voltage = 0;
+        double angle = 0;
 
         if (generator.getTerminal().getBusView().getBus() != null) {
-            if (!Float.isNaN(generator.getTerminal().getBusView().getBus().getV())) {
+            if (!Double.isNaN(generator.getTerminal().getBusView().getBus().getV())) {
                 voltage = generator.getTerminal().getBusView().getBus().getV();
             }
-            if (!Float.isNaN(generator.getTerminal().getBusView().getBus().getAngle())) {
+            if (!Double.isNaN(generator.getTerminal().getBusView().getBus().getAngle())) {
                 angle = generator.getTerminal().getBusView().getBus().getAngle();
             }
         }
 
-        float modulo = voltage / this.generator.getTerminal().getVoltageLevel().getNominalV();
-        float angulo = (float) (angle * Math.PI / 180);
+        double modulo = voltage / this.generator.getTerminal().getVoltageLevel().getNominalV();
+        double angulo = angle * Math.PI / 180;
 
         double ur0 = modulo * Math.cos(angulo);
         double ui0 = modulo * Math.sin(angulo);

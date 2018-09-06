@@ -1112,7 +1112,7 @@ public class OnlineDbMVStore implements OnlineDb {
             LOGGER.info("Storing post-contingency state data of network {} for wf {}, state {}, contingency {}", network.getId(), workflowId, stateId, contingencyId);
             MVStore wfMVStore = getStore(workflowId);
             Map<String, String> postcontingencyStatesMap = wfMVStore.openMap(STORED_POST_CONTINGENCY_STATES_MAP_NAME, mapBuilder);
-            LinkedHashMap<String, Float> branchesData = OnlineUtils.getBranchesData(network);
+            LinkedHashMap<String, Double> branchesData = OnlineUtils.getBranchesData(network);
             if (!postcontingencyStatesMap.containsKey(STORED_POST_CONTINGENCY_STATES_HEADERS_KEY)) {
                 postcontingencyStatesMap.put(STORED_POST_CONTINGENCY_STATES_HEADERS_KEY, OnlineDbMVStoreUtils.branchesDataToCsvHeaders(branchesData));
             }

@@ -38,7 +38,7 @@ public class BusRecord extends ModelicaRecord {
         this.bus = bus;
         this.busId = bus.getId();
 
-        if (!Float.isNaN(this.bus.getV())) {
+        if (!Double.isNaN(this.bus.getV())) {
             this.busVoltage = bus.getV() / bus.getVoltageLevel().getNominalV();
 
             this.busAngle = this.bus.getAngle();
@@ -57,12 +57,12 @@ public class BusRecord extends ModelicaRecord {
      * @param voltage
      * @param angle
      */
-    public BusRecord(String id, float voltage, float angle) {
+    public BusRecord(String id, double voltage, double angle) {
         this.busId = id;
         this.busVoltage = voltage;
         this.busAngle = angle;
 
-        if (!Float.isNaN(this.busVoltage)) {
+        if (!Double.isNaN(this.busVoltage)) {
             addParameter(StaticData.V_0, this.busVoltage);
             addParameter(StaticData.ANGLE_0, this.busAngle);
         }
@@ -114,7 +114,7 @@ public class BusRecord extends ModelicaRecord {
     @Override
     public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
         //We suppose: if V=NaN the bus is disconnected.
-        if (!Float.isNaN(this.busVoltage)) {
+        if (!Double.isNaN(this.busVoltage)) {
             if (super.isCorrect()) {
                 if (super.getModelicaType() != null) {
                     this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);
@@ -177,8 +177,8 @@ public class BusRecord extends ModelicaRecord {
     protected Bus                 bus                    = null;
 
     private String                busId;
-    private float                busVoltage            = 0;
-    private float                busAngle;
+    private double                busVoltage            = 0;
+    private double                busAngle;
 
     private String                DEFAULT_BUS_TYPE    = EurostagModDefaultTypes.DEFAULT_BUS_TYPE;
 

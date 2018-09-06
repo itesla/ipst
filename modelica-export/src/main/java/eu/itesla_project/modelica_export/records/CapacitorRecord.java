@@ -73,7 +73,7 @@ public class CapacitorRecord extends ModelicaRecord {
     @Override
     public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
 //        if(this.busInfo.isConnected()) {
-        if (!Float.isNaN(this.busInfo.getBus().getV()) && this.busInfo.isConnected()) {
+        if (!Double.isNaN(this.busInfo.getBus().getV()) && this.busInfo.isConnected()) {
             if (super.isCorrect()) {
                 if (!this.busInfo.isConnected()) {
                     this.addValue(StaticData.COMMENT);

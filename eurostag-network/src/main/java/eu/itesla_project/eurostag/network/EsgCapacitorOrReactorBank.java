@@ -20,13 +20,13 @@ public class EsgCapacitorOrReactorBank {
     private final Esg8charName znamba; // bank name
     private final Esg8charName znodba; // connection node name
     private final int ieleba; // number of steps in service
-    private final float plosba; // active loss on each step [kW]
-    private final float rcapba; // reactive power of each step [Mvar] positive for capacitors negative for reactors
+    private final double plosba; // active loss on each step [kW]
+    private final double rcapba; // reactive power of each step [Mvar] positive for capacitors negative for reactors
     private final int imaxba; // maximum number of steps
     private final RegulatingMode xregba; // regulating mode
                                          // ‘N‘     : not regulating
 
-    public EsgCapacitorOrReactorBank(Esg8charName znamba, Esg8charName znodba, int ieleba, float plosba, float rcapba, int imaxba, RegulatingMode xregba) {
+    public EsgCapacitorOrReactorBank(Esg8charName znamba, Esg8charName znodba, int ieleba, double plosba, double rcapba, int imaxba, RegulatingMode xregba) {
         this.znamba = Objects.requireNonNull(znamba);
         this.znodba = Objects.requireNonNull(znodba);
         this.ieleba = ieleba;
@@ -51,11 +51,11 @@ public class EsgCapacitorOrReactorBank {
         return imaxba;
     }
 
-    public float getPlosba() {
+    public double getPlosba() {
         return plosba;
     }
 
-    public float getRcapba() {
+    public double getRcapba() {
         return rcapba;
     }
 

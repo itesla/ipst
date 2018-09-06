@@ -167,10 +167,10 @@ public class WCAUtilsTest {
         network.getGenerator("generator1").getTerminal().setP(-network.getGenerator("generator1").getTargetP());
         network.getLoad("load1").getTerminal().setP(network.getLoad("load1").getP0());
 
-        float loadP = network.getLoad("load1").getTerminal().getP();
-        float loadP0 = network.getLoad("load1").getP0();
-        float generatorP = network.getGenerator("generator1").getTerminal().getP();
-        float generatorTargetP = network.getGenerator("generator1").getTargetP();
+        double loadP = network.getLoad("load1").getTerminal().getP();
+        double loadP0 = network.getLoad("load1").getP0();
+        double generatorP = network.getGenerator("generator1").getTerminal().getP();
+        double generatorTargetP = network.getGenerator("generator1").getTargetP();
 
         Map<String, Float> injections = new HashMap<String, Float>();
         injections.put("load1", 10f);

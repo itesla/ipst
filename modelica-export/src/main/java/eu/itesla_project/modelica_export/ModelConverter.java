@@ -261,7 +261,7 @@ public final class ModelConverter {
      * @param modContext
      * @return
      */
-    public static BusRecord getModelicaRecord(String busId, float busVoltage, float busAngle, ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
+    public static BusRecord getModelicaRecord(String busId, double busVoltage, double busAngle, ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
         BusRecord busRecord = new BusRecord(busId, busVoltage, busAngle);
         busRecord.createModelicaName(modContext, ddbManager, simulator);
 
@@ -274,7 +274,7 @@ public final class ModelConverter {
      * @param modContext
      * @return
      */
-    public static LineRecord getModelicaRecord(Line line, ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator, float snref) {
+    public static LineRecord getModelicaRecord(Line line, ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator, double snref) {
         LineRecord lineRecord = new LineRecord(line, snref);
         lineRecord.createModelicaName(modContext, ddbManager, simulator);
 
@@ -288,7 +288,7 @@ public final class ModelConverter {
      * @param modContext
      * @return
      */
-    public static DanglingLineRecord getModelicaRecord(DanglingLine dline, String danglingBusName, String danglingLoadName, ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator, float snref) {
+    public static DanglingLineRecord getModelicaRecord(DanglingLine dline, String danglingBusName, String danglingLoadName, ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator, double snref) {
         DanglingLineRecord dlineRecord = new DanglingLineRecord(dline, danglingBusName, danglingLoadName, snref);
         dlineRecord.createModelicaName(modContext, ddbManager, simulator);
 
@@ -302,7 +302,7 @@ public final class ModelConverter {
      * @param fixed
      * @return
      */
-    public static BranchRecord getModelicaRecord(TwoWindingsTransformer transformer, ModExportContext modContext, boolean fixed, DDBManager ddbManager, SimulatorInst simulator, float snref) {
+    public static BranchRecord getModelicaRecord(TwoWindingsTransformer transformer, ModExportContext modContext, boolean fixed, DDBManager ddbManager, SimulatorInst simulator, double snref) {
 //        TransformerForTest trafoForTest = new TransformerForTest(transformer, snref);
 //        trafoForTest.createModelicaName(modContext, ddbManager, simulator);
 //        return trafoForTest;
@@ -325,7 +325,7 @@ public final class ModelConverter {
      * @param modContext
      * @return
      */
-    public static LoadRecord getModelicaRecord(Load load, ConnectBusInfo busInfo, ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator, float snref, SourceEngine sourceEngine) {
+    public static LoadRecord getModelicaRecord(Load load, ConnectBusInfo busInfo, ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator, double snref, SourceEngine sourceEngine) {
         LoadRecord loadRecord = new LoadRecord(load, busInfo, snref, sourceEngine);
         loadRecord.createModelicaName(modContext, ddbManager, simulator);
 
@@ -338,13 +338,13 @@ public final class ModelConverter {
      * @param modContext
      * @return
      */
-//    public static FixedInjectionRecord getModelicaRecord(String loadId, float p0, float q0, float busVoltage, float busAngle, ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator, float snref, SourceEngine sourceEngine) {
+//    public static FixedInjectionRecord getModelicaRecord(String loadId, double p0, double q0, double busVoltage, double busAngle, ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator, double snref, SourceEngine sourceEngine) {
 //        FixedInjectionRecord fixInjRecord = new FixedInjectionRecord(loadId, p0, q0, busVoltage, busAngle, snref, sourceEngine);
 //        fixInjRecord.createModelicaName(modContext, ddbManager, simulator);
 //
 //        return fixInjRecord;
 //    }
-    public static LoadRecord getModelicaRecord(String loadId, float p0, float q0, float busVoltage, float busAngle, ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator, float snref, SourceEngine sourceEngine) {
+    public static LoadRecord getModelicaRecord(String loadId, double p0, double q0, double busVoltage, double busAngle, ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator, double snref, SourceEngine sourceEngine) {
         LoadRecord loadRecord = new LoadRecord(loadId, p0, q0, busVoltage, busAngle, snref, sourceEngine);
         loadRecord.createModelicaName(modContext, ddbManager, simulator);
 
@@ -375,7 +375,7 @@ public final class ModelConverter {
      * @param paramsDictionary
      * @return
      */
-    public static GeneratorRecord getModelicaRecord(Generator generator, ConnectBusInfo busInfo, ModExportContext modContext, DDBManager ddbManager, SimulatorInst modSim, SimulatorInst eurSim, boolean isInjection, float snref, Map<String, Map<String, String>> paramsDictionary, SourceEngine sourceEngine) {
+    public static GeneratorRecord getModelicaRecord(Generator generator, ConnectBusInfo busInfo, ModExportContext modContext, DDBManager ddbManager, SimulatorInst modSim, SimulatorInst eurSim, boolean isInjection, double snref, Map<String, Map<String, String>> paramsDictionary, SourceEngine sourceEngine) {
         GeneratorRecord generatorRecord = new GeneratorRecord(generator, busInfo, isInjection, snref, eurSim, paramsDictionary, sourceEngine);
         generatorRecord.createModelicaName(modContext, ddbManager, modSim);
 
@@ -398,7 +398,7 @@ public final class ModelConverter {
     }
 
 
-    public static float getNominalVoltage(Branch branch, Branch.Side side) {
+    public static double getNominalVoltage(Branch branch, Branch.Side side) {
 
         return 0;
     }

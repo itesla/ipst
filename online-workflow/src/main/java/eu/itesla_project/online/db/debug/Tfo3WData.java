@@ -16,19 +16,19 @@ public class Tfo3WData implements EquipmentData {
     private final String bus1Id;
     private final String bus2Id;
     private final String bus3Id;
-    private final float apparentPower1;
-    private final float apparentPower2;
-    private final float apparentPower3;
-    private final float nominalVoltage1;
-    private final float nominalVoltage2;
-    private final float nominalVoltage3;
-    private final float currentLimit1;
-    private final float currentLimit2;
-    private final float currentLimit3;
+    private final double apparentPower1;
+    private final double apparentPower2;
+    private final double apparentPower3;
+    private final double nominalVoltage1;
+    private final double nominalVoltage2;
+    private final double nominalVoltage3;
+    private final double currentLimit1;
+    private final double currentLimit2;
+    private final double currentLimit3;
 
-    public Tfo3WData(String tfoId, String bus1Id, String bus2Id, String bus3Id, float apparentPower1, float apparentPower2,
-                     float apparentPower3, float nominalVoltage1, float nominalVoltage2, float nominalVoltage3, float currentLimit1,
-                     float currentLimit2, float currentLimit3) {
+    public Tfo3WData(String tfoId, String bus1Id, String bus2Id, String bus3Id, double apparentPower1, double apparentPower2,
+                     double apparentPower3, double nominalVoltage1, double nominalVoltage2, double nominalVoltage3, double currentLimit1,
+                     double currentLimit2, double currentLimit3) {
         this.tfoId = tfoId;
         this.bus1Id = bus1Id;
         this.bus2Id = bus2Id;
@@ -74,23 +74,23 @@ public class Tfo3WData implements EquipmentData {
             case "bus 3 id":
                 return bus3Id;
             case "apparent power 1":
-                return Float.toString(apparentPower1);
+                return Double.toString(apparentPower1);
             case "apparent power 2":
-                return Float.toString(apparentPower2);
+                return Double.toString(apparentPower2);
             case "apparent power 3":
-                return Float.toString(apparentPower3);
+                return Double.toString(apparentPower3);
             case "nominal voltage 1":
-                return Float.toString(nominalVoltage1);
+                return Double.toString(nominalVoltage1);
             case "nominal voltage 2":
-                return Float.toString(nominalVoltage2);
+                return Double.toString(nominalVoltage2);
             case "nominal voltage 3":
-                return Float.toString(nominalVoltage3);
+                return Double.toString(nominalVoltage3);
             case "current limit 1":
-                return Float.toString(currentLimit1);
+                return Double.toString(currentLimit1);
             case "current limit 2":
-                return Float.toString(currentLimit2);
+                return Double.toString(currentLimit2);
             case "current limit 3":
-                return Float.toString(currentLimit3);
+                return Double.toString(currentLimit3);
             default:
                 throw new RuntimeException("no " + fieldName + " available in tfo data");
         }

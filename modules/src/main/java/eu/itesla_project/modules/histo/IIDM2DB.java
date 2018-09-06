@@ -189,10 +189,10 @@ public final class IIDM2DB {
     }
 
     private static class TerminalContext {
-        float p = Float.NaN;
-        float q = Float.NaN;
-        float v = Float.NaN;
-        float i = Float.NaN;
+        double p = Double.NaN;
+        double q = Double.NaN;
+        double v = Double.NaN;
+        double i = Double.NaN;
 
         private void update(Terminal t) {
             if (t.getBusView().getBus() != null) {
@@ -262,20 +262,20 @@ public final class IIDM2DB {
                         context.update(t);
 
                         if (config.isReplaceMissingValues()) {
-                            if (Float.isNaN(context.p)) {
+                            if (Double.isNaN(context.p)) {
                                 context.p = 0f;
                             }
-                            if (Float.isNaN(context.q)) {
+                            if (Double.isNaN(context.q)) {
                                 context.q = 0f;
                             }
-                            if (Float.isNaN(context.v)) {
+                            if (Double.isNaN(context.v)) {
                                 // use connectable bus voltage, better than nothing...
                                 context.v = t.getBusBreakerView().getConnectableBus().getV();
                             }
-                            if (Float.isNaN(context.v)) {
+                            if (Double.isNaN(context.v)) {
                                 context.v = 0f; // TODO is there a better value?
                             }
-                            if (Float.isNaN(context.i)) {
+                            if (Double.isNaN(context.i)) {
                                 context.i = 0f;
                             }
                         }
@@ -285,22 +285,22 @@ public final class IIDM2DB {
                         valueMap.put(new HistoDbNetworkAttributeId(inj.getId(), HistoDbAttr.I), context.i);
                     }
 
-                    private void visitBranch(Branch branch, Branch.Side side, float r, float x, float g1, float b1, float g2, float b2, float ratio) {
+                    private void visitBranch(Branch branch, Branch.Side side, double r, double x, double g1, double b1, double g2, double b2, double ratio) {
                         Terminal t = side == Branch.Side.ONE ? branch.getTerminal1() : branch.getTerminal2();
 
                         TerminalContext context = TerminalContext.create(t);
 
                         if (config.isReplaceMissingValues()) {
-                            if (Float.isNaN(context.p)) {
+                            if (Double.isNaN(context.p)) {
                                 context.p = 0f;
                             }
-                            if (Float.isNaN(context.q)) {
+                            if (Double.isNaN(context.q)) {
                                 context.q = 0f;
                             }
-                            if (Float.isNaN(context.v)) {
+                            if (Double.isNaN(context.v)) {
                                 Terminal otherT = t == branch.getTerminal1() ? branch.getTerminal2() : branch.getTerminal1();
                                 Bus otherBus = otherT.getBusView().getBus();
-                                if (otherBus != null && !Float.isNaN(otherBus.getV())) {
+                                if (otherBus != null && !Double.isNaN(otherBus.getV())) {
                                     // compute the voltage from the other side physical values
                                     // TODO approx we do not consider voltage drop due to branch impedance
                                     if (t == branch.getTerminal1()) {
@@ -317,10 +317,10 @@ public final class IIDM2DB {
                                     context.v = t.getBusBreakerView().getConnectableBus().getV();
                                 }
                             }
-                            if (Float.isNaN(context.v)) {
+                            if (Double.isNaN(context.v)) {
                                 context.v = 0;  // TODO is there a better value?
                             }
-                            if (Float.isNaN(context.i)) {
+                            if (Double.isNaN(context.i)) {
                                 context.i = 0;
                             }
                         }
@@ -335,7 +335,7 @@ public final class IIDM2DB {
                         TerminalContext context = new TerminalContext();
                         visitInjection(g, context);
                         // reactive limit
-                        float qmax = g.getReactiveLimits().getMaxQ(context.p);
+                        double qmax = g.getReactiveLimits().getMaxQ(context.p);
                         valueMap.put(new HistoDbNetworkAttributeId(g.getId(), HistoDbAttr.QR), Math.abs(qmax - context.q));
                     }
 
@@ -387,16 +387,16 @@ public final class IIDM2DB {
                         TerminalContext context = TerminalContext.create(t);
 
                         if (config.isReplaceMissingValues()) {
-                            if (Float.isNaN(context.p)) {
+                            if (Double.isNaN(context.p)) {
                                 context.p = 0f;
                             }
-                            if (Float.isNaN(context.q)) {
+                            if (Double.isNaN(context.q)) {
                                 context.q = 0f;
                             }
-                            if (Float.isNaN(context.v)) {
+                            if (Double.isNaN(context.v)) {
                                 context.v = 0; // TODO is possible to find a better replacement value?
                             }
-                            if (Float.isNaN(context.i)) {
+                            if (Double.isNaN(context.i)) {
                                 context.i = 0f;
                             }
                         }
@@ -448,10 +448,10 @@ public final class IIDM2DB {
                 for (Generator g: vl.getGenerators()) {
                     Terminal t = g.getTerminal();
                     if (t.getBusView().getBus() != null) {
-                        if (!Float.isNaN(t.getP())) {
+                        if (!Double.isNaN(t.getP())) {
                             pgen += t.getP();
                         }
-                        if (!Float.isNaN(t.getQ())) {
+                        if (!Double.isNaN(t.getQ())) {
                             qgen += t.getQ();
                         }
                     }
@@ -459,10 +459,10 @@ public final class IIDM2DB {
                 for (Load l: vl.getLoads()) {
                     Terminal t = l.getTerminal();
                     if (t.getBusView().getBus() != null) {
-                        if (!Float.isNaN(t.getP())) {
+                        if (!Double.isNaN(t.getP())) {
                             pload += t.getP();
                         }
-                        if (!Float.isNaN(t.getQ())) {
+                        if (!Double.isNaN(t.getQ())) {
                             qload += t.getQ();
                         }
                     }
@@ -470,7 +470,7 @@ public final class IIDM2DB {
                 for (ShuntCompensator s: vl.getShunts()) {
                     Terminal t = s.getTerminal();
                     if (t.getBusView().getBus() != null) {
-                        if (!Float.isNaN(t.getQ())) {
+                        if (!Double.isNaN(t.getQ())) {
                             qshunt += t.getQ();
                         }
                     }
@@ -479,29 +479,29 @@ public final class IIDM2DB {
                 float vSum = 0;
                 int validBusCount = 0;
                 int busCount = 0;
-                float vMin = Float.NaN;
-                float vMax = Float.NaN;
+                double vMin = Double.NaN;
+                double vMax = Double.NaN;
                 for (Bus b : vl.getBusView().getBuses()) {
-                    if (!Float.isNaN(b.getV())) {
+                    if (!Double.isNaN(b.getV())) {
                         vSum += b.getV();
                         validBusCount++;
-                        vMin = Float.isNaN(vMin) ? b.getV() : Math.min(vMin, b.getV());
-                        vMax = Float.isNaN(vMax) ? b.getV() : Math.max(vMax, b.getV());
+                        vMin = Double.isNaN(vMin) ? b.getV() : Math.min(vMin, b.getV());
+                        vMax = Double.isNaN(vMax) ? b.getV() : Math.max(vMax, b.getV());
                     }
                     busCount++;
                 }
-                float meanV = Float.NaN;
+                double meanV = Double.NaN;
                 if (validBusCount > 0) {
                     meanV = vSum / validBusCount;
                 }
                 if (config.isReplaceMissingValues()) {
-                    if (Float.isNaN(meanV)) {
+                    if (Double.isNaN(meanV)) {
                         meanV = 0; // TODO is there a better value?
                     }
-                    if (Float.isNaN(vMin)) {
+                    if (Double.isNaN(vMin)) {
                         vMin = 0; // TODO is there a better value?
                     }
-                    if (Float.isNaN(vMax)) {
+                    if (Double.isNaN(vMax)) {
                         vMax = 0; // TODO is there a better value?
                     }
                 }

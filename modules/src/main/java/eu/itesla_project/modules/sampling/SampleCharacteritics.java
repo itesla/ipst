@@ -17,24 +17,24 @@ import com.powsybl.iidm.network.Network;
  */
 public class SampleCharacteritics {
 
-    private final float loadPositiveP;
-    private final float loadPositiveQ;
-    private final float loadNegativeP;
-    private final float loadNegativeQ;
-    private final float generationP;
-    private final float generationQ;
-    private final float boundariesP;
-    private final float boundariesQ;
+    private final double loadPositiveP;
+    private final double loadPositiveQ;
+    private final double loadNegativeP;
+    private final double loadNegativeQ;
+    private final double generationP;
+    private final double generationQ;
+    private final double boundariesP;
+    private final double boundariesQ;
 
     public static SampleCharacteritics fromNetwork(Network network, boolean generationSampled, boolean boundariesSampled) {
-        float loadPositiveP = 0;
-        float loadPositiveQ = 0;
-        float loadNegativeP = 0;
-        float loadNegativeQ = 0;
-        float generationP = 0;
-        float generationQ = 0;
-        float boundariesP = 0;
-        float boundariesQ = 0;
+        double loadPositiveP = 0;
+        double loadPositiveQ = 0;
+        double loadNegativeP = 0;
+        double loadNegativeQ = 0;
+        double generationP = 0;
+        double generationQ = 0;
+        double boundariesP = 0;
+        double boundariesQ = 0;
         for (Load l : network.getLoads()) {
             if (l.getP0() > 0) {
                 loadPositiveP += l.getP0();
@@ -66,8 +66,8 @@ public class SampleCharacteritics {
         return new SampleCharacteritics(loadPositiveP, loadPositiveQ, loadNegativeP, loadNegativeQ, generationP, generationQ, boundariesP, boundariesQ);
     }
 
-    public SampleCharacteritics(float loadPositiveP, float loadPositiveQ, float loadNegativeP, float loadNegativeQ,
-                                float generationP, float generationQ, float boundariesP, float boundariesQ) {
+    public SampleCharacteritics(double loadPositiveP, double loadPositiveQ, double loadNegativeP, double loadNegativeQ,
+                                double generationP, double generationQ, double boundariesP, double boundariesQ) {
         this.loadPositiveP = loadPositiveP;
         this.loadPositiveQ = loadPositiveQ;
         this.loadNegativeP = loadNegativeP;
@@ -78,39 +78,39 @@ public class SampleCharacteritics {
         this.boundariesQ = boundariesQ;
     }
 
-    public float getLoadPositiveP() {
+    public double getLoadPositiveP() {
         return loadPositiveP;
     }
 
-    public float getLoadPositiveQ() {
+    public double getLoadPositiveQ() {
         return loadPositiveQ;
     }
 
-    public float getLoadNegativeP() {
+    public double getLoadNegativeP() {
         return loadNegativeP;
     }
 
-    public float getLoadNegativeQ() {
+    public double getLoadNegativeQ() {
         return loadNegativeQ;
     }
 
-    public float getGenerationP() {
+    public double getGenerationP() {
         return generationP;
     }
 
-    public float getGenerationQ() {
+    public double getGenerationQ() {
         return generationQ;
     }
 
-    public float getBoundariesP() {
+    public double getBoundariesP() {
         return boundariesP;
     }
 
-    public float getBoundariesQ() {
+    public double getBoundariesQ() {
         return boundariesQ;
     }
 
-    private static final float EPSILON = 1f;
+    private static final double EPSILON = 1;
 
     @Override
     public boolean equals(Object obj) {

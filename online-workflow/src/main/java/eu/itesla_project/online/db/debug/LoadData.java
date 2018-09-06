@@ -15,11 +15,11 @@ public class LoadData implements EquipmentData {
     private final String loadId;
     private final String busId;
     private final boolean isConnected;
-    private final float nominalVoltage;
-    private final float activePower;
-    private final float reactivePower;
+    private final double nominalVoltage;
+    private final double activePower;
+    private final double reactivePower;
 
-    public LoadData(String loadId, String busId, boolean isConnected, float nominalVoltage, float activePower, float reactivePower) {
+    public LoadData(String loadId, String busId, boolean isConnected, double nominalVoltage, double activePower, double reactivePower) {
         this.loadId = loadId;
         this.busId = busId;
         this.isConnected = isConnected;
@@ -49,11 +49,11 @@ public class LoadData implements EquipmentData {
             case "connected":
                 return Boolean.toString(isConnected);
             case "nominal voltage":
-                return Float.toString(nominalVoltage);
+                return Double.toString(nominalVoltage);
             case "active power":
-                return Float.toString(activePower);
+                return Double.toString(activePower);
             case "reactive power":
-                return Float.toString(reactivePower);
+                return Double.toString(reactivePower);
             default:
                 throw new RuntimeException("no " + fieldName + " available in load data");
         }

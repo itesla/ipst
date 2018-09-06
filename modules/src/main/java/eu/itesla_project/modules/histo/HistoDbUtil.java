@@ -27,10 +27,10 @@ public final class HistoDbUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HistoDbUtil.class);
 
-    private static final Range<Float> VOLTAGE_RANGE_DEFAULT_GEN_PU = Range.closed(0.95f, 1.05f);
-    private static final Range<Float> VOLTAGE_RANGE_NUCL_THE_PU = Range.closed(0.95f, 1.05f);
-    private static final Range<Float> VOLTAGE_RANGE_HYD_PU = Range.closed(0.9f, 1.1f);
-    private static final Range<Float> VOLTAGE_RANGE_NO_GEN = Range.closed(0.8f, 1.2f);
+    private static final Range<Double> VOLTAGE_RANGE_DEFAULT_GEN_PU = Range.closed(0.95, 1.05);
+    private static final Range<Double> VOLTAGE_RANGE_NUCL_THE_PU = Range.closed(0.95, 1.05);
+    private static final Range<Double> VOLTAGE_RANGE_HYD_PU = Range.closed(0.9, 1.1);
+    private static final Range<Double> VOLTAGE_RANGE_NO_GEN = Range.closed(0.8, 1.2);
 
     private HistoDbUtil() {
     }
@@ -39,9 +39,9 @@ public final class HistoDbUtil {
         return new HistoDbNetworkAttributeId(vl.getId(), HistoDbAttr.V);
     }
 
-    private static Range<Float> span(Range<Float> r1, Range<Float> r2) {
-        return Range.closed(r2.lowerEndpoint() < r1.lowerEndpoint() || Float.isNaN(r1.lowerEndpoint()) ? r2.lowerEndpoint() : r1.lowerEndpoint(),
-                            r2.upperEndpoint() > r1.upperEndpoint() || Float.isNaN(r1.upperEndpoint()) ? r2.upperEndpoint() : r1.upperEndpoint());
+    private static Range<Double> span(Range<Double> r1, Range<Double> r2) {
+        return Range.closed(r2.lowerEndpoint() < r1.lowerEndpoint() || Double.isNaN(r1.lowerEndpoint()) ? r2.lowerEndpoint() : r1.lowerEndpoint(),
+                            r2.upperEndpoint() > r1.upperEndpoint() || Double.isNaN(r1.upperEndpoint()) ? r2.upperEndpoint() : r1.upperEndpoint());
 
     }
 
@@ -55,7 +55,7 @@ public final class HistoDbUtil {
         for (VoltageLevel vl : network.getVoltageLevels()) {
             HistoDbNetworkAttributeId attributeId = createVoltageAttributeId(vl);
 
-            Range<Float> histoVoltageRangePu = Range.closed(stats.getValue(HistoDbStatsType.P0_1, attributeId, Float.NaN) / vl.getNominalV(),
+            Range<Double> histoVoltageRangePu = Range.closed(stats.getValue(HistoDbStatsType.P0_1, attributeId, Float.NaN) / vl.getNominalV(),
                                                             stats.getValue(HistoDbStatsType.P99_9, attributeId, Float.NaN) / vl.getNominalV());
 
             Set<EnergySource> energySources = EnumSet.noneOf(EnergySource.class);
@@ -63,17 +63,17 @@ public final class HistoDbUtil {
                 energySources.add(g.getEnergySource());
             }
 
-            Range<Float> networkVoltageRangePu = Float.isNaN(vl.getLowVoltageLimit()) || Float.isNaN(vl.getHighVoltageLimit())
-                    ? Range.closed(Float.NaN, Float.NaN)
+            Range<Double> networkVoltageRangePu = Double.isNaN(vl.getLowVoltageLimit()) || Double.isNaN(vl.getHighVoltageLimit())
+                    ? Range.closed(Double.NaN, Double.NaN)
                     : Range.closed(vl.getLowVoltageLimit() / vl.getNominalV(), vl.getHighVoltageLimit() / vl.getNominalV());
 
             LOGGER.trace("Fix voltage range of {}: histo={}, network={}, energySources={}",
                     vl.getId(), histoVoltageRangePu, networkVoltageRangePu, energySources);
 
-            Range<Float> rangeToEnclosePu;
+            Range<Double> rangeToEnclosePu;
             if (energySources.isEmpty()) {
-                rangeToEnclosePu = Range.closed(Float.isNaN(networkVoltageRangePu.lowerEndpoint()) ? VOLTAGE_RANGE_NO_GEN.lowerEndpoint() : networkVoltageRangePu.lowerEndpoint(),
-                                                Float.isNaN(networkVoltageRangePu.upperEndpoint()) ? VOLTAGE_RANGE_NO_GEN.upperEndpoint() : networkVoltageRangePu.upperEndpoint());
+                rangeToEnclosePu = Range.closed(Double.isNaN(networkVoltageRangePu.lowerEndpoint()) ? VOLTAGE_RANGE_NO_GEN.lowerEndpoint() : networkVoltageRangePu.lowerEndpoint(),
+                                                Double.isNaN(networkVoltageRangePu.upperEndpoint()) ? VOLTAGE_RANGE_NO_GEN.upperEndpoint() : networkVoltageRangePu.upperEndpoint());
             } else {
                 if (energySources.contains(EnergySource.NUCLEAR)
                         || energySources.contains(EnergySource.THERMAL)) {
@@ -88,8 +88,8 @@ public final class HistoDbUtil {
                     throw new AssertionError();
                 }
             }
-            Range<Float> rangePu = span(histoVoltageRangePu, rangeToEnclosePu);
-            Range<Float> range = Range.closed(rangePu.lowerEndpoint() * vl.getNominalV(), rangePu.upperEndpoint() * vl.getNominalV());
+            Range<Double> rangePu = span(histoVoltageRangePu, rangeToEnclosePu);
+            Range<Double> range = Range.closed(rangePu.lowerEndpoint() * vl.getNominalV(), rangePu.upperEndpoint() * vl.getNominalV());
 
             LOGGER.debug("Voltage range of {}: {} Kv ({} pu)", vl.getId(), range, rangePu);
 
@@ -120,9 +120,9 @@ public final class HistoDbUtil {
             for (Generator g : network.getGenerators()) {
                 if (hasInconsistenceActiveLimits(g)) {
                     HistoDbNetworkAttributeId attributeId = new HistoDbNetworkAttributeId(g.getId(), HistoDbAttr.P);
-                    float newMinP = -stats.getValue(HistoDbStatsType.MAX, attributeId, Float.NaN);
-                    float newMaxP = -stats.getValue(HistoDbStatsType.MIN, attributeId, Float.NaN);
-                    if (!Float.isNaN(newMinP) && !Float.isNaN(newMaxP)) {
+                    double newMinP = -stats.getValue(HistoDbStatsType.MAX, attributeId, Float.NaN);
+                    double newMaxP = -stats.getValue(HistoDbStatsType.MIN, attributeId, Float.NaN);
+                    if (!Double.isNaN(newMinP) && !Double.isNaN(newMaxP)) {
                         LOGGER.debug("Fix active power limits of generator {}: [{}, {}] -> [{}, {}]",
                                 g.getId(), g.getMinP(), g.getMaxP(), newMinP, newMaxP);
                         g.setMinP(newMinP);

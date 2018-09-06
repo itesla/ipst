@@ -31,7 +31,7 @@ public class NetworkUtilsTest {
     @Test
     public void test() {
         Bus gen1Bus = Mockito.mock(Bus.class);
-        Mockito.when(gen1Bus.getV()).thenReturn(380f);
+        Mockito.when(gen1Bus.getV()).thenReturn(380.0);
         BusBreakerView gen1BusBreakerView = Mockito.mock(BusBreakerView.class);
         Mockito.when(gen1BusBreakerView.getBus()).thenReturn(gen1Bus);
         Terminal gen1Terminal = Mockito.mock(Terminal.class);
@@ -63,7 +63,7 @@ public class NetworkUtilsTest {
         assertEquals("gen1", NetworkUtils.getRenewableGeneratorsIds(network).iterator().next());
         
         Bus load1Bus = Mockito.mock(Bus.class);
-        Mockito.when(load1Bus.getV()).thenReturn(Float.NaN);
+        Mockito.when(load1Bus.getV()).thenReturn(Double.NaN);
         BusBreakerView load1BusBreakerView = Mockito.mock(BusBreakerView.class);
         Mockito.when(load1BusBreakerView.getBus()).thenReturn(load1Bus);
         Terminal load1Terminal = Mockito.mock(Terminal.class);
@@ -74,7 +74,7 @@ public class NetworkUtilsTest {
         assertFalse(NetworkUtils.isConnected(load1));
 
         Bus load2Bus = Mockito.mock(Bus.class);
-        Mockito.when(load2Bus.getV()).thenReturn(380f);
+        Mockito.when(load2Bus.getV()).thenReturn(380.0);
         BusBreakerView load2BusBreakerView = Mockito.mock(BusBreakerView.class);
         Mockito.when(load2BusBreakerView.getBus()).thenReturn(load2Bus);
         Terminal load2Terminal = Mockito.mock(Terminal.class);

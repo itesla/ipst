@@ -274,8 +274,8 @@ public class OnlineDBUtils implements ProcessDBUtils {
         limitList.forEach(lv -> {
             LimitViolationType violationType = lv.getLimitType();
             String equipment = lv.getSubjectId();
-            float limit = lv.getLimit();
-            float value = lv.getValue();
+            double limit = lv.getLimit();
+            double value = lv.getValue();
             ViolationSynthesis synt;
             Optional<ViolationSynthesis> searchSynt = violationList.stream()
                     .filter(v -> v.getEquipment().equals(equipment))

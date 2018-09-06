@@ -82,11 +82,11 @@ public class HistoDbPrintVoltageRangeTool implements Tool {
     }
 
     private static final class VoltageStats {
-        private final Range<Float> range;
+        private final Range<Double> range;
         private final int count;
-        private final float vnom;
-        private float pmax = 0;
-        private VoltageStats(Range<Float> range, int count, float vnom) {
+        private final double vnom;
+        private double pmax = 0;
+        private VoltageStats(Range<Double> range, int count, double vnom) {
             this.range = range;
             this.count = count;
             this.vnom = vnom;
@@ -114,8 +114,8 @@ public class HistoDbPrintVoltageRangeTool implements Tool {
             HistoDbStats stats = histoDbClient.queryStats(attrIds, interval, HistoDbHorizon.SN, false);
             for (VoltageLevel vl : network.getVoltageLevels()) {
                 HistoDbNetworkAttributeId attrId = new HistoDbNetworkAttributeId(vl.getId(), HistoDbAttr.V);
-                float min = stats.getValue(HistoDbStatsType.MIN, attrId, Float.NaN) / vl.getNominalV();
-                float max = stats.getValue(HistoDbStatsType.MAX, attrId, Float.NaN) / vl.getNominalV();
+                double min = stats.getValue(HistoDbStatsType.MIN, attrId, Float.NaN) / vl.getNominalV();
+                double max = stats.getValue(HistoDbStatsType.MAX, attrId, Float.NaN) / vl.getNominalV();
                 int count = (int) stats.getValue(HistoDbStatsType.COUNT, attrId, 0);
                 VoltageStats vstats = new VoltageStats(Range.closed(min, max), count, vl.getNominalV());
                 for (Generator g : vl.getGenerators()) {
@@ -136,23 +136,23 @@ public class HistoDbPrintVoltageRangeTool implements Tool {
             (e1, e2) -> {
                 VoltageStats stats1 = e1.getValue();
                 VoltageStats stats2 = e2.getValue();
-                Range<Float> r1 = stats1.range;
-                Range<Float> r2 = stats2.range;
-                float s1 = r1.upperEndpoint() - r1.lowerEndpoint();
-                float s2 = r2.upperEndpoint() - r2.lowerEndpoint();
-                return Float.compare(s1, s2);
+                Range<Double> r1 = stats1.range;
+                Range<Double> r2 = stats2.range;
+                double s1 = r1.upperEndpoint() - r1.lowerEndpoint();
+                double s2 = r2.upperEndpoint() - r2.lowerEndpoint();
+                return Double.compare(s1, s2);
             }).forEach(e -> {
                 String vlId = e.getKey();
                 VoltageStats stats = e.getValue();
-                Range<Float> r = stats.range;
-                float s = r.upperEndpoint() - r.lowerEndpoint();
+                Range<Double> r = stats.range;
+                double s = r.upperEndpoint() - r.lowerEndpoint();
                 table.addCell(vlId);
-                table.addCell(Float.toString(stats.vnom));
-                table.addCell(Float.toString(s));
-                table.addCell(Float.toString(r.lowerEndpoint()));
-                table.addCell(Float.toString(r.upperEndpoint()));
+                table.addCell(Double.toString(stats.vnom));
+                table.addCell(Double.toString(s));
+                table.addCell(Double.toString(r.lowerEndpoint()));
+                table.addCell(Double.toString(r.upperEndpoint()));
                 table.addCell(Integer.toString(stats.count));
-                table.addCell(Float.toString(stats.pmax));
+                table.addCell(Double.toString(stats.pmax));
             });
         context.getOutputStream().println(table.render());
     }

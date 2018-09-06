@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  */
 public class LineRecord extends BranchRecord {
 
-    public LineRecord(Line line, float snref) {
+    public LineRecord(Line line, double snref) {
         super(line);
         this.line = line;
 
@@ -56,7 +56,7 @@ public class LineRecord extends BranchRecord {
         Equipments.ConnectionInfo info2 = Equipments.getConnectionInfoInBusBreakerView(this.line.getTerminal2());
         Bus b2 = info2.getConnectionBus();
 
-        if ((!Float.isNaN(b1.getV()) && info1.isConnected()) || (!Float.isNaN(b2.getV()) && info2.isConnected())) {
+        if ((!Double.isNaN(b1.getV()) && info1.isConnected()) || (!Double.isNaN(b2.getV()) && info2.isConnected())) {
             if (super.isCorrect()) {
                 if (super.getModelicaType() != null) {
                     this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);
@@ -101,11 +101,11 @@ public class LineRecord extends BranchRecord {
      * Add IIDM parameters to Line Modelica Model in p.u
      */
     @Override
-    public void setParameters(float snref) {
+    public void setParameters(double snref) {
         //super.iidmbranchParameters = new ArrayList<IIDMParameter>();
-        float tNominalV = ((Line) this.line).getTerminal2().getVoltageLevel().getNominalV();
-        float voltage = !Float.isNaN(tNominalV) ? tNominalV : 0;
-        float z = (voltage * voltage) / snref;
+        double tNominalV = ((Line) this.line).getTerminal2().getVoltageLevel().getNominalV();
+        double voltage = !Double.isNaN(tNominalV) ? tNominalV : 0;
+        double z = (voltage * voltage) / snref;
 
         super.addParameter(this.iidmbranchParameters, StaticData.R, this.line.getR() / z);
         super.addParameter(this.iidmbranchParameters, StaticData.X, this.line.getX() / z);

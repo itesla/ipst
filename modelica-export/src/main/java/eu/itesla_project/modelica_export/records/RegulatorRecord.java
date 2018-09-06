@@ -384,7 +384,7 @@ public class RegulatorRecord extends ModelicaRecord {
             }
             if (this.getModelicaType().equalsIgnoreCase(PsseModDefaultTypes.SCRX)) {
                 Bus bus = this.genRecord.getGenerator().getTerminal().getBusBreakerView().getBus();
-                float busVoltage = bus.getV();
+                double busVoltage = bus.getV();
                 double v0 = busVoltage / bus.getVoltageLevel().getNominalV();
                 parameter = new IIDMParameter(PsseFixedData.V_0, v0);
                 this.iidmregParameters.add(parameter);

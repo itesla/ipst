@@ -15,17 +15,17 @@ public class Tfo2WData implements EquipmentData {
     private final String tfoId;
     private final String bus1Id;
     private final String bus2Id;
-    private final float apparentPower1;
-    private final float apparentPower2;
-    private final float nominalVoltage1;
-    private final float nominalVoltage2;
-    private final float currentLimit1;
-    private final float currentLimit2;
+    private final double apparentPower1;
+    private final double apparentPower2;
+    private final double nominalVoltage1;
+    private final double nominalVoltage2;
+    private final double currentLimit1;
+    private final double currentLimit2;
     private final boolean isRegulating;
     private final int correntStepPosition;
 
-    public Tfo2WData(String tfoId, String bus1Id, String bus2Id, float apparentPower1, float apparentPower2, float nominalVoltage1,
-                     float nominalVoltage2, float currentLimi1, float currentLimi2, boolean isRegulating, int correntStepPosition) {
+    public Tfo2WData(String tfoId, String bus1Id, String bus2Id, double apparentPower1, double apparentPower2, double nominalVoltage1,
+                     double nominalVoltage2, double currentLimi1, double currentLimi2, boolean isRegulating, int correntStepPosition) {
         this.tfoId = tfoId;
         this.bus1Id = bus1Id;
         this.bus2Id = bus2Id;
@@ -65,17 +65,17 @@ public class Tfo2WData implements EquipmentData {
             case "bus 2 id":
                 return bus2Id;
             case "apparent power 1":
-                return Float.toString(apparentPower1);
+                return Double.toString(apparentPower1);
             case "apparent power 2":
-                return Float.toString(apparentPower2);
+                return Double.toString(apparentPower2);
             case "nominal voltage 1":
-                return Float.toString(nominalVoltage1);
+                return Double.toString(nominalVoltage1);
             case "nominal voltage 2":
-                return Float.toString(nominalVoltage2);
+                return Double.toString(nominalVoltage2);
             case "current limit 1":
-                return Float.toString(currentLimit1);
+                return Double.toString(currentLimit1);
             case "current limit 2":
-                return Float.toString(currentLimit2);
+                return Double.toString(currentLimit2);
             case "regulating status":
                 return Boolean.toString(isRegulating);
             case "step position":

@@ -118,8 +118,8 @@ public class ModelicaMainExporter {
                 //Moreover, for Eurostag the sign must be the same in IIDM and HELM and as it has been changed in the HELM integration
                 //i should be changed after this in the IIDM
                 for (Generator gen : _network.getGenerators()) {
-                    float p = -gen.getTerminal().getP();
-                    float q = -gen.getTerminal().getQ();
+                    double p = -gen.getTerminal().getP();
+                    double q = -gen.getTerminal().getQ();
 
                     gen.getTerminal().setP(p);
                     gen.getTerminal().setQ(q);

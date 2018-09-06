@@ -226,7 +226,7 @@ public final class WCAUtils {
         injections.keySet().forEach(injection -> {
             Load load = network.getLoad(injection);
             if (load != null) {
-                float oldP = load.getTerminal().getP();
+                double oldP = load.getTerminal().getP();
                 LOGGER.debug("Network {}, state {}: incrementing P of load {} from {} to {}",
                              network.getId(), network.getStateManager().getWorkingStateId(), injection, oldP, oldP + injections.get(injection));
                 load.getTerminal().setP(oldP + injections.get(injection));
@@ -234,7 +234,7 @@ public final class WCAUtils {
             } else {
                 Generator generator = network.getGenerator(injection);
                 if (generator != null) {
-                    float oldP = generator.getTerminal().getP();
+                    double oldP = generator.getTerminal().getP();
                     LOGGER.debug("Network {}, state {}: incrementing P of generator {} from {} to {}",
                                  network.getId(), network.getStateManager().getWorkingStateId(), injection, oldP, oldP + injections.get(injection));
                     generator.getTerminal().setP(oldP + injections.get(injection));

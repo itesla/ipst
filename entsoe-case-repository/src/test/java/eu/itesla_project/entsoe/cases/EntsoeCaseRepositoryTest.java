@@ -34,6 +34,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.Set;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -93,6 +94,11 @@ public class EntsoeCaseRepositoryTest {
 
         @Override
         public InputStream newInputStream(String fileName) throws IOException {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Set<String> listNames(String s) throws IOException {
             throw new UnsupportedOperationException();
         }
     }

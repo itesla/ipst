@@ -87,40 +87,40 @@ public class OnlineDbMVStoreUtilsTest {
                                        networkId,
                                        Integer.toString(stateId),
                                        contingencyId,
-                                       Float.toString(1192.5631f),
-                                       Float.toString(560f),
-                                       Float.toString(500f),
-                                       Float.toString(1192.5631f),
-                                       Float.toString(560f),
-                                       Float.toString(1100f),
-                                       Float.toString(1192.5631f),
-                                       Float.toString(560f),
-                                       Float.toString(1100f),
-                                       Float.toString(1192.5631f),
-                                       Float.toString(560f),
-                                       Float.toString(500f),
-                                       Float.toString(Float.NaN),
-                                       Float.toString(Float.NaN),
-                                       Float.toString(Float.NaN),
-                                       Float.toString(Float.NaN),
-                                       Float.toString(Float.NaN),
-                                       Float.toString(Float.NaN),
-                                       Float.toString(Float.NaN),
-                                       Float.toString(Float.NaN),
-                                       Float.toString(Float.NaN),
-                                       Float.toString(Float.NaN),
-                                       Float.toString(Float.NaN),
-                                       Float.toString(Float.NaN));
+                                       Double.toString(1192.5631358010583),
+                                       Double.toString(560.0),
+                                       Double.toString(500.0),
+                                       Double.toString(1192.5631358010583),
+                                       Double.toString(560.0),
+                                       Double.toString(1100.0),
+                                       Double.toString(1192.5631358010583),
+                                       Double.toString(560.0),
+                                       Double.toString(1100.0),
+                                       Double.toString(1192.5631358010583),
+                                       Double.toString(560.0),
+                                       Double.toString(500.0),
+                                       Double.toString(Double.NaN),
+                                       Double.toString(Double.NaN),
+                                       Double.toString(Double.NaN),
+                                       Double.toString(Double.NaN),
+                                       Double.toString(Double.NaN),
+                                       Double.toString(Double.NaN),
+                                       Double.toString(Double.NaN),
+                                       Double.toString(Double.NaN),
+                                       Double.toString(Double.NaN),
+                                       Double.toString(Double.NaN),
+                                       Double.toString(Double.NaN),
+                                       Double.toString(Double.NaN));
         // check to obtain the expected results
         Network network1 = EurostagTutorialExample1Factory.createWithCurrentLimits();
-        LinkedHashMap<String, Float> branchesData1 = OnlineUtils.getBranchesData(network1);
+        LinkedHashMap<String, Double> branchesData1 = OnlineUtils.getBranchesData(network1);
         String csvHeaders1 = OnlineDbMVStoreUtils.branchesDataToCsvHeaders(branchesData1);
         assertEquals(csvHeaders, csvHeaders1);
         String csvValues1 = OnlineDbMVStoreUtils.branchesDataToCsv(networkId, stateId, contingencyId, branchesData1);
         assertEquals(csvValues, csvValues1);
         // check that with the same network you get the same results (same order)
         Network network2 = EurostagTutorialExample1Factory.createWithCurrentLimits();
-        LinkedHashMap<String, Float> branchesData2 = OnlineUtils.getBranchesData(network2);
+        LinkedHashMap<String, Double> branchesData2 = OnlineUtils.getBranchesData(network2);
         String csvHeaders2 = OnlineDbMVStoreUtils.branchesDataToCsvHeaders(branchesData2);
         assertEquals(csvHeaders1, csvHeaders2);
         String csvValues2 = OnlineDbMVStoreUtils.branchesDataToCsv(networkId, stateId, contingencyId, branchesData2);

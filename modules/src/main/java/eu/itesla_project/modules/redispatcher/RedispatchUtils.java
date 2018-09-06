@@ -21,8 +21,8 @@ public final class RedispatchUtils {
     private RedispatchUtils() {
     }
 
-    public static Map<String, Float> getParticipationFactor(Network network) {
-        Map<String, Float> partecipationFactor = new HashMap<String, Float>();
+    public static Map<String, Double> getParticipationFactor(Network network) {
+        Map<String, Double> partecipationFactor = new HashMap<String, Double>();
         for (Generator generator : network.getGenerators()) {
             partecipationFactor.put(generator.getId(), generator.getMaxP());
         }
@@ -71,8 +71,8 @@ public final class RedispatchUtils {
                 //&& (generator.getTargetP() <= generator.getMaxP() && generator.getTargetP() >= generator.getMinP()) // target P is within limits
     }
 
-    public static float getRedispatchPMax(Generator generator, float redispatchLimitsPercentage) {
-        float redispatchPMax = generator.getMaxP();
+    public static double getRedispatchPMax(Generator generator, float redispatchLimitsPercentage) {
+        double redispatchPMax = generator.getMaxP();
         if (generator.getTargetP() < generator.getMinP()) {
             redispatchPMax = generator.getMinP() + redispatchLimitsPercentage * 0.01f * generator.getMaxP();
         } else {
@@ -81,8 +81,8 @@ public final class RedispatchUtils {
         return generator.getMaxP() > redispatchPMax ? redispatchPMax : generator.getMaxP();
     }
 
-    public static float getRedispatchPMin(Generator generator, float redispatchLimitsPercentage) {
-        float redispatchPMin = generator.getMinP();
+    public static double getRedispatchPMin(Generator generator, float redispatchLimitsPercentage) {
+        double redispatchPMin = generator.getMinP();
         if (generator.getTargetP() > generator.getMaxP()) {
             redispatchPMin = generator.getMaxP() - redispatchLimitsPercentage * 0.01f * generator.getMaxP();
         } else {

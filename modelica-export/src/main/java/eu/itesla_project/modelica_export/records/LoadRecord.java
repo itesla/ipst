@@ -35,23 +35,23 @@ import java.util.List;
  */
 public class LoadRecord extends ModelicaRecord {
 
-    public LoadRecord(Load load, ConnectBusInfo busInfo, float snref, SourceEngine sourceEngine) {
+    public LoadRecord(Load load, ConnectBusInfo busInfo, double snref, SourceEngine sourceEngine) {
         this.load = load;
         this.busInfo = busInfo;
         this.loadId = load.getId();
         this.busConnected = busInfo.isConnected();
         this.p0 = this.load.getP0();
         this.q0 = this.load.getQ0();
-        this.busVoltage = Float.NaN;
-        this.busAngle = Float.NaN;
+        this.busVoltage = Double.NaN;
+        this.busAngle = Double.NaN;
         this.sourceEngine = sourceEngine;
 
         if (this.busConnected) {
             if (load.getTerminal().getBusView().getBus() != null) {
-                if (!Float.isNaN(load.getTerminal().getBusView().getBus().getV())) {
+                if (!Double.isNaN(load.getTerminal().getBusView().getBus().getV())) {
                     busVoltage = load.getTerminal().getBusView().getBus().getV() / load.getTerminal().getVoltageLevel().getNominalV();
                 }
-                if (!Float.isNaN(load.getTerminal().getBusView().getBus().getAngle())) {
+                if (!Double.isNaN(load.getTerminal().getBusView().getBus().getAngle())) {
                     busAngle = load.getTerminal().getBusView().getBus().getAngle();
                 }
             }
@@ -67,7 +67,7 @@ public class LoadRecord extends ModelicaRecord {
         }
     }
 
-    public LoadRecord(String loadId, float p0, float q0, float busVoltage, float busAngle, float snref, SourceEngine sourceEngine) {
+    public LoadRecord(String loadId, double p0, double q0, double busVoltage, double busAngle, double snref, SourceEngine sourceEngine) {
         this.loadId = loadId;
         this.busVoltage = busVoltage;
         this.busAngle = busAngle;
@@ -120,7 +120,7 @@ public class LoadRecord extends ModelicaRecord {
 
     @Override
     public void createRecord(ModExportContext modContext, DDBManager ddbManager, SimulatorInst simulator) {
-        if (!Float.isNaN(this.busVoltage) && this.busConnected) {
+        if (!Double.isNaN(this.busVoltage) && this.busConnected) {
             if (super.isCorrect()) {
                 if (super.getModelicaType() != null) {
                     this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);
@@ -165,8 +165,8 @@ public class LoadRecord extends ModelicaRecord {
     }
 
     private void addLfParameters() {
-        float modulo = this.busVoltage;
-        float angulo = this.busAngle;
+        double modulo = this.busVoltage;
+        double angulo = this.busAngle;
 
         this.iidmloadParameters.add(new IIDMParameter(PsseFixedData.V_0, modulo));
         this.iidmloadParameters.add(new IIDMParameter(PsseFixedData.P_0, this.p0));
@@ -210,10 +210,10 @@ public class LoadRecord extends ModelicaRecord {
     protected Load                 load = null;
 
     private String loadId;
-    private float p0;
-    private float q0;
-    private float busVoltage;
-    private float busAngle;
+    private double p0;
+    private double q0;
+    private double busVoltage;
+    private double busAngle;
     private boolean busConnected;
     private ConnectBusInfo busInfo;
     private SourceEngine sourceEngine;

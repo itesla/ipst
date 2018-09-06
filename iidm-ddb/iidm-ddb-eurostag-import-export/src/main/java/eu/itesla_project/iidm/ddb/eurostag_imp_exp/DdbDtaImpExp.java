@@ -972,7 +972,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
     private boolean filteredGenerator(Generator g) {
         if (configExport.getGensPQfilter()) {
-            if (!Float.isNaN(g.getTerminal().getP()) && ((-g.getTerminal().getP() > g.getMaxP()) || (-g.getTerminal().getP() < g.getMinP()))) {
+            if (!Double.isNaN(g.getTerminal().getP()) && ((-g.getTerminal().getP() > g.getMaxP()) || (-g.getTerminal().getP() < g.getMinP()))) {
                 return true;
             }
         }

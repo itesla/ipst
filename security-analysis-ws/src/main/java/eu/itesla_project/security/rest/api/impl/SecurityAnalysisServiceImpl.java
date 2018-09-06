@@ -23,7 +23,6 @@ import com.powsybl.security.LimitViolationFilter;
 import com.powsybl.security.LimitViolationType;
 import com.powsybl.security.SecurityAnalysisResult;
 import com.powsybl.security.SecurityAnalyzer;
-import com.powsybl.security.SecurityAnalyzer.Format;
 import com.powsybl.security.converter.SecurityAnalysisResultExporters;
 import eu.itesla_project.security.rest.api.SecurityAnalysisService;
 import eu.itesla_project.security.rest.api.impl.utils.Utils;
@@ -56,7 +55,7 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
         try {
             Map<String, List<InputPart>> formParts = form.getFormDataMap();
 
-            Format format = Utils.getFormat(formParts);
+            Utils.Format format = Utils.getFormat(formParts);
             if (format == null) {
                 return Response.status(Status.BAD_REQUEST).entity("Missing required format parameter").build();
             }
@@ -91,7 +90,7 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
             SecurityAnalysisResult result = analyze(network, contingencies, limitViolationFilter);
 
             return Response.ok(toStream(result, network, format))
-                    .header("Content-Type", format.equals(Format.JSON) ? MediaType.APPLICATION_JSON : "text/csv")
+                    .header("Content-Type", format.equals(Utils.Format.JSON) ? MediaType.APPLICATION_JSON : "text/csv")
                     .build();
         } catch (IOException e) {
             LOGGER.error("Error", e);
@@ -106,7 +105,7 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
         return analyzer.analyze(network, contingenciesProvider);
     }
 
-    private StreamingOutput toStream(SecurityAnalysisResult result, Network network, Format format) {
+    private StreamingOutput toStream(SecurityAnalysisResult result, Network network, Utils.Format format) {
         return new StreamingOutput() {
 
             @Override
@@ -129,7 +128,7 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
         Objects.requireNonNull(form);
         try {
             Map<String, List<InputPart>> formParts = form.getFormDataMap();
-            Format format = Utils.getFormat(formParts);
+            Utils.Format format = Utils.getFormat(formParts);
 
             if (format == null) {
                 return Response.status(Status.BAD_REQUEST).entity("Missing required format parameter").build();
@@ -176,7 +175,7 @@ public class SecurityAnalysisServiceImpl implements SecurityAnalysisService {
                 SecurityAnalysisResult securityAnalysisResult = loadFlowActionSimulatorObserver.getResult();
 
                 return Response.ok(toStream(securityAnalysisResult, network, format))
-                        .header("Content-Type", format.equals(Format.JSON) ? MediaType.APPLICATION_JSON : "text/csv")
+                        .header("Content-Type", format.equals(Utils.Format.JSON) ? MediaType.APPLICATION_JSON : "text/csv")
                         .build();
             }
 

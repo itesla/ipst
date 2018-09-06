@@ -14,25 +14,25 @@ import java.util.List;
 public class BusData implements EquipmentData {
 
     private final String busId;
-    private final float ratedVoltage;
-    private final float voltageMagnitude;
-    private final float voltageAngle;
+    private final double ratedVoltage;
+    private final double voltageMagnitude;
+    private final double voltageAngle;
     private final boolean connectedToGenerator;
     private final List<String> generators;
-    private final float activeInjection;
-    private final float reactiveInjection;
+    private final double activeInjection;
+    private final double reactiveInjection;
     private final boolean connectedToLoad;
     private final List<String> loads;
-    private final float activeAbsorption;
-    private final float reactiveAbsorption;
-    private final float activePower;
-    private final float reactivePower;
+    private final double activeAbsorption;
+    private final double reactiveAbsorption;
+    private final double activePower;
+    private final double reactivePower;
     private boolean slack;
 
 
-    public BusData(String busId, float ratedVoltage, float voltageMagnitude, float voltageAngle, boolean connectedToGenerator, List<String> generators,
-                   float activeInjection, float reactiveInjection, boolean connectedToLoad, List<String> loads, float activeAbsorption, float reactiveAbsorption,
-                   float activePower, float reactivePower, boolean slack) {
+    public BusData(String busId, double ratedVoltage, double voltageMagnitude, double voltageAngle, boolean connectedToGenerator, List<String> generators,
+                   double activeInjection, double reactiveInjection, boolean connectedToLoad, List<String> loads, double activeAbsorption, double reactiveAbsorption,
+                   double activePower, double reactivePower, boolean slack) {
         this.busId = busId;
         this.ratedVoltage = ratedVoltage;
         this.voltageMagnitude = voltageMagnitude;
@@ -80,31 +80,31 @@ public class BusData implements EquipmentData {
             case "id":
                 return busId;
             case "rated voltage":
-                return Float.toString(ratedVoltage);
+                return Double.toString(ratedVoltage);
             case "voltage magnitude":
-                return Float.toString(voltageMagnitude);
+                return Double.toString(voltageMagnitude);
             case "voltage angle":
-                return Float.toString(voltageAngle);
+                return Double.toString(voltageAngle);
             case "connected to generator":
                 return Boolean.toString(connectedToGenerator);
             case "generators":
                 return listToString(generators);
             case "Pg":
-                return Float.toString(activeInjection);
+                return Double.toString(activeInjection);
             case "Qg":
-                return Float.toString(reactiveInjection);
+                return Double.toString(reactiveInjection);
             case "connected to load":
                 return Boolean.toString(connectedToLoad);
             case "loads":
                 return listToString(loads);
             case "Pc":
-                return Float.toString(activeAbsorption);
+                return Double.toString(activeAbsorption);
             case "Qc":
-                return Float.toString(reactiveAbsorption);
+                return Double.toString(reactiveAbsorption);
             case "active power":
-                return Float.toString(activePower);
+                return Double.toString(activePower);
             case "reactive power":
-                return Float.toString(reactivePower);
+                return Double.toString(reactivePower);
             case "slack":
                 return Boolean.toString(slack);
             default:

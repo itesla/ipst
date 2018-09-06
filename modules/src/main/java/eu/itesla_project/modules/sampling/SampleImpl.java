@@ -23,9 +23,9 @@ public class SampleImpl implements Sample {
 
     public static class InjectionSample {
         public String id;
-        public float p;
-        public float q;
-        public InjectionSample(String id, float p, float q) {
+        public double p;
+        public double q;
+        public InjectionSample(String id, double p, double q) {
             this.id = id;
             this.p = p;
             this.q = q;
@@ -41,15 +41,15 @@ public class SampleImpl implements Sample {
         this.id = id;
     }
 
-    public void addGenerator(String id, float p, float q) {
+    public void addGenerator(String id, double p, double q) {
         generators.add(new InjectionSample(id, p, q));
     }
 
-    public void addLoad(String id, float p, float q) {
+    public void addLoad(String id, double p, double q) {
         loads.add(new InjectionSample(id, p, q));
     }
 
-    public void addDanglingLine(String id, float p, float q) {
+    public void addDanglingLine(String id, double p, double q) {
         danglingLines.add(new InjectionSample(id, p, q));
     }
 
@@ -71,13 +71,13 @@ public class SampleImpl implements Sample {
             //   - the generator is not controlling voltage, we sample P and Q
             //     and WP4.2 optimizer won't touch it
             if (g.isVoltageRegulatorOn()) {
-                float oldP = g.getTargetP();
+                double oldP = g.getTargetP();
                 LOGGER.trace(" gen {} - P:{} -> P:{}", g.getId(), oldP, gs.p);
                 g.setTargetP(-gs.p);
                 g.getTerminal().setP(gs.p);
             } else {
-                float oldP = g.getTargetP();
-                float oldQ = g.getTargetQ();
+                double oldP = g.getTargetP();
+                double oldQ = g.getTargetQ();
                 LOGGER.trace(" gen {} - P:{}, Q:{} -> P:{}, Q:{} ", g.getId(), oldP, oldQ, gs.p, gs.q);
                 g.setTargetP(-gs.p)
                         .setTargetQ(-gs.q);
@@ -90,8 +90,8 @@ public class SampleImpl implements Sample {
             if (l == null) {
                 throw new RuntimeException("Load '" + ls.id + "' not found");
             }
-            float oldP0 = l.getP0();
-            float oldQ0 = l.getQ0();
+            double oldP0 = l.getP0();
+            double oldQ0 = l.getQ0();
             LOGGER.trace(" load {} - P:{}, Q:{} -> P:{}, Q:{} ", l.getId(), oldP0, oldQ0, ls.p, ls.q);
             l.setP0(ls.p).setQ0(ls.q);
             l.getTerminal().setP(ls.p).setQ(ls.q);
@@ -101,8 +101,8 @@ public class SampleImpl implements Sample {
             if (dl == null) {
                 throw new RuntimeException("Dangling line '" + ls.id + "' not found");
             }
-            float oldP0 = dl.getP0();
-            float oldQ0 = dl.getQ0();
+            double oldP0 = dl.getP0();
+            double oldQ0 = dl.getQ0();
             LOGGER.trace(" dangling line {} - P:{}, Q:{} -> P:{}, Q:{} ", dl.getId(), oldP0, oldQ0, ls.p, ls.q);
             dl.setP0(ls.p).setQ0(ls.q);
         }
@@ -110,14 +110,14 @@ public class SampleImpl implements Sample {
 
     @Override
     public SampleCharacteritics getCharacteritics() {
-        float loadPositiveP = 0;
-        float loadPositiveQ = 0;
-        float loadNegativeP = 0;
-        float loadNegativeQ = 0;
-        float generationP = 0;
-        float generationQ = 0;
-        float boundariesP = 0;
-        float boundariesQ = 0;
+        double loadPositiveP = 0;
+        double loadPositiveQ = 0;
+        double loadNegativeP = 0;
+        double loadNegativeQ = 0;
+        double generationP = 0;
+        double generationQ = 0;
+        double boundariesP = 0;
+        double boundariesQ = 0;
         for (InjectionSample ls : loads) {
             if (ls.p > 0) {
                 loadPositiveP += ls.p;

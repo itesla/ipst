@@ -33,13 +33,13 @@ public class RecordWriter {
         this.writer = writer;
     }
 
-    private String format(float aValue, int digit) {
-        String val = Float.isNaN(aValue) ? ""   :
+    private String format(double aValue, int digit) {
+        String val = Double.isNaN(aValue) ? ""   :
                      //...null value will be replaced by "0."
-                     aValue == 0.f       ? "0." :
+                     aValue == 0.       ? "0." :
                      //...23.0000 will be replaced by "23."
-                     aValue % 1 == 0.f   ? String.format(LOCALE, "%d.", (int) aValue)
-                     //...format float on n digit (right justification)
+                     aValue % 1 == 0.   ? String.format(LOCALE, "%d.", (int) aValue)
+                     //...format double on n digit (right justification)
                      : String.format(LOCALE, "%-" + digit + "f", aValue);
 
         //...truncate the string if the length is greater than digit+1
@@ -56,7 +56,7 @@ public class RecordWriter {
         return val;
     }
 
-    public void addValue(float aValue, int aColStart, int aColEnd) throws IOException {
+    public void addValue(double aValue, int aColStart, int aColEnd) throws IOException {
         String key = format(aValue, aColEnd - aColStart);
         this.addValue(key, aColStart, aColEnd, Justification.Right);
     }

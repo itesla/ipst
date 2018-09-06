@@ -49,27 +49,27 @@ public class EurostagNetworkModifier {
                 EsgLoad esgLoad = networkEch.getLoad(load);
                 Esg8charName nodeName = esgLoad.getZnodlo();
                 Esg8charName loadName = esgLoad.getZnamlo();
-                float pi = esgLoad.getPldstp();
-                float qi = esgLoad.getQldstp();
+                double pi = esgLoad.getPldstp();
+                double qi = esgLoad.getQldstp();
 
                 // Tfo parameters
-                float rate = (float) Math.max(1.0F, 1.5 * Math.sqrt(new Float(pi * pi + qi * qi).doubleValue()));
-                float vBase = 20.0F;
-                float ucc = 1.0F;
-                float vB = 1.14F;
-                float vT = 0.86F;
-                float pcu = 0.0F;
-                float cmagn = 0.0F;
-                float pfer = 0.0F;
-                float esat = 1.0F;
-                float voltr = vBase;
+                double rate = Math.max(1.0, 1.5 * Math.sqrt(new Float(pi * pi + qi * qi).doubleValue()));
+                double vBase = 20.0;
+                double ucc = 1.0;
+                double vB = 1.14;
+                double vT = 0.86;
+                double pcu = 0.0;
+                double cmagn = 0.0;
+                double pfer = 0.0;
+                double esat = 1.0;
+                double voltr = vBase;
                 int firstPlot = 1;
                 int lastPlot = 15;
 
                 // Choose the right initial tap because the load flow doesn't do it
                 EsgNode esgNode = networkEch.getNode(nodeName.toString());
-                float vCurHV = esgNode.getVinit();
-                int ktap8 = Math.round(firstPlot + (lastPlot - firstPlot) / (vB - vT) * (vCurHV - vT));
+                double vCurHV = esgNode.getVinit();
+                int ktap8 = (int) Math.round(firstPlot + (lastPlot - firstPlot) / (vB - vT) * (vCurHV - vT));
                 ktap8 = Math.max(firstPlot, ktap8);
                 ktap8 = Math.min(lastPlot, ktap8);
                 int ktpnom = 8;
@@ -78,8 +78,8 @@ public class EurostagNetworkModifier {
                 float vInit = 1.015F;
 
                 // Load parameters
-                float pf = pi;
-                float qf = qi - ucc / 100 * (pi * pi + qi * qi) / rate * 1 / (vInit * vInit);
+                double pf = pi;
+                double qf = qi - ucc / 100 * (pi * pi + qi * qi) / rate * 1 / (vInit * vInit);
 
                 Esg8charName lvNodeName = new Esg8charName(loadName.toString().toUpperCase()); // Upper Case for Eurostag 5.1.1
                 networkEch.addNode(new EsgNode(esgNode.getArea(), lvNodeName, vBase, vInit, 0, false));

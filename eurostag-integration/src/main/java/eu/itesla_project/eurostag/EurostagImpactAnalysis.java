@@ -245,16 +245,16 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
     }
 
     private static void dumpLimits(EurostagDictionary dictionary, BufferedWriter writer, String branchId, CurrentLimits cl1, CurrentLimits cl2,
-                                   float nominalV1, float nominalV2) throws IOException {
+                                   double nominalV1, double nominalV2) throws IOException {
         writer.write(dictionary.getEsgId(branchId));
         writer.write(";");
-        writer.write(Float.toString(cl1 != null ? cl1.getPermanentLimit() : Float.MAX_VALUE));
+        writer.write(Double.toString(cl1 != null ? cl1.getPermanentLimit() : Double.MAX_VALUE));
         writer.write(";");
-        writer.write(Float.toString(cl2 != null ? cl2.getPermanentLimit() : Float.MAX_VALUE));
+        writer.write(Double.toString(cl2 != null ? cl2.getPermanentLimit() : Double.MAX_VALUE));
         writer.write(";");
-        writer.write(Float.toString(nominalV1));
+        writer.write(Double.toString(nominalV1));
         writer.write(";");
-        writer.write(Float.toString(nominalV2));
+        writer.write(Double.toString(nominalV2));
         writer.write(";");
         writer.write(branchId);
         writer.newLine();
@@ -295,14 +295,14 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
                         continue;
                     }
                     VoltageLevel vl = b.getVoltageLevel();
-                    if (!Float.isNaN(vl.getLowVoltageLimit()) && !Float.isNaN(vl.getHighVoltageLimit())) {
+                    if (!Double.isNaN(vl.getLowVoltageLimit()) && !Double.isNaN(vl.getHighVoltageLimit())) {
                         writer.write(dictionary.getEsgId(b.getId()));
                         writer.write(";");
-                        writer.write(Float.toString(vl.getLowVoltageLimit()));
+                        writer.write(Double.toString(vl.getLowVoltageLimit()));
                         writer.write(";");
-                        writer.write(Float.toString(vl.getHighVoltageLimit()));
+                        writer.write(Double.toString(vl.getHighVoltageLimit()));
                         writer.write(";");
-                        writer.write(Float.toString(vl.getNominalV()));
+                        writer.write(Double.toString(vl.getNominalV()));
                         writer.newLine();
                     }
                 }

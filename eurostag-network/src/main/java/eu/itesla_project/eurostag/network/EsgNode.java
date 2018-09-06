@@ -15,12 +15,12 @@ public class EsgNode {
 
     private final Esg2charName area; // zone identifier
     private final Esg8charName name; // node name
-    private final float vbase; // base voltage [kV]
-    private final float vinit; // Initial voltage [p.u.]
-    private final float vangl; // Initial angle of the voltage [deg]
+    private final double vbase; // base voltage [kV]
+    private final double vinit; // Initial voltage [p.u.]
+    private final double vangl; // Initial angle of the voltage [deg]
     private final boolean slackBus;
 
-    public EsgNode(Esg2charName area, Esg8charName name, float vbase, float vinit, float vangl, boolean slackBus) {
+    public EsgNode(Esg2charName area, Esg8charName name, double vbase, double vinit, double vangl, boolean slackBus) {
         this.area = Objects.requireNonNull(area);
         this.name = Objects.requireNonNull(name);
         this.vbase = vbase;
@@ -37,15 +37,15 @@ public class EsgNode {
         return name;
     }
 
-    public float getVangl() {
+    public double getVangl() {
         return vangl;
     }
 
-    public float getVbase() {
+    public double getVbase() {
         return vbase;
     }
 
-    public float getVinit() {
+    public double getVinit() {
         return vinit;
     }
 

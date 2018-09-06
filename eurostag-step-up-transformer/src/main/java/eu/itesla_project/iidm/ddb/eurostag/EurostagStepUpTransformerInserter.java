@@ -64,7 +64,7 @@ public final class EurostagStepUpTransformerInserter {
 
     public static class StateBefore {
 
-        private final Map<String, Float> buses = new TreeMap<>();
+        private final Map<String, Double> buses = new TreeMap<>();
 
         private final Map<String, PowerFlow> injections = new HashMap<>();
 
@@ -72,8 +72,8 @@ public final class EurostagStepUpTransformerInserter {
             for (TwoWindingsTransformer twt : n.getTwoWindingsTransformers()) {
                 PowerFlow pf = injections.get(twt.getId());
                 if (pf != null) {
-                    double dp = pf.p - (Float.isNaN(twt.getTerminal1().getP()) ? 0 : twt.getTerminal1().getP());
-                    double dq = pf.q - (Float.isNaN(twt.getTerminal1().getQ()) ? 0 : twt.getTerminal1().getQ());
+                    double dp = pf.p - (Double.isNaN(twt.getTerminal1().getP()) ? 0 : twt.getTerminal1().getP());
+                    double dq = pf.q - (Double.isNaN(twt.getTerminal1().getQ()) ? 0 : twt.getTerminal1().getQ());
                     if (dp > 1 || dq > 1) {
                         LOGGER.warn("Mismatch detected for {}: {},{}-> {},{}",
                                 twt.getId(), pf.p, pf.q, twt.getTerminal1().getP(), twt.getTerminal1().getQ());
@@ -88,13 +88,13 @@ public final class EurostagStepUpTransformerInserter {
                 }
             }
 
-            List<Map.Entry<String, Float>> diffs = buses.entrySet().stream()
+            List<Map.Entry<String, Double>> diffs = buses.entrySet().stream()
                     .filter(e -> e.getValue() > ACCEPTABLE_VOLTAGE_DIFF)
-                    .sorted((o1, o2) -> Float.compare(o2.getValue(), o1.getValue()))
+                    .sorted((o1, o2) -> Double.compare(o2.getValue(), o1.getValue()))
                     .collect(Collectors.toList());
 
             if (diffs.size() > 0) {
-                float max = diffs.stream().max((o1, o2) -> Float.compare(o1.getValue(), o2.getValue())).get().getValue();
+                double max = diffs.stream().max((o1, o2) -> Double.compare(o1.getValue(), o2.getValue())).get().getValue();
                 LOGGER.warn("{} buses on {} with a voltage difference greater than {}, max is {}",
                         diffs.size(), buses.size(), ACCEPTABLE_VOLTAGE_DIFF, max);
                 if (LOGGER.isTraceEnabled()) {
@@ -220,10 +220,10 @@ public final class EurostagStepUpTransformerInserter {
                 Load hvAux = n.getLoad(hvAuxId);
                 if (hvAux != null && hvAux.getTerminal().getBusBreakerView().getConnectableBus() == hvGenConnectableBus) {
                     if (hvAux.getTerminal().getBusView().getBus() != null) {
-                        if (!Float.isNaN(hvAux.getTerminal().getP())) {
+                        if (!Double.isNaN(hvAux.getTerminal().getP())) {
                             hvAuxPf.p = hvAux.getTerminal().getP();
                         }
-                        if (!Float.isNaN(hvAux.getTerminal().getQ())) {
+                        if (!Double.isNaN(hvAux.getTerminal().getQ())) {
                             hvAuxPf.q = hvAux.getTerminal().getQ();
                         }
                     }
@@ -243,8 +243,8 @@ public final class EurostagStepUpTransformerInserter {
 
             // transfer auxiliary load from hv to lv
             if (hvAuxPf.isValid()) {
-                float v = hvGenConnectableBus.getV();
-                if (Float.isNaN(v)) {
+                double v = hvGenConnectableBus.getV();
+                if (Double.isNaN(v)) {
                     v = hvVl.getNominalV();
                 }
                 StateVariable auxSv = transformerModel.toSv2(new StateVariable(-hvAuxPf.p, -hvAuxPf.q, v, 0));
@@ -281,17 +281,17 @@ public final class EurostagStepUpTransformerInserter {
     private static void fillGeneratorState(Generator g, StateVariable sv) {
         Terminal t = g.getTerminal();
         Bus b = t.getBusBreakerView().getBus();
-        if (Float.isNaN(t.getP())) {
+        if (Double.isNaN(t.getP())) {
             sv.p = 0;
         } else {
             sv.p = t.getP();
         }
-        if (Float.isNaN(t.getQ())) {
+        if (Double.isNaN(t.getQ())) {
             sv.q = 0;
         } else {
             sv.q = t.getQ();
         }
-        if (b != null && !Float.isNaN(b.getV()) && !Float.isNaN(b.getAngle())) { // generator is connected
+        if (b != null && !Double.isNaN(b.getV()) && !Double.isNaN(b.getAngle())) { // generator is connected
             sv.u = b.getV();
             sv.theta = b.getAngle();
         } else {
@@ -373,7 +373,7 @@ public final class EurostagStepUpTransformerInserter {
 
                         //test if the step-up transformer impedance is compatible with the reactive limit bounds: the maximun nominal power with a very high
                         //short-circuit power should be higher than the reactive bounds. If not, remove the bounds
-                        float sMax = computeMaxRate(twt);
+                        double sMax = computeMaxRate(twt);
                         if ((sMax < Math.abs(newMinQ)) || (sMax < Math.abs(newMaxQ))) {
                             LOGGER.warn("Infinite limit mode activated for '{}': either abs({}) or abs({}) higher than {} (maximum nominal power with a short-circuit power of 40%)",
                                     lvGen.getId(), newMinQ, newMaxQ, sMax);
@@ -407,7 +407,7 @@ public final class EurostagStepUpTransformerInserter {
         VoltageLevel hvVl = hvT.getVoltageLevel();
         Substation s = hvVl.getSubstation();
         Network n = s.getNetwork();
-        float hvNomV = hvVl.getNominalV();
+        double hvNomV = hvVl.getNominalV();
         Bus hvGenBus = hvT.getBusView().getBus();
         Bus hvGenConnectableBus = hvT.getBusBreakerView().getConnectableBus();
         if (hvGenConnectableBus == null) {
@@ -484,11 +484,11 @@ public final class EurostagStepUpTransformerInserter {
      * @param twt two winding transformer
      * @return maximum nominal power
      */
-    private static float computeMaxRate(TwoWindingsTransformer twt) {
+    private static double computeMaxRate(TwoWindingsTransformer twt) {
         Objects.requireNonNull(twt);
         VoltageLevel u2 = twt.getTerminal2().getVoltageLevel();
-        float z = SV.getX(twt);
-        return 0.4f * (float) Math.pow(u2.getNominalV(), 2) / z;
+        double z = SV.getX(twt);
+        return 0.4 * Math.pow(u2.getNominalV(), 2) / z;
     }
 
     public static InsertionStatus insert(Generator g, Path ddbFile, IdDictionary auxDict, EurostagStepUpTransformerConfig config, StateBefore stateBefore) throws IOException {
@@ -542,12 +542,12 @@ public final class EurostagStepUpTransformerInserter {
                     throw new RuntimeException(errMsg);
                 }
 
-                float v = lvBus.getV();
-                if (Float.isNaN(v)) {
+                double v = lvBus.getV();
+                if (Double.isNaN(v)) {
                     v = lvVl.getNominalV();
                 }
-                float a = lvBus.getAngle();
-                if (Float.isNaN(a)) {
+                double a = lvBus.getAngle();
+                if (Double.isNaN(a)) {
                     a = 0;
                 }
 
@@ -647,10 +647,10 @@ public final class EurostagStepUpTransformerInserter {
                     } else {
                         throw new RuntimeException("Unexpected stator substation topology");
                     }
-                    if (!Float.isNaN(hvBus.getV())) {
+                    if (!Double.isNaN(hvBus.getV())) {
                         otherSideSv.u = hvBus.getV();
                     }
-                    if (!Float.isNaN(hvBus.getAngle())) {
+                    if (!Double.isNaN(hvBus.getAngle())) {
                         otherSideSv.theta = hvBus.getAngle();
                     }
                     return otherSideSv;
