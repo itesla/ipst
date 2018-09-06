@@ -111,8 +111,8 @@ public class RunTDSimulation implements Tool {
                         String[] values = new String[]{caseBasename,
                                 violation.getSubjectId(),
                                 violation.getLimitType().name(),
-                                Float.toString(violation.getValue()),
-                                Float.toString(violation.getLimit())};
+                                Double.toString(violation.getValue()),
+                                Double.toString(violation.getLimit())};
                         cvsWriter.writeRecord(values);
                     }
                 }

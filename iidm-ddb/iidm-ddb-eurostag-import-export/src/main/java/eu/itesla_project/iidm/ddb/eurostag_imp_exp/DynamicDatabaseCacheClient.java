@@ -51,7 +51,7 @@ public class DynamicDatabaseCacheClient implements DynamicDatabaseClient {
 
     private boolean filteredGenerator(Generator g, boolean isFiltered) {
         if (isFiltered) {
-            if (!Float.isNaN(g.getTerminal().getP()) && ((-g.getTerminal().getP() > g.getMaxP()) || (-g.getTerminal().getP() < g.getMinP()))) {
+            if (!Double.isNaN(g.getTerminal().getP()) && ((-g.getTerminal().getP() > g.getMaxP()) || (-g.getTerminal().getP() < g.getMinP()))) {
                 return true;
             }
         }

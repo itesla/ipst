@@ -85,7 +85,7 @@ public class UniqueTopologyChecker {
                     throw new AssertionError();
             }
         }
-        return Networks.isBusValid(feederCount, branchCount);
+        return Networks.isBusValid(branchCount);
     }
 
     private static Set<Set<String>> toTopoSet(PossibleTopology.Substation ps, ShortIdDictionary dict) {

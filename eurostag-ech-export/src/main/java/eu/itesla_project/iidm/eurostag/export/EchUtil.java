@@ -190,9 +190,9 @@ public final class EchUtil {
      * Multiplying  the line's nominalV by 2 corresponds to the fact that iIDM refers to the cable-ground voltage
      * while Eurostag regulations to the cable-cable voltage
      */
-    public static float getHvdcLineDcVoltage(HvdcLine line) {
+    public static double getHvdcLineDcVoltage(HvdcLine line) {
         Objects.requireNonNull(line);
-        return line.getNominalV() * 2.0f;
+        return line.getNominalV() * 2;
     }
 
     public static boolean isPMode(HvdcConverterStation vscConv, HvdcLine hvdcLine) {

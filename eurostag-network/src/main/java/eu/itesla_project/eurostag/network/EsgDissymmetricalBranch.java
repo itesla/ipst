@@ -14,17 +14,17 @@ import java.util.Objects;
 public class EsgDissymmetricalBranch {
     private final EsgBranchName name;
     private final EsgBranchConnectionStatus status;
-    private final float rb; // total resistance sending node towards receiving node [p.u.]
-    private final float rxb; // total reactance sending node towards receiving node [p.u.]
-    private final float gs; // sending side shunt conductance [p.u.]
-    private final float bs; // sending side shunt susceptance [p.u.]
-    private final float rate; // branch rated power [MVA]
-    private final float rb2; // total resistance receiving node towards sending node [p.u.]
-    private final float rxb2; // total reactance receiving node towards sending node [p.u.]
-    private final float gs2; // receiving side shunt conductance [p.u.]
-    private final float bs2; // receiving side shunt susceptance [p.u.]
+    private final double rb; // total resistance sending node towards receiving node [p.u.]
+    private final double rxb; // total reactance sending node towards receiving node [p.u.]
+    private final double gs; // sending side shunt conductance [p.u.]
+    private final double bs; // sending side shunt susceptance [p.u.]
+    private final double rate; // branch rated power [MVA]
+    private final double rb2; // total resistance receiving node towards sending node [p.u.]
+    private final double rxb2; // total reactance receiving node towards sending node [p.u.]
+    private final double gs2; // receiving side shunt conductance [p.u.]
+    private final double bs2; // receiving side shunt susceptance [p.u.]
 
-    public EsgDissymmetricalBranch(EsgBranchName name, EsgBranchConnectionStatus status, float rb, float rxb, float gs, float bs, float rate, float rb2, float rxb2, float gs2, float bs2) {
+    public EsgDissymmetricalBranch(EsgBranchName name, EsgBranchConnectionStatus status, double rb, double rxb, double gs, double bs, double rate, double rb2, double rxb2, double gs2, double bs2) {
         this.name = Objects.requireNonNull(name);
         this.status = Objects.requireNonNull(status);
         this.rb = rb;
@@ -46,39 +46,39 @@ public class EsgDissymmetricalBranch {
         return status;
     }
 
-    public float getRb() {
+    public double getRb() {
         return rb;
     }
 
-    public float getRxb() {
+    public double getRxb() {
         return rxb;
     }
 
-    public float getGs() {
+    public double getGs() {
         return gs;
     }
 
-    public float getBs() {
+    public double getBs() {
         return bs;
     }
 
-    public float getRb2() {
+    public double getRb2() {
         return rb2;
     }
 
-    public float getRxb2() {
+    public double getRxb2() {
         return rxb2;
     }
 
-    public float getGs2() {
+    public double getGs2() {
         return gs2;
     }
 
-    public float getBs2() {
+    public double getBs2() {
         return bs2;
     }
 
-    public float getRate() {
+    public double getRate() {
         return rate;
     }
 

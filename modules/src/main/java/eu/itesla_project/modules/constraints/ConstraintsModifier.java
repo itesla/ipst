@@ -114,7 +114,7 @@ public class ConstraintsModifier {
     private void setNewCurrentLimit(String stateId, LimitViolation violation, float margin, boolean applyToBaseCase) {
         Branch branch = network.getBranch(violation.getSubjectId());
         if (branch != null) {
-            float newLimit = getNewUpperLimit(violation, margin);
+            double newLimit = getNewUpperLimit(violation, margin);
             if (branch.getTerminal1().getI() == violation.getValue()) {
                 LOGGER.debug("State {}: changing current limit 1 of branch {}: {} -> {}",
                         stateId,
@@ -163,7 +163,7 @@ public class ConstraintsModifier {
         VoltageLevel voltageLevel = network.getVoltageLevel(violation.getSubjectId());
         if (voltageLevel != null) {
             if (violation.getValue() > voltageLevel.getHighVoltageLimit()) { // it could already have been fixed
-                float newLimit = getNewUpperLimit(violation, margin);
+                double newLimit = getNewUpperLimit(violation, margin);
                 LOGGER.debug("State {}: changing high voltage limit of voltage level {}: {} -> {}",
                         stateId,
                         voltageLevel.getId(),
@@ -193,7 +193,7 @@ public class ConstraintsModifier {
         VoltageLevel voltageLevel = network.getVoltageLevel(violation.getSubjectId());
         if (voltageLevel != null) {
             if (violation.getValue() < voltageLevel.getLowVoltageLimit()) { // it could already have been fixed
-                float newLimit = getNewLowerLimit(violation, margin);
+                double newLimit = getNewLowerLimit(violation, margin);
                 LOGGER.debug("State {}: changing low voltage limit of voltage level {}: {} -> {}",
                         stateId,
                         voltageLevel.getId(),
@@ -218,18 +218,18 @@ public class ConstraintsModifier {
         }
     }
 
-    private float getNewUpperLimit(LimitViolation violation, float margin) {
-        float newLimit = 9999;
+    private double getNewUpperLimit(LimitViolation violation, float margin) {
+        double newLimit = 9999;
         if (config.isInAreaOfInterest(violation, network)) {
-            newLimit = violation.getValue() * (1.0f + margin / 100.0f);
+            newLimit = violation.getValue() * (1.0 + margin / 100.0);
         }
         return newLimit;
     }
 
-    private float getNewLowerLimit(LimitViolation violation, float margin) {
-        float newLimit = -9999;
+    private double getNewLowerLimit(LimitViolation violation, float margin) {
+        double newLimit = -9999;
         if (config.isInAreaOfInterest(violation, network)) {
-            newLimit = violation.getValue() * (1.0f - margin / 100.0f);
+            newLimit = violation.getValue() * (1.0 - margin / 100.0);
         }
         return newLimit;
     }

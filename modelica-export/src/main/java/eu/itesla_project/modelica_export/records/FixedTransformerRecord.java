@@ -25,8 +25,7 @@ import org.slf4j.LoggerFactory;
  */
 public class FixedTransformerRecord extends BranchRecord {
 
-    public FixedTransformerRecord(TwoWindingsTransformer transformer,
-            float snref) {
+    public FixedTransformerRecord(TwoWindingsTransformer transformer, double snref) {
         super(transformer);
         this.transformer = transformer;
         super.setDEFAULT_BRANCH_TYPE(DEFAULT_FIXED_TRAFO_TYPE);
@@ -45,7 +44,7 @@ public class FixedTransformerRecord extends BranchRecord {
         Equipments.ConnectionInfo info2 = Equipments.getConnectionInfoInBusBreakerView(this.transformer.getTerminal2());
         Bus b2 = info2.getConnectionBus();
 
-        if ((!Float.isNaN(b1.getV()) && info1.isConnected()) || (!Float.isNaN(b2.getV()) && info2.isConnected())) {
+        if ((!Double.isNaN(b1.getV()) && info1.isConnected()) || (!Double.isNaN(b2.getV()) && info2.isConnected())) {
             if (super.isCorrect()) {
                 if (super.getModelicaType() != null) {
                     this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);
@@ -108,35 +107,35 @@ public class FixedTransformerRecord extends BranchRecord {
      * Add IIDM parameters to Fixed Transformer Modelica Model in p.u
      */
     @Override
-    void setParameters(float snref) {
+    void setParameters(double snref) {
         //super.iidmbranchParameters = new ArrayList<IIDMParameter>();
 
-        float t1NomV = this.transformer.getTerminal1().getVoltageLevel().getNominalV();
-        float t2NomV = this.transformer.getTerminal2().getVoltageLevel().getNominalV();
-        float u1Nom = !Float.isNaN(t1NomV) ? t1NomV : 0;
-        float u2Nom = !Float.isNaN(t2NomV) ? t2NomV : 0;
-        float v1 = !Float.isNaN(this.transformer.getRatedU1()) ? this.transformer.getRatedU1() : 0; // [kV]
-        float v2 = !Float.isNaN(this.transformer.getRatedU2()) ? this.transformer.getRatedU2() : 0; // [kV]
-        float zBase = (float) Math.pow(u2Nom, 2) / snref;
+        double t1NomV = this.transformer.getTerminal1().getVoltageLevel().getNominalV();
+        double t2NomV = this.transformer.getTerminal2().getVoltageLevel().getNominalV();
+        double u1Nom = !Double.isNaN(t1NomV) ? t1NomV : 0;
+        double u2Nom = !Double.isNaN(t2NomV) ? t2NomV : 0;
+        double v1 = !Double.isNaN(this.transformer.getRatedU1()) ? this.transformer.getRatedU1() : 0; // [kV]
+        double v2 = !Double.isNaN(this.transformer.getRatedU2()) ? this.transformer.getRatedU2() : 0; // [kV]
+        double zBase = (float) Math.pow(u2Nom, 2) / snref;
 
-        float r = this.transformer.getR() / zBase; // [p.u.]
+        double r = this.transformer.getR() / zBase; // [p.u.]
         super.addParameter(this.iidmbranchParameters, StaticData.R, r); // p.u.
 
-        float x = this.transformer.getX() / zBase; // [p.u.]
+        double x = this.transformer.getX() / zBase; // [p.u.]
         super.addParameter(this.iidmbranchParameters, StaticData.X, x); // p.u.
 
-        float g = this.transformer.getG() * zBase; // [p.u.]
+        double g = this.transformer.getG() * zBase; // [p.u.]
         super.addParameter(this.iidmbranchParameters, StaticData.G, g); // p.u.
 
-        float b = this.transformer.getB() * zBase; // [p.u.]
+        double b = this.transformer.getB() * zBase; // [p.u.]
         super.addParameter(this.iidmbranchParameters, StaticData.B, b); // p.u.
 
         /*
          * El ratio esta calculado de acuerdo al valor obtenido por HELM FLow
          */
-        float vEndPu = v1 / u1Nom;
-        float vSourcePu = v2 / u2Nom;
-        float ration = vSourcePu / vEndPu; // ...transformation ratio [p.u.]
+        double vEndPu = v1 / u1Nom;
+        double vSourcePu = v2 / u2Nom;
+        double ration = vSourcePu / vEndPu; // ...transformation ratio [p.u.]
         super.addParameter(this.iidmbranchParameters, EurostagFixedData.r, ration); // p.u.
     }
 

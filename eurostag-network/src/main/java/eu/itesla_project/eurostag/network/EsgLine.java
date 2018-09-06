@@ -13,13 +13,13 @@ public class EsgLine {
 
     private final EsgBranchName name;
     private final EsgBranchConnectionStatus status;
-    private final float rb; // total line resistance [p.u.]
-    private final float rxb; // total line reactance [p.u.]
-    private final float gs; // semi shunt conductance [p.u.]
-    private final float bs; // semi shunt susceptance [p.u.]
-    private final float rate; // line rated power [MVA].
+    private final double rb; // total line resistance [p.u.]
+    private final double rxb; // total line reactance [p.u.]
+    private final double gs; // semi shunt conductance [p.u.]
+    private final double bs; // semi shunt susceptance [p.u.]
+    private final double rate; // line rated power [MVA].
 
-    public EsgLine(EsgBranchName name, EsgBranchConnectionStatus status, float rb, float rxb, float gs, float bs, float rate) {
+    public EsgLine(EsgBranchName name, EsgBranchConnectionStatus status, double rb, double rxb, double gs, double bs, double rate) {
         this.name = name;
         this.status = status;
         this.rb = rb;
@@ -37,23 +37,23 @@ public class EsgLine {
         return status;
     }
 
-    public float getRate() {
+    public double getRate() {
         return rate;
     }
 
-    public float getRb() {
+    public double getRb() {
         return rb;
     }
 
-    public float getRxb() {
+    public double getRxb() {
         return rxb;
     }
 
-    public float getGs() {
+    public double getGs() {
         return gs;
     }
 
-    public float getBs() {
+    public double getBs() {
         return bs;
     }
 

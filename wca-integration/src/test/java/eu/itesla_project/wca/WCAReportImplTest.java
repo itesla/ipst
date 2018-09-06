@@ -74,7 +74,7 @@ public class WCAReportImplTest {
 
         VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
         Mockito.when(voltageLevel.getSubstation()).thenReturn(substation);
-        Mockito.when(voltageLevel.getNominalV()).thenReturn(380f);
+        Mockito.when(voltageLevel.getNominalV()).thenReturn(380.0);
 
         Terminal line1Terminal = Mockito.mock(Terminal.class);
         Mockito.when(line1Terminal.getVoltageLevel()).thenReturn(voltageLevel);

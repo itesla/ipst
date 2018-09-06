@@ -18,18 +18,18 @@ public class EsgGenerator {
                                             // ‘Y‘     : connected
                                             // ‘N’     : not connected
     private final Esg8charName znodge; // connection node name
-    private final float pgmin; // minimum active power [MW]
-    private final float pgen; // active power [MW]
-    private final float pgmax; // maximum active power [MW]
-    private final float qgmin; // minimum reactive power [Mvar]
-    private final float qgen; // reactive power [Mvar]
-    private final float qgmax; // maximum reactive power [Mvar]
+    private final double pgmin; // minimum active power [MW]
+    private final double pgen; // active power [MW]
+    private final double pgmax; // maximum active power [MW]
+    private final double qgmin; // minimum reactive power [Mvar]
+    private final double qgen; // reactive power [Mvar]
+    private final double qgmax; // maximum reactive power [Mvar]
     private EsgRegulatingMode xregge; // regulating mode
-    private float vregge; // voltage target
+    private double vregge; // voltage target
     private final Esg8charName zregnoge; // regulated node (= ZNODGE if blank)
-    private final float qgensh; // Reactive sharing coefficient [%]
+    private final double qgensh; // Reactive sharing coefficient [%]
 
-    public EsgGenerator(Esg8charName znamge, Esg8charName znodge, float pgmin, float pgen, float pgmax, float qgmin, float qgen, float qgmax, EsgRegulatingMode xregge, float vregge, Esg8charName zregnoge, float qgensh, EsgConnectionStatus xgenest) {
+    public EsgGenerator(Esg8charName znamge, Esg8charName znodge, double pgmin, double pgen, double pgmax, double qgmin, double qgen, double qgmax, EsgRegulatingMode xregge, double vregge, Esg8charName zregnoge, double qgensh, EsgConnectionStatus xgenest) {
         this.znamge = Objects.requireNonNull(znamge);
         this.znodge = Objects.requireNonNull(znodge);
         this.pgmin = pgmin;
@@ -45,39 +45,39 @@ public class EsgGenerator {
         this.xgenest = xgenest;
     }
 
-    public float getPgen() {
+    public double getPgen() {
         return pgen;
     }
 
-    public float getPgmax() {
+    public double getPgmax() {
         return pgmax;
     }
 
-    public float getPgmin() {
+    public double getPgmin() {
         return pgmin;
     }
 
-    public float getQgen() {
+    public double getQgen() {
         return qgen;
     }
 
-    public float getQgensh() {
+    public double getQgensh() {
         return qgensh;
     }
 
-    public float getQgmax() {
+    public double getQgmax() {
         return qgmax;
     }
 
-    public float getQgmin() {
+    public double getQgmin() {
         return qgmin;
     }
 
-    public float getVregge() {
+    public double getVregge() {
         return vregge;
     }
 
-    public void setVregge(float vregge) {
+    public void setVregge(double vregge) {
         this.vregge = vregge;
     }
 

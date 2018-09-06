@@ -168,17 +168,17 @@ public final class CaseProjectorUtils {
         for (Generator g : network.getGenerators()) {
             Terminal t = g.getTerminal();
             if (!onlyVoltage) {
-                if (!Float.isNaN(t.getP())) {
-                    float oldTargetP = g.getTargetP();
-                    float newTargetP = -t.getP();
+                if (!Double.isNaN(t.getP())) {
+                    double oldTargetP = g.getTargetP();
+                    double newTargetP = -t.getP();
                     if (oldTargetP != newTargetP) {
                         g.setTargetP(newTargetP);
                         LOGGER.debug("LF result reintegration: targetP {} -> {}", oldTargetP, newTargetP);
                     }
                 }
-                if (!Float.isNaN(t.getQ())) {
-                    float oldTargetQ = g.getTargetQ();
-                    float newTargetQ = -t.getQ();
+                if (!Double.isNaN(t.getQ())) {
+                    double oldTargetQ = g.getTargetQ();
+                    double newTargetQ = -t.getQ();
                     if (oldTargetQ != newTargetQ) {
                         g.setTargetQ(newTargetQ);
                         LOGGER.debug("LF result reintegration: targetQ {} -> {}", oldTargetQ, newTargetQ);
@@ -187,9 +187,9 @@ public final class CaseProjectorUtils {
             }
             Bus b = t.getBusView().getBus();
             if (b != null) {
-                if (!Float.isNaN(b.getV())) {
-                    float oldV = g.getTargetV();
-                    float newV = b.getV();
+                if (!Double.isNaN(b.getV())) {
+                    double oldV = g.getTargetV();
+                    double newV = b.getV();
                     if (oldV != newV) {
                         g.setTargetV(newV);
                         LOGGER.debug("LF result reintegration: targetV {} -> {}", oldV, newV);

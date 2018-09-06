@@ -85,16 +85,16 @@ public final class OnlineUtils {
         return date;
     }
 
-    public static LinkedHashMap<String, Float> getBranchesData(Network network) {
-        LinkedHashMap<String, Float> branchesData = new LinkedHashMap<>();
+    public static LinkedHashMap<String, Double> getBranchesData(Network network) {
+        LinkedHashMap<String, Double> branchesData = new LinkedHashMap<>();
         network.getBranchStream().forEach(branch -> {
-            addBranchSideData(branchesData, branch.getId(), branch.getTerminal1(), branch.getCurrentLimits1() == null ? Float.NaN : branch.getCurrentLimits1().getPermanentLimit());
-            addBranchSideData(branchesData, branch.getId(), branch.getTerminal2(), branch.getCurrentLimits2() == null ? Float.NaN : branch.getCurrentLimits2().getPermanentLimit());
+            addBranchSideData(branchesData, branch.getId(), branch.getTerminal1(), branch.getCurrentLimits1() == null ? Double.NaN : branch.getCurrentLimits1().getPermanentLimit());
+            addBranchSideData(branchesData, branch.getId(), branch.getTerminal2(), branch.getCurrentLimits2() == null ? Double.NaN : branch.getCurrentLimits2().getPermanentLimit());
         });
         return branchesData;
     }
 
-    private static void addBranchSideData(LinkedHashMap<String, Float> branchesData, String branchId, Terminal terminal, float currentLimit) {
+    private static void addBranchSideData(LinkedHashMap<String, Double> branchesData, String branchId, Terminal terminal, double currentLimit) {
         branchesData.put(getAttributeKey(branchId, terminal.getVoltageLevel().getId(), HistoDbAttr.I.name()), terminal.getI());
         branchesData.put(getAttributeKey(branchId, terminal.getVoltageLevel().getId(), HistoDbAttr.P.name()), terminal.getP());
         branchesData.put(getAttributeKey(branchId, terminal.getVoltageLevel().getId(), "IMAX"), currentLimit);

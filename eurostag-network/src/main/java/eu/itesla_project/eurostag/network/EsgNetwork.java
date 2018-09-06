@@ -136,7 +136,7 @@ public class EsgNetwork {
         for (Map.Entry<String, Collection<EsgGenerator>> e : generatorsConnectedToSameNode.asMap().entrySet()) {
             String nodeName = e.getKey();
             Collection<EsgGenerator> generators = e.getValue();
-            Set<Float> targetVoltageSet = generators.stream()
+            Set<Double> targetVoltageSet = generators.stream()
                     .map(EsgGenerator::getVregge)
                     .collect(Collectors.toSet());
             if (targetVoltageSet.size() > 1) {
@@ -154,7 +154,7 @@ public class EsgNetwork {
                         LOGGER.warn("Fix target voltage of disconnected generators {} to be consistent with target voltage ({} Kv) of other generators connected to the same node ({})",
                                 diconnectedGenerators.stream().map(EsgGenerator::getZnamge).collect(Collectors.toList()),
                                 targetVoltageSet.iterator().next(), nodeName);
-                        float vregge = targetVoltageSet.iterator().next();
+                        double vregge = targetVoltageSet.iterator().next();
                         for (EsgGenerator g : diconnectedGenerators) {
                             g.setVregge(vregge);
                         }
@@ -178,11 +178,11 @@ public class EsgNetwork {
         for (Map.Entry<Esg8charName, Collection<EsgDetailedTwoWindingTransformer>> e : transformersByRegulatedNode.asMap().entrySet()) {
             Esg8charName regulatedNode = e.getKey();
             Collection<EsgDetailedTwoWindingTransformer> transformers = e.getValue();
-            Set<Float> targetVoltageSet = transformers.stream()
+            Set<Double> targetVoltageSet = transformers.stream()
                     .map(EsgDetailedTwoWindingTransformer::getVoltr)
                     .collect(Collectors.toSet());
             if (targetVoltageSet.size() > 1) {
-                float chosenTargetVoltage = targetVoltageSet.stream().min(Float::compare).get();
+                double chosenTargetVoltage = targetVoltageSet.stream().min(Double::compare).get();
                 LOGGER.warn("Fix target voltage of transformers {} connected to same regulating bus {}: {} -> {}",
                         transformers.stream().map(EsgDetailedTwoWindingTransformer::getName).collect(Collectors.toList()),
                         regulatedNode, targetVoltageSet, chosenTargetVoltage);

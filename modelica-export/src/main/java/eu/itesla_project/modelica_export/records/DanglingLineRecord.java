@@ -32,7 +32,7 @@ import eu.itesla_project.modelica_export.util.eurostag.EurostagModDefaultTypes;
 public class DanglingLineRecord extends ModelicaRecord {
 
 
-    public DanglingLineRecord(DanglingLine danglingLine, String danglingBusName, String danglingLoadName, float snref) {
+    public DanglingLineRecord(DanglingLine danglingLine, String danglingBusName, String danglingLoadName, double snref) {
         this.danglingLine = danglingLine;
         this.danglingBusName = danglingBusName;
         this.danglingLoadName = danglingLoadName;
@@ -50,7 +50,7 @@ public class DanglingLineRecord extends ModelicaRecord {
         Equipments.ConnectionInfo info1 = Equipments.getConnectionInfoInBusBreakerView(this.danglingLine.getTerminal());
         Bus b1 = info1.getConnectionBus();
 
-        if (!Float.isNaN(b1.getV()) && info1.isConnected()) {
+        if (!Double.isNaN(b1.getV()) && info1.isConnected()) {
             if (super.isCorrect()) {
                 if (super.getModelicaType() != null) {
                     this.addValue(super.getModelicaType() + StaticData.WHITE_SPACE);
@@ -129,11 +129,11 @@ public class DanglingLineRecord extends ModelicaRecord {
     /**
      * Add IIDM parameters to Dangling Line Modelica Model in p.u
      */
-    private void setParameters(float snref) {
+    private void setParameters(double snref) {
         //this.iidmbranchParameters = new ArrayList<IIDMParameter>();
-        float tNominalV = this.danglingLine.getTerminal().getVoltageLevel().getNominalV();
-        float voltage = !Float.isNaN(tNominalV) ? tNominalV : 0;
-        float z = (voltage * voltage) / snref;
+        double tNominalV = this.danglingLine.getTerminal().getVoltageLevel().getNominalV();
+        double voltage = !Double.isNaN(tNominalV) ? tNominalV : 0;
+        double z = (voltage * voltage) / snref;
 
         super.addParameter(this.iidmbranchParameters, StaticData.R, this.danglingLine.getR() / z);
         super.addParameter(this.iidmbranchParameters, StaticData.X, this.danglingLine.getX() / z);

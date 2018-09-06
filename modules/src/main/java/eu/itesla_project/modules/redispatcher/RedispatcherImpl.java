@@ -47,7 +47,7 @@ public class RedispatcherImpl implements Redispatcher {
     @Override
     public RedispatchingResults redispatch(RedispatchingParameters parameters) {
         Objects.requireNonNull(parameters, "redispatching parameters are null");
-        float deltaP = parameters.getDeltaP();
+        double deltaP = parameters.getDeltaP();
         if (deltaP == 0) {
             LOGGER.info("No p to redispacthing in network {}", network.getId());
             return new RedispatchingResults(0f, 0f);
@@ -65,17 +65,17 @@ public class RedispatcherImpl implements Redispatcher {
         float totalRedispatchedP = 0;
         // run until all the delta P has been redispatched and there are generators that can be redispatched
         while (deltaP != 0 && redispatchableGenerators.size() > 0) {
-            float totalPartecipationFactor = getTotalPartecipationFactor(parameters.getParticipationFactor(), redispatchableGenerators);
+            double totalPartecipationFactor = getTotalPartecipationFactor(parameters.getParticipationFactor(), redispatchableGenerators);
             LOGGER.debug("totalPartecipationFactor = {}", totalPartecipationFactor);
             float remainingDeltaP = 0;
             List<Generator> remainingRedispatchableGenerators = new ArrayList<Generator>();
             float redispactchedP = 0;
             // distribute the P in the available redispatchable generators for this run
             for (Generator generator : redispatchableGenerators) {
-                float redispatchPMin = redispatchLimits.containsKey(generator.getId()) ? redispatchLimits.get(generator.getId()).getPMin() : generator.getMinP();
-                float redispatchPMax = redispatchLimits.containsKey(generator.getId()) ? redispatchLimits.get(generator.getId()).getPMax() : generator.getMaxP();
+                double redispatchPMin = redispatchLimits.containsKey(generator.getId()) ? redispatchLimits.get(generator.getId()).getPMin() : generator.getMinP();
+                double redispatchPMax = redispatchLimits.containsKey(generator.getId()) ? redispatchLimits.get(generator.getId()).getPMax() : generator.getMaxP();
                 // calculate new P according to delta P to redispatch and participation factor
-                float newP = newP(generator, deltaP, parameters.getParticipationFactor().get(generator.getId()), totalPartecipationFactor);
+                double newP = newP(generator, deltaP, parameters.getParticipationFactor().get(generator.getId()), totalPartecipationFactor);
 //                LOGGER.debug("{}: generator {} - new computed P:{}", network.getStateManager().getWorkingStateId(), generator.getId(), newP);
                 // keep P within redispatch limits
                 if (-newP <= redispatchPMin) {
@@ -112,30 +112,30 @@ public class RedispatcherImpl implements Redispatcher {
         return new RedispatchingResults(totalRedispatchedP, deltaP);
     }
 
-    private float getTotalPartecipationFactor(Map<String, Float> partecipationFactor, List<Generator> redispatchableGenerators) {
+    private double getTotalPartecipationFactor(Map<String, Double> partecipationFactor, List<Generator> redispatchableGenerators) {
         List<String> generatorsIds = redispatchableGenerators.stream().map(Generator::getId).collect(Collectors.toList());
-        return (float) partecipationFactor.keySet().stream().filter(x -> generatorsIds.contains(x)).mapToDouble((x) -> partecipationFactor.get(x)).sum();
+        return partecipationFactor.keySet().stream().filter(x -> generatorsIds.contains(x)).mapToDouble((x) -> partecipationFactor.get(x)).sum();
     }
 
-    private float newP(Generator generator, float deltaP, float participationFactor, float totalPartecipationFactor) {
+    private double newP(Generator generator, double deltaP, double participationFactor, double totalPartecipationFactor) {
         return generator.getTerminal().getP() - deltaP * participationFactor / totalPartecipationFactor;
     }
 
     class RedispatchLimits {
 
-        float pMin;
-        float pMax;
+        double pMin;
+        double pMax;
 
-        RedispatchLimits(float pMin, float pMax) {
+        RedispatchLimits(double pMin, double pMax) {
             this.pMin = pMin;
             this.pMax = pMax;
         }
 
-        public float getPMin() {
+        public double getPMin() {
             return pMin;
         }
 
-        public float getPMax() {
+        public double getPMax() {
             return pMax;
         }
 

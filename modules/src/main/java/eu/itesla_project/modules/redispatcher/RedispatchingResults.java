@@ -12,19 +12,19 @@ package eu.itesla_project.modules.redispatcher;
  */
 public class RedispatchingResults {
 
-    private final float redispatchedP; // redispatched P
-    private final float remainingDeltaP; // remaining delta P, that the redisparcher was not able to redispatch
+    private final double redispatchedP; // redispatched P
+    private final double remainingDeltaP; // remaining delta P, that the redisparcher was not able to redispatch
 
-    public RedispatchingResults(float redispatchedP, float remainingDeltaP) {
+    public RedispatchingResults(double redispatchedP, double remainingDeltaP) {
         this.redispatchedP = redispatchedP;
         this.remainingDeltaP = remainingDeltaP;
     }
 
-    public float getRedispatchedP() {
+    public double getRedispatchedP() {
         return redispatchedP;
     }
 
-    public float getRemainingDeltaP() {
+    public double getRemainingDeltaP() {
         return remainingDeltaP;
     }
 

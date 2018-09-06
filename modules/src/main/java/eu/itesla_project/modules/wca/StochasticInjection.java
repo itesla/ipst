@@ -54,7 +54,7 @@ public abstract class StochasticInjection {
         }
 
         @Override
-        public float getP() {
+        public double getP() {
             return generator.getTargetP();
         }
 
@@ -79,7 +79,7 @@ public abstract class StochasticInjection {
         }
 
         @Override
-        public float getP() {
+        public double getP() {
             return load.getP0();
         }
 
@@ -104,7 +104,7 @@ public abstract class StochasticInjection {
         }
 
         @Override
-        public float getP() {
+        public double getP() {
             return danglingLine.getP0();
         }
 
@@ -190,7 +190,7 @@ public abstract class StochasticInjection {
 
     public abstract String getId();
 
-    public abstract float getP();
+    public abstract double getP();
 
     public abstract Type getType();
 

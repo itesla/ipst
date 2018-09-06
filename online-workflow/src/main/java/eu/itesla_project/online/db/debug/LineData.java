@@ -15,12 +15,12 @@ public class LineData implements EquipmentData {
     private final String lineId;
     private final String bus1Id;
     private final String bus2Id;
-    private final float current1;
-    private final float current2;
-    private final float currentLimit1;
-    private final float currentLimit2;
+    private final double current1;
+    private final double current2;
+    private final double currentLimit1;
+    private final double currentLimit2;
 
-    public LineData(String lineId, String bus1Id, String bus2Id, float current1, float current2, float currentLimi1, float currentLimi2) {
+    public LineData(String lineId, String bus1Id, String bus2Id, double current1, double current2, double currentLimi1, double currentLimi2) {
         this.lineId = lineId;
         this.bus1Id = bus1Id;
         this.bus2Id = bus2Id;
@@ -52,13 +52,13 @@ public class LineData implements EquipmentData {
             case "bus 2 id":
                 return bus2Id;
             case "current 1":
-                return Float.toString(current1);
+                return Double.toString(current1);
             case "current 2":
-                return Float.toString(current2);
+                return Double.toString(current2);
             case "current limit 1":
-                return Float.toString(currentLimit1);
+                return Double.toString(currentLimit1);
             case "current limit 2":
-                return Float.toString(currentLimit2);
+                return Double.toString(currentLimit2);
             default:
                 throw new RuntimeException("no " + fieldName + " available in line data");
         }

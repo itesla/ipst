@@ -17,11 +17,15 @@ import com.powsybl.commons.PowsyblException;
 import com.powsybl.commons.config.ComponentDefaultConfig;
 import com.powsybl.computation.local.LocalComputationManager;
 import com.powsybl.contingency.ContingenciesProviderFactory;
-import com.powsybl.security.SecurityAnalyzer.Format;
 
 import eu.itesla_project.security.rest.api.impl.FilePart;
 
 public final class Utils {
+
+    public enum Format {
+        CSV,
+        JSON
+    }
 
     private static ComponentDefaultConfig componentDefaultConfig;
     private static LoadFlowActionSimulatorConfig actionSimulatorConfig;

@@ -18,14 +18,14 @@ public class EsgLoad {
                                                         //    ‘ ‘    : connected
                                                         //    ‘-’    : not connected
     private final Esg8charName znodlo; // connection node name
-    private final float pldsti; // active load [MW]
-    private final float pldstz; // active load [MW]
-    private final float pldstp; // active load [MW]
-    private final float qldsti; // reactive load [Mvar]
-    private final float qldstz; // reactive load [Mvar]
-    private final float qldstp; // reactive load [Mvar]
+    private final double pldsti; // active load [MW]
+    private final double pldstz; // active load [MW]
+    private final double pldstp; // active load [MW]
+    private final double qldsti; // reactive load [Mvar]
+    private final double qldstz; // reactive load [Mvar]
+    private final double qldstp; // reactive load [Mvar]
 
-    public EsgLoad(EsgConnectionStatus iloadst, Esg8charName znamlo, Esg8charName znodlo, float pldsti, float pldstz, float pldstp, float qldsti, float qldstz, float qldstp) {
+    public EsgLoad(EsgConnectionStatus iloadst, Esg8charName znamlo, Esg8charName znodlo, double pldsti, double pldstz, double pldstp, double qldsti, double qldstz, double qldstp) {
         this.iloadst = Objects.requireNonNull(iloadst);
         this.znamlo = Objects.requireNonNull(znamlo);
         this.znodlo = Objects.requireNonNull(znodlo);
@@ -41,27 +41,27 @@ public class EsgLoad {
         return iloadst;
     }
 
-    public float getPldsti() {
+    public double getPldsti() {
         return pldsti;
     }
 
-    public float getPldstp() {
+    public double getPldstp() {
         return pldstp;
     }
 
-    public float getPldstz() {
+    public double getPldstz() {
         return pldstz;
     }
 
-    public float getQldsti() {
+    public double getQldsti() {
         return qldsti;
     }
 
-    public float getQldstp() {
+    public double getQldstp() {
         return qldstp;
     }
 
-    public float getQldstz() {
+    public double getQldstz() {
         return qldstz;
     }
 

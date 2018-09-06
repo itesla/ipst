@@ -15,16 +15,16 @@ public class GeneratorData implements EquipmentData {
     private final String generatorId;
     private final String busId;
     private final boolean isConnected;
-    private final float apparentPower;
-    private final float activePower;
-    private final float reactivePower;
-    private final float nominalPower;
-    private final float maxReactivePower;
-    private final float minReactivePower;
+    private final double apparentPower;
+    private final double activePower;
+    private final double reactivePower;
+    private final double nominalPower;
+    private final double maxReactivePower;
+    private final double minReactivePower;
 
 
-    public GeneratorData(String generatorId, String busId, boolean isConnected, float apparentPower, float activePower,
-                         float reactivePower, float nominalPower, float maxReactivePower, float minReactivePower) {
+    public GeneratorData(String generatorId, String busId, boolean isConnected, double apparentPower, double activePower,
+                         double reactivePower, double nominalPower, double maxReactivePower, double minReactivePower) {
         this.generatorId = generatorId;
         this.busId = busId;
         this.isConnected = isConnected;
@@ -60,17 +60,17 @@ public class GeneratorData implements EquipmentData {
             case "connected":
                 return Boolean.toString(isConnected);
             case "apparent power":
-                return Float.toString(apparentPower);
+                return Double.toString(apparentPower);
             case "active power":
-                return Float.toString(activePower);
+                return Double.toString(activePower);
             case "reactive power":
-                return Float.toString(reactivePower);
+                return Double.toString(reactivePower);
             case "nominal power":
-                return Float.toString(nominalPower);
+                return Double.toString(nominalPower);
             case "max q":
-                return Float.toString(maxReactivePower);
+                return Double.toString(maxReactivePower);
             case "min q":
-                return Float.toString(minReactivePower);
+                return Double.toString(minReactivePower);
             default:
                 throw new RuntimeException("no " + fieldName + " available in generator data");
         }

@@ -472,7 +472,7 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
             throws IOException {
         for (LimitViolation violation : networkViolations) {
             String[] values = new String[] {basecase, violation.getSubjectId(), violation.getLimitType().name(),
-                    Float.toString(violation.getValue()), Float.toString(violation.getLimit()) };
+                    Double.toString(violation.getValue()), Double.toString(violation.getLimit()) };
             cvsWriter.writeRecord(values);
         }
         cvsWriter.flush();

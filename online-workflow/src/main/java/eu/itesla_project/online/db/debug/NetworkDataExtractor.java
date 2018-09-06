@@ -44,28 +44,28 @@ public final class NetworkDataExtractor {
         for (Bus bus : network.getBusBreakerView().getBuses()) {
 
             List<String> generators = new ArrayList<String>();
-            List<Float> generatorsActivePower = new ArrayList<Float>();
-            List<Float> generatorsReactivePower = new ArrayList<Float>();
+            List<Double> generatorsActivePower = new ArrayList<>();
+            List<Double> generatorsReactivePower = new ArrayList<>();
             //bus.getGenerators().forEach( (generator) -> generators.add(generator.getId()) );
             bus.getGenerators().forEach((generator) -> {
                 generators.add(generator.getId());
                 generatorsActivePower.add(generator.getTerminal().getP());
                 generatorsReactivePower.add(generator.getTerminal().getQ());
             });
-            float activeInjection = generatorsActivePower.isEmpty() ? Float.NaN : generatorsActivePower.stream().reduce(0f, (a, b) -> a + b);
-            float reactiveInjection = generatorsReactivePower.isEmpty() ? Float.NaN : generatorsReactivePower.stream().reduce(0f, (a, b) -> a + b);
+            double activeInjection = generatorsActivePower.isEmpty() ? Double.NaN : generatorsActivePower.stream().reduce(0.0, (a, b) -> a + b);
+            double reactiveInjection = generatorsReactivePower.isEmpty() ? Double.NaN : generatorsReactivePower.stream().reduce(0.0, (a, b) -> a + b);
 
             List<String> loads = new ArrayList<String>();
-            List<Float> loadsActivePower = new ArrayList<Float>();
-            List<Float> loadsReactivePower = new ArrayList<Float>();
+            List<Double> loadsActivePower = new ArrayList<>();
+            List<Double> loadsReactivePower = new ArrayList<>();
             //bus.getLoads().forEach( (load) -> loads.add(load.getId()) );
             bus.getLoads().forEach((load) -> {
                 loads.add(load.getId());
                 loadsActivePower.add(load.getTerminal().getP());
                 loadsReactivePower.add(load.getTerminal().getQ());
             });
-            float activeAbsorption = loadsActivePower.isEmpty() ? Float.NaN : loadsActivePower.stream().reduce(0f, (a, b) -> a + b);
-            float reactiveAbsorption = loadsReactivePower.isEmpty() ? Float.NaN : loadsReactivePower.stream().reduce(0f, (a, b) -> a + b);
+            double activeAbsorption = loadsActivePower.isEmpty() ? Float.NaN : loadsActivePower.stream().reduce(0.0, (a, b) -> a + b);
+            double reactiveAbsorption = loadsReactivePower.isEmpty() ? Float.NaN : loadsReactivePower.stream().reduce(0.0, (a, b) -> a + b);
 
             networkData.addBusData(new BusData(bus.getId(),
                                                bus.getVoltageLevel().getNominalV(),
@@ -193,7 +193,7 @@ public final class NetworkDataExtractor {
 
     private static float apparentPower(Terminal terminal) {
         float apparentPower = Float.NaN;
-        if (!Float.isNaN(terminal.getP()) && !Float.isNaN(terminal.getQ())) {
+        if (!Double.isNaN(terminal.getP()) && !Double.isNaN(terminal.getQ())) {
             apparentPower = (float) Math.sqrt(Math.pow(terminal.getP(), 2) + Math.pow(terminal.getQ(), 2));
         }
         return apparentPower;

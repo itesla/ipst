@@ -124,7 +124,7 @@ public abstract class BranchRecord extends ModelicaRecord {
         return parsedName;
     }
 
-    abstract void setParameters(float snref);
+    abstract void setParameters(double snref);
 
 //    abstract void addParameter(String name, Object value);
 

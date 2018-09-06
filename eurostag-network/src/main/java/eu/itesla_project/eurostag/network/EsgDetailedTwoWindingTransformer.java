@@ -24,12 +24,12 @@ public class EsgDetailedTwoWindingTransformer {
 
     public static class Tap {
         private final int iplo; // tap number
-        private final float uno1; // sending side voltage [kV]
-        private final float uno2; // receiving side voltage [kV]
-        private final float ucc; // leakage impedance [%]
-        private final float dephas; // phase shift angle [deg]
+        private final double uno1; // sending side voltage [kV]
+        private final double uno2; // receiving side voltage [kV]
+        private final double ucc; // leakage impedance [%]
+        private final double dephas; // phase shift angle [deg]
 
-        public Tap(int iplo, float dephas, float uno1, float uno2, float ucc) {
+        public Tap(int iplo, double dephas, double uno1, double uno2, double ucc) {
             this.iplo = iplo;
             this.dephas = dephas;
             this.uno1 = uno1;
@@ -37,7 +37,7 @@ public class EsgDetailedTwoWindingTransformer {
             this.ucc = ucc;
         }
 
-        public float getDephas() {
+        public double getDephas() {
             return dephas;
         }
 
@@ -45,40 +45,40 @@ public class EsgDetailedTwoWindingTransformer {
             return iplo;
         }
 
-        public float getUcc() {
+        public double getUcc() {
             return ucc;
         }
 
-        public float getUno1() {
+        public double getUno1() {
             return uno1;
         }
 
-        public float getUno2() {
+        public double getUno2() {
             return uno2;
         }
     }
 
     private final EsgBranchName name;
     private final EsgBranchConnectionStatus status;
-    private final float rate; // rated apparent power [MVA]
-    private final float pcu; // Cu losses [% base RATE]
-    private final float pfer; // Iron losses [% base RATE]
-    private final float cmagn; // magnetizing current [%]
-    private final float esat; // saturation exponent
+    private final double rate; // rated apparent power [MVA]
+    private final double pcu; // Cu losses [% base RATE]
+    private final double pfer; // Iron losses [% base RATE]
+    private final double cmagn; // magnetizing current [%]
+    private final double esat; // saturation exponent
 
     private final int ktpnom; // nominal tap number
     private final int ktap8; // initial tap position (tap number)
     private final Esg8charName zbusr; // regulated node name (if empty, no tap change)
-    private float voltr; // voltage target [kV]
-    private final float pregmin; // min active flux [MW]
-    private final float pregmax; //  max active flux [MW]
+    private double voltr; // voltage target [kV]
+    private final double pregmin; // min active flux [MW]
+    private final double pregmax; //  max active flux [MW]
     private final RegulatingMode xregtr; // regulating mode
 
     private final List<Tap> taps = new ArrayList<>(1);
 
-    public EsgDetailedTwoWindingTransformer(EsgBranchName name, EsgBranchConnectionStatus status, float cmagn,
-                                            float rate, float pcu, float pfer, float esat, int ktpnom, int ktap8, Esg8charName zbusr,
-                                            float voltr, float pregmin, float pregmax, RegulatingMode xregtr) {
+    public EsgDetailedTwoWindingTransformer(EsgBranchName name, EsgBranchConnectionStatus status, double cmagn,
+                                            double rate, double pcu, double pfer, double esat, int ktpnom, int ktap8, Esg8charName zbusr,
+                                            double voltr, double pregmin, double pregmax, RegulatingMode xregtr) {
         this.name = Objects.requireNonNull(name);
         this.status = status;
         this.cmagn = cmagn;
@@ -103,11 +103,11 @@ public class EsgDetailedTwoWindingTransformer {
         return status;
     }
 
-    public float getCmagn() {
+    public double getCmagn() {
         return cmagn;
     }
 
-    public float getEsat() {
+    public double getEsat() {
         return esat;
     }
 
@@ -119,23 +119,23 @@ public class EsgDetailedTwoWindingTransformer {
         return ktpnom;
     }
 
-    public float getPcu() {
+    public double getPcu() {
         return pcu;
     }
 
-    public float getPfer() {
+    public double getPfer() {
         return pfer;
     }
 
-    public float getPregmax() {
+    public double getPregmax() {
         return pregmax;
     }
 
-    public float getPregmin() {
+    public double getPregmin() {
         return pregmin;
     }
 
-    public float getRate() {
+    public double getRate() {
         return rate;
     }
 
@@ -143,11 +143,11 @@ public class EsgDetailedTwoWindingTransformer {
         return taps;
     }
 
-    public float getVoltr() {
+    public double getVoltr() {
         return voltr;
     }
 
-    public void setVoltr(float voltr) {
+    public void setVoltr(double voltr) {
         this.voltr = voltr;
     }
 

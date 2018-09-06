@@ -24,9 +24,9 @@ public class TransformerModel {
 
     private final Complex z;
     private final Complex y;
-    private final float ratio;
+    private final double ratio;
 
-    public TransformerModel(float r, float x, float g, float b, float ratio) {
+    public TransformerModel(double r, double x, double g, double b, double ratio) {
         this.z = new Complex(r, x); // z=r+jx
         this.y = new Complex(g, b); // y=g+jb
         this.ratio = ratio;

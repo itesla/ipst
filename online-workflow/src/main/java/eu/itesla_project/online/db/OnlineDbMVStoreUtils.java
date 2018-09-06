@@ -111,9 +111,9 @@ public final class OnlineDbMVStoreUtils {
         Map<String, String> limitViolation = new HashMap<String, String>();
         limitViolation.put("Subject", violation.getSubjectId());
         limitViolation.put("LimitType", violation.getLimitType().name());
-        limitViolation.put("Limit", Float.toString(violation.getLimit()));
+        limitViolation.put("Limit", Double.toString(violation.getLimit()));
         limitViolation.put("LimitReduction", Float.toString(violation.getLimitReduction()));
-        limitViolation.put("Value", Float.toString(violation.getValue()));
+        limitViolation.put("Value", Double.toString(violation.getValue()));
         if (violation.getLimitName() != null) {
             limitViolation.put("LimitName", violation.getLimitName());
         }
@@ -229,7 +229,7 @@ public final class OnlineDbMVStoreUtils {
         return objectMapper.readValue(json, OnlineProcess.class);
     }
 
-    public static String branchesDataToCsvHeaders(LinkedHashMap<String, Float> branchesData) {
+    public static String branchesDataToCsvHeaders(LinkedHashMap<String, Double> branchesData) {
         return String.join(";",
                            "networkId",
                            "stateId",
@@ -237,12 +237,12 @@ public final class OnlineDbMVStoreUtils {
                            String.join(";", branchesData.keySet()));
     }
 
-    public static String branchesDataToCsv(String networkId, Integer stateId, String contingencyId, LinkedHashMap<String, Float> branchesData) {
+    public static String branchesDataToCsv(String networkId, Integer stateId, String contingencyId, LinkedHashMap<String, Double> branchesData) {
         return String.join(";",
                            networkId,
                            Integer.toString(stateId),
                            contingencyId,
-                           String.join(";", branchesData.values().stream().map(value -> Float.toString(value)).collect(Collectors.toList())));
+                           String.join(";", branchesData.values().stream().map(value -> Double.toString(value)).collect(Collectors.toList())));
     }
 
     public static String postContingencyStateKey(Integer stateId, String contingencyId) {

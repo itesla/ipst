@@ -62,8 +62,8 @@ public final class NetworkUtils {
 
     public static boolean isConnected(Generator generator) {
         Bus generatorBus = generator.getTerminal().getBusBreakerView().getBus();
-        float voltage = getV(generator.getTerminal());
-        if (generatorBus != null && !Float.isNaN(voltage)) {
+        double voltage = getV(generator.getTerminal());
+        if (generatorBus != null && !Double.isNaN(voltage)) {
             // generator is connected
             return true;
         }
@@ -96,17 +96,17 @@ public final class NetworkUtils {
 
     public static boolean isConnected(Load load) {
         Bus loadBus = load.getTerminal().getBusBreakerView().getBus();
-        float voltage = getV(load.getTerminal());
-        if (loadBus != null && !Float.isNaN(voltage)) {
+        double voltage = getV(load.getTerminal());
+        if (loadBus != null && !Double.isNaN(voltage)) {
             // load is connected
             return true;
         }
         return false;
     }
 
-    private static float getV(Terminal t) {
+    private static double getV(Terminal t) {
         Bus b = t.getBusBreakerView().getBus();
-        return b != null ? b.getV() : Float.NaN;
+        return b != null ? b.getV() : Double.NaN;
     }
 
 

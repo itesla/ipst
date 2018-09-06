@@ -19,10 +19,10 @@ public class Violation {
     private final String country;
     private final int voltageLevel;
     private final String type;
-    private final float value;
-    private final float limit;
+    private final double value;
+    private final double limit;
 
-    public Violation(String country, String equipment, String type, float limit, float value, int voltageLevel) {
+    public Violation(String country, String equipment, String type, double limit, double value, int voltageLevel) {
         this.country = Objects.requireNonNull(country);
         this.equipment = Objects.requireNonNull(equipment);
         this.type = Objects.requireNonNull(type);
@@ -52,12 +52,12 @@ public class Violation {
     }
 
     @JsonProperty("value")
-    public float getValue() {
+    public double getValue() {
         return value;
     }
 
     @JsonProperty("limit")
-    public float getLimit() {
+    public double getLimit() {
         return limit;
     }
 

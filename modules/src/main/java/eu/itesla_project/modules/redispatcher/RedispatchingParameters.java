@@ -14,16 +14,16 @@ import java.util.Map;
  */
 public class RedispatchingParameters {
 
-    private final float deltaP; // P to redispatch
+    private final double deltaP; // P to redispatch
     private String[] generatorsToUse = null; // generators to use while redispatching
     private String[] generatorsToSkip = null; // generators to skip while redispatching
-    private Map<String, Float> participationFactor = null; // participation factor to redispatching for each generator
+    private Map<String, Double> participationFactor = null; // participation factor to redispatching for each generator
 
-    public RedispatchingParameters(float deltaP) {
+    public RedispatchingParameters(double deltaP) {
         this.deltaP = deltaP;
     }
 
-    public float getDeltaP() {
+    public double getDeltaP() {
         return deltaP;
     }
 
@@ -43,11 +43,11 @@ public class RedispatchingParameters {
         this.generatorsToSkip = generatorsToSkip;
     }
 
-    public Map<String, Float> getParticipationFactor() {
+    public Map<String, Double> getParticipationFactor() {
         return participationFactor;
     }
 
-    public void setParticipationFactor(Map<String, Float> participationFactor) {
+    public void setParticipationFactor(Map<String, Double> participationFactor) {
         this.participationFactor = participationFactor;
     }
 

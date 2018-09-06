@@ -16,15 +16,15 @@ public class EsgStaticVarCompensator {
     private final Esg8charName znamsvc; // SVC name
     private final EsgConnectionStatus xsvcst; // status: 'Y' -> connected, 'N' -> not connected
     private final Esg8charName znodsvc; // connection node name
-    private final float bmin; // minimum reactive power at node base voltage [Mvar]
-    private final float binit; // initial reactive power at node base voltage [Mvar]
-    private final float bmax; // maximum reactive power at node base voltage [Mvar]
+    private final double bmin; // minimum reactive power at node base voltage [Mvar]
+    private final double binit; // initial reactive power at node base voltage [Mvar]
+    private final double bmax; // maximum reactive power at node base voltage [Mvar]
     private final EsgRegulatingMode xregsvc; // regulating mode
-    private final float vregsvc; // voltage target
-    private final float qsvcsh; // reactive sharing coefficient [%]
+    private final double vregsvc; // voltage target
+    private final double qsvcsh; // reactive sharing coefficient [%]
 
-    public EsgStaticVarCompensator(Esg8charName znamsvc, EsgConnectionStatus xsvcst, Esg8charName znodsvc, float bmin,
-                                   float binit, float bmax, EsgRegulatingMode xregsvc, float vregsvc, float qsvcsh) {
+    public EsgStaticVarCompensator(Esg8charName znamsvc, EsgConnectionStatus xsvcst, Esg8charName znodsvc, double bmin,
+                                   double binit, double bmax, EsgRegulatingMode xregsvc, double vregsvc, double qsvcsh) {
         this.znamsvc = Objects.requireNonNull(znamsvc);
         this.xsvcst = Objects.requireNonNull(xsvcst);
         this.znodsvc = Objects.requireNonNull(znodsvc);
@@ -48,15 +48,15 @@ public class EsgStaticVarCompensator {
         return znodsvc;
     }
 
-    public float getBmin() {
+    public double getBmin() {
         return bmin;
     }
 
-    public float getBinit() {
+    public double getBinit() {
         return binit;
     }
 
-    public float getBmax() {
+    public double getBmax() {
         return bmax;
     }
 
@@ -64,11 +64,11 @@ public class EsgStaticVarCompensator {
         return xregsvc;
     }
 
-    public float getVregsvc() {
+    public double getVregsvc() {
         return vregsvc;
     }
 
-    public float getQsvcsh() {
+    public double getQsvcsh() {
         return qsvcsh;
     }
 }

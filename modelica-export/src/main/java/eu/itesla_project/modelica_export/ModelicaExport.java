@@ -363,8 +363,8 @@ public class ModelicaExport {
                 SV sv = new SV(0, 0,  knownBus.getV(), knownBus.getAngle());
                 SV svDangling = sv.otherSide(dl);
 
-                float voltage = svDangling.getU() / knownBus.getVoltageLevel().getNominalV();
-                float angle = svDangling.getA();
+                double voltage = svDangling.getU() / knownBus.getVoltageLevel().getNominalV();
+                double angle = svDangling.getA();
                 String name = "ext_" + dl.getId();
 
                 BusRecord busRecord = ModelConverter.getModelicaRecord(name, voltage, angle, modContext, _ddbManager, modelicaSim);
@@ -388,10 +388,10 @@ public class ModelicaExport {
                 Bus knownBus = dl.getTerminal().getBusBreakerView().getBus();
                 SV sv = new SV(0, 0,  knownBus.getV(), knownBus.getAngle());
                 SV svDangling = sv.otherSide(dl);
-                float busVoltage = svDangling.getU() / knownBus.getVoltageLevel().getNominalV();
-                float busAngle = svDangling.getA();
-                float p0 = dl.getP0();
-                float q0 = dl.getQ0();
+                double busVoltage = svDangling.getU() / knownBus.getVoltageLevel().getNominalV();
+                double busAngle = svDangling.getA();
+                double p0 = dl.getP0();
+                double q0 = dl.getQ0();
                 String loadId = "ext_" + dl.getId();
                 LoadRecord loadRecord = ModelConverter.getModelicaRecord(loadId, p0, q0, busVoltage, busAngle, modContext, _ddbManager, modelicaSim, SNREF, this._sourceEngine);
                 this.danglingLoads.add(loadRecord);
@@ -423,11 +423,11 @@ public class ModelicaExport {
                     SV sv = new SV(0, 0,  knownBus.getV(), knownBus.getAngle());
                     SV svDangling = sv.otherSide(dl);
 
-                    float busVoltage = svDangling.getU() / knownBus.getVoltageLevel().getNominalV();
-                    float busAngle = svDangling.getA();
+                    double busVoltage = svDangling.getU() / knownBus.getVoltageLevel().getNominalV();
+                    double busAngle = svDangling.getA();
                     String busName = "ext_" + dl.getId();
-                    float p0 = dl.getP0();
-                    float q0 = dl.getQ0();
+                    double p0 = dl.getP0();
+                    double q0 = dl.getQ0();
                     String loadId = "ext_" + dl.getId();
 
                     BusRecord busRecord = ModelConverter.getModelicaRecord(busName, busVoltage, busAngle, modContext, _ddbManager, modelicaSim);
@@ -652,7 +652,7 @@ public class ModelicaExport {
                     boolean hasEsdc2a = false;
                     RegulatorRecord esst1aRecord = null;
                     RegulatorRecord esdc2aRecord = null;
-                    if (!Float.isNaN(busInfo.getBus().getV()) && busInfo.isConnected()) {
+                    if (!Double.isNaN(busInfo.getBus().getV()) && busInfo.isConnected()) {
                         Equipment eq = _ddbManager.findEquipment(generator.getId());
                         if (eq != null) {
                             ConnectionSchema connectionSchema = _ddbManager.findConnectionSchema(eq.getCimId(), null);
@@ -977,7 +977,7 @@ public class ModelicaExport {
             this.addRecord(writerMo, null);
             for (Injection injection : identList) {
                 ConnectBusInfo busInfo = findBus(injection.getTerminal(), injection.getId());
-                if (!Float.isNaN(busInfo.getBus().getV()) && busInfo.isConnected()) {
+                if (!Double.isNaN(busInfo.getBus().getV()) && busInfo.isConnected()) {
                     ConnectGlobalVarRecord record = ModelConverter.getModelicaRecord(injection, globalVar, modContext, _ddbManager, modelicaSim);
                     if (record != null) {
                         this.addRecord(record, writerMo, modContext, _ddbManager, modelicaSim);
@@ -1048,7 +1048,7 @@ public class ModelicaExport {
                 LOGGER.info("\t Exporting line connect " + line.getId());
                 Equipments.ConnectionInfo info1 = Equipments.getConnectionInfoInBusBreakerView(line.getTerminal1());
                 Bus b = info1.getConnectionBus();
-                if (!Float.isNaN(b.getV())) {
+                if (!Double.isNaN(b.getV())) {
                     if (info1.isConnected()) {
                         ConnectLineRecord lineT1Connect = ModelConverter.getModelicaRecord(b, line, modContext, _ddbManager, modelicaSim);
                         this.addRecord(lineT1Connect, writerMo, modContext, _ddbManager, modelicaSim);
@@ -1056,7 +1056,7 @@ public class ModelicaExport {
                 }
                 Equipments.ConnectionInfo info2 = Equipments.getConnectionInfoInBusBreakerView(line.getTerminal2());
                 b = info2.getConnectionBus();
-                if (!Float.isNaN(b.getV())) {
+                if (!Double.isNaN(b.getV())) {
                     if (info2.isConnected()) {
                         ConnectLineRecord lineT2Connect = ModelConverter.getModelicaRecord(line, b, modContext, _ddbManager, modelicaSim);
                         this.addRecord(lineT2Connect, writerMo, modContext, _ddbManager, modelicaSim);
@@ -1083,7 +1083,7 @@ public class ModelicaExport {
                 LOGGER.info("\t Exporting dangling line connect " + dline.getDanglingLine().getId());
                 Equipments.ConnectionInfo info1 = Equipments.getConnectionInfoInBusBreakerView(dline.getDanglingLine().getTerminal());
                 Bus b = info1.getConnectionBus();
-                if (!Float.isNaN(b.getV())) {
+                if (!Double.isNaN(b.getV())) {
                     if (info1.isConnected()) {
                         ConnectLineRecord lineT1Connect = ModelConverter.getModelicaRecord(b, dline.getDanglingLine(), modContext, _ddbManager, modelicaSim);
                         this.addRecord(lineT1Connect, writerMo, modContext, _ddbManager, modelicaSim);
@@ -1113,7 +1113,7 @@ public class ModelicaExport {
                     LOGGER.info("\t Exporting coupling device connect " + sw.getId());
                     Bus bus1 = voltageLevel.getBusBreakerView().getBus1(sw.getId());
                     Bus bus2 = voltageLevel.getBusBreakerView().getBus2(sw.getId());
-                    if (!Float.isNaN(bus1.getV()) && !Float.isNaN(bus2.getV())) {
+                    if (!Double.isNaN(bus1.getV()) && !Double.isNaN(bus2.getV())) {
                         ConnectCouplingDevicesRecord couplingDeviceRecord = ModelConverter.getModelicaRecord(sw, bus1, bus2, modContext, _ddbManager, modelicaSim);
                         this.addRecord(couplingDeviceRecord, writerMo, modContext, _ddbManager, modelicaSim);
                     }
@@ -1138,7 +1138,7 @@ public class ModelicaExport {
             for (Load load : connectLoadsList) {
                 LOGGER.info("\t Exporting load connect " + load.getId());
                 ConnectBusInfo busInfo = findBus(load.getTerminal(), load.getId());
-                if (!Float.isNaN(busInfo.getBus().getV())) {
+                if (!Double.isNaN(busInfo.getBus().getV())) {
                     if (busInfo.isConnected()) {
                         ConnectRecord loadConnect = ModelConverter.getModelicaRecord(busInfo, load, modContext, _ddbManager, modelicaSim);
                         this.addRecord(loadConnect, writerMo, modContext, _ddbManager, modelicaSim);
@@ -1180,7 +1180,7 @@ public class ModelicaExport {
             for (ShuntCompensator capacitor : connectCapacitorsList) {
                 LOGGER.info("\t Exporting capacitor connect " + capacitor.getId());
                 ConnectBusInfo busInfo = findBus(capacitor.getTerminal(), capacitor.getId());
-                if (!Float.isNaN(busInfo.getBus().getV())) {
+                if (!Double.isNaN(busInfo.getBus().getV())) {
                     if (busInfo.isConnected()) {
                         ConnectRecord capacitorConnect = ModelConverter.getModelicaRecord(busInfo, capacitor, modContext, _ddbManager, modelicaSim);
                         this.addRecord(capacitorConnect, writerMo, modContext, _ddbManager, modelicaSim);
@@ -1207,7 +1207,7 @@ public class ModelicaExport {
                 for (Generator gen : generators) {
                     LOGGER.info("\t Exporting generator connect " + gen.getId());
                     ConnectBusInfo busInfo = findBus(gen.getTerminal(), gen.getId());
-                    if (!Float.isNaN(busInfo.getBus().getV())) {
+                    if (!Double.isNaN(busInfo.getBus().getV())) {
                         if (busInfo.isConnected()) {
                             ConnectRecord genConnect = ModelConverter.getModelicaRecord(busInfo, gen, modContext, _ddbManager, modelicaSim, false, this._sourceEngine);
                             this.addRecord(genConnect, writerMo, modContext, _ddbManager, modelicaSim);
@@ -1222,7 +1222,7 @@ public class ModelicaExport {
                 for (Generator gen : generatorsInyections) {
                     LOGGER.info("\t Exporting generator connect " + gen.getId());
                     ConnectBusInfo busInfo = findBus(gen.getTerminal(), gen.getId());
-                    if (!Float.isNaN(busInfo.getBus().getV())) {
+                    if (!Double.isNaN(busInfo.getBus().getV())) {
                         if (busInfo.isConnected()) {
                             ConnectRecord genConnect = ModelConverter.getModelicaRecord(busInfo, gen, modContext, _ddbManager, modelicaSim, true, this._sourceEngine);
                             this.addRecord(genConnect, writerMo, modContext, _ddbManager, modelicaSim);
@@ -1250,12 +1250,12 @@ public class ModelicaExport {
                 for (TwoWindingsTransformer trafo : fixedTranformers) {
                     LOGGER.info("\t Exporting fixed trafo connect " + trafo.getId());
                     Equipments.ConnectionInfo trafoT1Info = Equipments.getConnectionInfoInBusBreakerView(trafo.getTerminal1());
-                    if (!Float.isNaN(trafoT1Info.getConnectionBus().getV()) && trafoT1Info.isConnected()) {
+                    if (!Double.isNaN(trafoT1Info.getConnectionBus().getV()) && trafoT1Info.isConnected()) {
                         ConnectFixedTransformerRecord connectFixedTrafoT1Record = (ConnectFixedTransformerRecord) ModelConverter.getModelicaRecord(trafoT1Info.getConnectionBus(), trafo, modContext, true, _ddbManager, modelicaSim);
                         this.addRecord(connectFixedTrafoT1Record, writerMo, modContext, _ddbManager, modelicaSim);
                     }
                     Equipments.ConnectionInfo trafoT2Info = Equipments.getConnectionInfoInBusBreakerView(trafo.getTerminal2());
-                    if (!Float.isNaN(trafoT2Info.getConnectionBus().getV()) && trafoT2Info.isConnected()) {
+                    if (!Double.isNaN(trafoT2Info.getConnectionBus().getV()) && trafoT2Info.isConnected()) {
                         ConnectFixedTransformerRecord connectFixedTrafoT2Record = (ConnectFixedTransformerRecord) ModelConverter.getModelicaRecord(trafo, trafoT2Info.getConnectionBus(), modContext, true, _ddbManager, modelicaSim);
                         this.addRecord(connectFixedTrafoT2Record, writerMo, modContext, _ddbManager, modelicaSim);
                     }
@@ -1268,12 +1268,12 @@ public class ModelicaExport {
                 for (TwoWindingsTransformer trafo : detailedTranformers) {
                     LOGGER.info("\t Exporting detailed trafo connect " + trafo.getId());
                     Equipments.ConnectionInfo trafoT1Info = Equipments.getConnectionInfoInBusBreakerView(trafo.getTerminal1());
-                    if (!Float.isNaN(trafoT1Info.getConnectionBus().getV()) && trafoT1Info.isConnected()) {
+                    if (!Double.isNaN(trafoT1Info.getConnectionBus().getV()) && trafoT1Info.isConnected()) {
                         ConnectDetailedTransformerRecord connectDetailedTrafoT1Record = (ConnectDetailedTransformerRecord) ModelConverter.getModelicaRecord(trafoT1Info.getConnectionBus(), trafo, modContext, false, _ddbManager, modelicaSim);
                         this.addRecord(connectDetailedTrafoT1Record, writerMo, modContext, _ddbManager, modelicaSim);
                     }
                     Equipments.ConnectionInfo trafoT2Info = Equipments.getConnectionInfoInBusBreakerView(trafo.getTerminal2());
-                    if (!Float.isNaN(trafoT2Info.getConnectionBus().getV()) && trafoT2Info.isConnected()) {
+                    if (!Double.isNaN(trafoT2Info.getConnectionBus().getV()) && trafoT2Info.isConnected()) {
                         ConnectDetailedTransformerRecord connectDetailedTrafoT2Record = (ConnectDetailedTransformerRecord) ModelConverter.getModelicaRecord(trafo, trafoT2Info.getConnectionBus(), modContext, false, _ddbManager, modelicaSim);
                         this.addRecord(connectDetailedTrafoT2Record, writerMo, modContext, _ddbManager, modelicaSim);
                     }

@@ -36,23 +36,23 @@ public class EsgACDCVscConverter {
     private final ConverterState xstate; // converter state ' ' ON; 'S' OFF
     private final DCControlMode xregl; // DC control mode 'P' AC_ACTIVE_POWER; 'V' DC_VOLTAGE
     private final ACControlMode xoper; // AC control mode 'V' AC_VOLTAGE; 'Q' AC_REACTIVE_POWER; 'A' AC_POWER_FACTOR
-    private final float rrdc; // resistance [Ohms]
-    private final float rxdc; // reactance [Ohms]
-    private final float pac; // AC active power setpoint [MW]. Only if DC control mode is 'P'
-    private final float pvd; // DC voltage setpoint [MW]. Only if DC control mode is 'V'
-    private final float pva; // AC voltage setpoint [kV]. Only if AC control mode is 'V'
-    private final float pre; // AC reactive power setpoint [Mvar]. Only if AC control mode is 'Q'
-    private final float pco; // AC power factor setpoint. Only if AC control mode is 'A'
-    private final float qvscsh; // Reactive sharing cofficient [%]. Only if AC control mode is 'V'
-    private final float pvscmin; // Minimum AC active power [MW]
-    private final float pvscmax; // Maximum AC active power [MW]
-    private final float qvscmin; // Minimum reactive power injected on AC node [kV]
-    private final float qvscmax; // Maximum reactive power injected on AC node [kV]
-    private final float vsb0; // Losses coefficient Beta0 [MW]
-    private final float vsb1; // Losses coefficient Beta1 [kW]
-    private final float vsb2; // Losses coefficient Beta2 [Ohms]
-    private final float mvm; // Initial AC modulated voltage magnitude [p.u.]
-    private final float mva; // Initial AC modulated voltage angle [deg]
+    private final double rrdc; // resistance [Ohms]
+    private final double rxdc; // reactance [Ohms]
+    private final double pac; // AC active power setpoint [MW]. Only if DC control mode is 'P'
+    private final double pvd; // DC voltage setpoint [MW]. Only if DC control mode is 'V'
+    private final double pva; // AC voltage setpoint [kV]. Only if AC control mode is 'V'
+    private final double pre; // AC reactive power setpoint [Mvar]. Only if AC control mode is 'Q'
+    private final double pco; // AC power factor setpoint. Only if AC control mode is 'A'
+    private final double qvscsh; // Reactive sharing cofficient [%]. Only if AC control mode is 'V'
+    private final double pvscmin; // Minimum AC active power [MW]
+    private final double pvscmax; // Maximum AC active power [MW]
+    private final double qvscmin; // Minimum reactive power injected on AC node [kV]
+    private final double qvscmax; // Maximum reactive power injected on AC node [kV]
+    private final double vsb0; // Losses coefficient Beta0 [MW]
+    private final double vsb1; // Losses coefficient Beta1 [kW]
+    private final double vsb2; // Losses coefficient Beta2 [Ohms]
+    private final double mvm; // Initial AC modulated voltage magnitude [p.u.]
+    private final double mva; // Initial AC modulated voltage angle [deg]
 
     public EsgACDCVscConverter(Esg8charName znconv,
                                Esg8charName dcNode1,
@@ -61,23 +61,23 @@ public class EsgACDCVscConverter {
                                ConverterState xstate,
                                DCControlMode xregl,
                                ACControlMode xoper,
-                               float rrdc,
-                               float rxdc,
-                               float pac,
-                               float pvd,
-                               float pva,
-                               float pre,
-                               float pco,
-                               float qvscsh,
-                               float pvscmin,
-                               float pvscmax,
-                               float qvscmin,
-                               float qvscmax,
-                               float vsb0,
-                               float vsb1,
-                               float vsb2,
-                               float mvm,
-                               float mva) {
+                               double rrdc,
+                               double rxdc,
+                               double pac,
+                               double pvd,
+                               double pva,
+                               double pre,
+                               double pco,
+                               double qvscsh,
+                               double pvscmin,
+                               double pvscmax,
+                               double qvscmin,
+                               double qvscmax,
+                               double vsb0,
+                               double vsb1,
+                               double vsb2,
+                               double mvm,
+                               double mva) {
         this.znconv = Objects.requireNonNull(znconv);
         this.dcNode1 = Objects.requireNonNull(dcNode1);
         this.dcNode2 = Objects.requireNonNull(dcNode2);
@@ -133,71 +133,71 @@ public class EsgACDCVscConverter {
         return xoper;
     }
 
-    public float getRrdc() {
+    public double getRrdc() {
         return rrdc;
     }
 
-    public float getRxdc() {
+    public double getRxdc() {
         return rxdc;
     }
 
-    public float getPac() {
+    public double getPac() {
         return pac;
     }
 
-    public float getPvd() {
+    public double getPvd() {
         return pvd;
     }
 
-    public float getPva() {
+    public double getPva() {
         return pva;
     }
 
-    public float getPre() {
+    public double getPre() {
         return pre;
     }
 
-    public float getPco() {
+    public double getPco() {
         return pco;
     }
 
-    public float getQvscsh() {
+    public double getQvscsh() {
         return qvscsh;
     }
 
-    public float getPvscmin() {
+    public double getPvscmin() {
         return pvscmin;
     }
 
-    public float getPvscmax() {
+    public double getPvscmax() {
         return pvscmax;
     }
 
-    public float getQvscmin() {
+    public double getQvscmin() {
         return qvscmin;
     }
 
-    public float getQvscmax() {
+    public double getQvscmax() {
         return qvscmax;
     }
 
-    public float getVsb0() {
+    public double getVsb0() {
         return vsb0;
     }
 
-    public float getVsb1() {
+    public double getVsb1() {
         return vsb1;
     }
 
-    public float getVsb2() {
+    public double getVsb2() {
         return vsb2;
     }
 
-    public float getMvm() {
+    public double getMvm() {
         return mvm;
     }
 
-    public float getMva() {
+    public double getMva() {
         return mva;
     }
 }

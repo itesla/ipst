@@ -20,11 +20,11 @@ public class ViolationSynthesis {
     private final String equipment;
     private final LimitViolationType type;
     private final String limitName;
-    private final float limit;
-    private final float voltageLevel;
+    private final double limit;
+    private final double voltageLevel;
     private final List<TimeValue> timeValues = new ArrayList<TimeValue>();
 
-    public ViolationSynthesis(String equipment, float voltageLevel, LimitViolationType type, float limit, String limitName) {
+    public ViolationSynthesis(String equipment, double voltageLevel, LimitViolationType type, double limit, String limitName) {
         this.equipment = Objects.requireNonNull(equipment);
         this.type = Objects.requireNonNull(type);
         this.limit = limit;
@@ -60,7 +60,7 @@ public class ViolationSynthesis {
         return type;
     }
 
-    public Float getLimit() {
+    public Double getLimit() {
         return limit;
     }
 
@@ -77,7 +77,7 @@ public class ViolationSynthesis {
         return limitName;
     }
 
-    public float getVoltageLevel() {
+    public double getVoltageLevel() {
         return voltageLevel;
     }
 

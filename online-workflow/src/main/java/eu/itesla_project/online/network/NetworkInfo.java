@@ -163,7 +163,7 @@ public class NetworkInfo {
 
 
         logger.debug("  network " + network.getName()  + " equipment: " + equipment);
-        Float returnValue = null;
+        Double returnValue = null;
         EquipmentTypes     eqType = equipmentType(equipment);
         if (eqType != null) {
             switch (eqType) {
@@ -190,7 +190,7 @@ public class NetworkInfo {
         if (returnValue != null) {
             logger.debug(" RETURN P: " + returnValue + " for Network: " + network.getName() + " Equipment: " + equipment);
         }
-        return (returnValue != null) ? new Double(returnValue) : null;
+        return returnValue;
 
     }
 
@@ -199,7 +199,7 @@ public class NetworkInfo {
 
         logger.debug("  network " + network.getName() + " equipment: " + equipment);
 
-        Float returnValue = null;
+        Double returnValue = null;
         EquipmentTypes     eqType = equipmentType(equipment);
         if (eqType != null) {
             switch (eqType) {
@@ -226,7 +226,7 @@ public class NetworkInfo {
             logger.debug(" RETURN Q: " + returnValue + " for Network: " + network.getName() + " Equipment: " + equipment);
         }
 
-        return  (returnValue != null) ? new Double(returnValue) : null;
+        return  returnValue;
     }
 
 }
