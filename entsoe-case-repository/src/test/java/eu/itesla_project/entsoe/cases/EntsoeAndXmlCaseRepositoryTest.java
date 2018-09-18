@@ -10,12 +10,12 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Sets;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
-import eu.itesla_project.cases.CaseType;
 import com.powsybl.commons.datasource.DataSource;
+import com.powsybl.entsoe.util.EntsoeGeographicalCode;
 import com.powsybl.iidm.import_.Importer;
 import com.powsybl.iidm.network.Country;
 import com.powsybl.iidm.network.Network;
-import com.powsybl.entsoe.util.EntsoeGeographicalCode;
+import eu.itesla_project.cases.CaseType;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.junit.After;
@@ -36,7 +36,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 /**
  *
@@ -184,13 +184,13 @@ public class EntsoeAndXmlCaseRepositoryTest {
         // check that, when cim and ucte is forbidden for france, xml is loaded
         caseRepository.getConfig().getForbiddenFormatsByGeographicalCode().put(EntsoeGeographicalCode.FR, "CIM1");
         caseRepository.getConfig().getForbiddenFormatsByGeographicalCode().put(EntsoeGeographicalCode.FR, "UCTE");
-        assertTrue(caseRepository.load(DateTime.parse("2013-01-14T00:15:00+01:00"), CaseType.SN, Country.FR).equals(Collections.singletonList(xmlNetwork)));
+        assertEquals(Collections.singletonList(xmlNetwork), caseRepository.load(DateTime.parse("2013-01-14T00:15:00+01:00"), CaseType.SN, Country.FR));
     }
 
     @Test
     public void testDataAvailable() throws Exception {
-        assertTrue(caseRepository.dataAvailable(CaseType.SN, EnumSet.of(Country.FR), Interval.parse("2016-01-01T00:00:00+01:00/2016-01-14T01:00:00+01:00"))
-                .equals(Sets.newHashSet(DateTime.parse("2016-01-01T00:15:00+01:00"), DateTime.parse("2016-01-01T00:45:00+01:00"))));
+        assertEquals(Sets.newTreeSet(Arrays.asList(DateTime.parse("2016-01-01T00:15:00+01:00"), DateTime.parse("2016-01-01T00:45:00+01:00"))),
+                caseRepository.dataAvailable(CaseType.SN, EnumSet.of(Country.FR), Interval.parse("2016-01-01T00:00:00+01:00/2016-01-14T01:00:00+01:00")));
     }
 
     @Test
@@ -199,7 +199,7 @@ public class EntsoeAndXmlCaseRepositoryTest {
         // file suffix .xiidm
         caseRepository.getConfig().getForbiddenFormatsByGeographicalCode().put(EntsoeGeographicalCode.FR, "CIM1");
         caseRepository.getConfig().getForbiddenFormatsByGeographicalCode().put(EntsoeGeographicalCode.FR, "UCTE");
-        assertTrue(caseRepository.load(DateTime.parse("2016-02-02T01:15:00+01:00"), CaseType.SN, Country.FR).equals(Collections.singletonList(xmlNetwork)));
+        assertEquals(Collections.singletonList(xmlNetwork), caseRepository.load(DateTime.parse("2016-02-02T01:15:00+01:00"), CaseType.SN, Country.FR));
     }
 
 }

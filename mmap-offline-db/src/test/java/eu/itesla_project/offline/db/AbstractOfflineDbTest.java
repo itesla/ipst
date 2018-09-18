@@ -35,6 +35,10 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 /**
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
@@ -67,14 +71,14 @@ public class AbstractOfflineDbTest {
     protected void test(OfflineDb offlineDb) throws IOException {
         offlineDb.createWorkflow(null, createParameters());
         List<String> workflowIds = offlineDb.listWorkflows();
-        Assert.assertTrue(workflowIds.size() == 1);
+        assertEquals(1, workflowIds.size());
         String workflowId = "workflow-0";
-        Assert.assertTrue(workflowIds.get(0).equals(workflowId));
+        assertEquals(workflowId, workflowIds.get(0));
         Path workflowDir = tmpDir.resolve(DB_NAME).resolve(workflowId);
-        Assert.assertTrue(Files.exists(workflowDir));
-        Assert.assertTrue(offlineDb.createSample(workflowId) == 0);
-        Assert.assertTrue(offlineDb.createSample(workflowId) == 1);
-        Assert.assertTrue(offlineDb.getSampleCount(workflowId) == 2);
+        assertTrue(Files.exists(workflowDir));
+        assertEquals(0, offlineDb.createSample(workflowId));
+        assertEquals(1, offlineDb.createSample(workflowId));
+        assertEquals(2, offlineDb.getSampleCount(workflowId));
         Network n = EurostagTutorialExample1Factory.create();
         offlineDb.storeTaskStatus(workflowId, 0, OfflineTaskType.SAMPLING, OfflineTaskStatus.SUCCEED, null);
         offlineDb.storeTaskStatus(workflowId, 0, OfflineTaskType.STARTING_POINT_INITIALIZATION, OfflineTaskStatus.SUCCEED, null);
@@ -88,8 +92,8 @@ public class AbstractOfflineDbTest {
         offlineDb.storeTaskStatus(workflowId, 0, OfflineTaskType.IMPACT_ANALYSIS, OfflineTaskStatus.SUCCEED, null);
         SecurityIndex si = new OverloadSecurityIndex("NHV1_NHV2_1", 0.5);
         offlineDb.storeSecurityIndexes(workflowId, 0, Arrays.asList(si));
-        Assert.assertTrue(offlineDb.getSecurityIndexIds(workflowId).size() == 1);
-        Assert.assertTrue(offlineDb.getSecurityIndexIds(workflowId).iterator().next().equals(si.getId()));
+        assertEquals(1, offlineDb.getSecurityIndexIds(workflowId).size());
+        assertEquals(si.getId(), offlineDb.getSecurityIndexIds(workflowId).iterator().next());
         StringWriter writer = new StringWriter();
         offlineDb.exportCsv(workflowId, writer, new OfflineDbCsvExportConfig(';', OfflineAttributesFilter.ALL, false, true));
         writer.close();
@@ -97,11 +101,11 @@ public class AbstractOfflineDbTest {
         String[] lines1= new BufferedReader(new StringReader(writer.toString())).lines().toArray(String[]::new); 
         String[] lines2= new BufferedReader(new StringReader(offlineDbCsvRef)).lines().toArray(String[]::new);
         
-        Assert.assertTrue (Arrays.equals(lines1,lines2));             
+        assertTrue(Arrays.equals(lines1, lines2));
       //  Assert.assertTrue(writer.toString().equals(offlineDbCsvRef));
         offlineDb.deleteWorkflow(workflowId);
-        Assert.assertTrue(offlineDb.listWorkflows().isEmpty());
-        Assert.assertTrue(!Files.exists(workflowDir));
+        assertTrue(offlineDb.listWorkflows().isEmpty());
+        assertFalse(Files.exists(workflowDir));
     }
 
 }

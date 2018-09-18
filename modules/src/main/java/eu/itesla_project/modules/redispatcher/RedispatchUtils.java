@@ -74,9 +74,9 @@ public final class RedispatchUtils {
     public static double getRedispatchPMax(Generator generator, float redispatchLimitsPercentage) {
         double redispatchPMax = generator.getMaxP();
         if (generator.getTargetP() < generator.getMinP()) {
-            redispatchPMax = generator.getMinP() + redispatchLimitsPercentage * 0.01f * generator.getMaxP();
+            redispatchPMax = generator.getMinP() + redispatchLimitsPercentage * 0.01 * generator.getMaxP();
         } else {
-            redispatchPMax = generator.getTargetP() + redispatchLimitsPercentage * 0.01f * generator.getMaxP();
+            redispatchPMax = generator.getTargetP() + redispatchLimitsPercentage * 0.01 * generator.getMaxP();
         }
         return generator.getMaxP() > redispatchPMax ? redispatchPMax : generator.getMaxP();
     }
@@ -84,9 +84,9 @@ public final class RedispatchUtils {
     public static double getRedispatchPMin(Generator generator, float redispatchLimitsPercentage) {
         double redispatchPMin = generator.getMinP();
         if (generator.getTargetP() > generator.getMaxP()) {
-            redispatchPMin = generator.getMaxP() - redispatchLimitsPercentage * 0.01f * generator.getMaxP();
+            redispatchPMin = generator.getMaxP() - redispatchLimitsPercentage * 0.01 * generator.getMaxP();
         } else {
-            redispatchPMin = generator.getTargetP() - redispatchLimitsPercentage * 0.01f * generator.getMaxP();
+            redispatchPMin = generator.getTargetP() - redispatchLimitsPercentage * 0.01 * generator.getMaxP();
         }
         return generator.getMinP() < redispatchPMin ? redispatchPMin : generator.getMinP();
     }

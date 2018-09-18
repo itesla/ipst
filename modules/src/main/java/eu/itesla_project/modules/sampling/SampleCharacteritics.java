@@ -27,14 +27,14 @@ public class SampleCharacteritics {
     private final double boundariesQ;
 
     public static SampleCharacteritics fromNetwork(Network network, boolean generationSampled, boolean boundariesSampled) {
-        double loadPositiveP = 0;
-        double loadPositiveQ = 0;
-        double loadNegativeP = 0;
-        double loadNegativeQ = 0;
-        double generationP = 0;
-        double generationQ = 0;
-        double boundariesP = 0;
-        double boundariesQ = 0;
+        double loadPositiveP = 0.0;
+        double loadPositiveQ = 0.0;
+        double loadNegativeP = 0.0;
+        double loadNegativeQ = 0.0;
+        double generationP = 0.0;
+        double generationQ = 0.0;
+        double boundariesP = 0.0;
+        double boundariesQ = 0.0;
         for (Load l : network.getLoads()) {
             if (l.getP0() > 0) {
                 loadPositiveP += l.getP0();

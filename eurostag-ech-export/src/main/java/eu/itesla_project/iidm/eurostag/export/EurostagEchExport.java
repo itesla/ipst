@@ -84,8 +84,8 @@ public class EurostagEchExport implements EurostagEchExporter {
         return new EsgNode(new Esg2charName(countryIsoCode),
                 new Esg8charName(dictionary.getEsgId(busId)),
                 nominalV,
-                Double.isNaN(v) ? 1f : v / nominalV,
-                Double.isNaN(angle) ? 0f : angle,
+                Double.isNaN(v) ? 1.0 : v / nominalV,
+                Double.isNaN(angle) ? 0.0 : angle,
                 slackBus);
     }
 
@@ -427,16 +427,16 @@ public class EurostagEchExport implements EurostagEchExporter {
 
             //...mTrans.getR() = Get the nominal series resistance specified in Ω at the secondary voltage side.
             double rpu2 = (twt.getR() * parameters.getSnref()) / nomiU2 / nomiU2;  //...total line resistance  [p.u.](Base snref)
-            double gpu2 = ((config.isSpecificCompatibility() ? twt.getG() / 2 : twt.getG()) / parameters.getSnref()) * nomiU2 * nomiU2;  //...semi shunt conductance [p.u.](Base snref)
-            double bpu2 = ((config.isSpecificCompatibility() ? twt.getB() / 2 : twt.getB()) / parameters.getSnref()) * nomiU2 * nomiU2;  //...semi shunt susceptance [p.u.](Base snref)
+            double gpu2 = ((config.isSpecificCompatibility() ? twt.getG() / 2.0 : twt.getG()) / parameters.getSnref()) * nomiU2 * nomiU2;  //...semi shunt conductance [p.u.](Base snref)
+            double bpu2 = ((config.isSpecificCompatibility() ? twt.getB() / 2.0 : twt.getB()) / parameters.getSnref()) * nomiU2 * nomiU2;  //...semi shunt susceptance [p.u.](Base snref)
             double gpu2plus = Math.max(0, gpu2);
             double bpu2minus = Math.min(0, bpu2);
 
             //...changing base snref -> base rate to compute losses
-            double pcu = rpu2 * rate * 100 / parameters.getSnref();                   //...base rate (100F -> %)
-            double pfer = 10000 * (gpu2plus / rate) * (parameters.getSnref() / 100);  //...base rate
-            double modgb = Math.sqrt(Math.pow(gpu2plus, 2) + Math.pow(bpu2minus, 2));
-            double cmagn = 10000 * (modgb / rate) * (parameters.getSnref() / 100);    //...magnetizing current [% base rate]
+            double pcu = rpu2 * rate * 100.0 / parameters.getSnref();                   //...base rate (100F -> %)
+            double pfer = 10000.0 * (gpu2plus / rate) * (parameters.getSnref() / 100.0);  //...base rate
+            double modgb = Math.sqrt(Math.pow(gpu2plus, 2) + Math.pow(bpu2minus, 2.0));
+            double cmagn = 10000.0 * (modgb / rate) * (parameters.getSnref() / 100.0);    //...magnetizing current [% base rate]
             double esat = 1.0;
 
             //***************************
@@ -468,7 +468,7 @@ public class EurostagEchExport implements EurostagEchExporter {
                 ktpnom = rtc.getStepCount() / 2 + 1;
                 for (int p = rtc.getLowTapPosition(); p <= rtc.getHighTapPosition(); p++) {
                     int iplo = p - rtc.getLowTapPosition() + 1;
-                    taps.add(createTap(twt, iplo, getRtcRho1(twt, p), getRtcR(twt, p), getRtcX(twt, p), 0, rate, parameters));
+                    taps.add(createTap(twt, iplo, getRtcRho1(twt, p), getRtcR(twt, p), getRtcX(twt, p), 0.0, rate, parameters));
                 }
 
             } else if (ptc != null || rtc != null) {
@@ -504,16 +504,16 @@ public class EurostagEchExport implements EurostagEchExporter {
             if ((ptc != null) || (rtc != null)) {
                 double tapAdjustedR = getR(twt);
                 double rpu2Adjusted = (tapAdjustedR * parameters.getSnref()) / nomiU2 / nomiU2;
-                pcu = rpu2Adjusted * rate * 100 / parameters.getSnref();
+                pcu = rpu2Adjusted * rate * 100.0 / parameters.getSnref();
 
                 double tapAdjustedG = Math.max(getG1(twt), 0);
                 double gpu2Adjusted = (tapAdjustedG / parameters.getSnref()) * nomiU2 * nomiU2;
-                pfer = 10000 * (gpu2Adjusted / rate) * (parameters.getSnref() / 100);
+                pfer = 10000.0 * (gpu2Adjusted / rate) * (parameters.getSnref() / 100.0);
 
                 double tapAdjustedB = Math.min(getB1(twt), 0);
                 double bpu2Adjusted = (tapAdjustedB / parameters.getSnref()) * nomiU2 * nomiU2;
                 modgb = Math.sqrt(Math.pow(gpu2Adjusted, 2) + Math.pow(bpu2Adjusted, 2));
-                cmagn = 10000 * (modgb / rate) * (parameters.getSnref() / 100);
+                cmagn = 10000.0 * (modgb / rate) * (parameters.getSnref() / 100.0);
             }
 
             double pregmin = Double.NaN; //...?

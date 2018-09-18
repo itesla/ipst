@@ -6,27 +6,6 @@
  */
 package eu.itesla_project.iidm.ddb.ddb_ear.test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-import java.util.logging.Logger;
-import java.util.logging.Level;
-
-import javax.ejb.EJB;
-import javax.inject.Inject;
-
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
-import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import eu.itesla_project.iidm.ddb.model.DefaultParameters;
 import eu.itesla_project.iidm.ddb.model.Equipment;
 import eu.itesla_project.iidm.ddb.model.Internal;
@@ -44,6 +23,23 @@ import eu.itesla_project.iidm.ddb.model.SimulatorInst;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
 import eu.itesla_project.iidm.ddb.util.Resources;
 import eu.itesla_project.iidm.ddb.util.Utils;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
+import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import javax.ejb.EJB;
+import javax.inject.Inject;
+import java.util.List;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.*;
 
 /**
  *
@@ -126,12 +122,12 @@ public class DDBManagerTest {
         log.info("TEST_00");
         log.info("* check DDB for equipment _NGEN_00005 (there should be none)");
         Equipment leq = dbmanager.findEquipment("_NGEN_00005");
-        assertTrue(leq == null);
+        assertNull(leq);
         log.info("* ok");
 
         log.info("* check DDB for equipment _NGEN_00006 (there should be none)");
         leq = dbmanager.findEquipment("_NGEN_00006");
-        assertTrue(leq == null);
+        assertNull(leq);
         log.info("* ok");
 
         log.info("* creating equipment _NGEN_00005");
@@ -158,7 +154,7 @@ public class DDBManagerTest {
         ModelTemplate mt1 = new ModelTemplate(simInst,"mt1comment");
 
         mtc1.getModelTemplates().add(mt1);
-        mtc1=dbmanager.save(mtc1);
+        mtc1 = dbmanager.save(mtc1);
         assertNotNull(mtc1.getId());
         log.info("* ok");
         Utils.dump(mtc1, log);
@@ -169,27 +165,27 @@ public class DDBManagerTest {
         log.info("* setting eq1 modeltemplatecontainer ");
         eq1.setModelContainer(mtc1);
         // pequman.save(mtc1);
-        eq1=dbmanager.save(eq1);
+        eq1 = dbmanager.save(eq1);
 
         log.info("* setting eq2 modeltemplatecontainer ");
         eq2.setModelContainer(mtc1);
         // pequman.save(mtc1);
-        eq2=dbmanager.save(eq2);
+        eq2 = dbmanager.save(eq2);
 
         log.info("* current ddb state: ");
         dumpCurrentDB();
 
         log.info("* getting equipment _NGEN_00005 back from db and checking that it has linked the modeltemplatecontainer");
         Equipment leq2 = dbmanager.findEquipment("_NGEN_00005");
-        assertTrue(leq2 != null);
+        assertNotNull(leq2);
         Utils.dump(leq2, log);
-        assertTrue(leq2.getModelContainer().getDdbId().equals("MTC_GEN_00005"));
+        assertEquals("MTC_GEN_00005", leq2.getModelContainer().getDdbId());
         log.info("* ok");
 
         log.info("* trying removing modeltemplatecontainer MTC_GEN_00005 from DDB (should throw an exception, since MTC_GEN_00005 is 'used' by two equipments)");
         try {
             dbmanager.delete(mtc1);
-            assertTrue(false);
+            fail();
         } catch (Exception e) {
             log.info("* (exception handling) ok, removing is not possible: "
                     + e.getMessage());
@@ -366,7 +362,7 @@ public class DDBManagerTest {
             ModelTemplateContainer mtc2 = new ModelTemplateContainer(
                     "MTC_10000", "MTC_10000 comment");
             mtc2=dbmanager.save(mtc2);
-            assertTrue(false);
+            fail();
         } catch (Exception e) {
             log.info("ok, exception in creating two MTC with the same ddbId.");
         }
@@ -386,13 +382,13 @@ public class DDBManagerTest {
         assertNotNull(eurostagSimulator);
 
         ParametersContainer pc1 = new ParametersContainer("PC_10000");
-        pc1=dbmanager.save(pc1);
+        pc1 = dbmanager.save(pc1);
 
         try {
 
             ParametersContainer pc2 = new ParametersContainer("PC_10000");
-            pc2=dbmanager.save(pc2);
-            assertTrue(false);
+            pc2 = dbmanager.save(pc2);
+            fail();
         } catch (Exception e) {
             log.info("ok, exception in creating two parameters containers with the same ddbId.");
         }
@@ -410,12 +406,12 @@ public class DDBManagerTest {
 
         log.info("TEST_06");
         log.info("creating multiple MTC: " + NUMBEROFMTCS);
-        SimulatorInst eurostagSim=dbmanager.findSimulator(Simulator.EUROSTAG, "5.1.1");
+        SimulatorInst eurostagSim = dbmanager.findSimulator(Simulator.EUROSTAG, "5.1.1");
         assertNotNull(eurostagSim);
 
         for (int i=0;i<NUMBEROFMTCS; i++) {
-            ModelTemplateContainer mtc1 = new ModelTemplateContainer("MTC_100"+i);
-            ModelTemplate mt1 = new ModelTemplate(eurostagSim,"");
+            ModelTemplateContainer mtc1 = new ModelTemplateContainer("MTC_100" + i);
+            ModelTemplate mt1 = new ModelTemplate(eurostagSim, "");
             DefaultParameters dp = new DefaultParameters(1);
             dp.addParameter(new ParameterFloat("INTMAX", 1.1000f));
 //            dp.addParameter(new ParameterFloat("kdeltaf", 25f));
@@ -426,22 +422,22 @@ public class DDBManagerTest {
             mtc1.getModelTemplates().add(mt1);
 
 
-            mtc1=dbmanager.save(mtc1);
+            mtc1 = dbmanager.save(mtc1);
         }
 
-        for (int i=0;i<NUMBEROFMTCS; i++) {
-            ModelTemplateContainer mtcfound = dbmanager.findModelTemplateContainer("MTC_100"+i);
+        for (int i = 0; i < NUMBEROFMTCS; i++) {
+            ModelTemplateContainer mtcfound = dbmanager.findModelTemplateContainer("MTC_100" + i);
             assertNotNull(mtcfound);
         }
 
-        for (int i=0;i<NUMBEROFMTCS; i++) {
-            ModelTemplateContainer mtcfound = dbmanager.findModelTemplateContainer("MTC_100"+i);
+        for (int i = 0; i < NUMBEROFMTCS; i++) {
+            ModelTemplateContainer mtcfound = dbmanager.findModelTemplateContainer("MTC_100" + i);
             dbmanager.delete(mtcfound);
         }
 
-        for (int i=0;i<NUMBEROFMTCS; i++) {
-            ModelTemplateContainer mtcfound = dbmanager.findModelTemplateContainer("MTC_100"+i);
-            assertTrue(mtcfound==null);
+        for (int i = 0; i < NUMBEROFMTCS; i++) {
+            ModelTemplateContainer mtcfound = dbmanager.findModelTemplateContainer("MTC_100" + i);
+            assertNull(mtcfound);
         }
 
         log.info("OK! multiple MTCs created, then deleted");
@@ -455,44 +451,44 @@ public class DDBManagerTest {
     public void test_07() throws Exception {
         log.info("TEST_07");
 
-        SimulatorInst eurostagSim=dbmanager.findSimulator(Simulator.EUROSTAG, "5.1.1");
+        SimulatorInst eurostagSim = dbmanager.findSimulator(Simulator.EUROSTAG, "5.1.1");
         assertNotNull(eurostagSim);
 
-        String equipmentID="_NGEN_TN";
+        String equipmentID = "_NGEN_TN";
 
         log.info("retrieving parameters for equipment ");
-        Equipment eq1=dbmanager.findEquipment(equipmentID);
-        assertTrue(eq1!=null);
+        Equipment eq1 = dbmanager.findEquipment(equipmentID);
+        assertNotNull(eq1);
 
-        ModelTemplate modelTemplate=dbmanager.findModelTemplate(eq1, eurostagSim);
+        ModelTemplate modelTemplate = dbmanager.findModelTemplate(eq1, eurostagSim);
         assertNotNull(modelTemplate);
-        log.info("Modeltemplate found: " + modelTemplate.getId()+ ", " + modelTemplate.getSimulator());
+        log.info("Modeltemplate found: " + modelTemplate.getId() + ", " + modelTemplate.getSimulator());
         //log.info("              data: " + modelTemplate.getData());
 
 
         //retrieving all parameters
-        Parameters parameters=dbmanager.findParameters(eq1, eurostagSim);
-        assertTrue(parameters!=null);
-        List<Parameter> parList=parameters.getParameters();
+        Parameters parameters = dbmanager.findParameters(eq1, eurostagSim);
+        assertNotNull(parameters);
+        List<Parameter> parList = parameters.getParameters();
         for (Parameter parameter : parList) {
-            log.info("              ------    : " + parameter.getName() +", " +parameter.getValue());
+            log.info("              ------    : " + parameter.getName() + ", " + parameter.getValue());
         }
 
         //retrieving parameters by name and type
-        String parName="turbine.power";
-        Float parValueFloat=dbmanager.getFloatParameter(eq1, eurostagSim, parName);
+        String parName = "turbine.power";
+        Float parValueFloat = dbmanager.getFloatParameter(eq1, eurostagSim, parName);
         assertNotNull(parValueFloat);
-        log.info("  Parameter "+parName+": " + parValueFloat);
+        log.info("  Parameter " + parName + ": " + parValueFloat);
 
-        parName="model.type";
-        String parValueString=dbmanager.getStringParameter(eq1, eurostagSim, parName);
+        parName = "model.type";
+        String parValueString = dbmanager.getStringParameter(eq1, eurostagSim, parName);
         assertNotNull(parValueString);
-        log.info("  Parameter "+parName+": " + parValueString);
+        log.info("  Parameter " + parName + ": " + parValueString);
 
-        parName="transformer.included";
-        Boolean parValueBoolean=dbmanager.getBooleanParameter(eq1, eurostagSim, parName);
+        parName = "transformer.included";
+        Boolean parValueBoolean = dbmanager.getBooleanParameter(eq1, eurostagSim, parName);
         assertNotNull(parValueBoolean);
-        log.info("  Parameter "+parName+": " + parValueBoolean);
+        log.info("  Parameter " + parName + ": " + parValueBoolean);
 
         log.info("end - retrieving parameters");
         //dumpCurrentDB();
@@ -503,34 +499,34 @@ public class DDBManagerTest {
     @Test
     public void test_08() throws Exception {
         log.info("TEST_08");
-        SimulatorInst eurostagSim=dbmanager.findSimulator(Simulator.EUROSTAG, "5.1.1");
+        SimulatorInst eurostagSim = dbmanager.findSimulator(Simulator.EUROSTAG, "5.1.1");
         assertNotNull(eurostagSim);
 
-        String nativeID="AVR_1";
+        String nativeID = "AVR_1";
 
         log.info("retrieving parameters for internal: " + nativeID);
-        Internal eq1=dbmanager.findInternal(nativeID);
-        assertTrue(eq1 != null);
+        Internal eq1 = dbmanager.findInternal(nativeID);
+        assertNotNull(eq1);
 
-        ModelTemplate modelTemplate=dbmanager.findModelTemplate(eq1,eurostagSim);
+        ModelTemplate modelTemplate = dbmanager.findModelTemplate(eq1, eurostagSim);
         assertNotNull(modelTemplate);
-        log.info("Modeltemplate found: " + modelTemplate.getId()+ ", " + modelTemplate.getSimulator());
+        log.info("Modeltemplate found: " + modelTemplate.getId() + ", " + modelTemplate.getSimulator());
         //log.info("              data: " + modelTemplate.getData());
 
 
         //retrieving all parameters
-        Parameters parameters=dbmanager.findParameters(eq1,eurostagSim);
-        assertTrue(parameters!=null);
-        List<Parameter> parList=parameters.getParameters();
+        Parameters parameters = dbmanager.findParameters(eq1, eurostagSim);
+        assertNotNull(parameters);
+        List<Parameter> parList = parameters.getParameters();
         for (Parameter parameter : parList) {
-            log.info("              ------    : " + parameter.getName() +", " +parameter.getValue());
+            log.info("              ------    : " + parameter.getName() + ", " + parameter.getValue());
         }
 
         //retrieving parameters by name and type
-        String parName="paramset.index";
-        Integer parValueInt=dbmanager.getIntegerParameter(eq1,eurostagSim, parName);
+        String parName = "paramset.index";
+        Integer parValueInt = dbmanager.getIntegerParameter(eq1, eurostagSim, parName);
         assertNotNull(parValueInt);
-        log.info("  Parameter "+parName+": " + parValueInt);
+        log.info("  Parameter " + parName + ": " + parValueInt);
 
 
 
@@ -544,48 +540,48 @@ public class DDBManagerTest {
     @Test
     public void test_09() throws Exception {
         log.info("TEST_09");
-        SimulatorInst eurostagSim=dbmanager.findSimulator(Simulator.EUROSTAG, "5.1.1");
+        SimulatorInst eurostagSim = dbmanager.findSimulator(Simulator.EUROSTAG, "5.1.1");
         assertNotNull(eurostagSim);
         ModelTemplateContainer mtc1 = new ModelTemplateContainer("MTC_0002",
                 "MTC_0002 comment");
-        ModelTemplate mt1 = new ModelTemplate(eurostagSim,"");
+        ModelTemplate mt1 = new ModelTemplate(eurostagSim, "");
 
         DefaultParameters dp = new DefaultParameters(1);
         dp.addParameter(new ParameterFloat("INTMAX", 1.1000f));
         dp.addParameter(new ParameterFloat("INTMAX2", 2.2000f));
         mt1.getDefaultParameters().add(dp);
         mtc1.getModelTemplates().add(mt1);
-        mtc1=dbmanager.save(mtc1);
+        mtc1 = dbmanager.save(mtc1);
 
         ParametersContainer pc1 = new ParametersContainer("PC_0002");
         Parameters pars = new Parameters(eurostagSim);
         pars.setDefParamSetNum(1);
         pars.addParameter(new ParameterFloat("INTMAX2", 3.3000f));
         pc1.getParameters().add(pars);
-        pc1=dbmanager.save(pc1);
+        pc1 = dbmanager.save(pc1);
 
         Internal it1 = new Internal("IT_0002");
         it1.setModelContainer(mtc1);
         it1.setParametersContainer(pc1);
-        it1=dbmanager.save(it1);
+        it1 = dbmanager.save(it1);
         assertNotNull(it1.getId());
 
         log.info("Internal (" + it1.getNativeId() + ") was persisted with id "
                 + it1.getId());
 
         //default param 1.1000, no corresponding param in the parameters set
-        Float flValue=dbmanager.getFloatParameter(it1, eurostagSim ,"INTMAX");
-        assertTrue(flValue.compareTo(1.1000f) ==0);
+        Float flValue = dbmanager.getFloatParameter(it1, eurostagSim, "INTMAX");
+        assertEquals(1.1000f, flValue, 0.0f);
 
         //default param 2.2000 should be overwritten by actual param (which value is 3.3000) in the parameters set
-        Float flValue2=dbmanager.getFloatParameter(it1, eurostagSim, "INTMAX2");
-        assertTrue(flValue2.compareTo(3.3000f) ==0);
+        Float flValue2 = dbmanager.getFloatParameter(it1, eurostagSim, "INTMAX2");
+        assertEquals(3.3000f, flValue2, 0.0f);
 
         //no default param, nor actual param in the param set
-        try{
-            Float flValue3=dbmanager.getFloatParameter(it1, eurostagSim , "INTMAX3");
+        try {
+            Float flValue3 = dbmanager.getFloatParameter(it1, eurostagSim, "INTMAX3");
             //must not get here
-            assertTrue(false);
+            fail();
         } catch (RuntimeException e) {
             log.info(e.getMessage());
         }
