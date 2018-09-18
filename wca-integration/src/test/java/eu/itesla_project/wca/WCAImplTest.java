@@ -97,16 +97,16 @@ public class WCAImplTest {
         histoInterval = Interval.parse("2013-01-01T00:00:00+01:00/2013-01-31T23:59:00+01:00");
 
         network = EurostagTutorialExample1Factory.create();
-        ((Bus) network.getIdentifiable("NHV1")).setV(380f);
-        ((Bus) network.getIdentifiable("NHV2")).setV(380f);
-        network.getLine("NHV1_NHV2_1").getTerminal1().setP(560f).setQ(550f);
-        network.getLine("NHV1_NHV2_1").getTerminal2().setP(560f).setQ(550f);
-        network.getLine("NHV1_NHV2_1").newCurrentLimits1().setPermanentLimit(1500f).add();
-        network.getLine("NHV1_NHV2_1").newCurrentLimits2().setPermanentLimit(1500f).add();
-        network.getLine("NHV1_NHV2_2").getTerminal1().setP(560f).setQ(550f);
-        network.getLine("NHV1_NHV2_2").getTerminal2().setP(560f).setQ(550f);
-        network.getLine("NHV1_NHV2_2").newCurrentLimits1().setPermanentLimit(1500f).add();
-        network.getLine("NHV1_NHV2_2").newCurrentLimits2().setPermanentLimit(1500f).add();
+        ((Bus) network.getIdentifiable("NHV1")).setV(380.0);
+        ((Bus) network.getIdentifiable("NHV2")).setV(380.0);
+        network.getLine("NHV1_NHV2_1").getTerminal1().setP(560.0).setQ(550.0);
+        network.getLine("NHV1_NHV2_1").getTerminal2().setP(560.0).setQ(550.0);
+        network.getLine("NHV1_NHV2_1").newCurrentLimits1().setPermanentLimit(1500.0).add();
+        network.getLine("NHV1_NHV2_1").newCurrentLimits2().setPermanentLimit(1500.0).add();
+        network.getLine("NHV1_NHV2_2").getTerminal1().setP(560.0).setQ(550.0);
+        network.getLine("NHV1_NHV2_2").getTerminal2().setP(560.0).setQ(550.0);
+        network.getLine("NHV1_NHV2_2").newCurrentLimits1().setPermanentLimit(1500.0).add();
+        network.getLine("NHV1_NHV2_2").newCurrentLimits2().setPermanentLimit(1500.0).add();
         network.getStateManager().allowStateMultiThreadAccess(true);
 
         computationManager = Mockito.mock(ComputationManager.class);
@@ -121,13 +121,13 @@ public class WCAImplTest {
         histoDbClient = Mockito.mock(HistoDbClient.class);
         HistoDbStats histoDbStats = new HistoDbStats();
         network.getLoads().forEach( load -> {
-            histoDbStats.setValue(HistoDbStatsType.MIN, new HistoDbNetworkAttributeId(load.getId(), HistoDbAttr.P), (float) (load.getP0() - (load.getP0()*20/110)));
-            histoDbStats.setValue(HistoDbStatsType.MAX, new HistoDbNetworkAttributeId(load.getId(), HistoDbAttr.P), (float) (load.getP0() + (load.getP0()*20/110)));
+            histoDbStats.setValue(HistoDbStatsType.MIN, new HistoDbNetworkAttributeId(load.getId(), HistoDbAttr.P), (float) (load.getP0() - (load.getP0() * 20 / 110)));
+            histoDbStats.setValue(HistoDbStatsType.MAX, new HistoDbNetworkAttributeId(load.getId(), HistoDbAttr.P), (float) (load.getP0() + (load.getP0() * 20 / 110)));
         });
-        network.getGenerators().forEach( generator -> {
-            histoDbStats.setValue(HistoDbStatsType.MIN, new HistoDbNetworkAttributeId(generator.getId(), HistoDbAttr.P), (float) (generator.getTargetP() - (generator.getTargetP()*20/110)));
-            histoDbStats.setValue(HistoDbStatsType.MAX, new HistoDbNetworkAttributeId(generator.getId(), HistoDbAttr.P), (float) (generator.getTargetP() + (generator.getTargetP()*20/110)));
-        });        
+        network.getGenerators().forEach(generator -> {
+            histoDbStats.setValue(HistoDbStatsType.MIN, new HistoDbNetworkAttributeId(generator.getId(), HistoDbAttr.P), (float) (generator.getTargetP() - (generator.getTargetP() * 20 / 110)));
+            histoDbStats.setValue(HistoDbStatsType.MAX, new HistoDbNetworkAttributeId(generator.getId(), HistoDbAttr.P), (float) (generator.getTargetP() + (generator.getTargetP() * 20 / 110)));
+        });
         Mockito.when(histoDbClient.queryStats(Matchers.anySet(), Matchers.eq(histoInterval), Matchers.eq(HistoDbHorizon.SN), Matchers.eq(true)))
                .thenReturn(histoDbStats);
 
@@ -141,7 +141,7 @@ public class WCAImplTest {
             public void modify(Network network, ComputationManager computationManager) {
                 network.getLine("NHV1_NHV2_1").getTerminal1().disconnect();
                 network.getLine("NHV1_NHV2_1").getTerminal2().disconnect();
-                network.getLine("NHV1_NHV2_2").getTerminal1().setP(860f);
+                network.getLine("NHV1_NHV2_2").getTerminal1().setP(860.0);
             }
         });
         action =  Mockito.mock(Action.class);
@@ -151,7 +151,7 @@ public class WCAImplTest {
             public void modify(Network network, ComputationManager computationManager) {
                 network.getLine("NHV1_NHV2_1").getTerminal1().connect();
                 network.getLine("NHV1_NHV2_1").getTerminal2().connect();
-                network.getLine("NHV1_NHV2_2").getTerminal1().setP(560f);
+                network.getLine("NHV1_NHV2_2").getTerminal1().setP(560.0);
             }
         });
         Constraint constraint = new ConstraintImpl("NHV1_NHV2_2", 0, ConstraintType.BRANCH_OVERLOAD);
@@ -271,15 +271,15 @@ public class WCAImplTest {
 
     @Test
     public void testRunWithPreventiveActions() throws Exception {
-        network.getLine("NHV1_NHV2_2").getTerminal1().setP(860f);
-        network.getLine("NHV1_NHV2_1").getTerminal1().setP(860f);
+        network.getLine("NHV1_NHV2_2").getTerminal1().setP(860.0);
+        network.getLine("NHV1_NHV2_1").getTerminal1().setP(860.0);
 
         Action action1 =  Mockito.mock(Action.class);
         Mockito.when(action1.getId()).thenReturn("NHV1_NHV2_2_preventive_action");
         Mockito.when(action1.toTask()).thenReturn(new ModificationTask() {
             @Override
             public void modify(Network network, ComputationManager computationManager) {
-                network.getLine("NHV1_NHV2_2").getTerminal1().setP(560f);
+                network.getLine("NHV1_NHV2_2").getTerminal1().setP(560.0);
             }
         });
         Action action2 =  Mockito.mock(Action.class);
@@ -287,7 +287,7 @@ public class WCAImplTest {
         Mockito.when(action2.toTask()).thenReturn(new ModificationTask() {
             @Override
             public void modify(Network network, ComputationManager computationManager) {
-                network.getLine("NHV1_NHV2_1").getTerminal1().setP(850f);
+                network.getLine("NHV1_NHV2_1").getTerminal1().setP(850.0);
             }
         });
         Constraint constraint1 = new ConstraintImpl("NHV1_NHV2_2", 0, ConstraintType.BRANCH_OVERLOAD);

@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -53,10 +54,10 @@ public class EntsoeCaseRepositoryConfigTest {
         moduleConfig.setStringListProperty("forbiddenFormats_FR", Collections.singletonList("CIM1"));
         moduleConfig.setStringListProperty("forbiddenFormats_BE", Collections.singletonList("CIM1"));
         config = EntsoeCaseRepositoryConfig.load(platformConfig, Arrays.asList("CIM1", "UCTE"));
-        assertTrue(config.getRootDir().toString().equals("/config"));
-        assertTrue(config.getForbiddenFormatsByGeographicalCode().size() == 2);
-        assertTrue(config.getForbiddenFormatsByGeographicalCode().get(EntsoeGeographicalCode.FR).equals(Collections.singleton("CIM1")));
-        assertTrue(config.getForbiddenFormatsByGeographicalCode().get(EntsoeGeographicalCode.BE).equals(Collections.singleton("CIM1")));
+        assertEquals("/config", config.getRootDir().toString());
+        assertEquals(2, config.getForbiddenFormatsByGeographicalCode().size());
+        assertEquals(Collections.singleton("CIM1"), config.getForbiddenFormatsByGeographicalCode().get(EntsoeGeographicalCode.FR));
+        assertEquals(Collections.singleton("CIM1"), config.getForbiddenFormatsByGeographicalCode().get(EntsoeGeographicalCode.BE));
         assertTrue(config.getForbiddenFormatsByGeographicalCode().get(EntsoeGeographicalCode.D2).isEmpty());
     }
 

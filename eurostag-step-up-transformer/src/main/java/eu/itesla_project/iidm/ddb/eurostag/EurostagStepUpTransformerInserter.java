@@ -310,19 +310,19 @@ public final class EurostagStepUpTransformerInserter {
 
         StateVariable destTargetSv = fct.apply(srcSv);
 
-        float newTargetP = (float) -destTargetSv.p;
-        float newTargetQ = (float) -destTargetSv.q;
-        float newTargetV = (float) destTargetSv.u;
+        double newTargetP = -destTargetSv.p;
+        double newTargetQ = -destTargetSv.q;
+        double newTargetV = destTargetSv.u;
 
-        destBus.setV((float) destTargetSv.u);
-        destBus.setAngle((float) destTargetSv.theta);
+        destBus.setV(destTargetSv.u);
+        destBus.setAngle(destTargetSv.theta);
 
         LOGGER.trace("Resizing set points of '{}', p0: {} -> {}, q0: {} -> {}, v0: {} -> {}",
                 srcGen.getId(), -srcSv.p, newTargetP,
                 -srcSv.q, newTargetQ, srcSv.u, newTargetV);
 
-        float newMinP = (float) -fct.apply(new StateVariable(-srcGen.getMinP(), srcSv.q, srcSv.u, srcSv.theta)).p;
-        float newMaxP = (float) -fct.apply(new StateVariable(-srcGen.getMaxP(), srcSv.q, srcSv.u, srcSv.theta)).p;
+        double newMinP = -fct.apply(new StateVariable(-srcGen.getMinP(), srcSv.q, srcSv.u, srcSv.theta)).p;
+        double newMaxP = -fct.apply(new StateVariable(-srcGen.getMaxP(), srcSv.q, srcSv.u, srcSv.theta)).p;
 
         LOGGER.trace("Resizing active limits of {} [{}, {}] -> [{}, {}]",
                 srcGen.getId(), srcGen.getMinP(), srcGen.getMaxP(), newMinP, newMaxP);
@@ -353,8 +353,8 @@ public final class EurostagStepUpTransformerInserter {
             switch (srcGen.getReactiveLimits().getKind()) {
                 case MIN_MAX: {
                     MinMaxReactiveLimits limits = srcGen.getReactiveLimits(MinMaxReactiveLimits.class);
-                    float newMinQ = config.isNoReactiveLimits() ? -INFINITE_REACTIVE_LIMIT : (float) -fct.apply(new StateVariable(srcSv.p, -limits.getMinQ(), srcSv.u, srcSv.theta)).q;
-                    float newMaxQ = config.isNoReactiveLimits() ? INFINITE_REACTIVE_LIMIT : (float) -fct.apply(new StateVariable(srcSv.p, -limits.getMaxQ(), srcSv.u, srcSv.theta)).q;
+                    double newMinQ = config.isNoReactiveLimits() ? -INFINITE_REACTIVE_LIMIT : -fct.apply(new StateVariable(srcSv.p, -limits.getMinQ(), srcSv.u, srcSv.theta)).q;
+                    double newMaxQ = config.isNoReactiveLimits() ? INFINITE_REACTIVE_LIMIT : -fct.apply(new StateVariable(srcSv.p, -limits.getMaxQ(), srcSv.u, srcSv.theta)).q;
                     LOGGER.trace("Resizing reactive limits of '{}': [{}, {}] -> [{}, {}]",
                             lvGen.getId(), limits.getMinQ(), limits.getMaxQ(), newMinQ, newMaxQ);
                     lvGen.newMinMaxReactiveLimits()
@@ -367,9 +367,9 @@ public final class EurostagStepUpTransformerInserter {
                     ReactiveCapabilityCurve curve = srcGen.getReactiveLimits(ReactiveCapabilityCurve.class);
                     ReactiveCapabilityCurveAdder rcca = lvGen.newReactiveCapabilityCurve();
                     for (Point point : curve.getPoints()) {
-                        float newP = (float) -fct.apply(new StateVariable(-point.getP(), 0, srcSv.u, srcSv.theta)).p;
-                        float newMinQ = config.isNoReactiveLimits() ? -INFINITE_REACTIVE_LIMIT : (float) -fct.apply(new StateVariable(srcSv.p, -point.getMinQ(), srcSv.u, srcSv.theta)).q;
-                        float newMaxQ = config.isNoReactiveLimits() ? INFINITE_REACTIVE_LIMIT : (float) -fct.apply(new StateVariable(srcSv.p, -point.getMaxQ(), srcSv.u, srcSv.theta)).q;
+                        double newP = -fct.apply(new StateVariable(-point.getP(), 0, srcSv.u, srcSv.theta)).p;
+                        double newMinQ = config.isNoReactiveLimits() ? -INFINITE_REACTIVE_LIMIT : -fct.apply(new StateVariable(srcSv.p, -point.getMinQ(), srcSv.u, srcSv.theta)).q;
+                        double newMaxQ = config.isNoReactiveLimits() ? INFINITE_REACTIVE_LIMIT : -fct.apply(new StateVariable(srcSv.p, -point.getMaxQ(), srcSv.u, srcSv.theta)).q;
 
                         //test if the step-up transformer impedance is compatible with the reactive limit bounds: the maximun nominal power with a very high
                         //short-circuit power should be higher than the reactive bounds. If not, remove the bounds

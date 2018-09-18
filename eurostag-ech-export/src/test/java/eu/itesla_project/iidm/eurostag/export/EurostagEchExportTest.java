@@ -94,8 +94,8 @@ public class EurostagEchExportTest {
                 .setVoltageLevel2(vlhv2.getId())
                 .setBus2(nhv2.getId())
                 .setConnectableBus2(nhv2.getId())
-                .setR(3)
-                .setX(33)
+                .setR(3.0)
+                .setX(33.0)
                 .setG1(g1)
                 .setB1(b1)
                 .setG2(g2)
@@ -108,28 +108,28 @@ public class EurostagEchExportTest {
         Network network = EurostagTutorialExample1Factory.create();
         VoltageLevel vlhv1 = network.getSubstation("P1").newVoltageLevel()
                 .setId("VL1")
-                .setNominalV(380)
+                .setNominalV(380.0)
                 .setTopologyKind(TopologyKind.BUS_BREAKER)
                 .add();
         VoltageLevel vlhv2 = network.getSubstation("P2").newVoltageLevel()
                 .setId("VL2")
-                .setNominalV(380)
+                .setNominalV(380.0)
                 .setTopologyKind(TopologyKind.BUS_BREAKER)
                 .add();
 
-        double bTest1 = EurostagEchExport.B_EPSILON * 2;
+        double bTest1 = EurostagEchExport.B_EPSILON * 2.0;
 
         //G and B are the same on each side, G are 0
-        addLine(network, vlhv1, vlhv2, "L1", 0, 0, 0, 0);
-        addLine(network, vlhv1, vlhv2, "L2", 0, 0, bTest1, bTest1);
+        addLine(network, vlhv1, vlhv2, "L1", 0.0, 0.0, 0.0, 0.0);
+        addLine(network, vlhv1, vlhv2, "L2", 0.0, 0.0, bTest1, bTest1);
         //B are not the same, G are 0
-        addLine(network, vlhv1, vlhv2, "L3", 0, 0, bTest1, 0); // dummy shunt expected in the .ech
-        addLine(network, vlhv1, vlhv2, "L4", 0, 0, 0, bTest1); // dummy shunt expected in the .ech
-        addLine(network, vlhv1, vlhv2, "L5", 0, 0, EurostagEchExport.B_EPSILON / 2, 0);
-        addLine(network, vlhv1, vlhv2, "L6", 0, 0, 0, EurostagEchExport.B_EPSILON / 2);
+        addLine(network, vlhv1, vlhv2, "L3", 0.0, 0.0, bTest1, 0.0); // dummy shunt expected in the .ech
+        addLine(network, vlhv1, vlhv2, "L4", 0.0, 0.0, 0.0, bTest1); // dummy shunt expected in the .ech
+        addLine(network, vlhv1, vlhv2, "L5", 0.0, 0.0, EurostagEchExport.B_EPSILON / 2.0, 0.0);
+        addLine(network, vlhv1, vlhv2, "L6", 0.0, 0.0, 0.0, EurostagEchExport.B_EPSILON / 2.0);
         //B are not the same, G are not 0
-        addLine(network, vlhv1, vlhv2, "L7", 1, 0, bTest1, 0);
-        addLine(network, vlhv1, vlhv2, "L8", 0, 1, bTest1, 0);
+        addLine(network, vlhv1, vlhv2, "L7", 1.0, 0.0, bTest1, 0.0);
+        addLine(network, vlhv1, vlhv2, "L8", 0.0, 1.0, bTest1, 0.0);
 
         EsgSpecialParameters specialParameters = new EsgSpecialParameters();
         test(network, "/eurostag-tutorial-example1_lines.ech", LocalDate.parse("2016-03-01"), specialParameters);
@@ -149,12 +149,12 @@ public class EurostagEchExportTest {
                 .setRegulationMode(PhaseTapChanger.RegulationMode.FIXED_TAP)
                 .setRegulationValue(200)
                 .beginStep()
-                .setAlpha(-20)
+                .setAlpha(-20.0)
                 .setRho(0.96)
-                .setR(0)
-                .setX(0)
-                .setG(0)
-                .setB(0)
+                .setR(0.0)
+                .setX(0.0)
+                .setG(0.0)
+                .setB(0.0)
                 .endStep()
                 .add();
 
@@ -169,8 +169,8 @@ public class EurostagEchExportTest {
         //voltage regulator exception:  if specificCompatibility && (g.getTargetP() < 0.0001) && (g.getMinP() > 0.0001)
         // turn off g's voltage regulation
         Generator g = network.getGenerator("GEN");
-        g.setMinP(300);
-        g.setTargetP(0);
+        g.setMinP(300.0);
+        g.setTargetP(0.0);
 
         EsgSpecialParameters specialParameters = new EsgSpecialParameters();
         EurostagEchExportConfig exTemp = new EurostagEchExportConfig();

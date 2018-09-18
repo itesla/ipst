@@ -26,6 +26,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 /**
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
@@ -53,22 +56,22 @@ public class LocalFileSystemRulesDbClientTest {
 
     @Test
     public void listWorkflowsTest() {
-        Assert.assertTrue(rulesDbClient.listWorkflows().isEmpty());
+        assertTrue(rulesDbClient.listWorkflows().isEmpty());
         rulesDbClient.updateRule(new SecurityRuleMock(new RuleId(RuleAttributeSet.MONTE_CARLO, new SecurityIndexId("fault1", SecurityIndexType.TSO_OVERLOAD)), "workflow-0"));
-        Assert.assertEquals(rulesDbClient.listWorkflows(), Arrays.asList("workflow-0"));
+        assertEquals(rulesDbClient.listWorkflows(), Arrays.asList("workflow-0"));
         rulesDbClient.updateRule(new SecurityRuleMock(new RuleId(RuleAttributeSet.MONTE_CARLO, new SecurityIndexId("fault1", SecurityIndexType.TSO_OVERLOAD)), "workflow-1"));
-        Assert.assertEquals(rulesDbClient.listWorkflows(), Arrays.asList("workflow-0", "workflow-1"));
+        assertEquals(rulesDbClient.listWorkflows(), Arrays.asList("workflow-0", "workflow-1"));
     }
 
     @Test
     public void listRulesTest() {
-        Assert.assertTrue(rulesDbClient.listWorkflows().isEmpty());
-        Assert.assertTrue(rulesDbClient.listRules("workflow-0", RuleAttributeSet.MONTE_CARLO).isEmpty());
+        assertTrue(rulesDbClient.listWorkflows().isEmpty());
+        assertTrue(rulesDbClient.listRules("workflow-0", RuleAttributeSet.MONTE_CARLO).isEmpty());
         RuleId ruleId1 = new RuleId(RuleAttributeSet.MONTE_CARLO, new SecurityIndexId("fault1", SecurityIndexType.TSO_OVERLOAD));
         RuleId ruleId2 = new RuleId(RuleAttributeSet.MONTE_CARLO, new SecurityIndexId("fault2", SecurityIndexType.TSO_OVERLOAD));
         rulesDbClient.updateRule(new SecurityRuleMock(ruleId1, "workflow-0"));
         rulesDbClient.updateRule(new SecurityRuleMock(ruleId2, "workflow-0"));
-        Assert.assertEquals(rulesDbClient.listRules("workflow-0", RuleAttributeSet.MONTE_CARLO), Arrays.asList(ruleId1, ruleId2));
+        assertEquals(rulesDbClient.listRules("workflow-0", RuleAttributeSet.MONTE_CARLO), Arrays.asList(ruleId1, ruleId2));
     }
 
     @Test
@@ -77,11 +80,11 @@ public class LocalFileSystemRulesDbClientTest {
         SecurityRuleMock rule1 = new SecurityRuleMock(ruleId1, "workflow-0");
         rulesDbClient.updateRule(rule1);
         List<SecurityRule> rules1Back = rulesDbClient.getRules("workflow-0", RuleAttributeSet.MONTE_CARLO, "fault1", SecurityIndexType.TSO_OVERLOAD);
-        Assert.assertTrue(rules1Back.size() == 1);
-        Assert.assertTrue(rules1Back.get(0).getId().equals(ruleId1));
-        Assert.assertTrue(rules1Back.get(0).getWorkflowId().equals("workflow-0"));
+        assertEquals(1, rules1Back.size());
+        assertEquals(ruleId1, rules1Back.get(0).getId());
+        assertEquals("workflow-0", rules1Back.get(0).getWorkflowId());
         List<SecurityRule> rules2Back = rulesDbClient.getRules("workflow-0", RuleAttributeSet.WORST_CASE, "fault1", SecurityIndexType.TSO_OVERLOAD);
-        Assert.assertTrue(rules2Back.isEmpty());
+        assertTrue(rules2Back.isEmpty());
     }
 
     @Test
@@ -94,8 +97,8 @@ public class LocalFileSystemRulesDbClientTest {
         rulesDbClient.updateRule(rule2);
         rulesDbClient.updateRule(rule3);
         rulesDbClient.updateRule(rule4);
-        Assert.assertEquals(Sets.newHashSet(rule1, rule3), new HashSet<>(rulesDbClient.getRules("workflow-0", null, "fault1", SecurityIndexType.TSO_OVERLOAD)));
-        Assert.assertEquals(Sets.newHashSet(rule1, rule2), new HashSet<>(rulesDbClient.getRules("workflow-0", RuleAttributeSet.MONTE_CARLO, "fault1", null)));
+        assertEquals(Sets.newHashSet(rule1, rule3), new HashSet<>(rulesDbClient.getRules("workflow-0", null, "fault1", SecurityIndexType.TSO_OVERLOAD)));
+        assertEquals(Sets.newHashSet(rule1, rule2), new HashSet<>(rulesDbClient.getRules("workflow-0", RuleAttributeSet.MONTE_CARLO, "fault1", null)));
         try {
             rulesDbClient.getRules("workflow-0", RuleAttributeSet.MONTE_CARLO, null, SecurityIndexType.TSO_OVERLOAD);
             Assert.fail();

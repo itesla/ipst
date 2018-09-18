@@ -28,18 +28,18 @@ public class HistoDbAttributeIdParserTest {
     public void testParseBranchAttr() {
         HistoDbAttributeId attrId = HistoDbAttributeIdParser.parse("LINE1__TO__SUB1_P");
         assertTrue(attrId instanceof HistoDbNetworkAttributeId);
-        assertTrue("LINE1".equals(((HistoDbNetworkAttributeId) attrId).getEquipmentId()));
-        assertTrue("SUB1".equals(((HistoDbNetworkAttributeId) attrId).getSide()));
-        assertTrue(((HistoDbNetworkAttributeId) attrId).getAttributeType() == HistoDbAttr.P);
+        assertEquals("LINE1", ((HistoDbNetworkAttributeId) attrId).getEquipmentId());
+        assertEquals("SUB1", ((HistoDbNetworkAttributeId) attrId).getSide());
+        assertEquals(HistoDbAttr.P, ((HistoDbNetworkAttributeId) attrId).getAttributeType());
     }
 
     @Test
     public void testParseGeneratorAttr() {
         HistoDbAttributeId attrId = HistoDbAttributeIdParser.parse("GEN1_V");
         assertTrue(attrId instanceof HistoDbNetworkAttributeId);
-        assertTrue("GEN1".equals(((HistoDbNetworkAttributeId) attrId).getEquipmentId()));
-        assertTrue(((HistoDbNetworkAttributeId) attrId).getSide() == null);
-        assertTrue(((HistoDbNetworkAttributeId) attrId).getAttributeType() == HistoDbAttr.V);
+        assertEquals("GEN1", ((HistoDbNetworkAttributeId) attrId).getEquipmentId());
+        assertNull(((HistoDbNetworkAttributeId) attrId).getSide());
+        assertEquals(HistoDbAttr.V, ((HistoDbNetworkAttributeId) attrId).getAttributeType());
     }
 
 }

@@ -177,10 +177,10 @@ public class WCAUtilsTest {
         injections.put("generator1", -10f);
         WCAUtils.applyInjections(network, StateManager.INITIAL_STATE_ID, injections);
 
-        assertEquals(loadP+10, network.getLoad("load1").getTerminal().getP(), 0);
-        assertEquals(loadP0+10, network.getLoad("load1").getP0(), 0);
-        assertEquals(generatorP-10, network.getGenerator("generator1").getTerminal().getP(), 0);
-        assertEquals(generatorTargetP+10, network.getGenerator("generator1").getTargetP(), 0);
+        assertEquals(loadP + 10, network.getLoad("load1").getTerminal().getP(), 0.0);
+        assertEquals(loadP0 + 10, network.getLoad("load1").getP0(), 0.0);
+        assertEquals(generatorP - 10, network.getGenerator("generator1").getTerminal().getP(), 0.0);
+        assertEquals(generatorTargetP + 10, network.getGenerator("generator1").getTargetP(), 0.0);
     }
 
     @Test

@@ -132,7 +132,7 @@ public class WCAReportImplTest {
         String reportContent = String.join(System.lineSeparator(),
                                            WCAReportImpl.PRE_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_TITLE,
                                            "Basecase;FailureStep;FailureDescription;ViolationType;Equipment;Value;Limit;Country;BaseVoltage;Side",
-                                           networkId + ";;;CURRENT;" + line1Id + ";" + String.format(Locale.getDefault(),"%g",1100f) + ";" + String.format(Locale.getDefault(),"%g",1000f)
+                                           networkId + ";;;CURRENT;" + line1Id + ";" + String.format(Locale.getDefault(),"%g",1100.0) + ";" + String.format(Locale.getDefault(),"%g",1000f)
                                            + ";FR" + ";" + String.format(Locale.getDefault(),"%g",380f) + ";ONE",
                                            networkId + ";;;CURRENT;" + line2Id + ";" + String.format(Locale.getDefault(),"%g",950f) + ";" + String.format(Locale.getDefault(),"%g",900f)
                                            + ";FR" + ";" + String.format(Locale.getDefault(),"%g",380f) + ";ONE");

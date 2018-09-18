@@ -52,16 +52,16 @@ public class ConstraintsModifierTest {
         assertEquals(voltageLevel2.getLowVoltageLimit(), ConstraintsModifierTestUtils.LOW_VOLTAGE_LIMIT, 0);
     }
 
-    private void checkModifiedNetworkLimits(int margin) {
+    private void checkModifiedNetworkLimits(float margin) {
         Line line = network.getLine(ConstraintsModifierTestUtils.LINE_ID);
         double newCurrentLimit = ConstraintsModifierTestUtils.CURRENT_VALUE * (1.0 + margin / 100.0);
-        assertEquals(newCurrentLimit, line.getCurrentLimits1().getPermanentLimit(), 0);
+        assertEquals(newCurrentLimit, line.getCurrentLimits1().getPermanentLimit(), 0.0);
         VoltageLevel voltageLevel1 = network.getVoltageLevel(ConstraintsModifierTestUtils.VOLTAGE_LEVEL_1_ID);
         double newHighVoltageLimit = ConstraintsModifierTestUtils.V * (1.0 + margin / 100.0);
-        assertEquals(newHighVoltageLimit, voltageLevel1.getHighVoltageLimit(), 0);
+        assertEquals(newHighVoltageLimit, voltageLevel1.getHighVoltageLimit(), 0.0);
         VoltageLevel voltageLevel2 = network.getVoltageLevel(ConstraintsModifierTestUtils.VOLTAGE_LEVEL_2_ID);
         double newLowVoltageLimit = ConstraintsModifierTestUtils.V * (1.0 - margin / 100.0);
-        assertEquals(newLowVoltageLimit, voltageLevel2.getLowVoltageLimit(), 0);
+        assertEquals(newLowVoltageLimit, voltageLevel2.getLowVoltageLimit(), 0.0);
     }
 
     @Test
@@ -76,7 +76,7 @@ public class ConstraintsModifierTest {
 
     @Test
     public void testWithMargin() throws Exception {
-        int margin = 3;
+        float margin = 3.0f;
 
         checkOriginalNetworkLimits();
 
@@ -98,7 +98,7 @@ public class ConstraintsModifierTest {
 
     @Test
     public void testWithViolationsAndMargin() throws Exception {
-        int margin = 3;
+        float margin = 3.0f;
 
         checkOriginalNetworkLimits();
 
@@ -110,7 +110,7 @@ public class ConstraintsModifierTest {
 
     @Test
     public void testWithViolationsAndMarginApplyBasecase() throws Exception {
-        int margin = 3;
+        float margin = 3;
 
         checkOriginalNetworkLimits();
 
@@ -132,7 +132,7 @@ public class ConstraintsModifierTest {
 
     @Test
     public void testWithMarginApplyBasecase() throws Exception {
-        int margin = 3;
+        float margin = 3;
 
         checkOriginalNetworkLimits();
 
