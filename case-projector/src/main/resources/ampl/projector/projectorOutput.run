@@ -166,7 +166,7 @@ printf {(s,n) in SHUNTCC}
 ###########################################################################
 
 printf '#"num" "bus" "v_regul" "targetV(pu)" "Q(MVar)"\n'
-  > projector_results_svc.txt;
+  > projector_results_static_var_compensators.txt;
 printf {(s,n) in SVCCC}
   "%i %i %s %f %f\n",
   s,n,
@@ -174,7 +174,7 @@ printf {(s,n) in SVCCC}
   V[n],
   if (s,n) in SVC_V then -100*svc_b[s,n]*V[n]^2 # signe '-' car homogene a une consommation de reactif
   else if (s,n) in SVC_FIXE then svc_Q0[s,n]
-  > projector_results_svc.txt;
+  > projector_results_static_var_compensators.txt;
 
 
 ###########################################################################
@@ -184,7 +184,7 @@ printf {(s,n) in SVCCC}
 ###########################################################################
 
 printf '#"num" "bus" "P(MW)" "Q(MVar)"\n'
-  > projector_results_lcc.txt;
+  > projector_results_lcc_converter_stations.txt;
 
 
 ###########################################################################
@@ -194,11 +194,11 @@ printf '#"num" "bus" "P(MW)" "Q(MVar)"\n'
 ###########################################################################
 
 printf '#"num" "bus" "v_regul" "targetV(pu)" "targetQ(MVar)" "P(MW)" "Q(MVar)"\n'
-  > projector_results_vsc.txt;
+  > projector_results_vsc_converter_stations.txt;
 printf {(sc,n) in VSCCONV}
   "%i %i %s %f %f %f %f\n",
   sc,n,vscconv_vregul[sc,n],V[n],vscconv_Q[sc,n],vscconv_P[sc,n],vscconv_Q[sc,n]
-  > projector_results_vsc.txt;
+  > projector_results_vsc_converter_stations.txt;
 
 
 ###########################################################################
