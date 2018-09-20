@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Locale;
 
+import com.powsybl.commons.io.table.TableFormatterConfig;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,6 +62,7 @@ public class WCAReportImplTest {
     private String networkId = "network1";
     private String line1Id = "line1";
     private String line2Id = "line2";
+    private TableFormatterConfig tableFormatterConfig;
 
     @Before
     public void setUp() throws Exception {
@@ -94,6 +96,9 @@ public class WCAReportImplTest {
         Mockito.when(network.getId()).thenReturn(networkId);
         Mockito.when(network.getIdentifiable(line1Id)).thenReturn(line1);
         Mockito.when(network.getIdentifiable(line2Id)).thenReturn(line2);
+
+        tableFormatterConfig = new TableFormatterConfig();
+
     }
 
     @After
@@ -105,7 +110,7 @@ public class WCAReportImplTest {
     public void testExportPreContigencyViolationsWithoutUncertaintiesLoadflowDivergence() throws IOException {
         Path folder = Files.createDirectory(fileSystem.getPath("/export-folder"));
 
-        WCAReportImpl wcaReport = new WCAReportImpl(network);
+        WCAReportImpl wcaReport = new WCAReportImpl(network, tableFormatterConfig);
         wcaReport.setBaseStateLoadflowResult(new WCALoadflowResult(false, "base state loadflow diverged"));
         wcaReport.exportCsv(folder);
 
@@ -122,7 +127,7 @@ public class WCAReportImplTest {
     public void testExportPreContigencyViolationsWithoutUncertainties() throws IOException {
         Path folder = Files.createDirectory(fileSystem.getPath("/export-folder"));
 
-        WCAReportImpl wcaReport = new WCAReportImpl(network);
+        WCAReportImpl wcaReport = new WCAReportImpl(network, tableFormatterConfig);
         wcaReport.setBaseStateLoadflowResult(new WCALoadflowResult(true, null));
         wcaReport.setPreContingencyViolationsWithoutUncertainties(Arrays.asList(line1Violation, line2Violation));
         wcaReport.exportCsv(folder);
@@ -143,7 +148,7 @@ public class WCAReportImplTest {
     public void testExportPreContigencyViolationsWithUncertaintiesLoadflowDivergence() throws IOException {
         Path folder = Files.createDirectory(fileSystem.getPath("/export-folder"));
 
-        WCAReportImpl wcaReport = new WCAReportImpl(network);
+        WCAReportImpl wcaReport = new WCAReportImpl(network, tableFormatterConfig);
         wcaReport.setBaseStateWithUncertaintiesLoadflowResult(new WCALoadflowResult(false, "base state with uncertainties loadflow diverged"));
         wcaReport.exportCsv(folder);
 
@@ -160,7 +165,7 @@ public class WCAReportImplTest {
     public void testExportPreContigencyViolationsWithUncertainties() throws IOException {
         Path folder = Files.createDirectory(fileSystem.getPath("/export-folder"));
 
-        WCAReportImpl wcaReport = new WCAReportImpl(network);
+        WCAReportImpl wcaReport = new WCAReportImpl(network, tableFormatterConfig);
         wcaReport.setBaseStateLoadflowResult(new WCALoadflowResult(true, null));
         wcaReport.setPreContingencyViolationsWithUncertainties(Arrays.asList(line1Violation, line2Violation));
         wcaReport.exportCsv(folder);
@@ -181,7 +186,7 @@ public class WCAReportImplTest {
     public void testExportPreventiveActionsApplication() throws IOException {
         Path folder = Files.createDirectory(fileSystem.getPath("/export-folder"));
 
-        WCAReportImpl wcaReport = new WCAReportImpl(network);
+        WCAReportImpl wcaReport = new WCAReportImpl(network, tableFormatterConfig);
         wcaReport.addPreventiveActionApplication(new WCAActionApplication("action1", 
                                                                           line1Violation, 
                                                                           new WCALoadflowResult(true, null), 
@@ -217,7 +222,7 @@ public class WCAReportImplTest {
     public void testExportPostPreventiveActionsViolationsWithUncertainties() throws IOException {
         Path folder = Files.createDirectory(fileSystem.getPath("/export-folder"));
 
-        WCAReportImpl wcaReport = new WCAReportImpl(network);
+        WCAReportImpl wcaReport = new WCAReportImpl(network, tableFormatterConfig);
         wcaReport.setBaseStateLoadflowResult(new WCALoadflowResult(true, null));
         wcaReport.setPostPreventiveActionsViolationsWithUncertainties(Arrays.asList(line1Violation, line2Violation));
         wcaReport.exportCsv(folder);
@@ -238,7 +243,7 @@ public class WCAReportImplTest {
     public void testExportSecurityRulesApplication() throws IOException {
         Path folder = Files.createDirectory(fileSystem.getPath("/export-folder"));
 
-        WCAReportImpl wcaReport = new WCAReportImpl(network);
+        WCAReportImpl wcaReport = new WCAReportImpl(network, tableFormatterConfig);
         SecurityRule rule1 = Mockito.mock(SecurityRule.class);
         Mockito.when(rule1.getId()).thenReturn(new RuleId(RuleAttributeSet.WORST_CASE, new SecurityIndexId("fault1", SecurityIndexType.TSO_OVERLOAD)));
         Mockito.when(rule1.getWorkflowId()).thenReturn("workflow-0");
@@ -278,7 +283,7 @@ public class WCAReportImplTest {
     public void testExportPostContigencyViolationsWithoutUncertaintiesLoadflowDivergence() throws IOException {
         Path folder = Files.createDirectory(fileSystem.getPath("/export-folder"));
 
-        WCAReportImpl wcaReport = new WCAReportImpl(network);
+        WCAReportImpl wcaReport = new WCAReportImpl(network, tableFormatterConfig);
         WCAPostContingencyStatus postContingencyStatus = new WCAPostContingencyStatus("fault1", new WCALoadflowResult(false, "post contingency loadflow diverged")); 
         wcaReport.addPostContingencyStatus(postContingencyStatus);
         wcaReport.exportCsv(folder);
@@ -296,7 +301,7 @@ public class WCAReportImplTest {
     public void testExportPostContigencyViolationsWithoutUncertainties() throws IOException {
         Path folder = Files.createDirectory(fileSystem.getPath("/export-folder"));
 
-        WCAReportImpl wcaReport = new WCAReportImpl(network);
+        WCAReportImpl wcaReport = new WCAReportImpl(network, tableFormatterConfig);
         WCAPostContingencyStatus postContingencyStatus1 = new WCAPostContingencyStatus("fault1", new WCALoadflowResult(true, null));
         postContingencyStatus1.setPostContingencyViolationsWithoutUncertainties(Collections.singletonList(line1Violation));
         wcaReport.addPostContingencyStatus(postContingencyStatus1);
@@ -321,7 +326,7 @@ public class WCAReportImplTest {
     public void testExportPostContigencyViolationsWithUncertaintiesLoadflowDivergence() throws IOException {
         Path folder = Files.createDirectory(fileSystem.getPath("/export-folder"));
 
-        WCAReportImpl wcaReport = new WCAReportImpl(network);
+        WCAReportImpl wcaReport = new WCAReportImpl(network, tableFormatterConfig);
         WCAPostContingencyStatus postContingencyStatus = new WCAPostContingencyStatus("fault1", new WCALoadflowResult(true, null));
         postContingencyStatus.setPostContingencyWithUncertaintiesLoadflowResult(new WCALoadflowResult(false, "post contingency with uncertainties loadflow diverged"));
         wcaReport.addPostContingencyStatus(postContingencyStatus);
@@ -340,7 +345,7 @@ public class WCAReportImplTest {
     public void testExportPostContigencyViolationsWithUncertainties() throws IOException {
         Path folder = Files.createDirectory(fileSystem.getPath("/export-folder"));
 
-        WCAReportImpl wcaReport = new WCAReportImpl(network);
+        WCAReportImpl wcaReport = new WCAReportImpl(network, tableFormatterConfig);
         WCAPostContingencyStatus postContingencyStatus1 = new WCAPostContingencyStatus("fault1", new WCALoadflowResult(true, null));
         postContingencyStatus1.setPostContingencyWithUncertaintiesLoadflowResult(new WCALoadflowResult(true, null));
         postContingencyStatus1.setPostContingencyViolationsWithUncertainties(Collections.singletonList(line1Violation));
@@ -367,7 +372,7 @@ public class WCAReportImplTest {
     public void testExportCurativeActionsApplication() throws IOException {
         Path folder = Files.createDirectory(fileSystem.getPath("/export-folder"));
 
-        WCAReportImpl wcaReport = new WCAReportImpl(network);
+        WCAReportImpl wcaReport = new WCAReportImpl(network, tableFormatterConfig);
         WCAPostContingencyStatus postContingencyStatus1 = new WCAPostContingencyStatus("fault1", new WCALoadflowResult(true, null));
         postContingencyStatus1.setCurativeActionsApplication(Arrays.asList(new WCAActionApplication("action1", 
                                                                                                    null, 
@@ -406,7 +411,7 @@ public class WCAReportImplTest {
     @Test
     public void testExportCreateFolder() throws IOException {
         Path folder = fileSystem.getPath("/export-folder");
-        WCAReportImpl wcaReport = new WCAReportImpl(network);
+        WCAReportImpl wcaReport = new WCAReportImpl(network, tableFormatterConfig);
         wcaReport.exportCsv(folder);
         assertTrue(Files.exists(folder));
     }
@@ -414,7 +419,7 @@ public class WCAReportImplTest {
     @Test
     public void testFailExportToFile() throws IOException {
         Path file = Files.createFile(fileSystem.getPath("/file"));
-        WCAReportImpl wcaReport = new WCAReportImpl(network);
+        WCAReportImpl wcaReport = new WCAReportImpl(network, tableFormatterConfig);
         assertFalse(wcaReport.exportCsv(file));
     }
 }

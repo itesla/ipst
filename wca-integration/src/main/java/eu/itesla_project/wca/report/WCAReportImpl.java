@@ -59,7 +59,6 @@ public class WCAReportImpl implements WCAReport {
     public static String POST_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_TITLE = "post-contigency-violations-with-uncertainties";
     public static String POST_CURATIVE_ACTIONS_FILE = "post-curative-actions-report.csv";
     public static String POST_CURATIVE_ACTIONS_TITLE = "post-curative-actions";
-    private static TableFormatterConfig TABLE_FORMATTER_CONFIG = TableFormatterConfig.load();
     private static String LOADFLOW_STEP = "Loadflow";
 
     private final Network basecase;
@@ -72,9 +71,15 @@ public class WCAReportImpl implements WCAReport {
     private List<LimitViolation> baseStateRemainingViolations = Collections.synchronizedList(new ArrayList<>());
     private List<WCASecurityRuleApplication> securityRulesApplication = Collections.synchronizedList(new ArrayList<>());
     private List<WCAPostContingencyStatus> postContingenciesStatus = Collections.synchronizedList(new ArrayList<>());
+    private final TableFormatterConfig tableFormatterConfig;
 
     public WCAReportImpl(Network basecase) {
+        this(basecase, TableFormatterConfig.load());
+    }
+
+    public WCAReportImpl(Network basecase, TableFormatterConfig tableFormatterConfig) {
         this.basecase = Objects.requireNonNull(basecase);
+        this.tableFormatterConfig = tableFormatterConfig;
     }
 
     @Override
@@ -259,7 +264,7 @@ public class WCAReportImpl implements WCAReport {
         };
         CsvTableFormatterFactory factory = new CsvTableFormatterFactory();
         try (Writer writer = Files.newBufferedWriter(violationsPath, StandardCharsets.UTF_8);
-             TableFormatter formatter = factory.create(writer, title, TABLE_FORMATTER_CONFIG, columns)) {
+             TableFormatter formatter = factory.create(writer, title, tableFormatterConfig, columns)) {
             writeViolations(formatter, null, loadflowResult, violations);
         }
     }
@@ -339,7 +344,7 @@ public class WCAReportImpl implements WCAReport {
         };
         CsvTableFormatterFactory factory = new CsvTableFormatterFactory();
         try (Writer writer = Files.newBufferedWriter(violationsPath, StandardCharsets.UTF_8);
-             TableFormatter formatter = factory.create(writer, POST_PREVENTIVE_ACTIONS_TITLE, TABLE_FORMATTER_CONFIG, columns)) {
+             TableFormatter formatter = factory.create(writer, POST_PREVENTIVE_ACTIONS_TITLE, tableFormatterConfig, columns)) {
             writeActionsApplications(formatter, null, new ArrayList<>(preventiveActionsApplication.values()));
         }
     }
@@ -369,7 +374,7 @@ public class WCAReportImpl implements WCAReport {
         };
         CsvTableFormatterFactory factory = new CsvTableFormatterFactory();
         try (Writer writer = Files.newBufferedWriter(violationsPath, StandardCharsets.UTF_8);
-             TableFormatter formatter = factory.create(writer, SECURITY_RULES_VIOLATIONS_WITHOUT_UNCERTAINTIES_TITLE, TABLE_FORMATTER_CONFIG, columns)) {
+             TableFormatter formatter = factory.create(writer, SECURITY_RULES_VIOLATIONS_WITHOUT_UNCERTAINTIES_TITLE, tableFormatterConfig, columns)) {
             if (!securityRulesApplication.isEmpty()) {
                 securityRulesApplication.forEach(ruleApplication -> {
                     try {
@@ -419,9 +424,9 @@ public class WCAReportImpl implements WCAReport {
         };
         CsvTableFormatterFactory factory = new CsvTableFormatterFactory();
         try (Writer writer1 = Files.newBufferedWriter(violationsPath1, StandardCharsets.UTF_8);
-             TableFormatter formatter1 = factory.create(writer1, POST_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_TITLE, TABLE_FORMATTER_CONFIG, columns);
+             TableFormatter formatter1 = factory.create(writer1, POST_CONTINGENCY_VIOLATIONS_WITHOUT_UNCERTAINTIES_TITLE, tableFormatterConfig, columns);
              Writer writer2 = Files.newBufferedWriter(violationsPath2, StandardCharsets.UTF_8);
-             TableFormatter formatter2 = factory.create(writer2, POST_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_TITLE, TABLE_FORMATTER_CONFIG, columns)) {
+             TableFormatter formatter2 = factory.create(writer2, POST_CONTINGENCY_VIOLATIONS_WITH_UNCERTAINTIES_TITLE, tableFormatterConfig, columns)) {
             if (!postContingenciesStatus.isEmpty()) {
                 postContingenciesStatus.forEach(postContingencyStatus -> {
                     // post-contingency violations without uncertainties
@@ -457,7 +462,7 @@ public class WCAReportImpl implements WCAReport {
         };
         CsvTableFormatterFactory factory = new CsvTableFormatterFactory();
         try (Writer writer = Files.newBufferedWriter(violationsPath, StandardCharsets.UTF_8);
-             TableFormatter formatter = factory.create(writer, POST_CURATIVE_ACTIONS_TITLE, TABLE_FORMATTER_CONFIG, columns)) {
+             TableFormatter formatter = factory.create(writer, POST_CURATIVE_ACTIONS_TITLE, tableFormatterConfig, columns)) {
             if (!postContingenciesStatus.isEmpty()) {
                 postContingenciesStatus.forEach(postContingencyStatus -> {
                     writeActionsApplications(formatter,
