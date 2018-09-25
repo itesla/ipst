@@ -7,6 +7,7 @@
 package eu.itesla_project.modules;
 
 import com.google.auto.service.AutoService;
+import com.powsybl.loadflow.LoadFlowParameters;
 import com.powsybl.security.LimitViolationFilter;
 import com.powsybl.tools.Command;
 import com.powsybl.tools.Tool;
@@ -146,7 +147,7 @@ public class OptimizerTool implements Tool {
             if (result.isFeasible()) {
                 context.getOutputStream().println("running loadflow...");
 
-                LoadFlowResult result2 = loadFlow.run();
+                LoadFlowResult result2 = loadFlow.run(network.getStateManager().getWorkingStateId(), LoadFlowParameters.load()).join();
 
                 context.getOutputStream().println("loadflow status is " + (result2.isOk() ? "ok" : "nok") + " (" + result2.getMetrics() + ")");
 

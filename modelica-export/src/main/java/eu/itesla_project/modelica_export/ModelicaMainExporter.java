@@ -8,6 +8,7 @@ package eu.itesla_project.modelica_export;
 
 import com.powsybl.computation.ComputationManager;
 import com.powsybl.computation.local.LocalComputationManager;
+import com.powsybl.loadflow.LoadFlowParameters;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
 import eu.itesla_project.iidm.ejbclient.EjbClientCtx;
 import com.powsybl.iidm.network.*;
@@ -154,7 +155,7 @@ public class ModelicaMainExporter {
         int priority = 1;
         LoadFlow loadflow = loadFlowFactory.create(_network, computationManager, priority);
         //((HELMLoadFlow) loadflow).setSlack(this._slackId);
-        LoadFlowResult lfResults = loadflow.run();
+        LoadFlowResult lfResults = loadflow.run(_network.getStateManager().getWorkingStateId(), LoadFlowParameters.load()).join();
 
         if (!lfResults.isOk()) {
             System.out.println("LF has not been successfuly completed.");

@@ -99,7 +99,7 @@ public class SimplifiedOfflineWorkflow extends AbstractOfflineWorkflow {
                 }, executorService)
                 .thenComposeAsync(aVoid -> {
                     LOGGER.debug("Workflow {}, case {}: loadflow started", id, caseNum);
-                    return context.loadFlow.runAsync(getCaseId(caseNum), loadFlowParameters);
+                    return context.loadFlow.run(getCaseId(caseNum), loadFlowParameters);
                 }, executorService)
                 .thenAcceptAsync(loadFlowResult -> {
                     context.network.getStateManager().setWorkingState(getCaseId(caseNum));

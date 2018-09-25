@@ -15,6 +15,7 @@ import com.powsybl.contingency.Contingency;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.StateManager;
 import com.powsybl.loadflow.LoadFlow;
+import com.powsybl.loadflow.LoadFlowParameters;
 import com.powsybl.loadflow.LoadFlowResult;
 import eu.itesla_project.modules.constraints.ConstraintsModifier;
 import eu.itesla_project.modules.contingencies.ActionParameters;
@@ -61,6 +62,8 @@ public class StateAnalyzer implements Callable<Void> {
     Map<String, Boolean> loadflowResults = new HashMap<String, Boolean>();
     private ConstraintsModifier constraintsModifier;
     private final String logHeader;
+    private final LoadFlowParameters loadFlowParameters;
+
 
     public StateAnalyzer(OnlineWorkflowContext context, MontecarloSampler sampler, LoadFlow loadFlow,
                          OnlineRulesFacade rulesFacade, CorrectiveControlOptimizer optimizer, Stabilization stabilization,
@@ -94,6 +97,7 @@ public class StateAnalyzer implements Callable<Void> {
         initStatus();
         stateListener.onUpdate(stateId, status, context.timeHorizon);
         this.logHeader = " [WorkflowId=" + context.getWorkflowId() + "] ";
+        this.loadFlowParameters = LoadFlowParameters.load();
     }
 
     private void initStatus() {
@@ -132,7 +136,7 @@ public class StateAnalyzer implements Callable<Void> {
             status.put(currentStatus, OnlineTaskStatus.RUNNING);
             stateListener.onUpdate(stateId, status, context.timeHorizon);
             logger.info(this.logHeader + "{}: loadflow started", stateId);
-            LoadFlowResult result = loadFlow.run();
+            LoadFlowResult result = loadFlow.run(context.getNetwork().getStateManager().getWorkingStateId(), loadFlowParameters).join();
             status.put(currentStatus, result.isOk() ? OnlineTaskStatus.SUCCESS : OnlineTaskStatus.FAILED);
             stateListener.onUpdate(stateId, status, context.timeHorizon);
             logger.info(this.logHeader + "{}: loadflow terminated", stateId);
@@ -456,7 +460,7 @@ public class StateAnalyzer implements Callable<Void> {
             try {
                 // run load flow on post contingency state
                 logger.info(this.logHeader + "{}: running load flow on post contingency state {}", stateId, postContingencyStateId);
-                LoadFlowResult result = loadFlow.run();
+                LoadFlowResult result = loadFlow.run(network.getStateManager().getWorkingStateId(), loadFlowParameters).join();
                 if (!alreadyProcessed) {
                     // store post contingency state
                     Integer stateIdInt = Integer.parseInt(stateId);

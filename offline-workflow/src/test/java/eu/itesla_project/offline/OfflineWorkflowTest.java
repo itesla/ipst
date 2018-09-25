@@ -274,8 +274,8 @@ public class OfflineWorkflowTest {
                     return null;
                 }
             };
-            Mockito.when(loadFlow.run(Matchers.any(LoadFlowParameters.class)))
-                    .thenReturn(loadFlowResult);
+            Mockito.when(loadFlow.run(Matchers.any(String.class), Matchers.any(LoadFlowParameters.class)))
+                    .thenReturn(CompletableFuture.completedFuture(loadFlowResult));
 
             // dynamic simulation stabilization mock
             Stabilization stabilization = Mockito.mock(Stabilization.class);

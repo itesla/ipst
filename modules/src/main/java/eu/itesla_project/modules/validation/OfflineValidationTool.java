@@ -8,6 +8,7 @@ package eu.itesla_project.modules.validation;
 
 import com.google.auto.service.AutoService;
 import com.google.common.collect.Queues;
+import com.powsybl.loadflow.LoadFlowParameters;
 import eu.itesla_project.cases.CaseRepository;
 import eu.itesla_project.cases.CaseRepositoryFactory;
 import eu.itesla_project.cases.CaseType;
@@ -363,6 +364,7 @@ public class OfflineValidationTool implements Tool {
 
             int cores = Runtime.getRuntime().availableProcessors();
             ExecutorService executorService = Executors.newFixedThreadPool(cores);
+            LoadFlowParameters loadFlowParameters = LoadFlowParameters.load();
             try {
                 List<Future<?>> tasks = new ArrayList<>(cores);
                 for (int i = 0; i < cores; i++) {
@@ -386,7 +388,7 @@ public class OfflineValidationTool implements Tool {
                                 Map<RuleId, Map<HistoDbAttributeId, Object>> valuesPerRule = new HashMap<>();
 
                                 LoadFlow loadFlow = loadFlowFactory.create(network, context.getComputationManager(), 0);
-                                LoadFlowResult loadFlowResult = loadFlow.run();
+                                LoadFlowResult loadFlowResult = loadFlow.run(network.getStateManager().getWorkingStateId(), loadFlowParameters).join();
 
                                 context.getErrorStream().println("load flow terminated (" + loadFlowResult.isOk() + ") on " + network.getId());
 

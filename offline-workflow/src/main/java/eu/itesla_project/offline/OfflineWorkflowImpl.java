@@ -197,7 +197,7 @@ public class OfflineWorkflowImpl extends AbstractOfflineWorkflow {
         LOGGER.debug("Workflow {}, sample {}: load flow started", id, sample.getId());
 
         try {
-            LoadFlowResult result = context.getLoadflow().run(context.getLoadFlowParameters());
+            LoadFlowResult result = context.getLoadflow().run(context.getNetwork().getStateManager().getWorkingStateId(), context.getLoadFlowParameters()).join();
 
             LOGGER.debug("Workflow {}, sample {}: load flow terminated (ok={})", id, sample.getId(), result.isOk());
 
