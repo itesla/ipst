@@ -473,7 +473,7 @@ public class WCAImpl implements WCA, WCAConstants {
                     contingency.toTask().modify(network, computationManager);
 
                 }, computationManager.getExecutor())
-                .thenCompose(aVoid -> loadFlow.runAsync(contingencyStateId[0], LOAD_FLOW_PARAMETERS))
+                .thenCompose(aVoid -> loadFlow.run(contingencyStateId[0], LOAD_FLOW_PARAMETERS))
                 .thenCompose(loadFlowResult -> {
                     if (!loadFlowResult.isOk()) {
                         LOGGER.warn("Network {}, contingency {}: load flow on post contingency state diverged, metrics = {}",
@@ -546,7 +546,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                     }
                                     LoadFlowResult loadFlowResult1;
                                     try {
-                                        loadFlowResult1 = loadFlow.run(LOAD_FLOW_PARAMETERS);
+                                        loadFlowResult1 = loadFlow.run(network.getStateManager().getWorkingStateId(), LOAD_FLOW_PARAMETERS).join();
                                         if (loadFlowResult1.isOk()) {
                                             boolean violationsRemoved = false;
                                             boolean actionApplied = false;
@@ -629,7 +629,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                                 WCAUtils.applyInjections(network, clustersUncertaintiesState, clusterResults2.getInjections());
                                                 LOGGER.info("Network {}, contingency {}: running loadflow on post contingency state with 'clusters' uncertainties",
                                                             network.getId(), contingency.getId());
-                                                loadFlow.runAsync(clustersUncertaintiesState, LOAD_FLOW_PARAMETERS)
+                                                loadFlow.run(clustersUncertaintiesState, LOAD_FLOW_PARAMETERS)
                                                     .thenAccept(loadFlowResult2 -> {
                                                         if (!loadFlowResult2.isOk()) {
                                                             LOGGER.info("Network {}, contingency {}: loadflow on state with 'clusters' uncertainties diverged: metrics = {}",
@@ -683,7 +683,7 @@ public class WCAImpl implements WCA, WCAConstants {
         LoadFlow loadFlow = loadFlowFactory.create(network, computationManager, 0);
 
         return loadFlow
-                .runAsync(baseStateId, LOAD_FLOW_PARAMETERS)
+                .run(baseStateId, LOAD_FLOW_PARAMETERS)
                 .thenApply(loadFlowInBaseStateResult -> {
 
                     network.getStateManager().setWorkingState(baseStateId);
@@ -769,7 +769,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                             network.getStateManager().setWorkingState(domainsUncertaintiesState);
                                             WCAUtils.applyInjections(network, domainsUncertaintiesState, domainsResult.getInjections());
                                             LOGGER.info("Network {}: running loadflow on state with 'domains' uncertainties", network.getId());
-                                            return loadFlow.runAsync(domainsUncertaintiesState, LOAD_FLOW_PARAMETERS)
+                                            return loadFlow.run(domainsUncertaintiesState, LOAD_FLOW_PARAMETERS)
                                                     .thenApply(loadFlowResult -> {
                                                         if (!loadFlowResult.isOk()) {
                                                             LOGGER.info("Network {}: loadflow on state with 'domains' uncertainties diverged, metrics = {}", network.getId(), loadFlowResult.getMetrics());
@@ -836,7 +836,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                         }
                                         LoadFlowResult loadFlowResult1;
                                         try {
-                                            loadFlowResult1 = loadFlow.run(LOAD_FLOW_PARAMETERS);
+                                            loadFlowResult1 = loadFlow.run(network.getStateManager().getWorkingStateId(), LOAD_FLOW_PARAMETERS).join();
                                             if (loadFlowResult1.isOk()) {
                                                 List<LimitViolation> preventiveStateLimitViolations = violationsFilter.apply(Security.checkLimits(network), network);
                                                 Optional<LimitViolation> notSolvedLimitViolation = preventiveStateLimitViolations
@@ -966,7 +966,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                             }
                                         });
                                     }, computationManager.getExecutor())
-                                    .thenCompose(ignored -> loadFlow.runAsync(baseStateId, LOAD_FLOW_PARAMETERS))
+                                    .thenCompose(ignored -> loadFlow.run(baseStateId, LOAD_FLOW_PARAMETERS))
                                     .thenAccept(ignored -> {
                                         // check that the violations have disappeared? this check has already been done previously
                                         // update basecase remaining violations

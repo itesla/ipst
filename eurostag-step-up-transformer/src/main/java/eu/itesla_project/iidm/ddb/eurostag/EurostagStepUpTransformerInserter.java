@@ -706,7 +706,7 @@ public final class EurostagStepUpTransformerInserter {
         long start = System.currentTimeMillis();
 
         LoadFlow loadFlow = loadFlowFactory.create(n, computationManager, 0);
-        LoadFlowResult result = loadFlow.run(new LoadFlowParameters(LoadFlowParameters.VoltageInitMode.UNIFORM_VALUES));
+        LoadFlowResult result = loadFlow.run(n.getStateManager().getWorkingStateId(), new LoadFlowParameters(LoadFlowParameters.VoltageInitMode.UNIFORM_VALUES)).join();
 //            if (LOGGER.isTraceEnabled()) {
 //                LOGGER.trace("\n{}", result.getLogs());
 //            }
@@ -729,7 +729,7 @@ public final class EurostagStepUpTransformerInserter {
         if (config.isRemoveAlreadyExistingStators()) {
             removeStepUpTransformersAlreadyPresents(n, statorVoltageLevels, config);
 
-            result = loadFlow.run(new LoadFlowParameters(LoadFlowParameters.VoltageInitMode.UNIFORM_VALUES));
+            result = loadFlow.run(n.getStateManager().getWorkingStateId(), new LoadFlowParameters(LoadFlowParameters.VoltageInitMode.UNIFORM_VALUES)).join();
 //            if (LOGGER.isTraceEnabled()) {
 //                LOGGER.trace("\n{}", result.getLogs());
 //            }
@@ -754,7 +754,7 @@ public final class EurostagStepUpTransformerInserter {
             LOGGER.debug("    {}: {}", entry.getKey(), entry.getValue());
         }
 
-        result = loadFlow.run(new LoadFlowParameters(LoadFlowParameters.VoltageInitMode.UNIFORM_VALUES));
+        result = loadFlow.run(n.getStateManager().getWorkingStateId(), new LoadFlowParameters(LoadFlowParameters.VoltageInitMode.UNIFORM_VALUES)).join();
 //            if (LOGGER.isTraceEnabled()) {
 //                LOGGER.trace("\n{}", result.getLogs());
 //            }

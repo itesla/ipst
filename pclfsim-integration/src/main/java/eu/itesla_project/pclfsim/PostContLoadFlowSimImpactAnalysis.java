@@ -257,7 +257,7 @@ class PostContLoadFlowSimImpactAnalysis implements ImpactAnalysis, PostContLoadF
                     try {
                         createPostContingencyState(contingency, baseStateId, contingencyStateId);
 
-                        LoadFlowResult loadFlowResult = loadFlow.run(loadFlowParameters);
+                        LoadFlowResult loadFlowResult = loadFlow.run(network.getStateManager().getWorkingStateId(), loadFlowParameters).join();
 
                         analyseLoadFlowResult(baseStateId, index, contingency, contingencyStateId, loadFlowResult, baseViolationsByType,
                                               metrics, securityIndexes, okCount);
@@ -307,7 +307,7 @@ class PostContLoadFlowSimImpactAnalysis implements ImpactAnalysis, PostContLoadF
 
             results.add(
                 CompletableFuture.runAsync(() -> createPostContingencyState(contingency, baseStateId, contingencyStateId), computationManager.getExecutor())
-                .thenComposeAsync(aVoid -> loadFlow.runAsync(contingencyStateId, loadFlowParameters),
+                .thenComposeAsync(aVoid -> loadFlow.run(contingencyStateId, loadFlowParameters),
                         computationManager.getExecutor())
                 .thenAcceptAsync(loadFlowResult -> analyseLoadFlowResult(baseStateId, index, contingency, contingencyStateId, loadFlowResult, baseViolationsByType,
                                       metrics, securityIndexes, okCount), computationManager.getExecutor())

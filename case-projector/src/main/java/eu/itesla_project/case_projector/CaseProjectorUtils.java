@@ -128,7 +128,7 @@ public final class CaseProjectorUtils {
         LoadFlowParameters loadFlowParameters = LoadFlowParameters.load();
         LoadFlowParameters loadFlowParameters2 = LoadFlowParameters.load().setNoGeneratorReactiveLimits(true);
 
-        return loadFlow.runAsync(workingStateId, loadFlowParameters)
+        return loadFlow.run(workingStateId, loadFlowParameters)
                 .thenComposeAsync(loadFlowResult -> {
                     LOGGER.debug("Pre-projector load flow metrics: {}", loadFlowResult.getMetrics());
                     if (!loadFlowResult.isOk()) {
@@ -140,7 +140,7 @@ public final class CaseProjectorUtils {
                     if (!Boolean.TRUE.equals(ok)) {
                         throw new StopException("Projector failed");
                     }
-                    return loadFlow.runAsync(workingStateId, loadFlowParameters2);
+                    return loadFlow.run(workingStateId, loadFlowParameters2);
                 }, computationManager.getExecutor())
                 .thenApplyAsync(loadFlowResult -> {
                     LOGGER.debug("Post-projector load flow metrics: {}", loadFlowResult.getMetrics());

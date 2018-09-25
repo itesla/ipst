@@ -183,8 +183,8 @@ public class WCAImplTest {
             }
         };
         LoadFlow loadFlow = Mockito.mock(LoadFlow.class);
-        Mockito.when(loadFlow.run(Matchers.any(LoadFlowParameters.class))).thenReturn(loadFlowResult);
-        Mockito.when(loadFlow.runAsync(Matchers.any(String.class), Matchers.any(LoadFlowParameters.class)))
+        Mockito.when(loadFlow.run(Matchers.any(String.class), Matchers.any(LoadFlowParameters.class))).thenReturn(CompletableFuture.completedFuture(loadFlowResult));
+        Mockito.when(loadFlow.run(Matchers.any(String.class), Matchers.any(LoadFlowParameters.class)))
                .thenReturn(CompletableFuture.completedFuture(loadFlowResult));
         Mockito.when(loadFlowFactory.create(network, computationManager, 0)).thenReturn(loadFlow);
     }
@@ -247,9 +247,9 @@ public class WCAImplTest {
             }
         };
         LoadFlow loadFlow = Mockito.mock(LoadFlow.class);
-        Mockito.when(loadFlow.run(Matchers.any(LoadFlowParameters.class)))
-               .thenReturn(loadFlowResult);
-        Mockito.when(loadFlow.runAsync(Matchers.any(String.class), Matchers.any(LoadFlowParameters.class)))
+        Mockito.when(loadFlow.run(Matchers.any(String.class), Matchers.any(LoadFlowParameters.class)))
+               .thenReturn(CompletableFuture.completedFuture(loadFlowResult));
+        Mockito.when(loadFlow.run(Matchers.any(String.class), Matchers.any(LoadFlowParameters.class)))
                .thenReturn(CompletableFuture.completedFuture(loadFlowResult));
         Mockito.when(loadFlowFactory.create(network, computationManager, 0))
                .thenReturn(loadFlow);
@@ -379,9 +379,9 @@ public class WCAImplTest {
             }
         };
         LoadFlow loadFlow = Mockito.mock(LoadFlow.class);
-        Mockito.when(loadFlow.run(Matchers.any(LoadFlowParameters.class)))
-               .thenReturn(loadFlowResult);
-        Mockito.when(loadFlow.runAsync(Matchers.any(String.class), Matchers.any(LoadFlowParameters.class)))
+        Mockito.when(loadFlow.run(Matchers.any(String.class), Matchers.any(LoadFlowParameters.class)))
+               .thenReturn(CompletableFuture.completedFuture(loadFlowResult));
+        Mockito.when(loadFlow.run(Matchers.any(String.class), Matchers.any(LoadFlowParameters.class)))
                .thenReturn(CompletableFuture.completedFuture(loadFlowResult));
         Mockito.when(loadFlowFactory.create(network, computationManager, 0))
                .thenReturn(loadFlow);
