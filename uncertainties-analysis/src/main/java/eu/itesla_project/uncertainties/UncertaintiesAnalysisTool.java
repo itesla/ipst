@@ -15,6 +15,7 @@ import com.powsybl.tools.Tool;
 import com.powsybl.commons.util.StringToIntMapper;
 import com.powsybl.computation.ComputationManager;
 import com.powsybl.computation.local.LocalComputationManager;
+import com.powsybl.tools.ToolRunningContext;
 import eu.itesla_project.histodb.client.impl.HistoDbCacheImpl;
 import eu.itesla_project.histodb.client.impl.HistoDbClientImpl;
 import eu.itesla_project.histodb.client.impl.HistoDbConfig;
@@ -44,7 +45,7 @@ public class UncertaintiesAnalysisTool implements Tool {
     }
 
     @Override
-    public void run(CommandLine line) throws Exception {
+    public void run(CommandLine line, ToolRunningContext context) throws Exception {
         Path caseFile = Paths.get(line.getOptionValue("case-file"));
         Path outputDir = Paths.get(line.getOptionValue("output-dir"));
         Interval histoInterval = Interval.parse(line.getOptionValue("history-interval"));

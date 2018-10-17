@@ -9,13 +9,10 @@ package eu.itesla_project.modules.constraints;
 import java.util.List;
 import java.util.Objects;
 
+import com.powsybl.iidm.network.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.powsybl.iidm.network.Branch;
-import com.powsybl.iidm.network.Network;
-import com.powsybl.iidm.network.StateManager;
-import com.powsybl.iidm.network.VoltageLevel;
 import com.powsybl.security.LimitViolation;
 import com.powsybl.security.LimitViolationFilter;
 import com.powsybl.security.Security;
@@ -122,11 +119,11 @@ public class ConstraintsModifier {
                         violation.getLimit(),
                         newLimit);
                 branch.newCurrentLimits1().setPermanentLimit(newLimit).add();
-                if (applyToBaseCase && !StateManager.INITIAL_STATE_ID.equals(stateId)) { // change the limit also to basecase
-                    network.getStateManager().setWorkingState(StateManager.INITIAL_STATE_ID);
+                if (applyToBaseCase && !StateManagerConstants.INITIAL_STATE_ID.equals(stateId)) { // change the limit also to basecase
+                    network.getStateManager().setWorkingState(StateManagerConstants.INITIAL_STATE_ID);
                     branch = network.getBranch(violation.getSubjectId());
                     LOGGER.debug("State {}: changing current limit 1 of branch {}: {} -> {}",
-                                StateManager.INITIAL_STATE_ID,
+                                StateManagerConstants.INITIAL_STATE_ID,
                                 branch.getId(),
                                 violation.getLimit(),
                                 newLimit);
@@ -140,11 +137,11 @@ public class ConstraintsModifier {
                         violation.getLimit(),
                         newLimit);
                 branch.newCurrentLimits2().setPermanentLimit(newLimit).add();
-                if (applyToBaseCase && !StateManager.INITIAL_STATE_ID.equals(stateId)) { // change the limit also to basecase
-                    network.getStateManager().setWorkingState(StateManager.INITIAL_STATE_ID);
+                if (applyToBaseCase && !StateManagerConstants.INITIAL_STATE_ID.equals(stateId)) { // change the limit also to basecase
+                    network.getStateManager().setWorkingState(StateManagerConstants.INITIAL_STATE_ID);
                     branch = network.getBranch(violation.getSubjectId());
                     LOGGER.debug("State {}: changing current limit 2 of branch {}: {} -> {}",
-                                StateManager.INITIAL_STATE_ID,
+                                StateManagerConstants.INITIAL_STATE_ID,
                                 branch.getId(),
                                 violation.getLimit(),
                                 newLimit);
@@ -170,11 +167,11 @@ public class ConstraintsModifier {
                         violation.getLimit(),
                         newLimit);
                 voltageLevel.setHighVoltageLimit(newLimit);
-                if (applyToBaseCase && !StateManager.INITIAL_STATE_ID.equals(stateId)) { // change the limit also to basecase
-                    network.getStateManager().setWorkingState(StateManager.INITIAL_STATE_ID);
+                if (applyToBaseCase && !StateManagerConstants.INITIAL_STATE_ID.equals(stateId)) { // change the limit also to basecase
+                    network.getStateManager().setWorkingState(StateManagerConstants.INITIAL_STATE_ID);
                     voltageLevel = network.getVoltageLevel(violation.getSubjectId());
                     LOGGER.debug("State {}: changing high voltage limit of voltage level {}: {} -> {}",
-                                StateManager.INITIAL_STATE_ID,
+                                StateManagerConstants.INITIAL_STATE_ID,
                                 voltageLevel.getId(),
                                 violation.getLimit(),
                                 newLimit);
@@ -200,11 +197,11 @@ public class ConstraintsModifier {
                         violation.getLimit(),
                         newLimit);
                 voltageLevel.setLowVoltageLimit(newLimit);
-                if (applyToBaseCase && !StateManager.INITIAL_STATE_ID.equals(stateId)) { // change the limit also to basecase
-                    network.getStateManager().setWorkingState(StateManager.INITIAL_STATE_ID);
+                if (applyToBaseCase && !StateManagerConstants.INITIAL_STATE_ID.equals(stateId)) { // change the limit also to basecase
+                    network.getStateManager().setWorkingState(StateManagerConstants.INITIAL_STATE_ID);
                     voltageLevel = network.getVoltageLevel(violation.getSubjectId());
                     LOGGER.debug("State {}: changing low voltage limit of voltage level {}: {} -> {}",
-                                StateManager.INITIAL_STATE_ID,
+                                StateManagerConstants.INITIAL_STATE_ID,
                                 voltageLevel.getId(),
                                 violation.getLimit(),
                                 newLimit);

@@ -18,7 +18,6 @@ import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseCl
 import com.powsybl.contingency.BranchContingency;
 import com.powsybl.contingency.Contingency;
 import com.powsybl.contingency.ContingencyElement;
-import com.powsybl.contingency.ContingencyImpl;
 import eu.itesla_project.modules.contingencies.Scenario;
 import eu.itesla_project.modules.contingencies.Zone;
 
@@ -47,7 +46,7 @@ public class AutomaticContingenciesAndActionsDatabaseClient implements Contingen
     public List<Contingency> getContingencies(Network network) {
         List<Contingency> contingencies = new ArrayList<>(lineContigencyCount);
         for (Line l : Iterables.limit(network.getLines(), lineContigencyCount)) {
-            contingencies.add(new ContingencyImpl(l.getId(), Arrays.<ContingencyElement>asList(new BranchContingency(l.getId()))));
+            contingencies.add(new Contingency(l.getId(), Arrays.<ContingencyElement>asList(new BranchContingency(l.getId()))));
         }
         return contingencies;
     }

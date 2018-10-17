@@ -13,7 +13,7 @@ import com.google.common.collect.Multimaps;
 import com.powsybl.computation.ComputationManager;
 import com.powsybl.contingency.Contingency;
 import com.powsybl.iidm.network.Network;
-import com.powsybl.iidm.network.StateManager;
+import com.powsybl.iidm.network.StateManagerConstants;
 import com.powsybl.loadflow.LoadFlow;
 import com.powsybl.loadflow.LoadFlowParameters;
 import com.powsybl.loadflow.LoadFlowResult;
@@ -116,7 +116,7 @@ public class StateAnalyzer implements Callable<Void> {
             // create new state
             logger.info(this.logHeader + "Analyzing state {}", stateId);
             String stateIdStr = String.valueOf(stateId);
-            context.getNetwork().getStateManager().cloneState(StateManager.INITIAL_STATE_ID, stateIdStr);
+            context.getNetwork().getStateManager().cloneState(StateManagerConstants.INITIAL_STATE_ID, stateIdStr);
             context.getNetwork().getStateManager().setWorkingState(stateIdStr);
             // sample
             logger.info(this.logHeader + "{}: sampling started", stateId);

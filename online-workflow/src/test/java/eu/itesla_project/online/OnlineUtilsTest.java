@@ -23,7 +23,6 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableMap;
 import com.powsybl.contingency.Contingency;
-import com.powsybl.contingency.ContingencyImpl;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.test.EurostagTutorialExample1Factory;
 import com.powsybl.security.LimitViolationType;
@@ -34,8 +33,8 @@ import com.powsybl.simulation.securityindexes.SecurityIndex;
  */
 public class OnlineUtilsTest {
 
-    private final Contingency contingency1 = new ContingencyImpl("id1", Collections.emptyList());
-    private final Contingency contingency2 = new ContingencyImpl("id2", Collections.emptyList());
+    private final Contingency contingency1 = new Contingency("id1", Collections.emptyList());
+    private final Contingency contingency2 = new Contingency("id2", Collections.emptyList());
     private final List<Contingency> contingencies = Arrays.asList(contingency1, contingency2);
 
     @Test

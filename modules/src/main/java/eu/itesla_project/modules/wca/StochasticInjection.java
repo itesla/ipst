@@ -129,7 +129,7 @@ public abstract class StochasticInjection {
                 Bus bus = t.getBusView().getBus();
                 int ccNum = ConnectedComponents.getCcNum(bus);
                 // skip loads not in the main connected component
-                if (ccNum != Component.MAIN_NUM) {
+                if (ccNum != ComponentConstants.MAIN_NUM) {
                     continue;
                 }
             }
@@ -146,7 +146,7 @@ public abstract class StochasticInjection {
                     Bus bus = t.getBusView().getBus();
                     int ccNum = ConnectedComponents.getCcNum(bus);
                     // skip loads not in the main connected component
-                    if (ccNum != Component.MAIN_NUM) {
+                    if (ccNum != ComponentConstants.MAIN_NUM) {
                         continue;
                     }
                 }
@@ -178,7 +178,7 @@ public abstract class StochasticInjection {
                 Bus bus = t.getBusView().getBus();
                 int ccNum = ConnectedComponents.getCcNum(bus);
                 // skip generators not in the main connected component
-                if (ccNum != Component.MAIN_NUM) {
+                if (ccNum != ComponentConstants.MAIN_NUM) {
                     continue;
                 }
             }

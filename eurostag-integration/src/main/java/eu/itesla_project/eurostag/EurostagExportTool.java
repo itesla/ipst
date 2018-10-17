@@ -108,7 +108,7 @@ public class EurostagExportTool implements Tool, EurostagConstants {
             scenario.writePreFaultSeq(writer, PRE_FAULT_SAC_FILE_NAME);
         }
         ContingenciesProvider contingenciesProvider = defaultConfig.newFactoryImpl(ContingenciesProviderFactory.class).create();
-        scenario.writeFaultSeqArchive(contingenciesProvider.getContingencies(network), network, dictionary, faultNum -> FAULT_SEQ_FILE_NAME.replace(com.powsybl.computation.Command.EXECUTION_NUMBER_PATTERN, Integer.toString(faultNum)))
+        scenario.writeFaultSeqArchive(contingenciesProvider.getContingencies(network), network, dictionary, faultNum -> FAULT_SEQ_FILE_NAME.replace(com.powsybl.computation.CommandConstants.EXECUTION_NUMBER_PATTERN, Integer.toString(faultNum)))
                 .as(ZipExporter.class).exportTo(outputDir.resolve(ALL_SCENARIOS_ZIP_FILE_NAME).toFile());
 
         // export limits

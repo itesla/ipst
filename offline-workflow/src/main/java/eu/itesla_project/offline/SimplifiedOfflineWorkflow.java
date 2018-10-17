@@ -9,7 +9,7 @@ package eu.itesla_project.offline;
 import com.google.common.collect.ImmutableMap;
 import com.powsybl.computation.ComputationManager;
 import com.powsybl.iidm.network.Network;
-import com.powsybl.iidm.network.StateManager;
+import com.powsybl.iidm.network.StateManagerConstants;
 import com.powsybl.loadflow.LoadFlow;
 import com.powsybl.loadflow.LoadFlowFactory;
 import com.powsybl.loadflow.LoadFlowParameters;
@@ -93,7 +93,7 @@ public class SimplifiedOfflineWorkflow extends AbstractOfflineWorkflow {
 
                     // allow multi threads access of network states
                     context.network.getStateManager().allowStateMultiThreadAccess(true);
-                    context.network.getStateManager().cloneState(StateManager.INITIAL_STATE_ID, getCaseId(caseNum));
+                    context.network.getStateManager().cloneState(StateManagerConstants.INITIAL_STATE_ID, getCaseId(caseNum));
                     context.network.getStateManager().setWorkingState(getCaseId(caseNum));
 
                 }, executorService)

@@ -193,7 +193,7 @@ public class RunTDSimulation implements Tool {
                 Map<String, Boolean> tdSimulationResults = Utils.runTDSimulation(network,
                         contingencyIds,
                         emptyContingency,
-                        context.getComputationManager(),
+                        context.getShortTimeExecutionComputationManager(),
                         simulatorFactory,
                         contingencyDb,
                         metricsContent);
@@ -206,7 +206,7 @@ public class RunTDSimulation implements Tool {
                         Map<String, Boolean> tdSimulationResults = Utils.runTDSimulation(network,
                                 contingencyIds,
                                 emptyContingency,
-                                context.getComputationManager(),
+                                context.getShortTimeExecutionComputationManager(),
                                 simulatorFactory,
                                 contingencyDb,
                                 metricsContent);

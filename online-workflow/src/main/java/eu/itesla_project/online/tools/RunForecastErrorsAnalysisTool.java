@@ -200,7 +200,7 @@ public class RunForecastErrorsAnalysisTool implements Tool {
         ForecastErrorsAnalysisParameters parameters = new ForecastErrorsAnalysisParameters(baseCaseDate, histoInterval, analysisId, ir, flagPQ, method, nClusters,
                                                                                            percentileHistorical, modalityGaussian, outliers, conditionalSampling,
                                                                                            nSamples, countries, caseType, allInjections);
-        ForecastErrorsAnalysis feAnalysis = new ForecastErrorsAnalysis(context.getComputationManager(), ForecastErrorsAnalysisConfig.load(), parameters);
+        ForecastErrorsAnalysis feAnalysis = new ForecastErrorsAnalysis(context.getShortTimeExecutionComputationManager(), ForecastErrorsAnalysisConfig.load(), parameters);
         context.getOutputStream().println("Starting Forecast Errors Analysis");
         if (line.hasOption("time-horizon")) {
             TimeHorizon timeHorizon = TimeHorizon.fromName(line.getOptionValue("time-horizon"));

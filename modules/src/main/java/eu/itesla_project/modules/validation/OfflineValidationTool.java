@@ -8,6 +8,7 @@ package eu.itesla_project.modules.validation;
 
 import com.google.auto.service.AutoService;
 import com.google.common.collect.Queues;
+import com.powsybl.iidm.network.StateManagerConstants;
 import com.powsybl.loadflow.LoadFlowParameters;
 import eu.itesla_project.cases.CaseRepository;
 import eu.itesla_project.cases.CaseRepositoryFactory;
@@ -18,7 +19,6 @@ import com.powsybl.tools.ToolRunningContext;
 import com.powsybl.contingency.Contingency;
 import com.powsybl.iidm.network.Country;
 import com.powsybl.iidm.network.Network;
-import com.powsybl.iidm.network.StateManager;
 import com.powsybl.loadflow.LoadFlow;
 import com.powsybl.loadflow.LoadFlowFactory;
 import com.powsybl.loadflow.LoadFlowResult;
@@ -355,7 +355,7 @@ public class OfflineValidationTool implements Tool {
         try (RulesDbClient rulesDb = rulesDbClientFactory.create(rulesDbName);
              CsvMetricsDb metricsDb = new CsvMetricsDb(outputDir, true, "metrics")) {
 
-            CaseRepository caseRepository = caseRepositoryFactory.create(context.getComputationManager());
+            CaseRepository caseRepository = caseRepositoryFactory.create(context.getShortTimeExecutionComputationManager());
 
             Queue<DateTime> dates = Queues.synchronizedDeque(new ArrayDeque<>(caseRepository.dataAvailable(caseType, countries, histoInterval)));
 
@@ -373,7 +373,7 @@ public class OfflineValidationTool implements Tool {
                             DateTime date = dates.poll();
 
                             try {
-                                Network network = MergeUtil.merge(caseRepository, date, caseType, countries, loadFlowFactory, 0, mergeOptimizerFactory, context.getComputationManager(), mergeOptimized);
+                                Network network = MergeUtil.merge(caseRepository, date, caseType, countries, loadFlowFactory, 0, mergeOptimizerFactory, context.getShortTimeExecutionComputationManager(), mergeOptimized);
 
                                 context.getOutputStream().println("case " + network.getId() + " loaded");
 
@@ -381,20 +381,20 @@ public class OfflineValidationTool implements Tool {
 
                                 network.getStateManager().allowStateMultiThreadAccess(true);
                                 String baseStateId = network.getId();
-                                network.getStateManager().cloneState(StateManager.INITIAL_STATE_ID, baseStateId);
+                                network.getStateManager().cloneState(StateManagerConstants.INITIAL_STATE_ID, baseStateId);
                                 network.getStateManager().setWorkingState(baseStateId);
 
                                 Map<RuleId, ValidationStatus> statusPerRule = new HashMap<>();
                                 Map<RuleId, Map<HistoDbAttributeId, Object>> valuesPerRule = new HashMap<>();
 
-                                LoadFlow loadFlow = loadFlowFactory.create(network, context.getComputationManager(), 0);
+                                LoadFlow loadFlow = loadFlowFactory.create(network, context.getShortTimeExecutionComputationManager(), 0);
                                 LoadFlowResult loadFlowResult = loadFlow.run(network.getStateManager().getWorkingStateId(), loadFlowParameters).join();
 
                                 context.getErrorStream().println("load flow terminated (" + loadFlowResult.isOk() + ") on " + network.getId());
 
                                 if (loadFlowResult.isOk()) {
-                                    Stabilization stabilization = simulatorFactory.createStabilization(network, context.getComputationManager(), 0);
-                                    ImpactAnalysis impactAnalysis = simulatorFactory.createImpactAnalysis(network, context.getComputationManager(), 0, contingencyDb);
+                                    Stabilization stabilization = simulatorFactory.createStabilization(network, context.getShortTimeExecutionComputationManager(), 0);
+                                    ImpactAnalysis impactAnalysis = simulatorFactory.createImpactAnalysis(network, context.getShortTimeExecutionComputationManager(), 0, contingencyDb);
                                     Map<String, Object> initContext = new HashMap<>();
                                     stabilization.init(simulationParameters, initContext);
                                     impactAnalysis.init(simulationParameters, initContext);

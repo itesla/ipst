@@ -18,7 +18,6 @@ import com.powsybl.commons.util.StringToIntMapper;
 import com.powsybl.contingency.BranchContingency;
 import com.powsybl.contingency.Contingency;
 import com.powsybl.contingency.ContingencyElement;
-import com.powsybl.contingency.ContingencyImpl;
 import com.powsybl.commons.datasource.MemDataSource;
 import com.powsybl.ampl.converter.AmplSubset;
 import com.powsybl.ampl.converter.AmplUtil;
@@ -47,7 +46,7 @@ public class WCASecurityRulesWriterTest {
     @Test
     public void testWrite() {
         ContingencyElement contingencyElement = new BranchContingency("line");
-        Contingency contingency = new ContingencyImpl("contigency_1", contingencyElement);
+        Contingency contingency = new Contingency("contigency_1", contingencyElement);
 
         Network network = NetworkTest1Factory.create();
 

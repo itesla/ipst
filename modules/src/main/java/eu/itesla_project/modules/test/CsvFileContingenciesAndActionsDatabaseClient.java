@@ -18,7 +18,6 @@ import com.powsybl.contingency.BranchContingency;
 import com.powsybl.contingency.Contingency;
 import com.powsybl.contingency.ContingencyElement;
 import com.powsybl.contingency.GeneratorContingency;
-import com.powsybl.contingency.ContingencyImpl;
 import eu.itesla_project.modules.contingencies.Scenario;
 import eu.itesla_project.modules.contingencies.Zone;
 
@@ -123,7 +122,7 @@ public class CsvFileContingenciesAndActionsDatabaseClient implements Contingenci
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
             if (elements.size() > 0) {
-                contingencies.add(new ContingencyImpl(cd.getId(), elements));
+                contingencies.add(new Contingency(cd.getId(), elements));
             } else {
                 LOGGER.warn("Skip empty contingency " + cd.getId());
             }

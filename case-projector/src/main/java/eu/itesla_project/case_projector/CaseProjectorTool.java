@@ -8,13 +8,13 @@ package eu.itesla_project.case_projector;
 
 import com.google.auto.service.AutoService;
 import com.powsybl.commons.config.ComponentDefaultConfig;
+import com.powsybl.iidm.network.StateManagerConstants;
 import com.powsybl.tools.Command;
 import com.powsybl.tools.Tool;
 import com.powsybl.tools.ToolRunningContext;
 import com.powsybl.computation.local.LocalComputationManager;
 import com.powsybl.iidm.import_.Importers;
 import com.powsybl.iidm.network.Network;
-import com.powsybl.iidm.network.StateManager;
 import com.powsybl.loadflow.LoadFlowFactory;
 import com.powsybl.simulation.SimulatorFactory;
 import org.apache.commons.cli.CommandLine;
@@ -88,6 +88,6 @@ public class CaseProjectorTool implements Tool {
             caseProjectorConfig = new CaseProjectorConfig(caseProjectorConfig.getAmplHomeDir(), Paths.get(line.getOptionValue("generators-domains-file")), caseProjectorConfig.isDebug());
         }
         new CaseProjector(network, LocalComputationManager.getDefault(), loadFlowFactory, simulatorFactory, caseProjectorConfig)
-                .project(StateManager.INITIAL_STATE_ID).join();
+                .project(StateManagerConstants.INITIAL_STATE_ID).join();
     }
 }

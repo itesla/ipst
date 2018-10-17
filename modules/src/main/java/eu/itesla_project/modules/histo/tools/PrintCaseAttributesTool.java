@@ -107,7 +107,7 @@ public class PrintCaseAttributesTool implements Tool {
         }
         Path outputCsvFile = Paths.get(line.getOptionValue("output-csv-file"));
 
-        Importer importer = Importers.getImporter(caseFormat, context.getComputationManager());
+        Importer importer = Importers.getImporter(caseFormat, context.getShortTimeExecutionComputationManager());
         if (importer == null) {
             throw new PowsyblException("Format " + caseFormat + " not supported");
         }

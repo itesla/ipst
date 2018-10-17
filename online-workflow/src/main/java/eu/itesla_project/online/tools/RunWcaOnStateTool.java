@@ -144,7 +144,7 @@ public class RunWcaOnStateTool implements Tool {
             try (HistoDbClient histoDbClient = config.getHistoDbClientFactoryClass().newInstance().create();
                  RulesDbClient rulesDbClient = config.getRulesDbClientFactoryClass().newInstance().create("rulesdb")) {
                 UncertaintiesAnalyserFactory uncertaintiesAnalyserFactory = config.getUncertaintiesAnalyserFactoryClass().newInstance();
-                WCA wca = config.getWcaFactoryClass().newInstance().create(network, context.getComputationManager(), histoDbClient, rulesDbClient, uncertaintiesAnalyserFactory, contingenciesDb, loadFlowFactory);
+                WCA wca = config.getWcaFactoryClass().newInstance().create(network, context.getShortTimeExecutionComputationManager(), histoDbClient, rulesDbClient, uncertaintiesAnalyserFactory, contingenciesDb, loadFlowFactory);
                 WCAResult result = wca.run(wcaParameters);
                 Table table = new Table(7, BorderStyle.CLASSIC_WIDE);
                 table.addCell("Contingency", new CellStyle(CellStyle.HorizontalAlign.center));

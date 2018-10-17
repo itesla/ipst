@@ -988,7 +988,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
     }
 
     public boolean isInMainCc(Injection injection, boolean noswitch) {
-        return ConnectedComponents.getCcNum(getBus(injection.getTerminal(), noswitch)) == Component.MAIN_NUM;
+        return ConnectedComponents.getCcNum(getBus(injection.getTerminal(), noswitch)) == ComponentConstants.MAIN_NUM;
     }
 
 
@@ -2164,7 +2164,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
                         if (station.getName().equals(pilotPoint)) {
                             // Looking for a connected bus
                             for (Bus bus : station.getBusBreakerView().getBuses()) {
-                                if (bus.getConnectedComponent().getNum() == Component.MAIN_NUM || substpilotPoint == null) {
+                                if (bus.getConnectedComponent().getNum() == ComponentConstants.MAIN_NUM || substpilotPoint == null) {
                                     substpilotPoint = iidm2eurostagId.get(bus.getId());
                                 }
                             }

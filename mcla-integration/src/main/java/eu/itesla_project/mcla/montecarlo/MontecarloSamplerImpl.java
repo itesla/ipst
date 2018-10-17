@@ -22,6 +22,7 @@ import eu.itesla_project.modules.online.TimeHorizon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -156,30 +157,37 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
     }
 
     private SampledData runMontecarloSampler() throws Exception {
-        try (CommandExecutor executor = computationManager.newCommandExecutor(
-                createEnv(), WORKING_DIR_PREFIX, config.isDebug())) {
 
-            final Path workingDir = executor.getWorkingDir();
-            // put mat file(s) in working dir
-            Path forecastOfflineSamplesDataFile = null;
-            if (config.isCopyFEFile()) {
-                forecastOfflineSamplesDataFile = Paths.get(workingDir.toString(), MCSINPUTFILEPREFIX + "forecast_offline_samples_" + timeHorizon.getLabel() + ".mat");
-                forecastErrorsDataStorage.getForecastOfflineSamplesFile(feAnalysisId, timeHorizon, forecastOfflineSamplesDataFile);
-            } else {
-                forecastOfflineSamplesDataFile = forecastErrorsDataStorage.getForecastOfflineSamplesFilePath(feAnalysisId, timeHorizon);
+        return computationManager.execute(new ExecutionEnvironment(createEnv(), WORKING_DIR_PREFIX, config.isDebug()), new AbstractExecutionHandler<SampledData>() {
+            @Override
+            public List<CommandExecution> before(Path workingDir) throws IOException {
+                // put mat file(s) in working dir
+                Path forecastOfflineSamplesDataFile = null;
+                if (config.isCopyFEFile()) {
+                    forecastOfflineSamplesDataFile = Paths.get(workingDir.toString(), MCSINPUTFILEPREFIX + "forecast_offline_samples_" + timeHorizon.getLabel() + ".mat");
+                    forecastErrorsDataStorage.getForecastOfflineSamplesFile(feAnalysisId, timeHorizon, forecastOfflineSamplesDataFile);
+                } else {
+                    forecastOfflineSamplesDataFile = forecastErrorsDataStorage.getForecastOfflineSamplesFilePath(feAnalysisId, timeHorizon);
+                }
+                Path localNetworkDataMatFile = Paths.get(workingDir.toString(), MCSINPUTFILEPREFIX + network.getId().replaceAll(" ", "_") + ".mat");
+                Files.copy(networkDataMatFile, localNetworkDataMatFile);
+
+                LOGGER.info("Running montecarlo sampler on {} network, asking for {} samples", network.getId(), nSamples);
+                Command cmd = createCommand(forecastOfflineSamplesDataFile, localNetworkDataMatFile);
+                return Arrays.asList(new CommandExecution(cmd, 1));
             }
-            Path localNetworkDataMatFile = Paths.get(workingDir.toString(), MCSINPUTFILEPREFIX + network.getId().replaceAll(" ", "_") + ".mat");
-            Files.copy(networkDataMatFile, localNetworkDataMatFile);
 
-            LOGGER.info("Running montecarlo sampler on {} network, asking for {} samples", network.getId(), nSamples);
-            Command cmd = createCommand(forecastOfflineSamplesDataFile, localNetworkDataMatFile);
-            ExecutionReport report = executor.start(new CommandExecution(cmd, 1, Integer.MAX_VALUE));
-            report.log();
-
-            LOGGER.debug("Network {}: retrieving sampling results from file {}", network.getId(), MCSOUTPUTFILENAME);
-            SampledData sampledData = new MCSMatFileReader(workingDir.resolve(MCSOUTPUTFILENAME)).getSampledData();
-            return sampledData;
-        }
+            @Override
+            public SampledData after(Path workingDir, ExecutionReport report) throws IOException {
+                report.log();
+                LOGGER.debug("Network {}: retrieving sampling results from file {}", network.getId(), MCSOUTPUTFILENAME);
+                try {
+                    return new MCSMatFileReader(workingDir.resolve(MCSOUTPUTFILENAME)).getSampledData();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }).join();
     }
 
     private Map<String, String> createEnv() {

@@ -23,7 +23,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.google.common.collect.ImmutableMap;
 
 import com.powsybl.contingency.Contingency;
-import com.powsybl.contingency.ContingencyImpl;
 import com.powsybl.contingency.BranchContingency;
 import eu.itesla_project.modules.contingencies.Action;
 import eu.itesla_project.modules.contingencies.ActionPlan;
@@ -62,7 +61,7 @@ public class SimpleContingencyDbFacadeTest {
         // network
         Network mockNetwork = NetworkFactory.create("mockNetwork", "test");
         // contingency
-        ContingencyImpl mockContingency = new ContingencyImpl("mockContingency", new BranchContingency("mockLine"));
+        Contingency mockContingency = new Contingency("mockContingency", new BranchContingency("mockLine"));
         List<Contingency> mockContingencies = Arrays.asList(mockContingency);
         // contingency and actions db client
         ContingenciesAndActionsDatabaseClient mockContingenciesActionsDbClient = Mockito.mock(ContingenciesAndActionsDatabaseClient.class);
@@ -80,7 +79,7 @@ public class SimpleContingencyDbFacadeTest {
         Network mockNetwork = NetworkFactory.create("mockNetwork", "test");
         // contingency
         String mockContingencyId = "mockContingency";
-        ContingencyImpl mockContingency = new ContingencyImpl(mockContingencyId, new BranchContingency("mockLine"));
+        Contingency mockContingency = new Contingency(mockContingencyId, new BranchContingency("mockLine"));
         // action
         String mockActionId = "mockAction";
         Action mockAction = new ActionImpl(mockActionId, true, true, new SwitchClosingAction("mockVoltageLevel", "mockSwitch"));
@@ -108,7 +107,7 @@ public class SimpleContingencyDbFacadeTest {
         Network mockNetwork = NetworkFactory.create("mockNetwork", "test");
         // contingency
         String mockContingencyId = "mockContingency";
-        ContingencyImpl mockContingency = new ContingencyImpl(mockContingencyId, new BranchContingency("mockLine"));
+        Contingency mockContingency = new Contingency(mockContingencyId, new BranchContingency("mockLine"));
         // action
         String mockActionId = "mockAction";
         Action mockAction = new ActionImpl(mockActionId, true, true, new SwitchClosingAction("mockVoltageLevel", "mockSwitch"));
@@ -195,7 +194,7 @@ public class SimpleContingencyDbFacadeTest {
         List<LimitViolation> mockLimitViolations = Arrays.asList(mockLimitViolation);
         // contingency
         String mockContingencyId = "mockContingency";
-        ContingencyImpl mockContingency = new ContingencyImpl(mockContingencyId, new BranchContingency("mockLine"));
+        Contingency mockContingency = new Contingency(mockContingencyId, new BranchContingency("mockLine"));
         // action
         String mockActionId = "mockAction";
         Action mockAction = new ActionImpl(mockActionId, true, true, new SwitchClosingAction("mockVoltageLevel", "mockSwitch"));

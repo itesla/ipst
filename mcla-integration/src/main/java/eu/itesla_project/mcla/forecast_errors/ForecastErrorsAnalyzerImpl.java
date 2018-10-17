@@ -20,6 +20,7 @@ import eu.itesla_project.modules.online.TimeHorizon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -47,7 +48,7 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
     private static final String M0OUTPUTFILENAME = "feam0output.mat";
     private static final String M0OUTPUTFILENAMECSV = M0OUTPUTFILENAME + ".csv";
     private static final String GUIOUTPUTFILENAME = "feaguioutput.mat";
-    private static final String M2OUTPUTFILENAME = M2PATHPREFIX + Command.EXECUTION_NUMBER_PATTERN + MATPATHSUFFIX;
+    private static final String M2OUTPUTFILENAME = M2PATHPREFIX + CommandConstants.EXECUTION_NUMBER_PATTERN + MATPATHSUFFIX;
 
     private static final String FEA_M1 = "fea_m1";
     private static final String FEA_M2 = "fea_m2";
@@ -106,61 +107,93 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
             throw new RuntimeException("Forecast errors data for " + parameters.getFeAnalysisId() + " analysis and " + timeHorizon.getName() + " time horizon already exists");
         }
 
-        try (CommandExecutor executor = computationManager.newCommandExecutor(
-                createEnv(), WORKING_DIR_PREFIX, config.isDebug())) {
-
-            final Path workingDir = executor.getWorkingDir();
-
-            // get forecast errors historical data from histodb
-            Path historicalDataCsvFile = workingDir.resolve(FEACSVFILENAME);
-            FEAHistoDBFacade.historicalDataToCsvFile(histoDbClient,
-                                                     generatorsIds,
-                                                     loadsIds,
-                                                     parameters.getHistoInterval(),
-                                                     historicalDataCsvFile);
-
-            //Path historicalDataCsvFile = Paths.get("/itesla_data/MAT", "forecastsDiff_7nodes.csv");
-            ForecastErrorsHistoricalData forecastErrorsHistoricalData = new HistoricalDataCreator(network, generatorsIds, loadsIds)
-                    .createForecastErrorsHistoricalData(historicalDataCsvFile);
-            Path historicalDataMatFile = Paths.get(workingDir.toString(), FEAINPUTFILENAME);
-            new FEAMatFileWriter(historicalDataMatFile).writeHistoricalData(forecastErrorsHistoricalData);
-
-            LOGGER.info("Running forecast errors analysis for {} network, {} time horizon", network.getId(), timeHorizon.getName());
-            ExecutionReport report = executor.start(new CommandExecution(createMatm1Cmd(historicalDataMatFile), 1, Integer.MAX_VALUE));
-            report.log();
-            if (report.getErrors().isEmpty()) {
-                report = executor.start(new CommandExecution(createMatm2Cmd(), parameters.getnClusters(), Integer.MAX_VALUE));
-                report.log();
-                if (report.getErrors().isEmpty()) {
-                    report = executor.start(new CommandExecution(createMatm2reduceCmd(), 1, Integer.MAX_VALUE));
-                    report.log();
-                    if (report.getErrors().isEmpty()) {
-                        report = executor.start(new CommandExecution(createMatm3Cmd(), 1, Integer.MAX_VALUE));
-                        report.log();
-                    }
+        computationManager.execute(new ExecutionEnvironment(createEnv(), WORKING_DIR_PREFIX, config.isDebug()), new AbstractExecutionHandler<String>() {
+            @Override
+            public List<CommandExecution> before(Path workingDir) throws IOException {
+                // get forecast errors historical data from histodb
+                Path historicalDataCsvFile = workingDir.resolve(FEACSVFILENAME);
+                try {
+                    FEAHistoDBFacade.historicalDataToCsvFile(histoDbClient,
+                            generatorsIds,
+                            loadsIds,
+                            parameters.getHistoInterval(),
+                            historicalDataCsvFile);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
+
+                //Path historicalDataCsvFile = Paths.get("/itesla_data/MAT", "forecastsDiff_7nodes.csv");
+                ForecastErrorsHistoricalData forecastErrorsHistoricalData = new HistoricalDataCreator(network, generatorsIds, loadsIds)
+                        .createForecastErrorsHistoricalData(historicalDataCsvFile);
+                Path historicalDataMatFile = Paths.get(workingDir.toString(), FEAINPUTFILENAME);
+                new FEAMatFileWriter(historicalDataMatFile).writeHistoricalData(forecastErrorsHistoricalData);
+
+
+
+                LOGGER.info("Running forecast errors analysis for {} network, {} time horizon", network.getId(), timeHorizon.getName());
+
+                return Arrays.asList(new CommandExecution(createMatm1Cmd(historicalDataMatFile), 1, Integer.MAX_VALUE),
+                        new CommandExecution(createMatm2Cmd(), parameters.getnClusters(), Integer.MAX_VALUE),
+                        new CommandExecution(createMatm2reduceCmd(), 1, Integer.MAX_VALUE),
+                        new CommandExecution(createMatm3Cmd(), 1, Integer.MAX_VALUE)
+                        );
             }
 
-/*
-            //fake start
-            //M1OUTPUTFILENAME M0OUTPUTFILENAME M0OUTPUTFILENAMECSV GUIOUTPUTFILENAME
-            Arrays.asList(M1OUTPUTFILENAME,M0OUTPUTFILENAME,M0OUTPUTFILENAMECSV,GUIOUTPUTFILENAME,FEAOUTPUTFILENAME).stream()
-                .forEach( sf -> {
-                    try {
-                        Files.copy(Paths.get("/adisk05/ITESLA_DATA/itesla_forecasterrorsanalysis").resolve(sf), workingDir.resolve(sf));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
-            ExecutionReport report = executor.start(new CommandExecution(createMatm3Cmd(), 1, Integer.MAX_VALUE));
-            report.log();
-            //fake end
-*/
-            // store forecast errors data, offline sampling, statistics and uncertainties data for the GUI
-            forecastErrorsDataStorage.storeForecastErrorsFiles(parameters.getFeAnalysisId(), timeHorizon, workingDir.resolve(FEAOUTPUTFILENAME), workingDir.resolve(FEASAMPLERFILENAME), workingDir.resolve(M0OUTPUTFILENAMECSV), workingDir.resolve(GUIOUTPUTFILENAME));
-            // store analysis parameters
-            forecastErrorsDataStorage.storeParameters(parameters.getFeAnalysisId(), timeHorizon, parameters);
-        }
+            @Override
+            public String after(Path workingDir, ExecutionReport report) throws IOException {
+                report.log();
+                if (report.getErrors().isEmpty()) {
+                    // store forecast errors data, offline sampling, statistics and uncertainties data for the GUI
+                    forecastErrorsDataStorage.storeForecastErrorsFiles(parameters.getFeAnalysisId(), timeHorizon, workingDir.resolve(FEAOUTPUTFILENAME), workingDir.resolve(FEASAMPLERFILENAME), workingDir.resolve(M0OUTPUTFILENAMECSV), workingDir.resolve(GUIOUTPUTFILENAME));
+                    // store analysis parameters
+                    forecastErrorsDataStorage.storeParameters(parameters.getFeAnalysisId(), timeHorizon, parameters);
+                    return "OK";
+                }
+                return "KO";
+            }
+        }).join();
+
+// v<=2.0.0 implementation
+//        try (CommandExecutor executor = computationManager.newCommandExecutor(
+//                createEnv(), WORKING_DIR_PREFIX, config.isDebug())) {
+//
+//            final Path workingDir = executor.getWorkingDir();
+//
+//            // get forecast errors historical data from histodb
+//            Path historicalDataCsvFile = workingDir.resolve(FEACSVFILENAME);
+//            FEAHistoDBFacade.historicalDataToCsvFile(histoDbClient,
+//                                                     generatorsIds,
+//                                                     loadsIds,
+//                                                     parameters.getHistoInterval(),
+//                                                     historicalDataCsvFile);
+//
+//            //Path historicalDataCsvFile = Paths.get("/itesla_data/MAT", "forecastsDiff_7nodes.csv");
+//            ForecastErrorsHistoricalData forecastErrorsHistoricalData = new HistoricalDataCreator(network, generatorsIds, loadsIds)
+//                    .createForecastErrorsHistoricalData(historicalDataCsvFile);
+//            Path historicalDataMatFile = Paths.get(workingDir.toString(), FEAINPUTFILENAME);
+//            new FEAMatFileWriter(historicalDataMatFile).writeHistoricalData(forecastErrorsHistoricalData);
+//
+//            LOGGER.info("Running forecast errors analysis for {} network, {} time horizon", network.getId(), timeHorizon.getName());
+//            ExecutionReport report = executor.start(new CommandExecution(createMatm1Cmd(historicalDataMatFile), 1, Integer.MAX_VALUE));
+//            report.log();
+//            if (report.getErrors().isEmpty()) {
+//                report = executor.start(new CommandExecution(createMatm2Cmd(), parameters.getnClusters(), Integer.MAX_VALUE));
+//                report.log();
+//                if (report.getErrors().isEmpty()) {
+//                    report = executor.start(new CommandExecution(createMatm2reduceCmd(), 1, Integer.MAX_VALUE));
+//                    report.log();
+//                    if (report.getErrors().isEmpty()) {
+//                        report = executor.start(new CommandExecution(createMatm3Cmd(), 1, Integer.MAX_VALUE));
+//                        report.log();
+//                    }
+//                }
+//            }
+//
+//            // store forecast errors data, offline sampling, statistics and uncertainties data for the GUI
+//            forecastErrorsDataStorage.storeForecastErrorsFiles(parameters.getFeAnalysisId(), timeHorizon, workingDir.resolve(FEAOUTPUTFILENAME), workingDir.resolve(FEASAMPLERFILENAME), workingDir.resolve(M0OUTPUTFILENAMECSV), workingDir.resolve(GUIOUTPUTFILENAME));
+//            // store analysis parameters
+//            forecastErrorsDataStorage.storeParameters(parameters.getFeAnalysisId(), timeHorizon, parameters);
+//        }
     }
 
     //function exitcode=FEA_MODULE1_HELPER(ifile, ofile,natS,ofile_forFPF,ofileGUI, IRs, Ks, s_flagPQ,s_method,tolvar,Nmin_obs_fract,Nmin_obs_interv,outliers,koutlier,imputation_meth,Ngaussians,percentile_historical,check_module0,toleranceS,iterationsS,epsiloS,conditional_samplingS,histo_estremeQs,thresGUIs,s_rng_seed)
@@ -233,7 +266,7 @@ public class ForecastErrorsAnalyzerImpl implements ForecastErrorsAnalyzer {
                 .program(feaM2)
                 .args(M1OUTPUTFILENAME,
                         M2OUTPUTFILENAME,
-                        Command.EXECUTION_NUMBER_PATTERN,
+                        CommandConstants.EXECUTION_NUMBER_PATTERN,
                         // ""+parameters.getModalityGaussian(), removed in v1.8
                         "" + parameters.getIr(),
                         "" + config.gettFlags(),

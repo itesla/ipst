@@ -104,8 +104,8 @@ public class RunImpactAnalysisOnStateTool implements Tool {
         if (network != null) {
             ContingenciesAndActionsDatabaseClient contingencyDb = config.getContingencyDbClientFactoryClass().newInstance().create();
             SimulatorFactory simulatorFactory = config.getSimulatorFactoryClass().newInstance();
-            Stabilization stabilization = simulatorFactory.createStabilization(network, context.getComputationManager(), 0);
-            ImpactAnalysis impactAnalysis = simulatorFactory.createImpactAnalysis(network, context.getComputationManager(), 0, contingencyDb);
+            Stabilization stabilization = simulatorFactory.createStabilization(network, context.getShortTimeExecutionComputationManager(), 0);
+            ImpactAnalysis impactAnalysis = simulatorFactory.createImpactAnalysis(network, context.getShortTimeExecutionComputationManager(), 0, contingencyDb);
             Map<String, Object> initContext = new HashMap<>();
             SimulationParameters simulationParameters = SimulationParameters.load();
             stabilization.init(simulationParameters, initContext);

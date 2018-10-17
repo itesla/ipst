@@ -114,29 +114,31 @@ public class FPFAnalysis {
 
 
     public void runFPFCLASSIC(ComputationManager computationManager, ForecastErrorsStatistics fes, List<Contingency> lc, String analysysId, Path destPath) throws Exception {
-        Map<String, String> env = new HashMap<>();
-        try (CommandExecutor executor = computationManager.newCommandExecutor(
-                env, FPFCLASSIC_EXEC_PREFIX, true)) {
+        computationManager.execute(new ExecutionEnvironment(new HashMap<>(), FPFCLASSIC_EXEC_PREFIX, true), new AbstractExecutionHandler<String>() {
+            @Override
+            public List<CommandExecution> before(Path workingDir) throws IOException {
+                LOGGER.info(" - preparing FPFClassic input file");
+                //convert to, and put FPFClassic input file in the working dir
+                Converter.convert(network, lc, fes, workingDir.resolve(FPF_CLASSIC_INPUT_FILE), workingDir.resolve(FPF_CLASSIC_INPUT_FILE_CONT_MAPPING));
 
-            final Path workingDir = executor.getWorkingDir();
-            final Path fpfInputFile = workingDir.resolve(FPF_CLASSIC_INPUT_FILE);
-            final Path fpfInputFileContMapping = workingDir.resolve(FPF_CLASSIC_INPUT_FILE_CONT_MAPPING);
-
-            LOGGER.info(" - preparing FPFClassic input file");
-            //convert to, and put FPFClassic input file in the working dir
-            Converter.convert(network, lc, fes, fpfInputFile, fpfInputFileContMapping);
-
-            Command cmd = createFPFClassicCommand(destPath, fpfInputFile);
-            ExecutionReport report = executor.start(new CommandExecution(cmd, 1, Integer.MAX_VALUE));
-            report.log();
-            if (report.getErrors().size() == 0) {
-                LOGGER.info(" -- output files, here: {}", destPath.toFile().getAbsolutePath());
-                //Files.copy(workingDir.resolve("fpfclassic_output.zip"), destPath.resolve("fpfclassic_output.zip"), StandardCopyOption.REPLACE_EXISTING);
-                extractFPFOutputs(analysysId, workingDir.resolve(FPFCLASSIC_OUTPUT_FILE_ZIP), fpfInputFileContMapping, destPath);
-            } else {
-                LOGGER.error(" -- error details, here: {}", workingDir.resolve("fpfclassic_0.out").toFile().getAbsolutePath());
+                Command cmd = createFPFClassicCommand(destPath, workingDir.resolve(FPF_CLASSIC_INPUT_FILE));
+                return Arrays.asList(new CommandExecution(cmd, 1, Integer.MAX_VALUE));
             }
-        }
+
+            @Override
+            public String after(Path workingDir, ExecutionReport report) throws IOException {
+                report.log();
+                if (report.getErrors().size() == 0) {
+                    LOGGER.info(" -- output files, here: {}", destPath.toFile().getAbsolutePath());
+                    //Files.copy(workingDir.resolve("fpfclassic_output.zip"), destPath.resolve("fpfclassic_output.zip"), StandardCopyOption.REPLACE_EXISTING);
+                    extractFPFOutputs(analysysId, workingDir.resolve(FPFCLASSIC_OUTPUT_FILE_ZIP), workingDir.resolve(FPF_CLASSIC_INPUT_FILE_CONT_MAPPING), destPath);
+                    return "OK";
+                } else {
+                    LOGGER.error(" -- error details, here: {}", workingDir.resolve("fpfclassic_0.out").toFile().getAbsolutePath());
+                    return "KO";
+                }
+            }
+        }).join();
     }
 
 
