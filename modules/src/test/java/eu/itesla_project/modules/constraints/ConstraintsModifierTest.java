@@ -13,13 +13,10 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
+import com.powsybl.iidm.network.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.powsybl.iidm.network.Line;
-import com.powsybl.iidm.network.Network;
-import com.powsybl.iidm.network.StateManager;
-import com.powsybl.iidm.network.VoltageLevel;
 import com.powsybl.security.LimitViolation;
 import com.powsybl.security.LimitViolationType;
 
@@ -69,7 +66,7 @@ public class ConstraintsModifierTest {
         checkOriginalNetworkLimits();
 
         ConstraintsModifier constraintsModifier = new ConstraintsModifier(network, config);
-        constraintsModifier.looseConstraints(StateManager.INITIAL_STATE_ID);
+        constraintsModifier.looseConstraints(StateManagerConstants.INITIAL_STATE_ID);
 
         checkModifiedNetworkLimits(0);
     }
@@ -81,7 +78,7 @@ public class ConstraintsModifierTest {
         checkOriginalNetworkLimits();
 
         ConstraintsModifier constraintsModifier = new ConstraintsModifier(network, config);
-        constraintsModifier.looseConstraints(StateManager.INITIAL_STATE_ID, margin);
+        constraintsModifier.looseConstraints(StateManagerConstants.INITIAL_STATE_ID, margin);
 
         checkModifiedNetworkLimits(margin);
     }
@@ -91,7 +88,7 @@ public class ConstraintsModifierTest {
         checkOriginalNetworkLimits();
 
         ConstraintsModifier constraintsModifier = new ConstraintsModifier(network, config);
-        constraintsModifier.looseConstraints(StateManager.INITIAL_STATE_ID, violations);
+        constraintsModifier.looseConstraints(StateManagerConstants.INITIAL_STATE_ID, violations);
 
         checkModifiedNetworkLimits(0);
     }
@@ -103,7 +100,7 @@ public class ConstraintsModifierTest {
         checkOriginalNetworkLimits();
 
         ConstraintsModifier constraintsModifier = new ConstraintsModifier(network, config);
-        constraintsModifier.looseConstraints(StateManager.INITIAL_STATE_ID, violations, margin);
+        constraintsModifier.looseConstraints(StateManagerConstants.INITIAL_STATE_ID, violations, margin);
 
         checkModifiedNetworkLimits(margin);
     }
@@ -115,7 +112,7 @@ public class ConstraintsModifierTest {
         checkOriginalNetworkLimits();
 
         String stateId = "0";
-        network.getStateManager().cloneState(StateManager.INITIAL_STATE_ID, stateId);
+        network.getStateManager().cloneState(StateManagerConstants.INITIAL_STATE_ID, stateId);
         network.getStateManager().setWorkingState(stateId);
         checkOriginalNetworkLimits();
 
@@ -124,7 +121,7 @@ public class ConstraintsModifierTest {
 
         checkModifiedNetworkLimits(margin);
 
-        network.getStateManager().setWorkingState(StateManager.INITIAL_STATE_ID);
+        network.getStateManager().setWorkingState(StateManagerConstants.INITIAL_STATE_ID);
         checkModifiedNetworkLimits(margin);
 
         network.getStateManager().removeState(stateId);
@@ -137,7 +134,7 @@ public class ConstraintsModifierTest {
         checkOriginalNetworkLimits();
 
         String stateId = "0";
-        network.getStateManager().cloneState(StateManager.INITIAL_STATE_ID, stateId);
+        network.getStateManager().cloneState(StateManagerConstants.INITIAL_STATE_ID, stateId);
         network.getStateManager().setWorkingState(stateId);
         checkOriginalNetworkLimits();
 
@@ -146,7 +143,7 @@ public class ConstraintsModifierTest {
 
         checkModifiedNetworkLimits(margin);
 
-        network.getStateManager().setWorkingState(StateManager.INITIAL_STATE_ID);
+        network.getStateManager().setWorkingState(StateManagerConstants.INITIAL_STATE_ID);
         checkModifiedNetworkLimits(margin);
 
         network.getStateManager().removeState(stateId);
@@ -162,7 +159,7 @@ public class ConstraintsModifierTest {
 
         }
         try {
-            constraintsModifier.looseConstraints(StateManager.INITIAL_STATE_ID, null);
+            constraintsModifier.looseConstraints(StateManagerConstants.INITIAL_STATE_ID, null);
             fail();
         } catch (Throwable e) {
         }

@@ -129,12 +129,12 @@ public class OptimizerTool implements Tool {
         try (HistoDbClient histoDbClient = config.getHistoDbClientFactoryClass().newInstance().create();
              TopologyMiner topologyMiner = config.getTopologyMinerFactoryClass().newInstance().create()) {
 
-            Optimizer optimizer = config.getOptimizerFactoryClass().newInstance().create(network, context.getComputationManager(), 0, histoDbClient, topologyMiner);
-            LoadFlow loadFlow = config.getLoadFlowFactoryClass().newInstance().create(network, context.getComputationManager(), 0);
+            Optimizer optimizer = config.getOptimizerFactoryClass().newInstance().create(network, context.getShortTimeExecutionComputationManager(), 0, histoDbClient, topologyMiner);
+            LoadFlow loadFlow = config.getLoadFlowFactoryClass().newInstance().create(network, context.getShortTimeExecutionComputationManager(), 0);
 
             context.getOutputStream().println("initializing optimizer...");
 
-            TopologyContext topologyContext = TopologyContext.create(network, topologyMiner, histoDbClient, context.getComputationManager(), histoInterval, correlationThreshold, probabilityThreshold);
+            TopologyContext topologyContext = TopologyContext.create(network, topologyMiner, histoDbClient, context.getShortTimeExecutionComputationManager(), histoInterval, correlationThreshold, probabilityThreshold);
 
             optimizer.init(new OptimizerParameters(histoInterval), topologyContext);
 

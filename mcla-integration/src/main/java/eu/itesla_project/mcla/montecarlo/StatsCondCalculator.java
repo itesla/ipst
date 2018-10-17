@@ -7,6 +7,7 @@
  */
 package eu.itesla_project.mcla.montecarlo;
 
+import com.powsybl.commons.PowsyblException;
 import com.powsybl.computation.*;
 import com.powsybl.iidm.network.Network;
 import eu.itesla_project.mcla.NetworkUtils;
@@ -17,6 +18,7 @@ import eu.itesla_project.modules.online.TimeHorizon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -103,24 +105,33 @@ public class StatsCondCalculator {
 
 
     public void run(Path destPath) throws Exception {
-        try (CommandExecutor executor = computationManager.newCommandExecutor(
-                createEnv(), WORKING_DIR_PREFIX, config.isDebug())) {
+        computationManager.execute(new ExecutionEnvironment(createEnv(), WORKING_DIR_PREFIX, config.isDebug()), new AbstractExecutionHandler<String>() {
+            @Override
+            public List<CommandExecution> before(Path workingDir) throws IOException {
+                // put mat files in working dir
+                Path localForecastErrorsDataFile = Paths.get(workingDir.toString(), MCSINPUTFILEPREFIX + "forecast_errors_" + timeHorizon.getLabel() + ".mat");
+                forecastErrorsDataStorage.getForecastErrorsFile(feAnalysisId, timeHorizon, localForecastErrorsDataFile);
+                Path localNetworkDataMatFile = Paths.get(workingDir.toString(), MCSINPUTFILEPREFIX + network.getId() + ".mat");
+                Files.copy(networkDataMatFile, localNetworkDataMatFile);
 
-            final Path workingDir = executor.getWorkingDir();
-            // put mat files in working dir
-            Path localForecastErrorsDataFile = Paths.get(workingDir.toString(), MCSINPUTFILEPREFIX + "forecast_errors_" + timeHorizon.getLabel() + ".mat");
-            forecastErrorsDataStorage.getForecastErrorsFile(feAnalysisId, timeHorizon, localForecastErrorsDataFile);
-            Path localNetworkDataMatFile = Paths.get(workingDir.toString(), MCSINPUTFILEPREFIX + network.getId() + ".mat");
-            Files.copy(networkDataMatFile, localNetworkDataMatFile);
+                LOGGER.info("Preparing FPF input data for {} network", network.getId());
+                Command cmd = createFPFCommand(localForecastErrorsDataFile, localNetworkDataMatFile);
+                return Arrays.asList(new CommandExecution(cmd, 1));
 
-            LOGGER.info("Preparing FPF input data for {} network", network.getId());
-            Command cmd = createFPFCommand(localForecastErrorsDataFile, localNetworkDataMatFile);
-            ExecutionReport report = executor.start(new CommandExecution(cmd, 1, Integer.MAX_VALUE));
-            report.log();
+            }
 
-            LOGGER.debug("Retrieving FPF file {}", FPFFORECASTERRORSFILENAME + ".csv");
-            Files.copy(Paths.get(workingDir.toString(), FPFFORECASTERRORSFILENAME + ".csv"), destPath, StandardCopyOption.REPLACE_EXISTING);
-        }
+            @Override
+            public String after(Path workingDir, ExecutionReport report) throws IOException {
+                if (!report.getErrors().isEmpty()) {
+                    report.log();
+                    throw new PowsyblException("Execution error: " + report.getErrors());
+                } else {
+                    LOGGER.debug("Retrieving FPF file {}", FPFFORECASTERRORSFILENAME + ".csv");
+                    Files.copy(Paths.get(workingDir.toString(), FPFFORECASTERRORSFILENAME + ".csv"), destPath, StandardCopyOption.REPLACE_EXISTING);
+                    return null;
+                }
+            }
+        }).join();
     }
 
 

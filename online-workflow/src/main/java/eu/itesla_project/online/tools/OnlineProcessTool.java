@@ -138,7 +138,7 @@ public class OnlineProcessTool implements Tool {
 
         OnlineConfig oConfig = OnlineConfig.load();
         CaseRepository caseRepo = oConfig.getCaseRepositoryFactoryClass().newInstance()
-                .create(context.getComputationManager());
+                .create(context.getShortTimeExecutionComputationManager());
         DateTime[] basecases = null;
         Set<DateTime> baseCasesSet = null;
         if (procParams.getBasecasesInterval() != null) {

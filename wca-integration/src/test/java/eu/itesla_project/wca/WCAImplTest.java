@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
+import com.powsybl.iidm.network.*;
 import org.joda.time.Interval;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,10 +29,6 @@ import com.powsybl.computation.ComputationManager;
 import com.powsybl.computation.ExecutionEnvironment;
 import com.powsybl.contingency.Contingency;
 import com.powsybl.contingency.tasks.ModificationTask;
-import com.powsybl.iidm.network.Bus;
-import com.powsybl.iidm.network.Country;
-import com.powsybl.iidm.network.Network;
-import com.powsybl.iidm.network.StateManager;
 import com.powsybl.iidm.network.test.EurostagTutorialExample1Factory;
 import com.powsybl.loadflow.LoadFlow;
 import com.powsybl.loadflow.LoadFlowFactory;
@@ -363,7 +360,7 @@ public class WCAImplTest {
         LoadFlowResult loadFlowResult = new LoadFlowResult() {
             @Override
             public boolean isOk() {
-                if ( StateManager.INITIAL_STATE_ID.equals(network.getStateManager().getWorkingStateId()) )
+                if ( StateManagerConstants.INITIAL_STATE_ID.equals(network.getStateManager().getWorkingStateId()) )
                     return true;
                 return false;
             }

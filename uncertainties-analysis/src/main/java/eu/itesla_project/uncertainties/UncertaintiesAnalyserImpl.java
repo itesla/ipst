@@ -360,7 +360,7 @@ public class UncertaintiesAnalyserImpl implements UncertaintiesAnalyser {
     @Override
     public CompletableFuture<Uncertainties> analyse(Interval interval) throws Exception {
 
-        return computationManager.execute(new ExecutionEnvironment(ImmutableMap.of(), "itesla-r-", config.isDebug()), new DefaultExecutionHandler<Uncertainties>() {
+        return computationManager.execute(new ExecutionEnvironment(ImmutableMap.of(), "itesla-r-", config.isDebug()), new AbstractExecutionHandler<Uncertainties>() {
 
             private List<StochasticInjection> networkInjections;
 

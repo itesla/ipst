@@ -42,7 +42,7 @@ public class ComputeSecurityRuleTool implements Tool {
         RulesDbClient rulesDb = config.getRulesDbClientFactoryClass().newInstance().create(rulesDbName);
         OfflineDb offlineDb = config.getOfflineDbFactoryClass().newInstance().create(simulationDbName);
         MetricsDb metricsDb = config.getMetricsDbFactoryClass().newInstance().create(metricsDbName);
-        RulesBuilder rulesBuilder = config.getRulesBuilderFactoryClass().newInstance().create(context.getComputationManager(), offlineDb, metricsDb, rulesDb);
+        RulesBuilder rulesBuilder = config.getRulesBuilderFactoryClass().newInstance().create(context.getShortTimeExecutionComputationManager(), offlineDb, metricsDb, rulesDb);
         rulesBuilder.build(workflowId, attributeSet, new SecurityIndexId(contingency, indexType));
     }
 

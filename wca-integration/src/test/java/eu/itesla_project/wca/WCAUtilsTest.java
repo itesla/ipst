@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import com.powsybl.iidm.network.Branch;
+import com.powsybl.iidm.network.StateManagerConstants;
 import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -38,11 +39,9 @@ import com.powsybl.commons.util.StringToIntMapper;
 import com.powsybl.contingency.BranchContingency;
 import com.powsybl.contingency.Contingency;
 import com.powsybl.contingency.ContingencyElement;
-import com.powsybl.contingency.ContingencyImpl;
 import com.powsybl.commons.datasource.MemDataSource;
 import com.powsybl.ampl.converter.AmplSubset;
 import com.powsybl.iidm.network.Network;
-import com.powsybl.iidm.network.StateManager;
 import com.powsybl.iidm.network.test.NetworkTest1Factory;
 import eu.itesla_project.modules.wca.WCAClusterNum;
 import com.powsybl.security.LimitViolation;
@@ -137,7 +136,7 @@ public class WCAUtilsTest {
     @Test
     public void testWriteContingencies() {
         ContingencyElement contingencyElement = new BranchContingency("line");
-        Contingency contingency = new ContingencyImpl("contigency_1", contingencyElement);
+        Contingency contingency = new Contingency("contigency_1", contingencyElement);
         MemDataSource dataSource = new MemDataSource();
         StringToIntMapper<AmplSubset> mapper = new StringToIntMapper<>(AmplSubset.class);
 
@@ -175,7 +174,7 @@ public class WCAUtilsTest {
         Map<String, Float> injections = new HashMap<String, Float>();
         injections.put("load1", 10f);
         injections.put("generator1", -10f);
-        WCAUtils.applyInjections(network, StateManager.INITIAL_STATE_ID, injections);
+        WCAUtils.applyInjections(network, StateManagerConstants.INITIAL_STATE_ID, injections);
 
         assertEquals(loadP + 10, network.getLoad("load1").getTerminal().getP(), 0.0);
         assertEquals(loadP0 + 10, network.getLoad("load1").getP0(), 0.0);

@@ -113,7 +113,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
     private static final String WP43_ALL_CONFIGS_ZIP_FILE_NAME = "wp43-all-configs.zip";
     private static final String WP43_PARTIAL_CONFIGS_ZIP_FILE_NAME = "wp43-partial-configs.zip";
     private static final String WP43_CONFIGS_FILE_NAME = "wp43adapter.properties";
-    private static final String WP43_CONFIGS_PER_FAULT_FILE_NAME = "wp43adapter_fault_" + Command.EXECUTION_NUMBER_PATTERN + ".properties";
+    private static final String WP43_CONFIGS_PER_FAULT_FILE_NAME = "wp43adapter_fault_" + CommandConstants.EXECUTION_NUMBER_PATTERN + ".properties";
 
     private static final String WORKING_DIR_PREFIX = "itesla_eurostag_impact_analysis_";
 
@@ -324,7 +324,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
 
     private void writeScenarios(Domain domain, List<Contingency> contingencies, OutputStream os) throws IOException {
         GenericArchive archive = new EurostagScenario(parameters, config).writeFaultSeqArchive(domain, contingencies, network, dictionary,
-            faultNum -> FAULT_SEQ_FILE_NAME.replace(Command.EXECUTION_NUMBER_PATTERN, Integer.toString(faultNum)));
+            faultNum -> FAULT_SEQ_FILE_NAME.replace(CommandConstants.EXECUTION_NUMBER_PATTERN, Integer.toString(faultNum)));
         archive.as(ZipExporter.class).exportTo(os);
     }
 
@@ -363,7 +363,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
                 maxDuration = Math.max(maxDuration, getFaultDuration(contingency, it.next()));
             }
             node.setProperty("f_duration", maxDuration);
-            Path wp43Config = workingDir.resolve(WP43_CONFIGS_PER_FAULT_FILE_NAME.replace(Command.EXECUTION_NUMBER_PATTERN, Integer.toString(i)));
+            Path wp43Config = workingDir.resolve(WP43_CONFIGS_PER_FAULT_FILE_NAME.replace(CommandConstants.EXECUTION_NUMBER_PATTERN, Integer.toString(i)));
             try (Writer writer = Files.newBufferedWriter(wp43Config, StandardCharsets.UTF_8)) {
                 configuration.save(writer);
             }
@@ -395,7 +395,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
                     WP43_TRANSIENT_SECURITY_INDEX_FILE_NAME,
                     WP43_OVERLOAD_SECURITY_INDEX_FILE_NAME,
                     WP43_UNDEROVERVOLTAGE_SECURITY_INDEX_FILE_NAME)) {
-                Path file = workingDir.resolve(securityIndexFileName.replace(Command.EXECUTION_NUMBER_PATTERN, Integer.toString(i)));
+                Path file = workingDir.resolve(securityIndexFileName.replace(CommandConstants.EXECUTION_NUMBER_PATTERN, Integer.toString(i)));
                 if (Files.exists(file)) {
                     try (BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
                         for (SecurityIndex index : SecurityIndexParser.fromXml(contingency.getId(), reader)) {
@@ -406,7 +406,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
                 }
             }
             // also scan errors in output
-            EurostagUtil.searchErrorMessage(workingDir.resolve(FAULT_OUT_GZ_FILE_NAME.replace(Command.EXECUTION_NUMBER_PATTERN, Integer.toString(i))), result.getMetrics(), i);
+            EurostagUtil.searchErrorMessage(workingDir.resolve(FAULT_OUT_GZ_FILE_NAME.replace(CommandConstants.EXECUTION_NUMBER_PATTERN, Integer.toString(i))), result.getMetrics(), i);
         }
 
         LOGGER.trace("{} security indexes files read in {} ms", files, System.currentTimeMillis() - start);
@@ -457,7 +457,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
 
     @Override
     public ImpactAnalysisResult run(SimulationState state) throws Exception {
-        return run(state, null);
+        return runAsync(state, null, null).join();
     }
 
     private Command before(SimulationState state, Set<String> contingencyIds, Path workingDir, List<Contingency> contingencies) throws IOException {
@@ -534,20 +534,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
 
     @Override
     public ImpactAnalysisResult run(SimulationState state, Set<String> contingencyIds) throws Exception {
-        checkState(state);
-
-        try (CommandExecutor executor = computationManager.newCommandExecutor(EurostagUtil.createEnv(config), WORKING_DIR_PREFIX, config.isDebug())) {
-
-            Path workingDir = executor.getWorkingDir();
-
-            List<Contingency> contingencies = new ArrayList<>();
-            Command cmd = before(state, contingencyIds, workingDir, contingencies);
-
-            // start execution
-            ExecutionReport report = executor.start(new CommandExecution(cmd, contingencies.size(), priority, ImmutableMap.of("state", state.getName())));
-
-            return after(workingDir, contingencies, report);
-        }
+        return runAsync(state, contingencyIds, null).join();
     }
 
     @Override
@@ -563,13 +550,6 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
                     public List<CommandExecution> before(Path workingDir) throws IOException {
                         Command cmd = EurostagImpactAnalysis.this.before(state, contingencyIds, workingDir, contingencies);
                         return Arrays.asList(new CommandExecution(cmd, contingencies.size(), priority, ImmutableMap.of("state", state.getName())));
-                    }
-
-                    @Override
-                    public void onProgress(CommandExecution execution, int executionIndex) {
-                        if (listener != null) {
-                            listener.onProgress(executionIndex);
-                        }
                     }
 
                     @Override

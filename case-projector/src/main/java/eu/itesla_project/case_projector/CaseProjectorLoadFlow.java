@@ -41,14 +41,9 @@ public class CaseProjectorLoadFlow implements LoadFlow {
         return "1.0.0";
     }
 
-    @Override
-    public LoadFlowResult run(LoadFlowParameters parameters) throws Exception {
-        Boolean wres = runAmplTask(network.getStateManager().getWorkingStateId(), parameters).join();
-        return new LoadFlowResultImpl(wres, new HashMap<>(), null);
-    }
 
     @Override
-    public CompletableFuture<LoadFlowResult> runAsync(String workingStateId, LoadFlowParameters parameters) {
+    public CompletableFuture<LoadFlowResult> run(String workingStateId, LoadFlowParameters parameters) {
         return runAmplTask(workingStateId, parameters)
                 .thenApply(x -> new LoadFlowResultImpl(x, new HashMap<>(), null));
     }

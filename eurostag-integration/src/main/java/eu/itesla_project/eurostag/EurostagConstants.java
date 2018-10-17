@@ -6,10 +6,9 @@
  */
 package eu.itesla_project.eurostag;
 
-import com.powsybl.computation.Command;
+import com.powsybl.computation.CommandConstants;
 
 /**
- *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
  */
 public interface EurostagConstants {
@@ -21,7 +20,7 @@ public interface EurostagConstants {
     String PRE_FAULT_SAC_FILE_NAME = PRE_FAULT_SEQ_FILE_NAME.replace(".seq", ".sac");
     String PRE_FAULT_SAC_GZ_FILE_NAME = PRE_FAULT_SAC_FILE_NAME + ".gz";
 
-    String FAULT_SEQ_FILE_NAME = "sim_fault_" + Command.EXECUTION_NUMBER_PATTERN + ".seq";
+    String FAULT_SEQ_FILE_NAME = "sim_fault_" + CommandConstants.EXECUTION_NUMBER_PATTERN + ".seq";
 
     String ALL_SCENARIOS_ZIP_FILE_NAME = "eurostag-all-scenarios.zip";
 

@@ -10,7 +10,7 @@ import com.google.auto.service.AutoService;
 import com.powsybl.contingency.Contingency;
 import com.powsybl.iidm.import_.Importer;
 import com.powsybl.iidm.import_.Importers;
-import com.powsybl.iidm.network.StateManager;
+import com.powsybl.iidm.network.StateManagerConstants;
 import com.powsybl.loadflow.LoadFlowFactory;
 import com.powsybl.security.*;
 import com.powsybl.simulation.securityindexes.SecurityIndexType;
@@ -217,7 +217,7 @@ public class OverloadValidationTool implements Tool {
 
         try (RulesDbClient rulesDb = rulesDbClientFactory.create(rulesDbName)) {
 
-            Importer importer = Importers.getImporter(caseFormat, context.getComputationManager());
+            Importer importer = Importers.getImporter(caseFormat, context.getShortTimeExecutionComputationManager());
             if (importer == null) {
                 throw new RuntimeException("Format " + caseFormat + " not supported");
             }
@@ -234,7 +234,7 @@ public class OverloadValidationTool implements Tool {
                     context.getOutputStream().println("running security analysis...");
 
                     SecurityAnalysis securityAnalysis = new SecurityAnalysisImpl(network, context.getShortTimeExecutionComputationManager(), loadFlowFactory);
-                    SecurityAnalysisResult securityAnalysisResult = securityAnalysis.runAsync(network1 -> contingencies, StateManager.INITIAL_STATE_ID, SecurityAnalysisParameters.load()).join();
+                    SecurityAnalysisResult securityAnalysisResult = securityAnalysis.run(StateManagerConstants.INITIAL_STATE_ID, SecurityAnalysisParameters.load(), network1 -> contingencies).join();
 
                     context.getOutputStream().println("checking rules...");
 

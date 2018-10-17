@@ -15,6 +15,7 @@ import com.powsybl.computation.ComputationManager;
 import com.powsybl.computation.ComputationResourcesStatus;
 import com.powsybl.iidm.network.Country;
 import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.StateManagerConstants;
 import com.powsybl.iidm.network.VoltageLevel;
 import com.powsybl.iidm.network.test.EurostagTutorialExample1Factory;
 import com.powsybl.loadflow.LoadFlow;
@@ -29,7 +30,6 @@ import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseCl
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClientFactory;
 import com.powsybl.contingency.Contingency;
 import com.powsybl.contingency.BranchContingency;
-import com.powsybl.contingency.ContingencyImpl;
 import eu.itesla_project.modules.histo.*;
 import eu.itesla_project.modules.offline.MetricsDb;
 import eu.itesla_project.modules.offline.OfflineDb;
@@ -113,6 +113,8 @@ public class OfflineWorkflowTest {
 
             // create init network
             Network network = EurostagTutorialExample1Factory.create();
+            network.getStateManager().allowStateMultiThreadAccess(true);
+            network.getStateManager().setWorkingState(StateManagerConstants.INITIAL_STATE_ID);
 
             // computation manager mock
             ComputationManager computationManager = Mockito.mock(ComputationManager.class);
@@ -144,7 +146,7 @@ public class OfflineWorkflowTest {
 
             // contingencies db mock
             ContingenciesAndActionsDatabaseClient cadbClient = Mockito.mock(ContingenciesAndActionsDatabaseClient.class);
-            ContingencyImpl contingency = new ContingencyImpl("line", new BranchContingency("line"));
+            Contingency contingency = new Contingency("line", new BranchContingency("line"));
             List<Contingency> contingencies = Arrays.asList(contingency);
             Mockito.when(cadbClient.getContingencies(network))
                     .thenReturn(contingencies);

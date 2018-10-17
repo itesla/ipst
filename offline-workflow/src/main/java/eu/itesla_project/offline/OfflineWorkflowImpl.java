@@ -408,7 +408,7 @@ public class OfflineWorkflowImpl extends AbstractOfflineWorkflow {
         // sample is mapped to a state created by cloning the initial state of
         // the network
         network.getStateManager().allowStateMultiThreadAccess(true);
-        network.getStateManager().setWorkingState(StateManager.INITIAL_STATE_ID);
+        network.getStateManager().setWorkingState(StateManagerConstants.INITIAL_STATE_ID);
 
         Networks.printBalanceSummary("snapshot", network, LOGGER);
 
@@ -542,7 +542,7 @@ public class OfflineWorkflowImpl extends AbstractOfflineWorkflow {
                                 String stateId = "Sample-" + sample.getId();
 
                                 // create a new network state
-                                context.getNetwork().getStateManager().cloneState(StateManager.INITIAL_STATE_ID, stateId);
+                                context.getNetwork().getStateManager().cloneState(StateManagerConstants.INITIAL_STATE_ID, stateId);
                                 try {
                                     // set current thread working state
                                     context.getNetwork().getStateManager().setWorkingState(stateId);

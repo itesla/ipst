@@ -52,7 +52,7 @@
         <module>pclfsim-integration</module>
         <module>py-powsybl</module>
         <!-- to be aligned to powsybl-core v2.1.0 -->
-        <module>sampling-integration</module>
+        <!--module>sampling-integration</module-->
         <module>security-analysis-ws</module>
         <module>uncertainties-analysis</module>
         <module>wca-integration</module>

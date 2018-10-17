@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import com.powsybl.contingency.ContingencyElement;
-import com.powsybl.contingency.ContingencyImpl;
 import com.powsybl.contingency.GeneratorContingency;
 import com.powsybl.contingency.BranchContingency;
 import eu.itesla_project.iidm.actions_contingencies.xml.mapping.Action;
@@ -271,7 +270,7 @@ public class XmlFileContingenciesAndActionsDatabaseClient implements Contingenci
                     }
                 }
                 if (elements.size() > 0) {
-                    contingencies.add(new ContingencyImpl(contingency, elements));
+                    contingencies.add(new com.powsybl.contingency.Contingency(contingency, elements));
                 }
             }
 

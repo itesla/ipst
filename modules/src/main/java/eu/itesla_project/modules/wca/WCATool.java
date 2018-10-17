@@ -8,12 +8,12 @@
 package eu.itesla_project.modules.wca;
 
 import com.google.auto.service.AutoService;
+import com.powsybl.iidm.network.StateManagerConstants;
 import com.powsybl.tools.Command;
 import com.powsybl.tools.Tool;
 import com.powsybl.tools.ToolRunningContext;
 import com.powsybl.iidm.import_.Importers;
 import com.powsybl.iidm.network.Network;
-import com.powsybl.iidm.network.StateManager;
 import com.powsybl.loadflow.LoadFlowFactory;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
 import eu.itesla_project.modules.histo.*;
@@ -246,8 +246,8 @@ public class WCATool implements Tool {
                 }
                 network.getStateManager().allowStateMultiThreadAccess(true);
 
-                WCA wca = wcaFactory.create(network, context.getComputationManager(), histoDbClient, rulesDbClient, uncertaintiesAnalyserFactory, contingenciesDb, loadFlowFactory);
-                WCAAsyncResult result = wca.runAsync(StateManager.INITIAL_STATE_ID, parameters).join();
+                WCA wca = wcaFactory.create(network, context.getShortTimeExecutionComputationManager(), histoDbClient, rulesDbClient, uncertaintiesAnalyserFactory, contingenciesDb, loadFlowFactory);
+                WCAAsyncResult result = wca.runAsync(StateManagerConstants.INITIAL_STATE_ID, parameters).join();
 
                 Table table = new Table(3, BorderStyle.CLASSIC_WIDE);
                 table.addCell("Contingency");
@@ -303,10 +303,10 @@ public class WCATool implements Tool {
                     try {
                         network.getStateManager().allowStateMultiThreadAccess(true);
                         String baseStateId = network.getId();
-                        network.getStateManager().cloneState(StateManager.INITIAL_STATE_ID, baseStateId);
+                        network.getStateManager().cloneState(StateManagerConstants.INITIAL_STATE_ID, baseStateId);
                         network.getStateManager().setWorkingState(baseStateId);
 
-                        WCA wca = wcaFactory.create(network, context.getComputationManager(), histoDbClient, rulesDbClient, uncertaintiesAnalyserFactory, contingenciesDb, loadFlowFactory);
+                        WCA wca = wcaFactory.create(network, context.getShortTimeExecutionComputationManager(), histoDbClient, rulesDbClient, uncertaintiesAnalyserFactory, contingenciesDb, loadFlowFactory);
                         WCAAsyncResult result = wca.runAsync(baseStateId, parameters).join();
 
                         Map<String, WCACluster> clusterPerContingency = new HashMap<>();

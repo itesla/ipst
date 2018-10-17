@@ -113,7 +113,7 @@ public class RunFPFTool implements Tool {
         String outputDir = line.getOptionValue("output-dir");
 
         ForecastErrorsDataStorageImpl feDataStorage = new ForecastErrorsDataStorageImpl();
-        CaseRepository caseRepository = onlineConfig.getCaseRepositoryFactoryClass().newInstance().create(context.getComputationManager());
+        CaseRepository caseRepository = onlineConfig.getCaseRepositoryFactoryClass().newInstance().create(context.getShortTimeExecutionComputationManager());
 
         List<Network> networks = caseRepository.load(baseCaseDate, CaseType.FO, Country.FR);
         if (networks.isEmpty()) {
@@ -127,7 +127,7 @@ public class RunFPFTool implements Tool {
         List<Contingency> contingencyList = contingenciesDb.getContingencies(network);
 
         FPFAnalysis fpfce = new FPFAnalysis();
-        fpfce.init(network, context.getComputationManager(), feDataStorage);
+        fpfce.init(network, context.getShortTimeExecutionComputationManager(), feDataStorage);
         fpfce.run(analysisId, timeHorizon, contingencyList, Paths.get(outputDir));
     }
 }

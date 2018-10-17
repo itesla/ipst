@@ -348,17 +348,7 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
 
     @Override
     public StabilizationResult run() throws Exception {
-        try (CommandExecutor executor = computationManager.newCommandExecutor(EurostagUtil.createEnv(config), WORKING_DIR_PREFIX, config.isDebug())) {
-
-            Path workingDir = executor.getWorkingDir();
-
-            EurostagContext context = before(workingDir);
-
-            // start the execution
-            ExecutionReport report = executor.start(createCommandExecution());
-
-            return after(workingDir, context, report);
-        }
+        return runAsync(network.getStateManager().getWorkingStateId()).join();
     }
 
     @Override

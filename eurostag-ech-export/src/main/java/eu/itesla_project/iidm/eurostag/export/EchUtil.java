@@ -162,7 +162,7 @@ public final class EchUtil {
         return StreamSupport.stream(EchUtil.getBuses(network, config).spliterator(), false)
                 .sorted((b1, b2) -> b1.getId().compareTo(b2.getId()))
                 .filter(b -> !busesToAvoid.contains(b.getId())
-                        && b.getConnectedComponent() != null && b.getConnectedComponent().getNum() == Component.MAIN_NUM)
+                        && b.getConnectedComponent() != null && b.getConnectedComponent().getNum() == ComponentConstants.MAIN_NUM)
                  .map(b -> decorate(b))
                  .filter(db -> db.regulatingGenerator > 0 && db.maxP > 100) // only keep bus with a regulating generator and a pmax > 100 MW
                  .sorted((db1, db2) -> Float.compare((db1.maxP - db1.minP) / 2 - db1.targetP, (db2.maxP - db2.minP) / 2 - db2.targetP)) // select first bus with a high margin
@@ -173,16 +173,16 @@ public final class EchUtil {
     }
 
     public static boolean isInMainCc(Bus bus) {
-        return ConnectedComponents.getCcNum(bus) == Component.MAIN_NUM;
+        return ConnectedComponents.getCcNum(bus) == ComponentConstants.MAIN_NUM;
     }
 
     public static boolean isInMainCc(Injection injection, boolean noswitch) {
-        return ConnectedComponents.getCcNum(EchUtil.getBus(injection.getTerminal(), noswitch)) == Component.MAIN_NUM;
+        return ConnectedComponents.getCcNum(EchUtil.getBus(injection.getTerminal(), noswitch)) == ComponentConstants.MAIN_NUM;
     }
 
     public static boolean isInMainCc(Branch branch, boolean noswitch) {
-        return (ConnectedComponents.getCcNum(EchUtil.getBus(branch.getTerminal1(), noswitch)) == Component.MAIN_NUM)
-                && (ConnectedComponents.getCcNum(EchUtil.getBus(branch.getTerminal2(), noswitch)) == Component.MAIN_NUM);
+        return (ConnectedComponents.getCcNum(EchUtil.getBus(branch.getTerminal1(), noswitch)) == ComponentConstants.MAIN_NUM)
+                && (ConnectedComponents.getCcNum(EchUtil.getBus(branch.getTerminal2(), noswitch)) == ComponentConstants.MAIN_NUM);
     }
 
     /**

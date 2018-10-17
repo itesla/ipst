@@ -122,7 +122,7 @@ public class OnlineWorkflowTool implements Tool {
                         .parse(line.getOptionValue(OnlineWorkflowCommand.BASECASES_INTERVAL));
                 OnlineConfig oConfig = OnlineConfig.load();
                 CaseRepository caseRepo = oConfig.getCaseRepositoryFactoryClass().newInstance()
-                        .create(context.getComputationManager());
+                        .create(context.getShortTimeExecutionComputationManager());
                 baseCasesSet = caseRepo.dataAvailable(params.getCaseType(), params.getCountries(), basecasesInterval);
                 context.getOutputStream().println("Base cases available for interval " + basecasesInterval.toString());
                 baseCasesSet.forEach(x -> {
