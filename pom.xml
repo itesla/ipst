@@ -13,7 +13,7 @@
 
     <groupId>eu.itesla_project</groupId>
     <artifactId>itesla-parent</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>iTESLA platform</name>
@@ -62,21 +62,19 @@
 
         <java.version>1.8</java.version>
 
-        <maven.assembly.version>3.1.0</maven.assembly.version>
+        <maven.compiler.version>2.5.1</maven.compiler.version>
+        <maven.findbugs.version>3.0.4</maven.findbugs.version>
+        <maven.javadoc.version>2.10.4</maven.javadoc.version>
+        <maven.jacoco.version>0.7.8</maven.jacoco.version>
         <maven.buildnumber.version>1.4</maven.buildnumber.version>
-        <maven.checkstyle.version>3.0.0</maven.checkstyle.version>
-        <maven.compiler.version>3.8.0</maven.compiler.version>
-        <maven.coveralls.version>4.3.0</maven.coveralls.version>
-        <maven.deploy.version>2.8.2</maven.deploy.version>
-        <maven.findbugs.version>3.0.5</maven.findbugs.version>
-        <maven.install.version>2.5.2</maven.install.version>
-        <maven.javadoc.version>3.0.1</maven.javadoc.version>
-        <maven.jacoco.version>0.8.1</maven.jacoco.version>
-        <maven.jar.version>3.1.0</maven.jar.version>
-        <maven.license.version>3.0</maven.license.version>
-        <maven.surefire.version>2.22.0</maven.surefire.version>
+        <maven.surefire.version>2.19.1</maven.surefire.version>
         <maven.templating.version>1.0.0</maven.templating.version>
-        <maven.war.version>3.2.2</maven.war.version>
+        <maven.jar.version>3.0.2</maven.jar.version>
+        <maven.assembly.version>3.0.0</maven.assembly.version>
+        <maven.license.version>3.0</maven.license.version>
+        <maven.coveralls.version>4.3.0</maven.coveralls.version>
+        <maven.checkstyle.version>2.17</maven.checkstyle.version>
+        <maven.war.version>2.4</maven.war.version>
 
         <pepite.libs.weightedtrees.version>1.1-ITESLA</pepite.libs.weightedtrees.version>
         <pepite.libs.version>1.0-ITESLA</pepite.libs.version>
@@ -109,7 +107,7 @@
         <mapdb.version>3.0.3</mapdb.version>
         <mockito.version>1.10.19</mockito.version>
         <poi.version>3.15</poi.version>
-        <powsybl.version>1.1.0</powsybl.version>
+        <powsybl.version>2.0.0</powsybl.version>
         <resteasy.version>3.0.11.Final</resteasy.version>
         <servlet-api-version>3.0.1</servlet-api-version>
         <shrinkwrap.version>1.2.6</shrinkwrap.version>
@@ -141,6 +139,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.version}</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -166,11 +165,12 @@
                         <artifactId>umlgraph</artifactId>
                         <version>5.6</version>
                     </docletArtifact>
-                    <additionalOptions>-views -all</additionalOptions>
-                    <additionalOptions>-Xdoclint:none</additionalOptions>
+                    <additionalparam>-views -all</additionalparam>
+                    <additionalparam>-Xdoclint:none</additionalparam>
                     <useStandardDocletOptions>true</useStandardDocletOptions>
                     <excludePackageNames>cim1*</excludePackageNames>
                     <docfilessubdirs>true</docfilessubdirs>
+                    <aggregate>true</aggregate>
                 </configuration>
             </plugin>
             <plugin>
@@ -212,16 +212,6 @@
         </plugins>
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>${maven.compiler.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-install-plugin</artifactId>
-                    <version>${maven.install.version}</version>
-                </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>buildnumber-maven-plugin</artifactId>
@@ -267,13 +257,7 @@
                     <artifactId>coveralls-maven-plugin</artifactId>
                     <version>${maven.coveralls.version}</version>
                 </plugin>
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>${spring-boot.version}</version>
-                </plugin>
             </plugins>
-
         </pluginManagement>
     </build>
 
@@ -425,6 +409,11 @@
             <dependency>
                 <groupId>com.powsybl</groupId>
                 <artifactId>powsybl-loadflow-api</artifactId>
+                <version>${powsybl.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.powsybl</groupId>
+                <artifactId>powsybl-loadflow-validation</artifactId>
                 <version>${powsybl.version}</version>
             </dependency>
             <dependency>
