@@ -317,7 +317,7 @@ public class DdbPSLibImporter {
     private static final String    DEFAULT_USER                = "user";
     private static final String    DEFAULT_PASSWORD            = "password";
     private static final String    DEFAULT_REMOTING_PORT        = "8080";
-    private static final String    DDBMANAGERJNDINAME            = "ejb:iidm-ddb-ear/iidm-ddb-ejb-0.0.1-SNAPSHOT/DDBManagerBean!eu.itesla_project.iidm.ddb.service.DDBManager";
+    private static final String    DDBMANAGERJNDINAME            = "ejb:iidm-ddb-ear/iidm-ddb-ejb/DDBManagerBean!eu.itesla_project.iidm.ddb.service.DDBManager";
     private static final String    DEFAULT_MODELICA_VERSION    = "3.2";
 
     private static final String    REGULATORS_PACKAGE_NAME        = "Regulators";

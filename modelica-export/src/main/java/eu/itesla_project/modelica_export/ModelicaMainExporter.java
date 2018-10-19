@@ -387,7 +387,7 @@ public class ModelicaMainExporter {
     private final String     DEFAULT_USER                = "user";
     private final String     DEFAULT_PASSWORD            = "password";
     private final String     DEFAULT_PORT                = "8080";
-    private final String     DDBMANAGERJNDINAME            = "ejb:iidm-ddb-ear/iidm-ddb-ejb-0.0.1-SNAPSHOT/DDBManagerBean!eu.itesla_project.iidm.ddb.service.DDBManager";
+    private final String     DDBMANAGERJNDINAME            = "ejb:iidm-ddb-ear/iidm-ddb-ejb/DDBManagerBean!eu.itesla_project.iidm.ddb.service.DDBManager";
     private final String     DEFAULT_MODELICA_VERSION    = "3.2";
 //    private final String     DEFAULT_EUROSTAG_VERSION    = "5.1.1";
 

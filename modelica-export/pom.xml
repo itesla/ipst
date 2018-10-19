@@ -78,15 +78,15 @@
             <artifactId>powsybl-loadflow-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project.iidm-ddb</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>iidm-ddb-ejb</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>eu.itesla_project.iidm-ddb</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>iidm-ddb-ejb-remote-client-wildfly</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -95,9 +95,9 @@
         </dependency>
 
         <dependency>
-            <groupId>eu.itesla_project.iidm-ddb</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>iidm-ddb-eurostag-modelica-converter</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>

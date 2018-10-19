@@ -13,8 +13,8 @@
 
     <parent>
         <artifactId>iidm-ddb</artifactId>
-        <groupId>eu.itesla_project.iidm-ddb</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <groupId>eu.itesla_project</groupId>
+        <version>0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>iidm-ddb-ejb</artifactId>

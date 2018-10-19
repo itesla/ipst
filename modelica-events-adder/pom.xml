@@ -16,7 +16,6 @@
         <artifactId>itesla-parent</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
-    <groupId>eu.itesla_project</groupId>
     <artifactId>modelica-events-adder</artifactId>
     <version>0.1-SNAPSHOT</version>
     <name>modelica-events-adder</name>

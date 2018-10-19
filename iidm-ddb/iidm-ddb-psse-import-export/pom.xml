@@ -13,8 +13,8 @@
 
     <parent>
         <artifactId>iidm-ddb</artifactId>
-        <groupId>eu.itesla_project.iidm-ddb</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <groupId>eu.itesla_project</groupId>
+        <version>0.1-SNAPSHOT</version>
     </parent>
 
    <artifactId>iidm-ddb-psse-import-export</artifactId>
@@ -57,16 +57,16 @@
 
        <!-- We depend on the EJB remote interfaces  of this application -->
        <dependency>
-          <groupId>eu.itesla_project.iidm-ddb</groupId>
+          <groupId>${project.groupId}</groupId>
           <artifactId>iidm-ddb-ejb</artifactId>
-         <version>0.0.1-SNAPSHOT</version>
+         <version>${project.version}</version>
          <type>ejb-client</type>
        </dependency>
        
        <dependency>
-          <groupId>eu.itesla_project.iidm-ddb</groupId>
+          <groupId>${project.groupId}</groupId>
           <artifactId>iidm-ddb-ejb-remote-client-wildfly</artifactId>
-         <version>0.0.1-SNAPSHOT</version>
+         <version>${project.version}</version>
        </dependency>
 
       <dependency>
@@ -74,29 +74,14 @@
           <artifactId>super-csv</artifactId>
      </dependency>
        <dependency>
-           <groupId>eu.itesla_project</groupId>
-           <artifactId>modules</artifactId>
-           <version>${extends_ipst.version}</version>
-           <exclusions>
-               <exclusion>
-                   <groupId>eu.itesla_project</groupId>
-                   <artifactId>network-merge</artifactId>
-               </exclusion>
-               <exclusion>
-                   <groupId>eu.itesla_project</groupId>
-                   <artifactId>case-repository</artifactId>
-               </exclusion>
-           </exclusions>
-       </dependency>
-       <dependency>
-            <groupId>eu.itesla_project</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>network-merge</artifactId>
-            <version>${extends_ipst.version}</version>
+            <version>${project.version}</version>
        </dependency>
        <dependency>
-            <groupId>eu.itesla_project</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>case-repository</artifactId>
-            <version>${extends_ipst.version}</version>
+            <version>${project.version}</version>
        </dependency>
 
    </dependencies>

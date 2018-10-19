@@ -32,16 +32,16 @@
         </dependency>
 
         <dependency>
-            <groupId>eu.itesla_project</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>online-mpi</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <!-- Dynamic database (mysql) -->
         <dependency>
-            <groupId>eu.itesla_project.iidm-ddb</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>iidm-ddb-eurostag-import-export</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- Data mining -->
@@ -79,51 +79,51 @@
 
         <!-- load flow based simulator -->
         <dependency>
-            <groupId>eu.itesla_project</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>pclfsim-integration</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <!-- offline DB -->
         <dependency>
-            <groupId>eu.itesla_project</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>mmap-offline-db</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <!-- rules DB -->
         <dependency>
-            <groupId>eu.itesla_project</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>file-system-rules-db</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <!-- uncertainties -->
         <dependency>
-            <groupId>eu.itesla_project</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>uncertainties-analysis</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <!-- WCA -->
         <dependency>
-            <groupId>eu.itesla_project</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>wca-integration</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <!-- XML contingencies -->
         <dependency>
-            <groupId>eu.itesla_project</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>iidm-actions-contingencies-xml-client</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <!-- Modelica exporter -->
         <dependency>
-            <groupId>eu.itesla_project.iidm-ddb</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>iidm-ddb-eurostag-modelica-converter</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

@@ -41,7 +41,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
     private static final String MTC_PREFIX_NAME = "MTC_";
 
     //DDBManager jndi name
-    private static final String DDBMANAGERJNDINAME = "ejb:iidm-ddb-ear/iidm-ddb-ejb-0.0.1-SNAPSHOT/DDBManagerBean!eu.itesla_project.iidm.ddb.service.DDBManager";
+    private static final String DDBMANAGERJNDINAME = "ejb:iidm-ddb-ear/iidm-ddb-ejb/DDBManagerBean!eu.itesla_project.iidm.ddb.service.DDBManager";
     private static final String DICT_GENS_CSV = "dict_gens.csv";
     private static final String SKIPPED_GENS_CSV = "skipped_gens.csv";
 

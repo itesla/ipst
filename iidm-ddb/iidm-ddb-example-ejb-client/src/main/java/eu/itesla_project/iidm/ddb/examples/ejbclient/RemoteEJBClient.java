@@ -33,7 +33,7 @@ public class RemoteEJBClient {
     int DEFAULT_REMOTING_PORT = 8080;
     String DEFAULT_USER = "user";
     String DEFAULT_PASSWORD = "password";
-    String DDBMANAGERJNDINAME = "ejb:iidm-ddb-ear/iidm-ddb-ejb-0.0.1-SNAPSHOT/DDBManagerBean!eu.itesla_project.iidm.ddb.service.DDBManager";
+    String DDBMANAGERJNDINAME = "ejb:iidm-ddb-ear/iidm-ddb-ejb/DDBManagerBean!eu.itesla_project.iidm.ddb.service.DDBManager";
 
     String TESTSIMULATORVERSION = "test_5.1.1";
 
