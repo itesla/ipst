@@ -12,14 +12,14 @@
     <parent>
         <groupId>eu.itesla_project</groupId>
         <artifactId>histodb-parent</artifactId>
-        <version>0.1.0</version>
+        <version>0.2.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.itesla_project.histodb</groupId>
     <artifactId>histodb-dataserver</artifactId>
     <name>HistoDB Data Server</name>
-    <version>0.1.0</version>
+    <version>0.2.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <build>
