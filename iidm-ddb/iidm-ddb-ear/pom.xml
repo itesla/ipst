@@ -13,8 +13,8 @@
 
     <parent>
         <artifactId>iidm-ddb</artifactId>
-        <groupId>eu.itesla_project.iidm-ddb</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <groupId>eu.itesla_project</groupId>
+        <version>0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>iidm-ddb-ear</artifactId>
@@ -24,12 +24,12 @@
     <dependencies>
         <!-- Depend on the ejb module and war so that we can package them -->
         <dependency>
-            <groupId>eu.itesla_project.iidm-ddb</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>iidm-ddb-web</artifactId>
             <type>war</type>
         </dependency>
         <dependency>
-            <groupId>eu.itesla_project.iidm-ddb</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>iidm-ddb-ejb</artifactId>
             <type>ejb</type>
         </dependency>
@@ -50,13 +50,15 @@
                        have any modules (EJB-JARs and WARs) use them -->
                     <defaultLibBundleDir>lib</defaultLibBundleDir>
                     <applicationName>iidm-ddb-ear</applicationName>
+                    <!-- to have the version out of the JNDI name -->
+                    <fileNameMapping>no-version</fileNameMapping>
                     <modules>
                         <!-- Default context root of the web app is /iidm-ddb-web.
                         If a custom context root is needed, uncomment the following snippet to
                         register our War as a web module and set the contextRoot property -->
                         <!--
                         <webModule>
-                           <groupId>eu.itesla_project.iidm-ddb</groupId>
+                           <groupId>${project.groupId}</groupId>
                            <artifactId>iidm-ddb-web</artifactId>
                            <contextRoot>/iidm-ddb</contextRoot>
                         </webModule>

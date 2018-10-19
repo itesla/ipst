@@ -23,7 +23,7 @@ import eu.itesla_project.iidm.ejbclient.EjbClientCtxUtils;
  */
 public class DDBConverter {
 
-    private final String ddbManagerJNDIName = "ejb:iidm-ddb-ear/iidm-ddb-ejb-0.0.1-SNAPSHOT/DDBManagerBean!eu.itesla_project.iidm.ddb.service.DDBManager";
+    private final String ddbManagerJNDIName = "ejb:iidm-ddb-ear/iidm-ddb-ejb/DDBManagerBean!eu.itesla_project.iidm.ddb.service.DDBManager";
     private DDBManager ddbManager;
     private Context context = null;
 

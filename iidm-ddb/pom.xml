@@ -17,9 +17,8 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>eu.itesla_project.iidm-ddb</groupId>
     <artifactId>iidm-ddb</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+
     <packaging>pom</packaging>
     <name>iidm ddb</name>
     <description>iidm ddb (dynamic database)</description>
@@ -65,7 +64,6 @@
         <!-- maven-compiler-plugin -->
         <maven.compiler.target>1.7</maven.compiler.target>
         <maven.compiler.source>1.7</maven.compiler.source>
-        <extends_ipst.version>0.1-SNAPSHOT</extends_ipst.version>
     </properties>
 
     <dependencyManagement>
@@ -74,7 +72,7 @@
             <!-- Define the version of the EJB jar so that we don't need 
                 to repeat ourselves in every module -->
             <dependency>
-                <groupId>eu.itesla_project.iidm-ddb</groupId>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>iidm-ddb-ejb</artifactId>
                 <version>${project.version}</version>
                 <type>ejb</type>
@@ -83,7 +81,7 @@
             <!-- Define the version of the WAR so that we don't need to repeat 
                 ourselves in every module -->
             <dependency>
-                <groupId>eu.itesla_project.iidm-ddb</groupId>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>iidm-ddb-web</artifactId>
                 <version>${project.version}</version>
                 <type>war</type>

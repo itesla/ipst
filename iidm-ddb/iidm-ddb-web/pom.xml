@@ -13,8 +13,8 @@
 
     <parent>
         <artifactId>iidm-ddb</artifactId>
-        <groupId>eu.itesla_project.iidm-ddb</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <groupId>eu.itesla_project</groupId>
+        <version>0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>iidm-ddb-web</artifactId>
@@ -33,18 +33,18 @@
     <dependencies>
         <!-- Dependency on the EJB module so we can use it's services if needed -->
         <dependency>
-            <groupId>eu.itesla_project.iidm-ddb</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>iidm-ddb-ejb</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
             <type>ejb-client</type>
             <scope>provided</scope>
         </dependency>
 
         <!-- Dependency on the Eurostag-Modelica module so we can use its services if needed -->
         <dependency>
-            <groupId>eu.itesla_project.iidm-ddb</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>iidm-ddb-eurostag-modelica-converter</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- Import the JAX-RS API, we use provided scope as the API is included
