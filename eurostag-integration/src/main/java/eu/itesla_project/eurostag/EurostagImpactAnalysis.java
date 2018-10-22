@@ -549,7 +549,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
                     @Override
                     public List<CommandExecution> before(Path workingDir) throws IOException {
                         Command cmd = EurostagImpactAnalysis.this.before(state, contingencyIds, workingDir, contingencies);
-                        return Arrays.asList(new CommandExecution(cmd, contingencies.size(), priority, ImmutableMap.of("state", state.getName())));
+                        return Collections.singletonList(new CommandExecution(cmd, contingencies.size(), priority, ImmutableMap.of("state", state.getName())));
                     }
 
                     @Override

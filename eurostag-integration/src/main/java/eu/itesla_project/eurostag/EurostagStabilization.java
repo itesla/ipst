@@ -364,7 +364,7 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
 
                         context = EurostagStabilization.this.before(workingDir);
 
-                        return Arrays.asList(createCommandExecution());
+                        return Collections.singletonList(createCommandExecution());
                     }
 
                     @Override

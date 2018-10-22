@@ -85,7 +85,7 @@ public final class CaseProjectorUtils {
                                 .program(config.getAmplHomeDir().resolve("ampl").toString())
                                 .args("projector.run")
                                 .build();
-                        return Arrays.asList(new CommandExecution(command, 1, 0));
+                        return Collections.singletonList(new CommandExecution(command, 1, 0));
                     }
 
                     @Override
