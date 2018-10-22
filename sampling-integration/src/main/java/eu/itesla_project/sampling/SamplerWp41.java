@@ -291,7 +291,7 @@ public class SamplerWp41 implements Sampler {
         .program(wp41cM2)
         .args("MOD1_${EXEC_NUM}.mat",
                 "MOD2_${EXEC_NUM}.mat",
-                Command.EXECUTION_NUMBER_PATTERN,
+                CommandConstants.EXECUTION_NUMBER_PATTERN,
                 "" + config.getIr(),
                 "" + config.getTflag())
         .inputFiles(new InputFile("MOD1_${EXEC_NUM}.mat"))
@@ -300,56 +300,60 @@ public class SamplerWp41 implements Sampler {
 
     }
 
-
-
     private void computeMod1AndMod2(DataMiningFacadeParams dmParams, Path cacheDir) throws Exception {
-        try (CommandExecutor executor = computationManager.newCommandExecutor(createEnv(), WORKING_DIR_PREFIX, config.isDebug())) {
-            Path workingDir = executor.getWorkingDir();
-            LOGGER.info("Retrieving historical data for network {}", network.getId());
-            Wp41HistoData histoData = getHistoDBData(dmParams, workingDir);
-            int parK = config.getPar_k() == -1 ? (int) Math.round(Math.sqrt(histoData.getHdTable().rowKeyList().size() / 2))
-                    : config.getPar_k();
-            LOGGER.info(" IR: {}, tflag: {}, number of clusters: {} ", config.getIr(), config.getTflag(), parK);
-            double[][] dataMatrix = Utils.histoDataAsDoubleMatrixNew(histoData.getHdTable());
-            Utils.writeWp41ContModule1Mat(workingDir.resolve(M1INPUTFILENAME), dataMatrix);
-
-            if (config.getValidationDir() != null) {
-                // store input file, for validation purposes
+        computationManager.execute(new ExecutionEnvironment(createEnv(), WORKING_DIR_PREFIX, config.isDebug()), new AbstractExecutionHandler<Object>() {
+            int parK;
+            @Override
+            public List<CommandExecution> before(Path workingDir) throws IOException {
+                LOGGER.info("Retrieving historical data for network {}", network.getId());
+                Wp41HistoData histoData = null;
                 try {
-                    Files.copy(workingDir.resolve(M1INPUTFILENAME), config.getValidationDir().resolve(M1INPUTFILENAME), REPLACE_EXISTING);
-                    Utils.dumpWp41HistoDataColumns(histoData, config.getValidationDir());
-                } catch (Throwable t) {
-                    LOGGER.error(t.getMessage(), t);
+                    histoData = getHistoDBData(dmParams, workingDir);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
+                parK = config.getPar_k() == -1 ? (int) Math.round(Math.sqrt(histoData.getHdTable().rowKeyList().size() / 2))
+                        : config.getPar_k();
+                LOGGER.info(" IR: {}, tflag: {}, number of clusters: {} ", config.getIr(), config.getTflag(), parK);
+                double[][] dataMatrix = Utils.histoDataAsDoubleMatrixNew(histoData.getHdTable());
+                Utils.writeWp41ContModule1Mat(workingDir.resolve(M1INPUTFILENAME), dataMatrix);
+
+                if (config.getValidationDir() != null) {
+                    // store input file, for validation purposes
+                    try {
+                        Files.copy(workingDir.resolve(M1INPUTFILENAME), config.getValidationDir().resolve(M1INPUTFILENAME), REPLACE_EXISTING);
+                        Utils.dumpWp41HistoDataColumns(histoData, config.getValidationDir());
+                    } catch (Throwable t) {
+                        LOGGER.error(t.getMessage(), t);
+                    }
+                }
+
+                LOGGER.info("Executing wp41 module1(once), module2 ({} times)", parK);
+                return Arrays.asList(new CommandExecution(createMatm1Cmd(parK), 1, priority),
+                        new CommandExecution(createMatm2Cmd(), parK, priority));
             }
 
-            LOGGER.info("Executing wp41 module1(once) module2 ({} times)", parK);
-
-            ExecutionReport report = executor.start(new CommandExecution(createMatm1Cmd(parK), 1, priority));
-            report.log();
-            if (report.getErrors().size() > 0) {
-                throw new RuntimeException("Module 1 failed");
+            @Override
+            public Object after(Path workingDir, ExecutionReport report) throws IOException {
+                report.log();
+                if (report.getErrors().size() > 0) {
+                    throw new RuntimeException("Module 1 failed");
+                }
+                //1 brings all module1 output files (one per cluster plus the statvar file) back to the cache
+                for (int i = 0; i < parK; i++) {
+                    Path srcPath = workingDir.resolve("MOD1_" + i + ".mat");
+                    Path destPath = cacheDir.resolve("MOD1_" + i + ".mat");
+                    Files.copy(srcPath, destPath, REPLACE_EXISTING);
+                }
+                Files.copy(workingDir.resolve(M1STATVARSFILENAME), cacheDir.resolve(M1STATVARSFILENAME), REPLACE_EXISTING);
+                for (int i = 0; i < parK; i++) {
+                    Path srcPath = workingDir.resolve("MOD2_" + i + ".mat");
+                    Path destPath = cacheDir.resolve("MOD2_" + i + ".mat");
+                    Files.copy(srcPath, destPath, REPLACE_EXISTING);
+                }
+                return null;
             }
-            //1 brings all module1 output files (one per cluster plus the statvar file) back to the cache
-            for (int i = 0; i < parK; i++) {
-                Path srcPath = workingDir.resolve("MOD1_" + i + ".mat");
-                Path destPath = cacheDir.resolve("MOD1_" + i + ".mat");
-                Files.copy(srcPath, destPath, REPLACE_EXISTING);
-            }
-            Files.copy(workingDir.resolve(M1STATVARSFILENAME), cacheDir.resolve(M1STATVARSFILENAME), REPLACE_EXISTING);
-
-            //2 execute module2
-            report = executor.start(new CommandExecution(createMatm2Cmd(), parK, priority));
-            report.log();
-            if (report.getErrors().size() > 0) {
-                throw new RuntimeException("Module 2 failed");
-            }
-            for (int i = 0; i < parK; i++) {
-                Path srcPath = workingDir.resolve("MOD2_" + i + ".mat");
-                Path destPath = cacheDir.resolve("MOD2_" + i + ".mat");
-                Files.copy(srcPath, destPath, REPLACE_EXISTING);
-            }
-        }
+        }).join();
     }
 
     private Command createMatm3PreCmd(int clustNums, int samplesSize) {
@@ -381,14 +385,13 @@ public class SamplerWp41 implements Sampler {
                 .build();
     }
 
-
     private Command createMatm3Cmd() {
         List<String> args1 = new ArrayList<>();
         args1.add("MOD1_${EXEC_NUM}.mat");
         args1.add("MOD2_${EXEC_NUM}.mat");
         args1.add(M3NSAMCFILENAME);
         args1.add("MOD3_${EXEC_NUM}.mat");
-        args1.add(Command.EXECUTION_NUMBER_PATTERN);
+        args1.add(CommandConstants.EXECUTION_NUMBER_PATTERN);
         if (config.getRngSeed() != null) {
             args1.add(Integer.toString(config.getRngSeed()));
         } else {
@@ -415,10 +418,6 @@ public class SamplerWp41 implements Sampler {
 
     }
 
-
-
-
-
     private Command createMatm3reduceCmd(int clustNums) {
         String wp41cM3Reduce;
         if (config.getBinariesDir() != null) {
@@ -444,22 +443,21 @@ public class SamplerWp41 implements Sampler {
                 .build();
     }
 
-
     private double[][] computeModule3(int nSamples) throws Exception {
         LOGGER.info("Executing wp41 module3 (IR: {}, tflag: {}, number of clusters: {}), getting {} samples", config.getIr(), config.getTflag(), nClusters, nSamples);
-        try (CommandExecutor executor = computationManager.newCommandExecutor(createEnv(), WORKING_DIR_PREFIX, config.isDebug())) {
 
-            Path workingDir = executor.getWorkingDir();
-            Command cmd = createMatm3PreCmd(nClusters, nSamples);
-            ExecutionReport report = executor.start(new CommandExecution(cmd, 1, priority));
-            report.log();
-            if (report.getErrors().isEmpty()) {
-                report = executor.start(new CommandExecution(createMatm3Cmd(), nClusters, priority));
+        return computationManager.execute(new ExecutionEnvironment(createEnv(), WORKING_DIR_PREFIX, config.isDebug()), new AbstractExecutionHandler<double[][]>() {
+            @Override
+            public List<CommandExecution> before(Path workingDir) throws IOException {
+                return Arrays.asList(new CommandExecution(createMatm3PreCmd(nClusters, nSamples), 1, priority),
+                        new CommandExecution(createMatm3Cmd(), nClusters, priority),
+                        new CommandExecution(createMatm3reduceCmd(nClusters), 1, priority)
+                );
+            }
+            @Override
+            public double[][] after(Path workingDir, ExecutionReport report) throws IOException {
                 report.log();
                 if (report.getErrors().isEmpty()) {
-                    report = executor.start(new CommandExecution(createMatm3reduceCmd(nClusters), 1, priority));
-                    report.log();
-
                     LOGGER.debug("Retrieving module3 results from file {}", M3OUTPUTFILENAME);
                     MatFileReader mfr = new MatFileReader();
                     Map<String, MLArray> content = mfr.read(workingDir.resolve(M3OUTPUTFILENAME).toFile());
@@ -479,15 +477,13 @@ public class SamplerWp41 implements Sampler {
                             LOGGER.error(t.getMessage(), t);
                         }
                     }
-
                     return xNewMat;
+                } else {
+                    return null;
                 }
             }
-            return null;
-        }
-
+        }).join();
     }
-
 
     private Command createBinSamplerCmd(Path iFilePath, int nSamples) {
         String wp41bIs;
@@ -515,33 +511,39 @@ public class SamplerWp41 implements Sampler {
         if (nSamples <= 0) {
             throw new IllegalArgumentException("number of samples must be positive");
         }
-        try (CommandExecutor executor = computationManager.newCommandExecutor(createEnv(), WORKING_DIR_PREFIX, config.isDebug())) {
 
-            Path workingDir = executor.getWorkingDir();
-            Utils.writeWP41BinaryIndependentSamplingInputFile(workingDir.resolve(B1INPUTFILENAME), marginalExpectations);
+        return computationManager.execute(new ExecutionEnvironment(createEnv(), WORKING_DIR_PREFIX, config.isDebug()), new AbstractExecutionHandler<double[][]>() {
+            @Override
+            public List<CommandExecution> before(Path workingDir) throws IOException {
+                Utils.writeWP41BinaryIndependentSamplingInputFile(workingDir.resolve(B1INPUTFILENAME), marginalExpectations);
 
-            LOGGER.info("binsampler, asking for {} samples", nSamples);
+                LOGGER.info("binsampler, asking for {} samples", nSamples);
 
-            Command cmd = createBinSamplerCmd(workingDir.resolve(B1INPUTFILENAME), nSamples);
-            ExecutionReport report = executor.start(new CommandExecution(cmd, 1, priority));
-            report.log();
-
-            LOGGER.debug("Retrieving binsampler results from file {}", B1OUTPUTFILENAME);
-            MatFileReader mfr = new MatFileReader();
-            Map<String, MLArray> content;
-            content = mfr.read(workingDir.resolve(B1OUTPUTFILENAME).toFile());
-            String errMsg = Utils.MLCharToString((MLChar) content.get("errmsg"));
-            if (!("Ok".equalsIgnoreCase(errMsg))) {
-                throw new MatlabException(errMsg);
+                Command cmd = createBinSamplerCmd(workingDir.resolve(B1INPUTFILENAME), nSamples);
+                return Collections.singletonList(new CommandExecution(createBinSamplerCmd(workingDir.resolve(B1INPUTFILENAME), nSamples), 1, priority));
             }
-            MLArray xNew = content.get("STATUS");
-            Objects.requireNonNull(xNew);
-            MLDouble mld = (MLDouble) xNew;
-            double[][] retMat = mld.getArray();
-            return retMat;
-        }
 
-
+            @Override
+            public double[][] after(Path workingDir, ExecutionReport report) throws IOException {
+                report.log();
+                if (report.getErrors().isEmpty()) {
+                    LOGGER.debug("Retrieving binsampler results from file {}", B1OUTPUTFILENAME);
+                    MatFileReader mfr = new MatFileReader();
+                    Map<String, MLArray> content;
+                    content = mfr.read(workingDir.resolve(B1OUTPUTFILENAME).toFile());
+                    String errMsg = Utils.MLCharToString((MLChar) content.get("errmsg"));
+                    if (!("Ok".equalsIgnoreCase(errMsg))) {
+                        throw new MatlabException(errMsg);
+                    }
+                    MLArray xNew = content.get("STATUS");
+                    Objects.requireNonNull(xNew);
+                    MLDouble mld = (MLDouble) xNew;
+                    return mld.getArray();
+                } else {
+                    return null;
+                }
+            }
+        }).join();
     }
 
 }

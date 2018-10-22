@@ -18,10 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -129,19 +126,22 @@ public class DataComparatorTool implements Tool {
             throw new RuntimeException("either specify both set1 and set2 parameters, or none of them");
         }
 
-        try (CommandExecutor executor = context.getComputationManager().newCommandExecutor(createEnv(config), WORKING_DIR_PREFIX, config.isDebug())) {
-            Path workingDir = executor.getWorkingDir();
-            com.powsybl.computation.Command cmd = createConcatMatFilesCmd(config.getValidationDir(), MOD3FILES_PATTERN, config.getValidationDir().resolve(CONCATSAMPLESFILENAME), config);
-            int priority = 1;
-            ExecutionReport report = executor.start(new CommandExecution(cmd, 1, priority));
-            report.log();
-            if (report.getErrors().isEmpty()) {
-                report = executor.start(new CommandExecution(createDataComparatorCmd(config.getValidationDir().resolve(M1INPUTFILENAME).toFile().getAbsolutePath(), config.getValidationDir().resolve(CONCATSAMPLESFILENAME).toFile().getAbsolutePath(), set1, set2, config), 1, priority));
+        context.getShortTimeExecutionComputationManager().execute(new ExecutionEnvironment(createEnv(config), WORKING_DIR_PREFIX, config.isDebug()), new AbstractExecutionHandler<Object>() {
+            @Override
+            public List<CommandExecution> before(Path workingDir) throws IOException {
+                int priority = 1;
+                return Arrays.asList(new CommandExecution(createConcatMatFilesCmd(config.getValidationDir(), MOD3FILES_PATTERN, config.getValidationDir().resolve(CONCATSAMPLESFILENAME), config), 1, priority),
+                        new CommandExecution(createDataComparatorCmd(config.getValidationDir().resolve(M1INPUTFILENAME).toFile().getAbsolutePath(), config.getValidationDir().resolve(CONCATSAMPLESFILENAME).toFile().getAbsolutePath(), set1, set2, config), 1, priority));
+            }
+            @Override
+            public Object after(Path workingDir, ExecutionReport report) throws IOException {
                 report.log();
                 Files.copy(workingDir.resolve(DATA_COMPARATOR_OUT_FIG), Paths.get(oFilePrefix + ".fig"), REPLACE_EXISTING);
                 Files.copy(workingDir.resolve(DATA_COMPARATOR_OUT_PNG), Paths.get(oFilePrefix + ".png"), REPLACE_EXISTING);
+                return null;
             }
-        }
+        }).join();
+
     }
 
 
