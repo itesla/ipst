@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -308,7 +307,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                         WCA_SENSIBILITIES_FILE,
                                         WCA_INFLUENCE_PST_FILE)
                                 .build();
-                        return Arrays.asList(new CommandExecution(cmd, 1));
+                        return Collections.singletonList(new CommandExecution(cmd, 1));
                     }
 
                     @Override
@@ -405,7 +404,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                         WCA_SENSIBILITIES_FILE,
                                         WCA_INFLUENCE_PST_FILE)
                                 .build();
-                        return Arrays.asList(new CommandExecution(cmd, 1));
+                        return Collections.singletonList(new CommandExecution(cmd, 1));
                     }
 
                     @Override

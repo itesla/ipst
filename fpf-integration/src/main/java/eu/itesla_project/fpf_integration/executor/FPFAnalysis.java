@@ -122,7 +122,7 @@ public class FPFAnalysis {
                 Converter.convert(network, lc, fes, workingDir.resolve(FPF_CLASSIC_INPUT_FILE), workingDir.resolve(FPF_CLASSIC_INPUT_FILE_CONT_MAPPING));
 
                 Command cmd = createFPFClassicCommand(destPath, workingDir.resolve(FPF_CLASSIC_INPUT_FILE));
-                return Arrays.asList(new CommandExecution(cmd, 1, Integer.MAX_VALUE));
+                return Collections.singletonList(new CommandExecution(cmd, 1, Integer.MAX_VALUE));
             }
 
             @Override

@@ -116,7 +116,7 @@ public class StatsCondCalculator {
 
                 LOGGER.info("Preparing FPF input data for {} network", network.getId());
                 Command cmd = createFPFCommand(localForecastErrorsDataFile, localNetworkDataMatFile);
-                return Arrays.asList(new CommandExecution(cmd, 1));
+                return Collections.singletonList(new CommandExecution(cmd, 1));
 
             }
 

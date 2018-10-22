@@ -279,7 +279,7 @@ public class DymolaImpactAnalysis implements ImpactAnalysis {
                     @Override
                     public List<CommandExecution> before(Path workingDir) throws IOException {
                         Command cmd = DymolaImpactAnalysis.this.createCommand(state, contingencyIds, workingDir, contingencies);
-                        return Arrays.asList(new CommandExecution(cmd, contingencies.size(), priority, ImmutableMap.of("state", state.getName())));
+                        return Collections.singletonList(new CommandExecution(cmd, contingencies.size(), priority, ImmutableMap.of("state", state.getName())));
                     }
 
                     @Override

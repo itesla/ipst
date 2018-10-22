@@ -174,7 +174,7 @@ public class MontecarloSamplerImpl implements MontecarloSampler {
 
                 LOGGER.info("Running montecarlo sampler on {} network, asking for {} samples", network.getId(), nSamples);
                 Command cmd = createCommand(forecastOfflineSamplesDataFile, localNetworkDataMatFile);
-                return Arrays.asList(new CommandExecution(cmd, 1));
+                return Collections.singletonList(new CommandExecution(cmd, 1));
             }
 
             @Override
