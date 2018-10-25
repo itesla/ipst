@@ -158,7 +158,8 @@ public class EurostagScenario {
                                     + ": " + vl1.getId() + " or " + vl2.getId());
                         }
                     }
-                    double shortCircuitDuration = parameters.getBranchFaultShortCircuitDuration(contingency.getId(), l.getId());
+                    double shortCircuitDurationSide1 = parameters.getBranchSideOneFaultShortCircuitDuration(contingency.getId(), l.getId());
+                    double shortCircuitDurationSide2 = parameters.getBranchSideOTwoFaultShortCircuitDuration(contingency.getId(), l.getId());
                     String esgId = dictionary.getEsgId(l.getId());
                     writer.append(String.format("%8s", parameters.getFaultEventInstant()))
                             .append(PADDING_1)
@@ -176,14 +177,14 @@ public class EurostagScenario {
                             .append(PADDING_1)
                             .append("   0.");
                     writer.newLine();
-                    writer.append(format(parameters.getFaultEventInstant() + shortCircuitDuration, 8))
+                    writer.append(format(parameters.getFaultEventInstant() + shortCircuitDurationSide1, 8))
                             .append(PADDING_1)
                             .append("BRANC OP")
                             .append(PADDING_1)
                             .append(esgId)
                             .append(" S          1                           0.");
                     writer.newLine();
-                    writer.append(format(parameters.getFaultEventInstant() + shortCircuitDuration, 8))
+                    writer.append(format(parameters.getFaultEventInstant() + shortCircuitDurationSide2, 8))
                             .append(PADDING_1)
                             .append("BRANC OP")
                             .append(PADDING_1)
