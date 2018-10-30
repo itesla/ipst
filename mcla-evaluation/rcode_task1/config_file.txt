@@ -1,0 +1,33 @@
+"Parameter","Value"
+"results_path","C:/Users/rcode/output/contingencyA"
+"data_path","C:/Users/rcode/data/contingencyA"
+"do_parallel",TRUE
+"Cores",4
+"p-value",0.2
+"SM-value",0
+"Minimum timestamps",2
+"Maximum nr of ensembles",50
+"Time Evolution Plots",TRUE
+"TradeOff Analysis",TRUE
+"Initial timestamp","2018-03-01 00:00:00"
+"Final timestamp","2018-03-03 00:00:00"
+"Fan.chart.p.value1",0.025
+"Fan.chart.p.value2",0.05
+"Fan.chart.p.value3",0.1
+"Fan.chart.p.value4",0.15
+"Bootstrap.random",TRUE
+"re-dispatch.costs.options",3
+"re-dispatch.costs.SMs","0;0.09"
+"re-dispatch.costs.Q(1-p)","0.5;0.8"
+".BIESL61PRAGN__TO__.BIES.6",
+"HARC7L61MOUL8__TO__HARC7P6",
+"AUDI5L62RICHI__TO__AUDI5P6",
+"AUGUEL61LAVER__TO__AUGUEP6",
+"PRAGNL61DEPHG__TO__DEPHTP6",
+"PRAGNL62DEPHG__TO__DEPHTP6",
+".BIESL61PRAGN__TO__PRAGNP6",
+"PRAGNL62DEPHG__TO__PRAGNP6",
+"PRAGNL61DEPHG__TO__PRAGNP6",
+"AUGUEL61LAVER__TO__LAVERP6",
+"HARC7L61MOUL8__TO__MOUL8P6",
+"AUDI5L62RICHI__TO__RICHIP6",
