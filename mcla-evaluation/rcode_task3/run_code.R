@@ -5,7 +5,7 @@
 ## License, v. 2.0. If a copy of the MPL was not distributed with this        ##
 ## file, You can obtain one at http://mozilla.org/MPL/2.0/.                   ##
 ################################################################################
-## Authors: Carla Gonçalves, José Meirinhos and Helena Vasconcelos            ##
+## Authors: Carla Gonçalves and Helena Vasconcelos                           ##
 ################################################################################
 
 ################################################################################
@@ -13,9 +13,9 @@
 ################################################################################
 options(warn=-1)
 
-path_tool <-'C:/Users/mhv/Documents/Piu/Testes_R/Script_Task3/Version_2018_04_20/rcode'
+path_tool <-'C:/Users/rcode_task3'
 
-source(sprintf('%s/Task3_main_functions.R',path_tool))
+source(sprintf('%s/main_functions.R',path_tool))
 # read configuration file
 df.parameters <- read.csv(sprintf('%s/config_file.txt',path_tool),header=T)
 

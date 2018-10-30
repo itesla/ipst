@@ -1,6 +1,6 @@
 "Parameter","Value"
-"results_path","C:/Users/mhv/Documents/Piu/Testes_R/Script_Task3/Version_2018_04_20/results_bestines_April2017"
-"data_path","C:/Users/mhv/Documents/Piu/Testes_R/Script_Task3/data"
+"results_path","C:/Users/rcode_task3/results"
+"data_path","C:/Users/rcode_task3/data"
 "do_parallel",TRUE
 "Cores",8
 "p-value",0.05
