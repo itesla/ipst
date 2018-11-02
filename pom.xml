@@ -257,6 +257,11 @@
                     <artifactId>coveralls-maven-plugin</artifactId>
                     <version>${maven.coveralls.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring-boot.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
