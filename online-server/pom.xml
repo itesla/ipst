@@ -13,7 +13,7 @@
     <parent>
         <groupId>eu.itesla_project</groupId>
         <artifactId>itesla-parent</artifactId>
-        <version>0.1-SNAPSHOT</version>
+        <version>0.1.0</version>
     </parent>
     <artifactId>online-server</artifactId>
     <packaging>war</packaging>
@@ -24,12 +24,6 @@
             <artifactId>online-workflow</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-        <!--dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>apogee-client</artifactId>
-            <version>0.1-SNAPSHOT</version>
-        </dependency-->
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

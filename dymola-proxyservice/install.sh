@@ -15,7 +15,7 @@ installDir=./installbins
 rm -rf $installDir
 mkdir -p $installDir/share $installDir/share/java
 mvn -f pom.xml org.apache.maven.plugins:maven-dependency-plugin:2.8:copy-dependencies -DoutputDirectory=$installDir/share/java -DexcludeArtifactIds="slf4j-jdk14,slf4j-log4j12"
-mvn org.apache.maven.plugins:maven-dependency-plugin:2.8:copy -Dartifact=eu.itesla_project:dymola-proxyservice:0.1-SNAPSHOT -DoutputDirectory=$installDir/share/java
+mvn org.apache.maven.plugins:maven-dependency-plugin:2.8:copy -Dartifact=eu.itesla_project:dymola-proxyservice:0.1.0 -DoutputDirectory=$installDir/share/java
 
 cp src/main/scripts/service.bat $installDir
 cp src/main/scripts/logback-cmdline.xml $installDir/share/java
