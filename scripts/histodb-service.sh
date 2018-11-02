@@ -45,7 +45,7 @@ start() {
         mkdir $logsDir >> /dev/null 2>&1
         mv $logsDir/histodb.log $logsDir/histodb.log_${TIME} >> /dev/null 2>&1
         echo "starting histodb server ( execution details and errors will be logged in file: "$logsDir"/histodb.log )"
-        nohup $JAVA_HOME/bin/java -Xmx$java_xmx $options -cp $installDir/share/java -jar $installDir/share/java/histodb-server-0.3.0-SNAPSHOT-exec.jar > $logsDir/histodb.log 2>&1&
+        nohup $JAVA_HOME/bin/java -Xmx$java_xmx $options -cp $installDir/share/java -jar $installDir/share/java/histodb-server-0.3.0-exec.jar > $logsDir/histodb.log 2>&1&
         pid=$!
         [ $? -eq 0 ] && echo $pid > $pidFile
         sleep 5
