@@ -1,0 +1,23 @@
+"Parameter","Value"
+"results_path","C:/Users/rcode_task3/results"
+"data_path","C:/Users/rcode_task3/data"
+"do_parallel",TRUE
+"Cores",8
+"p-value",0.05
+"Minimum timestamps",100
+"Spread Plot",TRUE
+"QQ Plot",FALSE
+"Sensitivity Analysis",TRUE
+"Initial timestamp","2017-01-01 00:00:00"
+"Final timestamp","2017-06-30 23:00:00"
+"Fan.chart.p.value1",0.025
+"Fan.chart.p.value2",0.05
+"Fan.chart.p.value3",0.1
+"Fan.chart.p.value4",0.15
+"Boxplot.timestamp","2017-02-09 00:30:00"
+"B.CARL72BIANC__TO__B.CARP7",
+"COULAL71P.COR__TO__COULAP7",
+"COULAL74CRUA5__TO__COULAP7",
+"REALTL71TAVEL__TO__REALTP7",
+
+
