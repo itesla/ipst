@@ -180,6 +180,12 @@
             <artifactId>powsybl-loadflow-validation</artifactId>
         </dependency>
 
+        <!-- hades2 integration -->
+        <dependency>
+            <groupId>com.rte-france.powsybl</groupId>
+            <artifactId>powsybl-hades2-integration</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
