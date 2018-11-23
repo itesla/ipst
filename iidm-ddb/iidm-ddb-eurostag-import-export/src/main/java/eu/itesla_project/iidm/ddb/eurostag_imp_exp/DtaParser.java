@@ -121,6 +121,12 @@ public final class DtaParser {
             "tap.direction,TMAN,V1,V2,TV1,TDEL"
         });
 
+        componentsVariablesNames.put("A17", new String[]{
+            "RESEARCH_CRITERION", "AUTO_DEVICE_FUNCTIONING_MODE",
+            "machine.name", "SAMIN", "SAMAX", "DOBSA",
+            "TYPE_REFERENCE", "SVMIN", "SVMAX", "DELAIV", "DOBSV"
+        });
+
         componentsVariablesNames.put("A33_ACMC", new String[]{
             "keyword,ma.name,interface.name,block.number,c.type,S1,S2,S3,T1,TDEL",
             "",
@@ -238,6 +244,12 @@ public final class DtaParser {
         componentsDescriptors.put("A14", new String[]{
             "(A8, 1X, A8, 1X, A1, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, F8, 1X, A1, 1X, F8, 1X, F5, 1X, A8, 1X, I1, 1X, A8, 1X, A1)",
             "(17X, A2, 10X, F8, 7X, F8, 1X, F8, 1X, F8, 1X, F8)"
+        });
+
+        componentsDescriptors.put("A17", new String[]{
+            "(A1, 1X, A1)",
+            "(A8, 1X, F8, 1X, F8, 10X, F8)",
+            "(A1, 8X, F8, 1X, F8, 1X, F8, 1X, F8)"
         });
 
         componentsDescriptors.put("A33_ACMC", new String[]{
@@ -496,6 +508,7 @@ public final class DtaParser {
             case "A11":
             case "A12":
             case "A14":
+            case "A17":
                 int acountl = 1;
                 String[] recordsFormattinga = componentsDescriptors.get(zone.typeName);
                 for (String string : recordsFormattinga) {

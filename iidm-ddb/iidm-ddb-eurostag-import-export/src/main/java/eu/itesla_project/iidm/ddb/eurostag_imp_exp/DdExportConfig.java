@@ -20,6 +20,7 @@ public class DdExportConfig {
     private static final boolean DEFAULT_AUTOMATON_A11 = false;
     private static final boolean DEFAULT_AUTOMATON_A12 = false;
     private static final boolean DEFAULT_AUTOMATON_A14 = false;
+    private static final boolean DEFAULT_AUTOMATON_A17 = false;
     private static final boolean DEFAULT_RST = false;
     private static final boolean DEFAULT_ACMC = false;
     private static final boolean DEFAULT_LV_LOAD_MODELING = false;
@@ -33,10 +34,15 @@ public class DdExportConfig {
     private static final boolean DEFAULT_GENPQFILTER = false;
     private static final boolean DEFAULT_EXPORT_MAIN_CC_ONLY = false;
     private static final boolean DEFAULT_NOSWITCH = false;
+    private static final String DEFAULT_AUTOMATON_A17_REFERENCE_GENERATOR = null;
+    private static final double DEFAULT_AUTOMATON_A17_MINIMUM_PHASE_DIFFERENCE_THRESHOLD = -240.0;
+    private static final double DEFAULT_AUTOMATON_A17_MAXIMUM_PHASE_DIFFERENCE_THRESHOLD = 240.0;
+    private static final double DEFAULT_AUTOMATON_A17_OBSERVATION_DURATION = 15.0;
 
     private boolean automatonA11;
     private boolean automatonA12;
     private boolean automatonA14;
+    private boolean automatonA17;
     private boolean importExportRST;
     private boolean importExportACMC;
     private boolean LVLoadModeling;
@@ -50,11 +56,16 @@ public class DdExportConfig {
     private boolean gensPQfilter;
     private boolean exportMainCCOnly;
     private boolean noSwitch;
+    private String automatonA17AngularReferenceGenerator;
+    private double automatonA17MinimumPhaseDifferenceThreshold;
+    private double automatonA17MaximumPhaseDifferenceThreshold;
+    private double automatonA17ObservationDuration;
 
     public static DdExportConfig load() {
         boolean automatonA11 = DEFAULT_AUTOMATON_A11;
         boolean automatonA12 = DEFAULT_AUTOMATON_A12;
         boolean automatonA14 = DEFAULT_AUTOMATON_A14;
+        boolean automatonA17 = DEFAULT_AUTOMATON_A17;
         boolean importExportRST = DEFAULT_RST;
         boolean importExportACMC = DEFAULT_ACMC;
         boolean lvLoadModeling = DEFAULT_LV_LOAD_MODELING;
@@ -68,12 +79,22 @@ public class DdExportConfig {
         boolean gensPQfilter = DEFAULT_GENPQFILTER;
         boolean exportMainCCOnly = DEFAULT_EXPORT_MAIN_CC_ONLY;
         boolean noSwitch = DEFAULT_NOSWITCH;
+        String automatonA17AngularReferenceGenerator = DEFAULT_AUTOMATON_A17_REFERENCE_GENERATOR;
+        double automatonA17MinimumPhaseDifferenceThreshold = DEFAULT_AUTOMATON_A17_MINIMUM_PHASE_DIFFERENCE_THRESHOLD;
+        double automatonA17MaximumPhaseDifferenceThreshold = DEFAULT_AUTOMATON_A17_MAXIMUM_PHASE_DIFFERENCE_THRESHOLD;
+        double automatonA17ObservationDuration = DEFAULT_AUTOMATON_A17_OBSERVATION_DURATION;
+
 
         if (PlatformConfig.defaultConfig().moduleExists(MODULE_NAME)) {
             ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig(MODULE_NAME);
             automatonA11 = config.getBooleanProperty("automatonA11", DEFAULT_AUTOMATON_A11);
             automatonA12 = config.getBooleanProperty("automatonA12", DEFAULT_AUTOMATON_A12);
             automatonA14 = config.getBooleanProperty("automatonA14", DEFAULT_AUTOMATON_A14);
+            automatonA17 = config.getBooleanProperty("automatonA17", DEFAULT_AUTOMATON_A17);
+            automatonA17AngularReferenceGenerator = config.getStringProperty("automatonA17AngularReferenceGenerator", DEFAULT_AUTOMATON_A17_REFERENCE_GENERATOR);
+            automatonA17MinimumPhaseDifferenceThreshold = config.getDoubleProperty("automatonA17MinimumPhaseDifferenceThreshold", DEFAULT_AUTOMATON_A17_MINIMUM_PHASE_DIFFERENCE_THRESHOLD);
+            automatonA17MaximumPhaseDifferenceThreshold = config.getDoubleProperty("automatonA17MaximumPhaseDifferenceThreshold", DEFAULT_AUTOMATON_A17_MAXIMUM_PHASE_DIFFERENCE_THRESHOLD);
+            automatonA17ObservationDuration = config.getDoubleProperty("automatonA17ObservationDuration", DEFAULT_AUTOMATON_A17_OBSERVATION_DURATION);
             importExportRST = config.getBooleanProperty("importExportRST", DEFAULT_RST);
             importExportACMC = config.getBooleanProperty("importExportACMC", DEFAULT_ACMC);
             lvLoadModeling = config.getBooleanProperty("LVLoadModeling", DEFAULT_LV_LOAD_MODELING);
@@ -93,24 +114,25 @@ public class DdExportConfig {
             noSwitch = config.getBooleanProperty("noSwitch", DEFAULT_NOSWITCH);
         }
 
-        return new DdExportConfig(automatonA11, automatonA12, automatonA14, importExportRST, importExportACMC,
-                                  lvLoadModeling, rstRegulInjector, rstRegulGenerator, rstRegulGeneratorDelete,
+        return new DdExportConfig(automatonA11, automatonA12, automatonA14, automatonA17, automatonA17AngularReferenceGenerator, automatonA17MinimumPhaseDifferenceThreshold, automatonA17MaximumPhaseDifferenceThreshold, automatonA17ObservationDuration,
+                importExportRST, importExportACMC, lvLoadModeling, rstRegulInjector, rstRegulGenerator, rstRegulGeneratorDelete,
                                   acmcRegul, rstPilotGenerators, loadPatternAlpha, loadPatternBeta, gensPQfilter, exportMainCCOnly, noSwitch);
     }
 
     public DdExportConfig() {
-        this(DEFAULT_AUTOMATON_A11, DEFAULT_AUTOMATON_A12, DEFAULT_AUTOMATON_A14, DEFAULT_RST, DEFAULT_ACMC,
-                DEFAULT_LV_LOAD_MODELING, DEFAULT_RST_REGUL_INJECTOR, DEFAULT_RST_REGUL_GENERATOR, DEFAULT_RST_REGUL_GENERATOR_DELETE,
+        this(DEFAULT_AUTOMATON_A11, DEFAULT_AUTOMATON_A12, DEFAULT_AUTOMATON_A14, DEFAULT_AUTOMATON_A17, DEFAULT_AUTOMATON_A17_REFERENCE_GENERATOR, DEFAULT_AUTOMATON_A17_MINIMUM_PHASE_DIFFERENCE_THRESHOLD, DEFAULT_AUTOMATON_A17_MAXIMUM_PHASE_DIFFERENCE_THRESHOLD, DEFAULT_AUTOMATON_A17_OBSERVATION_DURATION,
+                DEFAULT_RST, DEFAULT_ACMC, DEFAULT_LV_LOAD_MODELING, DEFAULT_RST_REGUL_INJECTOR, DEFAULT_RST_REGUL_GENERATOR, DEFAULT_RST_REGUL_GENERATOR_DELETE,
                 DEFAULT_ACMC_REGUL, DEFAULT_RST_PILOT_GENERATORS, DEFAULT_LOAD_PATTERN_ALPHA, DEFAULT_LOAD_PATTERN_BETA, DEFAULT_GENPQFILTER, DEFAULT_EXPORT_MAIN_CC_ONLY, DEFAULT_NOSWITCH);
     }
 
-    public DdExportConfig(boolean automatonA11, boolean automatonA12, boolean automatonA14, boolean importExportRST,
-                          boolean importExportACMC, boolean lvLoadModeling, String rstRegulInjector,
+    public DdExportConfig(boolean automatonA11, boolean automatonA12, boolean automatonA14, boolean automatonA17, String automatonA17AngularReferenceGenerator, double automatonA17MinimumPhaseDifferenceThreshold, double automatonA17MaximumPhaseDifferenceThreshold, double automatonA17ObservationDuration,
+                          boolean importExportRST, boolean importExportACMC, boolean lvLoadModeling, String rstRegulInjector,
                           String rstRegulGenerator, String rstRegulGeneratorDelete, String acmcRegul,
                           String rstPilotGenerators, float loadPatternAlpha, float loadPatternBeta, boolean gensPQfilter, boolean exportMainCCOnly, boolean noSwitch) {
         this.automatonA11 = automatonA11;
         this.automatonA12 = automatonA12;
         this.automatonA14 = automatonA14;
+        this.automatonA17 = automatonA17;
         this.importExportRST = importExportRST;
         this.importExportACMC = importExportACMC;
         this.LVLoadModeling = lvLoadModeling;
@@ -124,6 +146,10 @@ public class DdExportConfig {
         this.gensPQfilter = gensPQfilter;
         this.exportMainCCOnly = exportMainCCOnly;
         this.noSwitch = noSwitch;
+        this.automatonA17AngularReferenceGenerator = automatonA17AngularReferenceGenerator;
+        this.automatonA17MinimumPhaseDifferenceThreshold = automatonA17MinimumPhaseDifferenceThreshold;
+        this.automatonA17MaximumPhaseDifferenceThreshold = automatonA17MaximumPhaseDifferenceThreshold;
+        this.automatonA17ObservationDuration = automatonA17ObservationDuration;
     }
 
     public boolean getAutomatonA11() {
@@ -136,6 +162,10 @@ public class DdExportConfig {
 
     public boolean getAutomatonA14() {
         return automatonA14;
+    }
+
+    public boolean getAutomatonA17() {
+        return automatonA17;
     }
 
     public boolean getExportRST() {
@@ -190,6 +220,22 @@ public class DdExportConfig {
         return gensPQfilter;
     }
 
+    public String getAutomatonA17AngularReferenceGenerator() {
+        return automatonA17AngularReferenceGenerator;
+    }
+
+    public double getAutomatonA17MinimumPhaseDifferenceThreshold() {
+        return automatonA17MinimumPhaseDifferenceThreshold;
+    }
+
+    public double getAutomatonA17MaximumPhaseDifferenceThreshold() {
+        return automatonA17MaximumPhaseDifferenceThreshold;
+    }
+
+    public double getAutomatonA17ObservationDuration() {
+        return automatonA17ObservationDuration;
+    }
+
     public void setAutomatonA11(Boolean automatonA11) {
         this.automatonA11 = automatonA11;
     }
@@ -200,6 +246,10 @@ public class DdExportConfig {
 
     public void setAutomatonA14(Boolean automatonA14) {
         this.automatonA14 = automatonA14;
+    }
+
+    public void setAutomatonA17(Boolean automatonA17) {
+        this.automatonA17 = automatonA17;
     }
 
     public void setImportExportRST(Boolean importExportRST) {
@@ -244,6 +294,22 @@ public class DdExportConfig {
 
     public void setGensPQfilter(boolean gensPQfilter) {
         this.gensPQfilter = gensPQfilter;
+    }
+
+    public void setAutomatonA17AngularReferenceGenerator(String automatonA17AngularReferenceGenerator) {
+        this.automatonA17AngularReferenceGenerator = automatonA17AngularReferenceGenerator;
+    }
+
+    public void setAutomatonA17MinimumPhaseDifferenceThreshold(double automatonA17MinimumPhaseDifferenceThreshold) {
+        this.automatonA17MinimumPhaseDifferenceThreshold = automatonA17MinimumPhaseDifferenceThreshold;
+    }
+
+    public void setAutomatonA17MaximumPhaseDifferenceThreshold(double automatonA17MaximumPhaseDifferenceThreshold) {
+        this.automatonA17MaximumPhaseDifferenceThreshold = automatonA17MaximumPhaseDifferenceThreshold;
+    }
+
+    public void setAutomatonA17ObservationDuration(double automatonA17ObservationDuration) {
+        this.automatonA17ObservationDuration = automatonA17ObservationDuration;
     }
 
     public boolean isExportMainCCOnly() {

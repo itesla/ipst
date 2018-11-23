@@ -1894,7 +1894,52 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             }
             DtaParser.dumpAutomatonHeader("A14", true, dtaOutStream);
         }
+        if (configExport.getAutomatonA17()) {
+            //A17
+            dumpDataAutomatonA17(dtaOutStream, iidm2eurostagId);
+        }
     }
+
+    public void dumpDataAutomatonA17(PrintStream out, Map<String, String> iidm2eurostagId) throws IOException {
+        String refGenId = configExport.getAutomatonA17AngularReferenceGenerator();
+        String automatonId = "A17";
+        if (refGenId == null) {
+            log.warn("Dump automaton {}: an angular reference generator id must be declared (attribute automatonA17AngularReferenceGenerator)", automatonId);
+        } else {
+            Generator refGen = network.getGenerator(refGenId);
+            if (refGen == null) {
+                log.warn("Dump automaton {}: skipping generator {}: no generators with this ID exist", automatonId, refGenId);
+            } else {
+                if (!iidm2eurostagId.containsKey(refGenId)) {
+                    log.warn("Dump automaton {}: skipping generator {}: no mapped eurostag id exists, for it", automatonId, refGenId);
+                } else {
+                    String refGenEurostagId = iidm2eurostagId.get(refGenId);
+                    log.debug("Dump automaton {}: generator id: {} mapped to eurostag id: {}", automatonId, refGenId, refGenEurostagId);
+                    try {
+                        DtaParser.dumpAutomatonHeader(automatonId, false, out);
+                        HashMap<String, Object> zm = new HashMap<String, Object>();
+                        zm.put("RESEARCH_CRITERION", "1");
+                        zm.put("AUTO_DEVICE_FUNCTIONING_MODE", "1");
+                        zm.put("machine.name", refGenEurostagId);
+                        zm.put("SAMIN", configExport.getAutomatonA17MinimumPhaseDifferenceThreshold());
+                        zm.put("SAMAX", configExport.getAutomatonA17MaximumPhaseDifferenceThreshold());
+                        zm.put("DOBSA", configExport.getAutomatonA17ObservationDuration());
+                        zm.put("TYPE_REFERENCE", " ");
+                        zm.put("SVMIN", "0.");
+                        zm.put("SVMAX", "0.");
+                        zm.put("DELAIV", "0.");
+                        zm.put("DOBSV", "0.");
+                        EurostagRecord eRecord = new EurostagRecord(automatonId, zm);
+                        DtaParser.dumpZone(eRecord, out);
+                        DtaParser.dumpAutomatonHeader(automatonId, true, out);
+                    } catch (ParseException e) {
+                        log.error(e.getMessage(), e);
+                    }
+                }
+            }
+        }
+    }
+
     public void dumpDataGeneratorAutomaton(Generator g, SimulatorInst simInst, String typeName, PrintStream out, Map<String, String> iidm2eurostagId) throws IOException {
         if (g == null) {
             throw new RuntimeException("Generator must be not null");
