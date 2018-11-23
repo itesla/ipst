@@ -30,7 +30,8 @@ param tempo;
 ###############################################################################
 param epsilon_tension_min = 0.5; # On considere qu'une Vmin ou Vmax < 0.5 ne vaut rien (exemple -99999). Idem pour une targetV
 param PQmax = 9000; # Toute valeur Pmin Pmax Qmin Qmax au dela de cette valeur sera invalidee
-
+param minReactiveRange = 1; # Tout groupe ayant un intervalle de réglage trop petit sera exclu des groupes réglants
+param specificCompatibility = true; # Paramètre de PowSyBl: true: meme comportement qu'Hades2 dans CVG, false: comportement souhaité à terme.
 
 
 ###############################################################################
@@ -424,12 +425,13 @@ set QUADCC_DEPH := {(qq,m,n) in QUADCC : quad_ptrDeph[qq,m,n] != -1 };
 set UNITCC  :=
   {(g,n) in UNIT : 
     n in NOEUDCC 
-    and ( abs(unit_Pc[g,n]) > 0.0001 or  abs(unit_Qc[g,n]) > 0.0001 ) # On refuse les groupes qui ont Pc=Qc=0
+    and ( abs(unit_Pc[g,n]) > 0.0001 or  abs(unit_Qc[g,n]) > 0.0001 or (unit_vregul[g,n]=="true" and unit_Vc[g,n]>epsilon_tension_min and (not(specificCompatibility) or abs(unit_Pc[g,n])>0.0001 or unit_Pmin<0.0001) ) ) # On refuse les groupes qui ont Pc=0 et Qc=0 saufs s'ils sont réglant (cf definition des groupes reglants ci-dessous).
     and ( abs(unit_P0[g,n]) < PQmax  and abs(unit_Q0[g,n]) < PQmax  ) # On refuse les groupes qui ont P0 ou Q0 à de trop grandes valeurs (exemple -999999)
   };
 
 # Groupes qui sont en reglage de tension
-set UNITCC_PV  := setof {(g,n) in UNITCC: unit_vregul[g,n]=="true" and unit_Vc[g,n]>epsilon_tension_min } (g,n);
+# = Groupes qui sont marqués comme reglant, donc la consigne est realiste et, dans le mode de compatibilite, qui ont une consigne non nulle ou une Pmin nulle ou negative. Il est donc impossible d'avoir un groupe compensateur synchrone avec une Pmin strictement positive, mais cela est preferable a mettre des groupes arretes dans le reglage.
+set UNITCC_PV  := setof {(g,n) in UNITCC: unit_vregul[g,n]=="true" and unit_Vc[g,n]>epsilon_tension_min and (not(specificCompatibility) or abs(unit_Pc[g,n])>0.0001 or unit_Pmin<0.0001)} (g,n);
 
 #
 # Ensembles relatifs aux coupes definissant les domaines dynamiques
@@ -440,7 +442,7 @@ set DOMAIN_IDENTIFIANTS := setof{(numero,id) in DOMAIN} id;
 set UNIT_DOMAIN         := setof{(g,n) in UNITCC: unit_id[g,n] in DOMAIN_IDENTIFIANTS} (g,n,unit_id[g,n]);
 
 # Nicolas Omont Juin 2017
-# Eliminaton des groupes pour lesquels il y a un mismatch de tension entre l'etat de réseau et les domaines
+# Elimination des groupes pour lesquels il y a un mismatch de tension entre l'etat de reseau et les domaines
 param gen_vnom_mismatch{UNIT_DOMAIN} default 0;
 
 # Groupes connectes et demarres ayant un domaine dynamique (en 1 seul indice)
@@ -782,7 +784,8 @@ minimize somme_ecarts_quadratiques :
   # Tous les groupes
     sum {(g,n) in UNITCC} ( unit_P[g,n] + unit_P0[g,n] )^2
   # Groupes avec domaine dynamique
-  + sum {(g,n) in UNITCC_PQV} ( unit_Q[g,n] + unit_Q0[g,n] )^2
+  #+ sum {(g,n) in UNITCC_PQV} ( unit_Q[g,n] + unit_Q0[g,n] )^2
+  + sum {(g,n) in UNITCC} ( unit_Q[g,n] + unit_Q0[g,n] )^2
   # Groupes avec domaine dynamique et groupes PV
   + 1000 * sum {(g,n) in UNITCC_PV union UNITCC_PQV} unit_Pmax[g,n] * (V[n] - noeud_V0[n])^2
   # SVC en reglage de tension
