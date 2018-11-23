@@ -107,9 +107,10 @@ public class EurostagExportTool implements Tool, EurostagConstants {
         try (BufferedWriter writer = Files.newBufferedWriter(outputDir.resolve(PRE_FAULT_SEQ_FILE_NAME), StandardCharsets.UTF_8)) {
             scenario.writePreFaultSeq(writer, PRE_FAULT_SAC_FILE_NAME);
         }
-        ContingenciesProvider contingenciesProvider = defaultConfig.newFactoryImpl(ContingenciesProviderFactory.class).create();
+        ContingenciesProvider contingenciesProvider = new FilterValidContingenciesProvider(defaultConfig.newFactoryImpl(ContingenciesProviderFactory.class).create());
+
         scenario.writeFaultSeqArchive(contingenciesProvider.getContingencies(network), network, dictionary, faultNum -> FAULT_SEQ_FILE_NAME.replace(com.powsybl.computation.CommandConstants.EXECUTION_NUMBER_PATTERN, Integer.toString(faultNum)))
-                .as(ZipExporter.class).exportTo(outputDir.resolve(ALL_SCENARIOS_ZIP_FILE_NAME).toFile());
+                .as(ZipExporter.class).exportTo(outputDir.resolve(ALL_SCENARIOS_ZIP_FILE_NAME).toFile(), true);
 
         // export limits
         try (OutputStream os = Files.newOutputStream(outputDir.resolve(LIMITS_ZIP_FILE_NAME))) {

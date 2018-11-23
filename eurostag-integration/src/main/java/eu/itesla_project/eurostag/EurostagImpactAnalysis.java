@@ -153,7 +153,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
         this.network = network;
         this.computationManager = computationManager;
         this.priority = priority;
-        this.contingenciesProvider = contingenciesProvider;
+        this.contingenciesProvider = new FilterValidContingenciesProvider(contingenciesProvider);
         this.config = config;
         this.exportConfig = exportConfig;
         allCmd = createCommand(ALL_SCENARIOS_ZIP_FILE_NAME, WP43_ALL_CONFIGS_ZIP_FILE_NAME);
@@ -499,7 +499,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
             }
         } else {
             // filter contingencies
-            for (Contingency c : contingenciesProvider.getContingencies(network)) {
+            for (Contingency c : allContingencies) {
                 if (contingencyIds.contains(c.getId())) {
                     contingencies.add(c);
                 }
