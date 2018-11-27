@@ -27,6 +27,28 @@ Start the py-powsybl 'server' in a console.
 Demo1.py demostrates what can be done (it executes a loadflow on a network, opens a switch, exports a network to a file in xiidm format)
 
     python Demo1.py     
+    
+Another example using pypowsybl module
+    
+```
+from pypowsybl import *
+
+load("/path/to/case-file/example.xiidm")
+
+lf = run_load_flow()
+print("\nLF result: " + str(lf.isOk()) + "; metrics: " + str(lf.getMetrics()))
+
+network = get_network()
+# modify network
+
+# re-run load flow
+lf = run_load_flow()
+print("\nLF result: " + str(lf.isOk()) + "; metrics: " + str(lf.getMetrics()))
+save("/path/to/output/example.xiidm")
+
+# shundown jvm
+shundown_pypowsybl()
+```
 
 ### Stop py-powsybl
 To stop the py-powsybl 'server',  CTRL+C in the itools console. 
