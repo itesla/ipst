@@ -249,17 +249,17 @@ printf "%s %i\n","nbGroupesVmaxInvalide",card({(g,n) in UNITCC: substation_Vmax[
 
 
 # Somme des P,Q avant apres
-printf "%s %.1f\n", "sommePavant", sum {(g,n) in UNITCC} unit_Pc[g,n] > projector_results_indic.txt;
+printf "%s %.1f\n", "sommePavant", sum {(g,n) in UNITCC} unit_P0[g,n] > projector_results_indic.txt;
 printf "%s %.1f\n", "sommePapres", sum {(g,n) in UNITCC} unit_P[g,n]  > projector_results_indic.txt;
-printf "%s %.1f\n", "sommeQavant", sum {(g,n) in UNITCC} unit_Qc[g,n] > projector_results_indic.txt;
+printf "%s %.1f\n", "sommeQavant", sum {(g,n) in UNITCC} unit_Q0[g,n] > projector_results_indic.txt;
 printf "%s %.1f\n", "sommeQapres", sum {(g,n) in UNITCC} unit_Q[g,n]  > projector_results_indic.txt;
 
 # Variations totales et moyennes P,Q
 let tempo := 1.0 / card(UNITCC);
-printf "%s %.1f\n", "variationTotaleP", sum {(g,n) in UNITCC} abs(unit_P[g,n] - unit_Pc[g,n]) > projector_results_indic.txt;
-printf "%s %.1f\n", "variationTotaleQ", sum {(g,n) in UNITCC} abs(unit_Q[g,n] - unit_Qc[g,n]) > projector_results_indic.txt;
-printf "%s %.2f\n", "variationMoyenneP", tempo * sum {(g,n) in UNITCC} abs(unit_P[g,n] - unit_Pc[g,n]) > projector_results_indic.txt;
-printf "%s %.2f\n", "variationMoyenneQ", tempo * sum {(g,n) in UNITCC} abs(unit_Q[g,n] - unit_Qc[g,n]) > projector_results_indic.txt;
+printf "%s %.1f\n", "variationTotaleP", sum {(g,n) in UNITCC} abs(unit_P[g,n] - unit_P0[g,n]) > projector_results_indic.txt;
+printf "%s %.1f\n", "variationTotaleQ", sum {(g,n) in UNITCC} abs(unit_Q[g,n] - unit_Q0[g,n]) > projector_results_indic.txt;
+printf "%s %.2f\n", "variationMoyenneP", tempo * sum {(g,n) in UNITCC} abs(unit_P[g,n] - unit_P0[g,n]) > projector_results_indic.txt;
+printf "%s %.2f\n", "variationMoyenneQ", tempo * sum {(g,n) in UNITCC} abs(unit_Q[g,n] - unit_Q0[g,n]) > projector_results_indic.txt;
 
 # Moyennes Tensions
 let tempo := card({(g,n) in UNITCC: unit_vregul[g,n]=="true"});
@@ -270,16 +270,16 @@ if tempo > 0 then {
 }
 
 # Nombre de groupes modifies P
-printf "%s %i\n", "nbGroupesPmodifie01MW",  card({(g,n) in UNITCC : abs(unit_P[g,n] - unit_Pc[g,n]) >= 0.1 } ) > projector_results_indic.txt;
-printf "%s %i\n", "nbGroupesPmodifie1MW",   card({(g,n) in UNITCC : abs(unit_P[g,n] - unit_Pc[g,n]) >= 1   } ) > projector_results_indic.txt;
-printf "%s %i\n", "nbGroupesPmodifie10MW",  card({(g,n) in UNITCC : abs(unit_P[g,n] - unit_Pc[g,n]) >= 10  } ) > projector_results_indic.txt;
-printf "%s %i\n", "nbGroupesPmodifie100MW", card({(g,n) in UNITCC : abs(unit_P[g,n] - unit_Pc[g,n]) >= 100 } ) > projector_results_indic.txt;
+printf "%s %i\n", "nbGroupesPmodifie01MW",  card({(g,n) in UNITCC : abs(unit_P[g,n] - unit_P0[g,n]) >= 0.1 } ) > projector_results_indic.txt;
+printf "%s %i\n", "nbGroupesPmodifie1MW",   card({(g,n) in UNITCC : abs(unit_P[g,n] - unit_P0[g,n]) >= 1   } ) > projector_results_indic.txt;
+printf "%s %i\n", "nbGroupesPmodifie10MW",  card({(g,n) in UNITCC : abs(unit_P[g,n] - unit_P0[g,n]) >= 10  } ) > projector_results_indic.txt;
+printf "%s %i\n", "nbGroupesPmodifie100MW", card({(g,n) in UNITCC : abs(unit_P[g,n] - unit_P0[g,n]) >= 100 } ) > projector_results_indic.txt;
 
 # Nombre de groupes modifies Q
-printf "%s %i\n", "nbGroupesQmodifie01Mvar",  card({(g,n) in UNITCC : abs(unit_Q[g,n] - unit_Qc[g,n]) >= 0.1 } ) > projector_results_indic.txt;
-printf "%s %i\n", "nbGroupesQmodifie1Mvar",   card({(g,n) in UNITCC : abs(unit_Q[g,n] - unit_Qc[g,n]) >= 1   } ) > projector_results_indic.txt;
-printf "%s %i\n", "nbGroupesQmodifie10Mvar",  card({(g,n) in UNITCC : abs(unit_Q[g,n] - unit_Qc[g,n]) >= 10  } ) > projector_results_indic.txt;
-printf "%s %i\n", "nbGroupesQmodifie100Mvar", card({(g,n) in UNITCC : abs(unit_Q[g,n] - unit_Qc[g,n]) >= 100 } ) > projector_results_indic.txt;
+printf "%s %i\n", "nbGroupesQmodifie01Mvar",  card({(g,n) in UNITCC : abs(unit_Q[g,n] - unit_Q0[g,n]) >= 0.1 } ) > projector_results_indic.txt;
+printf "%s %i\n", "nbGroupesQmodifie1Mvar",   card({(g,n) in UNITCC : abs(unit_Q[g,n] - unit_Q0[g,n]) >= 1   } ) > projector_results_indic.txt;
+printf "%s %i\n", "nbGroupesQmodifie10Mvar",  card({(g,n) in UNITCC : abs(unit_Q[g,n] - unit_Q0[g,n]) >= 10  } ) > projector_results_indic.txt;
+printf "%s %i\n", "nbGroupesQmodifie100Mvar", card({(g,n) in UNITCC : abs(unit_Q[g,n] - unit_Q0[g,n]) >= 100 } ) > projector_results_indic.txt;
 
 # Nombre de groupes modifies V
 printf "%s %i\n", "nbGroupesVmodifie01kV",
