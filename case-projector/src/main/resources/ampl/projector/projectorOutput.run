@@ -297,16 +297,16 @@ printf "%s %i\n", "nbGroupesVmodifie5kV",
 
 
 # Groupe ayant le plus varie en P
-let tempo := max {(g,n) in UNITCC} abs(unit_P[g,n] - unit_Pc[g,n]);
+let tempo := max {(g,n) in UNITCC} abs(unit_P[g,n] + unit_P0[g,n]);
 printf "%s %.1f\n", "variationMaximaleP", tempo > projector_results_indic.txt;
-for {(g,n) in UNITCC : abs(unit_P[g,n] - unit_Pc[g,n]) >= tempo } {
+for {(g,n) in UNITCC : abs(unit_P[g,n] + unit_P0[g,n]) >= tempo } {
   printf "%s %s\n", "groupeVariationMaximaleP", unit_id[g,n] > projector_results_indic.txt;
   }
 
 # Groupe ayant le plus varie en Q
-let tempo := max {(g,n) in UNITCC} abs(unit_Q[g,n] - unit_Qc[g,n]);
+let tempo := max {(g,n) in UNITCC} abs(unit_Q[g,n] + unit_Q0[g,n]);
 printf "%s %.1f\n", "variationMaximaleQ", tempo > projector_results_indic.txt;
-for {(g,n) in UNITCC : abs(unit_Q[g,n] - unit_Qc[g,n]) >= tempo } {
+for {(g,n) in UNITCC : abs(unit_Q[g,n] + unit_Q0[g,n]) >= tempo } {
   printf "%s %s\n", "groupeVariationMaximaleQ", unit_id[g,n] > projector_results_indic.txt;
   }
 
