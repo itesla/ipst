@@ -31,7 +31,7 @@ param tempo;
 param epsilon_tension_min = 0.5; # On considere qu'une Vmin ou Vmax < 0.5 ne vaut rien (exemple -99999). Idem pour une targetV
 param PQmax = 9000; # Toute valeur Pmin Pmax Qmin Qmax au dela de cette valeur sera invalidee
 param minReactiveRange = 1; # Tout groupe ayant un intervalle de réglage trop petit sera exclu des groupes réglants
-param specificCompatibility = true; # Paramètre de PowSyBl: true: meme comportement qu'Hades2 dans CVG, false: comportement souhaité à terme.
+param specificCompatibility = 1 binary; # Paramètre de PowSyBl: true: meme comportement qu'Hades2 dans CVG, false: comportement souhaité à terme.
 
 
 ###############################################################################
@@ -425,13 +425,15 @@ set QUADCC_DEPH := {(qq,m,n) in QUADCC : quad_ptrDeph[qq,m,n] != -1 };
 set UNITCC  :=
   {(g,n) in UNIT : 
     n in NOEUDCC 
-    and ( abs(unit_Pc[g,n]) > 0.0001 or  abs(unit_Qc[g,n]) > 0.0001 or (unit_vregul[g,n]=="true" and unit_Vc[g,n]>epsilon_tension_min and (not(specificCompatibility) or abs(unit_Pc[g,n])>0.0001 or unit_Pmin<0.0001) ) ) # On refuse les groupes qui ont Pc=0 et Qc=0 saufs s'ils sont réglant (cf definition des groupes reglants ci-dessous).
+    and ( abs(unit_Pc[g,n]) > 0.0001 or  abs(unit_Qc[g,n]) > 0.0001 or (unit_vregul[g,n]=="true" and unit_Vc[g,n]>epsilon_tension_min and (not(specificCompatibility) or abs(unit_Pc[g,n])>0.0001 or unit_Pmin[g,n]<0.0001) ) ) # On refuse les groupes qui ont Pc=0 et Qc=0 saufs s'ils sont réglant (cf definition des groupes reglants ci-dessous).
     and ( abs(unit_P0[g,n]) < PQmax  and abs(unit_Q0[g,n]) < PQmax  ) # On refuse les groupes qui ont P0 ou Q0 à de trop grandes valeurs (exemple -999999)
   };
 
 # Groupes qui sont en reglage de tension
 # = Groupes qui sont marqués comme reglant, donc la consigne est realiste et, dans le mode de compatibilite, qui ont une consigne non nulle ou une Pmin nulle ou negative. Il est donc impossible d'avoir un groupe compensateur synchrone avec une Pmin strictement positive, mais cela est preferable a mettre des groupes arretes dans le reglage.
-set UNITCC_PV  := setof {(g,n) in UNITCC: unit_vregul[g,n]=="true" and unit_Vc[g,n]>epsilon_tension_min and (not(specificCompatibility) or abs(unit_Pc[g,n])>0.0001 or unit_Pmin<0.0001)} (g,n);
+set UNITCC_PV  := setof {(g,n) in UNITCC: unit_vregul[g,n]=="true" and unit_Vc[g,n]>epsilon_tension_min and (not(specificCompatibility) or abs(unit_Pc[g,n])>0.0001 or unit_Pmin[g,n]<0.0001)} (g,n);
+
+
 
 #
 # Ensembles relatifs aux coupes definissant les domaines dynamiques
@@ -620,7 +622,7 @@ var unit_Q {(g,n) in UNITCC} >= Qmin[g,n], <= Qmax[g,n];
 # definies, c'est-a-dire de valeur absolue inferieure a PQmax
 set UNIT_TRAPEZE :=
   { (g,n) in UNITCC :
-  ( (g,n) in UNITCC_PQV or unit_vregul[g,n]=="true" )
+  ( (g,n) in UNITCC_PQV union UNITCC_PV )
   and abs(unit_Qp[g,n]) < PQmax
   and abs(unit_QP[g,n]) < PQmax
   and abs(unit_qP[g,n]) < PQmax
@@ -694,9 +696,13 @@ subject to limites_reactif_hades{(s,n) in SVC_V}:
 var vscconv_P{(sc,n) in VSCCONV} >= vscconv_Pmin[sc,n], <= vscconv_Pmax[sc,n];
 
 # Injection reactive de la station de conversion VSC
+
+param vscconv_Qmin{(sc,n) in VSCCONV}=min( vscconv_qp[sc,n], vscconv_qp0[sc,n], vscconv_qP[sc,n] );
+param vscconv_Qmax{(sc,n) in VSCCONV}=max( vscconv_Qp[sc,n], vscconv_Qp0[sc,n], vscconv_QP[sc,n] );
+
 var vscconv_Q{(sc,n) in VSCCONV}
-  >= min( vscconv_qp[sc,n], vscconv_qp0[sc,n], vscconv_qP[sc,n] ),
-  <= max( vscconv_Qp[sc,n], vscconv_Qp0[sc,n], vscconv_QP[sc,n] );
+  >= vscconv_Qmin[sc,n],
+  <= vscconv_Qmax[sc,n];
 
 # Diagrammes : contraintes trapezoidales reliant P et Q
 # La forme generale des droites definissant le diagramme est: Q=q1+*(q2-q1)/(p2-p1)*P
@@ -749,7 +755,7 @@ subject to bilan_P_noeud {k in NOEUDCC}:
 	  sum{(qq,k,n) in QUADCC} 100 * V[k] * Red_Tran_Act_Dir[qq,k,n]
 	+ sum{(qq,m,k) in QUADCC} 100 * V[k] * Red_Tran_Act_Inv[qq,m,k]
 	- sum{(g,k) in UNITCC} unit_P[g,k]
-  + sum{(sc,k) in VSCCONV} vscconv_P[sc,k] # Homogene a une conso
+    + sum{(sc,k) in VSCCONV} vscconv_P[sc,k] # Homogene a une conso
 	= 
 	- sum{(c,k) in CONSOCC} conso_PFix[c,k];
 
@@ -780,18 +786,30 @@ subject to bilan_Q_noeud {k in NOEUDCC}:
 # Fonction objectif
 ###############################################################################
 
+var sum_unit_P=sum {(g,n)  in UNITCC}                                                              100  * ( ( unit_P[g,n] + unit_P0[g,n] )              / ( if abs(Pmax[g,n]-Pmin[g,n])>1 then abs(Pmax[g,n]-Pmin[g,n]) else 1 ))^2;
+var sum_unit_Q=sum {(g,n)  in UNITCC_PV union UNITCC_PQV }      (if (g,n) in UNITCC_PV then 0.1 else 1) * ( ( unit_Q[g,n] + unit_Q0[g,n] )              / ( if abs(Qmax[g,n]-Qmin[g,n])>1 then abs(Qmax[g,n]-Qmin[g,n]) else 1 ))^2;
+var sum_svcs_Q=sum {(s,n)  in SVC_V}                          ( ( 100 * svc_b[s,n] * V[n]^2 + svc_Q0[s,n] ) / ( if abs(svc_bmax[s,n]-svc_bmin[s,n])>0 then 100*abs(svc_bmax[s,n]-svc_bmin[s,n]) else 1) )^2;
+var sum_hvdc_Q=sum {(sc,n) in VSCCONV : vscconv_vregul[sc,n]=="true"} ( ( vscconv_Q[sc,n] - vscconv_Q0[sc,n] ) / ( if abs(vscconv_Qmax[sc,n]-vscconv_Qmin[sc,n])>1 then abs(vscconv_Qmax[sc,n]-vscconv_Qmin[sc,n]) else 1))^2;
+var sum_unit_v=sum {(g,n)  in UNITCC_PV union UNITCC_PQV }            (V[n] - noeud_V0[n])^2;
+var sum_svcs_v=sum {(s,n)  in SVC_V  }                                (V[n] - noeud_V0[n])^2;
+var sum_hvdc_v=sum {(sc,n) in VSCCONV : vscconv_vregul[sc,n]=="true"} (V[n] - noeud_V0[n])^2;
+
 minimize somme_ecarts_quadratiques :
+  100 * (
   # Tous les groupes
-    sum {(g,n) in UNITCC} ( unit_P[g,n] + unit_P0[g,n] )^2
-  # Groupes avec domaine dynamique
-  #+ sum {(g,n) in UNITCC_PQV} ( unit_Q[g,n] + unit_Q0[g,n] )^2
-  + sum {(g,n) in UNITCC} ( unit_Q[g,n] + unit_Q0[g,n] )^2
+    sum_unit_P
+  # Tous les groupes avec domaine dynamique et, moins pondérés, les PV sans domaine dynamique (sinon il y a des mouvements quand plusieurs groupes sont connectes au meme noeud)
+  + sum_unit_Q
+  # Tous les CSPRs en réglage
+  + sum_svcs_Q
+  # Toutes les HVDCs en réglage
+  + sum_hvdc_Q
   # Groupes avec domaine dynamique et groupes PV
-  + 1000 * sum {(g,n) in UNITCC_PV union UNITCC_PQV} unit_Pmax[g,n] * (V[n] - noeud_V0[n])^2
+  + sum_unit_v
   # SVC en reglage de tension
-  + 1.0e+6 * sum {(s,n)  in SVC_V  } (V[n] - noeud_V0[n])^2
-  # Sations SVC en reglage de tension
-  + 1.0e+6 * sum {(sc,n) in VSCCONV : vscconv_vregul[sc,n]=="true"}  (V[n] - noeud_V0[n])^2
+  + sum_svcs_v
+  # Stations HVDC en reglage de tension
+  + sum_hvdc_v )
   ;
 
 

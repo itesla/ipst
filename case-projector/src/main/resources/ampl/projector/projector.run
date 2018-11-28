@@ -30,17 +30,17 @@
 #
 ###############################################################################
 /*
-                  Valeur modelisee :   P        Q        V
- Groupes PV avec domaine dynamique : optimise optimise optimise
- Groupes PQ avec domaine dynamique : optimise optimise optimise
- Groupes PV sans domaine dynamique : optimise libre    optimise
- Groupes PQ sans domaine dynamique : optimise fixe     libre	
-         SVC en reglage de tension : 0        libre    optimise
-                    SVC les autres : 0        fixe     libre
-Stations VSC en reglage de tension : fixe     libre    optimise
-          Stations VSC avec Q fixe : fixe     fixe     libre
+                  Valeur modelisee :   P        Q         V
+ Groupes PV avec domaine dynamique : optimise optimise  optimise
+ Groupes PQ avec domaine dynamique : optimise optimise  optimise
+ Groupes PV sans domaine dynamique : optimise optimise* optimise
+ Groupes PQ sans domaine dynamique : optimise fixe      libre	
+         SVC en reglage de tension : 0        optimise  optimise
+                    SVC les autres : 0        fixe      libre
+Stations VSC en reglage de tension : fixe     optimise  optimise
+          Stations VSC avec Q fixe : fixe     fixe      libre
 "libre" signifie absent de la fonction objectif
-"optimise" signifie present dans la fonction objectif
+"optimise" signifie present dans la fonction objectif. "optimise*" correspond à une pondération moindre dans l'objectif.
 "fixe" signifie que la valeur presente dans la situation est utilisse comme valeur fixe
 optimise -> le resultat est ecrit comme target
 Pour V optimise, la cible est le V du dernier load flow
