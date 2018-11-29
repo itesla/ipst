@@ -70,7 +70,7 @@ public class TestDynamicDatabaseSVCMock {
         Path workingDir = Files.createDirectory(fileSystem.getPath("/workingdir"));
 
         DynamicDatabaseClient ddbClient = new IIDMDynamicDatabaseSVCMockFactory().create(false);
-        ddbClient.dumpDtaFile(workingDir, DTA_FILENAME, network, new HashMap<String, Character>(), "mock", iidm2eurostag);
+        ddbClient.dumpDtaFile(workingDir, DTA_FILENAME, network, new HashMap<String, Character>(), "mock", iidm2eurostag, null);
 
         File expectedDtaFile = new File(getClass().getResource("/sim_test_svc.dta").toURI());
         Path testFile = workingDir.resolve(DTA_FILENAME);

@@ -6,6 +6,7 @@
  */
 
 import com.google.common.collect.ImmutableMap;
+import com.powsybl.simulation.SimulationParameters;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseClient;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.DynamicDatabaseMockUtils;
 import com.powsybl.iidm.network.Bus;
@@ -32,7 +33,7 @@ class DynamicDatabaseSVCMock implements DynamicDatabaseClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(DynamicDatabaseSVCMock.class);
 
     @Override
-    public void dumpDtaFile(Path workingDir, String fileName, Network network, Map<String, Character> parallelIndexes, String eurostagVersion, Map<String, String> iidm2eurostagId) {
+    public void dumpDtaFile(Path workingDir, String fileName, Network network, Map<String, Character> parallelIndexes, String eurostagVersion, Map<String, String> iidm2eurostagId, SimulationParameters simulationParameters) {
         Objects.requireNonNull(workingDir);
         Objects.requireNonNull(fileName);
         Objects.requireNonNull(network);

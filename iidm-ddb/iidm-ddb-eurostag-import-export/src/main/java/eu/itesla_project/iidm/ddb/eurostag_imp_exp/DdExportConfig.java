@@ -15,7 +15,7 @@ import com.powsybl.commons.config.PlatformConfig;
  */
 public class DdExportConfig {
 
-    private static final String MODULE_NAME = "ddImportExport";
+    public static final String MODULE_NAME = "ddImportExport";
 
     private static final boolean DEFAULT_AUTOMATON_A11 = false;
     private static final boolean DEFAULT_AUTOMATON_A12 = false;
@@ -37,7 +37,7 @@ public class DdExportConfig {
     private static final String DEFAULT_AUTOMATON_A17_REFERENCE_GENERATOR = null;
     private static final double DEFAULT_AUTOMATON_A17_MINIMUM_PHASE_DIFFERENCE_THRESHOLD = -240.0;
     private static final double DEFAULT_AUTOMATON_A17_MAXIMUM_PHASE_DIFFERENCE_THRESHOLD = 240.0;
-    private static final double DEFAULT_AUTOMATON_A17_OBSERVATION_DURATION = 15.0;
+    private static final double DEFAULT_AUTOMATON_A17_OBSERVATION_DURATION = -1;
 
     private boolean automatonA11;
     private boolean automatonA12;
@@ -61,7 +61,7 @@ public class DdExportConfig {
     private double automatonA17MaximumPhaseDifferenceThreshold;
     private double automatonA17ObservationDuration;
 
-    public static DdExportConfig load() {
+    public static DdExportConfig load(PlatformConfig platformConfig) {
         boolean automatonA11 = DEFAULT_AUTOMATON_A11;
         boolean automatonA12 = DEFAULT_AUTOMATON_A12;
         boolean automatonA14 = DEFAULT_AUTOMATON_A14;
@@ -85,8 +85,8 @@ public class DdExportConfig {
         double automatonA17ObservationDuration = DEFAULT_AUTOMATON_A17_OBSERVATION_DURATION;
 
 
-        if (PlatformConfig.defaultConfig().moduleExists(MODULE_NAME)) {
-            ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig(MODULE_NAME);
+        if (platformConfig.moduleExists(MODULE_NAME)) {
+            ModuleConfig config = platformConfig.getModuleConfig(MODULE_NAME);
             automatonA11 = config.getBooleanProperty("automatonA11", DEFAULT_AUTOMATON_A11);
             automatonA12 = config.getBooleanProperty("automatonA12", DEFAULT_AUTOMATON_A12);
             automatonA14 = config.getBooleanProperty("automatonA14", DEFAULT_AUTOMATON_A14);
@@ -108,8 +108,8 @@ public class DdExportConfig {
             gensPQfilter = config.getBooleanProperty("gensPQfilter", DEFAULT_GENPQFILTER);
         }
 
-        if (PlatformConfig.defaultConfig().moduleExists("eurostag-ech-export")) {
-            ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("eurostag-ech-export");
+        if (platformConfig.moduleExists("eurostag-ech-export")) {
+            ModuleConfig config = platformConfig.getModuleConfig("eurostag-ech-export");
             exportMainCCOnly = config.getBooleanProperty("exportMainCCOnly", DEFAULT_EXPORT_MAIN_CC_ONLY);
             noSwitch = config.getBooleanProperty("noSwitch", DEFAULT_NOSWITCH);
         }
@@ -117,6 +117,10 @@ public class DdExportConfig {
         return new DdExportConfig(automatonA11, automatonA12, automatonA14, automatonA17, automatonA17AngularReferenceGenerator, automatonA17MinimumPhaseDifferenceThreshold, automatonA17MaximumPhaseDifferenceThreshold, automatonA17ObservationDuration,
                 importExportRST, importExportACMC, lvLoadModeling, rstRegulInjector, rstRegulGenerator, rstRegulGeneratorDelete,
                                   acmcRegul, rstPilotGenerators, loadPatternAlpha, loadPatternBeta, gensPQfilter, exportMainCCOnly, noSwitch);
+    }
+
+    public static DdExportConfig load() {
+        return load(PlatformConfig.defaultConfig());
     }
 
     public DdExportConfig() {
@@ -318,5 +322,9 @@ public class DdExportConfig {
 
     public boolean isNoSwitch() {
         return noSwitch;
+    }
+
+    public boolean isAutomatonA17ObservationDurationSet() {
+        return automatonA17ObservationDuration >= 0.0;
     }
 }
