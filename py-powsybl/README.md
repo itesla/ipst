@@ -33,21 +33,34 @@ Another example using pypowsybl module
 ```
 from pypowsybl import *
 
-load("/path/to/case-file/example.xiidm")
+# simple dump network flows function
+def dump_lines_flow(network):
+    print(len(network.get_lines()))
+    for l in network.get_lines():
+        print(l.get_id() + ";" + str(l.get_terminal_1().get_i()) + ";" + str(l.get_terminal_2().get_i()))
 
-lf = run_load_flow()
-print("\nLF result: " + str(lf.isOk()) + "; metrics: " + str(lf.getMetrics()))
 
-network = get_network()
-# modify network
+if __name__ == '__main__':
+    if connect(3338):
+        n1 = load("/path/to/case-file/example.xiidm")
+        dump_lines_flow(n1)
 
-# re-run load flow
-lf = run_load_flow()
-print("\nLF result: " + str(lf.isOk()) + "; metrics: " + str(lf.getMetrics()))
-save("/path/to/output/example.xiidm")
+        lf = run_load_flow(n1)
+        print("\nLF result: " + str(lf.is_ok()) + "; metrics: " + str(lf.get_metrics()))
+        dump_lines_flow(n1)
 
-# shundown jvm
-shundown_pypowsybl()
+        # re-run load flow alternatively
+        lf = n1.run_load_flow()
+        print("\nLF result: " + str(lf.is_ok()) + "; metrics: " + str(lf.get_metrics()))
+        
+        n1.save("/path/to/output/example.xiidm")
+        # or save(n1, "/path/to/output/example.xiidm")
+
+        # shundown jvm
+        # shundown_pypowsybl()
+    else:
+        print("can not connect to jvm")
+
 ```
 
 ### Stop py-powsybl
