@@ -122,9 +122,10 @@ public final class DtaParser {
         });
 
         componentsVariablesNames.put("A17", new String[]{
-            "RESEARCH_CRITERION", "AUTO_DEVICE_FUNCTIONING_MODE",
-            "machine.name", "SAMIN", "SAMAX", "DOBSA",
-            "TYPE_REFERENCE", "SVMIN", "SVMAX", "DELAIV", "DOBSV"
+            "RESEARCH_CRITERION,AUTO_DEVICE_FUNCTIONING_MODE",
+            "machine.name,SAMIN,SAMAX,DOBSA",
+            "TYPE_REFERENCE,SVMIN,SVMAX,DELAIV,DOBSV",
+            ""
         });
 
         componentsVariablesNames.put("A33_ACMC", new String[]{
@@ -249,7 +250,8 @@ public final class DtaParser {
         componentsDescriptors.put("A17", new String[]{
             "(A1, 1X, A1)",
             "(A8, 1X, F8, 1X, F8, 10X, F8)",
-            "(A1, 8X, F8, 1X, F8, 1X, F8, 1X, F8)"
+            "(A1, 8X, F8, 1X, F8, 1X, F8, 1X, F8)",
+            "()"
         });
 
         componentsDescriptors.put("A33_ACMC", new String[]{

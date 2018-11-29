@@ -12,6 +12,7 @@ import com.powsybl.iidm.network.Generator;
 import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.util.Identifiables;
+import com.powsybl.simulation.SimulationParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +71,7 @@ public class DynamicDatabaseCacheClient implements DynamicDatabaseClient {
 
 
     @Override
-    public void dumpDtaFile(Path workingDir, String fileName, Network network, Map<String, Character> parallelIndexes, String eurostagVersion, Map<String, String> iidm2eurostagId) {
+    public void dumpDtaFile(Path workingDir, String fileName, Network network, Map<String, Character> parallelIndexes, String eurostagVersion, Map<String, String> iidm2eurostagId, SimulationParameters simulationParameters) {
         boolean isFiltered = DdExportConfig.load().getGensPQfilter();
 
         CacheManager.CacheEntry cacheEntry = PlatformConfig.defaultCacheManager().newCacheEntry("ddb")
@@ -92,7 +93,7 @@ public class DynamicDatabaseCacheClient implements DynamicDatabaseClient {
                     cacheEntry.create();
 
                     // generate data in the cache
-                    delegate.dumpDtaFile(cacheEntry.toPath(), fileName, network, parallelIndexes, eurostagVersion, iidm2eurostagId);
+                    delegate.dumpDtaFile(cacheEntry.toPath(), fileName, network, parallelIndexes, eurostagVersion, iidm2eurostagId, simulationParameters);
                 }
             } finally {
                 cacheEntry.unlock();

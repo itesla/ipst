@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableMap;
 import com.powsybl.iidm.network.Bus;
 import com.powsybl.iidm.network.Generator;
 import com.powsybl.iidm.network.Network;
+import com.powsybl.simulation.SimulationParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +31,7 @@ class DynamicDatabaseMock implements DynamicDatabaseClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(DynamicDatabaseMock.class);
 
     @Override
-    public void dumpDtaFile(Path workingDir, String fileName, Network network, Map<String, Character> parallelIndexes, String eurostagVersion, Map<String, String> iidm2eurostagId) {
+    public void dumpDtaFile(Path workingDir, String fileName, Network network, Map<String, Character> parallelIndexes, String eurostagVersion, Map<String, String> iidm2eurostagId, SimulationParameters simulationParameters) {
         Objects.requireNonNull(workingDir);
         Objects.requireNonNull(fileName);
         Objects.requireNonNull(network);

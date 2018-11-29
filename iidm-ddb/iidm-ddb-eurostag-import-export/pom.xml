@@ -56,6 +56,10 @@
        </dependency>
        <dependency>
            <groupId>com.powsybl</groupId>
+           <artifactId>powsybl-simulation-api</artifactId>
+       </dependency>
+       <dependency>
+           <groupId>com.powsybl</groupId>
            <artifactId>powsybl-tools</artifactId>
        </dependency>
 

@@ -12,6 +12,7 @@ import com.google.common.collect.Sets;
 import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.util.ConnectedComponents;
 import com.powsybl.iidm.network.util.Identifiables;
+import com.powsybl.simulation.SimulationParameters;
 import eu.itesla_project.iidm.ddb.eurostag_imp_exp.utils.Utils;
 import eu.itesla_project.iidm.ddb.model.*;
 import eu.itesla_project.iidm.ddb.service.DDBManager;
@@ -958,10 +959,10 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
     @Override
     public void dumpDtaFile(Path workingDir, String fileName,
             Network network, Map<String, Character> parallelIndexes, String eurostagVersion,
-            Map<String, String> iidm2eurostagId) {
+            Map<String, String> iidm2eurostagId, SimulationParameters simulationParameters) {
         try (EjbClientCtx cx = newEjbClientEcx()) {
             DDBManager ddbmanager = cx.connectEjb(DDBMANAGERJNDINAME);
-            dumpDtaFile(workingDir, fileName, network, parallelIndexes, eurostagVersion, iidm2eurostagId, ddbmanager);
+            dumpDtaFile(workingDir, fileName, network, parallelIndexes, eurostagVersion, iidm2eurostagId, simulationParameters, ddbmanager);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1006,7 +1007,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
      */
     public void dumpDtaFile(Path workingDir, String fileName,
             Network network, Map<String, Character> parallelIndexes, String eurostagVersion,
-            Map<String, String> iidm2eurostagId, DDBManager ddbmanager) {
+            Map<String, String> iidm2eurostagId, SimulationParameters simulationParameters, DDBManager ddbmanager) {
 
 
         if (workingDir == null) {
@@ -1135,7 +1136,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
             dumpDataLoadPatternAndBehaviour(cimIds, eurostagSim, ddbmanager, dtaOutStream);
 
-            dumpDataAutomatons(eurostagSim, ddbmanager, dtaOutStream, iidm2eurostagId);
+            dumpDataAutomatons(eurostagSim, ddbmanager, dtaOutStream, iidm2eurostagId, simulationParameters);
 
             dumpDataACMC(eurostagSim, ddbmanager, dtaOutStream, iidm2eurostagId, workingDir);
 
@@ -1828,7 +1829,7 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
     // Dump data without DDB parameters
     public void dumpDataAutomatons(SimulatorInst eurostagSim, DDBManager ddbmanager,
-            PrintStream dtaOutStream, Map<String, String> iidm2eurostagId) throws ParseException, IOException {
+            PrintStream dtaOutStream, Map<String, String> iidm2eurostagId, SimulationParameters simulationParameters) throws ParseException, IOException {
 
         if (configExport.getAutomatonA11()) {
             // A11
@@ -1894,46 +1895,62 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
             }
             DtaParser.dumpAutomatonHeader("A14", true, dtaOutStream);
         }
-        if (configExport.getAutomatonA17()) {
-            //A17
-            dumpDataAutomatonA17(dtaOutStream, iidm2eurostagId);
-        }
+
+        DdbDtaImpExp.dumpDataAutomatonA17(network, dtaOutStream, iidm2eurostagId, simulationParameters, configExport);
     }
 
-    public void dumpDataAutomatonA17(PrintStream out, Map<String, String> iidm2eurostagId) throws IOException {
-        String refGenId = configExport.getAutomatonA17AngularReferenceGenerator();
+
+    public static EurostagRecord createA17Record(String refGenEurostagId, DdExportConfig configExport, SimulationParameters simulationParameters) {
         String automatonId = "A17";
-        if (refGenId == null) {
-            log.warn("Dump automaton {}: an angular reference generator id must be declared (attribute automatonA17AngularReferenceGenerator)", automatonId);
-        } else {
-            Generator refGen = network.getGenerator(refGenId);
-            if (refGen == null) {
-                log.warn("Dump automaton {}: skipping generator {}: no generators with this ID exist", automatonId, refGenId);
+        HashMap<String, Object> zm = new HashMap<String, Object>();
+        zm.put("RESEARCH_CRITERION", "1");
+        zm.put("AUTO_DEVICE_FUNCTIONING_MODE", "1");
+        zm.put("machine.name", refGenEurostagId);
+        zm.put("SAMIN", configExport.getAutomatonA17MinimumPhaseDifferenceThreshold());
+        zm.put("SAMAX", configExport.getAutomatonA17MaximumPhaseDifferenceThreshold());
+        double observationDuration = configExport.getAutomatonA17ObservationDuration();
+        if (!configExport.isAutomatonA17ObservationDurationSet()) {
+            if (simulationParameters == null) {
+                throw new RuntimeException("simulation parameters must be not null");
+            }
+            observationDuration = simulationParameters.getPostFaultSimulationStopInstant() - simulationParameters.getFaultEventInstant();
+            log.warn("Dump automaton {}: parameter observationDuration is not declared; set to (postFaultSimulationStopInstant - faultEventInstant) = {}", automatonId, observationDuration);
+        }
+        zm.put("DOBSA", observationDuration);
+        zm.put("TYPE_REFERENCE", " ");
+        zm.put("SVMIN", "0.");
+        zm.put("SVMAX", "0.");
+        zm.put("DELAIV", "0.");
+        zm.put("DOBSV", "0.");
+        EurostagRecord eRecord = new EurostagRecord(automatonId, zm);
+        return eRecord;
+    }
+
+    public static void dumpDataAutomatonA17(Network network, PrintStream out, Map<String, String> iidm2eurostagId, SimulationParameters simulationParameters, DdExportConfig configExport) throws IOException {
+        if (configExport.getAutomatonA17()) {
+            String refGenId = configExport.getAutomatonA17AngularReferenceGenerator();
+            String automatonId = "A17";
+            if (refGenId == null) {
+                log.warn("Dump automaton {}: an angular reference generator id must be declared (attribute automatonA17AngularReferenceGenerator)", automatonId);
             } else {
-                if (!iidm2eurostagId.containsKey(refGenId)) {
-                    log.warn("Dump automaton {}: skipping generator {}: no mapped eurostag id exists, for it", automatonId, refGenId);
+                Generator refGen = network.getGenerator(refGenId);
+                if (refGen == null) {
+                    log.warn("Dump automaton {}: skipping generator {}: no generators with this ID exist", automatonId, refGenId);
+
                 } else {
-                    String refGenEurostagId = iidm2eurostagId.get(refGenId);
-                    log.debug("Dump automaton {}: generator id: {} mapped to eurostag id: {}", automatonId, refGenId, refGenEurostagId);
-                    try {
-                        DtaParser.dumpAutomatonHeader(automatonId, false, out);
-                        HashMap<String, Object> zm = new HashMap<String, Object>();
-                        zm.put("RESEARCH_CRITERION", "1");
-                        zm.put("AUTO_DEVICE_FUNCTIONING_MODE", "1");
-                        zm.put("machine.name", refGenEurostagId);
-                        zm.put("SAMIN", configExport.getAutomatonA17MinimumPhaseDifferenceThreshold());
-                        zm.put("SAMAX", configExport.getAutomatonA17MaximumPhaseDifferenceThreshold());
-                        zm.put("DOBSA", configExport.getAutomatonA17ObservationDuration());
-                        zm.put("TYPE_REFERENCE", " ");
-                        zm.put("SVMIN", "0.");
-                        zm.put("SVMAX", "0.");
-                        zm.put("DELAIV", "0.");
-                        zm.put("DOBSV", "0.");
-                        EurostagRecord eRecord = new EurostagRecord(automatonId, zm);
-                        DtaParser.dumpZone(eRecord, out);
-                        DtaParser.dumpAutomatonHeader(automatonId, true, out);
-                    } catch (ParseException e) {
-                        log.error(e.getMessage(), e);
+                    if (!iidm2eurostagId.containsKey(refGenId)) {
+                        log.warn("Dump automaton {}: skipping generator {}: no mapped eurostag id exists, for it", automatonId, refGenId);
+                    } else {
+                        String refGenEurostagId = iidm2eurostagId.get(refGenId);
+                        log.debug("Dump automaton {}: generator id: {} mapped to eurostag id: {}", automatonId, refGenId, refGenEurostagId);
+                        try {
+                            DtaParser.dumpAutomatonHeader(automatonId, false, out);
+                            EurostagRecord eRecord = createA17Record(refGenEurostagId, configExport, simulationParameters);
+                            DtaParser.dumpZone(eRecord, out);
+                            DtaParser.dumpAutomatonHeader(automatonId, true, out);
+                        } catch (ParseException e) {
+                            log.error(e.getMessage(), e);
+                        }
                     }
                 }
             }
