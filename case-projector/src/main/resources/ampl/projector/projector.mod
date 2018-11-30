@@ -203,6 +203,14 @@ param svc_P0            {SVC};
 param svc_Q0            {SVC}; # Valeur fixe a utiliser si le svc ne regule pas la tension (e-mail Nicolas Omont 30 mai 2018)
                                # Homogene a une consommation de reactif
 
+set SVC_EXT := setof {(s,n) in SVC} s ; # [svc]
+param svc_b0            {SVC_EXT}          default 0; # Susceptance B en p.u : faire B*100*V^2 pour obtenir des MVAr. Cette susceptance est a compter lorsque le CSPR est en mode veille.
+param svc_standby 	{SVC_EXT} symbolic default "not initialized"; # Si mode veille, la regulation se declenche si la tension sort d'une plage et la consigne est alors differente en cas de sortie vers le bas ou le haut. cf parametres suivants
+param svc_low_targetV   {SVC_EXT}          default 0; # Tension de consigne si activation pour sous tension
+param svc_high_targetV  {SVC_EXT}          default 0; # Tension de consigne si activation pour sur tension
+param svc_lowVoltageThreshold {SVC_EXT}    default 0; # Seuil de tension basse
+param svc_highVoltageThreshold {SVC_EXT}   default 0; # Seuil de tension haute
+
 #
 # Consistance
 #
@@ -318,20 +326,21 @@ check {(qq,m,n) in QUAD}: quad_ptrDeph[qq,m,n] in DEPH union {-1};
 param quad_G {(qq,m,n) in QUAD} = +quad_R[qq,m,n]/(quad_R[qq,m,n]^2+quad_X[qq,m,n]^2);
 param quad_B {(qq,m,n) in QUAD} = -quad_X[qq,m,n]/(quad_R[qq,m,n]^2+quad_X[qq,m,n]^2);
 
+#Desactive car la modelisation adequate n'est pas assimilable a une shunt
 # Lignes a vide (Ytot = Yshunt + YlignesAvide)
-param noeud_Ytot {k in NOEUD} =
-  sum{(qq,k,-1) in QUAD} (
-    quad_Bor[qq,k,-1] 
-    + if (quad_Bex[qq,k,-1] == 0) 
-      then 0 
-      else 1/( cos(atan2(quad_R[qq,k,-1], quad_X[qq,k,-1]))*sqrt(quad_R[qq,k,-1]^2 + quad_X[qq,k,-1]^2) + 1/quad_Bex[qq,k,-1] )
-  ) # Fin de la somme
-  + sum{(qq,-1,k) in QUAD} (
-    quad_Bex[qq,-1,k] 
-    + if (quad_Bor[qq,-1,k] == 0) 
-      then 0 
-      else 1/( cos(atan2(quad_R[qq,-1,k], quad_X[qq,-1,k]))*sqrt(quad_R[qq,-1,k]^2 + quad_X[qq,-1,k]^2) +1/quad_Bor[qq,-1,k])
-  );# Fin de la somme
+# param noeud_Ytot {k in NOEUD} =
+#  sum{(qq,k,-1) in QUAD} (
+#    quad_Bor[qq,k,-1] 
+#    + if (quad_Bex[qq,k,-1] == 0) 
+#      then 0 
+#      else 1/( cos(atan2(quad_R[qq,k,-1], quad_X[qq,k,-1]))*sqrt(quad_R[qq,k,-1]^2 + quad_X[qq,k,-1]^2) + 1/quad_Bex[qq,k,-1] )
+#  ) # Fin de la somme
+#  + sum{(qq,-1,k) in QUAD} (
+#    quad_Bex[qq,-1,k] 
+#    + if (quad_Bor[qq,-1,k] == 0) 
+#      then 0 
+#      else 1/( cos(atan2(quad_R[qq,-1,k], quad_X[qq,-1,k]))*sqrt(quad_R[qq,-1,k]^2 + quad_X[qq,-1,k]^2) +1/quad_Bor[qq,-1,k])
+#  );# Fin de la somme
 
 
 
@@ -375,7 +384,6 @@ check {(cs,n) in VSCCONV: vscconv_vregul[cs,n]=="true" } : vscconv_targetV[cs,n]
 
 ###############################################################################
 # Donnees HVDC
-# Rq: si on utilise les injections des stations VSC fixes, les donnees de la hvdc ne sont pas utilisees
 ###############################################################################
 set HVDC dimen 1;
 param hvdc_type           {HVDC} integer; # 1->vscConverterStation, 2->lccConverterStation
@@ -391,6 +399,12 @@ param hvdc_curative       {HVDC};
 param hvdc_id             {HVDC} symbolic;
 param hvdc_description    {HVDC} symbolic;
 
+param hvdc_apc_P0         {HVDC} default 0;
+param hvdc_apc_droop      {HVDC} default 0;
+param hvdc_apc_enabled    {HVDC} symbolic default "false";
+param hvdc_apr_fromCS1toCS2 {HVDC} default +Infinity;
+param hvdc_apr_fromCS2toCS1 {HVDC} default +Infinity;
+
 check {h in HVDC}: hvdc_type[h] == 1; # Doit valoir 1 ou 2 mais le type 2 n'est pas encore developpe ici
 check {h in HVDC}: hvdc_conv1[h] != hvdc_conv2[h];
 check {h in HVDC}: hvdc_Vnom[h] >= epsilon_tension_min;
@@ -398,6 +412,10 @@ check {h in HVDC}: hvdc_convertersMode[h] == "SIDE_1_RECTIFIER_SIDE_2_INVERTER" 
 check {h in HVDC}: hvdc_targetP[h] >= 0.0;
 check {h in HVDC}: hvdc_targetP[h] <= hvdc_Pmax[h];
 
+check {h in HVDC}: abs(hvdc_apc_P0[h])  <= hvdc_Pmax[h];
+check {h in HVDC}: hvdc_apc_enabled[h]=="true" or hvdc_apc_enabled[h]=="false";
+check {h in HVDC}: hvdc_apr_fromCS1toCS2[h] >=0;
+check {h in HVDC}: hvdc_apr_fromCS2toCS1[h] >=0;
 
 
 ###############################################################################
@@ -417,7 +435,7 @@ param coupledgen_control{COUPLEDGEN} symbolic;
 set NOEUDCC := {n in NOEUD : noeud_CC[n] == 0};
 set CONSOCC := {(c,n) in CONSO  : n in NOEUDCC};
 set SHUNTCC := {(s,n) in SHUNT  : n in NOEUDCC};
-set QUADCC  := {(qq,m,n) in QUAD : m in NOEUDCC && n in NOEUDCC};
+set QUADCC  := {(qq,m,n) in QUAD : m in NOEUDCC && n in NOEUDCC or (m in NOEUDCC and n==-1) or (m==-1 and n in NOEUDCC) };
 set QUADCC_REGL := {(qq,m,n) in QUADCC : quad_ptrRegl[qq,m,n] != -1 };
 set QUADCC_DEPH := {(qq,m,n) in QUADCC : quad_ptrDeph[qq,m,n] != -1 };
 
@@ -425,13 +443,13 @@ set QUADCC_DEPH := {(qq,m,n) in QUADCC : quad_ptrDeph[qq,m,n] != -1 };
 set UNITCC  :=
   {(g,n) in UNIT : 
     n in NOEUDCC 
-    and ( abs(unit_Pc[g,n]) > 0.0001 or  abs(unit_Qc[g,n]) > 0.0001 or (unit_vregul[g,n]=="true" and unit_Vc[g,n]>epsilon_tension_min and (not(specificCompatibility) or abs(unit_Pc[g,n])>0.0001 or unit_Pmin[g,n]<0.0001) ) ) # On refuse les groupes qui ont Pc=0 et Qc=0 saufs s'ils sont réglant (cf definition des groupes reglants ci-dessous).
+    and ( abs(unit_Pc[g,n]) > 0.0001 or  abs(unit_Qc[g,n]) > 0.0001 or (unit_vregul[g,n]=="true" and unit_Vc[g,n]>epsilon_tension_min and (not(specificCompatibility) or abs(unit_Pc[g,n])>0.0001 or unit_Pmin[g,n]<=1+1E-10) ) ) # On refuse les groupes qui ont Pc=0 et Qc=0 saufs s'ils sont réglant (cf definition des groupes reglants ci-dessous).
     and ( abs(unit_P0[g,n]) < PQmax  and abs(unit_Q0[g,n]) < PQmax  ) # On refuse les groupes qui ont P0 ou Q0 à de trop grandes valeurs (exemple -999999)
   };
 
 # Groupes qui sont en reglage de tension
 # = Groupes qui sont marqués comme reglant, donc la consigne est realiste et, dans le mode de compatibilite, qui ont une consigne non nulle ou une Pmin nulle ou negative. Il est donc impossible d'avoir un groupe compensateur synchrone avec une Pmin strictement positive, mais cela est preferable a mettre des groupes arretes dans le reglage.
-set UNITCC_PV  := setof {(g,n) in UNITCC: unit_vregul[g,n]=="true" and unit_Vc[g,n]>epsilon_tension_min and (not(specificCompatibility) or abs(unit_Pc[g,n])>0.0001 or unit_Pmin[g,n]<0.0001)} (g,n);
+set UNITCC_PV  := setof {(g,n) in UNITCC: unit_vregul[g,n]=="true" and unit_Vc[g,n]>epsilon_tension_min and (not(specificCompatibility) or abs(unit_Pc[g,n])>0.0001 or unit_Pmin[g,n]<=1+1E-10)} (g,n);
 
 
 
@@ -571,6 +589,8 @@ check {n in NOEUDCC} : min_noeud_V[n] < max_noeud_V[n];
 
 param Ph_min = -1 + min{n in NOEUDCC} noeud_angl0[n];
 param Ph_max =  1 + max{n in NOEUDCC} noeud_angl0[n];
+param V_min = min{n in NOEUDCC} min_noeud_V[n];
+param V_max = max{n in NOEUDCC} max_noeud_V[n];
 
 var Ph{n in NOEUDCC} >= Ph_min, <= Ph_max;
 var V {n in NOEUDCC} <= max_noeud_V[n], >= min_noeud_V[n];
@@ -632,8 +652,10 @@ set UNIT_TRAPEZE :=
   };
 
 # Inclusion dans un diagramme trapezoidal
-param ctr_trapeze_qmax_rhs{(g,n) in UNIT_TRAPEZE} = unit_Pmax[g,n] * unit_Qp[g,n] - unit_Pmin[g,n] * unit_QP[g,n];
-param ctr_trapeze_qmin_rhs{(g,n) in UNIT_TRAPEZE} = unit_Pmin[g,n] * unit_qP[g,n] - unit_Pmax[g,n] * unit_qp[g,n];
+# Max pour etre certain d'inclure le point courant. Attention: unit_P unit_P0 n'ont pas le meme signe. Le cas arrive car les diagrammes a 6 points ne sont pas encore modelises
+param ctr_trapeze_qmax_rhs{(g,n) in UNIT_TRAPEZE} = max( unit_Pmax[g,n] * unit_Qp[g,n] - unit_Pmin[g,n] * unit_QP[g,n], ( unit_Qp[g,n] - unit_QP[g,n] ) * -unit_P0[g,n] + ( unit_Pmax[g,n] - unit_Pmin[g,n] ) * -unit_Q0[g,n] );
+param ctr_trapeze_qmin_rhs{(g,n) in UNIT_TRAPEZE} = max( unit_Pmin[g,n] * unit_qP[g,n] - unit_Pmax[g,n] * unit_qp[g,n], ( unit_qP[g,n] - unit_qp[g,n] ) * -unit_P0[g,n] - ( unit_Pmax[g,n] - unit_Pmin[g,n] ) * -unit_Q0[g,n]);
+
 subject to ctr_trapeze_qmax{(g,n) in UNIT_TRAPEZE} :
     ( unit_Qp[g,n]   - unit_QP[g,n]   ) * unit_P[g,n]
   + ( unit_Pmax[g,n] - unit_Pmin[g,n] ) * unit_Q[g,n]
@@ -683,8 +705,10 @@ set SVC_FIXE := {(s,n) in SVCCC : (s,n) not in SVC_V}; # && (s,n) not in SVC_Q};
 var svc_b{(s,n) in SVC_V} >= svc_bmin[s,n], <= svc_bmax[s,n];
 
 # Dans Hades, la production de reactif est limitee par bmin*Vnominale^2 et bmax*Vnominale^2. On veut garder ces limitations ici.
+# plutot que de rajouter * V[n]^2, on pretraite svc_bmin en divisant par noeud_V0^2. Cela permet d'integrer les svc_b0 qui sont elles modelisees
+# comme des condensateur dans Hades
 subject to limites_reactif_hades{(s,n) in SVC_V}:
-  svc_bmin[s,n] <= svc_b[s,n] * V[n]^2 <= svc_bmax[s,n]; # Vnominale est egale a 1kV
+  svc_bmin[s,n] <= svc_b[s,n] <= svc_bmax[s,n]; # Vnominale est egale a 1kV
 
 
 
@@ -708,44 +732,84 @@ var vscconv_Q{(sc,n) in VSCCONV}
 # La forme generale des droites definissant le diagramme est: Q=q1+*(q2-q1)/(p2-p1)*P
 # S'il s'agit d'une limite superieure, on remplace = par <=
 # S'il s'agit d'une limite inferieure, on remplace = par >=
+# On ajoute des - partout car les diagrammes sont donnees en convention producteur alors que la convention des VSC est consommateur
 
 # Limites entre P=0 et Pmax
 subject to limites_sup_reactif_Ppositif{(sc,n) in VSCCONV}:
-  vscconv_Q[sc,n] <= vscconv_Qp0[sc,n] + (vscconv_QP[sc,n]-vscconv_Qp0[sc,n])/(vscconv_Pmax[sc,n]-0.0)*vscconv_P[sc,n];
+  -vscconv_Q[sc,n] <= vscconv_Qp0[sc,n] + (vscconv_QP[sc,n]-vscconv_Qp0[sc,n])/(vscconv_Pmax[sc,n]-0.0)*-vscconv_P[sc,n];
 subject to limites_inf_reactif_Ppositif{(sc,n) in VSCCONV}:
-  vscconv_Q[sc,n] >= vscconv_qp0[sc,n] + (vscconv_qP[sc,n]-vscconv_qp0[sc,n])/(vscconv_Pmax[sc,n]-0.0)*vscconv_P[sc,n];
+  -vscconv_Q[sc,n] >= vscconv_qp0[sc,n] + (vscconv_qP[sc,n]-vscconv_qp0[sc,n])/(vscconv_Pmax[sc,n]-0.0)*-vscconv_P[sc,n];
 
 # Limites entre Pmin et P=0
 subject to limites_sup_reactif_Pnegatif{(sc,n) in VSCCONV}:
-  vscconv_Q[sc,n] <= vscconv_Qp0[sc,n] + (vscconv_Qp[sc,n]-vscconv_Qp0[sc,n])/(vscconv_Pmin[sc,n]-0.0)*vscconv_P[sc,n];
+  -vscconv_Q[sc,n] <= vscconv_Qp0[sc,n] + (vscconv_Qp[sc,n]-vscconv_Qp0[sc,n])/(vscconv_Pmin[sc,n]-0.0)*-vscconv_P[sc,n];
 subject to limites_inf_reactif_Pnegatif{(sc,n) in VSCCONV}:
-  vscconv_Q[sc,n] >= vscconv_qp0[sc,n] + (vscconv_qp[sc,n]-vscconv_qp0[sc,n])/(vscconv_Pmin[sc,n]-0.0)*vscconv_P[sc,n];
+  -vscconv_Q[sc,n] >= vscconv_qp0[sc,n] + (vscconv_qp[sc,n]-vscconv_qp0[sc,n])/(vscconv_Pmin[sc,n]-0.0)*-vscconv_P[sc,n];
 
+# Consigne d'actif (fixe ou emulation AC)
+# En fixe, on aimerait bien utiliser la consigne, mais elle n'est pas toujours bien remplie, donc on prend le resultat
+
+var hvdc_targetP_ecart{ h in HVDC }
+	>=  -10*hvdc_Pmax[h]
+	<=  10*hvdc_Pmax[h]
+	;
+
+#On pouvait penser que le controle etait fait cote RECTIFIER, mais il semble etre cote soutirage dans Hades, ce qui cree une non-differentiabilite en 0.
+#Plutot que de la gerer, on prefere mal modeliser le changement de signe en se basant sur le signe de la valeur initiale
+subject to hvdc_consigne_P{ h in HVDC, (sc1,n1) in VSCCONV, (sc2,n2) in VSCCONV : hvdc_conv1[h]==sc1 and hvdc_conv2[h]==sc2 } :
+  #if hvdc_convertersMode[h]=="SIDE_1_RECTIFIER_SIDE_2_INVERTER" then vscconv_P[sc1,n1] else vscconv_P[sc2,n2] = 
+  #if vscconv_P[sc1,n1]>0 then vscconv_P[sc1,n1] else vscconv_P[sc2,n2] = # Exact
+  if vscconv_P0[sc1,n1]>=0 then vscconv_P[sc1,n1] else vscconv_P[sc2,n2] = # Approximatif en cas de changement de signe
+	hvdc_targetP_ecart[h] +
+	if hvdc_apc_enabled[h]=="true" then
+		hvdc_apc_P0[h]+hvdc_apc_droop[h]*45/atan(1)*(if vscconv_P0[sc1,n1]>=0 then Ph[n1]-Ph[n2] else Ph[n2]-Ph[n1])
+	else
+		(if specificCompatibility==1 then (if vscconv_P0[sc1,n1]>=0 then vscconv_P0[sc1,n1] else vscconv_P0[sc2,n2]) else hvdc_targetP[h])
+  ;
+
+#Active power control range
+subject to hvdc_power_range_12_max{ h in HVDC, (sc1,n1) in VSCCONV, (sc2,n2) in VSCCONV : hvdc_conv1[h]==sc1 and hvdc_conv2[h]==sc2 }:
+ 	vscconv_P[sc1,n1] <=  hvdc_apr_fromCS1toCS2[h];
+subject to hvdc_power_range_21_max{ h in HVDC, (sc1,n1) in VSCCONV, (sc2,n2) in VSCCONV : hvdc_conv1[h]==sc1 and hvdc_conv2[h]==sc2 }:
+        vscconv_P[sc2,n2] <= hvdc_apr_fromCS2toCS1[h];
+
+#Bilan en puissance.
+#Les pertes exprimees en % de puissance dans les convertisseurs creent une non-differentiabilite en 0
+#Plutot que de la gerer, on prefere mal modeliser le changement de signe en se basant sur la valeur initiale
+subject to hvdc_bilan_P{ h in HVDC, (sc1,n1) in VSCCONV, (sc2,n2) in VSCCONV : hvdc_conv1[h]==sc1 and hvdc_conv2[h]==sc2 } :
+   #if vscconv_P[sc1,n1]>0 then #exact
+   if vscconv_P0[sc1,n1]>=0 then #approximatif en cas de changement de signe
+	vscconv_P[sc1,n1]*(1-vscconv_lossFactor[sc1,n1]/100-hvdc_r[h]*vscconv_P[sc1,n1]/hvdc_Vnom[h]^2) + vscconv_P[sc2,n2]/(1-vscconv_lossFactor[sc2,n2]/100)
+   else
+	vscconv_P[sc2,n2]*(1-vscconv_lossFactor[sc2,n2]/100-hvdc_r[h]*vscconv_P[sc2,n2]/hvdc_Vnom[h]^2) + vscconv_P[sc1,n1]/(1-vscconv_lossFactor[sc1,n1]/100)
+   = 0;
 
 
 ###############################################################################
 # Transits 
 ###############################################################################
 
-var Red_Tran_Act_Dir{(qq,m,n) in QUADCC} =
-	+V[n]*quad_admi[qq,m,n]*quad_Ror[qq,m,n]*sin(Ph[m]-Ph[n]+quad_dephor[qq,m,n]-quad_angper[qq,m,n])
-	+V[m]*quad_Ror[qq,m,n]^2*(quad_admi[qq,m,n]*sin(quad_angper[qq,m,n])+quad_Gor[qq,m,n])
+var Vouv{(qq,m,n) in QUADCC : m==-1 or n==-1} >= V_min <= V_max;
+
+var Phouv{(qq,m,n) in QUADCC : m==-1 or n==-1} >= Ph_min <= Ph_max := if n==-1 and m<>-1 then noeud_angl0[m] else if n<>-1 and m==-1 then noeud_angl0[n] else 0; 
+
+var Red_Tran_Act_Dir{(qq,m,n) in QUADCC } =
+	+(if n==-1 then Vouv[qq,m,n] else V[n])*quad_admi[qq,m,n]*quad_Ror[qq,m,n]*sin( (if m==-1 then Phouv[qq,m,n] else Ph[m])-(if n==-1 then Phouv[qq,m,n] else Ph[n])+quad_dephor[qq,m,n]-quad_angper[qq,m,n])
+	+(if m==-1 then Vouv[qq,m,n] else V[m])*quad_Ror[qq,m,n]^2*(quad_admi[qq,m,n]*sin(quad_angper[qq,m,n])+quad_Gor[qq,m,n])
 ;
-var Red_Tran_Rea_Dir{(qq,m,n) in QUADCC} = 
-	-V[n]*quad_admi[qq,m,n]*quad_Ror[qq,m,n]*cos(Ph[m]-Ph[n]+quad_dephor[qq,m,n]-quad_angper[qq,m,n])
-	+V[m]*quad_Ror[qq,m,n]^2*(quad_admi[qq,m,n]*cos(quad_angper[qq,m,n])-quad_Bor[qq,m,n])
+var Red_Tran_Rea_Dir{(qq,m,n) in QUADCC } = 
+	-(if n==-1 then Vouv[qq,m,n] else V[n])*quad_admi[qq,m,n]*quad_Ror[qq,m,n]*cos( (if m==-1 then Phouv[qq,m,n] else Ph[m])-(if n==-1 then Phouv[qq,m,n] else Ph[n])+quad_dephor[qq,m,n]-quad_angper[qq,m,n])
+	+(if m==-1 then Vouv[qq,m,n] else V[m])*quad_Ror[qq,m,n]^2*(quad_admi[qq,m,n]*cos(quad_angper[qq,m,n])-quad_Bor[qq,m,n])
 ;
 
-var Red_Tran_Act_Inv{(qq,m,n) in QUADCC} = 
-	+V[m]*quad_admi[qq,m,n]*quad_Ror[qq,m,n]*sin(Ph[n]-Ph[m]-quad_dephor[qq,m,n]-quad_angper[qq,m,n])
-	+V[n]*(quad_admi[qq,m,n]*sin(quad_angper[qq,m,n])+quad_Gex[qq,m,n])
+var Red_Tran_Act_Inv{(qq,m,n) in QUADCC } = 
+	+(if m==-1 then Vouv[qq,m,n] else V[m])*quad_admi[qq,m,n]*quad_Ror[qq,m,n]*sin( (if n==-1 then Phouv[qq,m,n] else Ph[n])-(if m==-1 then Phouv[qq,m,n] else Ph[m])-quad_dephor[qq,m,n]-quad_angper[qq,m,n])
+	+(if n==-1 then Vouv[qq,m,n] else V[n])*(quad_admi[qq,m,n]*sin(quad_angper[qq,m,n])+quad_Gex[qq,m,n])
 ;
-var Red_Tran_Rea_Inv{(qq,m,n) in QUADCC} =
-	-V[m]*quad_admi[qq,m,n]*quad_Ror[qq,m,n]*cos(Ph[n]-Ph[m]-quad_dephor[qq,m,n]-quad_angper[qq,m,n])
-	+V[n]*(quad_admi[qq,m,n]*cos(quad_angper[qq,m,n])-quad_Bex[qq,m,n])
+var Red_Tran_Rea_Inv{(qq,m,n) in QUADCC } =
+	-(if m==-1 then Vouv[qq,m,n] else V[m])*quad_admi[qq,m,n]*quad_Ror[qq,m,n]*cos( (if n==-1 then Phouv[qq,m,n] else Ph[n])-(if m==-1 then Phouv[qq,m,n] else Ph[m])-quad_dephor[qq,m,n]-quad_angper[qq,m,n])
+	+(if n==-1 then Vouv[qq,m,n] else V[n])*(quad_admi[qq,m,n]*cos(quad_angper[qq,m,n])-quad_Bex[qq,m,n])
 ;
-
-
 
 ###############################################################################
 # Bilans de puissance active en chaque noeud
@@ -759,6 +823,8 @@ subject to bilan_P_noeud {k in NOEUDCC}:
 	= 
 	- sum{(c,k) in CONSOCC} conso_PFix[c,k];
 
+subject to bilan_P_noeud_ouv{(qq,m,n) in QUADCC : m==-1 or n==-1}:
+	if m==-1 then Red_Tran_Act_Dir[qq,m,n] else Red_Tran_Act_Inv[qq,m,n]=0;
 
 ###############################################################################
 # Bilans de puissance reactive en chaque noeud
@@ -770,7 +836,8 @@ subject to bilan_P_noeud {k in NOEUDCC}:
 # Sauf si gros probleme numerique, il faut mettre shunt_noeud[k] * V[k]^2
 
 subject to bilan_Q_noeud {k in NOEUDCC}: 
-  - 100 * noeud_Ytot[k]  * V[k]^2  
+  #Ligne suivante commentee car quadripole a vides modelise directement
+  #- 100 * noeud_Ytot[k]  * V[k]^2  
   - sum{(shunt,k) in SHUNTCC } 100 * shunt_valnom[shunt,k] * V[k]^2
   - sum{(svc,k)   in SVC_V   } 100 * svc_b[svc,k]          * V[k]^2
   + sum{(svc,k)   in SVC_FIXE} svc_Q0[svc,k]   # Homogene a une conso
@@ -781,6 +848,8 @@ subject to bilan_Q_noeud {k in NOEUDCC}:
   =
   - sum{(c,k) in CONSOCC} conso_QFix[c,k];
 
+subject to bilan_Q_noeud_ouv{(qq,m,n) in QUADCC : m==-1 or n==-1}:
+	if m==-1 then Red_Tran_Rea_Dir[qq,m,n] else Red_Tran_Rea_Inv[qq,m,n]=0;
 
 ###############################################################################
 # Fonction objectif
@@ -792,7 +861,8 @@ var sum_svcs_Q=sum {(s,n)  in SVC_V}                          ( ( 100 * svc_b[s,
 var sum_hvdc_Q=sum {(sc,n) in VSCCONV : vscconv_vregul[sc,n]=="true"} ( ( vscconv_Q[sc,n] - vscconv_Q0[sc,n] ) / ( if abs(vscconv_Qmax[sc,n]-vscconv_Qmin[sc,n])>1 then abs(vscconv_Qmax[sc,n]-vscconv_Qmin[sc,n]) else 1))^2;
 var sum_unit_v=sum {(g,n)  in UNITCC_PV union UNITCC_PQV }            (V[n] - noeud_V0[n])^2;
 var sum_svcs_v=sum {(s,n)  in SVC_V  }                                (V[n] - noeud_V0[n])^2;
-var sum_hvdc_v=sum {(sc,n) in VSCCONV : vscconv_vregul[sc,n]=="true"} (V[n] - noeud_V0[n])^2;
+var sum_hvdc_v=sum {(sc,n) in VSCCONV : vscconv_vregul[sc,n]=="true" and n in NOEUDCC} (V[n] - noeud_V0[n])^2;
+var sum_hvdc_p=100*sum{h in HVDC} (hvdc_targetP_ecart[h]/(2*hvdc_Pmax[h]))^2;
 
 minimize somme_ecarts_quadratiques :
   100 * (
@@ -809,7 +879,10 @@ minimize somme_ecarts_quadratiques :
   # SVC en reglage de tension
   + sum_svcs_v
   # Stations HVDC en reglage de tension
-  + sum_hvdc_v )
+  + sum_hvdc_v
+  # Ecart sur la consigne de puissance active des HVDC
+  + sum_hvdc_p
+  )
   ;
 
 

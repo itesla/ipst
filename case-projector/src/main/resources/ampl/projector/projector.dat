@@ -54,9 +54,21 @@ param: QUAD: quad_3wt quad_subor quad_subex quad_R quad_X quad_Gor quad_Gex quad
 #"num" "bus" "con. bus" "substation" "minB (S)" "maxB (S)" "v regul." "targetV (pu)" "fault" "curative" "id" "description" "P (MW)" "Q (MVar)"
 param: SVC: svc_noeudpossible svc_substation svc_bmin svc_bmax svc_vregul svc_targetV svc_fault svc_curative svc_id svc_description svc_P0 svc_Q0 := include ampl_network_static_var_compensators.txt;
 
+# ampl_network_static_var_compensators_standby_automaton.txt
+# #"num" "b0 (S)" "standby" "low targetV (pu)" "high targetV (pu)" "lowVoltageThreshold (pu)" "lowVoltageThreshold (pu)"
+param: svc_b0 svc_standby svc_low_targetV svc_high_targetV svc_lowVoltageThreshold svc_highVoltageThreshold := include ampl_network_static_var_compensators_standby_automaton.txt;
+
 #ampl_network_hvdc.txt
 #"num" "type" "converterStation1" "converterStation2" "r(ohm)" "nomV(KV)" "convertersMode" "targetP(MW)" "maxP(MW)" "fault" "curative" "id" "description"
 param: HVDC: hvdc_type hvdc_conv1 hvdc_conv2 hvdc_r hvdc_Vnom hvdc_convertersMode hvdc_targetP hvdc_Pmax hvdc_fault hvdc_curative hvdc_id hvdc_description := include ampl_network_hvdc.txt;
+
+#ampl_network_hvdc_angle_droop_active_power_control.txt
+#"num" "p0 (MW)" "droop (MW/degree)" "enabled"
+param: hvdc_apc_P0 hvdc_apc_droop hvdc_apc_enabled := include ampl_network_hvdc_angle_droop_active_power_control.txt;
+
+#ampl_network_hvdc_operator_active_power_range.txt
+#"num" "fromCS1toCS2 (MW)" "fromCS2toCS1 (MW)"
+param: hvdc_apr_fromCS1toCS2 hvdc_apr_fromCS2toCS1 := include ampl_network_hvdc_operator_active_power_range.txt;
 
 #ampl_network_vsc_converter_stations.txt
 #"num" "bus" "con. bus" "substation" "minP(MW)" "maxP(MW)" "minQmaxP(MVar)" "minQ0(MVar)" "minQminP(MVar)" "maxQmaxP(MVar)" "maxQ0(MVar)" "maxQminP(MVar)" "v regul." "targetV(pu)" "targetQ(MVar)" "lossFactor(%PDC)" "fault" "curative" "id" "description" "P(MW)" "Q(MVar)"
