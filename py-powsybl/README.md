@@ -41,7 +41,9 @@ def dump_lines_flow(network):
 
 
 if __name__ == '__main__':
-    if connect(3338):
+    port = 3338
+    launch("config2", port)
+    if connect(port):
         n1 = load("/path/to/case-file/example.xiidm")
         dump_lines_flow(n1)
 
@@ -56,8 +58,8 @@ if __name__ == '__main__':
         n1.save("/path/to/output/example.xiidm")
         # or save(n1, "/path/to/output/example.xiidm")
 
-        # shundown jvm
-        # shundown_pypowsybl()
+        # don't forget to shundown jvm
+        shundown_pypowsybl()
     else:
         print("can not connect to jvm")
 

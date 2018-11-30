@@ -2,6 +2,9 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+import subprocess
+import time
+from threading import Thread
 
 from py4j.java_gateway import JavaGateway, GatewayParameters
 from py4j.java_gateway import java_import
@@ -17,11 +20,30 @@ lf_para = None
 defaultConfig = None
 default_exporter_properties = None
 
+retried = 0
+
+def launch_task(config_name, nb_port):
+    if config_name is None:
+        cmd = 'itools py-powsybl -port=' + str(nb_port)
+    else:
+        cmd = 'itools --config-name ' + config_name + ' py-powsybl -port=' + str(nb_port)
+    subprocess.call([cmd], shell=True)
+
+
+def launch(nb_port):
+    launch(None, nb_port)
+
+
+def launch(config_name, nb_port):
+    t = Thread(target=launch_task, args=(config_name, nb_port))
+    t.start()
+
 
 def connect(nb_port):
     # connect to the JVM (running iPST/PowSyBl)
     global gateway
     try:
+        time.sleep(1)
         gateway = JavaGateway(gateway_parameters=GatewayParameters(auto_field=True,port=nb_port))
 
         # other boilerplate imports
@@ -63,6 +85,11 @@ def connect(nb_port):
         exporter = gateway.jvm.com.powsybl.iidm.export.Exporters
         return True
     except Py4JError:
+        global retried
+        while retried < 5:
+            retried = retried + 1
+            print("retring..." + retried)
+            connect(nb_port)
         return False
 
 
