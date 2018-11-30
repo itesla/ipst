@@ -452,7 +452,6 @@ set UNITCC  :=
 set UNITCC_PV  := setof {(g,n) in UNITCC: unit_vregul[g,n]=="true" and unit_Vc[g,n]>epsilon_tension_min and (not(specificCompatibility) or abs(unit_Pc[g,n])>0.0001 or unit_Pmin[g,n]<=1+1E-10)} (g,n);
 
 
-
 #
 # Ensembles relatifs aux coupes definissant les domaines dynamiques
 #
@@ -863,6 +862,7 @@ var sum_unit_v=sum {(g,n)  in UNITCC_PV union UNITCC_PQV }            (V[n] - no
 var sum_svcs_v=sum {(s,n)  in SVC_V  }                                (V[n] - noeud_V0[n])^2;
 var sum_hvdc_v=sum {(sc,n) in VSCCONV : vscconv_vregul[sc,n]=="true" and n in NOEUDCC} (V[n] - noeud_V0[n])^2;
 var sum_hvdc_p=100*sum{h in HVDC} (hvdc_targetP_ecart[h]/(2*hvdc_Pmax[h]))^2;
+
 
 minimize somme_ecarts_quadratiques :
   100 * (
