@@ -23,6 +23,7 @@ default_exporter_properties = None
 
 retried = 0
 
+
 def launch_task(config_name, nb_port):
     if config_name is None:
         cmd = 'itools py-powsybl -port=' + str(nb_port)
@@ -67,7 +68,7 @@ def connect(nb_port):
         default_exporter_properties = gateway.jvm.java.util.Properties()
 
         # needed below to resolve some class-factories, by name
-        ReflectionUtil = gateway.jvm.py4j.reflection.ReflectionUtil
+        reflection_util = gateway.jvm.py4j.reflection.ReflectionUtil
 
         # load platform config
         global defaultConfig
@@ -77,7 +78,7 @@ def connect(nb_port):
         global computation_manager
         computation_manager = gateway.jvm.LocalComputationManager()
         global lf_factory
-        lf_factory = defaultConfig.newFactoryImpl(ReflectionUtil.classForName("com.powsybl.loadflow.LoadFlowFactory"))
+        lf_factory = defaultConfig.newFactoryImpl(reflection_util.classForName("com.powsybl.loadflow.LoadFlowFactory"))
         global lf_para
         lf_para = gateway.jvm.com.powsybl.loadflow.LoadFlowParameters.load()
         global importer
