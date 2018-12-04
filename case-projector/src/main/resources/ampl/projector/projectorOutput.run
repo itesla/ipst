@@ -76,10 +76,10 @@ printf '#"num" "bus1" "bus2" "p1(MW)" "p2(MW)" "q1(MVar)" "q2(MVar)"\n'
 printf {(qq,n,m) in QUADCC}
   "%i %i %i %f %f %f %f\n",
   qq,n,m,
-  100 * V[n] * Red_Tran_Act_Dir[qq,n,m],
-  100 * V[m] * Red_Tran_Act_Inv[qq,n,m],
-  100 * V[n] * Red_Tran_Rea_Dir[qq,n,m],
-  100 * V[m] * Red_Tran_Rea_Inv[qq,n,m]
+  100 * (if n<>-1 then V[n] * Red_Tran_Act_Dir[qq,n,m] else 0),
+  100 * (if m<>-1 then V[m] * Red_Tran_Act_Inv[qq,n,m] else 0),
+  100 * (if n<>-1 then V[n] * Red_Tran_Rea_Dir[qq,n,m] else 0),
+  100 * (if m<>-1 then V[m] * Red_Tran_Rea_Inv[qq,n,m] else 0)
   > projector_results_branches.txt;
 
 
@@ -195,7 +195,7 @@ printf '#"num" "bus" "P(MW)" "Q(MVar)"\n'
 
 printf '#"num" "bus" "v_regul" "targetV(pu)" "targetQ(MVar)" "P(MW)" "Q(MVar)"\n'
   > projector_results_vsc_converter_stations.txt;
-printf {(sc,n) in VSCCONV}
+printf {(sc,n) in VSCCONV : n in NOEUDCC}
   "%i %i %s %f %f %f %f\n",
   sc,n,vscconv_vregul[sc,n],V[n],vscconv_Q[sc,n],vscconv_P[sc,n],vscconv_Q[sc,n]
   > projector_results_vsc_converter_stations.txt;
@@ -246,6 +246,7 @@ printf "%s %i\n","nbGroupesVminInvalide",card({(g,n) in UNITCC: substation_Vmin[
   > projector_results_indic.txt;
 printf "%s %i\n","nbGroupesVmaxInvalide",card({(g,n) in UNITCC: substation_Vmax[unit_substation[g,n]] <= 0})
   > projector_results_indic.txt;
+
 
 
 # Somme des P,Q avant apres
@@ -407,7 +408,7 @@ printf {(s,n) in SVCCC}
   > projector_debug_voltageregulators.csv;
 
 # Stations de conversion VSC
-printf {(sc,n) in VSCCONV}
+printf {(sc,n) in VSCCONV : n in NOEUDCC}
   #"%i;%i;%s;%s;%s;%.1f;%s;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%f;%f;%f;%f;%f;%f;%f;%i;%s;\n",
   #                       P                                  Q                                  V              
   "%i;%i;%s;%s;%s;%.1f;%s;%.1f;%.1f;%.1f;%.1f;%f;%f;%f;%.1f;%.1f;%.1f;%.1f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%i;%s;\n",
