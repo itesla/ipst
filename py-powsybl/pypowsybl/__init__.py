@@ -156,7 +156,7 @@ class Network(Identifiable):
 
     def get_branches(self):
         l_branch = []
-        for j_e in self.j_instance.getBranches().toList():
+        for j_e in self.j_instance.getBranches().toArray():
             l_branch.append(Branch(j_e))
         return l_branch
 
@@ -168,7 +168,7 @@ class Network(Identifiable):
 
     def get_busbar_sections(self):
         l_busbarsection = []
-        for j_e in self.j_instance.getBusbarSections().toList():
+        for j_e in self.j_instance.getBusbarSections().toArray():
             l_busbarsection.append(BusbarSection(j_e))
         return l_busbarsection
 
@@ -183,7 +183,7 @@ class Network(Identifiable):
 
     def get_dangling_lines(self):
         l_danglingline = []
-        for j_e in self.j_instance.getDanglingLines().toList():
+        for j_e in self.j_instance.getDanglingLines().toArray():
             l_danglingline.append(DanglingLine(j_e))
         return l_danglingline
 
@@ -198,7 +198,7 @@ class Network(Identifiable):
 
     def get_generators(self):
         l_generator = []
-        for j_e in self.j_instance.getGenerators().toList():
+        for j_e in self.j_instance.getGenerators().toArray():
             l_generator.append(Generator(j_e))
         return l_generator
 
@@ -210,7 +210,7 @@ class Network(Identifiable):
 
     def get_hvdc_converter_stations(self):
         l_hvdcconverterstation = []
-        for j_e in self.j_instance.getHvdcConverterStations().toList():
+        for j_e in self.j_instance.getHvdcConverterStations().toArray():
             l_hvdcconverterstation.append(HvdcConverterStation(j_e))
         return l_hvdcconverterstation
 
@@ -222,7 +222,7 @@ class Network(Identifiable):
 
     def get_hvdc_lines(self):
         l_hvdcline = []
-        for j_e in self.j_instance.getHvdcLines().toList():
+        for j_e in self.j_instance.getHvdcLines().toArray():
             l_hvdcline.append(HvdcLine(j_e))
         return l_hvdcline
 
@@ -237,7 +237,7 @@ class Network(Identifiable):
 
     def get_lcc_converter_stations(self):
         l_lccconverterstation = []
-        for j_e in self.j_instance.getLccConverterStations().toList():
+        for j_e in self.j_instance.getLccConverterStations().toArray():
             l_lccconverterstation.append(LccConverterStation(j_e))
         return l_lccconverterstation
 
@@ -249,7 +249,7 @@ class Network(Identifiable):
 
     def get_lines(self):
         l_line = []
-        for j_e in self.j_instance.getLines().toList():
+        for j_e in self.j_instance.getLines().toArray():
             l_line.append(Line(j_e))
         return l_line
 
@@ -261,7 +261,7 @@ class Network(Identifiable):
 
     def get_loads(self):
         l_load = []
-        for j_e in self.j_instance.getLoads().toList():
+        for j_e in self.j_instance.getLoads().toArray():
             l_load.append(Load(j_e))
         return l_load
 
@@ -273,7 +273,7 @@ class Network(Identifiable):
 
     def get_shunts(self):
         l_shuntcompensator = []
-        for j_e in self.j_instance.getShunts().toList():
+        for j_e in self.j_instance.getShunts().toArray():
             l_shuntcompensator.append(ShuntCompensator(j_e))
         return l_shuntcompensator
 
@@ -288,7 +288,7 @@ class Network(Identifiable):
 
     def get_static_var_compensators(self):
         l_staticvarcompensator = []
-        for j_e in self.j_instance.getStaticVarCompensators().toList():
+        for j_e in self.j_instance.getStaticVarCompensators().toArray():
             l_staticvarcompensator.append(StaticVarCompensator(j_e))
         return l_staticvarcompensator
 
@@ -300,7 +300,7 @@ class Network(Identifiable):
 
     def get_substations(self):
         l_substation = []
-        for j_e in self.j_instance.getSubstations().toList():
+        for j_e in self.j_instance.getSubstations().toArray():
             l_substation.append(Substation(j_e))
         return l_substation
 
@@ -312,7 +312,7 @@ class Network(Identifiable):
 
     def get_switches(self):
         l_switch = []
-        for j_e in self.j_instance.getSwitches().toList():
+        for j_e in self.j_instance.getSwitches().toArray():
             l_switch.append(Switch(j_e))
         return l_switch
 
@@ -324,7 +324,7 @@ class Network(Identifiable):
 
     def get_three_windings_transformers(self):
         l_threewindingstransformer = []
-        for j_e in self.j_instance.getThreeWindingsTransformers().toList():
+        for j_e in self.j_instance.getThreeWindingsTransformers().toArray():
             l_threewindingstransformer.append(ThreeWindingsTransformer(j_e))
         return l_threewindingstransformer
 
@@ -336,7 +336,7 @@ class Network(Identifiable):
 
     def get_two_windings_transformers(self):
         l_twowindingstransformer = []
-        for j_e in self.j_instance.getTwoWindingsTransformers().toList():
+        for j_e in self.j_instance.getTwoWindingsTransformers().toArray():
             l_twowindingstransformer.append(TwoWindingsTransformer(j_e))
         return l_twowindingstransformer
 
@@ -348,7 +348,7 @@ class Network(Identifiable):
 
     def get_voltage_levels(self):
         l_voltagelevel = []
-        for j_e in self.j_instance.getVoltageLevels().toList():
+        for j_e in self.j_instance.getVoltageLevels().toArray():
             l_voltagelevel.append(VoltageLevel(j_e))
         return l_voltagelevel
 
@@ -360,7 +360,7 @@ class Network(Identifiable):
 
     def get_vsc_converter_stations(self):
         l_vscconverterstation = []
-        for j_e in self.j_instance.getVscConverterStations().toList():
+        for j_e in self.j_instance.getVscConverterStations().toArray():
             l_vscconverterstation.append(VscConverterStation(j_e))
         return l_vscconverterstation
 
@@ -488,31 +488,31 @@ class Bus(Identifiable):
 
     def get_dangling_lines(self):
         l_danglingline = []
-        for j_e in self.j_instance.getDanglingLines().toList():
+        for j_e in self.j_instance.getDanglingLines().toArray():
             l_danglingline.append(DanglingLine(j_e))
         return l_danglingline
 
     def get_generators(self):
         l_generator = []
-        for j_e in self.j_instance.getGenerators().toList():
+        for j_e in self.j_instance.getGenerators().toArray():
             l_generator.append(Generator(j_e))
         return l_generator
 
     def get_lcc_converter_stations(self):
         l_lccconverterstation = []
-        for j_e in self.j_instance.getLccConverterStations().toList():
+        for j_e in self.j_instance.getLccConverterStations().toArray():
             l_lccconverterstation.append(LccConverterStation(j_e))
         return l_lccconverterstation
 
     def get_lines(self):
         l_line = []
-        for j_e in self.j_instance.getLines().toList():
+        for j_e in self.j_instance.getLines().toArray():
             l_line.append(Line(j_e))
         return l_line
 
     def get_loads(self):
         l_load = []
-        for j_e in self.j_instance.getLoads().toList():
+        for j_e in self.j_instance.getLoads().toArray():
             l_load.append(Load(j_e))
         return l_load
 
@@ -524,13 +524,13 @@ class Bus(Identifiable):
 
     def get_shunt_compensators(self):
         l_shuntcompensator = []
-        for j_e in self.j_instance.getShuntCompensators().toList():
+        for j_e in self.j_instance.getShuntCompensators().toArray():
             l_shuntcompensator.append(ShuntCompensator(j_e))
         return l_shuntcompensator
 
     def get_static_var_compensators(self):
         l_staticvarcompensator = []
-        for j_e in self.j_instance.getStaticVarCompensators().toList():
+        for j_e in self.j_instance.getStaticVarCompensators().toArray():
             l_staticvarcompensator.append(StaticVarCompensator(j_e))
         return l_staticvarcompensator
 
@@ -539,13 +539,13 @@ class Bus(Identifiable):
 
     def get_three_windings_transformers(self):
         l_threewindingtransformer = []
-        for j_e in self.j_instance.getThreeWindingsTransformers().toList():
+        for j_e in self.j_instance.getThreeWindingsTransformers().toArray():
             l_threewindingtransformer.append(ThreeWindingsTransformer(j_e))
         return l_threewindingtransformer
 
     def get_two_windings_transformers(self):
         l_twowindingtransformer = []
-        for j_e in self.j_instance.getTwoWindingsTransformers().toList():
+        for j_e in self.j_instance.getTwoWindingsTransformers().toArray():
             l_twowindingtransformer.append(TwoWindingsTransformer(j_e))
         return l_twowindingtransformer
 
@@ -557,7 +557,7 @@ class Bus(Identifiable):
 
     def get_vsc_converter_stations(self):
         l_vscconverterstation = []
-        for j_e in self.j_instance.getVscConverterStations().toList():
+        for j_e in self.j_instance.getVscConverterStations().toArray():
             l_vscconverterstation.append(VscConverterStation(j_e))
         return l_vscconverterstation
 
@@ -579,7 +579,7 @@ class Component:
 
     def get_buses(self):
         l_bus = []
-        for j_e in self.j_instance.getBuses().toList():
+        for j_e in self.j_instance.getBuses().toArray():
             l_bus.append(Bus(j_e))
         return l_bus
 
@@ -898,7 +898,7 @@ class VoltageLevel(Identifiable):
 
     def get_connectables(self):
         l_connectable = []
-        for j_e in self.j_instance.getConnectables().toList():
+        for j_e in self.j_instance.getConnectables().toArray():
             l_connectable.append(Connectable(j_e))
         return l_connectable
 
@@ -910,7 +910,7 @@ class VoltageLevel(Identifiable):
 
     def get_generators(self):
         l_generator = []
-        for j_e in self.j_instance.getGenerators().toList():
+        for j_e in self.j_instance.getGenerators().toArray():
             l_generator.append(Generator(j_e))
         return l_generator
 
@@ -919,13 +919,13 @@ class VoltageLevel(Identifiable):
 
     def get_loads(self):
         l_load = []
-        for j_e in self.j_instance.getLoads().toList():
+        for j_e in self.j_instance.getLoads().toArray():
             l_load.append(Load(j_e))
         return l_load
 
     def get_switches(self):
         l_switch = []
-        for j_e in self.j_instance.getSwitches().toList():
+        for j_e in self.j_instance.getSwitches().toArray():
             l_switch.append(Switch(j_e))
         return l_switch
 
@@ -940,7 +940,7 @@ class VoltageLevel(Identifiable):
 
     def get_shunt_compensators(self):
         l_shuntcompensator = []
-        for j_e in self.j_instance.getShuntCompensators().toList():
+        for j_e in self.j_instance.getShuntCompensators().toArray():
             l_shuntcompensator.append(ShuntCompensator(j_e))
         return l_shuntcompensator
 
@@ -949,7 +949,7 @@ class VoltageLevel(Identifiable):
 
     def get_dangling_lines(self):
         l_danglingline = []
-        for j_e in self.j_instance.getDanglingLines().toList():
+        for j_e in self.j_instance.getDanglingLines().toArray():
             l_danglingline.append(DanglingLine(j_e))
         return l_danglingline
 
@@ -958,7 +958,7 @@ class VoltageLevel(Identifiable):
 
     def get_static_var_compensators(self):
         l_staticvarcompensator = []
-        for j_e in self.j_instance.getStaticVarCompensators().toList():
+        for j_e in self.j_instance.getStaticVarCompensators().toArray():
             l_staticvarcompensator.append(StaticVarCompensator(j_e))
         return l_staticvarcompensator
 
@@ -967,7 +967,7 @@ class VoltageLevel(Identifiable):
 
     def get_vsc_converter_stations(self):
         l_vscconverterstation = []
-        for j_e in self.j_instance.getVscConverterStations().toList():
+        for j_e in self.j_instance.getVscConverterStations().toArray():
             l_vscconverterstation.append(VscConverterStation(j_e))
         return l_vscconverterstation
 
@@ -976,7 +976,7 @@ class VoltageLevel(Identifiable):
 
     def get_lcc_converter_stations(self):
         l_lccconverterstation = []
-        for j_e in self.j_instance.getLccConverterStations().toList():
+        for j_e in self.j_instance.getLccConverterStations().toArray():
             l_lccconverterstation.append(LccConverterStation(j_e))
         return l_lccconverterstation
 

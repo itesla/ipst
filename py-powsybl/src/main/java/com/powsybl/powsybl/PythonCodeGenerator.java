@@ -107,7 +107,7 @@ public final class PythonCodeGenerator {
                     String eleClazzName = getReturnElementClassName(methodName);
                     String eleListVar = "l_" + eleClazzName.toLowerCase();
                     codes.add(A2 + eleListVar + " = []");
-                    codes.add(A2 + "for j_e in self.j_instance." + methodName + "().toList():");
+                    codes.add(A2 + "for j_e in self.j_instance." + methodName + "().toArray():");
 
                     codes.add(A3 + eleListVar + ".append(" + eleClazzName + "(j_e))");
                     codes.add(A2_RETURN + eleListVar);
