@@ -38,7 +38,10 @@ def dump_lines_flow(network):
     print(len(network.get_lines()))
     for l in network.get_lines():
         print(l.get_id() + ";" + str(l.get_terminal_1().get_i()) + ";" + str(l.get_terminal_2().get_i()))
-
+        print(l.get_current_limits_1().get_permanent_limit())
+        print(str(l.check_permanent_limit_1()) + ";" + str(l.check_permanent_limit_2()))
+        print(str(l.check_permanent_limit_1(0.1)) + ";" + str(l.check_permanent_limit_2(0.1)))
+        print(str(l.is_overloaded()) + ";" + str(l.is_overloaded(0.1)))
 
 if __name__ == '__main__':
     port = 3338

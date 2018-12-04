@@ -426,20 +426,48 @@ class Injection(Connectable):
         return Terminal(self.j_instance.getTerminal())
 
 
+# Auto generated python wrapper for java class: com.powsybl.iidm.network.Branch
 class Branch(Connectable):
 
     def __init__(self, j_branch):
         Connectable.__init__(self, j_branch)
         self.j_instance = j_branch
 
-    def is_overloaded(self):
-        return self.j_instance.isOverloaded()
+    def check_permanent_limit_1(self, var0=None):
+        if var0 is None:
+            return self.j_instance.checkPermanentLimit1()
+        else:
+            return self.j_instance.checkPermanentLimit1(var0)
+
+    def check_permanent_limit_2(self, var0=None):
+        if var0 is None:
+            return self.j_instance.checkPermanentLimit2()
+        else:
+            return self.j_instance.checkPermanentLimit2(var0)
+
+    def get_current_limits_1(self):
+        return CurrentLimits(self.j_instance.getCurrentLimits1())
+
+    def get_current_limits_2(self):
+        return CurrentLimits(self.j_instance.getCurrentLimits2())
+
+    def get_overload_duration(self):
+        return self.j_instance.getOverloadDuration()
+
+    def get_terminal(self, var0):
+        return Terminal(self.j_instance.getTerminal(var0))
 
     def get_terminal_1(self):
         return Terminal(self.j_instance.getTerminal1())
 
     def get_terminal_2(self):
         return Terminal(self.j_instance.getTerminal2())
+
+    def is_overloaded(self, var0=None):
+        if var0 is None:
+            return self.j_instance.isOverloaded()
+        else:
+            return self.j_instance.isOverloaded(var0)
 
 
 # Auto generated python wrapper for java class: com.powsybl.iidm.network.Bus
@@ -843,17 +871,18 @@ class TwoWindingsTransformer(Branch):
         return Substation(self.j_instance.getSubstation())
 
 
+# Auto generated python wrapper for java class: com.powsybl.iidm.network.BusbarSection
 class BusbarSection(Injection):
 
-    def __init__(self, j_busbar_section):
-        Injection.__init__(self, j_busbar_section)
-        self.j_instance = j_busbar_section
-
-    def get_v(self):
-        return self.j_instance.getV()
+    def __init__(self, j_busbarsection):
+        Injection.__init__(self, j_busbarsection)
+        self.j_instance = j_busbarsection
 
     def get_angle(self):
         return self.j_instance.getAngle()
+
+    def get_v(self):
+        return self.j_instance.getV()
 
 
 # Auto generated python wrapper for java class: com.powsybl.iidm.network.VoltageLevel

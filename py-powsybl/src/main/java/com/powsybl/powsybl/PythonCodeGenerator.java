@@ -24,6 +24,7 @@ public final class PythonCodeGenerator {
 
     private static final Set<String> SIMPLE_TYPE = new HashSet<>(Arrays.asList("int", "boolean", "float", "double", "long", "class java.lang.String"));
     private static final Set<String> SKIP_METHODS_NAME = new HashSet<>(Arrays.asList("export", "merge", "visit", "remove"));
+    private static final Set<String> SKIP_PARA_TYPE = new HashSet<>(Arrays.asList("Country", "Side", "Class"));
     private static final String BLANK_LINE = "";
     private static final String A1_DEF = "    def ";
     private static final String A2_RETURN = "        return ";
@@ -38,6 +39,7 @@ public final class PythonCodeGenerator {
     public static void main(String... args) {
 //        Class clazz = Bus.class;
 //        Class clazz = Branch.class;
+//        Class clazz = BusbarSection.class;
 //        Class clazz = Component.class;
 //        Class clazz = Connectable.class;
 //        Class clazz = Container.class;
@@ -225,8 +227,8 @@ public final class PythonCodeGenerator {
         }
         List<Class> parameterClass = Arrays.asList(m.getParameterTypes());
         for (Class c : parameterClass) {
-            if (c.getSimpleName().equals("Class") || c.getSimpleName().equals("Country")) {
-                System.out.println(m + " skipped(parameters with class)");
+            if (SKIP_PARA_TYPE.contains(c.getSimpleName())) {
+                System.out.println(m + " skipped(parameters type)");
                 return true;
             }
         }
@@ -252,7 +254,7 @@ public final class PythonCodeGenerator {
         if (javaMethodName.equals("getbPerSection")) {
             return "get_b_per_section";
         }
-        String[] r = javaMethodName.split("(?=\\p{Upper})");
+        String[] r = javaMethodName.split("(?=\\p{Upper}|\\d)");
 //        Arrays.asList(r).stream().forEach(l -> System.out.println(l));
         String python = "";
         for (int i = 0; i < r.length - 1; i++) {
