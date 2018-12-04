@@ -59,7 +59,6 @@ def connect(nb_port):
         java_import(gateway.jvm, 'com.powsybl.loadflow.LoadFlowFactory')
         java_import(gateway.jvm, 'com.powsybl.iidm.import_.Importers')
         java_import(gateway.jvm, 'com.powsybl.iidm.export.Exporters')
-        java_import(gateway.jvm, 'com.powsybl.iidm.network.test.FictitiousSwitchFactory')
 
         global string_class
         string_class = gateway.jvm.java.lang.String
