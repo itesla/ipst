@@ -94,7 +94,7 @@ def connect(nb_port):
         return False
 
 
-def load(path):
+def load_network(path):
     return Network(importer.loadNetwork(path))
 
 
@@ -124,7 +124,7 @@ def save(network, str_path):
     exporter.export(export_format, network.get_java_network(), default_exporter_properties, dest_path)
 
 
-def shundown_pypowsybl():
+def shutdown_pypowsybl():
     gateway.shutdown()
 
 

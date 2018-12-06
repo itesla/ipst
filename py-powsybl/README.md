@@ -47,7 +47,7 @@ if __name__ == '__main__':
     port = 3338
     launch("config2", port)
     if connect(port):
-        n1 = load("/path/to/case-file/example.xiidm")
+        n1 = load_network("/path/to/case-file/example.xiidm")
         dump_lines_flow(n1)
 
         lf = run_load_flow(n1)
@@ -62,7 +62,7 @@ if __name__ == '__main__':
         # or save(n1, "/path/to/output/example.xiidm")
 
         # don't forget to shundown jvm
-        shundown_pypowsybl()
+        shutdown_pypowsybl()
     else:
         print("can not connect to jvm")
 
