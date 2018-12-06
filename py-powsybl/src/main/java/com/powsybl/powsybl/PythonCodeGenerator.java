@@ -109,7 +109,7 @@ public final class PythonCodeGenerator {
                     String eleClazzName = getReturnElementClassName(methodName);
                     String eleListVar = "l_" + eleClazzName.toLowerCase();
                     codes.add(A2 + eleListVar + " = []");
-                    codes.add(A2 + pythonForStatement(methodName, clazz));
+                    codes.add(A2 + foreachInIterable(methodName));
 
                     codes.add(A3 + eleListVar + ".append(" + eleClazzName + "(j_e))");
                     codes.add(A2_RETURN + eleListVar);
@@ -145,14 +145,8 @@ public final class PythonCodeGenerator {
         codes.stream().forEach(l -> System.out.println(l));
     }
 
-    // TODO init a real network in jvm and check instance type
-    static String pythonForStatement(String methodName, Class c) {
-        String collection = "Array";
-        // TODO Bus.getFoos()
-        if (c.getSimpleName().equals("Network") && MUTABLE_COLLECTIONS_METHOD.contains(methodName)) {
-            collection = "List";
-        }
-        return "for j_e in self.j_instance." + methodName + "().to" + collection + "():";
+    static String foreachInIterable(String methodName) {
+        return "for j_e in Lists.newArrayList(self.j_instance." + methodName + "()):";
     }
 
     static String argsDef(Method m) {
