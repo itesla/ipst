@@ -25,6 +25,8 @@ public final class PythonCodeGenerator {
     private static final Set<String> SIMPLE_TYPE = new HashSet<>(Arrays.asList("int", "boolean", "float", "double", "long", "class java.lang.String"));
     private static final Set<String> SKIP_METHODS_NAME = new HashSet<>(Arrays.asList("export", "merge", "visit", "remove"));
     private static final Set<String> SKIP_PARA_TYPE = new HashSet<>(Arrays.asList("Country", "Side", "Class"));
+    private static final Set<String> MUTABLE_COLLECTIONS_METHOD = new HashSet<>(Arrays.asList("getBranches", "getLines", "getHvdcConverterStations", "getVoltageLevels"));
+
     private static final String BLANK_LINE = "";
     private static final String A1_DEF = "    def ";
     private static final String A2_RETURN = "        return ";
@@ -51,7 +53,7 @@ public final class PythonCodeGenerator {
 //        Class clazz = HvdcConverterStation.class;
 //        Class clazz = HvdcLine.class;
 //        Class clazz = Load.class;
-//        Class clazz = Network.class;
+        Class clazz = Network.class;
 //        Class clazz = ReactiveLimits.class;
 //        Class clazz = ShuntCompensator.class;
 //        Class clazz = StaticVarCompensator.class;
@@ -60,7 +62,7 @@ public final class PythonCodeGenerator {
 //        Class clazz = ThreeWindingsTransformer.class;
 //        Class clazz = TwoWindingsTransformer.class;
 //        Class clazz = VoltageLevel.class;
-        Class clazz = VscConverterStation.class;
+//        Class clazz = VscConverterStation.class;
 
         List<Class> superInterfaces = Arrays.asList(clazz.getInterfaces());
         System.out.println("----super interfaces----");
@@ -107,7 +109,7 @@ public final class PythonCodeGenerator {
                     String eleClazzName = getReturnElementClassName(methodName);
                     String eleListVar = "l_" + eleClazzName.toLowerCase();
                     codes.add(A2 + eleListVar + " = []");
-                    codes.add(A2 + "for j_e in self.j_instance." + methodName + "().toArray():");
+                    codes.add(A2 + pythonForStatement(methodName, clazz));
 
                     codes.add(A3 + eleListVar + ".append(" + eleClazzName + "(j_e))");
                     codes.add(A2_RETURN + eleListVar);
@@ -141,6 +143,16 @@ public final class PythonCodeGenerator {
         });
         System.out.println("-------------------------");
         codes.stream().forEach(l -> System.out.println(l));
+    }
+
+    // TODO init a real network in jvm and check instance type
+    static String pythonForStatement(String methodName, Class c) {
+        String collection = "Array";
+        // TODO Bus.getFoos()
+        if (c.getSimpleName().equals("Network") && MUTABLE_COLLECTIONS_METHOD.contains(methodName)) {
+            collection = "List";
+        }
+        return "for j_e in self.j_instance." + methodName + "().to" + collection + "():";
     }
 
     static String argsDef(Method m) {

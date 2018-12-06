@@ -155,7 +155,7 @@ class Network(Identifiable):
 
     def get_branches(self):
         l_branch = []
-        for j_e in self.j_instance.getBranches().toArray():
+        for j_e in self.j_instance.getBranches().toList():
             l_branch.append(Branch(j_e))
         return l_branch
 
@@ -209,7 +209,7 @@ class Network(Identifiable):
 
     def get_hvdc_converter_stations(self):
         l_hvdcconverterstation = []
-        for j_e in self.j_instance.getHvdcConverterStations().toArray():
+        for j_e in self.j_instance.getHvdcConverterStations().toList():
             l_hvdcconverterstation.append(HvdcConverterStation(j_e))
         return l_hvdcconverterstation
 
@@ -248,7 +248,7 @@ class Network(Identifiable):
 
     def get_lines(self):
         l_line = []
-        for j_e in self.j_instance.getLines().toArray():
+        for j_e in self.j_instance.getLines().toList():
             l_line.append(Line(j_e))
         return l_line
 
@@ -347,7 +347,7 @@ class Network(Identifiable):
 
     def get_voltage_levels(self):
         l_voltagelevel = []
-        for j_e in self.j_instance.getVoltageLevels().toArray():
+        for j_e in self.j_instance.getVoltageLevels().toList():
             l_voltagelevel.append(VoltageLevel(j_e))
         return l_voltagelevel
 
