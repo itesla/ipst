@@ -4,6 +4,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 import subprocess
 import time
+from contextlib import contextmanager
 from enum import Enum
 from threading import Thread
 
@@ -38,9 +39,13 @@ def launch(nb_port):
     launch(None, nb_port)
 
 
+@contextmanager
 def launch(config_name, nb_port):
     t = Thread(target=launch_task, args=(config_name, nb_port))
     t.start()
+    connect(nb_port)
+    yield
+    shutdown_pypowsybl()
 
 
 def connect(nb_port):
@@ -130,7 +135,10 @@ def save(network, str_path):
 
 
 def shutdown_pypowsybl():
-    gateway.shutdown()
+    try:
+        gateway.shutdown()
+    except ConnectionRefusedError:
+        pass
 
 
 class Identifiable:
