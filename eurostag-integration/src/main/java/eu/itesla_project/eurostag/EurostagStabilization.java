@@ -166,7 +166,7 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
         GenericArchive archive = domain.getArchiveFactory().create(GenericArchive.class);
         try (FileSystem fileSystem = ShrinkWrapFileSystems.newFileSystem(archive)) {
             Path rootDir = fileSystem.getPath("/");
-            ddbClient.dumpDtaFile(rootDir, DTA_FILE_NAME, network, parallelIndexes.toMap(), EurostagUtil.VERSION, dictionary.toMap());
+            ddbClient.dumpDtaFile(rootDir, DTA_FILE_NAME, network, parallelIndexes.toMap(), EurostagUtil.VERSION, dictionary.toMap(), parameters);
         }
         archive.as(ZipExporter.class).exportTo(ddbOs);
         //put just the generators dict csv file (extracted from the ddb files) in the common files set, to be used by wp43 transient stability index

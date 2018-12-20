@@ -13,6 +13,7 @@
 /file-system-rules-db/target/
 /fpf-integration/target/
 /histodb-client/target/
+/histodb-server/target/
 /iidm-actions-contingencies-xml-client/target/
 /iidm-ddb/iidm-ddb-ear/target/
 /iidm-ddb/iidm-ddb-ejb-remote-client-wildfly/target/
@@ -23,6 +24,7 @@
 /iidm-ddb/iidm-ddb-psse-import-export/target/
 /iidm-ddb/iidm-ddb-web/target/
 /iidm-ddb/iidm-ddb-example-ejb-client/target/
+/iidm-ddb/target/
 /mcla-integration/target/
 /mmap-offline-db/target/
 /modelica-events-adder/target/
@@ -38,6 +40,7 @@
 /online-workflow/target/
 /pclfsim-integration/target/
 /sampling-integration/target/
+/security-analysis-ws/target/
 /target/
 /uncertainties-analysis/target/
 /wca-integration/target/

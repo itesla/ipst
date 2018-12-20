@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2017, RTE (http://www.rte-france.com)
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +9,7 @@ package eu.itesla_project.iidm.ddb.eurostag_imp_exp;
 
 import com.powsybl.iidm.network.Network;
 import com.powsybl.commons.Versionable;
+import com.powsybl.simulation.SimulationParameters;
 
 import java.nio.file.Path;
 import java.util.Map;
@@ -19,6 +21,6 @@ import java.util.Map;
 public interface DynamicDatabaseClient extends Versionable {
 
     void dumpDtaFile(Path workingDir, String fileName, Network network, Map<String, Character> parallelIndexes,
-                     String eurostagVersion, Map<String, String> iidm2eurostagId);
+                     String eurostagVersion, Map<String, String> iidm2eurostagId, SimulationParameters simulationParameters);
 
 }

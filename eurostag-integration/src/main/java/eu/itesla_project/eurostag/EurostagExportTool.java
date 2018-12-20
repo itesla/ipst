@@ -97,13 +97,15 @@ public class EurostagExportTool implements Tool, EurostagConstants {
         dictionary.dump(outputDir.resolve("dict.csv"));
         context.getOutputStream().println("exporting dta...");
 
+        SimulationParameters simulationParameters = SimulationParameters.load();
+
         // export .dta
-        ddbClient.dumpDtaFile(outputDir, "sim.dta", network, parallelIndexes.toMap(), EurostagUtil.VERSION, dictionary.toMap());
+        ddbClient.dumpDtaFile(outputDir, "sim.dta", network, parallelIndexes.toMap(), EurostagUtil.VERSION, dictionary.toMap(), simulationParameters);
 
         context.getOutputStream().println("exporting seq...");
 
         // export .seq
-        EurostagScenario scenario = new EurostagScenario(SimulationParameters.load(), eurostagConfig);
+        EurostagScenario scenario = new EurostagScenario(simulationParameters, eurostagConfig);
         try (BufferedWriter writer = Files.newBufferedWriter(outputDir.resolve(PRE_FAULT_SEQ_FILE_NAME), StandardCharsets.UTF_8)) {
             scenario.writePreFaultSeq(writer, PRE_FAULT_SAC_FILE_NAME);
         }

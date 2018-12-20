@@ -30,17 +30,17 @@
 #
 ###############################################################################
 /*
-                  Valeur modelisee :   P        Q        V
- Groupes PV avec domaine dynamique : optimise optimise optimise
- Groupes PQ avec domaine dynamique : optimise optimise optimise
- Groupes PV sans domaine dynamique : optimise libre    optimise
- Groupes PQ sans domaine dynamique : optimise fixe     libre	
-         SVC en reglage de tension : 0        libre    optimise
-                    SVC les autres : 0        fixe     libre
-Stations VSC en reglage de tension : fixe     libre    optimise
-          Stations VSC avec Q fixe : fixe     fixe     libre
+                  Valeur modelisee :   P        Q         V
+ Groupes PV avec domaine dynamique : optimise optimise  optimise
+ Groupes PQ avec domaine dynamique : optimise optimise  optimise
+ Groupes PV sans domaine dynamique : optimise optimise* optimise
+ Groupes PQ sans domaine dynamique : optimise fixe      libre	
+         SVC en reglage de tension : 0        optimise  optimise
+                    SVC les autres : 0        fixe      libre
+Stations VSC en reglage de tension : fixe     optimise  optimise
+          Stations VSC avec Q fixe : fixe     fixe      libre
 "libre" signifie absent de la fonction objectif
-"optimise" signifie present dans la fonction objectif
+"optimise" signifie present dans la fonction objectif. "optimise*" correspond à une pondération moindre dans l'objectif.
 "fixe" signifie que la valeur presente dans la situation est utilisse comme valeur fixe
 optimise -> le resultat est ecrit comme target
 Pour V optimise, la cible est le V du dernier load flow
@@ -64,7 +64,9 @@ close;
 # La commande ci-dessous permet ce creer des fichirs vides s'ils sont inexistants
 shell 'touch ampl_generators_domains.txt';
 shell 'touch ampl_network_coupledgen.txt';
-
+shell 'touch ampl_network_hvdc_angle_droop_active_power_control.txt';
+shell 'touch ampl_network_hvdc_operator_active_power_range.txt';
+shell 'touch ampl_network_static_var_compensators_standby_automaton.txt';
 
 ###############################################################################
 # Indicateur de crash :
@@ -162,7 +164,72 @@ for {(s,n) in SVCCC} {
     let svc_bmin[s,n] := svc_bmin[s,n] * 0.01 * substation_Vnomi[noeud_poste[n]]^2;
     let svc_bmax[s,n] := svc_bmax[s,n] * 0.01 * substation_Vnomi[noeud_poste[n]]^2;
   }
+  #b0 est en Siemens. Il faut per-unite
+  let svc_b0[s] := svc_b0[s] * 0.01 * substation_Vnomi[noeud_poste[n]]^2;
 }
+
+
+###############################################################################
+# Correction des 9999 en mode compatibilite
+###############################################################################
+
+if (specificCompatibility==1) then let {(s,n) in SVC : abs(svc_Q0[s,n]--99999.0)<1E-10} svc_Q0[s,n]:=0;
+
+
+#En mode veille, un CSPR peut etre marque reglant alors que la tension n'est pas suffisamment eloignee pour qu'il regule
+#On desactive le reglage. Il faut distinguer ce cas de la butee
+#Si on sait qu'il est en mode veille grace a l'extension, la gestion est plus aisee et on peut meme corriger l'erreur car on connait b0
+for {(s,n) in SVCCC  : svc_vregul[s,n]=="true" } {
+	if (specificCompatibility==1) then {
+		#Malheureusement, la partie b0 est considere comme un condensateur tandis que la partie bmin-bmax comme un groupe
+		#Donc on corrige les bmin et bmax pour retomber sur les limites d'hades, mais on s'assure de
+		#seulement resserer l'intervalle car Eurostag attend les "bons" bmin
+		let svc_bmin[s,n] := max(svc_bmin[s,n]/noeud_V0[n]^2,svc_bmin[s,n]) + svc_b0[s];
+		let svc_bmax[s,n] := min(svc_bmax[s,n]/noeud_V0[n]^2,svc_bmax[s,n]) + svc_b0[s];
+	}
+		
+	if (  svc_standby[s]<>"not initialized") then {
+		#Si le CSPR n'est pas en butee
+		if (abs(svc_Q0[s,n]--100*svc_bmin[s,n]*noeud_V0[n]^2)>1 and abs(svc_Q0[s,n]--100*svc_bmax[s,n]*noeud_V0[n]^2)>1) then {
+			if ( svc_standby[s]=="false" ) then {
+				if abs(noeud_V0[n]-svc_targetV[s,n])>0.002 then {
+					printf "CSPR %i %i %s pas en veille dont le couple V,Q est incomprehensible => regulation de tension desactivee\n", s, n, svc_description[s, n];
+					printf " reactif produit %f , borne sup %f, borne inf %f\n", svc_Q0[s,n], -100*svc_bmin[s,n]*noeud_V0[n]^2, -100*svc_bmax[s,n]*noeud_V0[n]^2;
+					printf " bmin %f , bmax %f , b0 %f \n", svc_bmin[s,n], svc_bmax[s,n], svc_b0[s];
+					let svc_vregul[s,n]:="false"
+				}
+			}
+			else {
+				if ( abs(noeud_V0[n]-svc_low_targetV[s])<0.002 ) then {
+					let svc_targetV[s,n] := svc_low_targetV[s];
+				} else {
+					if ( abs(noeud_V0[n]-svc_high_targetV[s])<0.002 ) then {
+						let svc_targetV[s,n] := svc_high_targetV[s];
+					}
+					else {
+						if ( noeud_V0[n]<svc_lowVoltageThreshold[s] or noeud_V0[n]>svc_highVoltageThreshold[s]) then {
+							printf "CSPR %i %i %s en veille dont le couple V,Q est incomprehensible => regulation de tension desactivee\n", s, n, svc_description[s, n];
+							let svc_vregul[s,n]:="false";
+						}
+					}
+				}
+			}
+		}
+	}
+	else {
+		if (abs(noeud_V0[n]-svc_targetV[s,n])>0.002 and abs(svc_Q0[s,n]--100*svc_bmin[s,n]*noeud_V0[n]^2)>1 and abs(svc_Q0[s,n]--100*svc_bmax[s,n]*noeud_V0[n]^2)>1) then {
+			if (specificCompatibility==1) then {
+				printf "CSPR %i %i %s probablement en mode veille ou q0 non modelise=> regulation de tension desactivee\n", s, n, svc_description[s, n];
+                                #printf " reactif produit %f , borne sup %f, borne inf %f\n", svc_Q0[s,n], -100*svc_bmin[s,n]*noeud_V0[n]^2, -100*svc_bmax[s,n]*noeud_V0[n]^2;
+                                #printf " bmin %f , bmax %f , b0 %f \n", svc_bmin[s,n], svc_bmax[s,n], svc_b0[s];
+				let svc_vregul[s,n]:="false";
+			}
+		}
+	}
+}
+
+if (specificCompatibility==1) then let {(s,n) in VSCCONV : abs(vscconv_P0[s,n]-999999.0)<1E-10 } vscconv_P0[s,n]:=0;
+
 
 
 
@@ -212,6 +279,19 @@ for {(g,n,gid) in UNIT_DOMAIN} {
 let {n in NOEUDCC} Ph[n] := noeud_angl0[n];
 fix Ph[noeud_phase_nulle]; # On ne le fixe pas a zero mais a sa valeur initiale
 let {n in NOEUDCC} V[n]  := noeud_V0[n];
+
+#Cas des quadripoles ouverts a une extremite
+let {(qq,m,n) in QUADCC : m==-1 or n==-1} Phouv[qq,m,n] := if n==-1 and m<>-1 then noeud_angl0[m] else if n<>-1 and m==-1 then noeud_angl0[n] else 0; #Initialisation approximative
+let {(qq,m,n) in QUADCC : m==-1 or n==-1} Vouv[qq,m,n] :=
+        if n==-1 and m<>-1 then
+                (noeud_V0[m] * quad_admi[qq,m,n] / (  quad_Ror[qq,m,n]* sqrt((quad_admi[qq,m,n]*sin(quad_angper[qq,m,n])+quad_Gor[qq,m,n])^2+(quad_admi[qq,m,n]*cos(quad_angper[qq,m,n])-quad_Bor[qq,m,n])^2)))
+        else if m==-1 and n<>-1 then
+                (noeud_V0[n] * quad_admi[qq,m,n] / (1/quad_Ror[qq,m,n]* sqrt((quad_admi[qq,m,n]*sin(quad_angper[qq,m,n])+quad_Gex[qq,m,n])^2+(quad_admi[qq,m,n]*cos(quad_angper[qq,m,n])-quad_Bex[qq,m,n])^2)))
+        else 0
+        ; #Initialisation normalement exacte (non testee). Initialiser par noeud_V0[m/n] est vraisemblablement suffisant
+
+
+
 let {(g,n) in UNITCC} unit_P[g,n] := -unit_P0[g,n]; # On initialise sur la valeur issue d'hades, mais la 
 let {(g,n) in UNITCC} unit_Q[g,n] := -unit_Q0[g,n]; # convention de signe est inversee
 let {(sc,n) in VSCCONV} vscconv_Q[sc,n] := vscconv_Q0[sc,n]; # Homogene a une consommation
@@ -238,8 +318,9 @@ let {(sc,n) in VSCCONV} vscconv_Q[sc,n] := vscconv_Q0[sc,n]; # Homogene a une co
 # Groupes PQ sans domaine dynamique : optimise fixe     libre	
 fix {(g,n) in UNITCC diff (UNITCC_PV union UNITCC_PQV) } unit_Q[g,n] := -unit_Q0[g,n];
 
+# Change pour une prise en compte explicite de la consigne
 # Fonctionnement des stations de conversion HVDC mode VSC : injection active fixee
-fix {(sc,n) in VSCCONV} vscconv_P[sc,n] := vscconv_P0[sc,n];
+# fix {(sc,n) in VSCCONV} vscconv_P[sc,n] := vscconv_P0[sc,n];
 
 # Fonctionnement des stations de conversion HVDC mode VSC sans regulation de tension : injection reactive fixee
 fix {(sc,n) in VSCCONV : vscconv_vregul[sc,n]!="true"} vscconv_Q[sc,n] := vscconv_Q0[sc,n];
