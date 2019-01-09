@@ -135,6 +135,10 @@ public final class DtaParser {
             "equipment.name,seq.params"
         });
 
+        componentsVariablesNames.put("A56", new String[]{
+            "BRANCH_ID,NO_BEATS,DELAY,INITIAL_VOLTAGE,BASE_VOLTAGE,TIME_CONSTANT,COMMENTS"
+        });
+
         componentsVariablesNames.put("M21", new String[]{
             "machine.type, type.fortescue, XMACOUP, fnum1, fnum2, falpha",
             "machine.name,connection.node.name,type.power.assigned,PP,PQ,PN,RIFO,RIXFO,R0FO,R0XFO"
@@ -259,6 +263,10 @@ public final class DtaParser {
             "()",
             "(A2,1X,A8,1X,A3,1X,A8,1X,A8,1X,A8)",
             "(18X,A8,1X,A52)"
+        });
+
+        componentsDescriptors.put("A56", new String[]{
+            "(A19,1X,F8,1X,F8,1X,F8,1X,F8,1X,F8,2X,A2)",
         });
 
         componentsDescriptors.put("M21", new String[]{
@@ -511,6 +519,7 @@ public final class DtaParser {
             case "A12":
             case "A14":
             case "A17":
+            case "A56":
                 int acountl = 1;
                 String[] recordsFormattinga = componentsDescriptors.get(zone.typeName);
                 for (String string : recordsFormattinga) {
