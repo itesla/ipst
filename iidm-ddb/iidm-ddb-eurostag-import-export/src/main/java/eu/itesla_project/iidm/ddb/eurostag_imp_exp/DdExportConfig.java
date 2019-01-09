@@ -9,6 +9,8 @@ package eu.itesla_project.iidm.ddb.eurostag_imp_exp;
 import com.powsybl.commons.config.ModuleConfig;
 import com.powsybl.commons.config.PlatformConfig;
 
+import java.nio.file.Path;
+
 /**
  *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
@@ -38,11 +40,16 @@ public class DdExportConfig {
     private static final double DEFAULT_AUTOMATON_A17_MINIMUM_PHASE_DIFFERENCE_THRESHOLD = -240.0;
     private static final double DEFAULT_AUTOMATON_A17_MAXIMUM_PHASE_DIFFERENCE_THRESHOLD = 240.0;
     private static final double DEFAULT_AUTOMATON_A17_OBSERVATION_DURATION = -1;
+    private static final boolean DEFAULT_AUTOMATON_A56 = false;
+    private static final Path DEFAULT_AUTOMATON_A56_DETAILS_FILE = null;
+
+
 
     private boolean automatonA11;
     private boolean automatonA12;
     private boolean automatonA14;
     private boolean automatonA17;
+    private boolean automatonA56;
     private boolean importExportRST;
     private boolean importExportACMC;
     private boolean LVLoadModeling;
@@ -60,12 +67,14 @@ public class DdExportConfig {
     private double automatonA17MinimumPhaseDifferenceThreshold;
     private double automatonA17MaximumPhaseDifferenceThreshold;
     private double automatonA17ObservationDuration;
+    private Path automatonA56DetailsFile;
 
     public static DdExportConfig load(PlatformConfig platformConfig) {
         boolean automatonA11 = DEFAULT_AUTOMATON_A11;
         boolean automatonA12 = DEFAULT_AUTOMATON_A12;
         boolean automatonA14 = DEFAULT_AUTOMATON_A14;
         boolean automatonA17 = DEFAULT_AUTOMATON_A17;
+        boolean automatonA56 = DEFAULT_AUTOMATON_A56;
         boolean importExportRST = DEFAULT_RST;
         boolean importExportACMC = DEFAULT_ACMC;
         boolean lvLoadModeling = DEFAULT_LV_LOAD_MODELING;
@@ -83,6 +92,7 @@ public class DdExportConfig {
         double automatonA17MinimumPhaseDifferenceThreshold = DEFAULT_AUTOMATON_A17_MINIMUM_PHASE_DIFFERENCE_THRESHOLD;
         double automatonA17MaximumPhaseDifferenceThreshold = DEFAULT_AUTOMATON_A17_MAXIMUM_PHASE_DIFFERENCE_THRESHOLD;
         double automatonA17ObservationDuration = DEFAULT_AUTOMATON_A17_OBSERVATION_DURATION;
+        Path automatonA56DetailsFile = DEFAULT_AUTOMATON_A56_DETAILS_FILE;
 
 
         if (platformConfig.moduleExists(MODULE_NAME)) {
@@ -91,10 +101,12 @@ public class DdExportConfig {
             automatonA12 = config.getBooleanProperty("automatonA12", DEFAULT_AUTOMATON_A12);
             automatonA14 = config.getBooleanProperty("automatonA14", DEFAULT_AUTOMATON_A14);
             automatonA17 = config.getBooleanProperty("automatonA17", DEFAULT_AUTOMATON_A17);
+            automatonA56 = config.getBooleanProperty("automatonA56", DEFAULT_AUTOMATON_A56);
             automatonA17AngularReferenceGenerator = config.getStringProperty("automatonA17AngularReferenceGenerator", DEFAULT_AUTOMATON_A17_REFERENCE_GENERATOR);
             automatonA17MinimumPhaseDifferenceThreshold = config.getDoubleProperty("automatonA17MinimumPhaseDifferenceThreshold", DEFAULT_AUTOMATON_A17_MINIMUM_PHASE_DIFFERENCE_THRESHOLD);
             automatonA17MaximumPhaseDifferenceThreshold = config.getDoubleProperty("automatonA17MaximumPhaseDifferenceThreshold", DEFAULT_AUTOMATON_A17_MAXIMUM_PHASE_DIFFERENCE_THRESHOLD);
             automatonA17ObservationDuration = config.getDoubleProperty("automatonA17ObservationDuration", DEFAULT_AUTOMATON_A17_OBSERVATION_DURATION);
+            automatonA56DetailsFile = automatonA56 ? config.getPathProperty("automatonA56DetailsFile") : config.getPathProperty("automatonA56DetailsFile", null);
             importExportRST = config.getBooleanProperty("importExportRST", DEFAULT_RST);
             importExportACMC = config.getBooleanProperty("importExportACMC", DEFAULT_ACMC);
             lvLoadModeling = config.getBooleanProperty("LVLoadModeling", DEFAULT_LV_LOAD_MODELING);
@@ -115,6 +127,7 @@ public class DdExportConfig {
         }
 
         return new DdExportConfig(automatonA11, automatonA12, automatonA14, automatonA17, automatonA17AngularReferenceGenerator, automatonA17MinimumPhaseDifferenceThreshold, automatonA17MaximumPhaseDifferenceThreshold, automatonA17ObservationDuration,
+                automatonA56, automatonA56DetailsFile,
                 importExportRST, importExportACMC, lvLoadModeling, rstRegulInjector, rstRegulGenerator, rstRegulGeneratorDelete,
                                   acmcRegul, rstPilotGenerators, loadPatternAlpha, loadPatternBeta, gensPQfilter, exportMainCCOnly, noSwitch);
     }
@@ -125,11 +138,13 @@ public class DdExportConfig {
 
     public DdExportConfig() {
         this(DEFAULT_AUTOMATON_A11, DEFAULT_AUTOMATON_A12, DEFAULT_AUTOMATON_A14, DEFAULT_AUTOMATON_A17, DEFAULT_AUTOMATON_A17_REFERENCE_GENERATOR, DEFAULT_AUTOMATON_A17_MINIMUM_PHASE_DIFFERENCE_THRESHOLD, DEFAULT_AUTOMATON_A17_MAXIMUM_PHASE_DIFFERENCE_THRESHOLD, DEFAULT_AUTOMATON_A17_OBSERVATION_DURATION,
+                DEFAULT_AUTOMATON_A56, DEFAULT_AUTOMATON_A56_DETAILS_FILE,
                 DEFAULT_RST, DEFAULT_ACMC, DEFAULT_LV_LOAD_MODELING, DEFAULT_RST_REGUL_INJECTOR, DEFAULT_RST_REGUL_GENERATOR, DEFAULT_RST_REGUL_GENERATOR_DELETE,
                 DEFAULT_ACMC_REGUL, DEFAULT_RST_PILOT_GENERATORS, DEFAULT_LOAD_PATTERN_ALPHA, DEFAULT_LOAD_PATTERN_BETA, DEFAULT_GENPQFILTER, DEFAULT_EXPORT_MAIN_CC_ONLY, DEFAULT_NOSWITCH);
     }
 
     public DdExportConfig(boolean automatonA11, boolean automatonA12, boolean automatonA14, boolean automatonA17, String automatonA17AngularReferenceGenerator, double automatonA17MinimumPhaseDifferenceThreshold, double automatonA17MaximumPhaseDifferenceThreshold, double automatonA17ObservationDuration,
+                          boolean automatonA56, Path automatonA56DetailsFile,
                           boolean importExportRST, boolean importExportACMC, boolean lvLoadModeling, String rstRegulInjector,
                           String rstRegulGenerator, String rstRegulGeneratorDelete, String acmcRegul,
                           String rstPilotGenerators, float loadPatternAlpha, float loadPatternBeta, boolean gensPQfilter, boolean exportMainCCOnly, boolean noSwitch) {
@@ -137,6 +152,7 @@ public class DdExportConfig {
         this.automatonA12 = automatonA12;
         this.automatonA14 = automatonA14;
         this.automatonA17 = automatonA17;
+        this.automatonA56 = automatonA56;
         this.importExportRST = importExportRST;
         this.importExportACMC = importExportACMC;
         this.LVLoadModeling = lvLoadModeling;
@@ -154,6 +170,7 @@ public class DdExportConfig {
         this.automatonA17MinimumPhaseDifferenceThreshold = automatonA17MinimumPhaseDifferenceThreshold;
         this.automatonA17MaximumPhaseDifferenceThreshold = automatonA17MaximumPhaseDifferenceThreshold;
         this.automatonA17ObservationDuration = automatonA17ObservationDuration;
+        this.automatonA56DetailsFile = automatonA56DetailsFile;
     }
 
     public boolean getAutomatonA11() {
@@ -170,6 +187,10 @@ public class DdExportConfig {
 
     public boolean getAutomatonA17() {
         return automatonA17;
+    }
+
+    public boolean getAutomatonA56() {
+        return automatonA56;
     }
 
     public boolean getExportRST() {
@@ -238,6 +259,10 @@ public class DdExportConfig {
 
     public double getAutomatonA17ObservationDuration() {
         return automatonA17ObservationDuration;
+    }
+
+    public Path getDefaultAutomatonA56DetailsFile() {
+        return automatonA56DetailsFile;
     }
 
     public void setAutomatonA11(Boolean automatonA11) {
