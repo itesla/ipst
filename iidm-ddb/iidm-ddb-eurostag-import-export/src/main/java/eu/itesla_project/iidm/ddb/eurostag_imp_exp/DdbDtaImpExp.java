@@ -1898,14 +1898,19 @@ public class DdbDtaImpExp implements DynamicDatabaseClient {
 
         DdbDtaImpExp.dumpDataAutomatonA17(network, dtaOutStream, iidm2eurostagId, simulationParameters, configExport);
 
-        DdbDtaImpExp.dumpDataAutomatonA56(network, dtaOutStream, iidm2eurostagId, simulationParameters, configExport);
+        DdbDtaImpExp.dumpDataAutomatonA56(network, dtaOutStream, iidm2eurostagId, configExport);
     }
 
 
-    private static void dumpDataAutomatonA56(Network network, PrintStream dtaOutStream, Map<String, String> iidm2eurostagId, SimulationParameters simulationParameters, DdExportConfig configExport) {
+    public static void dumpDataAutomatonA56(Network network, PrintStream dtaOutStream, Map<String, String> iidm2eurostagId, DdExportConfig configExport) {
         if (configExport.getAutomatonA56()) {
             try {
-                AutomatonA56.writeToDta(network, dtaOutStream, iidm2eurostagId, configExport.getDefaultAutomatonA56DetailsFile());
+                Path a56DetailsXml = configExport.getDefaultAutomatonA56DetailsFile();
+                if (Files.exists(a56DetailsXml)) {
+                    AutomatonA56.writeToDta(network, dtaOutStream, iidm2eurostagId, a56DetailsXml);
+                } else {
+                    log.error("skipping A56 section: automaton details file {} does not exist", a56DetailsXml);
+                }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
             }
