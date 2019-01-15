@@ -215,7 +215,7 @@ public class DymolaImpactAnalysis implements ImpactAnalysis {
     private Command createCommand(SimulationState state, Set<String> contingencyIds, Path workingDir, List<Contingency> contingencies) throws IOException {
         // dump state info for debugging
         if (config.isDebug()) {
-            Networks.dumpStateId(workingDir, state.getName());
+            Networks.dumpVariantId(workingDir, state.getName());
         }
 
         Command cmd;

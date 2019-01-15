@@ -463,7 +463,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
     private Command before(SimulationState state, Set<String> contingencyIds, Path workingDir, List<Contingency> contingencies) throws IOException {
         // dump state info for debugging
         if (config.isDebug()) {
-            Networks.dumpStateId(workingDir, state.getName());
+            Networks.dumpVariantId(workingDir, state.getName());
         }
 
         try (OutputStream os = Files.newOutputStream(workingDir.resolve(PRE_FAULT_SAC_GZ_FILE_NAME))) {

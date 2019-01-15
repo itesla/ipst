@@ -247,7 +247,7 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
     private EurostagContext before(Path workingDir) throws IOException {
         if (config.isDebug()) {
             // dump state info for debugging
-            Networks.dumpStateId(workingDir, network);
+            Networks.dumpVariantId(workingDir, network);
 
             Exporter exporter = Exporters.getExporter("XIIDM");
             if (exporter != null) {
