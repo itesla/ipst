@@ -6,8 +6,7 @@
  */
 package eu.itesla_project.histodb.client.impl;
 
-import com.powsybl.commons.io.CacheManager;
-import com.powsybl.commons.config.PlatformConfig;
+import eu.itesla_project.modules.commons.io.CacheManager;
 import eu.itesla_project.modules.histo.cache.HistoDbCache;
 
 import java.io.IOException;
@@ -50,7 +49,7 @@ public class HistoDbCacheImpl implements HistoDbCache {
     }
 
     private CacheManager.CacheEntry getCacheEntry(String url) throws IOException {
-        return PlatformConfig.defaultCacheManager().newCacheEntry(cacheName)
+        return CacheManager.defaultCacheManager().newCacheEntry(cacheName)
                 .withKey(url)
                 .build();
     }
@@ -83,7 +82,7 @@ public class HistoDbCacheImpl implements HistoDbCache {
 
     @Override
     public List<String> listUrls() throws IOException {
-        Path dir = PlatformConfig.defaultConfig().getCacheDir().resolve(cacheName);
+        Path dir = CacheManager.getCacheDir().resolve(cacheName);
         if (Files.exists(dir)) {
             try (Stream<Path> stream = Files.list(dir)) {
                 return stream

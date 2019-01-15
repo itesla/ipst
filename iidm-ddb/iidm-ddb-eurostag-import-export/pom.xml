@@ -77,13 +77,17 @@
          <version>${project.version}</version>
        </dependency>
 
-      <dependency>
+       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>EU2Mod_MB</artifactId>
         <version>${project.version}</version>
          <type>jar</type>
-      </dependency>
-
+       </dependency>
+       <dependency>
+           <groupId>${project.groupId}</groupId>
+           <artifactId>modules</artifactId>
+           <version>${project.version}</version>
+       </dependency>
        <dependency>
            <groupId>net.sf.supercsv</groupId>
            <artifactId>super-csv</artifactId>
