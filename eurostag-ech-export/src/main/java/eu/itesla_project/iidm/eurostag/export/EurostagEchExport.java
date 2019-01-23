@@ -726,16 +726,13 @@ public class EurostagEchExport implements EurostagEchExporter {
         boolean isPmode = EchUtil.isPMode(vscConv, hline);
         Esg8charName znamsvc = new Esg8charName(dictionary.getEsgId(vscConv.getId())); // converter station ID
         Esg8charName receivingNodeDcName = new Esg8charName("GROUND"); // receiving DC node name; always GROUND
-        Bus vscConvBus = EchUtil.getBus(vscConv.getTerminal(), config);
-        if (vscConvBus == null) {
-            throw new RuntimeException("VSCConverter " + vscConv.getId() + " not connected to a bus and not connectable");
-        }
+        ConnectionBus vscConvBus = ConnectionBus.fromTerminal(vscConv.getTerminal(), config, fakeNodes);
         Esg8charName acNode = dictionary.iidmIdExists(vscConvBus.getId()) ? new Esg8charName(dictionary.getEsgId(vscConvBus.getId()))
                 : null;
         if (acNode == null) {
             throw new RuntimeException("VSCConverter " + vscConv.getId() + " : acNode mapping not found");
         }
-        EsgACDCVscConverter.ConverterState xstate = EsgACDCVscConverter.ConverterState.ON; // converter state ' ' ON; 'S' OFF
+        EsgACDCVscConverter.ConverterState xstate = EsgACDCVscConverter.ConverterState.ON; // converter state ' ' ON; 'S' OFF - always ON, even when the bus is disconnected?
         EsgACDCVscConverter.DCControlMode xregl = isPmode ? EsgACDCVscConverter.DCControlMode.AC_ACTIVE_POWER : EsgACDCVscConverter.DCControlMode.DC_VOLTAGE; // DC control mode 'P' AC_ACTIVE_POWER; 'V' DC_VOLTAGE
         //AC control mode assumed to be "AC reactive power"(Q)
         EsgACDCVscConverter.ACControlMode xoper = EsgACDCVscConverter.ACControlMode.AC_REACTIVE_POWER; // AC control mode 'V' AC_VOLTAGE; 'Q' AC_REACTIVE_POWER; 'A' AC_POWER_FACTOR
