@@ -45,7 +45,7 @@
         <module>network-merge</module>
         <module>offline-mpi</module>
         <module>offline-server</module>
-        <!--module>offline-workflow</module-->
+        <module>offline-workflow</module>
         <module>online-mpi</module>
         <module>online-rest-api</module>
         <module>online-server</module>
