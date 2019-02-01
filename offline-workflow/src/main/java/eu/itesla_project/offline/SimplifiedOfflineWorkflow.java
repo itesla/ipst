@@ -9,7 +9,7 @@ package eu.itesla_project.offline;
 import com.google.common.collect.ImmutableMap;
 import com.powsybl.computation.ComputationManager;
 import com.powsybl.iidm.network.Network;
-import com.powsybl.iidm.network.StateManagerConstants;
+import com.powsybl.iidm.network.VariantManagerConstants;
 import com.powsybl.loadflow.LoadFlow;
 import com.powsybl.loadflow.LoadFlowFactory;
 import com.powsybl.loadflow.LoadFlowParameters;
@@ -92,9 +92,9 @@ public class SimplifiedOfflineWorkflow extends AbstractOfflineWorkflow {
                     }
 
                     // allow multi threads access of network states
-                    context.network.getStateManager().allowStateMultiThreadAccess(true);
-                    context.network.getStateManager().cloneState(StateManagerConstants.INITIAL_STATE_ID, getCaseId(caseNum));
-                    context.network.getStateManager().setWorkingState(getCaseId(caseNum));
+                    context.network.getVariantManager().allowVariantMultiThreadAccess(true);
+                    context.network.getVariantManager().cloneVariant(VariantManagerConstants.INITIAL_VARIANT_ID, getCaseId(caseNum));
+                    context.network.getVariantManager().setWorkingVariant(getCaseId(caseNum));
 
                 }, executorService)
                 .thenComposeAsync(aVoid -> {
@@ -102,7 +102,7 @@ public class SimplifiedOfflineWorkflow extends AbstractOfflineWorkflow {
                     return context.loadFlow.run(getCaseId(caseNum), loadFlowParameters);
                 }, executorService)
                 .thenAcceptAsync(loadFlowResult -> {
-                    context.network.getStateManager().setWorkingState(getCaseId(caseNum));
+                    context.network.getVariantManager().setWorkingVariant(getCaseId(caseNum));
 
                     LOGGER.debug("Workflow {}, case {}: loadflow terminated (ok={})",
                             id, caseNum, loadFlowResult.isOk());

@@ -197,7 +197,7 @@ public class OfflineWorkflowImpl extends AbstractOfflineWorkflow {
         LOGGER.debug("Workflow {}, sample {}: load flow started", id, sample.getId());
 
         try {
-            LoadFlowResult result = context.getLoadflow().run(context.getNetwork().getStateManager().getWorkingStateId(), context.getLoadFlowParameters()).join();
+            LoadFlowResult result = context.getLoadflow().run(context.getNetwork().getVariantManager().getWorkingVariantId(), context.getLoadFlowParameters()).join();
 
             LOGGER.debug("Workflow {}, sample {}: load flow terminated (ok={})", id, sample.getId(), result.isOk());
 
@@ -407,8 +407,8 @@ public class OfflineWorkflowImpl extends AbstractOfflineWorkflow {
         // to use the multi-states feature of IIDM network model. Each of the
         // sample is mapped to a state created by cloning the initial state of
         // the network
-        network.getStateManager().allowStateMultiThreadAccess(true);
-        network.getStateManager().setWorkingState(StateManagerConstants.INITIAL_STATE_ID);
+        network.getVariantManager().allowVariantMultiThreadAccess(true);
+        network.getVariantManager().setWorkingVariant(VariantManagerConstants.INITIAL_VARIANT_ID);
 
         Networks.printBalanceSummary("snapshot", network, LOGGER);
 
@@ -542,10 +542,10 @@ public class OfflineWorkflowImpl extends AbstractOfflineWorkflow {
                                 String stateId = "Sample-" + sample.getId();
 
                                 // create a new network state
-                                context.getNetwork().getStateManager().cloneState(StateManagerConstants.INITIAL_STATE_ID, stateId);
+                                context.getNetwork().getVariantManager().cloneVariant(VariantManagerConstants.INITIAL_VARIANT_ID, stateId);
                                 try {
                                     // set current thread working state
-                                    context.getNetwork().getStateManager().setWorkingState(stateId);
+                                    context.getNetwork().getVariantManager().setWorkingVariant(stateId);
 
                                     // apply the sample to the network
                                     sample.apply(context.getNetwork());
@@ -573,7 +573,7 @@ public class OfflineWorkflowImpl extends AbstractOfflineWorkflow {
                                         LOGGER.error(e.toString(), e);
                                     }
                                 } finally {
-                                    context.getNetwork().getStateManager().removeState(stateId);
+                                    context.getNetwork().getVariantManager().removeVariant(stateId);
                                 }
                             }
                         }

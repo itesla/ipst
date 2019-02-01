@@ -59,7 +59,7 @@ public class RulesFacadeMock implements OnlineRulesFacade {
             StateStatus ruleResults = (rulesResults == StateStatus.SAFE) ? StateStatus.SAFE : StateStatus.UNSAFE;
             indexesResults.put(indexType, ruleResults);
         }
-        return new RulesFacadeResults(network.getStateManager().getWorkingStateId(), contingency.getId(), rulesResults, indexesResults,
+        return new RulesFacadeResults(network.getVariantManager().getWorkingVariantId(), contingency.getId(), rulesResults, indexesResults,
                 new ArrayList<>(), true);
     }
 

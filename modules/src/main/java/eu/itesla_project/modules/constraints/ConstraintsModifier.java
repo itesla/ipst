@@ -47,12 +47,12 @@ public class ConstraintsModifier {
     }
 
     public void looseConstraints(String stateId, float margin, boolean applyToBaseCase) {
-        if (network.getStateManager().getStateIds().contains(stateId)) {
-            String workingStateId = network.getStateManager().getWorkingStateId();
-            network.getStateManager().setWorkingState(stateId);
+        if (network.getVariantManager().getVariantIds().contains(stateId)) {
+            String workingStateId = network.getVariantManager().getWorkingVariantId();
+            network.getVariantManager().setWorkingVariant(stateId);
             List<LimitViolation> violations = Security.checkLimits(network);
             looseConstraints(stateId, violations, margin, applyToBaseCase);
-            network.getStateManager().setWorkingState(workingStateId);
+            network.getVariantManager().setWorkingVariant(workingStateId);
         } else {
             throw new RuntimeException("No " + stateId + " in network " + network.getId() + ": cannot loose constraints");
         }
@@ -69,12 +69,12 @@ public class ConstraintsModifier {
     public void looseConstraints(String stateId, List<LimitViolation> violations, float margin, boolean applyToBaseCase) {
         Objects.requireNonNull(stateId, "state id is null");
         Objects.requireNonNull(violations, "violations is null");
-        if (network.getStateManager().getStateIds().contains(stateId)) {
-            String workingStateId = network.getStateManager().getWorkingStateId();
-            network.getStateManager().setWorkingState(stateId);
+        if (network.getVariantManager().getVariantIds().contains(stateId)) {
+            String workingStateId = network.getVariantManager().getWorkingVariantId();
+            network.getVariantManager().setWorkingVariant(stateId);
             LOGGER.info("Loosening constraints of network {}, state {}, using margin {}",
                     network.getId(),
-                    network.getStateManager().getWorkingStateId(),
+                    network.getVariantManager().getWorkingVariantId(),
                     margin);
             LimitViolationFilter violationsFilter = new LimitViolationFilter(config.getViolationsTypes(), 0);
             List<LimitViolation> filteredViolations = violationsFilter.apply(violations, network);
@@ -82,7 +82,7 @@ public class ConstraintsModifier {
             if (report != null) {
                 LOGGER.debug("Fixing constraints of network {}, state {}, causing the following {} violations:\n{}",
                         network.getId(),
-                        network.getStateManager().getWorkingStateId(),
+                        network.getVariantManager().getWorkingVariantId(),
                         filteredViolations.size(),
                         report);
             }
@@ -102,7 +102,7 @@ public class ConstraintsModifier {
                         break;
                 }
             }
-            network.getStateManager().setWorkingState(workingStateId);
+            network.getVariantManager().setWorkingVariant(workingStateId);
         } else {
             throw new RuntimeException("No " + stateId + " in network " + network.getId() + ": cannot loose constraints");
         }
@@ -119,16 +119,16 @@ public class ConstraintsModifier {
                         violation.getLimit(),
                         newLimit);
                 branch.newCurrentLimits1().setPermanentLimit(newLimit).add();
-                if (applyToBaseCase && !StateManagerConstants.INITIAL_STATE_ID.equals(stateId)) { // change the limit also to basecase
-                    network.getStateManager().setWorkingState(StateManagerConstants.INITIAL_STATE_ID);
+                if (applyToBaseCase && !VariantManagerConstants.INITIAL_VARIANT_ID.equals(stateId)) { // change the limit also to basecase
+                    network.getVariantManager().setWorkingVariant(VariantManagerConstants.INITIAL_VARIANT_ID);
                     branch = network.getBranch(violation.getSubjectId());
                     LOGGER.debug("State {}: changing current limit 1 of branch {}: {} -> {}",
-                                StateManagerConstants.INITIAL_STATE_ID,
+                                VariantManagerConstants.INITIAL_VARIANT_ID,
                                 branch.getId(),
                                 violation.getLimit(),
                                 newLimit);
                     branch.newCurrentLimits1().setPermanentLimit(newLimit).add();
-                    network.getStateManager().setWorkingState(stateId);
+                    network.getVariantManager().setWorkingVariant(stateId);
                 }
             } else if (branch.getTerminal2().getI() == violation.getValue()) {
                 LOGGER.debug("State {}: changing current limit 2 of branch {}: {} -> {}",
@@ -137,16 +137,16 @@ public class ConstraintsModifier {
                         violation.getLimit(),
                         newLimit);
                 branch.newCurrentLimits2().setPermanentLimit(newLimit).add();
-                if (applyToBaseCase && !StateManagerConstants.INITIAL_STATE_ID.equals(stateId)) { // change the limit also to basecase
-                    network.getStateManager().setWorkingState(StateManagerConstants.INITIAL_STATE_ID);
+                if (applyToBaseCase && !VariantManagerConstants.INITIAL_VARIANT_ID.equals(stateId)) { // change the limit also to basecase
+                    network.getVariantManager().setWorkingVariant(VariantManagerConstants.INITIAL_VARIANT_ID);
                     branch = network.getBranch(violation.getSubjectId());
                     LOGGER.debug("State {}: changing current limit 2 of branch {}: {} -> {}",
-                                StateManagerConstants.INITIAL_STATE_ID,
+                                VariantManagerConstants.INITIAL_VARIANT_ID,
                                 branch.getId(),
                                 violation.getLimit(),
                                 newLimit);
                     branch.newCurrentLimits2().setPermanentLimit(newLimit).add();
-                    network.getStateManager().setWorkingState(stateId);
+                    network.getVariantManager().setWorkingVariant(stateId);
                 }
             }
         } else {
@@ -167,16 +167,16 @@ public class ConstraintsModifier {
                         violation.getLimit(),
                         newLimit);
                 voltageLevel.setHighVoltageLimit(newLimit);
-                if (applyToBaseCase && !StateManagerConstants.INITIAL_STATE_ID.equals(stateId)) { // change the limit also to basecase
-                    network.getStateManager().setWorkingState(StateManagerConstants.INITIAL_STATE_ID);
+                if (applyToBaseCase && !VariantManagerConstants.INITIAL_VARIANT_ID.equals(stateId)) { // change the limit also to basecase
+                    network.getVariantManager().setWorkingVariant(VariantManagerConstants.INITIAL_VARIANT_ID);
                     voltageLevel = network.getVoltageLevel(violation.getSubjectId());
                     LOGGER.debug("State {}: changing high voltage limit of voltage level {}: {} -> {}",
-                                StateManagerConstants.INITIAL_STATE_ID,
+                                VariantManagerConstants.INITIAL_VARIANT_ID,
                                 voltageLevel.getId(),
                                 violation.getLimit(),
                                 newLimit);
                     voltageLevel.setHighVoltageLimit(newLimit);
-                    network.getStateManager().setWorkingState(stateId);
+                    network.getVariantManager().setWorkingVariant(stateId);
                 }
             }
         } else {
@@ -197,11 +197,11 @@ public class ConstraintsModifier {
                         violation.getLimit(),
                         newLimit);
                 voltageLevel.setLowVoltageLimit(newLimit);
-                if (applyToBaseCase && !StateManagerConstants.INITIAL_STATE_ID.equals(stateId)) { // change the limit also to basecase
-                    network.getStateManager().setWorkingState(StateManagerConstants.INITIAL_STATE_ID);
+                if (applyToBaseCase && !VariantManagerConstants.INITIAL_VARIANT_ID.equals(stateId)) { // change the limit also to basecase
+                    network.getVariantManager().setWorkingVariant(VariantManagerConstants.INITIAL_VARIANT_ID);
                     voltageLevel = network.getVoltageLevel(violation.getSubjectId());
                     LOGGER.debug("State {}: changing low voltage limit of voltage level {}: {} -> {}",
-                                StateManagerConstants.INITIAL_STATE_ID,
+                                VariantManagerConstants.INITIAL_VARIANT_ID,
                                 voltageLevel.getId(),
                                 violation.getLimit(),
                                 newLimit);

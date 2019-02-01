@@ -9,6 +9,7 @@ package eu.itesla_project.mcla.montecarlo;
 
 import com.powsybl.commons.config.ModuleConfig;
 import com.powsybl.commons.config.PlatformConfig;
+import eu.itesla_project.mcla.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,12 +80,12 @@ public class StatsCondCalculatorConfig {
         Path binariesDir = config.getPathProperty("binariesDir");
         Path runtimeHomeDir = config.getPathProperty("runtimeHomeDir");
         Path tmpDir = config.getPathProperty("tmpDir");
-        Integer rngSeed = config.getOptionalIntegerProperty("rngSeed").orElse(null);
+        Integer rngSeed = Utils.getIntegerFromPropertyOrNull(config, "rngSeed");
         boolean debug = config.getBooleanProperty("debug", false);
-        Integer isdeterministic = config.getOptionalIntegerProperty("isdeterministic").orElse(null);
-        Integer isuniform = config.getOptionalIntegerProperty("isuniform").orElse(null);
-        Integer optFPF = config.getOptionalIntegerProperty("opt_FPF").orElse(null);
-        Integer homothetic = config.getOptionalIntegerProperty("homothetic").orElse(null);
+        Integer isdeterministic = Utils.getIntegerFromPropertyOrNull(config, "isdeterministic");
+        Integer isuniform = Utils.getIntegerFromPropertyOrNull(config, "isuniform");
+        Integer optFPF = Utils.getIntegerFromPropertyOrNull(config, "opt_FPF");
+        Integer homothetic = Utils.getIntegerFromPropertyOrNull(config, "homothetic");
 
         return new StatsCondCalculatorConfig(binariesDir, runtimeHomeDir, tmpDir, isdeterministic, isuniform, optFPF, homothetic, rngSeed, debug);
     }

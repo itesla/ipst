@@ -7,7 +7,6 @@
 package eu.itesla_project.dymola;
 
 import com.google.common.collect.ImmutableMap;
-import com.powsybl.commons.Version;
 import com.powsybl.commons.config.PlatformConfig;
 import com.powsybl.computation.*;
 import com.powsybl.contingency.ContingenciesProvider;
@@ -118,10 +117,7 @@ public class DymolaImpactAnalysis implements ImpactAnalysis {
     //OK
     @Override
     public String getVersion() {
-        return ImmutableMap.builder().put("dymolaVersion", DymolaUtil.VERSION)
-                .putAll(Version.VERSION.toMap())
-                .build()
-                .toString();
+        return DymolaUtil.VERSION;
     }
 
     //OK
@@ -215,7 +211,7 @@ public class DymolaImpactAnalysis implements ImpactAnalysis {
     private Command createCommand(SimulationState state, Set<String> contingencyIds, Path workingDir, List<Contingency> contingencies) throws IOException {
         // dump state info for debugging
         if (config.isDebug()) {
-            Networks.dumpStateId(workingDir, state.getName());
+            Networks.dumpVariantId(workingDir, state.getName());
         }
 
         Command cmd;
@@ -237,7 +233,7 @@ public class DymolaImpactAnalysis implements ImpactAnalysis {
         }
 
         LOGGER.info("Current state  {}", state.getName());
-        network.getStateManager().setWorkingState(state.getName());
+        network.getVariantManager().setWorkingVariant(state.getName());
 
         //prepare dymola inputs in modelica format
         LOGGER.info("Writing dymola inputs in modelica format - start");
@@ -404,7 +400,7 @@ public class DymolaImpactAnalysis implements ImpactAnalysis {
             throw new RuntimeException(e);
         }
 
-        LOGGER.info("Exporting modelica data for network {}, working state-id {} ", network, network.getStateManager().getWorkingStateId());
+        LOGGER.info("Exporting modelica data for network {}, working state-id {} ", network, network.getVariantManager().getWorkingVariantId());
         ModelicaMainExporter exporter = new ModelicaMainExporter(network, slackId, jbossHost, jbossPort, jbossUser, jbossPassword, modelicaVersion, sourceEngine, sourceVersion, modelicaLibPath, loadFlowFactory);
         exporter.export(dymolaExportPath);
         ModEventsExport eventsExporter = new ModEventsExport(dymolaExportPath.resolve(network.getId() + ".mo").toFile(), eventsPath.toFile());

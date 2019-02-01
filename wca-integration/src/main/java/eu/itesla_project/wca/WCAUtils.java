@@ -221,14 +221,14 @@ public final class WCAUtils {
         Objects.requireNonNull(network);
         Objects.requireNonNull(stateId);
         Objects.requireNonNull(injections);
-        String originalStateId = network.getStateManager().getWorkingStateId();
-        network.getStateManager().setWorkingState(stateId);
+        String originalStateId = network.getVariantManager().getWorkingVariantId();
+        network.getVariantManager().setWorkingVariant(stateId);
         injections.keySet().forEach(injection -> {
             Load load = network.getLoad(injection);
             if (load != null) {
                 double oldP = load.getTerminal().getP();
                 LOGGER.debug("Network {}, state {}: incrementing P of load {} from {} to {}",
-                             network.getId(), network.getStateManager().getWorkingStateId(), injection, oldP, oldP + injections.get(injection));
+                             network.getId(), network.getVariantManager().getWorkingVariantId(), injection, oldP, oldP + injections.get(injection));
                 load.getTerminal().setP(oldP + injections.get(injection));
                 load.setP0(oldP + injections.get(injection));
             } else {
@@ -236,7 +236,7 @@ public final class WCAUtils {
                 if (generator != null) {
                     double oldP = generator.getTerminal().getP();
                     LOGGER.debug("Network {}, state {}: incrementing P of generator {} from {} to {}",
-                                 network.getId(), network.getStateManager().getWorkingStateId(), injection, oldP, oldP + injections.get(injection));
+                                 network.getId(), network.getVariantManager().getWorkingVariantId(), injection, oldP, oldP + injections.get(injection));
                     generator.getTerminal().setP(oldP + injections.get(injection));
                     generator.setTargetP(-oldP - injections.get(injection));
                 } else {
@@ -245,7 +245,7 @@ public final class WCAUtils {
 
             }
         });
-        network.getStateManager().setWorkingState(originalStateId);
+        network.getVariantManager().setWorkingVariant(originalStateId);
     }
 
     public static boolean containsViolation(List<LimitViolation> violations, LimitViolation violation) {

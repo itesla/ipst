@@ -70,7 +70,7 @@ public final class DymolaUtil {
     }
 
     public static void dumpStateId(Path workingDir, Network network) throws IOException {
-        dumpStateId(workingDir, network.getStateManager().getWorkingStateId());
+        dumpStateId(workingDir, network.getVariantManager().getWorkingVariantId());
     }
 
 }

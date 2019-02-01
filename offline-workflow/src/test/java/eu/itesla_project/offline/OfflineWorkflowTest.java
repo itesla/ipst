@@ -8,14 +8,13 @@ package eu.itesla_project.offline;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
-import com.powsybl.commons.io.CacheManager;
+import com.powsybl.commons.config.XmlModuleConfigRepository;
 import com.powsybl.commons.config.PlatformConfig;
-import com.powsybl.commons.config.XmlPlatformConfig;
 import com.powsybl.computation.ComputationManager;
 import com.powsybl.computation.ComputationResourcesStatus;
 import com.powsybl.iidm.network.Country;
 import com.powsybl.iidm.network.Network;
-import com.powsybl.iidm.network.StateManagerConstants;
+import com.powsybl.iidm.network.VariantManagerConstants;
 import com.powsybl.iidm.network.VoltageLevel;
 import com.powsybl.iidm.network.test.EurostagTutorialExample1Factory;
 import com.powsybl.loadflow.LoadFlow;
@@ -26,6 +25,7 @@ import eu.itesla_project.merge.MergeOptimizerFactory;
 import eu.itesla_project.modules.*;
 import eu.itesla_project.cases.CaseRepository;
 import eu.itesla_project.cases.CaseType;
+import eu.itesla_project.modules.commons.io.CacheManager;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClientFactory;
 import com.powsybl.contingency.Contingency;
@@ -84,12 +84,14 @@ public class OfflineWorkflowTest {
             Path cfgDir = fileSystem.getPath("/config");
             Path cacheDir = fileSystem.getPath("/cache");
 
-            try (OutputStream os = Files.newOutputStream(cfgDir.resolve("config.xml"))) {
+            Path xmlConfigFile = cfgDir.resolve("config.xml");
+
+            try (OutputStream os = Files.newOutputStream(xmlConfigFile)) {
                 ByteStreams.copy(OfflineWorkflowTest.class.getResourceAsStream("/config.xml"), os);
             }
 
-            PlatformConfig.setDefaultConfig(XmlPlatformConfig.create(fileSystem, cfgDir, cacheDir, "config").get());
-            PlatformConfig.setDefaultCacheManager(new CacheManager(cacheDir));
+            PlatformConfig.setDefaultConfig(new PlatformConfig(new XmlModuleConfigRepository(xmlConfigFile)));
+            CacheManager.setDefaultCacheManager(new CacheManager(cacheDir));
 
             // workflow parameters: topo init is not activated
             DateTime baseCaseDate = DateTime.parse("2013-01-15T18:45:00+01:00");
@@ -113,8 +115,8 @@ public class OfflineWorkflowTest {
 
             // create init network
             Network network = EurostagTutorialExample1Factory.create();
-            network.getStateManager().allowStateMultiThreadAccess(true);
-            network.getStateManager().setWorkingState(StateManagerConstants.INITIAL_STATE_ID);
+            network.getVariantManager().allowVariantMultiThreadAccess(true);
+            network.getVariantManager().setWorkingVariant(VariantManagerConstants.INITIAL_VARIANT_ID);
 
             // computation manager mock
             ComputationManager computationManager = Mockito.mock(ComputationManager.class);

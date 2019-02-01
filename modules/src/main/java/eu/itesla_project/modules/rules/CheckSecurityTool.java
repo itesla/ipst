@@ -156,7 +156,7 @@ public class CheckSecurityTool implements Tool {
                 if (network == null) {
                     throw new RuntimeException("Case '" + caseFile + "' not found");
                 }
-                network.getStateManager().allowStateMultiThreadAccess(true);
+                network.getVariantManager().allowVariantMultiThreadAccess(true);
 
                 context.getOutputStream().println("checking rules...");
 

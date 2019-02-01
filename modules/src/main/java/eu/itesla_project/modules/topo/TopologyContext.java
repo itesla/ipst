@@ -6,10 +6,10 @@
  */
 package eu.itesla_project.modules.topo;
 
-import com.powsybl.commons.config.PlatformConfig;
 import com.powsybl.computation.ComputationManager;
 import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
+import eu.itesla_project.modules.commons.io.CacheManager;
 import eu.itesla_project.modules.histo.HistoDbClient;
 import org.joda.time.Interval;
 import org.slf4j.Logger;
@@ -55,7 +55,7 @@ public class TopologyContext {
 
 
     public static Path createTopoCacheDir(Network network, Interval histoInterval, double correlationThreshold, double probabilityThreshold) throws IOException {
-        return PlatformConfig.defaultCacheManager().newCacheEntry("topo")
+        return CacheManager.defaultCacheManager().newCacheEntry("topo")
                 .withKey(histoInterval.toString())
                 .withKey(Double.toString(correlationThreshold))
                 .withKey(Double.toString(probabilityThreshold))

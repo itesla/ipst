@@ -17,7 +17,7 @@ public class DicoEurostagNamingStrategyFactory implements EurostagNamingStrategy
 
     @Override
     public EurostagNamingStrategy create() {
-        ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfigIfExists(CONFIG_SECTION_NAME);
+        ModuleConfig config = PlatformConfig.defaultConfig().getOptionalModuleConfig(CONFIG_SECTION_NAME).orElse(null);
         if (config != null) {
             Path dicoFile = config.getPathProperty(CONFIG_PROPERTY_DICO_FILE_NAME, null);
             LOGGER.info("Instantiating DicoEurostagNamingStrategy: property {}={} declared in config section '{}'", CONFIG_PROPERTY_DICO_FILE_NAME, dicoFile, CONFIG_SECTION_NAME);

@@ -93,7 +93,7 @@ public class ContingencyEvaluator {
     private RulesFacadeResults evaluate(Network network, List<SecurityRule> rules, List<SecurityIndexType> bacecaseInvalidRulesIndexes) {
         Objects.requireNonNull(network, "network is null");
         HashMap<HistoDbAttributeId, Object> networkValues = IIDM2DB.extractCimValues(network, new IIDM2DB.Config(null, true)).getSingleValueMap();
-        return evaluate(network.getId(), network.getStateManager().getWorkingStateId(), networkValues, rules, bacecaseInvalidRulesIndexes);
+        return evaluate(network.getId(), network.getVariantManager().getWorkingVariantId(), networkValues, rules, bacecaseInvalidRulesIndexes);
     }
 
     private RulesFacadeResults evaluate(String networkId, String stateId, Map<HistoDbAttributeId, Object> networkValues, List<SecurityRule> rules,

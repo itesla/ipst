@@ -102,7 +102,7 @@ public class CheckSubstationUniqueToposTool implements Tool {
         if (network == null) {
             throw new RuntimeException("Case '" + caseFile + "' not found");
         }
-        network.getStateManager().allowStateMultiThreadAccess(true);
+        network.getVariantManager().allowVariantMultiThreadAccess(true);
 
         OfflineConfig config = OfflineConfig.load();
         try (TopologyMiner topologyMiner = config.getTopologyMinerFactoryClass().newInstance().create()) {

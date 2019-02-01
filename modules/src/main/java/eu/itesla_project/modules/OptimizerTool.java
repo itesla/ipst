@@ -121,7 +121,7 @@ public class OptimizerTool implements Tool {
         if (network == null) {
             throw new RuntimeException("Case '" + caseFile + "' not found");
         }
-        network.getStateManager().allowStateMultiThreadAccess(true);
+        network.getVariantManager().allowVariantMultiThreadAccess(true);
 
         context.getOutputStream().println("sample characteristics: " + SampleCharacteritics.fromNetwork(network, generationSampled, boundariesSampled));
 
@@ -147,7 +147,7 @@ public class OptimizerTool implements Tool {
             if (result.isFeasible()) {
                 context.getOutputStream().println("running loadflow...");
 
-                LoadFlowResult result2 = loadFlow.run(network.getStateManager().getWorkingStateId(), LoadFlowParameters.load()).join();
+                LoadFlowResult result2 = loadFlow.run(network.getVariantManager().getWorkingVariantId(), LoadFlowParameters.load()).join();
 
                 context.getOutputStream().println("loadflow status is " + (result2.isOk() ? "ok" : "nok") + " (" + result2.getMetrics() + ")");
 

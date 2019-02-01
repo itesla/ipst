@@ -50,7 +50,7 @@ public class CaseProjectorPostProcessor implements ImportPostProcessor {
     public void process(Network network, ComputationManager computationManager) throws Exception {
         LoadFlowFactory loadFlowFactory = defaultConfigSupplier.get().newFactoryImpl(LoadFlowFactory.class);
         LoadFlow loadFlow = loadFlowFactory.create(network, computationManager, 0);
-        CaseProjectorUtils.project(computationManager, network, loadFlow, network.getStateManager().getWorkingStateId(), caseProjectorConfigSupplier.get()).join();
+        CaseProjectorUtils.project(computationManager, network, loadFlow, network.getVariantManager().getWorkingVariantId(), caseProjectorConfigSupplier.get()).join();
     }
 
 }

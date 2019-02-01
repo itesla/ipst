@@ -89,7 +89,7 @@ public class RedispatcherImpl implements Redispatcher {
                 }
                 // redispatch on this generator
                 LOGGER.debug("{}: generator {} - P:{} -> P:{} - limits[{},{}], redispatch limits[{},{}]",
-                        network.getStateManager().getWorkingStateId(), generator.getId(), generator.getTerminal().getP(), newP,
+                        network.getVariantManager().getWorkingVariantId(), generator.getId(), generator.getTerminal().getP(), newP,
                         generator.getMinP(), generator.getMaxP(), redispatchPMin, redispatchPMax);
                 redispactchedP += -newP + generator.getTerminal().getP();
                 generator.getTerminal().setP(newP);

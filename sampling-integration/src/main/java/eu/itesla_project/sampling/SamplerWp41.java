@@ -6,15 +6,13 @@
  */
 package eu.itesla_project.sampling;
 
-import com.google.common.collect.ImmutableMap;
 import com.jmatio.io.MatFileReader;
 import com.jmatio.types.MLArray;
 import com.jmatio.types.MLChar;
 import com.jmatio.types.MLDouble;
-import com.powsybl.commons.Version;
-import com.powsybl.commons.config.PlatformConfig;
 import com.powsybl.computation.*;
 import com.powsybl.iidm.network.Network;
+import eu.itesla_project.modules.commons.io.CacheManager;
 import eu.itesla_project.modules.histo.HistoDbClient;
 import eu.itesla_project.modules.sampling.*;
 import eu.itesla_project.sampling.util.*;
@@ -92,10 +90,7 @@ public class SamplerWp41 implements Sampler {
 
     @Override
     public String getVersion() {
-        return ImmutableMap.builder().put("samplingVersion", "v6.7")
-                                     .putAll(Version.VERSION.toMap())
-                                     .build()
-                                     .toString();
+        return "v6.7";
     }
 
     public SamplerWp41Config getConfig() {
@@ -103,7 +98,7 @@ public class SamplerWp41 implements Sampler {
     }
 
     private Path getCacheDir(DataMiningFacadeParams dmParams) throws IOException {
-        return PlatformConfig.defaultCacheManager().newCacheEntry(WP41_CACHEDIR_NAME)
+        return CacheManager.defaultCacheManager().newCacheEntry(WP41_CACHEDIR_NAME)
                 .withKey(Double.toString(config.getIr()))
                 .withKey(Integer.toString(config.getPar_k()))
                 .withKey(Double.toString(config.getTflag()))

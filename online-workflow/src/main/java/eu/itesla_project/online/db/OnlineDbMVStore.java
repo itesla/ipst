@@ -1051,8 +1051,8 @@ public class OnlineDbMVStore implements OnlineDb {
             stateIdStr = String.valueOf(stateId);
             LOGGER.info("Storing state {} of workflow {}", stateIdStr, workflowId);
         }
-        if (network.getStateManager().getStateIds().contains(stateIdStr)) {
-            network.getStateManager().setWorkingState(stateIdStr);
+        if (network.getVariantManager().getVariantIds().contains(stateIdStr)) {
+            network.getVariantManager().setWorkingVariant(stateIdStr);
             Path workflowStatesFolder = getWorkflowStatesFolder(workflowId);
             Path stateFolder;
             if (contingencyId != null) {

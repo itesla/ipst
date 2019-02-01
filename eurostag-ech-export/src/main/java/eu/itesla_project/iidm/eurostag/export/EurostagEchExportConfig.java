@@ -111,7 +111,7 @@ public class EurostagEchExportConfig {
     public static EurostagEchExportConfig load(PlatformConfig platformConfig) {
 
         // specificCompatibility parameter = true forces  svcAsFixedInjectionInLF to true
-        ModuleConfig loadFlowModuleConfig = platformConfig.getModuleConfigIfExists("load-flow-default-parameters");
+        ModuleConfig loadFlowModuleConfig = platformConfig.getOptionalModuleConfig("load-flow-default-parameters").orElse(null);
         boolean specificCompatibility = (loadFlowModuleConfig != null) ? loadFlowModuleConfig.getBooleanProperty("specificCompatibility", DEFAULT_SPECIFIC_COMPATIBILITY) : DEFAULT_SPECIFIC_COMPATIBILITY;
 
         if (platformConfig.moduleExists(EUROSTAG_ECH_EXPORT_CONFIG)) {

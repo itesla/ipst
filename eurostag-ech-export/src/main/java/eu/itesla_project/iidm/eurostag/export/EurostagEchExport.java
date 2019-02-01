@@ -903,7 +903,7 @@ public class EurostagEchExport implements EurostagEchExporter {
 
     public void write(Writer writer, EsgGeneralParameters parameters, EsgSpecialParameters specialParameters) throws IOException {
         EsgNetwork esgNetwork = createNetwork(parameters);
-        new EsgWriter(esgNetwork, parameters, specialParameters).write(writer, network.getId() + "/" + network.getStateManager().getWorkingStateId());
+        new EsgWriter(esgNetwork, parameters, specialParameters).write(writer, network.getId() + "/" + network.getVariantManager().getWorkingVariantId());
     }
 
     public void write(Writer writer) throws IOException {

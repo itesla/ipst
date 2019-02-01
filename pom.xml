@@ -22,7 +22,7 @@
     <modules>
         <module>case-projector</module>
         <module>case-repository</module>
-		<module>connectable-switches-collapser</module>
+        <module>connectable-switches-collapser</module>
         <module>distribution</module>
         <module>dymola-integration</module>
         <module>entsoe-case-repository</module>
@@ -45,7 +45,7 @@
         <module>network-merge</module>
         <module>offline-mpi</module>
         <module>offline-server</module>
-        <module>offline-workflow</module>
+        <!--module>offline-workflow</module-->
         <module>online-mpi</module>
         <module>online-rest-api</module>
         <module>online-server</module>
@@ -93,7 +93,7 @@
         <graphvizapi.version>1.1</graphvizapi.version>
         <guava.version>20.0</guava.version>
         <h2database.version>1.4.191</h2database.version>
-        <hades2-integration.version>2.1.2</hades2-integration.version>
+        <hades2-integration.version>2.3.0</hades2-integration.version>
         <httpclient.version>4.5.2</httpclient.version>
         <javaee-api-version>7.0</javaee-api-version>
         <jackson.version>2.8.7</jackson.version>
@@ -109,7 +109,7 @@
         <mapdb.version>3.0.3</mapdb.version>
         <mockito.version>1.10.19</mockito.version>
         <poi.version>3.15</poi.version>
-        <powsybl.version>2.1.0</powsybl.version>
+        <powsybl.version>2.3.0</powsybl.version>
         <resteasy.version>3.0.11.Final</resteasy.version>
         <servlet-api-version>3.0.1</servlet-api-version>
         <shrinkwrap.version>1.2.6</shrinkwrap.version>

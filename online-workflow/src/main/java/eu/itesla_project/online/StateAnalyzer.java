@@ -13,7 +13,7 @@ import com.google.common.collect.Multimaps;
 import com.powsybl.computation.ComputationManager;
 import com.powsybl.contingency.Contingency;
 import com.powsybl.iidm.network.Network;
-import com.powsybl.iidm.network.StateManagerConstants;
+import com.powsybl.iidm.network.VariantManagerConstants;
 import com.powsybl.loadflow.LoadFlow;
 import com.powsybl.loadflow.LoadFlowParameters;
 import com.powsybl.loadflow.LoadFlowResult;
@@ -116,8 +116,8 @@ public class StateAnalyzer implements Callable<Void> {
             // create new state
             logger.info(this.logHeader + "Analyzing state {}", stateId);
             String stateIdStr = String.valueOf(stateId);
-            context.getNetwork().getStateManager().cloneState(StateManagerConstants.INITIAL_STATE_ID, stateIdStr);
-            context.getNetwork().getStateManager().setWorkingState(stateIdStr);
+            context.getNetwork().getVariantManager().cloneVariant(VariantManagerConstants.INITIAL_VARIANT_ID, stateIdStr);
+            context.getNetwork().getVariantManager().setWorkingVariant(stateIdStr);
             // sample
             logger.info(this.logHeader + "{}: sampling started", stateId);
             status.put(currentStatus, OnlineTaskStatus.RUNNING);
@@ -136,7 +136,7 @@ public class StateAnalyzer implements Callable<Void> {
             status.put(currentStatus, OnlineTaskStatus.RUNNING);
             stateListener.onUpdate(stateId, status, context.timeHorizon);
             logger.info(this.logHeader + "{}: loadflow started", stateId);
-            LoadFlowResult result = loadFlow.run(context.getNetwork().getStateManager().getWorkingStateId(), loadFlowParameters).join();
+            LoadFlowResult result = loadFlow.run(context.getNetwork().getVariantManager().getWorkingVariantId(), loadFlowParameters).join();
             status.put(currentStatus, result.isOk() ? OnlineTaskStatus.SUCCESS : OnlineTaskStatus.FAILED);
             stateListener.onUpdate(stateId, status, context.timeHorizon);
             logger.info(this.logHeader + "{}: loadflow terminated", stateId);
@@ -247,7 +247,7 @@ public class StateAnalyzer implements Callable<Void> {
                         logger.info(this.logHeader + "{}: corrective control optimization started - working on {} contingencies", stateId, contingenciesForOptimizer.size());
                         runOptimizer(context.getNetwork(), contingenciesForOptimizer, contingenciesForSimulator, context.getResults());
                         // the optimizer could possibly have changed the network working state: set the original one
-                        context.getNetwork().getStateManager().setWorkingState(stateIdStr);
+                        context.getNetwork().getVariantManager().setWorkingVariant(stateIdStr);
                         stateListener.onOptimizerResults(stateId, context);
                         logger.info(this.logHeader + "{}: corrective control optimization terminated", stateId);
                         status.put(OnlineTaskType.OPTIMIZER, OnlineTaskStatus.SUCCESS);
@@ -300,15 +300,15 @@ public class StateAnalyzer implements Callable<Void> {
             stateListener.onUpdate(stateId, status, context.timeHorizon, currentStatus + " failed ... ");
             logger.error(this.logHeader + "{}: Error working on state: {}", stateId, t.toString(), t);
         } finally {
-            if (context.getNetwork().getStateManager().getStateIds().contains(String.valueOf(stateId))) {
-                context.getNetwork().getStateManager().removeState(String.valueOf(stateId));
+            if (context.getNetwork().getVariantManager().getVariantIds().contains(String.valueOf(stateId))) {
+                context.getNetwork().getVariantManager().removeVariant(String.valueOf(stateId));
             }
         }
         return null;
     }
 
     private void runOptimizer(Network network, List<Contingency> contingencies, List<Contingency> contingenciesForSimulator, ForecastAnalysisResults results) {
-        String stateId = network.getStateManager().getWorkingStateId();
+        String stateId = network.getVariantManager().getWorkingVariantId();
         logger.info(this.logHeader + "{}: running optimizer", stateId);
         List<Callable<Void>> postContingencyStateComputations = new ArrayList<>(contingencies.size());
         for (Contingency contingency : contingencies) {
@@ -369,8 +369,8 @@ public class StateAnalyzer implements Callable<Void> {
                                     }
                                 }
                             } finally {
-                                if (network.getStateManager().getStateIds().contains(postContingencyStateId)) {
-                                    network.getStateManager().removeState(postContingencyStateId);
+                                if (network.getVariantManager().getVariantIds().contains(postContingencyStateId)) {
+                                    network.getVariantManager().removeVariant(postContingencyStateId);
                                 }
                             }
                             return null;
@@ -386,11 +386,11 @@ public class StateAnalyzer implements Callable<Void> {
             logger.error(logHeader + "{}: Error running optimizer: {}", stateId, e.getMessage());
         }
         taskExecutor.shutdown();
-        network.getStateManager().setWorkingState(stateId);
+        network.getVariantManager().setWorkingVariant(stateId);
     }
 
     private void computeAndStorePostContingencyViolations(Network network, List<Contingency> contingencies) {
-        String stateId = network.getStateManager().getWorkingStateId();
+        String stateId = network.getVariantManager().getWorkingVariantId();
         logger.info(this.logHeader + "{}: computing post contingency violations", stateId);
         List<Callable<Void>> postContingencyViolationsComputations = new ArrayList<>(contingencies.size());
         for (Contingency contingency : contingencies) {
@@ -415,10 +415,10 @@ public class StateAnalyzer implements Callable<Void> {
                                 } else {
                                     logger.info("{}: post contingency loadflow does not converge for contingency {}, skipping computing post contingency violations", stateId, contingency.getId());
                                 }
-                                network.getStateManager().setWorkingState(stateId);
+                                network.getVariantManager().setWorkingVariant(stateId);
                             } finally {
-                                if (network.getStateManager().getStateIds().contains(postContingencyStateId)) {
-                                    network.getStateManager().removeState(postContingencyStateId);
+                                if (network.getVariantManager().getVariantIds().contains(postContingencyStateId)) {
+                                    network.getVariantManager().removeVariant(postContingencyStateId);
                                 }
                             }
                             return null;
@@ -445,22 +445,22 @@ public class StateAnalyzer implements Callable<Void> {
                 loadflowConverge = loadflowResults.get(postContingencyStateId);
             }
         }
-        if (alreadyProcessed && network.getStateManager().getStateIds().contains(postContingencyStateId)) {
+        if (alreadyProcessed && network.getVariantManager().getVariantIds().contains(postContingencyStateId)) {
             // post contingency state already computed, avoid to run the load flow again
             logger.info(this.logHeader + "{}: post contingency state {} already computed", stateId, postContingencyStateId);
-            network.getStateManager().setWorkingState(postContingencyStateId);
+            network.getVariantManager().setWorkingVariant(postContingencyStateId);
         } else {
             // create post contingency state
             logger.info(this.logHeader + "{}: creating post contingency state {}", stateId, postContingencyStateId);
-            network.getStateManager().cloneState(stateId, postContingencyStateId);
-            network.getStateManager().setWorkingState(postContingencyStateId);
+            network.getVariantManager().cloneVariant(stateId, postContingencyStateId);
+            network.getVariantManager().setWorkingVariant(postContingencyStateId);
             // apply contingency to post contingency state
             logger.info(this.logHeader + "{}: applying contingency {} to post contingency state {}", stateId, contingency.getId(), postContingencyStateId);
             contingency.toTask().modify(network, computationManager);
             try {
                 // run load flow on post contingency state
                 logger.info(this.logHeader + "{}: running load flow on post contingency state {}", stateId, postContingencyStateId);
-                LoadFlowResult result = loadFlow.run(network.getStateManager().getWorkingStateId(), loadFlowParameters).join();
+                LoadFlowResult result = loadFlow.run(network.getVariantManager().getWorkingVariantId(), loadFlowParameters).join();
                 if (!alreadyProcessed) {
                     // store post contingency state
                     Integer stateIdInt = Integer.parseInt(stateId);

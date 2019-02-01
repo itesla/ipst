@@ -60,7 +60,7 @@ public final class CaseProjectorUtils {
 
                     @Override
                     public List<CommandExecution> before(Path workingDir) throws IOException {
-                        network.getStateManager().setWorkingState(workingStateId);
+                        network.getVariantManager().setWorkingVariant(workingStateId);
 
                         // copy AMPL model
                         for (String amplModelFileName : AMPL_MODEL_FILE_NAMES) {
@@ -93,7 +93,7 @@ public final class CaseProjectorUtils {
                         report.log();
 
                         if (report.getErrors().isEmpty()) {
-                            network.getStateManager().setWorkingState(workingStateId);
+                            network.getVariantManager().setWorkingVariant(workingStateId);
 
                             Map<String, String> metrics = new HashMap<>();
                             new AmplNetworkReader(new FileDataSource(workingDir, "projector_results"/*"ampl_network_"*/), network, mapper)
@@ -164,7 +164,7 @@ public final class CaseProjectorUtils {
     }
 
     protected static void reintegrateLfState(Network network, String workingStateId, boolean onlyVoltage) {
-        network.getStateManager().setWorkingState(workingStateId);
+        network.getVariantManager().setWorkingVariant(workingStateId);
         for (Generator g : network.getGenerators()) {
             Terminal t = g.getTerminal();
             if (!onlyVoltage) {

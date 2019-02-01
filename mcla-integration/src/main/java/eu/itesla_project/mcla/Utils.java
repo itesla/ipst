@@ -18,6 +18,7 @@ import com.jmatio.types.MLCell;
 import com.jmatio.types.MLChar;
 import com.jmatio.types.MLDouble;
 
+import com.powsybl.commons.config.ModuleConfig;
 import eu.itesla_project.modules.mcla.ForecastErrorsStatistics;
 
 /**
@@ -83,6 +84,10 @@ public final class Utils {
             doubles = doublesMatrix.getArray();
         }
         return doubles;
+    }
+
+    public static Integer getIntegerFromPropertyOrNull(ModuleConfig config, String propertyName) {
+        return config.getOptionalIntProperty(propertyName).isPresent() ? config.getIntProperty(propertyName) : null;
     }
 
 }

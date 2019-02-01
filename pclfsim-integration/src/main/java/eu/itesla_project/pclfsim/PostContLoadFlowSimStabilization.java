@@ -6,8 +6,6 @@
  */
 package eu.itesla_project.pclfsim;
 
-import com.google.common.collect.ImmutableMap;
-import com.powsybl.commons.Version;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.security.LimitViolation;
 import com.powsybl.security.LimitViolationFilter;
@@ -51,10 +49,7 @@ class PostContLoadFlowSimStabilization implements Stabilization, PostContLoadFlo
 
     @Override
     public String getVersion() {
-        return ImmutableMap.builder().put("postContLoadFlowSimVersion", VERSION)
-                                     .putAll(Version.VERSION.toMap())
-                                     .build()
-                                     .toString();
+        return VERSION;
     }
 
     @Override
@@ -63,7 +58,7 @@ class PostContLoadFlowSimStabilization implements Stabilization, PostContLoadFlo
 
     @Override
     public StabilizationResult run() {
-        String baseStateId = network.getStateManager().getWorkingStateId();
+        String baseStateId = network.getVariantManager().getWorkingVariantId();
 
         List<LimitViolation> violations = baseVoltageFilter.apply(Security.checkLimits(network, config.getCurrentLimitType(),
                 config.getLimitReduction()), network);
@@ -79,7 +74,7 @@ class PostContLoadFlowSimStabilization implements Stabilization, PostContLoadFlo
     @Override
     public CompletableFuture<StabilizationResult> runAsync(String workingStateId) {
         return CompletableFuture.supplyAsync(() -> {
-            network.getStateManager().setWorkingState(workingStateId);
+            network.getVariantManager().setWorkingVariant(workingStateId);
             return run();
         });
     }

@@ -8,7 +8,7 @@ package eu.itesla_project.modules.validation;
 
 import com.google.auto.service.AutoService;
 import com.google.common.collect.Queues;
-import com.powsybl.iidm.network.StateManagerConstants;
+import com.powsybl.iidm.network.VariantManagerConstants;
 import com.powsybl.loadflow.LoadFlowParameters;
 import eu.itesla_project.cases.CaseRepository;
 import eu.itesla_project.cases.CaseRepositoryFactory;
@@ -379,16 +379,16 @@ public class OfflineValidationTool implements Tool {
 
                                 context.getOutputStream().println("running simulation on " + network.getId() + "...");
 
-                                network.getStateManager().allowStateMultiThreadAccess(true);
+                                network.getVariantManager().allowVariantMultiThreadAccess(true);
                                 String baseStateId = network.getId();
-                                network.getStateManager().cloneState(StateManagerConstants.INITIAL_STATE_ID, baseStateId);
-                                network.getStateManager().setWorkingState(baseStateId);
+                                network.getVariantManager().cloneVariant(VariantManagerConstants.INITIAL_VARIANT_ID, baseStateId);
+                                network.getVariantManager().setWorkingVariant(baseStateId);
 
                                 Map<RuleId, ValidationStatus> statusPerRule = new HashMap<>();
                                 Map<RuleId, Map<HistoDbAttributeId, Object>> valuesPerRule = new HashMap<>();
 
                                 LoadFlow loadFlow = loadFlowFactory.create(network, context.getShortTimeExecutionComputationManager(), 0);
-                                LoadFlowResult loadFlowResult = loadFlow.run(network.getStateManager().getWorkingStateId(), loadFlowParameters).join();
+                                LoadFlowResult loadFlowResult = loadFlow.run(network.getVariantManager().getWorkingVariantId(), loadFlowParameters).join();
 
                                 context.getErrorStream().println("load flow terminated (" + loadFlowResult.isOk() + ") on " + network.getId());
 

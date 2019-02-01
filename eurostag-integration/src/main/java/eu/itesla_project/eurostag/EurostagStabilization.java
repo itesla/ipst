@@ -7,9 +7,7 @@
  */
 package eu.itesla_project.eurostag;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
-import com.powsybl.commons.Version;
 import com.powsybl.commons.config.ComponentDefaultConfig;
 import com.powsybl.commons.datasource.FileDataSource;
 import com.powsybl.computation.*;
@@ -156,10 +154,7 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
 
     @Override
     public String getVersion() {
-        return ImmutableMap.builder().put("eurostagVersion", EurostagUtil.VERSION)
-                .putAll(Version.VERSION.toMap())
-                .build()
-                .toString();
+        return EurostagUtil.VERSION;
     }
 
     private void writeDtaAndControls(Domain domain, OutputStream ddbOs, OutputStream dictGensOs) throws IOException {
@@ -199,7 +194,7 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
             }
             EsgNetwork networkEch = eurostagEchExporterFactory.createEchExporter(network, exportConfig, parallelIndexes, dictionary, fakeNodes).createNetwork(parameters);
             networkModifier.hvLoadModelling(networkEch);
-            new EsgWriter(networkEch, parameters, specialParameters).write(writer, network.getId() + "/" + network.getStateManager().getWorkingStateId());
+            new EsgWriter(networkEch, parameters, specialParameters).write(writer, network.getId() + "/" + network.getVariantManager().getWorkingVariantId());
         }
         if (config.isDebug()) {
             dictionary.dump(workingDir.resolve("dict.csv"));
@@ -247,7 +242,7 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
     private EurostagContext before(Path workingDir) throws IOException {
         if (config.isDebug()) {
             // dump state info for debugging
-            Networks.dumpStateId(workingDir, network);
+            Networks.dumpVariantId(workingDir, network);
 
             Exporter exporter = Exporters.getExporter("XIIDM");
             if (exporter != null) {
@@ -332,7 +327,7 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
         if (ok) {
             status = EurostagUtil.isSteadyStateReached(workingDir.resolve(INTEGRATION_STEP_FILE_NAME), config.getMinStepAtEndOfStabilization())
                     ? StabilizationStatus.COMPLETED : StabilizationStatus.COMPLETED_BUT_NOT_TO_STEADY_STATE;
-            state = new EurostagState(network.getStateManager().getWorkingStateId(),
+            state = new EurostagState(network.getVariantManager().getWorkingVariantId(),
                     Files.readAllBytes(workingDir.resolve(PRE_FAULT_SAC_GZ_FILE_NAME)),
                     context.dictGensCsv);
         } else {
@@ -348,7 +343,7 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
 
     @Override
     public StabilizationResult run() throws Exception {
-        return runAsync(network.getStateManager().getWorkingStateId()).join();
+        return runAsync(network.getVariantManager().getWorkingVariantId()).join();
     }
 
     @Override
@@ -360,7 +355,7 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
 
                     @Override
                     public List<CommandExecution> before(Path workingDir) throws IOException {
-                        network.getStateManager().setWorkingState(workingStateId);
+                        network.getVariantManager().setWorkingVariant(workingStateId);
 
                         context = EurostagStabilization.this.before(workingDir);
 
@@ -369,7 +364,7 @@ public class EurostagStabilization implements Stabilization, EurostagConstants {
 
                     @Override
                     public StabilizationResult after(Path workingDir, ExecutionReport report) throws IOException {
-                        network.getStateManager().setWorkingState(workingStateId);
+                        network.getVariantManager().setWorkingVariant(workingStateId);
 
                         return EurostagStabilization.this.after(workingDir, context, report);
                     }

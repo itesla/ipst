@@ -9,6 +9,7 @@ package eu.itesla_project.mcla.forecast_errors;
 
 import com.powsybl.commons.config.ModuleConfig;
 import com.powsybl.commons.config.PlatformConfig;
+import eu.itesla_project.mcla.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,46 +146,47 @@ public class ForecastErrorsAnalyzerConfig {
         this.modelConv = modelConv;
     }
 
+
     public static ForecastErrorsAnalyzerConfig load() {
         ModuleConfig config = PlatformConfig.defaultConfig().getModuleConfig("forecastErrorsAnalyzer");
 
         Path binariesDir = config.getPathProperty("binariesDir");
         Path runtimeHomeDir = config.getPathProperty("runtimeHomeDir");
         boolean debug = config.getBooleanProperty("debug", false);
-        Integer checkModule0 = config.getOptionalIntegerProperty("checkModule0").orElse(null);
+        Integer checkModule0 = Utils.getIntegerFromPropertyOrNull(config, "checkModule0");
         double percpuGaussLoad = config.getDoubleProperty("percpuGaussLoad");
         double percpuGaussRes = config.getDoubleProperty("percpuGaussRes");
         double correlationGauss = config.getDoubleProperty("correlationGauss");
         double tolVar = config.getDoubleProperty("tolvar");
         double nMinObsFract = config.getDoubleProperty("Nmin_obs_fract");
-        Integer nMinObsInterv = config.getOptionalIntegerProperty("Nmin_obs_interv").orElse(null);
-        Integer imputationMeth = config.getOptionalIntegerProperty("imputation_meth").orElse(null);
-        Integer nGaussians = config.getOptionalIntegerProperty("Ngaussians").orElse(null);
-        Integer rngSeed = config.getOptionalIntegerProperty("rngSeed").orElse(null);
-        Integer kOutlier = config.getOptionalIntegerProperty("koutlier").orElse(null);
+        Integer nMinObsInterv = Utils.getIntegerFromPropertyOrNull(config, "Nmin_obs_interv");
+        Integer imputationMeth = Utils.getIntegerFromPropertyOrNull(config, "imputation_meth");
+        Integer nGaussians = Utils.getIntegerFromPropertyOrNull(config, "Ngaussians");
+        Integer rngSeed = Utils.getIntegerFromPropertyOrNull(config, "rngSeed");
+        Integer kOutlier = Utils.getIntegerFromPropertyOrNull(config, "koutlier");
         double tolerance = config.getDoubleProperty("tolerance");
-        Integer iterations = config.getOptionalIntegerProperty("iterations").orElse(null);
+        Integer iterations = Utils.getIntegerFromPropertyOrNull(config, "iterations");
         double epsilo = config.getDoubleProperty("epsilo");
-        Integer conditionalSampling = config.getOptionalIntegerProperty("conditionalSampling").orElse(null);
-        Integer tFlags = config.getOptionalIntegerProperty("tFlags").orElse(null);
+        Integer conditionalSampling = Utils.getIntegerFromPropertyOrNull(config, "conditionalSampling");
+        Integer tFlags = Utils.getIntegerFromPropertyOrNull(config, "tFlags");
         double histoEstremeQ = config.getDoubleProperty("histo_estremeQ");
         double thresGUI = config.getDoubleProperty("thresGUI");
         String nats = config.getStringProperty("nats", "All");
         double nnz = config.getDoubleProperty("nnz");
-        Integer unimod = config.getOptionalIntegerProperty("unimod").orElse(null);
-        Integer modoInv = config.getOptionalIntegerProperty("modo_inv").orElse(null);
-        Integer isdeterministic = config.getOptionalIntegerProperty("isdeterministic").orElse(null);
-        Integer isuniform = config.getOptionalIntegerProperty("isuniform").orElse(null);
-        Integer optGUI = config.getOptionalIntegerProperty("opt_GUI").orElse(null);
+        Integer unimod = Utils.getIntegerFromPropertyOrNull(config, "unimod");
+        Integer modoInv = Utils.getIntegerFromPropertyOrNull(config, "modo_inv");
+        Integer isdeterministic = Utils.getIntegerFromPropertyOrNull(config, "isdeterministic");
+        Integer isuniform = Utils.getIntegerFromPropertyOrNull(config, "isuniform");
+        Integer optGUI = Utils.getIntegerFromPropertyOrNull(config, "opt_GUI");
         double pLoadDeterministic = config.getDoubleProperty("Pload_deterministic");
         double qLoadDeterministic = config.getDoubleProperty("Qload_deterministic");
         double bandUniformPL = config.getDoubleProperty("band_uniformPL");
         double bandUniformQL = config.getDoubleProperty("band_uniformQL");
         double bandUniformPGEN = config.getDoubleProperty("band_uniformPGEN");
-        Integer correlationFictUniform = config.getOptionalIntegerProperty("correlation_fict_uniform").orElse(null);
-        Integer optFPF = config.getOptionalIntegerProperty("opt_FPF").orElse(null);
-        Integer homothetic = config.getOptionalIntegerProperty("homothetic").orElse(null);
-        Integer modelConv = config.getOptionalIntegerProperty("modelConv").orElse(null);
+        Integer correlationFictUniform = Utils.getIntegerFromPropertyOrNull(config, "correlation_fict_uniform");
+        Integer optFPF = Utils.getIntegerFromPropertyOrNull(config, "opt_FPF");
+        Integer homothetic = Utils.getIntegerFromPropertyOrNull(config, "homothetic");
+        Integer modelConv = Utils.getIntegerFromPropertyOrNull(config, "modelConv");
 
         return new ForecastErrorsAnalyzerConfig(binariesDir, runtimeHomeDir, checkModule0, percpuGaussLoad, percpuGaussRes,
                 correlationGauss, tolVar, nMinObsFract, nMinObsInterv, imputationMeth, nGaussians, kOutlier, tolerance,

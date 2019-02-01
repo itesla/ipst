@@ -91,7 +91,7 @@ public class CreateMclaMat implements Tool {
             if (network == null) {
                 throw new RuntimeException("Case '" + caseFile + "' not found");
             }
-            network.getStateManager().allowStateMultiThreadAccess(true);
+            network.getVariantManager().allowVariantMultiThreadAccess(true);
 
             createMat(network, outputFolder);
         } else if (Files.isDirectory(caseFile)) {

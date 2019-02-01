@@ -8,7 +8,7 @@
 package eu.itesla_project.modules.wca;
 
 import com.google.auto.service.AutoService;
-import com.powsybl.iidm.network.StateManagerConstants;
+import com.powsybl.iidm.network.VariantManagerConstants;
 import com.powsybl.tools.Command;
 import com.powsybl.tools.Tool;
 import com.powsybl.tools.ToolRunningContext;
@@ -244,10 +244,10 @@ public class WCATool implements Tool {
                 if (network == null) {
                     throw new RuntimeException("Case '" + caseFile + "' not found");
                 }
-                network.getStateManager().allowStateMultiThreadAccess(true);
+                network.getVariantManager().allowVariantMultiThreadAccess(true);
 
                 WCA wca = wcaFactory.create(network, context.getShortTimeExecutionComputationManager(), histoDbClient, rulesDbClient, uncertaintiesAnalyserFactory, contingenciesDb, loadFlowFactory);
-                WCAAsyncResult result = wca.runAsync(StateManagerConstants.INITIAL_STATE_ID, parameters).join();
+                WCAAsyncResult result = wca.runAsync(VariantManagerConstants.INITIAL_VARIANT_ID, parameters).join();
 
                 Table table = new Table(3, BorderStyle.CLASSIC_WIDE);
                 table.addCell("Contingency");
@@ -301,10 +301,10 @@ public class WCATool implements Tool {
 
                 Importers.loadNetworks(caseFile, true, network -> {
                     try {
-                        network.getStateManager().allowStateMultiThreadAccess(true);
+                        network.getVariantManager().allowVariantMultiThreadAccess(true);
                         String baseStateId = network.getId();
-                        network.getStateManager().cloneState(StateManagerConstants.INITIAL_STATE_ID, baseStateId);
-                        network.getStateManager().setWorkingState(baseStateId);
+                        network.getVariantManager().cloneVariant(VariantManagerConstants.INITIAL_VARIANT_ID, baseStateId);
+                        network.getVariantManager().setWorkingVariant(baseStateId);
 
                         WCA wca = wcaFactory.create(network, context.getShortTimeExecutionComputationManager(), histoDbClient, rulesDbClient, uncertaintiesAnalyserFactory, contingenciesDb, loadFlowFactory);
                         WCAAsyncResult result = wca.runAsync(baseStateId, parameters).join();

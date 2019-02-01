@@ -64,7 +64,7 @@ public class EurostagExportTool implements Tool, EurostagConstants {
         if (network == null) {
             throw new RuntimeException("Case '" + caseFile + "' not found");
         }
-        network.getStateManager().allowStateMultiThreadAccess(true);
+        network.getVariantManager().allowVariantMultiThreadAccess(true);
 
         context.getOutputStream().println("exporting ech...");
         // export .ech and dictionary
@@ -92,7 +92,7 @@ public class EurostagExportTool implements Tool, EurostagConstants {
             EurostagEchExporterFactory echExportFactory = defaultConfig.newFactoryImpl(EurostagEchExporterFactory.class, EurostagEchExporterFactoryImpl.class);
             EsgNetwork networkEch = echExportFactory.createEchExporter(network, exportConfig, parallelIndexes, dictionary, fakeNodes).createNetwork(parameters);
             new EurostagNetworkModifier().hvLoadModelling(networkEch);
-            new EsgWriter(networkEch, parameters, specialParameters).write(writer, network.getId() + "/" + network.getStateManager().getWorkingStateId());
+            new EsgWriter(networkEch, parameters, specialParameters).write(writer, network.getId() + "/" + network.getVariantManager().getWorkingVariantId());
         }
         dictionary.dump(outputDir.resolve("dict.csv"));
         context.getOutputStream().println("exporting dta...");

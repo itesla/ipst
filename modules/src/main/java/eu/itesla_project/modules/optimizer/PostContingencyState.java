@@ -27,7 +27,7 @@ public class PostContingencyState {
 
 
     public Network getNetwork() {
-        network.getStateManager().setWorkingState(stateId);
+        network.getVariantManager().setWorkingVariant(stateId);
         return network;
     }
 

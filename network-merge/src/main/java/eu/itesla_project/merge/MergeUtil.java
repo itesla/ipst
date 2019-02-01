@@ -91,7 +91,7 @@ public final class MergeUtil {
                 if (optimize) {
                     for (Network network : networks) {
                         LoadFlow loadFlow = loadFlowFactory.create(network, computationManager, loadFlowPriority);
-                        LoadFlowResult result = loadFlow.run(network.getStateManager().getWorkingStateId(), loadFlowParameters).join();
+                        LoadFlowResult result = loadFlow.run(network.getVariantManager().getWorkingVariantId(), loadFlowParameters).join();
                         if (!result.isOk()) {
                             LOGGER.error("LF divergence on network " + network.getId());
                         }
@@ -128,7 +128,7 @@ public final class MergeUtil {
                 }
 
                 LoadFlow loadFlow = loadFlowFactory.create(merge, computationManager, loadFlowPriority);
-                LoadFlowResult result = loadFlow.run(merge.getStateManager().getWorkingStateId(), loadFlowParameters).join();
+                LoadFlowResult result = loadFlow.run(merge.getVariantManager().getWorkingVariantId(), loadFlowParameters).join();
                 if (!result.isOk()) {
                     throw new RuntimeException("Merge LF divergence");
                 }

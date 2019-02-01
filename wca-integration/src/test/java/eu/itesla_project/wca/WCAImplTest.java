@@ -104,7 +104,7 @@ public class WCAImplTest {
         network.getLine("NHV1_NHV2_2").getTerminal2().setP(560.0).setQ(550.0);
         network.getLine("NHV1_NHV2_2").newCurrentLimits1().setPermanentLimit(1500.0).add();
         network.getLine("NHV1_NHV2_2").newCurrentLimits2().setPermanentLimit(1500.0).add();
-        network.getStateManager().allowStateMultiThreadAccess(true);
+        network.getVariantManager().allowVariantMultiThreadAccess(true);
 
         computationManager = Mockito.mock(ComputationManager.class);
         Executor executor = new Executor() {
@@ -360,7 +360,7 @@ public class WCAImplTest {
         LoadFlowResult loadFlowResult = new LoadFlowResult() {
             @Override
             public boolean isOk() {
-                if ( StateManagerConstants.INITIAL_STATE_ID.equals(network.getStateManager().getWorkingStateId()) )
+                if (VariantManagerConstants.INITIAL_VARIANT_ID.equals(network.getVariantManager().getWorkingVariantId()) )
                     return true;
                 return false;
             }

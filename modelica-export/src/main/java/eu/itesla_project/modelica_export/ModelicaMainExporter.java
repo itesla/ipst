@@ -155,7 +155,7 @@ public class ModelicaMainExporter {
         int priority = 1;
         LoadFlow loadflow = loadFlowFactory.create(_network, computationManager, priority);
         //((HELMLoadFlow) loadflow).setSlack(this._slackId);
-        LoadFlowResult lfResults = loadflow.run(_network.getStateManager().getWorkingStateId(), LoadFlowParameters.load()).join();
+        LoadFlowResult lfResults = loadflow.run(_network.getVariantManager().getWorkingVariantId(), LoadFlowParameters.load()).join();
 
         if (!lfResults.isOk()) {
             System.out.println("LF has not been successfuly completed.");

@@ -10,7 +10,7 @@ package eu.itesla_project.online;
 import com.csvreader.CsvWriter;
 import com.google.common.collect.Sets;
 import eu.itesla_project.cases.CaseRepository;
-import com.powsybl.commons.Version;
+import com.powsybl.tools.Version;
 import com.powsybl.computation.ComputationManager;
 import com.powsybl.computation.ComputationResourcesStatus;
 import com.powsybl.iidm.import_.Importers;
@@ -90,7 +90,7 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
         this.computationManager = Objects.requireNonNull(computationManager);
         this.ses = Objects.requireNonNull(ses);
         this.executorService = Objects.requireNonNull(executorService);
-        LOGGER.info("Version: {}", Version.VERSION);
+        LOGGER.info("Version: {}", Version.getTableString());
 
         this.enableJmx = enableJmx;
 
@@ -536,7 +536,7 @@ public class LocalOnlineApplication extends NotificationBroadcasterSupport
                     if (network == null) {
                         throw new RuntimeException("Case '" + caseFile + "' not found");
                     }
-                    network.getStateManager().allowStateMultiThreadAccess(true);
+                    network.getVariantManager().allowVariantMultiThreadAccess(true);
 
                     List<LimitViolation> networkViolations = Security.checkLimits(network);
                     writeCsvViolations(network.getId(), networkViolations, violationsCvsWriter);

@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import com.powsybl.iidm.network.Branch;
-import com.powsybl.iidm.network.StateManagerConstants;
+import com.powsybl.iidm.network.VariantManagerConstants;
 import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -174,7 +174,7 @@ public class WCAUtilsTest {
         Map<String, Float> injections = new HashMap<String, Float>();
         injections.put("load1", 10f);
         injections.put("generator1", -10f);
-        WCAUtils.applyInjections(network, StateManagerConstants.INITIAL_STATE_ID, injections);
+        WCAUtils.applyInjections(network, VariantManagerConstants.INITIAL_VARIANT_ID, injections);
 
         assertEquals(loadP + 10, network.getLoad("load1").getTerminal().getP(), 0.0);
         assertEquals(loadP0 + 10, network.getLoad("load1").getP0(), 0.0);

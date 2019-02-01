@@ -12,6 +12,7 @@ import com.powsybl.commons.config.PlatformConfig;
 import java.nio.file.Path;
 import java.util.Objects;
 
+import eu.itesla_project.mcla.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,7 +94,7 @@ public class MontecarloSamplerConfig {
         Path tmpDir = config.getPathProperty("tmpDir");
         int optionSign = config.getIntProperty("optionSign");
         int centering = config.getIntProperty("centering");
-        Integer fullDependence = config.getOptionalIntegerProperty("full_dependence").orElse(null);
+        Integer fullDependence = Utils.getIntegerFromPropertyOrNull(config, "full_dependence");
         boolean copyFEFile = config.getBooleanProperty("copyFEFile", true);
         boolean debug = config.getBooleanProperty("debug", false);
 

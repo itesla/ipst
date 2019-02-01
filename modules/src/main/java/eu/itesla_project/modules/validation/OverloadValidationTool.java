@@ -10,7 +10,7 @@ import com.google.auto.service.AutoService;
 import com.powsybl.contingency.Contingency;
 import com.powsybl.iidm.import_.Importer;
 import com.powsybl.iidm.import_.Importers;
-import com.powsybl.iidm.network.StateManagerConstants;
+import com.powsybl.iidm.network.VariantManagerConstants;
 import com.powsybl.loadflow.LoadFlowFactory;
 import com.powsybl.security.*;
 import com.powsybl.simulation.securityindexes.SecurityIndexType;
@@ -234,7 +234,7 @@ public class OverloadValidationTool implements Tool {
                     context.getOutputStream().println("running security analysis...");
 
                     SecurityAnalysis securityAnalysis = new SecurityAnalysisImpl(network, context.getShortTimeExecutionComputationManager(), loadFlowFactory);
-                    SecurityAnalysisResult securityAnalysisResult = securityAnalysis.run(StateManagerConstants.INITIAL_STATE_ID, SecurityAnalysisParameters.load(), network1 -> contingencies).join();
+                    SecurityAnalysisResult securityAnalysisResult = securityAnalysis.run(VariantManagerConstants.INITIAL_VARIANT_ID, SecurityAnalysisParameters.load(), network1 -> contingencies).join();
 
                     context.getOutputStream().println("checking rules...");
 

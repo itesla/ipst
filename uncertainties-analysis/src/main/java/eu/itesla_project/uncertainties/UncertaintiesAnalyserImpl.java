@@ -9,11 +9,10 @@ package eu.itesla_project.uncertainties;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Table;
-import com.powsybl.commons.config.PlatformConfig;
-import com.powsybl.commons.io.CacheManager;
 import com.powsybl.commons.io.MathUtil;
 import com.powsybl.computation.*;
 import com.powsybl.iidm.network.Network;
+import eu.itesla_project.modules.commons.io.CacheManager;
 import eu.itesla_project.modules.histo.*;
 import eu.itesla_project.modules.wca.StochasticInjection;
 import eu.itesla_project.modules.wca.Uncertainties;
@@ -332,7 +331,7 @@ public class UncertaintiesAnalyserImpl implements UncertaintiesAnalyser {
     }
 
     private CacheManager.CacheEntry getInjectionsCacheDir(Interval interval, List<StochasticInjection> networkInjections) {
-        return PlatformConfig.defaultCacheManager().newCacheEntry("uncertainties")
+        return CacheManager.defaultCacheManager().newCacheEntry("uncertainties")
                 .withKey(interval.toString())
                 .withKeys(networkInjections.stream().map(StochasticInjection::getId).collect(Collectors.toList()))
                 .withKey(SCRIPTS.getVersion())
@@ -341,7 +340,7 @@ public class UncertaintiesAnalyserImpl implements UncertaintiesAnalyser {
     }
 
     private CacheManager.CacheEntry getMonthlyCacheDir(Interval interval) {
-        return PlatformConfig.defaultCacheManager().newCacheEntry("uncertainties")
+        return CacheManager.defaultCacheManager().newCacheEntry("uncertainties")
                 .withKey(interval.toString())
                 .withKey("" + network.getCaseDate().year().get() + network.getCaseDate().monthOfYear().get())
                 .withKey(SCRIPTS.getVersion())

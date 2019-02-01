@@ -11,7 +11,6 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.powsybl.commons.Version;
 import com.powsybl.commons.config.PlatformConfig;
 import com.powsybl.computation.*;
 import com.powsybl.contingency.ContingenciesProvider;
@@ -199,10 +198,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
 
     @Override
     public String getVersion() {
-        return ImmutableMap.builder().put("eurostagVersion", EurostagUtil.VERSION)
-                .putAll(Version.VERSION.toMap())
-                .build()
-                .toString();
+        return EurostagUtil.VERSION;
     }
 
     //needed by wp43 integration
@@ -337,7 +333,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
             case GENERATOR:
                 return parameters.getGeneratorFaultShortCircuitDuration(contingency.getId(), element.getId());
             case BRANCH:
-                return parameters.getBranchFaultShortCircuitDuration(contingency.getId(), element.getId());
+                return parameters.getBranchSideOneFaultShortCircuitDuration(contingency.getId(), element.getId());
             default:
                 throw new AssertionError();
         }
@@ -463,7 +459,7 @@ public class EurostagImpactAnalysis implements ImpactAnalysis, EurostagConstants
     private Command before(SimulationState state, Set<String> contingencyIds, Path workingDir, List<Contingency> contingencies) throws IOException {
         // dump state info for debugging
         if (config.isDebug()) {
-            Networks.dumpStateId(workingDir, state.getName());
+            Networks.dumpVariantId(workingDir, state.getName());
         }
 
         try (OutputStream os = Files.newOutputStream(workingDir.resolve(PRE_FAULT_SAC_GZ_FILE_NAME))) {

@@ -66,7 +66,7 @@ public class ConstraintsModifierTest {
         checkOriginalNetworkLimits();
 
         ConstraintsModifier constraintsModifier = new ConstraintsModifier(network, config);
-        constraintsModifier.looseConstraints(StateManagerConstants.INITIAL_STATE_ID);
+        constraintsModifier.looseConstraints(VariantManagerConstants.INITIAL_VARIANT_ID);
 
         checkModifiedNetworkLimits(0);
     }
@@ -78,7 +78,7 @@ public class ConstraintsModifierTest {
         checkOriginalNetworkLimits();
 
         ConstraintsModifier constraintsModifier = new ConstraintsModifier(network, config);
-        constraintsModifier.looseConstraints(StateManagerConstants.INITIAL_STATE_ID, margin);
+        constraintsModifier.looseConstraints(VariantManagerConstants.INITIAL_VARIANT_ID, margin);
 
         checkModifiedNetworkLimits(margin);
     }
@@ -88,7 +88,7 @@ public class ConstraintsModifierTest {
         checkOriginalNetworkLimits();
 
         ConstraintsModifier constraintsModifier = new ConstraintsModifier(network, config);
-        constraintsModifier.looseConstraints(StateManagerConstants.INITIAL_STATE_ID, violations);
+        constraintsModifier.looseConstraints(VariantManagerConstants.INITIAL_VARIANT_ID, violations);
 
         checkModifiedNetworkLimits(0);
     }
@@ -100,7 +100,7 @@ public class ConstraintsModifierTest {
         checkOriginalNetworkLimits();
 
         ConstraintsModifier constraintsModifier = new ConstraintsModifier(network, config);
-        constraintsModifier.looseConstraints(StateManagerConstants.INITIAL_STATE_ID, violations, margin);
+        constraintsModifier.looseConstraints(VariantManagerConstants.INITIAL_VARIANT_ID, violations, margin);
 
         checkModifiedNetworkLimits(margin);
     }
@@ -112,8 +112,8 @@ public class ConstraintsModifierTest {
         checkOriginalNetworkLimits();
 
         String stateId = "0";
-        network.getStateManager().cloneState(StateManagerConstants.INITIAL_STATE_ID, stateId);
-        network.getStateManager().setWorkingState(stateId);
+        network.getVariantManager().cloneVariant(VariantManagerConstants.INITIAL_VARIANT_ID, stateId);
+        network.getVariantManager().setWorkingVariant(stateId);
         checkOriginalNetworkLimits();
 
         ConstraintsModifier constraintsModifier = new ConstraintsModifier(network, config);
@@ -121,10 +121,10 @@ public class ConstraintsModifierTest {
 
         checkModifiedNetworkLimits(margin);
 
-        network.getStateManager().setWorkingState(StateManagerConstants.INITIAL_STATE_ID);
+        network.getVariantManager().setWorkingVariant(VariantManagerConstants.INITIAL_VARIANT_ID);
         checkModifiedNetworkLimits(margin);
 
-        network.getStateManager().removeState(stateId);
+        network.getVariantManager().removeVariant(stateId);
     }
 
     @Test
@@ -134,8 +134,8 @@ public class ConstraintsModifierTest {
         checkOriginalNetworkLimits();
 
         String stateId = "0";
-        network.getStateManager().cloneState(StateManagerConstants.INITIAL_STATE_ID, stateId);
-        network.getStateManager().setWorkingState(stateId);
+        network.getVariantManager().cloneVariant(VariantManagerConstants.INITIAL_VARIANT_ID, stateId);
+        network.getVariantManager().setWorkingVariant(stateId);
         checkOriginalNetworkLimits();
 
         ConstraintsModifier constraintsModifier = new ConstraintsModifier(network, config);
@@ -143,10 +143,10 @@ public class ConstraintsModifierTest {
 
         checkModifiedNetworkLimits(margin);
 
-        network.getStateManager().setWorkingState(StateManagerConstants.INITIAL_STATE_ID);
+        network.getVariantManager().setWorkingVariant(VariantManagerConstants.INITIAL_VARIANT_ID);
         checkModifiedNetworkLimits(margin);
 
-        network.getStateManager().removeState(stateId);
+        network.getVariantManager().removeVariant(stateId);
     }
 
     @Test
@@ -159,7 +159,7 @@ public class ConstraintsModifierTest {
 
         }
         try {
-            constraintsModifier.looseConstraints(StateManagerConstants.INITIAL_STATE_ID, null);
+            constraintsModifier.looseConstraints(VariantManagerConstants.INITIAL_VARIANT_ID, null);
             fail();
         } catch (Throwable e) {
         }

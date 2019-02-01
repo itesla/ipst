@@ -106,9 +106,9 @@ public class UniqueTopologyChecker {
         int errors = 0;
         // create a test state
         String topoCheckStateId = "topocheck";
-        String oldState = network.getStateManager().getWorkingStateId();
-        network.getStateManager().cloneState(oldState, topoCheckStateId);
-        network.getStateManager().setWorkingState(topoCheckStateId);
+        String oldState = network.getVariantManager().getWorkingVariantId();
+        network.getVariantManager().cloneVariant(oldState, topoCheckStateId);
+        network.getVariantManager().setWorkingVariant(topoCheckStateId);
         try {
             // try to apply all possible configurations to the unique topology and check it is equal to the corresponding
             // historical nodal topology
@@ -147,8 +147,8 @@ public class UniqueTopologyChecker {
                 }
             }
         } finally {
-            network.getStateManager().removeState(topoCheckStateId);
-            network.getStateManager().setWorkingState(oldState);
+            network.getVariantManager().removeVariant(topoCheckStateId);
+            network.getVariantManager().setWorkingVariant(oldState);
         }
         if (errors > 0) {
             throw new RuntimeException("Check failed for " + errors + " substations");

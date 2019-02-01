@@ -104,7 +104,7 @@ public class CreateFeaMat implements Tool {
             if (network == null) {
                 throw new RuntimeException("Case '" + caseFile + "' not found");
             }
-            network.getStateManager().allowStateMultiThreadAccess(true);
+            network.getVariantManager().allowVariantMultiThreadAccess(true);
             createMat(network, histoInterval, outputFolder);
         } else {
             throw new RuntimeException("Case '" + caseFile + "' is not a valid basecase file");

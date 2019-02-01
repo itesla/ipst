@@ -230,7 +230,7 @@ public class WCAImpl implements WCA, WCAConstants {
                     @Override
                     public List<CommandExecution> before(Path workingDir) throws IOException {
 
-                        network.getStateManager().setWorkingState(baseStateId);
+                        network.getVariantManager().setWorkingVariant(baseStateId);
 
                         copyRequired(workingDir);
 
@@ -256,7 +256,7 @@ public class WCAImpl implements WCA, WCAConstants {
                         }
 
                         // write post contingency state
-                        network.getStateManager().setWorkingState(contingencyStateId);
+                        network.getVariantManager().setWorkingVariant(contingencyStateId);
                         AmplUtil.resetNetworkMapping(mapper);
                         AmplUtil.fillMapper(mapper, network); // because action can create a new bus
                         new AmplNetworkWriter(network, dataSource, contingencyNum, 0, true, mapper, CLUSTERS_AMPL_EXPORT_CONFIG).write();
@@ -276,7 +276,7 @@ public class WCAImpl implements WCA, WCAConstants {
                             int curativeActionNum = mapper.newInt(AmplSubset.CURATIVE_ACTION, curativeActionId);
 
                             String curativeStateId = curativeStateIds.get(i);
-                            network.getStateManager().setWorkingState(curativeStateId);
+                            network.getVariantManager().setWorkingVariant(curativeStateId);
                             AmplUtil.resetNetworkMapping(mapper);
                             AmplUtil.fillMapper(mapper, network); // because action can create a new bus
                             new AmplNetworkWriter(network, dataSource, contingencyNum, curativeActionNum, true, mapper, CLUSTERS_AMPL_EXPORT_CONFIG).write();
@@ -335,7 +335,7 @@ public class WCAImpl implements WCA, WCAConstants {
                     @Override
                     public List<CommandExecution> before(Path workingDir) throws IOException {
 
-                        network.getStateManager().setWorkingState(baseStateId);
+                        network.getVariantManager().setWorkingVariant(baseStateId);
 
                         copyRequired(workingDir);
 
@@ -369,7 +369,7 @@ public class WCAImpl implements WCA, WCAConstants {
                             int preventiveActionNum = mapper.newInt(AmplSubset.PREVENTIVE_ACTION, preventiveActionId);
 
                             String preventiveStateId = preventiveStateIds.get(i);
-                            network.getStateManager().setWorkingState(preventiveStateId);
+                            network.getVariantManager().setWorkingVariant(preventiveStateId);
                             AmplUtil.resetNetworkMapping(mapper);
                             AmplUtil.fillMapper(mapper, network); // because action can create a new bus
                             new AmplNetworkWriter(network, dataSource, 0, preventiveActionNum, true, mapper, DOMAINS_AMPL_EXPORT_CONFIG).write();
@@ -466,8 +466,8 @@ public class WCAImpl implements WCA, WCAConstants {
                 .runAsync(() -> {
                     LOGGER.info("Network {}, contingency {}: computing post contingency state", network.getId(), contingency.getId());
                     contingencyStateId[0] = baseStateId + "_" + contingency.getId();
-                    network.getStateManager().cloneState(baseStateId, contingencyStateId[0]);
-                    network.getStateManager().setWorkingState(contingencyStateId[0]);
+                    network.getVariantManager().cloneVariant(baseStateId, contingencyStateId[0]);
+                    network.getVariantManager().setWorkingVariant(contingencyStateId[0]);
 
                     contingency.toTask().modify(network, computationManager);
 
@@ -486,7 +486,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                 ));
                         return CompletableFuture.completedFuture(WCAClusterNum.FOUR);
                     } else {
-                        network.getStateManager().setWorkingState(contingencyStateId[0]);
+                        network.getVariantManager().setWorkingVariant(contingencyStateId[0]);
 
                         WCAPostContingencyStatus postContingencyStatus = new WCAPostContingencyStatus(contingency.getId(), new WCALoadflowResult(true, null));
 
@@ -536,8 +536,8 @@ public class WCAImpl implements WCA, WCAConstants {
                                     curativeStateIds.add(curativeStateId);
                                     LOGGER.info("Network {}, contingency {}, curative action {}: starting analysis",
                                                 network.getId(), contingency.getId(), curativeActionId);
-                                    network.getStateManager().cloneState(previousState, curativeStateId);
-                                    network.getStateManager().setWorkingState(curativeStateId);
+                                    network.getVariantManager().cloneVariant(previousState, curativeStateId);
+                                    network.getVariantManager().setWorkingVariant(curativeStateId);
                                     LOGGER.info("Network {}, contingency {}, curative action {}: computing post curative action state",
                                                 network.getId(), contingency.getId(), curativeActionId);
                                     for (Action subAction : curativeAction) {
@@ -545,7 +545,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                     }
                                     LoadFlowResult loadFlowResult1;
                                     try {
-                                        loadFlowResult1 = loadFlow.run(network.getStateManager().getWorkingStateId(), LOAD_FLOW_PARAMETERS).join();
+                                        loadFlowResult1 = loadFlow.run(network.getVariantManager().getWorkingVariantId(), LOAD_FLOW_PARAMETERS).join();
                                         if (loadFlowResult1.isOk()) {
                                             boolean violationsRemoved = false;
                                             boolean actionApplied = false;
@@ -623,8 +623,8 @@ public class WCAImpl implements WCA, WCAConstants {
                                                 String clustersUncertaintiesState = contingencyStateId[0] + "_clustersUncertaintiesState";
                                                 LOGGER.info("Network {}, contingency {}: creating post contingency state with 'clusters' uncertainties",
                                                             network.getId(), contingency.getId());
-                                                network.getStateManager().cloneState(contingencyStateId[0], clustersUncertaintiesState);
-                                                network.getStateManager().setWorkingState(clustersUncertaintiesState);
+                                                network.getVariantManager().cloneVariant(contingencyStateId[0], clustersUncertaintiesState);
+                                                network.getVariantManager().setWorkingVariant(clustersUncertaintiesState);
                                                 WCAUtils.applyInjections(network, clustersUncertaintiesState, clusterResults2.getInjections());
                                                 LOGGER.info("Network {}, contingency {}: running loadflow on post contingency state with 'clusters' uncertainties",
                                                             network.getId(), contingency.getId());
@@ -666,16 +666,16 @@ public class WCAImpl implements WCA, WCAConstants {
                     }
 
                     // cleanup working states
-                    network.getStateManager().removeState(contingencyStateId[0]);
+                    network.getVariantManager().removeVariant(contingencyStateId[0]);
                     for (String curativeStateId : curativeStateIds) {
-                        network.getStateManager().removeState(curativeStateId);
+                        network.getVariantManager().removeVariant(curativeStateId);
                     }
                     return clusterNumber;
                 });
     }
 
     private CompletableFuture<List<CompletableFuture<WCACluster>>> createWcaTask(String baseStateId, WCAParameters parameters) throws Exception {
-        if (!network.getStateManager().isStateMultiThreadAccessAllowed()) {
+        if (!network.getVariantManager().isVariantMultiThreadAccessAllowed()) {
             throw new IllegalArgumentException("State multi thread access has to be activated");
         }
 
@@ -685,7 +685,7 @@ public class WCAImpl implements WCA, WCAConstants {
                 .run(baseStateId, LOAD_FLOW_PARAMETERS)
                 .thenApply(loadFlowInBaseStateResult -> {
 
-                    network.getStateManager().setWorkingState(baseStateId);
+                    network.getVariantManager().setWorkingVariant(baseStateId);
 
                     ContingencyDbFacade contingencyDbFacade = new SimpleContingencyDbFacade(contingenciesActionsDbClient, network);
 
@@ -722,7 +722,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                                                                                  WCAClusterOrigin.LF_BASIC_VIOLATION));
                         }
                         Supplier<CompletableFuture<Uncertainties>> uncertainties = Suppliers.memoize(() -> {
-                            network.getStateManager().setWorkingState(baseStateId);
+                            network.getVariantManager().setWorkingVariant(baseStateId);
                             try {
                                 if (!(config.getPreventiveActionsFilter() == WCAPreventiveActionsFilter.DOMAINS)
                                         && !(config.getPreventiveActionsOptimizer() == WCAPreventiveActionsOptimizer.DOMAINS)
@@ -738,7 +738,7 @@ public class WCAImpl implements WCA, WCAConstants {
                         });
                         Supplier<CompletableFuture<WCAHistoLimits>> histoLimits
                                 = Suppliers.memoize(() -> CompletableFuture.supplyAsync(() -> {
-                                    network.getStateManager().setWorkingState(baseStateId);
+                                    network.getVariantManager().setWorkingVariant(baseStateId);
                                     try {
                                         WCAHistoLimits limits = new WCAHistoLimits(parameters.getHistoInterval());
                                         if (config.getPreventiveActionsFilter() == WCAPreventiveActionsFilter.DOMAINS
@@ -764,8 +764,8 @@ public class WCAImpl implements WCA, WCAConstants {
                                             LOGGER.info("Network {}: 'domains' found basic violations", network.getId());
                                             String domainsUncertaintiesState = "domainsUncertaintiesState";
                                             LOGGER.info("Network {}: creating state with 'domains' uncertainties", network.getId());
-                                            network.getStateManager().cloneState(baseStateId, domainsUncertaintiesState);
-                                            network.getStateManager().setWorkingState(domainsUncertaintiesState);
+                                            network.getVariantManager().cloneVariant(baseStateId, domainsUncertaintiesState);
+                                            network.getVariantManager().setWorkingVariant(domainsUncertaintiesState);
                                             WCAUtils.applyInjections(network, domainsUncertaintiesState, domainsResult.getInjections());
                                             LOGGER.info("Network {}: running loadflow on state with 'domains' uncertainties", network.getId());
                                             return loadFlow.run(domainsUncertaintiesState, LOAD_FLOW_PARAMETERS)
@@ -794,7 +794,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                         return CompletableFuture.completedFuture(baseStateLimitViolations);
                                     })
                                     .join();
-                            network.getStateManager().setWorkingState(baseStateId);
+                            network.getVariantManager().setWorkingVariant(baseStateId);
                         }
                         LOGGER.info("Network {}: {} violations to be prevented:\n{}",
                                     network.getId(), violationsToBePrevented.size(), Security.printLimitsViolations(violationsToBePrevented, network, violationsFilter));
@@ -828,14 +828,14 @@ public class WCAImpl implements WCA, WCAConstants {
                                         LOGGER.info("Network {}, preventive action {}: starting analysis for {} violation on equipment {}",
                                                     network.getId(), preventiveActionId, violationToBePrevented.getLimitType(), violationToBePrevented.getSubjectId());
                                         possibleActionsToApply.put(preventiveActionId, preventiveAction);
-                                        network.getStateManager().cloneState(previousState, preventiveStateId);
-                                        network.getStateManager().setWorkingState(preventiveStateId);
+                                        network.getVariantManager().cloneVariant(previousState, preventiveStateId);
+                                        network.getVariantManager().setWorkingVariant(preventiveStateId);
                                         for (Action subAction : preventiveAction) {
                                             subAction.toTask().modify(network, computationManager);
                                         }
                                         LoadFlowResult loadFlowResult1;
                                         try {
-                                            loadFlowResult1 = loadFlow.run(network.getStateManager().getWorkingStateId(), LOAD_FLOW_PARAMETERS).join();
+                                            loadFlowResult1 = loadFlow.run(network.getVariantManager().getWorkingVariantId(), LOAD_FLOW_PARAMETERS).join();
                                             if (loadFlowResult1.isOk()) {
                                                 List<LimitViolation> preventiveStateLimitViolations = violationsFilter.apply(Security.checkLimits(network), network);
                                                 Optional<LimitViolation> notSolvedLimitViolation = preventiveStateLimitViolations
@@ -951,7 +951,7 @@ public class WCAImpl implements WCA, WCAConstants {
                                         .join();
                                 if (preventiveActionsToApply.size() > 0 && config.applyPreventiveActions()) {
                                     LOGGER.info("Network {}: applying preventive actions", network.getId());
-                                    network.getStateManager().setWorkingState(baseStateId);
+                                    network.getVariantManager().setWorkingVariant(baseStateId);
                                     CompletableFuture.runAsync(() -> {
                                         preventiveActionsToApply.forEach(actionId -> {
                                             if (possibleActionsToApply.containsKey(actionId)) {
@@ -1005,7 +1005,7 @@ public class WCAImpl implements WCA, WCAConstants {
                             clusters.add(CompletableFuture
                                     .completedFuture(null)
                                     .thenComposeAsync(ignored -> {
-                                        network.getStateManager().setWorkingState(baseStateId);
+                                        network.getVariantManager().setWorkingVariant(baseStateId);
                                         boolean rulesViolated = false;
                                         List<SecurityRuleExpression> securityRuleExpressions = new ArrayList<>();
                                         if (parameters.getOfflineWorkflowId() != null) {
@@ -1137,7 +1137,7 @@ public class WCAImpl implements WCA, WCAConstants {
 
     @Override
     public WCAResult run(WCAParameters parameters) throws Exception {
-        WCAAsyncResult asyncResult = runAsync(network.getStateManager().getWorkingStateId(), parameters)
+        WCAAsyncResult asyncResult = runAsync(network.getVariantManager().getWorkingVariantId(), parameters)
                 .join();
         List<WCACluster> clusters = new ArrayList<>();
         for (CompletableFuture<WCACluster> cluster : asyncResult.getClusters()) {

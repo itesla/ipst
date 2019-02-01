@@ -103,7 +103,7 @@ public class HistoDbPrintVoltageRangeTool implements Tool {
         if (network == null) {
             throw new RuntimeException("Case '" + caseFile + "' not found");
         }
-        network.getStateManager().allowStateMultiThreadAccess(true);
+        network.getVariantManager().allowVariantMultiThreadAccess(true);
 
         OfflineConfig config = OfflineConfig.load();
         try (HistoDbClient histoDbClient = config.getHistoDbClientFactoryClass().newInstance().create()) {

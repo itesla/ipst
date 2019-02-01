@@ -52,7 +52,7 @@ public class DymolaStabilization implements Stabilization {
     @Override
     public StabilizationResult run()  {
         LOGGER.info("Running Dymola stabilization");
-        String baseStateId = network.getStateManager().getWorkingStateId();
+        String baseStateId = network.getVariantManager().getWorkingVariantId();
         DymolaState state = new DymolaState(baseStateId);
         return new DymolaStabilizationResult(state);
     }
@@ -60,7 +60,7 @@ public class DymolaStabilization implements Stabilization {
     @Override
     public CompletableFuture<StabilizationResult> runAsync(String workingStateId) {
         return CompletableFuture.supplyAsync(() -> {
-            network.getStateManager().setWorkingState(workingStateId);
+            network.getVariantManager().setWorkingVariant(workingStateId);
             return run();
         });
     }

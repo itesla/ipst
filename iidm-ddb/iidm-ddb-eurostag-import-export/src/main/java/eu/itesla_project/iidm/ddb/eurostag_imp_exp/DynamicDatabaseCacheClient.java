@@ -6,13 +6,12 @@
  */
 package eu.itesla_project.iidm.ddb.eurostag_imp_exp;
 
-import com.powsybl.commons.io.CacheManager;
-import com.powsybl.commons.config.PlatformConfig;
 import com.powsybl.iidm.network.Generator;
 import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.util.Identifiables;
 import com.powsybl.simulation.SimulationParameters;
+import eu.itesla_project.modules.commons.io.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +73,7 @@ public class DynamicDatabaseCacheClient implements DynamicDatabaseClient {
     public void dumpDtaFile(Path workingDir, String fileName, Network network, Map<String, Character> parallelIndexes, String eurostagVersion, Map<String, String> iidm2eurostagId, SimulationParameters simulationParameters) {
         boolean isFiltered = DdExportConfig.load().getGensPQfilter();
 
-        CacheManager.CacheEntry cacheEntry = PlatformConfig.defaultCacheManager().newCacheEntry("ddb")
+        CacheManager.CacheEntry cacheEntry = CacheManager.defaultCacheManager().newCacheEntry("ddb")
                 .withKey(fileName)
                 .withKeys(StreamSupport.stream(filterGenerators(network, isFiltered).spliterator(), false)
                                .map(Identifiable::getId)

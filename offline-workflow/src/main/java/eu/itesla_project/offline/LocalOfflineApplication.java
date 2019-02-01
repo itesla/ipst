@@ -6,7 +6,6 @@
  */
 package eu.itesla_project.offline;
 
-import com.powsybl.commons.Version;
 import com.powsybl.computation.ComputationManager;
 import com.powsybl.loadflow.LoadFlowFactory;
 import eu.itesla_project.merge.MergeOptimizerFactory;
@@ -20,6 +19,7 @@ import eu.itesla_project.modules.sampling.SamplerFactory;
 import com.powsybl.simulation.securityindexes.SecurityIndexId;
 import com.powsybl.simulation.securityindexes.SecurityIndexType;
 import com.powsybl.simulation.SimulatorFactory;
+import com.powsybl.tools.Version;
 import eu.itesla_project.modules.topo.TopologyMinerFactory;
 import eu.itesla_project.modules.validation.ValidationDb;
 import eu.itesla_project.offline.monitoring.BusyCoresSeries;
@@ -110,7 +110,7 @@ public class LocalOfflineApplication extends NotificationBroadcasterSupport impl
         this.ses = ses;
         this.es = es;
 
-        LOGGER.info("Version: {}", Version.VERSION);
+        LOGGER.info("Version: {}", Version.getTableString());
 
         offlineDb = config.getOfflineDbFactoryClass().newInstance().create(simulationDbName);
         histoDbClientFactory = config.getHistoDbClientFactoryClass().newInstance();

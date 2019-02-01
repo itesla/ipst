@@ -6,8 +6,6 @@
  */
 package eu.itesla_project.pclfsim;
 
-import com.google.common.collect.ImmutableMap;
-import com.powsybl.commons.Version;
 import com.powsybl.computation.ComputationManager;
 import com.powsybl.contingency.ContingenciesProvider;
 import com.powsybl.iidm.network.Network;
@@ -84,10 +82,7 @@ class PostContLoadFlowSimImpactAnalysis implements ImpactAnalysis, PostContLoadF
 
     @Override
     public String getVersion() {
-        return ImmutableMap.builder().put("postContLoadFlowSimVersion", VERSION)
-                                     .putAll(Version.VERSION.toMap())
-                                     .build()
-                                     .toString();
+        return VERSION;
     }
 
     @Override
@@ -120,15 +115,15 @@ class PostContLoadFlowSimImpactAnalysis implements ImpactAnalysis, PostContLoadF
     }
 
     private void createPostContingencyState(Contingency contingency, String baseStateId, String contingencyStateId) {
-        network.getStateManager().cloneState(baseStateId, contingencyStateId);
-        network.getStateManager().setWorkingState(contingencyStateId);
+        network.getVariantManager().cloneVariant(baseStateId, contingencyStateId);
+        network.getVariantManager().setWorkingVariant(contingencyStateId);
         contingency.toTask().modify(network, computationManager);
     }
 
     private void removePostContingencyState(String contingencyStateId, Map<String, String> metrics) {
-        network.getStateManager().setWorkingState(contingencyStateId);
+        network.getVariantManager().setWorkingVariant(contingencyStateId);
 
-        network.getStateManager().removeState(contingencyStateId);
+        network.getVariantManager().removeVariant(contingencyStateId);
     }
 
     private static Map<LimitViolationType, List<LimitViolation>>  groupViolationsByType(List<LimitViolation> violations) {
@@ -157,7 +152,7 @@ class PostContLoadFlowSimImpactAnalysis implements ImpactAnalysis, PostContLoadF
         if (loadFlowResult.isOk()) {
             okCount.incrementAndGet();
 
-            network.getStateManager().setWorkingState(contingencyStateId);
+            network.getVariantManager().setWorkingVariant(contingencyStateId);
 
             List<LimitViolation> violations = baseVoltageFilter.apply(Security.checkLimits(network, config.getCurrentLimitType(), 1f), network);
             String report = Security.printLimitsViolations(violations, network, CURRENT_FILTER);
@@ -216,7 +211,7 @@ class PostContLoadFlowSimImpactAnalysis implements ImpactAnalysis, PostContLoadF
     }
 
     private void checkMultiThreadAccess() {
-        if (!network.getStateManager().isStateMultiThreadAccessAllowed()) {
+        if (!network.getVariantManager().isVariantMultiThreadAccessAllowed()) {
             throw new IllegalStateException("Multi thread access has to be allowed in the network");
         }
     }
@@ -257,7 +252,7 @@ class PostContLoadFlowSimImpactAnalysis implements ImpactAnalysis, PostContLoadF
                     try {
                         createPostContingencyState(contingency, baseStateId, contingencyStateId);
 
-                        LoadFlowResult loadFlowResult = loadFlow.run(network.getStateManager().getWorkingStateId(), loadFlowParameters).join();
+                        LoadFlowResult loadFlowResult = loadFlow.run(network.getVariantManager().getWorkingVariantId(), loadFlowParameters).join();
 
                         analyseLoadFlowResult(baseStateId, index, contingency, contingencyStateId, loadFlowResult, baseViolationsByType,
                                               metrics, securityIndexes, okCount);

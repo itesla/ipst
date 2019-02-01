@@ -172,7 +172,7 @@ public class OnlineWorkflowImpl implements OnlineWorkflow {
         logger.info(this.logHeader + "- Network name: " + network.getName());
 
         // needed in order to correctly handle multithreading access to network
-        network.getStateManager().allowStateMultiThreadAccess(true);
+        network.getVariantManager().allowVariantMultiThreadAccess(true);
 
 
         oCtx.setWorkflowId(id);
