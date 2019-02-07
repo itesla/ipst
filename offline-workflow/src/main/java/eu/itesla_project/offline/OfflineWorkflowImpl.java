@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2016, All partners of the iTesla project (http://www.itesla-project.eu/consortium)
+ * Copyright (c) 2016-2019, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -19,6 +20,7 @@ import com.powsybl.security.LimitViolationFilter;
 import eu.itesla_project.merge.MergeOptimizerFactory;
 import eu.itesla_project.modules.*;
 import eu.itesla_project.cases.CaseRepository;
+import eu.itesla_project.modules.commons.ThreadSafeVariantManager;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClient;
 import eu.itesla_project.modules.contingencies.ContingenciesAndActionsDatabaseClientFactory;
 import eu.itesla_project.modules.histo.HistoDbClient;
@@ -54,6 +56,7 @@ import static eu.itesla_project.modules.offline.OfflineTaskType.*;
 /**
  *
  * @author Geoffroy Jamgotchian <geoffroy.jamgotchian at rte-france.com>
+ * @author Christian Biasuzzi <christian.biasuzzi@techrain.eu>
  */
 public class OfflineWorkflowImpl extends AbstractOfflineWorkflow {
 
@@ -147,7 +150,6 @@ public class OfflineWorkflowImpl extends AbstractOfflineWorkflow {
     }
 
     private boolean runStartingPointInit(WorkflowContext context, WorkflowStartContext startContext, int sampleId) {
-
         LOGGER.debug("Workflow {}, sample {}: starting point initialization started", id, sampleId);
 
         // call starting point initialization module to fill control
@@ -522,6 +524,7 @@ public class OfflineWorkflowImpl extends AbstractOfflineWorkflow {
             final Semaphore statePermits = new Semaphore(stateQueueSize, true);
             final Queue<SimulationState> states = Queues.synchronizedQueue(new ArrayDeque<SimulationState>(stateQueueSize));
             final Map<SimulationState, Integer> sampleIds = Collections.synchronizedMap(new HashMap<>());
+            ThreadSafeVariantManager variantManager = new ThreadSafeVariantManager(context.getNetwork().getVariantManager());
 
             for (int i = 0; i < stateQueueSize; i++) {
                 stateFutures.add(executorService.submit(() -> {
@@ -542,10 +545,10 @@ public class OfflineWorkflowImpl extends AbstractOfflineWorkflow {
                                 String stateId = "Sample-" + sample.getId();
 
                                 // create a new network state
-                                context.getNetwork().getVariantManager().cloneVariant(VariantManagerConstants.INITIAL_VARIANT_ID, stateId);
+                                variantManager.cloneVariant(VariantManagerConstants.INITIAL_VARIANT_ID, stateId);
                                 try {
                                     // set current thread working state
-                                    context.getNetwork().getVariantManager().setWorkingVariant(stateId);
+                                    variantManager.setWorkingVariant(stateId);
 
                                     // apply the sample to the network
                                     sample.apply(context.getNetwork());
@@ -573,7 +576,7 @@ public class OfflineWorkflowImpl extends AbstractOfflineWorkflow {
                                         LOGGER.error(e.toString(), e);
                                     }
                                 } finally {
-                                    context.getNetwork().getVariantManager().removeVariant(stateId);
+                                    variantManager.removeVariant(stateId);
                                 }
                             }
                         }
