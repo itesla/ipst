@@ -27,6 +27,41 @@ Start the py-powsybl 'server' in a console.
 Demo1.py demostrates what can be done (it executes a loadflow on a network, opens a switch, exports a network to a file in xiidm format)
 
     python Demo1.py     
+    
+Another example using pypowsybl module
+    
+```
+from pypowsybl import *
+
+# simple dump network flows function
+def dump_lines_flow(network):
+    print(len(network.get_lines()))
+    for l in network.get_lines():
+        print(l.get_id() + ";" + str(l.get_terminal_1().get_i()) + ";" + str(l.get_terminal_2().get_i()))
+        print(l.get_current_limits_1().get_permanent_limit())
+        print(str(l.check_permanent_limit_1()) + ";" + str(l.check_permanent_limit_2()))
+        print(str(l.check_permanent_limit_1(0.1)) + ";" + str(l.check_permanent_limit_2(0.1)))
+        print(str(l.is_overloaded()) + ";" + str(l.is_overloaded(0.1)))
+
+if __name__ == '__main__':
+    port = 3338
+    with launch(config_name=None, nb_port=port):
+        n1 = load_network("/path/to/case-file/example.xiidm")
+        dump_lines_flow(n1)
+
+        lf = run_load_flow(n1)
+        print("\nLF result: " + str(lf.is_ok()) + "; metrics: " + str(lf.get_metrics()))
+        dump_lines_flow(n1)
+
+        # re-run load flow alternatively
+        lf = n1.run_load_flow()
+        print("\nLF result: " + str(lf.is_ok()) + "; metrics: " + str(lf.get_metrics()))
+        
+        n1.save("/path/to/output/example.xiidm")
+        # or save(n1, "/path/to/output/example.xiidm")
+
+
+```
 
 ### Stop py-powsybl
 To stop the py-powsybl 'server',  CTRL+C in the itools console. 

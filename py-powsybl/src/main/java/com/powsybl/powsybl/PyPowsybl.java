@@ -11,6 +11,7 @@ import com.powsybl.tools.Command;
 import com.powsybl.tools.Tool;
 import com.powsybl.tools.ToolRunningContext;
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import py4j.GatewayServer;
 
@@ -19,6 +20,8 @@ import py4j.GatewayServer;
  */
 @AutoService(Tool.class)
 public class PyPowsybl implements Tool {
+
+    private static final String PORT = "port";
 
     @Override
     public Command getCommand() {
@@ -42,6 +45,11 @@ public class PyPowsybl implements Tool {
             @Override
             public Options getOptions() {
                 Options options = new Options();
+                options.addOption(Option.builder().longOpt(PORT)
+                        .desc("port for python to connect")
+                        .hasArg()
+                        .argName("PORT")
+                        .build());
                 return options;
             }
 
@@ -55,8 +63,9 @@ public class PyPowsybl implements Tool {
 
     @Override
     public void run(CommandLine line, ToolRunningContext context) throws Exception {
+        int port = Integer.parseInt(line.getOptionValue(PORT, "25333"));
 
-        GatewayServer server = new GatewayServer();
+        GatewayServer server = new GatewayServer("entry_point", port);
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
@@ -67,9 +76,10 @@ public class PyPowsybl implements Tool {
         });
 
         // execute the py4j Gateway service
-        //TODO customize service parameters: address, port, .....
+        //TODO customize service parameters: address, .....
         server.start();
-        System.out.println("py-powsybl server started; CTRL+C to stop it");
+        System.out.println("py-powsybl server started at " + server.getAddress() + ":" + port);
+        System.out.println("CTRL+C to stop it");
 
     }
 }

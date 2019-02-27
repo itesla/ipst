@@ -42,6 +42,8 @@ defaultConfig = gateway.jvm.ComponentDefaultConfig.load()
 computationManager = gateway.jvm.LocalComputationManager()
 loadflowfactory=defaultConfig.newFactoryImpl(ReflectionUtil.classForName("com.powsybl.loadflow.LoadFlowFactory"))
 
+lf_para = gateway.jvm.com.powsybl.loadflow.LoadFlowParameters.load()
+
 #create a demo network
 network = gateway.jvm.com.powsybl.iidm.network.test.FictitiousSwitchFactory.create()
 
@@ -52,7 +54,7 @@ loadFlow = loadflowfactory.create(network, computationManager, 0)
 dumpLinesFlow(network)
 
 #run a LF on the network and dump its results metrics
-loadflowResult = loadFlow.run()
+loadflowResult = loadFlow.run(network.getStateManager().getWorkingStateId(), lf_para).get()
 print("\nLF result: " + str(loadflowResult.isOk()) + "; metrics: " + str(loadflowResult.getMetrics()))
 
 #dump network's lines flow
@@ -63,7 +65,7 @@ dumpLinesFlow(network)
 network.getSwitch("BD").setOpen(True)
 
 #re-run a LF on the network and dump its results metrics
-loadflowResult = loadFlow.run()
+loadflowResult = loadFlow.run(network.getStateManager().getWorkingStateId(), lf_para).get()
 print("\nLF result: " + str(loadflowResult.isOk()) + "; metrics: " + str(loadflowResult.getMetrics()))
 
 #dump network's lines flow
